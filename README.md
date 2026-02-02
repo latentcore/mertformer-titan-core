@@ -270,7 +270,7 @@ graph TD;
         Norm1[RMSNorm] --> MLA[Multi-Head Latent Attention];
         MLA --> Norm2[RMSNorm];
         Norm2 --> MoE[LiquidRouter + BitSwiGLU Experts];
-        MoE --> Liquid[LiquidMixer (Layer 4, 10, 16)];
+        MoE --> Liquid["LiquidMixer (Layer 4, 10, 16)"];
     end
 ```
 
