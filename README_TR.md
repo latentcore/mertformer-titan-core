@@ -663,15 +663,13 @@ NİHAİ/
 │   └── 📄 logger.py        # Loglama altyapısı (WandB, CSV, JSONL)
 ├── 📂 scripts/             # Yardımcı betikler
 │   ├── 📄 smart_runner.py  # Akıllı Paralel Orkestratör (Veri -> Damıtma -> Eğitim)
-│   ├── 📄 distillation_manager.py # Çevrimdışı Öğretmen Yöneticisi (Llama-3-70B)
 │   ├── 📄 titan_preflight.py # 🦅 Nihai Sistem Test Pilotu (İz Bırakmayan Tam Doğrulama)
-│   ├── 📄 system_health.py # Çevrimdışı Sistem Sağlık Kontrolü
-│   ├── 📄 smoke_test.py    # Uçuş öncesi doğrulama
 │   ├── 📄 data_pipeline.py # Veri seti hazırlığı (4 aşamalı müfredat)
 │   ├── 📄 mobile_export.py # S25 için ONNX export
-│   └── 📄 chat.py          # Etkileşimli sohbet arayüzü
+│   ├── 📄 chat.py          # Etkileşimli sohbet arayüzü
+│   └── 📄 xray.py          # Görsel Analiz Aracı
 ├── 📂 tests/               # Birim & entegrasyon testleri
-├── 📂 orchestrator/        # Agentic Beyin (Çekirdek Mantık)
+├── 📂 orchestrator/        # Agentic Beyin (Çekirdek Mantık) & Damıtma Yöneticisi
 ├── 📂 checkpoints/         # Model kontrol noktaları
 ├── 📂 datasets/            # Eğitim verileri (4 aşamalı müfredat)
 ├── 📂 logs/                # Eğitim günlükleri

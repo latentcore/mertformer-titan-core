@@ -663,15 +663,13 @@ NİHAİ/
 │   └── 📄 logger.py        # Logging infrastructure (WandB, CSV, JSONL)
 ├── 📂 scripts/             # Helper scripts
 │   ├── 📄 smart_runner.py  # Master Parallel Orchestrator (Data -> Distill -> Train)
-│   ├── 📄 distillation_manager.py # Offline Teacher Manager (Llama-3-70B)
 │   ├── 📄 titan_preflight.py # 🦅 Ultimate System Test (Zero-Footprint Full Verification)
-│   ├── 📄 system_health.py # Offline System Integrity Check
-│   ├── 📄 smoke_test.py    # Pre-flight validation
 │   ├── 📄 data_pipeline.py # Dataset preparation (4-stage curriculum)
 │   ├── 📄 mobile_export.py # ONNX export for S25
-│   └── 📄 chat.py          # Interactive chat interface
+│   ├── 📄 chat.py          # Interactive chat interface
+│   └── 📄 xray.py          # Vision Analysis Tool
 ├── 📂 tests/               # Unit & integration tests
-├── 📂 orchestrator/        # Agentic Brain (Core Logic)
+├── 📂 orchestrator/        # Agentic Brain (Core Logic) & Distillation Manager
 ├── 📂 checkpoints/         # Model checkpoints
 ├── 📂 datasets/            # Training data (4-stage curriculum)
 ├── 📂 logs/                # Training logs
