@@ -675,7 +675,11 @@ NİHAİ/
 ├── 📂 logs/                # Training logs
 ├── 📄 run.sh               # One-command launcher (auto-setup + NCCL tuning)
 ├── 📄 requirements.txt     # Python dependencies
+├── 📄 PITCH.md             # Investor Pitch Deck (5 Slides)
+├── 📄 TRAINING_PLAN.md     # 3-Phase Execution Roadmap
+├── 📄 TECHNICAL_REPORT_TR.md # Detailed Technical Breakdown (Turkish)
 ├── 📄 README.md            # This file
+├── 📄 README_TR.md         # Turkish Documentation
 └── 📄 LICENSE              # MIT License
 ```
 

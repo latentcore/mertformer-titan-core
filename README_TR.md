@@ -675,7 +675,11 @@ NİHAİ/
 ├── 📂 logs/                # Eğitim günlükleri
 ├── 📄 run.sh               # Tek komutla başlatıcı (otomatik kurulum + NCCL tuning)
 ├── 📄 requirements.txt     # Python bağımlılıkları
-├── 📄 README.md            # Bu dosya
+├── 📄 PITCH.md             # Yatırımcı Sunumu (5 Slayt)
+├── 📄 TRAINING_PLAN.md     # 3 Aşamalı Yol Haritası
+├── 📄 TECHNICAL_REPORT_TR.md # Detaylı Teknik Rapor (Türkçe)
+├── 📄 README.md            # İngilizce Dokümantasyon
+├── 📄 README_TR.md         # Bu dosya
 └── 📄 LICENSE              # MIT Lisansı
 ```
 
