@@ -101,9 +101,8 @@ Bu sürüm, sadece üreten değil, her hatasından ders çıkaran ve her projede
 - [Benchmarks](#benchmarks)
 - [Turkish Vision](#turkish-vision)
 - [FAQ](#faq)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
 - [License](#license)
+- [Contact](#contact)
 
 ---
 
@@ -685,18 +684,6 @@ NİHAİ/
 
 ---
 
-<a id="contributing"></a>
-## 🤝 Contributing
-
-We welcome contributions! Please see our contributing guidelines or open a Pull Request.
-
-**Areas for contribution:**
-- Turkish corpus expansion
-- Mobile deployment (S25 NPU)
-- Benchmark evaluations
-- Documentation improvements
-
----
 
 <a id="forensics"></a>
 ## 🧬 Forensic Verification (Proof of Concept)

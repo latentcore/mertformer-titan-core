@@ -101,9 +101,8 @@ Bu sürüm, sadece üreten değil, her hatasından ders çıkaran ve her projede
 - [Kıyaslamalar (Benchmarks)](#kıyaslamalar-benchmarks)
 - [Türkiye Vizyonu](#türkiye-vizyonu)
 - [SSS](#sss)
-- [Proje Yapısı](#proje-yapısı)
-- [Katkıda Bulunma](#katkıda-bulunma)
 - [Lisans](#lisans)
+- [İletişim](#iletişim)
 
 ---
 
@@ -685,18 +684,6 @@ NİHAİ/
 
 ---
 
-<a id="katkıda-bulunma"></a>
-## 🤝 Katkıda Bulunma
-
-Katkılarınızı bekliyoruz! Lütfen katkıda bulunma yönergelerimize bakın veya bir Pull Request açın.
-
-**Katkı alanları:**
-- Türkçe corpus genişletme
-- Mobil dağıtım (S25 NPU)
-- Kıyaslama değerlendirmeleri
-- Dokümantasyon iyileştirmeleri
-
----
 
 <a id="forensics"></a>
 ## 🧬 Adli Doğrulama (Forensic Verification)

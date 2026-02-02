@@ -1,15 +1,33 @@
-COPYRIGHT AND LICENSE NOTICE
-
+PROPRIETARY AND CONFIDENTIAL LICENSE NOTICE
+==============================================================================
 Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
+==============================================================================
 
-This software and all associated files are the proprietary and confidential property 
-of the MertFormer AI Team. No part of this software or its associated files may be 
-reproduced, distributed, or transmitted in any form or by any means, including 
-photocopying, recording, or other electronic or mechanical methods, without the 
-prior written permission of the copyright owner, except in the case of brief 
-quotations embodied in critical reviews and certain other noncommercial uses 
-permitted by copyright law.
+1. OWNERSHIP
+This software, including all source code, documentation, logos, and associated 
+assets, is the sole and exclusive property of the MertFormer AI Team ("Owner").
 
-UNAUTHORIZED COPYING, MODIFICATION, OR DISTRIBUTION OF THIS SOFTWARE IS STRICTLY PROHIBITED.
+2. RESTRICTIONS
+Unauthorized use, copying, modification, distribution, or decompilation of this 
+software is strictly prohibited. Access to this software is granted solely under 
+explicit written agreement or employment contract with the Owner.
 
-For permission requests, please contact the copyright holder.
+3. CONFIDENTIALITY
+The algorithms, architectural designs (specifically the Swarm Orchestrator and 
+LiquidRouter), and training methodologies contained herein are TRADE SECRETS. 
+Any disclosure to third parties without a signed Non-Disclosure Agreement (NDA) 
+is a violation of intellectual property laws.
+
+4. NO WARRANTY
+THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY 
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
+OTHERWISE.
+
+5. TERMINATION
+The Owner reserves the right to revoke access or use permissions at any time 
+without prior notice.
+
+==============================================================================
+GOVERNED BY THE LAWS OF TURKEY AND INTERNATIONAL COPYRIGHT TREATIES.
+==============================================================================
