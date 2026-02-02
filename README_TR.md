@@ -35,7 +35,7 @@
 
 ---
 
-## 🏢 MertFormer Inc. - Otonom Sürü Mimarisi (v5.2 - Bilge Sürümü) 🦉
+## 🏢 MertFormer Inc. - Otonom Sürü Mimarisi (v5.2 - Bilge Sürümü) [HEDEF MİMARİ] 🦉
 **Donanım**: NVIDIA RTX 5090 (45 Eşzamanlı Ajan)  
 **Yazılım**: Çok Ajanlı Orkestratör (Python) + BitNet İşçileri (C++)
 

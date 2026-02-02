@@ -35,7 +35,7 @@
 
 ---
 
-## 🏢 MertFormer Inc. - Autonomous Swarm Architecture (v5.2 - Sage Edition) 🦉
+## 🏢 MertFormer Inc. - Autonomous Swarm Architecture (v5.2 - Sage Edition) [TARGET ARCHITECTURE] 🦉
 **Hardware**: NVIDIA RTX 5090 (45 Concurrent Agents)  
 **Software**: Multi-Agent Orchestrator (Python) + BitNet Workers (C++)
 
