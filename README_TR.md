@@ -679,7 +679,7 @@ NİHAİ/
 ├── 📄 TRAINING_PLAN.md     # 3 Aşamalı Yol Haritası
 ├── 📄 TECHNICAL_REPORT_TR.md # Detaylı Teknik Rapor (Türkçe)
 ├── 📄 README.md            # İngilizce Dokümantasyon
-├── 📄 README_TR.md         # Bu dosya
+├── 📄 README_TR.md         # Türkçe Dokümantasyon
 └── 📄 LICENSE              # MIT Lisansı
 ```
 
