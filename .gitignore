@@ -1,0 +1,33 @@
+# System & Python Junk
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+.env
+venv/
+.idea/
+.vscode/
+.ipynb_checkpoints/
+wandb/
+*.zip
+
+# Heavy Files (Models & Data)
+*.onnx
+*.pt
+*.pth
+*.ckpt
+/datasets/
+/data/
+/dataset/
+/weights/
+/checkpoints/
+
+# Logs (Ignore all except the PROOF)
+logs/*
+!logs/TITAN_POC_PROOF.jsonl
+!logs/preflight/titan_preflight.log
+
+# Temporary
+*.tmp
+*.bak

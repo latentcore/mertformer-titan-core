@@ -1,0 +1,46 @@
+# ==============================================================================
+# MERTFORMER TITAN - REQUIREMENTS
+# ==============================================================================
+# Version: v26.5 - Production Ready
+# Platform: CUDA / MPS / CPU
+# ==============================================================================
+
+# Core ML Framework
+torch>=2.0
+numpy>=1.24
+
+# Hugging Face Ecosystem
+transformers>=4.30
+datasets>=2.12
+accelerate>=0.20
+sentencepiece>=0.1.99
+protobuf>=3.20
+peft>=0.4.0  # LoRA/Adapter Support (Critical for MacBook Fine-Tuning)
+
+# Training Utilities
+tqdm>=4.65
+zstandard>=0.21  # For streaming datasets
+
+# Testing
+pytest>=7.3
+pytest-cov>=4.1  # Optional: coverage reports
+
+# System Monitoring
+psutil>=5.9
+
+# AGI Orchestrator (Optional)
+# Uncomment if using full orchestrator features:
+# duckduckgo-search>=3.8  # Web search
+# beautifulsoup4>=4.12    # HTML parsing
+# requests>=2.31          # HTTP client
+# SpeechRecognition>=3.10 # Voice input
+# Pillow>=9.5             # Image processing
+bitsandbytes>=0.41.0
+flash-attn>=2.5.0
+huggingface_hub
+scipy
+onnx>=1.14
+onnxscript
+onnx-simplifier>=0.4.33  # Mobile Optimization (Critical)
+wandb>=0.15.0            # Experiment Tracking
+galore-torch             # GaLore Optimizer (VRAM Saver)
