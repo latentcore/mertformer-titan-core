@@ -778,7 +778,7 @@ Bu proje **MIT Lisansı** altında lisanslanmıştır - detaylar için [LICENSE]
   year = {2026},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{[https://github.com/mertyunlu/mertformer-titan](https://github.com/mertyunlu/mertformer-titan)}}
+  howpublished = {\url{https://github.com/latentcore/mertformer-titan-v27}}
 }
 ```
 

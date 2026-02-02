@@ -777,7 +777,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
   year = {2026},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{[https://github.com/mertyunlu/mertformer-titan](https://github.com/mertyunlu/mertformer-titan)}}
+  howpublished = {\url{https://github.com/latentcore/mertformer-titan-v27}}
 }
 ```
 
