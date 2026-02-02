@@ -24,7 +24,7 @@
 > **MertFormer is an autonomous multi-agent AI architecture designed to build production-grade software with minimal human intervention.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](./LICENSE)
-[![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg?style=flat-square)](https://github.com/mertyunlu/mertformer-titan)
+[![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
 [![Architecture: BitNet 1.58b](https://img.shields.io/badge/Architecture-BitNet%201.58b-orange.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
 
 ## 🏗️ Design Principles

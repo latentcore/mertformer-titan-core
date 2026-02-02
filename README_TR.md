@@ -24,7 +24,7 @@
 > **MertFormer, minimum insan müdahalesi ile üretim kalitesinde yazılım geliştirmek için tasarlanmış otonom, çok ajanlı bir yapay zeka mimarisidir.**
 
 [![Lisans: MIT](https://img.shields.io/badge/Lisans-MIT-blue.svg?style=flat-square)](./LICENSE)
-[![Durum: Üretime Hazır](https://img.shields.io/badge/Durum-%C3%9Cretime%20Haz%C4%B1r-brightgreen.svg?style=flat-square)](https://github.com/mertyunlu/mertformer-titan)
+[![Durum: Üretime Hazır](https://img.shields.io/badge/Durum-%C3%9Cretime%20Haz%C4%B1r-brightgreen.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
 [![Mimari: BitNet 1.58b](https://img.shields.io/badge/Mimari-BitNet%201.58b-orange.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
 
 ## 🏗️ Tasarım İlkeleri
