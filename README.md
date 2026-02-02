@@ -669,7 +669,7 @@ NİHAİ/
 │   ├── 📄 chat.py          # Interactive chat interface
 │   └── 📄 xray.py          # Vision Analysis Tool
 ├── 📂 tests/               # Unit & integration tests
-├── 📂 orchestrator/        # Agentic Brain (Core Logic) & Distillation Manager
+├── 📂 orchestrator/        # Agentic Brain (Target Architecture v5.2)
 ├── 📂 checkpoints/         # Model checkpoints
 ├── 📂 datasets/            # Training data (4-stage curriculum)
 ├── 📂 logs/                # Training logs

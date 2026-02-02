@@ -669,7 +669,7 @@ NİHAİ/
 │   ├── 📄 chat.py          # Etkileşimli sohbet arayüzü
 │   └── 📄 xray.py          # Görsel Analiz Aracı
 ├── 📂 tests/               # Birim & entegrasyon testleri
-├── 📂 orchestrator/        # Agentic Beyin (Çekirdek Mantık) & Damıtma Yöneticisi
+├── 📂 orchestrator/        # Agentic Beyin (Hedef Mimari v5.2)
 ├── 📂 checkpoints/         # Model kontrol noktaları
 ├── 📂 datasets/            # Eğitim verileri (4 aşamalı müfredat)
 ├── 📂 logs/                # Eğitim günlükleri
