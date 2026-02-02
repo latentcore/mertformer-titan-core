@@ -728,12 +728,12 @@ To verify the authenticity of a shared run log or benchmark result:
 - [x] **v27.0**: Performance optimizations (Flash Attention, torch.compile, NCCL)
 - [x] **v27.0**: Safety features (OOM recovery, NaN detection, disk monitoring)
 - [x] **v27.0**: Best checkpoint saving
+- [ ] **v27.x**: Publication of measured benchmark results (post-trained checkpoints)
 - [x] **v28.0**: Multi-lingual support (Turkish corpus expansion)
 - [ ] **v28.0**: Long-context (8K-16K tokens)
 - [ ] **v29.0**: Samsung S25 NPU deployment (real device testing)
 - [ ] **v30.0**: Academic paper (LiquidRouter publication)
 - [ ] **v31.0**: Benchmark suite (MMLU, HellaSwag, Turkish NLU)
-- [ ] **v27.x**: Publication of measured benchmark results (post-trained checkpoints)
 
 ---
 

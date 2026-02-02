@@ -728,12 +728,13 @@ Paylaşılan bir eğitim sonucunun veya benchmark skorunun doğruluğunu teyit e
 - [x] **v27.0**: Performans optimizasyonları (Flash Attention, torch.compile, NCCL)
 - [x] **v27.0**: Güvenlik özellikleri (OOM kurtarma, NaN tespiti, disk izleme)
 - [x] **v27.0**: En iyi kontrol noktası kaydı
+- [ ] **v27.x**: Ölçülmüş benchmark sonuçlarının yayınlanması (trained checkpoints sonrası)
 - [x] **v28.0**: Çoklu dil desteği (Türkçe corpus genişletme)
 - [ ] **v28.0**: Uzun bağlam (8K-16K token)
 - [ ] **v29.0**: Samsung S25 NPU dağıtımı (gerçek cihaz testi)
 - [ ] **v30.0**: Akademik makale (LiquidRouter yayını)
 - [ ] **v31.0**: Kıyaslama paketi (MMLU, HellaSwag, Türkçe NLU)
-- [ ] **v27.x**: Ölçülmüş benchmark sonuçlarının yayınlanması (trained checkpoints sonrası)
+- [ ] **v31.0**: Kıyaslama paketi (MMLU, HellaSwag, Türkçe NLU)
 
 ---
 
