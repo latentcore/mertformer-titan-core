@@ -270,7 +270,7 @@ graph TD;
         Norm1[RMSNorm] --> MLA[Çok Başlı Latent Dikkat];
         MLA --> Norm2[RMSNorm];
         Norm2 --> MoE[LiquidRouter + BitSwiGLU Uzmanları];
-        MoE --> Liquid[LiquidMixer (Katman 4, 10, 16)];
+        MoE --> Liquid["LiquidMixer (Katman 4, 10, 16)"];
     end
 ```
 
