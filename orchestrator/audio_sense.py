@@ -3,7 +3,7 @@
 MERTFORMER TITAN (ONYX STORM) - AUDIO SENSE (STT & TTS)
 -------------------------------------------------------------------------------
 Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
-Licensed under MIT License.
+Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: v27.0-FINAL (Locked & Sealed)

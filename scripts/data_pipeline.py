@@ -3,7 +3,7 @@
 MERTFORMER TITAN (ONYX STORM) - DATA PIPELINE
 -------------------------------------------------------------------------------
 Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
-Licensed under MIT License.
+Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: v27.0-FINAL (Locked & Sealed)
@@ -21,7 +21,7 @@ from huggingface_hub import login
 MERTFORMER TITAN (ONYX STORM)
 -------------------------------------------------------------------------------
 Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
-Licensed under MIT License.
+Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: v25.0-TITAN-GOLD

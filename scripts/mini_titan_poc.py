@@ -5,7 +5,7 @@ from __future__ import annotations
 MERTFORMER TITAN (ONYX STORM) - LOCKED RUN LOGGER (Mini-Titan v5.0)
 -------------------------------------------------------------------------------
 Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
-Licensed under MIT License.
+Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: v5.0-FORENSIC (Locked & Sealed)

@@ -23,7 +23,7 @@
 # 🦅 MertFormer Titan: Autonomous Swarm Architecture
 > **MertFormer is an autonomous multi-agent AI architecture designed to build production-grade software with minimal human intervention.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](./LICENSE)
+[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg?style=flat-square)](./LICENSE)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
 [![Architecture: BitNet 1.58b](https://img.shields.io/badge/Architecture-BitNet%201.58b-orange.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
 
@@ -680,7 +680,7 @@ NİHAİ/
 ├── 📄 TECHNICAL_REPORT_TR.md # Detailed Technical Breakdown (Turkish)
 ├── 📄 README.md            # English Documentation
 ├── 📄 README_TR.md         # Turkish Documentation
-└── 📄 LICENSE              # MIT License
+└── 📄 LICENSE              # Proprietary License (All Rights Reserved)
 ```
 
 ---
@@ -743,7 +743,7 @@ To verify the authenticity of a shared run log or benchmark result:
 <a id="license"></a>
 ## 📄 License
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+This project is **confidential and proprietary**. All rights are reserved by the **MertFormer AI Team**. Unauthorized copying, modification, or distribution is strictly prohibited. See the [LICENSE](LICENSE) file for full details.
 
 ---
 

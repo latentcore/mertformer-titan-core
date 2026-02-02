@@ -3,7 +3,7 @@
 MERTFORMER TITAN (ONYX STORM)
 -------------------------------------------------------------------------------
 Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
-Licensed under MIT License.
+Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: v26.5-COMPREHENSIVE-TESTS
