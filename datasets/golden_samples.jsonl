@@ -1,0 +1,50 @@
+{"id": 1, "category": "algorithms", "prompt": "Write a Python function binary_search_leftmost(nums, target) that returns the leftmost index of target or -1."}
+{"id": 2, "category": "algorithms", "prompt": "Merge overlapping intervals given a list of [start, end] pairs."}
+{"id": 3, "category": "algorithms", "prompt": "Return the top K frequent words from a list of strings. Break ties alphabetically."}
+{"id": 4, "category": "algorithms", "prompt": "Implement an LRU cache with get and put in O(1)."}
+{"id": 5, "category": "algorithms", "prompt": "Implement Dijkstra's shortest path for a weighted graph represented as adjacency lists."}
+{"id": 6, "category": "data_structures", "prompt": "Implement a Trie with insert, search, and starts_with."}
+{"id": 7, "category": "data_structures", "prompt": "Implement Union-Find (Disjoint Set Union) with path compression."}
+{"id": 8, "category": "data_structures", "prompt": "Implement a stack that supports get_min in O(1)."}
+{"id": 9, "category": "data_structures", "prompt": "Implement a queue using two stacks."}
+{"id": 10, "category": "debugging", "prompt": "Fix the off-by-one bug in a sliding window sum function."}
+{"id": 11, "category": "debugging", "prompt": "Identify and fix the KeyError in a function that reads a nested dict."}
+{"id": 12, "category": "refactor", "prompt": "Refactor deeply nested if/else logic into guard clauses."}
+{"id": 13, "category": "refactor", "prompt": "Extract a helper function and add type hints for clarity."}
+{"id": 14, "category": "tests", "prompt": "Write pytest unit tests for an email validator function."}
+{"id": 15, "category": "tests", "prompt": "Write unit tests for a parse_config(path) function using temporary files."}
+{"id": 16, "category": "cli", "prompt": "Build a CLI with argparse to convert CSV input to JSON output."}
+{"id": 17, "category": "parsing", "prompt": "Parse log lines into a dict with fields timestamp, level, and message."}
+{"id": 18, "category": "regex", "prompt": "Write a regex that matches semantic versions like 1.2.3 or 2.0.0-beta."}
+{"id": 19, "category": "concurrency", "prompt": "Implement a thread-safe counter with increment and value methods."}
+{"id": 20, "category": "concurrency", "prompt": "Write an async function that fetches URLs with retries and backoff."}
+{"id": 21, "category": "performance", "prompt": "Optimize a function that concatenates many strings in a loop."}
+{"id": 22, "category": "performance", "prompt": "Cache an expensive function using functools.lru_cache."}
+{"id": 23, "category": "security", "prompt": "Hash a password with a random salt using hashlib and return salt+hash."}
+{"id": 24, "category": "security", "prompt": "Sanitize a user-supplied file path to prevent directory traversal."}
+{"id": 25, "category": "networking", "prompt": "Implement a simple TCP echo server and client."}
+{"id": 26, "category": "networking", "prompt": "Parse a URL into scheme, host, port, path, and query parameters."}
+{"id": 27, "category": "database", "prompt": "Write an SQL query that returns the top 5 customers by total spend."}
+{"id": 28, "category": "data", "prompt": "Compute a rolling average over a list of numbers with window size k."}
+{"id": 29, "category": "data", "prompt": "Normalize a list of floats to the range [0, 1]."}
+{"id": 30, "category": "math", "prompt": "Compute cosine similarity between two vectors."}
+{"id": 31, "category": "logging", "prompt": "Configure logging with a rotating file handler and console output."}
+{"id": 32, "category": "files", "prompt": "Safely write data to a file by using a temp file and atomic rename."}
+{"id": 33, "category": "errors", "prompt": "Define a custom exception and raise it when input validation fails."}
+{"id": 34, "category": "serialization", "prompt": "Serialize a dataclass instance to JSON and back."}
+{"id": 35, "category": "time", "prompt": "Convert a UTC timestamp to a local time string."}
+{"id": 36, "category": "data", "prompt": "Group a list of dicts by a key into a dict of lists."}
+{"id": 37, "category": "algorithms", "prompt": "Detect a cycle in a linked list using O(1) extra space."}
+{"id": 38, "category": "algorithms", "prompt": "Find the longest common prefix among a list of strings."}
+{"id": 39, "category": "algorithms", "prompt": "Check if a string has balanced parentheses."}
+{"id": 40, "category": "algorithms", "prompt": "Compute edit distance between two strings."}
+{"id": 41, "category": "algorithms", "prompt": "Implement KMP substring search."}
+{"id": 42, "category": "algorithms", "prompt": "Generate all permutations of a list of numbers."}
+{"id": 43, "category": "algorithms", "prompt": "Topologically sort a DAG given adjacency lists."}
+{"id": 44, "category": "algorithms", "prompt": "Serialize and deserialize a binary tree."}
+{"id": 45, "category": "system", "prompt": "Read environment variables with defaults and validate required keys."}
+{"id": 46, "category": "config", "prompt": "Merge two configuration dicts with precedence and deep merge behavior."}
+{"id": 47, "category": "metrics", "prompt": "Compute precision, recall, and F1 score from y_true and y_pred."}
+{"id": 48, "category": "ml", "prompt": "Implement an early stopping callback based on validation loss."}
+{"id": 49, "category": "streaming", "prompt": "Read a large file in chunks and count total lines."}
+{"id": 50, "category": "text", "prompt": "Tokenize a paragraph into sentences without external libraries."}

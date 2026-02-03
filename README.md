@@ -470,6 +470,14 @@ The `run.sh` script automatically:
 5. ✅ Runs smoke test (pre-flight check)
 6. ✅ Launches training with all optimizations
 
+### Operator Mode Gate
+Run the single-entry safety and readiness suite (safe mode by default):
+
+```bash
+python scripts/operator_mode_gate.py
+# Use --full on training hardware
+```
+
 ### 🛡️ Diagnostic Excellence (Pre-Flight)
 MertFormer Titan includes a professional-grade diagnostic judge. Run `./run.sh --test` to see:
 ```text

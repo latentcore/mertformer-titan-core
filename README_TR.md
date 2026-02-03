@@ -470,6 +470,14 @@ bash run.sh
 5. ✅ Duman testi (smoke test) çalıştırır (kalkış öncesi kontrol)
 6. ✅ Eğitimi tüm optimizasyonlarla başlatır
 
+### Operator Modu Gate
+Tek girişli güvenlik ve hazır olma süiti (varsayılan güvenli mod):
+
+```bash
+python scripts/operator_mode_gate.py
+# Eğitim donanımında tam mod için --full kullanın
+```
+
 ### 🛡️ Tanısal Mükemmellik (Uçuş Öncesi Kontrol)
 MertFormer Titan, profesyonel düzeyde bir tanı koyma sistemine sahiptir. `./run.sh --test` çalıştırdığınızda şu çıktıyı alırsınız:
 ```text

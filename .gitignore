@@ -22,6 +22,7 @@ wandb/
 /dataset/
 /weights/
 /checkpoints/
+!datasets/golden_samples.jsonl
 
 # Logs (Ignore all except the PROOF)
 logs/*
