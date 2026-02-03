@@ -28,6 +28,7 @@ def check_ram():
     print(f"   💾 RAM Usage: {vm.percent}% (Available: {vm.available / (1024**3):.1f} GB)")
 
 def run_mac_simulation():
+    # End-to-end Mac simulation: load model, run sample prompts, and verify local inference stability.
     print(f"\n🍏 MACBOOK M4 TITAN SIMULATION (HIGH FIDELITY)")
     print(f"==================================================")
     check_ram()

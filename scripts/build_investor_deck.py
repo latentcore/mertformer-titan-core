@@ -259,6 +259,7 @@ def slide_xml(title: str, bullets: list[str], footer: str) -> str:
 
 
 def write_pptx(output_path: Path, slides: list[dict[str, list[str]]], footer: str) -> None:
+    # Build a self-contained PPTX package (XML + relationships) without external dependencies.
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     content_types = [

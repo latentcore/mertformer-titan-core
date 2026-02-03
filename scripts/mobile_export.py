@@ -53,6 +53,7 @@ from model.transformers import MertFormer, MertFormerConfig
 from config.config import cfg
 
 def export_production_model():
+    # Production-grade export pipeline: load model, validate, export ONNX, and emit metadata for mobile deploy.
     print("\n" + "="*60)
     print("🚀 MERTFORMER TITAN: PRODUCTION MOBILE EXPORT PROTOCOL")
     print(f"   Target Device: Samsung S25 NPU (via ONNX)")
