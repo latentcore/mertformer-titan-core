@@ -745,26 +745,38 @@ NİHAİ/
 │   └── 📄 train.py         # Main training loop (1200+ lines, production-grade)
 ├── 📂 utils/               # Utilities
 │   └── 📄 logger.py        # Logging infrastructure (WandB, CSV, JSONL)
-├── 📂 scripts/             # Helper scripts
+├── 📂 scripts/             # Helper scripts & Reports
 │   ├── 📄 smart_runner.py  # Master Parallel Orchestrator (Data -> Distill -> Train)
 │   ├── 📄 titan_preflight.py # 🦅 Ultimate System Test (Zero-Footprint Full Verification)
 │   ├── 📄 data_pipeline.py # Dataset preparation (4-stage curriculum)
 │   ├── 📄 mobile_export.py # ONNX export for S25
 │   ├── 📄 chat.py          # Interactive chat interface
-│   └── 📄 xray.py          # Vision Analysis Tool
+│   ├── 📄 xray.py          # Vision Analysis Tool
+│   └── 📂 reports/         # Dynamic system & health reports
+├── 📂 assets/              # Branding & Synaptic Maps
+│   ├── 📄 header.png       # Futuristic Header Image
+│   └── 📄 synaptic_map.png # Layer Hierarchy Visualization
 ├── 📂 tests/               # Unit & integration tests
 ├── 📂 orchestrator/        # Agentic Brain (Target Architecture v5.2)
+├── 📂 reports/             # Executive Health & Validation Reports
 ├── 📂 checkpoints/         # Model checkpoints
 ├── 📂 datasets/            # Training data (4-stage curriculum)
 ├── 📂 logs/                # Training logs
+├── 📄 Dockerfile           # Containarized Environment
 ├── 📄 run.sh               # One-command launcher (auto-setup + NCCL tuning)
 ├── 📄 requirements.txt     # Python dependencies
-├── 📄 PITCH.md             # Investor Pitch Deck (5 Slides)
-├── 📄 TRAINING_PLAN.md     # 3-Phase Execution Roadmap
-├── 📄 TECHNICAL_REPORT_TR.md # Detailed Technical Breakdown (Turkish)
+├── 📄 PITCH.md             # Investor Pitch Deck (English)
+├── 📄 PITCH_TR.md          # Investor Pitch Deck (Turkish)
+├── 📄 TRAINING_PLAN.md     # 3-Phase Execution Roadmap (English)
+├── 📄 TRAINING_PLAN_TR.md  # 3-Phase Execution Roadmap (Turkish)
+├── 📄 WHITE_PAPER_LIQUIDROUTER.md # Technical Deep-Dive (English)
+├── 📄 WHITE_PAPER_LIQUIDROUTER_TR.md # Technical Deep-Dive (Turkish)
+├── 📄 TECHNICAL_REPORT.md  # Detailed Technical Analysis (English)
+├── 📄 TECHNICAL_REPORT_TR.md # Detailed Technical Analysis (Turkish)
 ├── 📄 README.md            # English Documentation
 ├── 📄 README_TR.md         # Turkish Documentation
-└── 📄 LICENSE              # Proprietary License (All Rights Reserved)
+├── 📄 LICENSE              # Proprietary License (English)
+└── 📄 LICENSE_TR           # Özel Lisans (Türkçe)
 ```
 
 ---
