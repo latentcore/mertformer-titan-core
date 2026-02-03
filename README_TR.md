@@ -748,8 +748,8 @@ NİHAİ/
 ├── 📂 scripts/             # Yardımcı betikler ve Raporlar
 │   ├── 📄 smart_runner.py  # Akıllı Paralel Orkestratör (Veri -> Damıtma -> Eğitim)
 │   ├── 📄 titan_preflight.py # 🦅 Nihai Sistem Test Pilotu (İz Bırakmayan Tam Doğrulama)
-│   ├── 📄 data_pipeline.py # Veri seti hazırlığı (4 aşamalı müfredat)
-│   ├── 📄 mobile_export.py # S25 için ONNX export
+│   ├── 📄 data_pipeline.py # Veri Simyası (5 Aşamalı Müfredatlı Öğrenme)
+│   ├── 📄 mobile_export.py # Üretim Seviyesi Mobil İhracatçı (S25 NPU Optimize ONNX)
 │   ├── 📄 chat.py          # Etkileşimli sohbet arayüzü
 │   ├── 📄 xray.py          # Akıllı Proje Denetçisi (Derin yapısal analiz ve döküm)
 │   └── 📂 reports/         # Dinamik sistem ve sağlık raporları
