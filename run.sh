@@ -206,6 +206,21 @@ if [ "$RUN_TEST" = true ]; then
 fi
 
 # ------------------------------------------------------------------------------
+# 🛡️ 5.5 OPERATOR MODE GATE (FULL)
+# ------------------------------------------------------------------------------
+if [ -z "$OPERATOR_GATE_SKIP" ]; then
+    echo "🛡️  OPERATOR MODE GATE (FULL) STARTING..."
+    python3 scripts/operator_mode_gate.py --full --no-pytest
+    if [ $? -ne 0 ]; then
+        echo "❌ OPERATOR MODE GATE FAILED! Aborting launch."
+        exit 1
+    fi
+    echo "✅ OPERATOR MODE GATE PASSED."
+else
+    echo "⚠️  OPERATOR MODE GATE SKIPPED (OPERATOR_GATE_SKIP set)."
+fi
+
+# ------------------------------------------------------------------------------
 # 🚀 6. ATEŞLEME
 # ------------------------------------------------------------------------------
 echo "🚀 TITAN LAUNCHING..."
