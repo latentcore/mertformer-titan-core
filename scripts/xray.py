@@ -75,8 +75,6 @@ SKIP_CONTENT_EXTENSIONS = {
 # Büyük dosyalar için içerik limiti (bytes)
 # Varsayılan: 200 KB, istersen çevre değişkeni ile artırılabilir.
 MAX_TEXT_FILE_BYTES = int(os.environ.get("XRAY_MAX_TEXT_BYTES", "200000"))
-# Log dosyaları daha hızlı büyüdüğü için ayrı limit
-MAX_LOG_FILE_BYTES = int(os.environ.get("XRAY_LOG_MAX_TEXT_BYTES", "50000"))
 
 
 # -------------------------------------------------------------------------
@@ -119,10 +117,13 @@ def is_text_file(path: Path) -> bool:
         return False
 
 
-def is_log_file(path: Path) -> bool:
-    if "logs" in {p.lower() for p in path.parts}:
+
+
+def should_skip_content(path: Path) -> bool:
+    parts = {p.lower() for p in path.parts}
+    if "logs" in parts or "datasets" in parts or "checkpoints" in parts:
         return True
-    return path.suffix.lower() in {".log", ".jsonl", ".csv"}
+    return False
 
     # 2. İçerik kontrolü (Kesin sonuç)
     try:
@@ -166,11 +167,17 @@ def write_tree(path: Path, file_handle, prefix: str = ""):
             try:
                 # Eğer dosya metin ise (py, xml, txt, md...)
                 if is_text_file(entry):
-                    file_size = entry.stat().st_size
-                    size_limit = MAX_LOG_FILE_BYTES if is_log_file(entry) else MAX_TEXT_FILE_BYTES
-                    if file_size > size_limit:
+                    if should_skip_content(entry):
+                        file_size = entry.stat().st_size
                         log(
-                            f"{new_prefix}    [İÇERİK GİZLENDİ: Dosya çok büyük ({file_size} bytes, limit {size_limit} bytes)]",
+                            f\"{new_prefix}    [İÇERİK GİZLENDİ: Klasör politikası (logs/datasets/checkpoints), {file_size} bytes]\",
+                            file_handle
+                        )
+                        continue
+                    file_size = entry.stat().st_size
+                    if file_size > MAX_TEXT_FILE_BYTES:
+                        log(
+                            f"{new_prefix}    [İÇERİK GİZLENDİ: Dosya çok büyük ({file_size} bytes, limit {MAX_TEXT_FILE_BYTES} bytes)]",
                             file_handle
                         )
                         continue
@@ -212,7 +219,6 @@ def main():
     print("MOD: Tüm dosya yapısını gösterir, sadece METİN içeriklerini okur.")
     print("     (.pyc, .DS_Store gibi gereksizlerin içeriği atlanır.)")
     print(f"TEXT LIMIT: {MAX_TEXT_FILE_BYTES} bytes (XRAY_MAX_TEXT_BYTES ile değiştirilebilir)")
-    print(f"LOG LIMIT : {MAX_LOG_FILE_BYTES} bytes (XRAY_LOG_MAX_TEXT_BYTES ile değiştirilebilir)")
 
     choice = timed_input(f"👉 Başlatılsın mı? (y/n, {TIMEOUT_SECONDS}s): ", TIMEOUT_SECONDS)
 

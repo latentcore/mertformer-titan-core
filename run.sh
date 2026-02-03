@@ -230,6 +230,17 @@ mkdir -p logs
 # V27.0 SMART RUNNER: Starts Parallel Data Pipeline -> Distillation -> Training
 python3 scripts/smart_runner.py 2>&1 | tee logs/production_run.log
 
+# ------------------------------------------------------------------------------
+# 📊 6.5. INTERNAL BENCHMARKS (HUMANEVAL/MBPP)
+# ------------------------------------------------------------------------------
+if [ -z "$BENCHMARK_SKIP" ]; then
+    echo "📊 Running internal benchmarks (HumanEval/MBPP)..."
+    BENCHMARK_SAMPLES=${BENCHMARK_SAMPLES:-5}
+    python3 scripts/benchmarks_internal.py --run --samples "$BENCHMARK_SAMPLES" || echo "⚠️ Benchmarks failed or unavailable. Continuing..."
+else
+    echo "⚠️ Benchmarks skipped (BENCHMARK_SKIP set)."
+fi
+
 # Eğitim bitti, şimdi paketle ve temizle
 echo "🚀 EĞİTİM TAMAMLANDI. MOBİL EXPORT BAŞLATILIYOR..."
 python3 scripts/mobile_export.py

@@ -67,9 +67,16 @@ def main() -> None:
     model = MertFormer().to(device)
 
     ckpt_path = Path(args.ckpt)
+    if not ckpt_path.exists():
+        candidate = Path(cfg.save_dir) / f"{cfg.model_name}_latest.pt"
+        if candidate.exists():
+            ckpt_path = candidate
+
     if ckpt_path.exists():
         checkpoint = torch.load(ckpt_path, map_location=device)
         model.load_state_dict(checkpoint.get("model", checkpoint))
+    else:
+        print(f\"⚠️  Checkpoint not found: {ckpt_path}. Benchmarks will run on random weights.\")
     model.eval()
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
