@@ -803,18 +803,19 @@ Paylaşılan bir eğitim sonucunun veya benchmark skorunun doğruluğunu teyit e
 
 ---
 
-## 📈 Yol Haritası (Roadmap)
+## 📈 Teknik Yol Haritası (Roadmap)
 
-- [x] **v27.0**: Performans optimizasyonları (Flash Attention, torch.compile, NCCL)
-- [x] **v27.0**: Güvenlik özellikleri (OOM kurtarma, NaN tespiti, disk izleme)
-- [x] **v27.0**: En iyi kontrol noktası kaydı
-- [ ] **v27.x**: Ölçülmüş benchmark sonuçlarının yayınlanması (trained checkpoints sonrası)
-- [x] **v28.0**: Çoklu dil desteği (Türkçe corpus genişletme)
-- [ ] **v28.0**: Uzun bağlam (8K-16K token)
-- [ ] **v29.0**: Samsung S25 NPU dağıtımı (gerçek cihaz testi)
-- [ ] **v30.0**: Akademik makale (LiquidRouter yayını)
-- [ ] **v31.0**: Kıyaslama paketi (MMLU, HellaSwag, Türkçe NLU)
-- [ ] **v31.0**: Kıyaslama paketi (MMLU, HellaSwag, Türkçe NLU)
+### ✅ Mevcut Sürüm (v27.0-FINAL)
+*   **Optimizasyon**: Flash Attention, `torch.compile` ve NCCL çoklu-GPU ölçeklendirme.
+*   **Dayanıklılık**: Proaktif OOM kurtarma, NaN tespiti ve disk duyarlı kontrol noktası kaydı.
+*   **Çekirdek**: LiquidRouter MoE ve MLA ile BitNet 1.58-bit katmanları.
+
+### 🚀 Gelecek Dönem Hedefleri
+*   **v27.x**: Tam eğitim setinin tamamlanması ve Benchmark sonuçlarının yayınlanması.
+*   **v28.0**: Uzun bağlam (16K token) genişletmesi ve Türkçe veri kümesi optimizasyonu.
+*   **v29.0**: Yerel NPU dağıtımı ve gerçek cihaz performansı (Samsung S25).
+*   **v30.0**: `LiquidRouter` mimarisinin akademik yayın ve makale süreci.
+*   **v31.0**: Kapsamlı NLU kıyaslama paketi (MMLU, HumanEval-TR).
 
 ---
 

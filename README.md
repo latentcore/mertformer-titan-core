@@ -803,17 +803,19 @@ To verify the authenticity of a shared run log or benchmark result:
 
 ---
 
-## 📈 Roadmap
+## 📈 Technical Roadmap
 
-- [x] **v27.0**: Performance optimizations (Flash Attention, torch.compile, NCCL)
-- [x] **v27.0**: Safety features (OOM recovery, NaN detection, disk monitoring)
-- [x] **v27.0**: Best checkpoint saving
-- [ ] **v27.x**: Publication of measured benchmark results (post-trained checkpoints)
-- [x] **v28.0**: Multi-lingual support (Turkish corpus expansion)
-- [ ] **v28.0**: Long-context (8K-16K tokens)
-- [ ] **v29.0**: Samsung S25 NPU deployment (real device testing)
-- [ ] **v30.0**: Academic paper (LiquidRouter publication)
-- [ ] **v31.0**: Benchmark suite (MMLU, HellaSwag, Turkish NLU)
+### ✅ Current Release (v27.0-FINAL)
+*   **Optimization**: Flash Attention, `torch.compile`, and NCCL multi-GPU scaling.
+*   **Resilience**: Proactive OOM recovery, NaN detection, and disk-aware checkpointing.
+*   **Core**: BitNet 1.58-bit layers with LiquidRouter MoE and MLA.
+
+### 🚀 Upcoming Milestones
+*   **v27.x**: Full training suite completion and Benchmark publication.
+*   **v28.0**: Long-context expansion (16K tokens) and Turkish corpus enrichment.
+*   **v29.0**: Native NPU deployment and real-device profiling (Samsung S25).
+*   **v30.0**: Academic publication of the `LiquidRouter` architecture.
+*   **v31.0**: Comprehensive NLU benchmark suite (MMLU, HumanEval-TR).
 
 ---
 
