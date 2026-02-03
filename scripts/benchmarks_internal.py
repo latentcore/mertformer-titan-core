@@ -76,7 +76,7 @@ def main() -> None:
         checkpoint = torch.load(ckpt_path, map_location=device)
         model.load_state_dict(checkpoint.get("model", checkpoint))
     else:
-        print(f\"⚠️  Checkpoint not found: {ckpt_path}. Benchmarks will run on random weights.\")
+        print(f"⚠️  Checkpoint not found: {ckpt_path}. Benchmarks will run on random weights.")
     model.eval()
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id)

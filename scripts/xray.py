@@ -82,13 +82,31 @@ MAX_TEXT_FILE_BYTES = int(os.environ.get("XRAY_MAX_TEXT_BYTES", "200000"))
 # -------------------------------------------------------------------------
 
 def timed_input(prompt, timeout):
-    import select
     print(prompt, end='', flush=True)
+    if os.name == "nt":
+        import msvcrt
+        end_time = time.time() + timeout
+        buffer = ""
+        while time.time() < end_time:
+            if msvcrt.kbhit():
+                ch = msvcrt.getwche()
+                if ch in ("\r", "\n"):
+                    print()
+                    return buffer.strip().lower()
+                if ch == "\003":
+                    raise KeyboardInterrupt
+                if ch == "\b":
+                    buffer = buffer[:-1]
+                else:
+                    buffer += ch
+            time.sleep(0.05)
+        return None
+
+    import select
     r, _, _ = select.select([sys.stdin], [], [], timeout)
     if r:
         return sys.stdin.readline().strip().lower()
-    else:
-        return None
+    return None
 
 
 def get_unique_filepath(directory: Path, base_name: str) -> Path:
@@ -115,23 +133,19 @@ def is_text_file(path: Path) -> bool:
     # 1. Uzantı kontrolü (Hızlı eleme)
     if path.suffix.lower() in SKIP_CONTENT_EXTENSIONS:
         return False
-
-
-
+    # 2. İçerik kontrolü (Kesin sonuç)
+    try:
+        with path.open("rb") as f:
+            chunk = f.read(1024)
+        return b"\0" not in chunk  # Null byte yoksa metindir
+    except Exception:
+        return False
 
 def should_skip_content(path: Path) -> bool:
     parts = {p.lower() for p in path.parts}
     if "logs" in parts or "datasets" in parts or "checkpoints" in parts:
         return True
     return False
-
-    # 2. İçerik kontrolü (Kesin sonuç)
-    try:
-        with path.open("rb") as f:
-            chunk = f.read(1024)
-            return b"\0" not in chunk  # Null byte yoksa metindir
-    except Exception:
-        return False
 
 
 # -------------------------------------------------------------------------
@@ -170,7 +184,7 @@ def write_tree(path: Path, file_handle, prefix: str = ""):
                     if should_skip_content(entry):
                         file_size = entry.stat().st_size
                         log(
-                            f\"{new_prefix}    [İÇERİK GİZLENDİ: Klasör politikası (logs/datasets/checkpoints), {file_size} bytes]\",
+                            f"{new_prefix}    [İÇERİK GİZLENDİ: Klasör politikası (logs/datasets/checkpoints), {file_size} bytes]",
                             file_handle
                         )
                         continue

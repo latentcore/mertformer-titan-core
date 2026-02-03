@@ -817,6 +817,10 @@ NİHAİ/
 │   ├── 📄 demo_video_script_TR.md # Demo video script (TR)
 │   ├── 📄 founders_hub_application.md # Founders Hub taslağı
 │   ├── 📄 founders_hub_application_TR.md # Founders Hub taslağı (TR)
+│   ├── 📄 security_compliance.md # Güvenlik & uyum özeti (EN)
+│   ├── 📄 security_compliance_TR.md # Güvenlik & uyum özeti (TR)
+│   ├── 📄 poc_protocol.md # Pilot/PoC protokolü (EN)
+│   ├── 📄 poc_protocol_TR.md # Pilot/PoC protokolü (TR)
 │   ├── 📄 investor_deck.pptx # Investor deck (EN)
 │   ├── 📄 investor_deck_TR.pptx # Investor deck (TR)
 │   ├── 📄 asset_stack.md    # Asset stack indeksi
