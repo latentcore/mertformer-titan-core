@@ -65,6 +65,23 @@ def log(msg, level="info"):
     if level == "error": logging.error(msg_str)
     elif level == "warning": logging.warning(msg_str)
     else: logging.info(msg_str)
+    
+def load_env():
+    env_path = PROJECT_ROOT / ".env"
+    if env_path.exists():
+        log(f"Loading secrets from {env_path}...", "info")
+        with open(env_path, "r") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                if "=" in line:
+                    key, val = line.split("=", 1)
+                    # Strip whitespace and quotes
+                    val = val.strip().strip('"').strip("'")
+                    os.environ[key.strip()] = val
+    else:
+        log(".env file not found, skipping local load.", "warning")
 
 def cleanup():
     log("CLEANUP: Removing temporary files...", "info")
@@ -124,7 +141,7 @@ def data_distill_test():
     # 1. Connection Check
     from datasets import load_dataset
     try:
-        ds = load_dataset("uonlp/CulturaX", "tr", split="train", streaming=True)
+        ds = load_dataset("uonlp/CulturaX", "tr", split="train", streaming=True, token=os.environ.get("HF_TOKEN"))
         next(iter(ds))
         log("Connection to uonlp/CulturaX successful.", "success")
     except Exception as e:
@@ -179,6 +196,7 @@ def moe_guru_learning_test():
     cfg.num_layers = 2
     cfg.hidden_size = 256
     cfg.num_heads = 2
+    cfg.num_kv_heads = 2 # [FIX] Align with num_heads to avoid GQA repetition error
     cfg.vocab_size = 1000 # Small vocab for speed
     cfg.moe_every_n_layers = 1 # Force MoE on every layer for testing
     cfg.liquid_layers_idx = [0] # Force Liquid on layer 0
@@ -253,6 +271,7 @@ def main():
     success = False
     
     try:
+        load_env()
         if not check_secrets(): sys.exit(1)
         if not architectural_audit(): sys.exit(1)
         if not data_distill_test(): sys.exit(1)

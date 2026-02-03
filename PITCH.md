@@ -1,21 +1,17 @@
-# MertFormer Titan: The Executive Pitch
+# MertFormer Titan: Private Placement Brief
 
-### 1. Problem
-**Software development is slow, expensive, and error-prone.**
-Human teams suffer from communication overhead, burnout, and context switching, limiting the speed of innovation.
+### 💎 The Thesis
+Enterprise AI is currently a cloud-dependent OPEX liability. **MertFormer Titan** is a sovereign, 1.58-bit "Edge-Native" SLM designed to eliminate cloud costs and data leakage while delivering a **GPT-3.5-class efficiency target** on consumer NPUs.
 
-### 2. Solution
-**MertFormer Titan: An Autonomous Multi-Agent Swarm Integration.**
-A production-grade AI architecture where specialized AI agents collaborate to build, test, and deploy software with minimal human intervention.
+### ⚡ The Product
+A 2.6B parameter coding engine specialized for autonomous software lifecycle management.
+- **Speed**: Target <50ms/token on mobile NPU (**Architecture-modeled**).
+- **Efficiency**: 93% memory reduction via ternary BitLinear weights.
 
-### 3. Innovation
-**Adaptive "Sage" Architecture (v5.2).**
-Unlike static LLMs, MertFormer features a "Wisdom Loop" that persistently learns from every project post-mortem, dramatically reducing repeated errors. Powered by 1.58-bit execution for extreme efficiency on consumer hardware (RTX 5090).
+### 🏰 The Moat
+1. **Mathematical Momentum**: Proprietary `LiquidRouter` (CfC-based) ensures context-aware routing that surpasses standard MoE stability.
+2. **Economic Floor**: Zero-cost inference platform for private enterprise clouds.
+3. **Founder Alpha**: Rapid execution architecture by a systems-focused founder with atypical execution velocity.
 
-### 4. Market
-**The "AI-Engineer" Era.**
-The demand for autonomous coding agents is exploding. MertFormer targets the "Sovereign AI" niche—enterprise-grade power running on local, secure infrastructure.
-
-### 5. Vision
-**From Copilot to Autopilot.**
-To build the first "Digital Factory" capable of turning a single prompt into a fully deployed, tested, and secured application in minutes, not weeks.
+### 🚀 Goal
+To establish the industry standard for the **Fastest On-Device Coding Model under 3B parameters**, transitioning from a deep-tech prototype to a venture-scale production layer.

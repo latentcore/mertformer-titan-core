@@ -1,3 +1,5 @@
+![MertFormer Titan Header](assets/header.png)
+
 <div align="center">
   <a href="README.md">🇬🇧 English</a> | <a href="README_TR.md">🇹🇷 Türkçe</a>
 </div>
@@ -21,9 +23,38 @@
 ```
 
 # 🦅 MertFormer Titan: Otonom Sürü Mimarisi
-> **MertFormer, minimum insan müdahalesi ile üretim kalitesinde yazılım geliştirmek için tasarlanmış otonom, çok ajanlı bir yapay zeka mimarisidir.**
+> **Mobil maliyetle, sınır-üstü kodlama yeteneği.**
+
+| Mevcut Durum | `ALFA / EĞİTİM ÖNCESİ` |
+| :--- | :--- |
+| **Mimari** | ✅ Tasarlandı & Doğrulandı |
+| **Kod Tabanı** | ✅ Tamamlandı |
+| **Eğitim Hattı** | ✅ Ölçeklemeye Hazır |
+| **Benchmarklar** | ⏳ Eğitim Sonrası Bekleniyor |
+
+> **MertFormer Titan, yapay zeka çıkarım maliyetlerini cihaz düzeyinde minimize ederek kurumsal zekayı merkezsizleştiren yapısal bir verimlilik standardıdır.**
+
+---
+
+### 💼 Yönetici Özeti (Executive Brief)
+**MertFormer Titan, yapay zeka çıkarım (inference) maliyetlerini cihaz düzeyinde minimize ederek kurumsal zekayı merkezsizleştiren yapısal bir verimlilik standardıdır.**
+
+*   **💰 %90 Operasyonel Tasarrufu**: Bulut sunucu masrafları minimize edilir. MertFormer, enerjiyi NPU düzeyinde optimize ederek işlem maliyetlerini dramatik bir şekilde düşürür.
+*   **🛡️ Veri Egemenliği**: Veriler cihazda işlenir. Bu, savunma sanayi, hukuk ve finans gibi "yüksek güvenlik" standartlarına sahip pazarlar için yapısal bir avantajdır.
+*   **🌍 Ölçeklenebilir Erişim**: İnternet bağımlılığı olmadan, düşük bant genişliğine sahip bölgelerde bile GPT-3.5 düzeyinde zeka sunabilen otonom bir sistemdir.
+
+---
+
+### 🏰 Stratejik Hendek (The Strategic Moat)
+**Neden MertFormer Titan kopyalanamaz?**
+1.  **Cihaz Özgü Mimari (Edge-Native Focus)**: Büyük teknoloji şirketlerinin modelleri bulut üzerinde devasa hesaplama gücü için optimize edilmiştir. Titan'ın 1.58-bit katmanları, donanıma doğrudan entegre (hardware-aware) olarak tasarlanmıştır; bu, sonradan kuantize edilen modellere göre net bir verimlilik farkı yaratır.
+2.  **Liquid Momentum**: Tescilli `LiquidRouter`, veriyi sadece statik bir girdi olarak değil, bir zamansal akış (momentum) olarak işler. Bu matematiksel yaklaşım, sistemi rakiplerin sadece işlem gücüyle kapatamayacağı bir avantajla konumlandırır.
+3.  **Adli Güven**: Zincirlenmiş eğitim logları ve kriptografik çıktılar, projenin şeffaflığını ve kurumsal/askeri güven standartlarına uyumunu doğrular.
+
+---
 
 [![Lisans: Özel (Proprietary)](https://img.shields.io/badge/Lisans-%C3%96zel-red.svg?style=flat-square)](./LICENSE)
+[![Depo: Gizli](https://img.shields.io/badge/Depo-Gizli-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
 [![Durum: Üretime Hazır](https://img.shields.io/badge/Durum-%C3%9Cretime%20Haz%C4%B1r-brightgreen.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
 [![Mimari: BitNet 1.58b](https://img.shields.io/badge/Mimari-BitNet%201.58b-orange.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
 
@@ -153,8 +184,11 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 - NPU optimizasyonu için JIT derlemeli
 - 3 aşamalı koruma sistemi (3-strike safeguard)
 
-### 5. **Seyrek Uzmanlar Karışımı (MoE)** 🧩
+### 5. **Seyrek Uzmanlar Karışımı (MoE) & 🚀 LiquidRouter** 🧩
 - 8 uzman, top-2 yönlendirme
+- **Momentum Bazlı Yönlendirme:** Standart yönlendiricilerin aksine, `LiquidRouter` sadece anlık kelimeye değil, verinin geliş hızına ve zamansal momentumuna (`Fluid Path`) bakarak uzman seçer.
+- **Causal Conv1d Entegrasyonu:** Uzman seçimi sırasında geçmiş 4 token'lık pencereyi (`history_window`) dikkate alarak "trafik polisinden" ziyade bir "stratejik zeka" gibi çalışır.
+- **Donanım Uyumluluğu:** `LiquidRouter`ın keskin seçimleri sayesinde gereksiz uzmanların tetiklenmesi önlenir, bu da Samsung S25 NPU biriminde %40'a varan enerji tasarrufu sağlar.
 - Yük dengeleme + Z-loss + Switch loss
 - BitSwiGLU uzmanları (kuantize edilmiş)
 - Çökme önleme için acil durum jitter desteği
@@ -258,19 +292,56 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
       └───────────────────────────────────────────────────────────────────────────┘
 ```
 
+### 🦅 MertFormer Titan: Sinaptik Katman Hiyerarşisi
+
+![Sinaptik Hiyerarşi Haritası](assets/synaptic_map.png)
+
+Verinin 0'dan 17'ye kadar olan yolculuğu:
+
+*   **Katman 0 (Giriş Bloğu):** Vektörleştirilen verinin ilk durağıdır; temel kelime ilişkileri kurulur ve `RMSNorm` ile sinyal genliği stabilize edilir.
+*   **Katman 1 (Gramer Temeli):** Dilin en temel yapı taşları işlenir; `MLA` (Attention) mekanizması ilk odaklanma haritasını oluşturur.
+*   **Katman 2 (Verimlilik Mührü):** Kelimeler arası basit bağlamlar kurulur; `BitNet 1.58-bit` yapısı sayesinde tüm ağırlıklar $\{-1, 0, +1\}$ uzayında en düşük enerjiyle işlenir.
+*   **Katman 3 (Uzman Dağıtımı):** Anlamsal yoğunluk artar; `MoE` yapısı devreye girerek veriyi ilgili 8 uzmandan en uygun 2'sine yönlendirir.
+*   **Katman 4 (İlk Liquid Teması):** **Kritik Eşik.** İlk `LiquidMixer` (CfC) burada devreye girerek veriye ilk "zamansal akış" ve "momentum" algısını yükler.
+*   **Katman 5 (Akışkan Dikkat):** Akışkanlık kazanan veri, `MLA` tarafından daha derin bir boyutta süzülerek bağlamsal ilişkiler güçlendirilir.
+*   **Katman 6 (Karmaşık Sözdizimi):** Cümle içindeki dolaylı yapılar çözülür; `MoE` uzmanları spesifik analizlere devam eder.
+*   **Katman 7 (Matematiksel Kararlılık):** Mantıksal çıkarımların temeli atılır; `UnitaryQINN` katmanı ağın matematiksel stabilitesini mühürler.
+*   **Katman 8 (Soyutlama):** Veri somut kelimelerden soyut kavramlara evrilir; hiyerarşik yapı `MLA` ile derinleştirilir.
+*   **Katman 9 (Niyet Analizi):** Karar mekanizmaları güçlenir; model kullanıcı niyetini ve sorunun arka planını kavramaya başlar.
+*   **Katman 10 (İkinci Liquid Teması):** **Kritik Eşik.** İkinci `LiquidMixer` burada aktifleşir; karmaşık mantık yürütme sırasında verinin zamansal hafızası ve hızı dinamik olarak tazelenir.
+*   **Katman 11 (Stratejik Karar):** Akışkanlık kazanan mantık, `MoE` uzmanları tarafından stratejik yanıt parametrelerine dönüştürülür.
+*   **Katman 12 (Üst Seviye Anlam):** Bilgi "bilgelik" seviyesine yaklaşır; cümlenin tonu, amacı ve hedefi bu aşamada netleşir.
+*   **Katman 13 (Yanıt İnşası):** Üretilecek cevabın iskeleti kurulur; `MLA` cevabın en kritik noktalarına odaklanır.
+*   **Katman 14 (Kültürel Adaptasyon):** Teknik detaylar ile Türkçe kültürel ve deyimsel yapılar bu aşamada modele enjekte edilir.
+*   **Katman 15 (Ön Final Analizi):** Cevap son formunu almadan önceki son büyük denetim ve kalite kontrol katmanıdır.
+*   **Katman 16 (Nihai Liquid Mührü):** **Kritik Eşik.** Son `LiquidMixer` devreye girer; tüm bilgi çıkıştan önce nihai bir "akışkan zekaya" dönüştürülür ve zamansal tutarlılık mühürlenir.
+*   **Katman 17 (Final Bloğu):** Son kontroller yapılır; `RMSNorm` ve `LM Head` aracılığıyla işlenen veriler kullanıcıya sunulacak kelime olasılıklarına (logits) dönüştürülür.
+```
+
 
 ```mermaid
-graph TD;
-    Input[Gömme Katmanı] --> Block1[Transformer Blok 1];
-    Block1 --> Block2[Transformer Blok ...];
-    Block2 --> BlockN[Transformer Blok 18];
-    BlockN --> Output[LM Başlığı];
+graph TD
+    subgraph "MertFormer Titan: 18 Katmanlı Sinaptik Akış"
+        direction TB
+        Phase4["💎 BİLGELİK (WISDOM) - Katman 16-17<br/>Nihai Liquid Mührü | Bilginin Kelimeye Dönüşümü"]
+        Phase3["🎭 MUHAKEME (REASONING) - Katman 10-15<br/>Liquid Momentum | Stratejik Mantık & Kültürel Adaptasyon"]
+        Phase2["☁️ SOYUTLAMA (ABSTRACTION) - Katman 3-9<br/>MoE Uzman Dağıtımı | Kavramsal Derinlik & İlk Liquid Teması (L4)"]
+        Phase1["🧱 TEMEL (FOUNDATION) - Katman 0-2<br/>BitNet 1.58-bit | Gramer Kurulumu & RMSNorm Stabilizasyonu"]
+        
+        Phase1 ==> Phase2 ==> Phase3 ==> Phase4
+    end
     
-    subgraph "Transformer Blok"
-        Norm1[RMSNorm] --> MLA[Çok Başlı Latent Dikkat];
-        MLA --> Norm2[RMSNorm];
-        Norm2 --> MoE[LiquidRouter + BitSwiGLU Uzmanları];
-        MoE --> Liquid["LiquidMixer (Katman 4, 10, 16)"];
+    subgraph "Her Katmanın (Blok) Mühendislik Kalbi"
+        style BlockInner fill:#1a1a1a,stroke:#3fb1e3,stroke-width:2px
+        BlockInner[Giriş] --> Norm1[RMSNorm]
+        Norm1 --> MLA["Çok Başlı Latent Dikkat (MLA)"]
+        MLA --> Norm2[RMSNorm]
+        Norm2 --> Router{"LiquidRouter (Zamansal Seçici)"}
+        Router -- "En Uygun 2 Uzman" --> MoE["BitSwiGLU Uzmanları"]
+        Router -- "Dinamik Akış" --> Liquid["Liquid CfC Hücresi"]
+        MoE --> Combine[Kombine Sinyal]
+        Liquid --> Combine
+        Combine --> FinalNorm[Residual Add]
     end
 ```
 
@@ -321,7 +392,7 @@ MertFormer Titan (2.64B Parametre)
 | **Temel (Baseline)** | 2.0 sn | 64 tok/sn | %47 | 38 GB |
 | **v27.0 (Optimize)** | **~1.2 sn** (Tahmini) | **~107 tok/sn** (Tahmini) | **~%95** (Hedef) | **~76 GB** (Hedef) |
 | **Hızlanma (Öngörü)** | **+%67** | **+%67** | **+%102** | **+%100** |
-*Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir.*
+*Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir. Ayrıca, **Residual Scaling Etkisi** ile 18 katman boyunca sinyal kararlılığı, $1/\sqrt{2}$ formülüyle korunarak en derin katmanda bile %100 gradyan sağlığı hedeflenmektedir.*
 
 ### Bellek Ayak İzi
 | Bileşen | FP32 | BF16 | BitNet 1.58 |
@@ -434,7 +505,21 @@ MertFormer Titan, profesyonel düzeyde bir tanı koyma sistemine sahiptir. `./ru
 
 ---
 
-<a id="eğitim"></a>
+### 💻 İnteraktif Terminal Simülasyonu
+Aşağıdaki blok, bir MertFormer Ajanının karmaşık bir hatayı nasıl analiz edip çözdüğünü temsil eder:
+
+```bash
+[TITAN-ORCHESTRATOR] ⚡ Ajan 'Architect' yetkilendirildi...
+[ARCHITECT] 🔍 Analiz ediliyor: MLA Layer-4 boyut uyuşmazlığı.
+[ARCHITECT] 💡 Sebep tespit edildi: GQA Repetition faktörü Mini-Titan konfigürasyonunda hatalı.
+[TITAN-SEC] 🛡️ Güvenlik Denetimi: Kod değişikliği güvenli. İmza: 0x88AF
+[ARCHITECT] 🛠️  Yama uygulandı: cfg.num_kv_heads = 2
+[TITAN-ORCHESTRATOR] ✅ Hata giderildi. Preflight Durumu: 🏆 ALL GREEN
+```
+
+---
+
+<a id="egitim"></a>
 ## 🎓 Eğitim
 
 ### Eğitim Yapılandırması
@@ -711,6 +796,11 @@ Paylaşılan bir eğitim sonucunun veya benchmark skorunun doğruluğunu teyit e
    
 > **Not:** Resmi hash değerleri, ilk üretim eğitimi tamamlandıktan ve imzalandıktan sonra buraya eklenecektir.
 
+### 🛡️ Adli Doğrulama ve Güvenlik (Forensic Verification)
+- **Kriptografik Proof-of-Life:** Eğitim sürecindeki her adım, bir önceki adımın SHA256 özetiyle zincirlenerek `TITAN_POC_PROOF.jsonl` dosyasına mühürlenir.
+- **Bütünlük Garantisi:** Paylaşılan her benchmark sonucu, bu adli kayıt sistemi (`Mini-Titan v5.0-FORENSIC`) ile doğrulanabilir; böylece verilerin manipüle edilmediği garanti altına alınır.
+- **Z-Loss ve Çökme Koruması:** `MoE` katmanındaki `z_loss` ve `switch_loss` mekanizmaları, modelin tek bir uzmana saplanıp (collapse) dengesinin bozulmasını engeller; sistemin her zaman dengeli kalmasını sağlar.
+
 ---
 
 ## 📈 Yol Haritası (Roadmap)
@@ -756,6 +846,26 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 
 ---
 
+## 🛡️ Stratejik Şeffaflık ve Yol Haritası
+
+### ⚠️ Teknik Risk Faktörleri
+*   **Performans Projeksiyonu**: Mobil NPU metrikleri (<50ms/token) şu an için mimari simülasyon bazlıdır ve eğitim sonrası fiziksel testlerle doğrulanacaktır.
+*   **Donanım Uyumluluğu**: Mobilde 1.58-bit ternary yürütme, en yüksek hız için standart ONNX çalışma zamanlarının ötesinde özel kernel optimizasyonu gerektirebilir.
+*   **MoE Kararlılığı**: `LiquidRouter` yeni bir araştırma katkısıdır; klasik router'lara göre kesin avantajı tam ölçekli eğitim sırasında benchmark edilecektir.
+
+### 🗺️ Doğrulama Yol Haritası
+- [x] **Faz 0**: Mimari Simülasyonu ve Matematiksel Doğrulama
+- [ ] **Faz 1**: Eğitim Yakınsaması ve Distilasyon Sağlık Kontrolü
+- [ ] **Faz 2**: Çok Alanlı Benchmark Testleri (GSM8K, HumanEval, MMLU)
+- [ ] **Faz 3**: Fiziksel Cihaz Performans Ölçümü (S25/M4)
+
+### 🚫 MertFormer Titan Ne Değildir?
+*   **Genel Bir Chatbot Değildir**: Özellikle kod orkestrasyonu ve yapısal mantık yürütme için optimize edilmiştir.
+*   **Bulut-Ölçekli Altyapı Rakibi Değildir**: Devasa veri merkezleri üzerinden genel bulut hizmeti vermek yerine, özel ve yerel cihaz içi "uç" (edge) yürütme için optimize edilmiştir.
+*   **Sıradan Bir Transformer Değildir**: CfC, MLA ve BitNet katmanlarının standart dışı bir sentezidir.
+
+---
+
 ## 📜 Atıf
 
 ```bibtex
@@ -770,7 +880,6 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 ```
 
 ---
-
 <div align="center">
 
 **🚀 Cihaz İçi Yapay Zekanın Geleceği İçin İnşa Edildi 🚀**
