@@ -607,7 +607,8 @@ liquid_spike_threshold = 5.0
 | **4. Soul (Identity)** | 75-85% | Personality, instruction | 10% of corpus |
 | **5. Tool Use** | 85-100% | Function calling, APIs | 15% of corpus |
 
-**Total Tokens**: ~24 Billion (high-quality, KD-focused)
+**Total Tokens**: ~24 Billion (high-quality, KD-focused)  
+*Note: Distillation boosts effective learning per token, but it does not increase raw token count.*
 
 ### Monitoring
 

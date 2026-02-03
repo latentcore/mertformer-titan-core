@@ -607,7 +607,8 @@ liquid_spike_threshold = 5.0
 | **4. Ruh (Kimlik)** | %75-85 | Kişilik, talimat takibi | Corpus'un %10'u |
 | **5. Araç Kullanımı** | %85-100 | Fonksiyon çağırma, API | Corpus'un %15'i |
 
-**Toplam Token**: ~24 Milyar (yüksek kaliteli, KD odaklı)
+**Toplam Token**: ~24 Milyar (yüksek kaliteli, KD odaklı)  
+*Not: Damıtma, token başına etkin öğrenmeyi artırır; ancak ham token sayısını artırmaz.*
 
 ### İzleme
 
