@@ -751,7 +751,7 @@ NİHAİ/
 │   ├── 📄 data_pipeline.py # Dataset preparation (4-stage curriculum)
 │   ├── 📄 mobile_export.py # ONNX export for S25
 │   ├── 📄 chat.py          # Interactive chat interface
-│   ├── 📄 xray.py          # Vision Analysis Tool
+│   ├── 📄 xray.py          # Smart Project Auditor (Deep structural analysis & dump)
 │   └── 📂 reports/         # Dynamic system & health reports
 ├── 📂 assets/              # Branding & Synaptic Maps
 │   ├── 📄 header.png       # Futuristic Header Image
