@@ -745,13 +745,17 @@ NİHAİ/
 │   └── 📄 train.py         # Ana eğitim döngüsü (1200+ satır, üretim kalitesi)
 ├── 📂 utils/               # Araçlar
 │   └── 📄 logger.py        # Loglama altyapısı (WandB, CSV, JSONL)
-├── 📂 scripts/             # Yardımcı betikler
+├── 📂 scripts/             # Yardımcı betikler ve Raporlar
 │   ├── 📄 smart_runner.py  # Akıllı Paralel Orkestratör (Veri -> Damıtma -> Eğitim)
 │   ├── 📄 titan_preflight.py # 🦅 Nihai Sistem Test Pilotu (İz Bırakmayan Tam Doğrulama)
 │   ├── 📄 data_pipeline.py # Veri seti hazırlığı (4 aşamalı müfredat)
 │   ├── 📄 mobile_export.py # S25 için ONNX export
 │   ├── 📄 chat.py          # Etkileşimli sohbet arayüzü
-│   └── 📄 xray.py          # Görsel Analiz Aracı
+│   ├── 📄 xray.py          # Görsel Analiz Aracı
+│   └── 📂 reports/         # Dinamik sistem ve sağlık raporları
+├── 📂 assets/              # Markalama ve Sinaptik Haritalar
+│   ├── 📄 header.png       # Fütüristik Başlık Görseli
+│   └── 📄 synaptic_map.png # Katman Hiyerarşisi Görselleştirmesi
 ├── 📂 tests/               # Birim & entegrasyon testleri
 ├── 📂 orchestrator/        # Agentic Beyin (Hedef Mimari v5.2)
 ├── 📂 checkpoints/         # Model kontrol noktaları
