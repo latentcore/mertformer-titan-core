@@ -392,7 +392,7 @@ MertFormer Titan (2.64B Parametre)
 | **Temel (Baseline)** | 2.0 sn | 64 tok/sn | %47 | 38 GB |
 | **v27.0 (Optimize)** | **~1.2 sn** (Tahmini) | **~107 tok/sn** (Tahmini) | **~%95** (Hedef) | **~76 GB** (Hedef) |
 | **Hızlanma (Öngörü)** | **+%67** | **+%67** | **+%102** | **+%100** |
-*Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir. Ayrıca, **Residual Scaling Etkisi** ile 18 katman boyunca sinyal kararlılığı, $1/\sqrt{2}$ formülüyle korunarak en derin katmanda bile %100 gradyan sağlığı hedeflenmektedir.*
+*Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir. Ayrıca, **Residual Scaling Etkisi** ile 18 katman boyunca sinyal kararlılığı, $1/\sqrt{2}$ formülüyle korunarak en derin katmanda bile gradyan akışının stabil kalması hedeflenmektedir.*
 
 ### Bellek Ayak İzi
 | Bileşen | FP32 | BF16 | BitNet 1.58 |

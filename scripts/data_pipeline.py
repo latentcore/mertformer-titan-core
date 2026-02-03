@@ -406,9 +406,9 @@ def main() -> None:
     create_stage_directories()
     
     # Configuration
-    # V24.0 SWEET SPOT: 12 Million Samples (Optimal for 1.5B model with distillation)
-    # Chinchilla scaling: ~20 tokens per parameter, with teacher = ~5-10B tokens ideal
-    # 12M samples * ~500 tokens/sample = ~6B tokens = SWEET SPOT!
+    # Target sample budget (adjust based on your token budget and compute).
+    # Approx tokens ~= samples * avg_tokens_per_sample (e.g., 12M * ~500 ~= ~6B tokens).
+    # If your training plan targets higher total tokens, increase TARGET_SAMPLES accordingly.
     TARGET_SAMPLES = 12_000_000 
     
     # Stage 1: Pure Logic (45% = 450,000 samples)
