@@ -478,6 +478,34 @@ python scripts/operator_mode_gate.py
 # Use --full on training hardware
 ```
 
+### Operator Mode Checklist (Evidence-Backed)
+The following items are implemented and tied to concrete files/logs:
+
+- Phase -1: Safety & Failure Budget
+- Auto-Kill NaN Injection: `scripts/nan_kill_test.py`
+- Failure Budget (Pivot/Debug trigger): `orchestrator/failure_budget.py`
+- Checkpoint Restore Drill: `scripts/checkpoint_restore_drill.py`
+- Phase 0: Infrastructure & Reality Gates
+- Reproducibility Stamp (git/config/seed/datasets): `scripts/operator_mode_gate.py`, `utils/logger.py`
+- Overfit Gate (1MB): `scripts/overfit_gate.py` (safe mode run completed; full 1MB gate runs on training hardware with `--full`)
+- Observability (grad norms/router entropy/VRAM): `orchestrator/telemetry.py`
+- Golden Sample Eval (50 prompts): `datasets/golden_samples.jsonl`, `scripts/golden_eval.py`
+- Phase 1: Telemetry-Driven Execution
+- Expected vs Actual tracking scaffold: `orchestrator/telemetry.py`
+- Master Training (2.6B): execution on training hardware (not run locally)
+- Internal Truth Benchmarks (HumanEval/MBPP): `scripts/benchmarks_internal.py`
+- Phase 2: Asset Stack
+- Demo Video Script (offline): `reports/demo_video_script.md`
+- One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`, `PITCH.md`
+- Founders Hub Application Draft: `reports/founders_hub_application.md`
+- Phase 3: Future Horizons
+- White Paper: `WHITE_PAPER_LIQUIDROUTER.md`
+- Verification Plan
+- Sanity Drills: `scripts/checkpoint_restore_drill.py`, `scripts/failure_budget_drill.py`
+
+Latest operator-mode run logs:
+- `logs/operator_mode/`
+
 ### 🛡️ Diagnostic Excellence (Pre-Flight)
 MertFormer Titan includes a professional-grade diagnostic judge. Run `./run.sh --test` to see:
 ```text

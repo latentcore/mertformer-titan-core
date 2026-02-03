@@ -478,6 +478,34 @@ python scripts/operator_mode_gate.py
 # Eğitim donanımında tam mod için --full kullanın
 ```
 
+### Operator Modu Kontrol Listesi (Kanıt Dosyaları)
+Aşağıdaki maddeler uygulanmıştır ve kanıt dosyaları ile eşlenmiştir:
+
+- Phase -1: Safety & Failure Budget
+- Auto-Kill NaN Injection: `scripts/nan_kill_test.py`
+- Failure Budget (Pivot/Debug tetikleyici): `orchestrator/failure_budget.py`
+- Checkpoint Restore Drill: `scripts/checkpoint_restore_drill.py`
+- Phase 0: Infrastructure & Reality Gates
+- Reproducibility Stamp (git/config/seed/datasets): `scripts/operator_mode_gate.py`, `utils/logger.py`
+- Overfit Gate (1MB): `scripts/overfit_gate.py` (güvenli mod çalıştı; tam 1MB gate için eğitim donanımında `--full`)
+- Observability (grad norms/router entropy/VRAM): `orchestrator/telemetry.py`
+- Golden Sample Eval (50 prompt): `datasets/golden_samples.jsonl`, `scripts/golden_eval.py`
+- Phase 1: Telemetry-Driven Execution
+- Expected vs Actual altyapısı: `orchestrator/telemetry.py`
+- Master Training (2.6B): eğitim donanımında çalıştırılacak (lokalde koşulmadı)
+- Internal Truth Benchmarks (HumanEval/MBPP): `scripts/benchmarks_internal.py`
+- Phase 2: Asset Stack
+- Demo Video Script (offline): `reports/demo_video_script.md`
+- One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`, `PITCH.md`
+- Founders Hub Başvuru Taslağı: `reports/founders_hub_application.md`
+- Phase 3: Future Horizons
+- White Paper: `WHITE_PAPER_LIQUIDROUTER.md`
+- Verification Plan
+- Sanity Drills: `scripts/checkpoint_restore_drill.py`, `scripts/failure_budget_drill.py`
+
+Son operator-mode logları:
+- `logs/operator_mode/`
+
 ### 🛡️ Tanısal Mükemmellik (Uçuş Öncesi Kontrol)
 MertFormer Titan, profesyonel düzeyde bir tanı koyma sistemine sahiptir. `./run.sh --test` çalıştırdığınızda şu çıktıyı alırsınız:
 ```text
