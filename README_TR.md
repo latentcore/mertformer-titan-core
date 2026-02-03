@@ -759,12 +759,18 @@ NİHAİ/
 ├── 📂 logs/                # Eğitim günlükleri
 ├── 📄 run.sh               # Tek komutla başlatıcı (otomatik kurulum + NCCL tuning)
 ├── 📄 requirements.txt     # Python bağımlılıkları
-├── 📄 PITCH.md             # Yatırımcı Sunumu (5 Slayt)
-├── 📄 TRAINING_PLAN.md     # 3 Aşamalı Yol Haritası
-├── 📄 TECHNICAL_REPORT_TR.md # Detaylı Teknik Rapor (Türkçe)
+├── 📄 PITCH.md             # Yatırımcı Sunumu (İngilizce)
+├── 📄 PITCH_TR.md          # Yatırımcı Sunumu (Türkçe)
+├── 📄 TRAINING_PLAN.md     # 3 Aşamalı Yol Haritası (İngilizce)
+├── 📄 TRAINING_PLAN_TR.md  # 3 Aşamalı Yol Haritası (Türkçe)
+├── 📄 WHITE_PAPER_LIQUIDROUTER.md # Teknik Derin Dalış (İngilizce)
+├── 📄 WHITE_PAPER_LIQUIDROUTER_TR.md # Teknik Derin Dalış (Türkçe)
+├── 📄 TECHNICAL_REPORT.md  # Detaylı Teknik Analiz (İngilizce)
+├── 📄 TECHNICAL_REPORT_TR.md # Detaylı Teknik Analiz (Türkçe)
 ├── 📄 README.md            # İngilizce Dokümantasyon
 ├── 📄 README_TR.md         # Türkçe Dokümantasyon
-└── 📄 LICENSE              # Özel Lisans (Telif Hakları Saklıdır)
+├── 📄 LICENSE              # Özel Lisans (İngilizce)
+└── 📄 LICENSE_TR           # Özel Lisans (Türkçe)
 ```
 
 ---
