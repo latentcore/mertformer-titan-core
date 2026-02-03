@@ -816,6 +816,7 @@ To verify the authenticity of a shared run log or benchmark result:
 *   **v29.0**: Native NPU deployment and real-device profiling (Samsung S25).
 *   **v30.0**: Academic publication of the `LiquidRouter` architecture.
 *   **v31.0**: Comprehensive NLU benchmark suite (MMLU, HumanEval-TR).
+*   **v32.0+**: **Biological Intelligence Synthesis** (Synaptic Plasticity & Neuromodulation targets).
 
 ---
 

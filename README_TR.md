@@ -816,6 +816,7 @@ Paylaşılan bir eğitim sonucunun veya benchmark skorunun doğruluğunu teyit e
 *   **v29.0**: Yerel NPU dağıtımı ve gerçek cihaz performansı (Samsung S25).
 *   **v30.0**: `LiquidRouter` mimarisinin akademik yayın ve makale süreci.
 *   **v31.0**: Kapsamlı NLU kıyaslama paketi (MMLU, HumanEval-TR).
+*   **v32.0+**: **Biyolojik Zeka Sentezi** (Sinaptik Plastisite ve Nöromodülasyon hedefleri).
 
 ---
 
