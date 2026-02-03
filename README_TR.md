@@ -799,6 +799,7 @@ NİHAİ/
 │   ├── 📄 nan_kill_test.py # Sentetik NaN kill-switch testi
 │   ├── 📄 checkpoint_restore_drill.py # Checkpoint restore testi
 │   ├── 📄 failure_budget_drill.py # Failure budget testi
+│   ├── 📄 build_investor_deck.py # PPTX deck üretici
 │   └── 📂 reports/         # Dinamik sistem ve sağlık raporları
 ├── 📂 assets/              # Markalama ve Sinaptik Haritalar
 │   ├── 📄 header.png       # Fütüristik Başlık Görseli
@@ -809,10 +810,17 @@ NİHAİ/
 │   └── 📄 failure_budget.py # Failure budget izleyici
 ├── 📂 reports/             # Yönetici Sağlık ve Doğrulama Raporları
 │   ├── 📄 one_pager.md      # One-pager (EN)
+│   ├── 📄 one_pager_TR.md   # One-pager (TR)
 │   ├── 📄 technical_snapshot.md # Technical snapshot (EN)
+│   ├── 📄 technical_snapshot_TR.md # Technical snapshot (TR)
 │   ├── 📄 demo_video_script.md # Demo video script (offline)
+│   ├── 📄 demo_video_script_TR.md # Demo video script (TR)
 │   ├── 📄 founders_hub_application.md # Founders Hub taslağı
-│   └── 📄 asset_stack.md    # Asset stack indeksi
+│   ├── 📄 founders_hub_application_TR.md # Founders Hub taslağı (TR)
+│   ├── 📄 investor_deck.pptx # Investor deck (EN)
+│   ├── 📄 investor_deck_TR.pptx # Investor deck (TR)
+│   ├── 📄 asset_stack.md    # Asset stack indeksi
+│   └── 📄 asset_stack_TR.md # Asset stack indeksi (TR)
 ├── 📂 checkpoints/         # Model kontrol noktaları
 ├── 📂 datasets/            # Eğitim verileri (5 aşamalı müfredat)
 │   └── 📄 golden_samples.jsonl # 50 golden prompt
@@ -825,7 +833,9 @@ NİHAİ/
 ├── 📄 TRAINING_PLAN.md     # 3 Aşamalı Yol Haritası (İngilizce)
 ├── 📄 TRAINING_PLAN_TR.md  # 3 Aşamalı Yol Haritası (Türkçe)
 ├── 📄 TASK.md              # Operator Mode Görev Planı
+├── 📄 TASK_TR.md           # Operator Mode Görev Planı (TR)
 ├── 📄 IMPLEMENTATION_PLAN.md # Uygulama Planı
+├── 📄 IMPLEMENTATION_PLAN_TR.md # Uygulama Planı (TR)
 ├── 📄 WHITE_PAPER_LIQUIDROUTER.md # Teknik Derin Dalış (İngilizce)
 ├── 📄 WHITE_PAPER_LIQUIDROUTER_TR.md # Teknik Derin Dalış (Türkçe)
 ├── 📄 TECHNICAL_REPORT.md  # Detaylı Teknik Analiz (İngilizce)

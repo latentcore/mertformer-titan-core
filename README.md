@@ -799,6 +799,7 @@ NİHAİ/
 │   ├── 📄 nan_kill_test.py # Synthetic NaN kill-switch drill
 │   ├── 📄 checkpoint_restore_drill.py # Checkpoint restore drill
 │   ├── 📄 failure_budget_drill.py # Failure budget drill
+│   ├── 📄 build_investor_deck.py # PPTX deck generator
 │   └── 📂 reports/         # Dynamic system & health reports
 ├── 📂 assets/              # Branding & Synaptic Maps
 │   ├── 📄 header.png       # Futuristic Header Image
@@ -809,10 +810,17 @@ NİHAİ/
 │   └── 📄 failure_budget.py # Failure budget monitor
 ├── 📂 reports/             # Executive Health & Validation Reports
 │   ├── 📄 one_pager.md      # One-pager (EN)
+│   ├── 📄 one_pager_TR.md   # One-pager (TR)
 │   ├── 📄 technical_snapshot.md # Technical snapshot (EN)
+│   ├── 📄 technical_snapshot_TR.md # Technical snapshot (TR)
 │   ├── 📄 demo_video_script.md # Demo video script (offline)
+│   ├── 📄 demo_video_script_TR.md # Demo video script (TR)
 │   ├── 📄 founders_hub_application.md # Founders Hub draft
-│   └── 📄 asset_stack.md    # Asset stack index
+│   ├── 📄 founders_hub_application_TR.md # Founders Hub draft (TR)
+│   ├── 📄 investor_deck.pptx # Investor deck (EN)
+│   ├── 📄 investor_deck_TR.pptx # Investor deck (TR)
+│   ├── 📄 asset_stack.md    # Asset stack index
+│   └── 📄 asset_stack_TR.md # Asset stack index (TR)
 ├── 📂 checkpoints/         # Model checkpoints
 ├── 📂 datasets/            # Training data (5-stage curriculum)
 │   └── 📄 golden_samples.jsonl # 50 golden prompts
@@ -825,7 +833,9 @@ NİHAİ/
 ├── 📄 TRAINING_PLAN.md     # 3-Phase Execution Roadmap (English)
 ├── 📄 TRAINING_PLAN_TR.md  # 3-Phase Execution Roadmap (Turkish)
 ├── 📄 TASK.md              # Operator Mode Task Plan
+├── 📄 TASK_TR.md           # Operator Mode Task Plan (TR)
 ├── 📄 IMPLEMENTATION_PLAN.md # Implementation Plan
+├── 📄 IMPLEMENTATION_PLAN_TR.md # Implementation Plan (TR)
 ├── 📄 WHITE_PAPER_LIQUIDROUTER.md # Technical Deep-Dive (English)
 ├── 📄 WHITE_PAPER_LIQUIDROUTER_TR.md # Technical Deep-Dive (Turkish)
 ├── 📄 TECHNICAL_REPORT.md  # Detailed Technical Analysis (English)
