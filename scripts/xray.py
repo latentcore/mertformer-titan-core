@@ -72,6 +72,16 @@ SKIP_CONTENT_EXTENSIONS = {
     ".db", ".sqlite", ".bin", ".pkl", ".pt", ".pth", ".ckpt"
 }
 
+# Büyük klasörleri tamamen atla (içerik ve alt dizinler)
+SKIP_DIR_NAMES = {
+    ".git",
+    ".titan-venv",
+    "__pycache__",
+    "logs",
+    "datasets",
+    "checkpoints",
+}
+
 # Büyük dosyalar için içerik limiti (bytes)
 # Varsayılan: 200 KB, istersen çevre değişkeni ile artırılabilir.
 MAX_TEXT_FILE_BYTES = int(os.environ.get("XRAY_MAX_TEXT_BYTES", "200000"))
@@ -148,6 +158,10 @@ def should_skip_content(path: Path) -> bool:
     return False
 
 
+def should_skip_dir(path: Path) -> bool:
+    return path.name in SKIP_DIR_NAMES
+
+
 # -------------------------------------------------------------------------
 # TARAMA MOTORU
 # -------------------------------------------------------------------------
@@ -172,6 +186,9 @@ def write_tree(path: Path, file_handle, prefix: str = ""):
         new_prefix = prefix + ("    " if idx == len(entries) - 1 else "│   ")
 
         if entry.is_dir():
+            if should_skip_dir(entry):
+                log(f"{prefix}{connector}📁 {entry.name}/ [SKIPPED]", file_handle)
+                continue
             log(f"{prefix}{connector}📁 {entry.name}/", file_handle)
             write_tree(entry, file_handle, new_prefix)
         else:
