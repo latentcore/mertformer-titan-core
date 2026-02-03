@@ -747,9 +747,9 @@ NİHAİ/
 │   └── 📄 logger.py        # Logging infrastructure (WandB, CSV, JSONL)
 ├── 📂 scripts/             # Helper scripts & Reports
 │   ├── 📄 smart_runner.py  # Master Parallel Orchestrator (Data -> Distill -> Train)
-│   ├── 📄 titan_preflight.py # 🦅 Ultimate System Test (Zero-Footprint Full Verification)
-│   ├── 📄 data_pipeline.py # Dataset preparation (4-stage curriculum)
-│   ├── 📄 mobile_export.py # ONNX export for S25
+│   ├── 📄 titan_preflight.py # 🦅 Ultimate System Test Prophet (Zero-Footprint Full Verification)
+│   ├── 📄 data_pipeline.py # Dataset Alchemy (5-Stage Curriculum Learning)
+│   ├── 📄 mobile_export.py # Production-Grade Mobile Exporter (S25 NPU Optimized ONNX)
 │   ├── 📄 chat.py          # Interactive chat interface
 │   ├── 📄 xray.py          # Smart Project Auditor (Deep structural analysis & dump)
 │   └── 📂 reports/         # Dynamic system & health reports
@@ -760,7 +760,7 @@ NİHAİ/
 ├── 📂 orchestrator/        # Agentic Brain (Target Architecture v5.2)
 ├── 📂 reports/             # Executive Health & Validation Reports
 ├── 📂 checkpoints/         # Model checkpoints
-├── 📂 datasets/            # Training data (4-stage curriculum)
+├── 📂 datasets/            # Training data (5-stage curriculum)
 ├── 📂 logs/                # Training logs
 ├── 📄 Dockerfile           # Containarized Environment
 ├── 📄 run.sh               # One-command launcher (auto-setup + NCCL tuning)
