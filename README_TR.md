@@ -758,9 +758,11 @@ NİHAİ/
 │   └── 📄 synaptic_map.png # Katman Hiyerarşisi Görselleştirmesi
 ├── 📂 tests/               # Birim & entegrasyon testleri
 ├── 📂 orchestrator/        # Agentic Beyin (Hedef Mimari v5.2)
+├── 📂 reports/             # Yönetici Sağlık ve Doğrulama Raporları
 ├── 📂 checkpoints/         # Model kontrol noktaları
 ├── 📂 datasets/            # Eğitim verileri (4 aşamalı müfredat)
 ├── 📂 logs/                # Eğitim günlükleri
+├── 📄 Dockerfile           # Konteynırlaştırılmış Ortam
 ├── 📄 run.sh               # Tek komutla başlatıcı (otomatik kurulum + NCCL tuning)
 ├── 📄 requirements.txt     # Python bağımlılıkları
 ├── 📄 PITCH.md             # Yatırımcı Sunumu (İngilizce)
