@@ -39,9 +39,9 @@
 ### 💼 Yönetici Özeti (Executive Brief)
 **MertFormer Titan, yapay zeka çıkarım (inference) maliyetlerini cihaz düzeyinde minimize ederek kurumsal zekayı merkezsizleştiren yapısal bir verimlilik standardıdır.**
 
-*   **💰 %90 Operasyonel Tasarrufu**: Bulut sunucu masrafları minimize edilir. MertFormer, enerjiyi NPU düzeyinde optimize ederek işlem maliyetlerini dramatik bir şekilde düşürür.
+*   **💰 Hedeflenen ~%90 Operasyonel Tasarruf**: Bulut sunucu masrafları minimize edilir. MertFormer, enerjiyi NPU düzeyinde optimize ederek işlem maliyetlerini azaltmayı hedefler.
 *   **🛡️ Veri Egemenliği**: Veriler cihazda işlenir. Bu, savunma sanayi, hukuk ve finans gibi "yüksek güvenlik" standartlarına sahip pazarlar için yapısal bir avantajdır.
-*   **🌍 Ölçeklenebilir Erişim**: İnternet bağımlılığı olmadan, düşük bant genişliğine sahip bölgelerde bile GPT-3.5 düzeyinde zeka sunabilen otonom bir sistemdir.
+*   **🌍 Ölçeklenebilir Erişim**: İnternet bağımlılığı olmadan, düşük bant genişliğine sahip bölgelerde bile GPT-3.5 düzeyini hedefleyen otonom bir sistemdir.
 
 ---
 
@@ -145,10 +145,10 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 ### Neden MertFormer Titan?
 
 - 🛡️ **Önce Gizlilik**: %100 cihaz içi, sıfır bulut bağımlılığı
-- ⚡ **Ultra Verimli**: BitNet kuantizasyonu ile %93.75 bellek tasarrufu
+- ⚡ **Ultra Verimli**: BitNet kuantizasyonu ile teorik %93.75 bellek tasarrufu
 - 🏭 **Endüstriyel Sınıf**: Endüstri standardı optimizasyonlar (Flash Attention 2, torch.compile, NCCL tuning)
 - 📱 **Mobil Optimize**: Samsung S25 NPU için JIT derlemesi
-- 🧪 **Araştırma Düzeyi**: Özgün LiquidRouter mimarisi (dünyanın ilk bağlamsal MoE'si)
+- 🧪 **Araştırma Düzeyi**: Özgün LiquidRouter mimarisi (bağlamsal MoE yönlendirme)
 - 🇹🇷 **Türkiye'ye Hazır**: Türk dili ve kültürü için optimize edildi
 
 ---
@@ -159,13 +159,13 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 ### 1. **BitNet 1.58-bit Kuantizasyon** 🤏
 - Üçlü (Ternary) ağırlıklar: `{-1, 0, +1}`
 - INT8 aktivasyonlar: `[-127, 127]`
-- **%93.75 bellek azaltma** (32-bit → 1.58-bit)
+- **teorik %93.75 bellek azaltma** (32-bit → 1.58-bit)
 - Gradyan akışı için Straight-Through Estimator (STE)
 - Stabilite için RMS ölçekleme (v26.0 yükseltmesi)
 
 ### 2. **LiquidRouter (Dünyada İlk)** 🌍
 - **Yenilik**: Liquid Sinir Ağlarının **MoE Yönlendirmesi** için kullanıldığı ilk mimari.
-- **Etki**: Standart (hafızasız) yönlendiricilere kıyasla **%15-20 daha iyi yönlendirme kalitesi**.
+- **Etki**: Standart (hafızasız) yönlendiricilere kıyasla **tahmini %15-20 daha iyi yönlendirme kalitesi**.
 - **Zamansal Rota**: Geçmişi hatırlayan "Trafik Polisi" mantığıyla uzman çökmesini önler.
 - **Dinamik**: Stabilite için zaman sabiti adaptasyonu ve jitter desteği.
 - **Akademik Değer**: Koşullu hesaplamada (conditional computation) yeni bir paradigma.
@@ -188,7 +188,7 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 - 8 uzman, top-2 yönlendirme
 - **Momentum Bazlı Yönlendirme:** Standart yönlendiricilerin aksine, `LiquidRouter` sadece anlık kelimeye değil, verinin geliş hızına ve zamansal momentumuna (`Fluid Path`) bakarak uzman seçer.
 - **Causal Conv1d Entegrasyonu:** Uzman seçimi sırasında geçmiş 4 token'lık pencereyi (`history_window`) dikkate alarak "trafik polisinden" ziyade bir "stratejik zeka" gibi çalışır.
-- **Donanım Uyumluluğu:** `LiquidRouter`ın keskin seçimleri sayesinde gereksiz uzmanların tetiklenmesi önlenir, bu da Samsung S25 NPU biriminde %40'a varan enerji tasarrufu sağlar.
+- **Donanım Uyumluluğu:** `LiquidRouter`ın keskin seçimleri sayesinde gereksiz uzmanların tetiklenmesi önlenir, bu da Samsung S25 NPU biriminde tahmini %40'a varan enerji tasarrufu sağlar.
 - Yük dengeleme + Z-loss + Switch loss
 - BitSwiGLU uzmanları (kuantize edilmiş)
 - Çökme önleme için acil durum jitter desteği
@@ -505,6 +505,9 @@ Aşağıdaki maddeler uygulanmıştır ve kanıt dosyaları ile eşlenmiştir:
 
 Son operator-mode logları:
 - `logs/operator_mode/`
+Özet (son lokal koşu):
+- Gate durumu: PASS (güvenli mod)
+- Log paketi: `logs/operator_mode/operator_2026-02-03_22-09-00.jsonl` ve `.manifest.json`
 
 ### 🛡️ Tanısal Mükemmellik (Uçuş Öncesi Kontrol)
 MertFormer Titan, profesyonel düzeyde bir tanı koyma sistemine sahiptir. `./run.sh --test` çalıştırdığınızda şu çıktıyı alırsınız:
@@ -770,7 +773,7 @@ NİHAİ/
 ├── 📂 layers/              # Model bileşenleri
 │   ├── 📄 bitlinear.py     # BitNet 1.58-bit kuantizasyon
 │   ├── 📄 mla.py           # Çok Başlı Latent Dikkat + Flash Attention 2
-│   ├── 📄 moe.py           # Seyrek MoE + LiquidRouter (dünyada ilk)
+│   ├── 📄 moe.py           # Seyrek MoE + LiquidRouter (bağlamsal MoE yönlendirme)
 │   ├── 📄 liquid.py        # Liquid Neural Networks (CfC)
 │   ├── 📄 ffn.py           # Yoğun İleri Beslemeli (SwiGLU)
 │   ├── 📄 mertformer_block.py  # Transformer blok montajı
@@ -780,7 +783,8 @@ NİHAİ/
 ├── 📂 train/               # Eğitim hattı
 │   └── 📄 train.py         # Ana eğitim döngüsü (1200+ satır, üretim kalitesi)
 ├── 📂 utils/               # Araçlar
-│   └── 📄 logger.py        # Loglama altyapısı (WandB, CSV, JSONL)
+│   ├── 📄 logger.py        # Loglama altyapısı (WandB, CSV, JSONL)
+│   └── 📄 safety.py        # Güvenlik yardımcıları (kill switch araçları)
 ├── 📂 scripts/             # Yardımcı betikler ve Raporlar
 │   ├── 📄 smart_runner.py  # Akıllı Paralel Orkestratör (Veri -> Damıtma -> Eğitim)
 │   ├── 📄 titan_preflight.py # 🦅 Nihai Sistem Test Pilotu (İz Bırakmayan Tam Doğrulama)
@@ -788,15 +792,30 @@ NİHAİ/
 │   ├── 📄 mobile_export.py # Üretim Seviyesi Mobil İhracatçı (S25 NPU Optimize ONNX)
 │   ├── 📄 chat.py          # Etkileşimli sohbet arayüzü
 │   ├── 📄 xray.py          # Akıllı Proje Denetçisi (Derin yapısal analiz ve döküm)
+│   ├── 📄 operator_mode_gate.py # Tek girişli operator-mode gate
+│   ├── 📄 overfit_gate.py  # 1MB overfit gate (full/safe)
+│   ├── 📄 golden_eval.py   # Golden sample değerlendirme (50 prompt)
+│   ├── 📄 benchmarks_internal.py # HumanEval/MBPP çıktı üretici
+│   ├── 📄 nan_kill_test.py # Sentetik NaN kill-switch testi
+│   ├── 📄 checkpoint_restore_drill.py # Checkpoint restore testi
+│   ├── 📄 failure_budget_drill.py # Failure budget testi
 │   └── 📂 reports/         # Dinamik sistem ve sağlık raporları
 ├── 📂 assets/              # Markalama ve Sinaptik Haritalar
 │   ├── 📄 header.png       # Fütüristik Başlık Görseli
 │   └── 📄 synaptic_map.png # Katman Hiyerarşisi Görselleştirmesi
 ├── 📂 tests/               # Birim & entegrasyon testleri
 ├── 📂 orchestrator/        # Agentic Beyin (Hedef Mimari v5.2)
+│   ├── 📄 telemetry.py     # Telemetri yardımcıları (expected vs actual, snapshot)
+│   └── 📄 failure_budget.py # Failure budget izleyici
 ├── 📂 reports/             # Yönetici Sağlık ve Doğrulama Raporları
+│   ├── 📄 one_pager.md      # One-pager (EN)
+│   ├── 📄 technical_snapshot.md # Technical snapshot (EN)
+│   ├── 📄 demo_video_script.md # Demo video script (offline)
+│   ├── 📄 founders_hub_application.md # Founders Hub taslağı
+│   └── 📄 asset_stack.md    # Asset stack indeksi
 ├── 📂 checkpoints/         # Model kontrol noktaları
 ├── 📂 datasets/            # Eğitim verileri (5 aşamalı müfredat)
+│   └── 📄 golden_samples.jsonl # 50 golden prompt
 ├── 📂 logs/                # Eğitim günlükleri
 ├── 📄 Dockerfile           # Konteynırlaştırılmış Ortam
 ├── 📄 run.sh               # Tek komutla başlatıcı (otomatik kurulum + NCCL tuning)
@@ -805,6 +824,8 @@ NİHAİ/
 ├── 📄 PITCH_TR.md          # Yatırımcı Sunumu (Türkçe)
 ├── 📄 TRAINING_PLAN.md     # 3 Aşamalı Yol Haritası (İngilizce)
 ├── 📄 TRAINING_PLAN_TR.md  # 3 Aşamalı Yol Haritası (Türkçe)
+├── 📄 TASK.md              # Operator Mode Görev Planı
+├── 📄 IMPLEMENTATION_PLAN.md # Uygulama Planı
 ├── 📄 WHITE_PAPER_LIQUIDROUTER.md # Teknik Derin Dalış (İngilizce)
 ├── 📄 WHITE_PAPER_LIQUIDROUTER_TR.md # Teknik Derin Dalış (Türkçe)
 ├── 📄 TECHNICAL_REPORT.md  # Detaylı Teknik Analiz (İngilizce)

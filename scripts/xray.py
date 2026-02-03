@@ -25,16 +25,39 @@ from datetime import datetime
 # AYARLAR
 # -------------------------------------------------------------------------
 
-# HEDEF KONUM SEÇİMİ (Önce yeniye bakar, bulamazsa eskiye döner)
-_PRIMARY_PATH = Path("/Applications/NİHAİ")
-_FALLBACK_PATH = Path("/Users/mertyunlu/Downloads/NİHAİ")
+# HEDEF KONUM SEÇİMİ (OS bağımsız)
+# 1) XRAY_ROOT env varsa onu kullanır.
+# 2) Script konumundan yukarı doğru proje kökü arar.
+# 3) Bulamazsa çalışma dizinini kullanır.
+def detect_project_root() -> Path:
+    env_root = os.environ.get("XRAY_ROOT")
+    if env_root:
+        return Path(env_root).expanduser().resolve()
 
-if _PRIMARY_PATH.exists():
-    ROOT_DIR = _PRIMARY_PATH
-else:
-    ROOT_DIR = _FALLBACK_PATH
+    candidate = Path(__file__).resolve().parent
+    for _ in range(6):
+        if (candidate / "config").exists() and (candidate / "model").exists():
+            return candidate
+        candidate = candidate.parent
 
-DOWNLOADS_DIR = Path.home() / "Downloads"
+    return Path.cwd().resolve()
+
+
+ROOT_DIR = detect_project_root()
+
+def detect_output_dir() -> Path:
+    env_out = os.environ.get("XRAY_OUTPUT_DIR")
+    if env_out:
+        return Path(env_out).expanduser().resolve()
+
+    downloads = Path.home() / "Downloads"
+    if downloads.exists():
+        return downloads
+
+    return Path.home().resolve()
+
+
+DOWNLOADS_DIR = detect_output_dir()
 BASE_FILENAME = "MertFormer_Smart_Dump"
 TIMEOUT_SECONDS = 10
 
@@ -48,6 +71,12 @@ SKIP_CONTENT_EXTENSIONS = {
     ".zip", ".tar", ".gz", ".rar", ".7z", ".pdf", ".exe", ".dll", ".so",
     ".db", ".sqlite", ".bin", ".pkl", ".pt", ".pth", ".ckpt"
 }
+
+# Büyük dosyalar için içerik limiti (bytes)
+# Varsayılan: 200 KB, istersen çevre değişkeni ile artırılabilir.
+MAX_TEXT_FILE_BYTES = int(os.environ.get("XRAY_MAX_TEXT_BYTES", "200000"))
+# Log dosyaları daha hızlı büyüdüğü için ayrı limit
+MAX_LOG_FILE_BYTES = int(os.environ.get("XRAY_LOG_MAX_TEXT_BYTES", "50000"))
 
 
 # -------------------------------------------------------------------------
@@ -88,6 +117,12 @@ def is_text_file(path: Path) -> bool:
     # 1. Uzantı kontrolü (Hızlı eleme)
     if path.suffix.lower() in SKIP_CONTENT_EXTENSIONS:
         return False
+
+
+def is_log_file(path: Path) -> bool:
+    if "logs" in {p.lower() for p in path.parts}:
+        return True
+    return path.suffix.lower() in {".log", ".jsonl", ".csv"}
 
     # 2. İçerik kontrolü (Kesin sonuç)
     try:
@@ -131,6 +166,15 @@ def write_tree(path: Path, file_handle, prefix: str = ""):
             try:
                 # Eğer dosya metin ise (py, xml, txt, md...)
                 if is_text_file(entry):
+                    file_size = entry.stat().st_size
+                    size_limit = MAX_LOG_FILE_BYTES if is_log_file(entry) else MAX_TEXT_FILE_BYTES
+                    if file_size > size_limit:
+                        log(
+                            f"{new_prefix}    [İÇERİK GİZLENDİ: Dosya çok büyük ({file_size} bytes, limit {size_limit} bytes)]",
+                            file_handle
+                        )
+                        continue
+
                     log("", file_handle)
                     log(f"{new_prefix}    " + "=" * 40, file_handle)
                     log(f"{new_prefix}    START: {entry.name}", file_handle)
@@ -167,6 +211,8 @@ def main():
     print(f"Hedef: {ROOT_DIR}")
     print("MOD: Tüm dosya yapısını gösterir, sadece METİN içeriklerini okur.")
     print("     (.pyc, .DS_Store gibi gereksizlerin içeriği atlanır.)")
+    print(f"TEXT LIMIT: {MAX_TEXT_FILE_BYTES} bytes (XRAY_MAX_TEXT_BYTES ile değiştirilebilir)")
+    print(f"LOG LIMIT : {MAX_LOG_FILE_BYTES} bytes (XRAY_LOG_MAX_TEXT_BYTES ile değiştirilebilir)")
 
     choice = timed_input(f"👉 Başlatılsın mı? (y/n, {TIMEOUT_SECONDS}s): ", TIMEOUT_SECONDS)
 

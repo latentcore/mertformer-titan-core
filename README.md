@@ -39,9 +39,9 @@
 ### 💼 Executive Brief
 **MertFormer Titan is a structural efficiency standard that decentralizes enterprise intelligence by minimizing AI inference costs at the device level.**
 
-*   **💰 90% Operational Savings**: Cloud server expenses are minimized. MertFormer dramatically reduces processing costs by optimizing energy at the NPU level.
+*   **💰 Targeted ~90% Operational Savings**: Cloud server expenses are minimized. MertFormer aims to reduce processing costs by optimizing energy at the NPU level.
 *   **🛡️ Data Sovereignty**: Data is processed on-device. This is a structural advantage for markets with high security standards, such as defense, law, and finance.
-*   **🌍 Scalable Access**: An autonomous system capable of delivering GPT-3.5 level intelligence even in low-bandwidth regions without internet dependency.
+*   **🌍 Scalable Access**: An autonomous system aiming for GPT-3.5 level intelligence even in low-bandwidth regions without internet dependency.
 
 ---
 
@@ -145,10 +145,10 @@ MertFormer Titan is a cutting-edge **2.64B parameter** language model designed f
 ### Why MertFormer Titan?
 
 - 🛡️ **Privacy-First**: 100% on-device, zero cloud dependency
-- ⚡ **Ultra-Efficient**: 93.75% memory reduction via BitNet quantization
+- ⚡ **Ultra-Efficient**: theoretical 93.75% memory reduction via BitNet quantization
 - 🏭 **Industrial-Grade**: Industry-standard optimizations (Flash Attention 2, torch.compile, NCCL tuning)
 - 📱 **Mobile-Optimized**: JIT compilation for Samsung S25 NPU
-- 🧪 **Research-Grade**: Novel LiquidRouter architecture (world's first contextual MoE)
+- 🧪 **Research-Grade**: Novel LiquidRouter architecture (contextual MoE routing)
 - 🇹🇷 **Turkish-Ready**: Optimized for Turkish language and culture
 
 ---
@@ -159,13 +159,13 @@ MertFormer Titan is a cutting-edge **2.64B parameter** language model designed f
 ### 1. **BitNet 1.58-bit Quantization** 🤏
 - Ternary weights: `{-1, 0, +1}`
 - INT8 activations: `[-127, 127]`
-- **93.75% memory reduction** (32-bit → 1.58-bit)
+- **theoretical 93.75% memory reduction** (32-bit → 1.58-bit)
 - Straight-Through Estimator (STE) for gradient flow
 - RMS scaling for stability (v26.0 upgrade)
 
 ### 2. **LiquidRouter (World's First)** 🌍
 - **Novelty**: First-ever use of Liquid Neural Networks for **MoE Routing** (Traffic control, not just memory).
-- **Impact**: **15-20% better routing quality** vs standard routers (stateless).
+- **Impact**: **estimated 15-20% better routing quality** vs standard routers (stateless).
 - **Temporal Routing**: Decisions are based on **historical context**, preventing expert collapse.
 - **Dynamic**: Time-constant adaptation with jitter boost for stability.
 - **Academic value**: A new paradigm in conditional computation.
@@ -188,7 +188,7 @@ MertFormer Titan is a cutting-edge **2.64B parameter** language model designed f
 - 8 experts, top-2 routing
 - **Momentum-Based Routing:** Unlike standard routers, `LiquidRouter` selects experts by looking at the data's arrival speed and temporal momentum (`Fluid Path`), not just the immediate word.
 - **Causal Conv1d Integration:** It acts more like "strategic intelligence" than a "traffic controller" by considering the past 4-token window (`history_window`) during expert selection.
-- **Hardware Compatibility:** `LiquidRouter`'s sharp selections prevent unnecessary expert triggers, leading to up to 40% energy savings on the Samsung S25 NPU unit.
+- **Hardware Compatibility:** `LiquidRouter`'s sharp selections prevent unnecessary expert triggers, leading to an estimated up to 40% energy savings on the Samsung S25 NPU unit.
 - Load balancing + Z-loss + Switch loss
 - BitSwiGLU experts (quantized)
 - Emergency jitter boost for collapse prevention
@@ -505,6 +505,9 @@ The following items are implemented and tied to concrete files/logs:
 
 Latest operator-mode run logs:
 - `logs/operator_mode/`
+Summary (latest local run):
+- Gate status: PASS (safe mode)
+- Log bundle: `logs/operator_mode/operator_2026-02-03_22-09-00.jsonl` and `.manifest.json`
 
 ### 🛡️ Diagnostic Excellence (Pre-Flight)
 MertFormer Titan includes a professional-grade diagnostic judge. Run `./run.sh --test` to see:
@@ -770,7 +773,7 @@ NİHAİ/
 ├── 📂 layers/              # Model components
 │   ├── 📄 bitlinear.py     # BitNet 1.58-bit quantization
 │   ├── 📄 mla.py           # Multi-Head Latent Attention + Flash Attention 2
-│   ├── 📄 moe.py           # Sparse MoE + LiquidRouter (world's first)
+│   ├── 📄 moe.py           # Sparse MoE + LiquidRouter (contextual MoE routing)
 │   ├── 📄 liquid.py        # Liquid Neural Networks (CfC)
 │   ├── 📄 ffn.py           # Dense FeedForward (SwiGLU)
 │   ├── 📄 mertformer_block.py  # Transformer block assembly
@@ -780,7 +783,8 @@ NİHAİ/
 ├── 📂 train/               # Training pipeline
 │   └── 📄 train.py         # Main training loop (1200+ lines, production-grade)
 ├── 📂 utils/               # Utilities
-│   └── 📄 logger.py        # Logging infrastructure (WandB, CSV, JSONL)
+│   ├── 📄 logger.py        # Logging infrastructure (WandB, CSV, JSONL)
+│   └── 📄 safety.py        # Safety helpers (kill switch utilities)
 ├── 📂 scripts/             # Helper scripts & Reports
 │   ├── 📄 smart_runner.py  # Master Parallel Orchestrator (Data -> Distill -> Train)
 │   ├── 📄 titan_preflight.py # 🦅 Ultimate System Test Prophet (Zero-Footprint Full Verification)
@@ -788,15 +792,30 @@ NİHAİ/
 │   ├── 📄 mobile_export.py # Production-Grade Mobile Exporter (S25 NPU Optimized ONNX)
 │   ├── 📄 chat.py          # Interactive chat interface
 │   ├── 📄 xray.py          # Smart Project Auditor (Deep structural analysis & dump)
+│   ├── 📄 operator_mode_gate.py # Single-entry operator-mode gate runner
+│   ├── 📄 overfit_gate.py  # 1MB overfit gate (full/safe modes)
+│   ├── 📄 golden_eval.py   # Golden sample evaluator (50 prompts)
+│   ├── 📄 benchmarks_internal.py # HumanEval/MBPP output generator
+│   ├── 📄 nan_kill_test.py # Synthetic NaN kill-switch drill
+│   ├── 📄 checkpoint_restore_drill.py # Checkpoint restore drill
+│   ├── 📄 failure_budget_drill.py # Failure budget drill
 │   └── 📂 reports/         # Dynamic system & health reports
 ├── 📂 assets/              # Branding & Synaptic Maps
 │   ├── 📄 header.png       # Futuristic Header Image
 │   └── 📄 synaptic_map.png # Layer Hierarchy Visualization
 ├── 📂 tests/               # Unit & integration tests
 ├── 📂 orchestrator/        # Agentic Brain (Target Architecture v5.2)
+│   ├── 📄 telemetry.py     # Telemetry helpers (expected vs actual, snapshots)
+│   └── 📄 failure_budget.py # Failure budget monitor
 ├── 📂 reports/             # Executive Health & Validation Reports
+│   ├── 📄 one_pager.md      # One-pager (EN)
+│   ├── 📄 technical_snapshot.md # Technical snapshot (EN)
+│   ├── 📄 demo_video_script.md # Demo video script (offline)
+│   ├── 📄 founders_hub_application.md # Founders Hub draft
+│   └── 📄 asset_stack.md    # Asset stack index
 ├── 📂 checkpoints/         # Model checkpoints
 ├── 📂 datasets/            # Training data (5-stage curriculum)
+│   └── 📄 golden_samples.jsonl # 50 golden prompts
 ├── 📂 logs/                # Training logs
 ├── 📄 Dockerfile           # Containarized Environment
 ├── 📄 run.sh               # One-command launcher (auto-setup + NCCL tuning)
@@ -805,6 +824,8 @@ NİHAİ/
 ├── 📄 PITCH_TR.md          # Investor Pitch Deck (Turkish)
 ├── 📄 TRAINING_PLAN.md     # 3-Phase Execution Roadmap (English)
 ├── 📄 TRAINING_PLAN_TR.md  # 3-Phase Execution Roadmap (Turkish)
+├── 📄 TASK.md              # Operator Mode Task Plan
+├── 📄 IMPLEMENTATION_PLAN.md # Implementation Plan
 ├── 📄 WHITE_PAPER_LIQUIDROUTER.md # Technical Deep-Dive (English)
 ├── 📄 WHITE_PAPER_LIQUIDROUTER_TR.md # Technical Deep-Dive (Turkish)
 ├── 📄 TECHNICAL_REPORT.md  # Detailed Technical Analysis (English)
