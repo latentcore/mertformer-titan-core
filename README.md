@@ -99,6 +99,8 @@ Primary entry docs and checklists.
 **SDK**
 Package + CLI for edge deployments.
 - [mertformer_sdk/](mertformer_sdk/)
+- [SDK_GUIDE.md](SDK_GUIDE.md)
+- [SDK_GUIDE_TR.md](SDK_GUIDE_TR.md)
 
 **Plans**
 Execution roadmaps and operator plans.
@@ -1076,6 +1078,8 @@ NİHAİ/
 ├── 📄 run.sh               # One-command launcher (auto-setup + NCCL tuning)
 ├── 📄 requirements.txt     # Python dependencies
 ├── 📄 pyproject.toml       # SDK packaging metadata
+├── 📄 SDK_GUIDE.md         # SDK quick guide (EN)
+├── 📄 SDK_GUIDE_TR.md      # SDK quick guide (TR)
 ├── 📄 SECURITY.md          # Security policy (EN)
 ├── 📄 SECURITY_TR.md       # Security policy (TR)
 ├── 📄 DECISIONS.md         # Architecture decisions (EN)

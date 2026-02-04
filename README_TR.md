@@ -99,6 +99,8 @@ Ana giriş dokümanları ve checklistler.
 **SDK**
 Edge dağıtım için paket + CLI.
 - [mertformer_sdk/](mertformer_sdk/)
+- [SDK_GUIDE.md](SDK_GUIDE.md)
+- [SDK_GUIDE_TR.md](SDK_GUIDE_TR.md)
 
 **Planlar**
 Yol haritaları ve operatör planları.
@@ -1076,6 +1078,8 @@ NİHAİ/
 ├── 📄 run.sh               # Tek komut baslatici (auto-setup + NCCL tuning)
 ├── 📄 requirements.txt     # Python dependencies
 ├── 📄 pyproject.toml       # SDK paketleme metadatasi
+├── 📄 SDK_GUIDE.md         # SDK hizli kilavuz (EN)
+├── 📄 SDK_GUIDE_TR.md      # SDK hizli kilavuz (TR)
 ├── 📄 SECURITY.md          # Security policy (EN)
 ├── 📄 SECURITY_TR.md       # Security policy (TR)
 ├── 📄 DECISIONS.md         # Architecture decisions (EN)
