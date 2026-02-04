@@ -208,6 +208,8 @@ class DistillationManager:
         """
         Quick sanity check to ensure offline logits exist for all stages.
         """
+        # TR: Tüm stage'ler için shard var mı?
+        # EN: Do shards exist for all stages?
         for stage in stage_names:
             files = _list_logits_files(self.logits_dir, stage, subset=subset)
             if not files:
@@ -244,6 +246,8 @@ class PrecomputedLogitsIterable(IterableDataset):
         self.files = _list_logits_files(self.logits_dir, stage_name, subset=subset)
 
     def __iter__(self):
+        # TR: Shard'ları sırayla oku ve sample başına logits üret
+        # EN: Read shards sequentially and yield logits per sample
         if not self.files:
             raise RuntimeError(
                 f"Precomputed logits not found for stage '{self.stage_name}' "

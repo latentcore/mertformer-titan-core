@@ -1,9 +1,9 @@
-# Verimlilik Raporu (Sablon)
+# Verimlilik Raporu (Şablon)
 
-Durum: **Henuz olculmedi**.
+Durum: **Henüz ölçülmedi**.
 
-Uretim kosularindan sonra doldurun:
+Üretim koşularından sonra doldurun:
 - Tokens/saniye
-- GPU kullanimi
+- GPU kullanımı
 - Bellek izi
 - Enerji tahminleri

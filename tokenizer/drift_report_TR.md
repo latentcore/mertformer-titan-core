@@ -1,3 +1,3 @@
 # Tokenizer Drift Raporu (Sablon)
 
-Tokenizer surumu veya merge degisikliklerini kaydedin.
+Tokenizer surumu veya merge değişikliklerini kaydedin.

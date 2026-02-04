@@ -160,6 +160,8 @@ class MertFormer(nn.Module):
                 router = getattr(getattr(block, "ff", None), "router", None)
                 if router is None:
                     continue
+                # TR: Batch boyutuna göre temiz state üret
+                # EN: Create clean state matching batch size
                 state = torch.zeros(
                     batch_size,
                     router.hidden_size,

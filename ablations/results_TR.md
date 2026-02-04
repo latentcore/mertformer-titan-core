@@ -1,10 +1,10 @@
-# Ablation Sonuclari (Sablon)
+# Ablation Sonuçları (Şablon)
 
-Durum: **Henuz kosulmadi**. Egitim donanimi kosularindan sonra tabloyu doldurun.
+Durum: **Henüz koşulmadı**. Eğitim donanımı koşularından sonra tabloyu doldurun.
 
-| Ablation | Amac | Durum | Notlar |
+| Ablation | Amaç | Durum | Notlar |
 | --- | --- | --- | --- |
-| no_moe | Dense-only baseline olcumu | Planlandi | Egitim donaniminda kos |
-| no_liquid | Liquid katman etkisi | Planlandi | Egitim donaniminda kos |
-| dense_only | MoE + Liquid kapali | Planlandi | Egitim donaniminda kos |
-| bitlinear_off | BitNet kapali baseline | Planlandi | Egitim donaniminda kos |
+| no_moe | Dense-only baseline ölçümü | Planlandı | Eğitim donanımında koş |
+| no_liquid | Liquid katman etkisi | Planlandı | Eğitim donanımında koş |
+| dense_only | MoE + Liquid kapalı | Planlandı | Eğitim donanımında koş |
+| bitlinear_off | BitNet kapalı baseline | Planlandı | Eğitim donanımında koş |

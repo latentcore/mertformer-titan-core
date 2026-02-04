@@ -1,3 +1,3 @@
 # Tool Sandbox
 
-Tool kullanimi icin guvenli yurutme sinirlarini tanimlar.
+Tool kullanımı için güvenli yürütme sınırlarını tanımlar.

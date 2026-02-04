@@ -1,8 +1,8 @@
-# Ablation: BitLinear Kapali
+# Ablation: BitLinear Kapalı
 
-**Amac**: BitNet ve standart dense agirliklari karsilastirmak.
+**Amaç**: BitNet ve standart dense agirliklari karsilastirmak.
 
-**Config degisikligi**:
+**Config değişikliği**:
 - `use_bitnet: false`
 
-**Durum**: Henuz kosulmadi. Sonuclari `ablations/results.md` dosyasina kaydedin.
+**Durum**: Henüz koşulmadı. Sonuçları `ablations/results.md` dosyasına kaydedin.

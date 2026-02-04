@@ -1,14 +1,14 @@
-# Maliyet Modeli (Sablon)
+# Maliyet Modeli (Şablon)
 
-Bu dokuman, egitim ve cikartim icin hafif bir maliyet modelini icerir.
+Bu doküman, eğitim ve çıkarım için hafif bir maliyet modelini içerir.
 
-## Degiskenler
-- `P`: parametre sayisi
+## Değişkenler
+- `P`: parametre sayısı
 - `T`: toplam token
-- `F`: token basina FLOPs (yaklasik)
+- `F`: token başına FLOPs (yaklaşık)
 
-## Yaklasim
-- **Egitim FLOPs** ≈ `6 * P * T` (kabaca)
-- **Cikartim FLOPs** ≈ `2 * P * T`
+## Yaklaşım
+- **Eğitim FLOPs** ≈ `6 * P * T` (kabaca)
+- **Çıkarım FLOPs** ≈ `2 * P * T`
 
-Uretim kosularindan sonra gercek olcumlerle guncellenmelidir.
+Üretim koşularından sonra gerçek ölçümlerle güncellenmelidir.

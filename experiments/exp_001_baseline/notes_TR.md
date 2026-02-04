@@ -2,7 +2,7 @@
 
 Durum: **Planlandi**
 
-- Amac:
+- Amaç:
 - Donanim:
 - Veri snapshot:
 - Degisiklikler:

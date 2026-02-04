@@ -1,5 +1,5 @@
 # Mimari Kararlar
 
-- **Config disiplini**: `config.py` calisma zamani varsayilani; istege bagli YAML overlay destegi.
-- **Swarm mimarisi**: Hedef mimari olarak dokumante; core training'e zorunlu degil.
-- **Multimodal**: Metin cekirdegi kanitlanana kadar ertelendi.
+- **Config disiplini**: `config.py` çalışma zamanı varsayılanı; isteğe bağlı YAML overlay desteği.
+- **Swarm mimarisi**: Hedef mimari olarak dokümante; core training'e zorunlu değil.
+- **Multimodal**: Metin çekirdeği kanıtlanana kadar ertelendi.

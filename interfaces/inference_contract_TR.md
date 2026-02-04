@@ -1,14 +1,14 @@
-# Cikartim Sozlesmesi
+# Çıkarım Sözleşmesi
 
 ## Girdiler
-- **Metin girisi** (UTF-8)
-- **Tokenizer**: calisma zamaninda `meta-llama/Llama-3.3-70B-Instruct` uzerinden yuklenir
-- **Maksimum baglam**: 4096 token (`cfg.max_seq_len`)
+- **Metin girişi** (UTF-8)
+- **Tokenizer**: çalışma zamanında `meta-llama/Llama-3.3-70B-Instruct` üzerinden yüklenir
+- **Maksimum bağlam**: 4096 token (`cfg.max_seq_len`)
 
-## Ciktilar
-- Token ID'leri ve cozulmus metin
-- Cikti uzunlugu **cagiran tarafindan belirlenir** (orn. chat varsayilani 128 token)
+## Çıktılar
+- Token ID'leri ve çözülmüş metin
+- Çıktı uzunluğu **çağıran tarafından belirlenir** (örn. chat varsayılanı 128 token)
 
 ## Notlar
-- Mobil cikartim icin ONNX export saglanir.
-- Sozlesme, uretim kosularindan sonra guncellenebilir.
+- Mobil çıkarım için ONNX export sağlanır.
+- Sözleşme, üretim koşularından sonra güncellenebilir.

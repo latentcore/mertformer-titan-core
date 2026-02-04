@@ -1,17 +1,17 @@
-# Olceklenme Kirilma Noktalari (Sablon)
+# Ölçeklenme Kırılma Noktaları (Şablon)
 
-Durum: **Henuz olculmedi**. Uretim kosularindan sonra doldurun.
+Durum: **Henüz ölçülmedi**. Üretim koşularından sonra doldurun.
 
 ## Batch Size
 - Maksimum stabil batch:
-- NaN esigi:
+- NaN eşiği:
 
 ## Context Length
-- Stabil baglam uzunlugu:
-- Bozulma baslangici:
+- Stabil bağlam uzunluğu:
+- Bozulma başlangıcı:
 
 ## Router Saturation
-- Expert collapse esigi:
-- Onleyici notlar:
+- Expert collapse eşiği:
+- Önleyici notlar:
 
-Egriler icin `limits/stress_curves.png` dosyasina bakin (simdilik placeholder).
+Eğriler için `limits/stress_curves.png` dosyasına bakın (şimdilik placeholder).

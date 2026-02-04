@@ -139,6 +139,8 @@ def check_disk_space(min_gb: float = 10.0, path: Optional[Path] = None) -> bool:
     """
     target = path or project_root
     try:
+        # TR: Disk boşluğu ölçümü
+        # EN: Disk free space measurement
         total, used, free = shutil.disk_usage(str(target))
         free_gb = free / (1024 ** 3)
         return free_gb >= float(min_gb)
@@ -153,6 +155,8 @@ def get_gpu_memory_usage(device: Optional[int] = None) -> tuple[float, float]:
     """
     if not torch.cuda.is_available():
         return 0.0, 0.0
+    # TR: Allocated/Reserved bellek raporu
+    # EN: Allocated/Reserved memory report
     idx = device if device is not None else torch.cuda.current_device()
     allocated = torch.cuda.memory_allocated(idx) / (1024 ** 3)
     reserved = torch.cuda.memory_reserved(idx) / (1024 ** 3)
@@ -479,6 +483,8 @@ class PrecomputedCurriculumDataset(IterableDataset):
         self.current_stage = stage
 
     def _align_logits(self, logits: torch.Tensor, target_len: int) -> torch.Tensor:
+        # TR: Logit uzunluğunu token uzunluğuna hizala
+        # EN: Align logits length to token length
         # logits: [seq, vocab]
         if logits.dim() == 3 and logits.size(0) == 1:
             logits = logits.squeeze(0)
@@ -493,6 +499,8 @@ class PrecomputedCurriculumDataset(IterableDataset):
         return logits
 
     def _iter_stage(self, stage_name: str, path: Path):
+        # TR: Stage dataset + logits shard eşlemesi (deterministik)
+        # EN: Deterministic pairing of stage dataset with logits shards
         logits_iter = iter(self.distill_manager.get_precomputed_loader(stage_name))
         with open(path, "r", encoding="utf-8") as f:
             for line in f:
@@ -519,6 +527,8 @@ class PrecomputedCurriculumDataset(IterableDataset):
                     continue
 
     def __iter__(self):
+        # TR: Offline logits için worker paralelliği kapalı
+        # EN: Disable worker parallelism for offline logits alignment
         worker_info = get_worker_info()
         if worker_info is not None:
             raise RuntimeError("Precomputed logits require num_workers=0 for deterministic alignment.")
@@ -871,6 +881,8 @@ def train():
 
 
     # V27.0 DISTILLATION MANAGER: Switch between Online (TeacherBundle) and Offline (Precomputed Logits)
+    # TR: Offline logits modu (öğretmen model yüklemeden distill)
+    # EN: Offline logits mode (distill without loading teacher model)
     use_offline_logits = getattr(cfg, "use_precomputed_logits", False)
     distill_manager = None
     teacher = None
@@ -928,6 +940,8 @@ def train():
             teacher_tokenizer = teacher.tokenizer
             use_offline_logits = False
         else:
+            # TR: Logit'lerle senkron dataset (num_workers=0 zorunlu)
+            # EN: Logit-synced dataset (requires num_workers=0)
             curriculum_ds = PrecomputedCurriculumDataset(stage_info, cfg.max_seq_len, teacher_tokenizer, distill_manager)
 
     if not use_offline_logits:
