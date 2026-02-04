@@ -21,11 +21,13 @@ def load_dataset_safe(name: str, config: str):
         return load_dataset(name, split="test")
 
 
-def run_generation(dataset, tokenizer, model, device, out_path: Path, max_new_tokens: int, samples: int) -> None:
+def run_generation(dataset, tokenizer, model, device, out_path: Path, max_new_tokens: int, samples: int) -> int:
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    total = len(dataset)
+    limit = total if samples <= 0 else min(samples, total)
     with out_path.open("w", encoding="utf-8") as f:
         for idx, row in enumerate(dataset):
-            if idx >= samples:
+            if idx >= limit:
                 break
             prompt = row.get("prompt") or row.get("text") or row.get("problem") or ""
             if not prompt:
@@ -41,12 +43,13 @@ def run_generation(dataset, tokenizer, model, device, out_path: Path, max_new_to
                 "completion": completion,
             }
             f.write(json.dumps(record, ensure_ascii=True) + "\n")
+    return limit
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run", action="store_true")
-    parser.add_argument("--samples", type=int, default=5)
+    parser.add_argument("--samples", type=int, default=0)
     parser.add_argument("--max-new-tokens", type=int, default=256)
     parser.add_argument("--ckpt", type=str, default="checkpoints/latest.pt")
     args = parser.parse_args()
@@ -86,7 +89,7 @@ def main() -> None:
     humaneval = load_dataset_safe("openai_humaneval", "openai_humaneval")
     mbpp = load_dataset_safe("mbpp", "sanitized")
 
-    run_generation(
+    humaneval_count = run_generation(
         humaneval,
         tokenizer,
         model,
@@ -95,7 +98,7 @@ def main() -> None:
         args.max_new_tokens,
         args.samples,
     )
-    run_generation(
+    mbpp_count = run_generation(
         mbpp,
         tokenizer,
         model,
@@ -105,7 +108,7 @@ def main() -> None:
         args.samples,
     )
 
-    print("Benchmarks generated.")
+    print(f"Benchmarks generated. HumanEval={humaneval_count}, MBPP={mbpp_count}")
 
 
 if __name__ == "__main__":

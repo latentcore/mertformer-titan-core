@@ -235,7 +235,7 @@ python3 scripts/smart_runner.py 2>&1 | tee logs/production_run.log
 # ------------------------------------------------------------------------------
 if [ -z "$BENCHMARK_SKIP" ]; then
     echo "📊 Running internal benchmarks (HumanEval/MBPP)..."
-    BENCHMARK_SAMPLES=${BENCHMARK_SAMPLES:-5}
+    BENCHMARK_SAMPLES=${BENCHMARK_SAMPLES:-0}
     BENCHMARK_CKPT_PATH=$(python3 - <<'PY'
 from pathlib import Path
 import os
