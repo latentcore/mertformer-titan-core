@@ -21,6 +21,7 @@ import os
 import random
 import sys
 import time
+import shutil
 from pathlib import Path
 from typing import List, Optional
 
@@ -129,6 +130,33 @@ def validate_config(cfg, stage="pre"):
     if cfg.max_seq_len > 100000: print("⚠️ Warning: Unusual max_seq_len (>100k)")
     
     print(f"✅ Config Schema Verified ({stage}).")
+
+
+def check_disk_space(min_gb: float = 10.0, path: Optional[Path] = None) -> bool:
+    """
+    TR: Diskte yeterli boş alan var mı kontrol eder.
+    EN: Checks if there is enough free disk space.
+    """
+    target = path or project_root
+    try:
+        total, used, free = shutil.disk_usage(str(target))
+        free_gb = free / (1024 ** 3)
+        return free_gb >= float(min_gb)
+    except Exception:
+        return True  # Fail-open to avoid breaking training
+
+
+def get_gpu_memory_usage(device: Optional[int] = None) -> tuple[float, float]:
+    """
+    TR: GPU bellek kullanımını (allocated/reserved) GB olarak döndürür.
+    EN: Returns GPU memory usage (allocated/reserved) in GB.
+    """
+    if not torch.cuda.is_available():
+        return 0.0, 0.0
+    idx = device if device is not None else torch.cuda.current_device()
+    allocated = torch.cuda.memory_allocated(idx) / (1024 ** 3)
+    reserved = torch.cuda.memory_reserved(idx) / (1024 ** 3)
+    return allocated, reserved
 
 
 def get_student_device(accelerator=None):
