@@ -14,7 +14,16 @@ Status : PRODUCTION READY (LOCKED)
 __version__ = "27.0-FINAL"
 __author__ = "Mert"
 
-import onnxruntime as ort
+try:
+    import onnxruntime as ort
+except Exception as exc:  # pragma: no cover - optional dependency
+    if __name__ != "__main__":
+        try:
+            import pytest
+            pytest.skip("onnxruntime not installed", allow_module_level=True)
+        except Exception:
+            raise exc
+    raise
 import numpy as np
 import time
 import os
