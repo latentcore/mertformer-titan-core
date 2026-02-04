@@ -56,6 +56,7 @@ def tiny_cfg():
         "num_experts": cfg.num_experts,
         "num_experts_per_tok": cfg.num_experts_per_tok,
         "num_heads": cfg.num_heads,
+        "num_kv_heads": cfg.num_kv_heads,
         "head_dim": cfg.head_dim,
         "num_layers": cfg.num_layers,
         "num_hidden_layers": cfg.num_hidden_layers,
@@ -76,6 +77,7 @@ def tiny_cfg():
     cfg.num_experts_per_tok = 2
     cfg.active_experts = 2
     cfg.num_heads = 4
+    cfg.num_kv_heads = 4  # Keep KV heads <= Q heads for GQA
     cfg.head_dim = 32
     cfg.num_layers = 4
     cfg.num_hidden_layers = 4  # MUST match num_layers!
