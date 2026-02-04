@@ -433,8 +433,89 @@ class CurriculumDataset(IterableDataset):
                 continue
 
 
+class PrecomputedCurriculumDataset(IterableDataset):
+    """
+    TR: Önceden hesaplanmış logits ile deterministik curriculum dataset.
+    EN: Deterministic curriculum dataset paired with precomputed logits.
+    """
+
+    def __init__(self, stage_info, max_len: int, tokenizer, distill_manager):
+        self.stage_info = stage_info  # list of (stage_name, path)
+        self.max_len = max_len
+        self.tokenizer = tokenizer
+        self.distill_manager = distill_manager
+        self.current_stage = 1
+        self.pad_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else 0
+
+    def set_stage(self, stage: int):
+        self.current_stage = stage
+
+    def _align_logits(self, logits: torch.Tensor, target_len: int) -> torch.Tensor:
+        # logits: [seq, vocab]
+        if logits.dim() == 3 and logits.size(0) == 1:
+            logits = logits.squeeze(0)
+        if logits.dim() != 2:
+            raise ValueError(f"Invalid logits shape: {tuple(logits.shape)}")
+        seq_len = logits.size(0)
+        if seq_len > target_len:
+            logits = logits[:target_len]
+        elif seq_len < target_len:
+            pad = torch.zeros(target_len - seq_len, logits.size(1), dtype=logits.dtype)
+            logits = torch.cat([logits, pad], dim=0)
+        return logits
+
+    def _iter_stage(self, stage_name: str, path: Path):
+        logits_iter = iter(self.distill_manager.get_precomputed_loader(stage_name))
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                try:
+                    obj = json.loads(line)
+                    text = obj.get("text", "")
+                    if not text:
+                        continue
+                    enc = self.tokenizer(
+                        text,
+                        truncation=True,
+                        max_length=self.max_len,
+                        padding="max_length",
+                        return_tensors="pt"
+                    )
+                    input_ids = enc["input_ids"].squeeze(0)
+                    try:
+                        t_logits = next(logits_iter)
+                    except StopIteration:
+                        return
+                    t_logits = self._align_logits(t_logits, input_ids.size(0))
+                    yield input_ids, input_ids, t_logits
+                except Exception:
+                    continue
+
+    def __iter__(self):
+        worker_info = get_worker_info()
+        if worker_info is not None:
+            raise RuntimeError("Precomputed logits require num_workers=0 for deterministic alignment.")
+
+        current_stage = self.current_stage
+        stage_name, path = self.stage_info[current_stage - 1]
+        stage_iter = self._iter_stage(stage_name, path)
+
+        while True:
+            if self.current_stage != current_stage:
+                current_stage = self.current_stage
+                stage_name, path = self.stage_info[current_stage - 1]
+                stage_iter = self._iter_stage(stage_name, path)
+
+            try:
+                yield next(stage_iter)
+            except StopIteration:
+                stage_iter = self._iter_stage(stage_name, path)
+
+
 def collate_fn(batch):
     # TR: [FIX] 2 elemana sadeleştirildi (text kaldırıldı) / EN: [FIX] Simplified to 2 elements (removed text)
+    if len(batch[0]) == 3:
+        x, y, t = zip(*batch)
+        return torch.stack(x), torch.stack(y), torch.stack(t)
     x, y = zip(*batch)
     return torch.stack(x), torch.stack(y)
 
@@ -576,6 +657,24 @@ class TeacherBundle:
         if hasattr(self, 'device'):
              input_ids = input_ids.to(self.device)
         return self.model(input_ids).logits
+
+
+def load_teacher_tokenizer():
+    """
+    TR: Öğretmen tokenizer'ını güvenli şekilde yükle.
+    EN: Safely load the teacher tokenizer (without loading the teacher model).
+    """
+    try:
+        tok = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
+        if tok.pad_token is None:
+            tok.pad_token = tok.eos_token
+        return tok
+    except Exception as e:
+        print(f"⚠️ Teacher tokenizer load failed: {e}. Falling back to gpt2.")
+        tok = AutoTokenizer.from_pretrained("gpt2")
+        if tok.pad_token is None:
+            tok.pad_token = tok.eos_token
+        return tok
 
 
 # -----------------------------------------------------------------------------
@@ -743,24 +842,30 @@ def train():
         logger.log_meta()
 
 
-    # V27.0 DISTILLATION MANAGER: Switch between Online (TeacherBundle) and Offline (DistillationManager)
-    if getattr(cfg, "use_precomputed_logits", False):
+    # V27.0 DISTILLATION MANAGER: Switch between Online (TeacherBundle) and Offline (Precomputed Logits)
+    use_offline_logits = getattr(cfg, "use_precomputed_logits", False)
+    distill_manager = None
+    teacher = None
+    teacher_tokenizer = None
+
+    if use_offline_logits:
         print("🚀 DISTILLATION: Usage of Pre-computed Logits ENABLED (Offline Mode)")
-        print("   Teacher Model will NOT be loaded into VRAM.")
-        teacher = None
-        # In a full implementation, we would initialize the manager here to handle data loading
-        # distillation_manager = DistillationManager(cfg, None) 
+        print("   Teacher logits will be read from disk (no teacher VRAM load).")
+        teacher_tokenizer = load_teacher_tokenizer()
+        distill_manager = DistillationManager(cfg, teacher_tokenizer)
     else:
         teacher = TeacherBundle()
+        teacher_tokenizer = teacher.tokenizer
 
     # CURRICULUM: Find stage datasets
-    stage_paths = [
-        project_root / "datasets" / "stage1" / "stage1_data.jsonl",
-        project_root / "datasets" / "stage2" / "stage2_data.jsonl",
-        project_root / "datasets" / "stage3" / "stage3_data.jsonl",
-        project_root / "datasets" / "stage4_soul" / "stage4_data.jsonl",
-        project_root / "datasets" / "stage5_tools" / "stage5_data.jsonl",
+    stage_info = [
+        ("stage1", project_root / "datasets" / "stage1" / "stage1_data.jsonl"),
+        ("stage2", project_root / "datasets" / "stage2" / "stage2_data.jsonl"),
+        ("stage3", project_root / "datasets" / "stage3" / "stage3_data.jsonl"),
+        ("stage4_soul", project_root / "datasets" / "stage4_soul" / "stage4_data.jsonl"),
+        ("stage5_tools", project_root / "datasets" / "stage5_tools" / "stage5_data.jsonl"),
     ]
+    stage_paths = [p for _, p in stage_info]
 
     # Fallback/Auto-Download logic
     if not all(p.exists() for p in stage_paths):
@@ -778,6 +883,7 @@ def train():
                  fallback_path = project_root / "datasets" / "training_data.jsonl"
                  if fallback_path.exists():
                      stage_paths = [fallback_path]
+                     stage_info = [("fallback", fallback_path)]
                      print("ℹ️ Using fallback dataset after Alchemy.")
                  else:
                      raise FileNotFoundError("Data Alchemy ran but datasets are still missing!")
@@ -786,10 +892,24 @@ def train():
             sys.exit(1)
 
     # Curriculum dataset
-    curriculum_ds = CurriculumDataset(stage_paths, cfg.max_seq_len, teacher.tokenizer, current_stage=1)
+    if use_offline_logits:
+        stage_names = [name for name, _ in stage_info]
+        if not distill_manager.has_precomputed_logits(stage_names):
+            print("⚠️ Precomputed logits not found for all stages. Falling back to ONLINE teacher.")
+            teacher = TeacherBundle()
+            teacher_tokenizer = teacher.tokenizer
+            use_offline_logits = False
+        else:
+            curriculum_ds = PrecomputedCurriculumDataset(stage_info, cfg.max_seq_len, teacher_tokenizer, distill_manager)
+
+    if not use_offline_logits:
+        curriculum_ds = CurriculumDataset(stage_paths, cfg.max_seq_len, teacher_tokenizer, current_stage=1)
 
     num_workers = getattr(cfg, "dataloader_num_workers", 4)
     prefetch_factor = getattr(cfg, "dataloader_prefetch_factor", 2)
+    if use_offline_logits:
+        num_workers = 0  # deterministic alignment with precomputed logits
+        prefetch_factor = None
     dl = DataLoader(
         curriculum_ds,
         batch_size=cfg.micro_batch_size,
@@ -804,7 +924,7 @@ def train():
     if val_path.exists():
         print(f"🔍 Validation Dataset Found: {val_path}")
         # [PRO] Use Deterministic Dataset
-        val_ds = ValidationJsonlDataset(val_path, cfg.max_seq_len, teacher.tokenizer)
+    val_ds = ValidationJsonlDataset(val_path, cfg.max_seq_len, teacher_tokenizer)
         # num_workers=0 ensures main process does sequential read
         val_dl = DataLoader(val_ds, batch_size=cfg.micro_batch_size, collate_fn=collate_fn, num_workers=0)
     else:
@@ -824,7 +944,7 @@ def train():
     else:
         print(f"ℹ️  Epoch Mode Skipped. Using provided max_steps: {cfg.max_steps}")
 
-    cfg.vocab_size = teacher.tokenizer.vocab_size
+    cfg.vocab_size = teacher_tokenizer.vocab_size
     if accelerator.is_main_process:
         validate_config(cfg, stage="post")
     
@@ -1008,10 +1128,16 @@ def train():
             # ---------------------------------------------------------------------
 
             try:
-                input_ids, labels = next(dataloader_iter)
+                batch = next(dataloader_iter)
             except StopIteration:
                 dataloader_iter = iter(dl)
-                input_ids, labels = next(dataloader_iter)
+                batch = next(dataloader_iter)
+
+            t_logits = None
+            if isinstance(batch, (list, tuple)) and len(batch) == 3:
+                input_ids, labels, t_logits = batch
+            else:
+                input_ids, labels = batch
 
             # Accelerate handles device placement
             # input_ids = input_ids.to(student_device)
@@ -1086,29 +1212,25 @@ def train():
                 with accelerator.autocast():
                     s_logits, aux_loss, _ = student(input_ids)
 
-                    t_logits = None
-                    t_logits = None
-                    if teacher is not None and teacher.model is not None:
+                    # Teacher logits: offline (precomputed) or online (teacher model)
+                    if t_logits is None and teacher is not None and teacher.model is not None:
                         # Teacher is already on correct device via device_map fix
                         t_logits = teacher.get_logits(input_ids)
-                    elif getattr(cfg, "use_precomputed_logits", False):
-                         # [V27.0] Placeholder for Offline Logits
-                         # In a real run, 'batch' would contain logits from DistillationManager's loader
-                         # logic: t_logits = batch['logits']
-                         pass
 
                     shift_logits = s_logits[..., :-1, :].contiguous()
                     shift_labels = labels[..., 1:].contiguous()
 
+                    pad_id = teacher_tokenizer.pad_token_id if teacher_tokenizer and teacher_tokenizer.pad_token_id is not None else 0
                     loss_ce = F.cross_entropy(
                         shift_logits.view(-1, cfg.vocab_size),
                         shift_labels.view(-1),
-                        ignore_index=teacher.tokenizer.pad_token_id,
+                        ignore_index=pad_id,
                         label_smoothing=getattr(cfg, "label_smoothing", 0.0)
                     )
 
                     loss_distill = 0.0
                     if t_logits is not None:
+                        t_logits = t_logits.to(shift_logits.device)
                         shift_t_logits = t_logits[..., :-1, :].contiguous()
                         loss_distill = kd_loss_safe(shift_logits, shift_t_logits, cfg.teacher_temp)
 
@@ -1296,7 +1418,7 @@ def train():
                                 val_batch_loss = F.cross_entropy(
                                     val_shift_logits.view(-1, cfg.vocab_size),
                                     val_shift_labels.view(-1),
-                                    ignore_index=teacher.tokenizer.pad_token_id
+                                    ignore_index=teacher_tokenizer.pad_token_id if teacher_tokenizer and teacher_tokenizer.pad_token_id is not None else 0
                                 )
                                 val_loss += val_batch_loss.item()
                                 val_samples += 1

@@ -280,7 +280,7 @@ MertFormer Titan is a cutting-edge **2.64B parameter** language model designed f
 ### 9. **Technological Edge (V27.0 Upgrade)** 🛠️
 - **GaLore Integration**: Gradient Low-Rank Projection optimization for memory efficiency on Consumer GPUs (Locked).
 - **8-bit AdamW**: Memory-optimized optimizer reduces optimizer state footprint by 75% (Locked).
-- **Offline Knowledge Distillation**: Pre-computed Llama-3-70B logits for zero-overhead teacher training.
+- **Offline Knowledge Distillation**: Pre-computed Llama-3-70B logits for zero-overhead teacher training (requires precomputed shards; falls back to online teacher if missing).
 - **Smart Parallel Orchestration (Hyper-Threading)**: Zero-latency pipeline where data download, distillation, and training happen concurrently.
 
 ---
@@ -449,7 +449,7 @@ MertFormer Titan (2.64B Parameters)
 | **Baseline** | 2.0 sec | 64 tok/s | 47% | 38 GB |
 | **v27.0 (Optimized)** | **~1.2 sec** (Est.) | **~107 tok/s** (Est.) | **~95%** (Target) | **~76 GB** (Target) |
 | **Speedup (Proj.)** | **+67%** | **+67%** | **+102%** | **+100%** |
-*Note: Performance metrics are pre-training estimates based on architecture simulation. Furthermore, the **Residual Scaling Effect** maintains signal stability throughout 18 layers using the $1/\sqrt{2}$ formula, aiming to keep gradient flow stable even in the deepest layer.*
+*Note: Performance metrics are pre-training estimates based on architecture simulation. BitNet 1.58 inference is currently simulated until a dedicated low-bit kernel is integrated. Furthermore, the **Residual Scaling Effect** maintains signal stability throughout 18 layers using the $1/\sqrt{2}$ formula, aiming to keep gradient flow stable even in the deepest layer.*
 
 ### Memory Footprint
 | Component | FP32 | BF16 | BitNet 1.58 |

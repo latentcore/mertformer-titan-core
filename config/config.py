@@ -173,7 +173,6 @@ def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None):
 
 
 @dataclass
-@dataclass
 class MertFormerConfig:
     # -------------------------------------------------------------------------
     # TR: 1. SİSTEM KİMLİĞİ / EN: 1. SYSTEM IDENTITY

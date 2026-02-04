@@ -20,6 +20,7 @@ import torch.nn.functional as F
 from pathlib import Path
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from torch.utils.data import IterableDataset
 import logging
 
 # Set up logging
@@ -201,9 +202,62 @@ class DistillationManager:
         """
         Returns a dataloader that yields (input_ids, teacher_logits) from disk.
         """
-        # Logic to load .pt or .safetensors files map-style
-        # Implementation placeholder
-        pass
+        return PrecomputedLogitsIterable(self.logits_dir, stage_name, subset="train")
+
+    def has_precomputed_logits(self, stage_names, subset="train"):
+        """
+        Quick sanity check to ensure offline logits exist for all stages.
+        """
+        for stage in stage_names:
+            files = _list_logits_files(self.logits_dir, stage, subset=subset)
+            if not files:
+                return False
+        return True
+
+
+def _list_logits_files(logits_dir: Path, stage_name: str, subset: str = "train"):
+    pattern = f"{stage_name}_{subset}_part_*.pt"
+    files = sorted(logits_dir.glob(pattern), key=lambda p: _part_index(p.name))
+    return files
+
+
+def _part_index(name: str) -> int:
+    # Extract chunk index from "stage_subset_part_N.pt"
+    try:
+        base = name.rsplit("_part_", 1)[-1]
+        return int(base.split(".")[0])
+    except Exception:
+        return 0
+
+
+class PrecomputedLogitsIterable(IterableDataset):
+    """
+    Sequential iterator over precomputed logits shards.
+    Each yielded item is a single sample's logits tensor.
+    """
+
+    def __init__(self, logits_dir: Path, stage_name: str, subset: str = "train") -> None:
+        super().__init__()
+        self.logits_dir = Path(logits_dir)
+        self.stage_name = stage_name
+        self.subset = subset
+        self.files = _list_logits_files(self.logits_dir, stage_name, subset=subset)
+
+    def __iter__(self):
+        if not self.files:
+            raise RuntimeError(
+                f"Precomputed logits not found for stage '{self.stage_name}' "
+                f"(subset={self.subset}) in {self.logits_dir}"
+            )
+        for file in self.files:
+            chunk = torch.load(file, map_location="cpu")
+            # Support list or dict payloads
+            if isinstance(chunk, dict) and "logits" in chunk:
+                chunk = chunk["logits"]
+            if not isinstance(chunk, (list, tuple)):
+                raise RuntimeError(f"Invalid logits shard format: {file}")
+            for logits in chunk:
+                yield logits
 
 if __name__ == "__main__":
     import argparse

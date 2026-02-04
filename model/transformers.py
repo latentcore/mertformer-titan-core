@@ -92,6 +92,11 @@ class MertFormer(nn.Module):
                 - aux_loss: Tüm MoE katmanlarından gelen toplam aux loss / Total aux loss
                 - present_key_values: Yeni cache'ler / New caches (if use_cache=True)
         """
+        # TR: Yeni sequence başlangıcında router state sıfırla (KV cache determinism)
+        # EN: Reset router state at new sequence start (KV cache determinism)
+        if use_cache and past_key_values is None and not self.training:
+            self.reset_router_state(batch_size=input_ids.size(0))
+
         # TR: Embedding / EN: Embedding
         x = self.tok_embeddings(input_ids)  # (B, T, H)
         
@@ -145,6 +150,25 @@ class MertFormer(nn.Module):
 
         return logits, aux_total, present_key_values
 
+    def reset_router_state(self, batch_size: int = 1) -> None:
+        """
+        TR: LiquidRouter state'ini sıfırlar (deterministik cache için).
+        EN: Resets LiquidRouter state (for deterministic KV cache).
+        """
+        for block in self.layers:
+            if getattr(block, "is_moe_layer", False):
+                router = getattr(getattr(block, "ff", None), "router", None)
+                if router is None:
+                    continue
+                state = torch.zeros(
+                    batch_size,
+                    router.hidden_size,
+                    router.history_window - 1,
+                    device=router.inference_state.device,
+                    dtype=router.inference_state.dtype,
+                )
+                router.set_state(state)
+
     @torch.no_grad()
     def generate(
         self,
@@ -169,6 +193,8 @@ class MertFormer(nn.Module):
         Returns:
             torch.Tensor: Üretilen token dizisi / Generated token sequence
         """
+        # Reset router state for fresh generation
+        self.reset_router_state(batch_size=input_ids.size(0))
         generated = input_ids
         past_key_values = None
 
@@ -216,4 +242,3 @@ class MertFormer(nn.Module):
                 break
 
         return generated
-
