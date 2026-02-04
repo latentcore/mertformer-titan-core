@@ -469,6 +469,7 @@ bash run.sh
 4. ✅ NCCL ayarlamasını uygular (çoklu GPU optimizasyonu)
 5. ✅ Duman testi (smoke test) çalıştırır (kalkış öncesi kontrol)
 6. ✅ Eğitimi tüm optimizasyonlarla başlatır
+7. ✅ Eğitimden sonra **checkpoint bulunursa** dahili benchmarkları (HumanEval/MBPP) çalıştırır. Varsayılan **tam veri seti** (`BENCHMARK_SAMPLES=0`); `BENCHMARK_SAMPLES` ve `BENCHMARK_SKIP` ile kontrol edilir.
 
 ### Operator Modu Gate
 Tek girişli güvenlik ve hazır olma süiti (varsayılan güvenli mod):

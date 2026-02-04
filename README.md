@@ -469,6 +469,7 @@ The `run.sh` script automatically:
 4. ✅ Applies NCCL tuning (multi-GPU optimization)
 5. ✅ Runs smoke test (pre-flight check)
 6. ✅ Launches training with all optimizations
+7. ✅ Runs internal benchmarks (HumanEval/MBPP) after training **if a checkpoint is found**. Defaults to **full dataset** (`BENCHMARK_SAMPLES=0`); control with `BENCHMARK_SAMPLES` and `BENCHMARK_SKIP`.
 
 ### Operator Mode Gate
 Run the single-entry safety and readiness suite (safe mode by default):
