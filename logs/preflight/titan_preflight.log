@@ -1,0 +1,35 @@
+2026-02-03 17:11:12,252 - [INFO] - ✈️ ============================================================
+2026-02-03 17:11:12,253 - [INFO] - ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
+2026-02-03 17:11:12,253 - [INFO] - ✈️ ============================================================
+2026-02-03 17:11:12,253 - [INFO] - ✈️ Loading secrets from /Applications/NİHAİ/.env...
+2026-02-03 17:11:12,254 - [INFO] - ✈️ STEP 1: SECRET SCAN...
+2026-02-03 17:11:12,254 - [INFO] - 🛡️ HF_TOKEN detected (starts with hf_Bg...)
+2026-02-03 17:11:12,254 - [INFO] - 🛡️ WANDB_API_KEY detected (ends with ...kTBr)
+2026-02-03 17:11:12,254 - [INFO] - ✅ Secrets validated.
+2026-02-03 17:11:12,254 - [INFO] - ✈️ STEP 2: ARCHITECTURAL AUDIT...
+2026-02-03 17:11:12,254 - [INFO] - ✅ Layer configuration validated: No Liquid/MoE conflicts.
+2026-02-03 17:11:12,254 - [INFO] - ✅ MLA Dimensions: Consistent (2048 features).
+2026-02-03 17:11:12,254 - [INFO] - ✅ BitNet b1.58 logic: ACTIVE (Locked).
+2026-02-03 17:11:12,254 - [INFO] - ✈️ STEP 3: DATA & DISTILLATION TEST...
+2026-02-03 17:11:43,754 - [INFO] - ✅ Connection to uonlp/CulturaX successful.
+2026-02-03 17:11:45,201 - [INFO] - 🛡️ Teacher Model mocked (Prevented 140GB download).
+2026-02-03 17:11:45,201 - [INFO] - ⚙️  Pre-computing logits for preflight...
+2026-02-03 17:11:45,230 - [INFO] - ✅ Saved Final Chunk 0: /Applications/NİHAİ/temp_preflight_logits/preflight_test_part_0.pt
+2026-02-03 17:11:45,231 - [INFO] - ✅ Distillation pipeline: PROVEN (Logits generated/saved).
+2026-02-03 17:11:45,236 - [INFO] - ✈️ STEP 4: MOE GURU LEARNING TEST...
+2026-02-03 17:11:45,236 - [INFO] - ✈️ 🏗️  CONFIG: Using 'Mini-Titan' (2 Layers, 256 Hidden, forced MoE/Liquid) for RAM safety.
+2026-02-03 17:11:45,425 - [INFO] - ✈️ Checking Architectural Gradient Health...
+2026-02-03 17:11:45,431 - [INFO] - ✅ MoE Learning: PROVEN (48 expert params receiving gradients).
+2026-02-03 17:11:45,431 - [INFO] - ✅ Liquid Dynamics: PROVEN (7 liquid params receiving gradients).
+2026-02-03 17:11:45,432 - [INFO] - ✈️ Shared Expert Grad: OK
+2026-02-03 17:11:45,432 - [INFO] - ✅ MertFormer forward/backward pass verified.
+2026-02-03 17:11:45,432 - [INFO] - ✅ OVERALL SYSTEM STATUS: 100% PROTECTED & READY.
+2026-02-03 17:11:45,432 - [INFO] - ✈️ CLEANUP: Removing temporary files...
+2026-02-03 17:11:45,433 - [INFO] - ✈️ Removed /Applications/NİHAİ/temp_preflight_data
+2026-02-03 17:11:45,433 - [INFO] - ✈️ Removed /Applications/NİHAİ/temp_preflight_logits
+2026-02-03 17:11:45,433 - [INFO] - ✅ CLEANUP: Done.
+2026-02-03 17:11:45,433 - [INFO] - ✈️ Preflight Duration: 33.18s
+2026-02-03 17:11:45,433 - [INFO] - ✈️ ============================================================
+2026-02-03 17:11:45,433 - [INFO] - ✈️ FINAL RESULT: 🏆 ALL GREEN
+2026-02-03 17:11:45,433 - [INFO] - ✈️ Full Report: /Applications/NİHAİ/logs/preflight/titan_preflight.log
+2026-02-03 17:11:45,433 - [INFO] - ✈️ ============================================================

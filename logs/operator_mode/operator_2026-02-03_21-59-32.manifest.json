@@ -1,0 +1,31 @@
+{
+  "run_id": "operator_2026-02-03_21-59-32",
+  "opened_at_utc": "2026-02-03T18:59:32Z",
+  "closed_at_utc": "2026-02-03T18:59:39Z",
+  "status": "failed",
+  "jsonl_path": "/Applications/NİHAİ/logs/operator_mode/operator_2026-02-03_21-59-32.jsonl",
+  "jsonl_bytes": 5036,
+  "lines": 2,
+  "chain_genesis": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "final_chain_hash": "03e3f98222106b099cf59da256e802a40bf6524e4a089ac3b4484235dc962833",
+  "csv_path": null,
+  "extra": {
+    "status": "failed",
+    "elapsed_sec": 6.876134157180786,
+    "error": "Command failed (1): /opt/homebrew/opt/python@3.14/bin/python3.14 scripts/overfit_gate.py --dataset datasets/stage1/stage1_data.jsonl --fast",
+    "results": [
+      {
+        "step": "nan_kill_switch",
+        "status": "pass"
+      },
+      {
+        "step": "checkpoint_restore_drill",
+        "status": "pass"
+      },
+      {
+        "step": "failure_budget_drill",
+        "status": "pass"
+      }
+    ]
+  }
+}

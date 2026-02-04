@@ -24,10 +24,17 @@ wandb/
 /checkpoints/
 !datasets/golden_samples.jsonl
 
-# Logs (Ignore all except the PROOF)
+# Logs (Ignore all except selected evidence)
 logs/*
+!logs/README.md
 !logs/TITAN_POC_PROOF.jsonl
-!logs/preflight/titan_preflight.log
+!logs/preflight/
+!logs/preflight/*.log
+!logs/operator_mode/
+!logs/operator_mode/*.jsonl
+!logs/operator_mode/*.manifest.json
+!logs/run_*.jsonl
+!logs/run_*.csv
 
 # Temporary
 *.tmp
