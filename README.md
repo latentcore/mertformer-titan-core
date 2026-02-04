@@ -882,6 +882,7 @@ NİHAİ/
 │   ├── 📄 train_tpu_turbo.py # TPU training launcher
 │   ├── 📄 verify_datasets.py # Dataset sanity checks
 │   ├── 📄 verify_onnx_local.py # ONNX verification (local)
+│   ├── 📄 write_cuda_lock.py # Auto-generate repro/cuda.lock
 │   ├── 📄 __init__.py      # Package marker
 │   ├── 📂 reports/         # Script-generated reports
 │   └── 📂 runs/            # Script run artifacts
