@@ -13,6 +13,11 @@ venv/
 wandb/
 .pytest_cache/
 *.zip
+dist/
+build/
+*.egg-info/
+*.so
+.triton/
 
 # Heavy Files (Models & Data)
 *.onnx

@@ -117,6 +117,13 @@ Dahili yol haritası ve yetenek boşluk haritalaması (kamusal değil).
 - [INTERNAL_AGI_GAP.md](INTERNAL_AGI_GAP.md)
 - [INTERNAL_AGI_GAP_TR.md](INTERNAL_AGI_GAP_TR.md)
 
+**Denetim & Strateji**
+Rapor doğruluk denetimi ve stratejik değer özeti.
+- [reports/report_accuracy_audit.md](reports/report_accuracy_audit.md)
+- [reports/report_accuracy_audit_TR.md](reports/report_accuracy_audit_TR.md)
+- [reports/strategic_value.md](reports/strategic_value.md)
+- [reports/strategic_value_TR.md](reports/strategic_value_TR.md)
+
 **Sunum & Asset**
 Yatırımcı materyalleri ve lansman varlıkları.
 - [PITCH.md](PITCH.md)
@@ -454,7 +461,7 @@ MertFormer Titan (2.64B Parametre)
 | **Temel (Baseline)** | 2.0 sn | 64 tok/sn | %47 | 38 GB |
 | **v27.0 (Optimize)** | **~1.2 sn** (Tahmini) | **~107 tok/sn** (Tahmini) | **~%95** (Hedef) | **~76 GB** (Hedef) |
 | **Hızlanma (Öngörü)** | **+%67** | **+%67** | **+%102** | **+%100** |
-*Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir. BitNet 1.58 çıkarımı, düşük-bit kernel entegrasyonu tamamlanana kadar simülasyon seviyesindedir. Ayrıca, **Residual Scaling Etkisi** ile 18 katman boyunca sinyal kararlılığı, $1/\sqrt{2}$ formülüyle korunarak en derin katmanda bile gradyan akışının stabil kalması hedeflenmektedir.*
+*Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir. BitNet 1.58 çıkarımı artık opsiyonel düşük-bit kernel yolu içerir; ancak enerji/TOPS kazanımları gerçek cihaz ölçümü gerektirir. Ayrıca, **Residual Scaling Etkisi** ile 18 katman boyunca sinyal kararlılığı, $1/\sqrt{2}$ formülüyle korunarak en derin katmanda bile gradyan akışının stabil kalması hedeflenmektedir.*
 
 ### Bellek Ayak İzi
 | Bileşen | FP32 | BF16 | BitNet 1.58 |
@@ -512,6 +519,19 @@ pip install -r requirements.txt
 
 # 3. (Opsiyonel) Flash Attention 2 Kurun (Sadece Linux, 5-10 dk)
 pip install flash-attn --no-build-isolation
+```
+
+### SDK (Opsiyonel)
+
+```bash
+# SDK'yı editable modda kur
+pip install -e .
+
+# (Opsiyonel) CUDA + ONNX ekstralari
+pip install -e ".[cuda,onnx]"
+
+# CLI bilgi
+mertformer info
 ```
 
 ### Eğitimi Başlatma
@@ -861,6 +881,16 @@ NİHAİ/
 ├── 📂 model/               # Model montaji
 │   ├── 📄 transformers.py  # MertFormer ana sinif
 │   └── 📄 __init__.py      # Paket isaretcisi
+├── 📂 mertformer_sdk/      # SDK paketi (API + CLI + kernel)
+│   ├── 📄 __init__.py
+│   ├── 📄 api.py
+│   ├── 📄 cli.py
+│   ├── 📄 export.py
+│   ├── 📂 kernels/
+│   │   ├── 📄 __init__.py
+│   │   └── 📄 triton_ternary.py
+│   └── 📂 utils/
+│       └── 📄 bitpack.py
 ├── 📂 train/               # Egitim hatti
 │   ├── 📄 train.py         # Ana egitim dongusu (1200+ satir)
 │   └── 📄 __init__.py      # Paket isaretcisi
@@ -995,6 +1025,10 @@ NİHAİ/
 │   ├── 📄 one_pager_TR.md   # One-pager (TR)
 │   ├── 📄 technical_snapshot.md # Technical snapshot (EN)
 │   ├── 📄 technical_snapshot_TR.md # Technical snapshot (TR)
+│   ├── 📄 report_accuracy_audit.md # Report accuracy audit (EN)
+│   ├── 📄 report_accuracy_audit_TR.md # Report accuracy audit (TR)
+│   ├── 📄 strategic_value.md # Strategic value summary (EN)
+│   ├── 📄 strategic_value_TR.md # Strategic value summary (TR)
 │   ├── 📄 demo_video_script.md # Demo video script (offline)
 │   ├── 📄 demo_video_script_TR.md # Demo video script (TR)
 │   ├── 📄 founders_hub_application.md # Founders Hub draft
@@ -1037,6 +1071,7 @@ NİHAİ/
 ├── 📄 Dockerfile           # Containarized Environment
 ├── 📄 run.sh               # Tek komut baslatici (auto-setup + NCCL tuning)
 ├── 📄 requirements.txt     # Python dependencies
+├── 📄 pyproject.toml       # SDK paketleme metadatasi
 ├── 📄 SECURITY.md          # Security policy (EN)
 ├── 📄 SECURITY_TR.md       # Security policy (TR)
 ├── 📄 DECISIONS.md         # Architecture decisions (EN)

@@ -117,6 +117,13 @@ Internal roadmap and capability gap mapping (non-public).
 - [INTERNAL_AGI_GAP.md](INTERNAL_AGI_GAP.md)
 - [INTERNAL_AGI_GAP_TR.md](INTERNAL_AGI_GAP_TR.md)
 
+**Audit & Strategy**
+Report accuracy audit and strategic value summary.
+- [reports/report_accuracy_audit.md](reports/report_accuracy_audit.md)
+- [reports/report_accuracy_audit_TR.md](reports/report_accuracy_audit_TR.md)
+- [reports/strategic_value.md](reports/strategic_value.md)
+- [reports/strategic_value_TR.md](reports/strategic_value_TR.md)
+
 **Pitch & Assets**
 Investor-facing materials and launch assets.
 - [PITCH.md](PITCH.md)
@@ -454,7 +461,7 @@ MertFormer Titan (2.64B Parameters)
 | **Baseline** | 2.0 sec | 64 tok/s | 47% | 38 GB |
 | **v27.0 (Optimized)** | **~1.2 sec** (Est.) | **~107 tok/s** (Est.) | **~95%** (Target) | **~76 GB** (Target) |
 | **Speedup (Proj.)** | **+67%** | **+67%** | **+102%** | **+100%** |
-*Note: Performance metrics are pre-training estimates based on architecture simulation. BitNet 1.58 inference is currently simulated until a dedicated low-bit kernel is integrated. Furthermore, the **Residual Scaling Effect** maintains signal stability throughout 18 layers using the $1/\sqrt{2}$ formula, aiming to keep gradient flow stable even in the deepest layer.*
+*Note: Performance metrics are pre-training estimates based on architecture simulation. BitNet 1.58 inference now includes an optional low-bit kernel path, but energy/TOPS gains still require real device measurement. Furthermore, the **Residual Scaling Effect** maintains signal stability throughout 18 layers using the $1/\sqrt{2}$ formula, aiming to keep gradient flow stable even in the deepest layer.*
 
 ### Memory Footprint
 | Component | FP32 | BF16 | BitNet 1.58 |
@@ -512,6 +519,19 @@ pip install -r requirements.txt
 
 # 3. (Optional) Install Flash Attention 2 (Linux only, 5-10 min)
 pip install flash-attn --no-build-isolation
+```
+
+### SDK (Optional)
+
+```bash
+# Install SDK in editable mode
+pip install -e .
+
+# (Optional) CUDA + ONNX extras
+pip install -e ".[cuda,onnx]"
+
+# CLI info
+mertformer info
 ```
 
 ### Run Training
@@ -861,6 +881,16 @@ NİHAİ/
 ├── 📂 model/               # Model assembly
 │   ├── 📄 transformers.py  # MertFormer main class
 │   └── 📄 __init__.py      # Package marker
+├── 📂 mertformer_sdk/      # SDK package (API + CLI + kernels)
+│   ├── 📄 __init__.py
+│   ├── 📄 api.py
+│   ├── 📄 cli.py
+│   ├── 📄 export.py
+│   ├── 📂 kernels/
+│   │   ├── 📄 __init__.py
+│   │   └── 📄 triton_ternary.py
+│   └── 📂 utils/
+│       └── 📄 bitpack.py
 ├── 📂 train/               # Training pipeline
 │   ├── 📄 train.py         # Main training loop (1200+ lines, production-grade)
 │   └── 📄 __init__.py      # Package marker
@@ -995,6 +1025,10 @@ NİHAİ/
 │   ├── 📄 one_pager_TR.md   # One-pager (TR)
 │   ├── 📄 technical_snapshot.md # Technical snapshot (EN)
 │   ├── 📄 technical_snapshot_TR.md # Technical snapshot (TR)
+│   ├── 📄 report_accuracy_audit.md # Report accuracy audit (EN)
+│   ├── 📄 report_accuracy_audit_TR.md # Report accuracy audit (TR)
+│   ├── 📄 strategic_value.md # Strategic value summary (EN)
+│   ├── 📄 strategic_value_TR.md # Strategic value summary (TR)
 │   ├── 📄 demo_video_script.md # Demo video script (offline)
 │   ├── 📄 demo_video_script_TR.md # Demo video script (TR)
 │   ├── 📄 founders_hub_application.md # Founders Hub draft
@@ -1037,6 +1071,7 @@ NİHAİ/
 ├── 📄 Dockerfile           # Containarized Environment
 ├── 📄 run.sh               # One-command launcher (auto-setup + NCCL tuning)
 ├── 📄 requirements.txt     # Python dependencies
+├── 📄 pyproject.toml       # SDK packaging metadata
 ├── 📄 SECURITY.md          # Security policy (EN)
 ├── 📄 SECURITY_TR.md       # Security policy (TR)
 ├── 📄 DECISIONS.md         # Architecture decisions (EN)

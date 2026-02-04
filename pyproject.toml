@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mertformer-sdk"
+version = "0.1.0"
+description = "MertFormer Titan SDK"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE"}
+authors = [{name = "MertFormer AI Team"}]
+dependencies = [
+  "torch>=2.0",
+  "transformers>=4.30",
+  "numpy>=1.24",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+cuda = ["triton>=2.1"]
+onnx = ["onnx>=1.14", "onnxruntime>=1.16"]
+cli = ["tqdm>=4.65"]
+
+[project.scripts]
+mertformer = "mertformer_sdk.cli:main"
+
+[tool.setuptools]
+packages = ["mertformer_sdk", "mertformer_sdk.kernels", "mertformer_sdk.utils"]

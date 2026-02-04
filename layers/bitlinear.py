@@ -14,10 +14,36 @@ Status : PRODUCTION READY (LOCKED)
 __version__ = "27.0-FINAL"
 __author__ = "Mert"
 
+import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from typing import Tuple
+
+_LOWBIT_KERNEL_ENABLED = os.getenv("MERTFORMER_LOWBIT_KERNEL", "0") == "1"
+
+
+def set_lowbit_kernel_enabled(enabled: bool) -> None:
+    """
+    TR: Low-bit kernel yolunu aç/kapat (opt-in).
+    EN: Enable/disable low-bit kernel path (opt-in).
+    """
+    global _LOWBIT_KERNEL_ENABLED
+    _LOWBIT_KERNEL_ENABLED = bool(enabled)
+
+
+def _try_lowbit_kernel(x: torch.Tensor, w: torch.Tensor, bias: torch.Tensor | None) -> torch.Tensor | None:
+    if not _LOWBIT_KERNEL_ENABLED:
+        return None
+    if not x.is_cuda or not w.is_cuda:
+        return None
+    try:
+        from mertformer_sdk.kernels.triton_ternary import triton_ternary_linear, is_triton_available
+        if not is_triton_available():
+            return None
+        return triton_ternary_linear(x, w, bias)
+    except Exception:
+        return None
 
 
 def activation_quant(x: torch.Tensor) -> torch.Tensor:
@@ -84,6 +110,11 @@ class BitLinear(nn.Linear):
         Returns:
             torch.Tensor: Çıktı tensörü / Output tensor
         """
+        # Opt-in low-bit kernel path (CUDA + Triton). Falls back safely.
+        lowbit_out = _try_lowbit_kernel(x, self.weight, self.bias)
+        if lowbit_out is not None:
+            return lowbit_out
+
         x_q = activation_quant(x)
         w_q = weight_quant(self.weight)
         return F.linear(x_q, w_q, self.bias)

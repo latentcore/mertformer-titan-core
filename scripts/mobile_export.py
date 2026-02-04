@@ -29,6 +29,7 @@ __author__ = "Mert"
 import os
 import sys
 import time
+from pathlib import Path
 import torch
 import numpy as np
 
@@ -52,7 +53,7 @@ except ImportError:
 from model.transformers import MertFormer, MertFormerConfig
 from config.config import cfg
 
-def export_production_model():
+def export_production_model(ckpt_override=None, output_dir=None, bitpack: bool = False):
     # Production-grade export pipeline: load model, validate, export ONNX, and emit metadata for mobile deploy.
     print("\n" + "="*60)
     print("🚀 MERTFORMER TITAN: PRODUCTION MOBILE EXPORT PROTOCOL")
@@ -63,10 +64,16 @@ def export_production_model():
     # 1. SETUP & MODEL LOADING
     # -------------------------------------------------------------------------
     # Target the FINAL production checkpoint
-    ckpt_dir = os.path.join(project_root, "checkpoints", "mertformer_titan_prod")
+    ckpt_dir = output_dir or os.path.join(project_root, "checkpoints", "mertformer_titan_prod")
     ckpt_path = os.path.join(ckpt_dir, "MertFormer_Titan_Nano_Final.pt")
     
     # Fallback to simulation checkpoint if production not found (for testing)
+    if ckpt_override:
+        if str(ckpt_override) == "latest":
+            ckpt_path = os.path.join(project_root, cfg.save_dir, f"{cfg.model_name}_latest.pt")
+        else:
+            ckpt_path = str(ckpt_override)
+
     if not os.path.exists(ckpt_path):
         print(f"⚠️  Production Checkpoint not found at: {ckpt_path}")
         sim_path = os.path.join(project_root, "checkpoints", "mac_simulation_model.pt")
@@ -100,6 +107,19 @@ def export_production_model():
     except Exception as e:
         print(f"❌ Failed to load model: {e}")
         return
+
+    # -------------------------------------------------------------------------
+    # 1.5 OPTIONAL BITPACK EXPORT (TERNARY 5-IN-8)
+    # -------------------------------------------------------------------------
+    if bitpack or os.getenv("MERTFORMER_BITPACK", "0") == "1":
+        try:
+            from mertformer_sdk.utils.bitpack import pack_state_dict
+            bitpack_bin = os.path.join(ckpt_dir, "titan_s25_bitpack.bin")
+            bitpack_meta = os.path.join(ckpt_dir, "titan_s25_bitpack.json")
+            pack_state_dict(model.state_dict(), Path(bitpack_bin), Path(bitpack_meta))
+            print("✅ Bitpack export complete.")
+        except Exception as e:
+            print(f"⚠️  Bitpack export skipped: {e}")
 
     # -------------------------------------------------------------------------
     # 2. EXPORT PREPARATION (KV CACHE & DYNAMIC AXES)
@@ -227,6 +247,27 @@ def export_production_model():
             print(f"❌ Quantization Failed: {e}")
     else:
         print("\n⚠️  Skipping Quantization (onnxruntime not installed)")
+
+    # -------------------------------------------------------------------------
+    # 4.5 ONNX METADATA (BITPACK HOOK)
+    # -------------------------------------------------------------------------
+    if (bitpack or os.getenv("MERTFORMER_BITPACK", "0") == "1") and 'onnx' in sys.modules:
+        try:
+            def _add_metadata(path):
+                model_onnx = onnx.load(path)
+                meta = model_onnx.metadata_props
+                meta.clear()
+                meta.add(key="mertformer.bitpack", value="ternary5in8")
+                meta.add(key="mertformer.bitpack_meta", value="titan_s25_bitpack.json")
+                onnx.save(model_onnx, path)
+
+            if os.path.exists(output_fp32):
+                _add_metadata(output_fp32)
+            if os.path.exists(output_int8):
+                _add_metadata(output_int8)
+            print("✅ ONNX metadata updated for bitpack.")
+        except Exception as e:
+            print(f"⚠️  ONNX metadata update failed: {e}")
 
     # -------------------------------------------------------------------------
     # 5. VERIFICATION
