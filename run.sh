@@ -236,7 +236,52 @@ python3 scripts/smart_runner.py 2>&1 | tee logs/production_run.log
 if [ -z "$BENCHMARK_SKIP" ]; then
     echo "📊 Running internal benchmarks (HumanEval/MBPP)..."
     BENCHMARK_SAMPLES=${BENCHMARK_SAMPLES:-5}
-    python3 scripts/benchmarks_internal.py --run --samples "$BENCHMARK_SAMPLES" || echo "⚠️ Benchmarks failed or unavailable. Continuing..."
+    BENCHMARK_CKPT_PATH=$(python3 - <<'PY'
+from pathlib import Path
+import os
+
+def pick_checkpoint():
+    candidates = []
+    env_ckpt = os.environ.get("BENCHMARK_CKPT")
+    if env_ckpt:
+        candidates.append(Path(env_ckpt))
+
+    try:
+        from config.config import cfg
+        save_dir = Path(cfg.save_dir)
+        model_name = cfg.model_name
+    except Exception:
+        save_dir = Path("checkpoints")
+        model_name = None
+
+    if model_name:
+        candidates.append(save_dir / f"{model_name}_latest.pt")
+        candidates.append(save_dir / f"{model_name}_best.pt")
+
+    if save_dir.exists():
+        candidates += sorted(save_dir.glob("*_latest.pt"))
+        candidates += sorted(save_dir.glob("*_best.pt"))
+        candidates += sorted(save_dir.glob("*.pt"))
+
+    root = Path("checkpoints")
+    if root.exists():
+        candidates += sorted(root.rglob("*_latest.pt"))
+        candidates += sorted(root.rglob("*_best.pt"))
+        candidates += sorted(root.rglob("*.pt"))
+
+    for c in candidates:
+        if c and c.exists():
+            return str(c)
+    return ""
+
+print(pick_checkpoint())
+PY
+    )
+    if [ -z "$BENCHMARK_CKPT_PATH" ]; then
+        echo "⚠️ Benchmarks skipped (checkpoint not found)."
+    else
+        python3 scripts/benchmarks_internal.py --run --samples "$BENCHMARK_SAMPLES" --ckpt "$BENCHMARK_CKPT_PATH" || echo "⚠️ Benchmarks failed or unavailable. Continuing..."
+    fi
 else
     echo "⚠️ Benchmarks skipped (BENCHMARK_SKIP set)."
 fi
