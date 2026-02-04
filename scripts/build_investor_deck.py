@@ -80,6 +80,22 @@ SLIDES_EN = [
         ],
     },
     {
+        "title": "Compute Need & Plan",
+        "bullets": [
+            "Multi-GPU credits for master run (A100/H100 class)",
+            "Phased run: full 1MB gate → master run → benchmarks",
+            "Deliverables: checkpoints, logs, eval outputs",
+        ],
+    },
+    {
+        "title": "Pilot / Go-to-Market",
+        "bullets": [
+            "Offline PoC for regulated teams (defense/legal/finance)",
+            "2–4 week pilot with clear success criteria",
+            "Post‑pilot: paid deployments + support",
+        ],
+    },
+    {
         "title": "Market & Use Cases",
         "bullets": [
             "Regulated enterprises and defense workflows",
@@ -160,6 +176,22 @@ SLIDES_TR = [
             "Golden sample seti (50 prompt)",
             "HumanEval/MBPP çıktı üretimi",
             "Eğitim donanımında 1MB overfit gate",
+        ],
+    },
+    {
+        "title": "Compute İhtiyacı & Plan",
+        "bullets": [
+            "Master run için multi-GPU kredisi (A100/H100 sınıfı)",
+            "Aşamalı koşu: full 1MB gate → master run → benchmark",
+            "Çıktılar: checkpoint, log, eval sonuçları",
+        ],
+    },
+    {
+        "title": "Pilot / Pazara Çıkış",
+        "bullets": [
+            "Düzenlemeli ekipler için offline PoC (savunma/hukuk/finans)",
+            "2–4 haftalık pilot, net başarı kriterleriyle",
+            "Pilot sonrası: ücretli dağıtım + destek",
         ],
     },
     {
