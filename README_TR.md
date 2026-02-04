@@ -611,6 +611,9 @@ liquid_spike_threshold = 5.0
 **Toplam Token**: ~24 Milyar (yüksek kaliteli, KD odaklı)  
 *Not: Damıtma, token başına etkin öğrenmeyi artırır; ancak ham token sayısını artırmaz.*
 
+Bu eğitim sırası ve token bütçesi, **güçlü bir temel için yeterli** olacak şekilde tasarlanmıştır.  
+**Niş veya özel alanlar** için, en yüksek uzmanlık seviyesine çıkmak amacıyla **hedefli fine‑tune** önerilir.
+
 ### İzleme
 
 Eğitim metrikleri şuralara kaydedilir:

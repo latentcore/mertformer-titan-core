@@ -611,6 +611,9 @@ liquid_spike_threshold = 5.0
 **Total Tokens**: ~24 Billion (high-quality, KD-focused)  
 *Note: Distillation boosts effective learning per token, but it does not increase raw token count.*
 
+This curriculum order and token budget are designed to be **sufficient for a strong general foundation**.  
+For **niche or proprietary domains**, we recommend **targeted fine-tuning** on domain data to maximize specialization.
+
 ### Monitoring
 
 Training metrics are logged to:
