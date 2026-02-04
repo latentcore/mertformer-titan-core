@@ -2,12 +2,18 @@
 
 Bu belge, Azure A100 altyapısı üzerindeki Titan Eğitim Çalışması (Training Run) için uygulama planını ana hatlarıyla belirtir.
 
-## Aşama 1: Prototip İnce Ayar (Bilgi Damıtma - Distillation)
-**Hedef:** Llama-3-70B (Öğretmen) modelinden MertFormer-1.58bit (Öğrenci) modeline bilgi aktarımı.
-- **Veri Seti:** 10 Milyar Token (Yüksek kaliteli kodlama talimat setleri).
-- **Yöntem:** Çevrimdışı Logits Damıtma (Statik).
-- **Altyapı:** 8x A100 (Founders Hub).
-- **Sonuç:** Temel talimat takibi ve sözdizimi açısından kusursuz kodlama yapabilen bir model.
+## Aşama 0: Preflight & Güvenlik Gate'leri
+**Hedef:** Eğitim öncesi sistem bütünlüğünü ve hazır olma durumunu doğrulamak.
+- **Yöntem:** `run.sh --test` + operator mode gate (eğitim donanımında tam mod).
+- **Çıktılar:** Preflight logları + operator gate logları.
+
+## Aşama 1: Damıtma Koşusu (Temel)
+**Hedef:** **Llama-3.3-70B-Instruct** (Öğretmen) modelinden MertFormer (Öğrenci) modeline bilgi aktarımı.
+- **Veri Seti:** ~24 Milyar token (yüksek kalite, KD odaklı müfredat).
+- **Yöntem:** Çevrimdışı logits damıtma + **precomputed logits**.
+- **Altyapı:** 8x A100 (Founders Hub veya eşdeğeri).
+- **Ana ayarlar:** `max_steps=45000`, `max_seq_len=4096`.
+- **Sonuç:** Stabil talimat takibi ve sözdizimi açısından sağlam kodlama baseline'ı.
 
 ## Aşama 2: Ajan Entegrasyonu (Sürü - Swarm)
 **Hedef:** Modeli çoklu ajan rolleri için özelleştirmek.
@@ -21,5 +27,10 @@ Bu belge, Azure A100 altyapısı üzerindeki Titan Eğitim Çalışması (Traini
 - **Yöntem:** Derleyici Geri Bildiriminden Takviyeli Öğrenme (RLCF).
 - **Sonuç:** Aynı hatayı iki kez yapmayan, kendi kendini iyileştiren bir sistem.
 
+## Aşama 4: Değerlendirme ve Benchmarklar
+**Hedef:** Eğitim sonrası dahili benchmark çıktıları üretmek.
+- **HumanEval/MBPP:** Checkpoint varsa eğitimden sonra otomatik çalışır.
+- **Çıktılar:** `reports/benchmarks/` altında JSONL çıktıları.
+
 ---
-**Durum:** AŞAMA 1 BAŞLATILMAYA HAZIR.
+**Durum:** AŞAMA 1 BAŞLATILMAYA HAZIR (eğitim donanımı bekleniyor).
