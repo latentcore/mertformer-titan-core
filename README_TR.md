@@ -96,6 +96,10 @@ Ana giriş dokümanları ve checklistler.
 - [README_CHECKLIST.md](README_CHECKLIST.md)
 - [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md)
 
+**SDK**
+Edge dağıtım için paket + CLI.
+- [mertformer_sdk/](mertformer_sdk/)
+
 **Planlar**
 Yol haritaları ve operatör planları.
 - [TASK.md](TASK.md)

@@ -96,6 +96,10 @@ Primary entry docs and checklists.
 - [README_CHECKLIST.md](README_CHECKLIST.md)
 - [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md)
 
+**SDK**
+Package + CLI for edge deployments.
+- [mertformer_sdk/](mertformer_sdk/)
+
 **Plans**
 Execution roadmaps and operator plans.
 - [TASK.md](TASK.md)

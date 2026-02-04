@@ -53,6 +53,7 @@ SLIDES_EN = [
             "2.6B parameter target model for coding",
             "Offline operation on mobile-class hardware",
             "Security-first with reproducibility gates",
+            "SDK + CLI for edge deployments",
         ],
     },
     {
@@ -152,6 +153,7 @@ SLIDES_TR = [
             "Kodlama için 2.6B parametre hedef model",
             "Mobil sınıf donanımda offline çalışma",
             "Reproducibility gate’leriyle güvenlik‑öncelik",
+            "Edge dağıtım için SDK + CLI",
         ],
     },
     {
