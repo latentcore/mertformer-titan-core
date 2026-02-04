@@ -1193,6 +1193,18 @@ This project is **confidential and proprietary**. All rights are reserved by the
 
 ---
 
+## ✅ Sales-Ready Checklist (Post-Training)
+
+To be **100% sales-ready**, the following must be completed on training hardware:
+
+- **Master Run (2.6B)** real training run
+- **Full 1MB Overfit Gate** on training hardware
+- **Real benchmark outputs** (auto-generated + logged)
+- **Demo video** (offline + working example)
+- **README/reports updated with measured metrics** (replace estimates)
+
+---
+
 ## 🛡️ Strategic Transparency & Roadmap
 
 ### ⚠️ Technical Risk Factors

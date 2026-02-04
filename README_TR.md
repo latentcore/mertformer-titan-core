@@ -1193,6 +1193,18 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 
 ---
 
+## ✅ Satışa Hazır Checklist (Eğitim Sonrası)
+
+**%100 satışa hazır** olmak için, aşağıdakiler eğitim donanımında tamamlanmalıdır:
+
+- **Master Run (2.6B)** gerçek eğitim koşusu
+- **Full 1MB Overfit Gate** (training hardware)
+- **Gerçek benchmark çıktıları** (otomatik üretilen + loglanan)
+- **Demo video** (offline + çalışan örnek)
+- **README/raporlar ölçülen metriklerle güncellenecek** (tahminler yerine)
+
+---
+
 ## 🛡️ Stratejik Şeffaflık ve Yol Haritası
 
 ### ⚠️ Teknik Risk Faktörleri
