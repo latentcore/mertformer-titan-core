@@ -924,7 +924,7 @@ def train():
     if val_path.exists():
         print(f"🔍 Validation Dataset Found: {val_path}")
         # [PRO] Use Deterministic Dataset
-    val_ds = ValidationJsonlDataset(val_path, cfg.max_seq_len, teacher_tokenizer)
+        val_ds = ValidationJsonlDataset(val_path, cfg.max_seq_len, teacher_tokenizer)
         # num_workers=0 ensures main process does sequential read
         val_dl = DataLoader(val_ds, batch_size=cfg.micro_batch_size, collate_fn=collate_fn, num_workers=0)
     else:
