@@ -1,0 +1,5 @@
+{
+  "status": "template",
+  "metrics": {},
+  "notes": "Populate after run (loss, throughput, eval)."
+}

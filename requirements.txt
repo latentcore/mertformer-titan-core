@@ -20,6 +20,7 @@ peft>=0.4.0  # LoRA/Adapter Support (Critical for MacBook Fine-Tuning)
 # Training Utilities
 tqdm>=4.65
 zstandard>=0.21  # For streaming datasets
+pyyaml>=6.0      # YAML config overlays
 
 # Testing
 pytest>=7.3

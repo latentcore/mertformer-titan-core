@@ -1,0 +1,5 @@
+# CUDA lock (template)
+cuda=12.x
+cudnn=8.x
+nccl=2.x
+driver>=535

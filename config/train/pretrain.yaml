@@ -1,0 +1,5 @@
+# Training override: pretrain profile
+max_steps: 45000
+batch_size: 128
+learning_rate: 0.0015
+warmup_steps: 3000

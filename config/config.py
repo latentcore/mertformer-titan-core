@@ -16,7 +16,8 @@ __author__ = "Mert"
 
 import os
 from dataclasses import dataclass, field
-from typing import Any
+from pathlib import Path
+from typing import Any, Dict
 
 import torch
 
@@ -48,7 +49,7 @@ def get_auto_dtype() -> Any:
         return torch.float32
 
 
-def auto_configure_batch_size(target_global_batch: int = 128):
+def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None):
     """
     TR: GRANDMASTER AUTO-PILOT - Fizik tabanlı VRAM hesaplama ve optimizasyon.
     EN: GRANDMASTER AUTO-PILOT - Physics-based VRAM calculation & optimization.
@@ -97,27 +98,27 @@ def auto_configure_batch_size(target_global_batch: int = 128):
     # 2. PHYSICS-BASED MEMORY MODELING
     # -------------------------------------------------------------------------
     try:
-        # Create temporary config to read values
-        conf = MertFormerConfig()
-        # Use config values for calculation
+        # Use provided config values if available (avoid recursive instantiation)
+        use_8bit_adam = getattr(conf, "use_8bit_adam", True) if conf is not None else True
+        max_seq_len = getattr(conf, "max_seq_len", 4096) if conf is not None else 4096
+
         total_params = 2.64 * 10**9
-        
+
         # A. Static Memory (Fixed Cost)
         # Weights (BF16=2 bytes) + Grads (BF16=2 bytes) = 4 bytes per param
         # Optimizer (8-bit Adam = 2 bytes state, 32-bit = 8 bytes state)
-        bytes_per_param_static = 4 + (2 if conf.use_8bit_adam else 8)
-        
+        bytes_per_param_static = 4 + (2 if use_8bit_adam else 8)
+
         static_mem_gb = (total_params * bytes_per_param_static) / (1024**3)
         # DDP Sharding Savings (Zero-1/2 equivalent effect estimate)
         if num_gpus > 1:
-            static_mem_gb /= (num_gpus ** 0.5) # Conservative sharding benefit
-            
-        static_mem_gb += 1.5 # CUDA Context + PyTorch Overhead buffer
-        max_seq_len = conf.max_seq_len
-    except:
-         # Fallback if class not fully init yet
-         static_mem_gb = 6.0
-         max_seq_len = 4096
+            static_mem_gb /= (num_gpus ** 0.5)  # Conservative sharding benefit
+
+        static_mem_gb += 1.5  # CUDA Context + PyTorch Overhead buffer
+    except Exception:
+        # Fallback if config is not available
+        static_mem_gb = 6.0
+        max_seq_len = 4096
 
     # B. Dynamic Memory (Per Sample Cost)
     # Formula: Layers * SeqLen * Hidden * Batch * Buffer
@@ -171,6 +172,7 @@ def auto_configure_batch_size(target_global_batch: int = 128):
 
 
 
+@dataclass
 @dataclass
 class MertFormerConfig:
     # -------------------------------------------------------------------------
@@ -296,7 +298,7 @@ class MertFormerConfig:
     def __post_init__(self):
         """Post-initialization: Auto-configure batch sizes if not set."""
         if self.micro_batch_size is None or self.grad_accum_steps is None:
-            auto_micro, auto_accum = auto_configure_batch_size(target_global_batch=self.batch_size)
+            auto_micro, auto_accum = auto_configure_batch_size(target_global_batch=self.batch_size, conf=self)
             if self.micro_batch_size is None:
                 self.micro_batch_size = auto_micro
                 self.grad_accum_steps = auto_accum
@@ -379,8 +381,80 @@ class MertFormerConfig:
     attention_dropout: float = 0.1
 
 
+def _load_yaml(path: Path) -> Dict[str, Any]:
+    """Best-effort YAML loader. Returns empty dict if missing or unavailable."""
+    if not path.exists():
+        return {}
+    try:
+        import yaml  # type: ignore
+    except Exception:
+        return {}
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        if isinstance(data, dict):
+            return data
+    except Exception:
+        return {}
+    return {}
+
+
+def _resolve_config_path(config_dir: Path, name: str) -> Path:
+    """Resolve config path relative to config_dir unless absolute."""
+    p = Path(name)
+    return p if p.is_absolute() else (config_dir / name)
+
+
+def _load_config_overlays() -> Dict[str, Any]:
+    """Load base + optional overlays from config/*.yaml (env-controlled)."""
+    config_dir = Path(__file__).resolve().parent
+    merged: Dict[str, Any] = {}
+
+    base_override = os.environ.get("MERTFORMER_CONFIG")
+    base_path = _resolve_config_path(config_dir, base_override) if base_override else (config_dir / "base.yaml")
+    merged.update(_load_yaml(base_path))
+
+    model_override = os.environ.get("MERTFORMER_MODEL_CONFIG")
+    if model_override:
+        merged.update(_load_yaml(_resolve_config_path(config_dir, f"model/{model_override}")))
+
+    train_override = os.environ.get("MERTFORMER_TRAIN_CONFIG")
+    if train_override:
+        merged.update(_load_yaml(_resolve_config_path(config_dir, f"train/{train_override}")))
+
+    export_override = os.environ.get("MERTFORMER_EXPORT_CONFIG")
+    if export_override:
+        merged.update(_load_yaml(_resolve_config_path(config_dir, f"export/{export_override}")))
+
+    return merged
+
+
+def _apply_overrides(cfg: MertFormerConfig, overrides: Dict[str, Any]) -> None:
+    """Apply flat key overrides to config instance."""
+    for key, value in overrides.items():
+        if hasattr(cfg, key):
+            setattr(cfg, key, value)
+
+
+def _finalize_config(cfg: MertFormerConfig) -> None:
+    """Finalize config after overrides (batch size auto-tune, worker cap)."""
+    if cfg.micro_batch_size is None or cfg.grad_accum_steps is None:
+        auto_micro, auto_accum = auto_configure_batch_size(target_global_batch=cfg.batch_size, conf=cfg)
+        if cfg.micro_batch_size is None:
+            cfg.micro_batch_size = auto_micro
+        if cfg.grad_accum_steps is None:
+            cfg.grad_accum_steps = auto_accum
+
+    try:
+        cpu_count = os.cpu_count() or 4
+        cfg.dataloader_num_workers = min(cfg.dataloader_num_workers, cpu_count)
+    except Exception:
+        pass
+
+
 # Config instance
 cfg = MertFormerConfig()
+_apply_overrides(cfg, _load_config_overlays())
+_finalize_config(cfg)
 
 def validate_layer_config(cfg: MertFormerConfig) -> None:
     """

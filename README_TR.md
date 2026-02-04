@@ -135,6 +135,58 @@
 - [reports/system_hardware.md](reports/system_hardware.md)
 - [reports/system_hardware_TR.md](reports/system_hardware_TR.md)
 
+**Operasyon & Yönetişim**
+- [SECURITY.md](SECURITY.md)
+- [SECURITY_TR.md](SECURITY_TR.md)
+- [DECISIONS.md](DECISIONS.md)
+- [DECISIONS_TR.md](DECISIONS_TR.md)
+- [datasets/README.md](datasets/README.md)
+- [datasets/README_TR.md](datasets/README_TR.md)
+- [datasets/SOURCES.md](datasets/SOURCES.md)
+- [datasets/SOURCES_TR.md](datasets/SOURCES_TR.md)
+- [datasets/LICENSES.md](datasets/LICENSES.md)
+- [datasets/LICENSES_TR.md](datasets/LICENSES_TR.md)
+- [repro/seed_policy.md](repro/seed_policy.md)
+- [repro/seed_policy_TR.md](repro/seed_policy_TR.md)
+- [interfaces/inference_contract.md](interfaces/inference_contract.md)
+- [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md)
+- [economics/cost_model.md](economics/cost_model.md)
+- [economics/cost_model_TR.md](economics/cost_model_TR.md)
+- [economics/efficiency_report.md](economics/efficiency_report.md)
+- [economics/efficiency_report_TR.md](economics/efficiency_report_TR.md)
+- [limits/scaling_breakpoints.md](limits/scaling_breakpoints.md)
+- [limits/scaling_breakpoints_TR.md](limits/scaling_breakpoints_TR.md)
+- [postmortems/README.md](postmortems/README.md)
+- [postmortems/README_TR.md](postmortems/README_TR.md)
+- [postmortems/_template.md](postmortems/_template.md)
+- [postmortems/_template_TR.md](postmortems/_template_TR.md)
+- [prompts/changelog.md](prompts/changelog.md)
+- [prompts/changelog_TR.md](prompts/changelog_TR.md)
+- [tokenizer/stats.md](tokenizer/stats.md)
+- [tokenizer/stats_TR.md](tokenizer/stats_TR.md)
+- [tokenizer/drift_report.md](tokenizer/drift_report.md)
+- [tokenizer/drift_report_TR.md](tokenizer/drift_report_TR.md)
+- [ablations/results.md](ablations/results.md)
+- [ablations/results_TR.md](ablations/results_TR.md)
+- [ablations/no_moe/README.md](ablations/no_moe/README.md)
+- [ablations/no_moe/README_TR.md](ablations/no_moe/README_TR.md)
+- [ablations/no_liquid/README.md](ablations/no_liquid/README.md)
+- [ablations/no_liquid/README_TR.md](ablations/no_liquid/README_TR.md)
+- [ablations/dense_only/README.md](ablations/dense_only/README.md)
+- [ablations/dense_only/README_TR.md](ablations/dense_only/README_TR.md)
+- [ablations/bitlinear_off/README.md](ablations/bitlinear_off/README.md)
+- [ablations/bitlinear_off/README_TR.md](ablations/bitlinear_off/README_TR.md)
+- [experiments/exp_001_baseline/notes.md](experiments/exp_001_baseline/notes.md)
+- [experiments/exp_001_baseline/notes_TR.md](experiments/exp_001_baseline/notes_TR.md)
+- [tools/abuse_tests.md](tools/abuse_tests.md)
+- [tools/abuse_tests_TR.md](tools/abuse_tests_TR.md)
+- [tools/sandbox/README.md](tools/sandbox/README.md)
+- [tools/sandbox/README_TR.md](tools/sandbox/README_TR.md)
+- [tools/contracts/README.md](tools/contracts/README.md)
+- [tools/contracts/README_TR.md](tools/contracts/README_TR.md)
+- [training_dynamics/cold_vs_warm.md](training_dynamics/cold_vs_warm.md)
+- [training_dynamics/cold_vs_warm_TR.md](training_dynamics/cold_vs_warm_TR.md)
+
 ---
 
 <a id="genel-bakış"></a>
@@ -655,6 +707,8 @@ response = chat.generate(
 print(response)
 ```
 
+**Bağlam limitleri**: varsayılan giriş limiti **4096 token** (`cfg.max_seq_len`). Çıktı uzunluğu çağıran tarafından belirlenir; `scripts/chat.py` varsayılanı `--max_tokens=128`, `scripts/benchmarks_internal.py` varsayılanı `--max-new-tokens=256`.
+
 ---
 
 <a id="kıyaslamalar-benchmarks"></a>
@@ -773,132 +827,227 @@ Planlanan Türkçe veri kaynakları:
 
 ```bash
 NİHAİ/
-├── 📂 config/              # Yapılandırma dosyaları
-│   └── 📄 config.py        # Model & eğitim hiperparametreleri (400+ satır)
-├── 📂 layers/              # Model bileşenleri
+├── 📂 config/              # Yapilandirma dosyalari
+│   ├── 📄 config.py        # Model ve egitim hiperparametreleri (400+ satir)
+│   ├── 📄 base.yaml        # Temel konfigurasyon overlay
+│   ├── 📂 model/           # Model overlay'leri
+│   │   ├── 📄 mertformer_small.yaml # Kucuk debug varyanti
+│   │   └── 📄 mertformer_moe.yaml   # MoE baseline
+│   ├── 📂 train/           # Egitim overlay'leri
+│   │   ├── 📄 pretrain.yaml
+│   │   └── 📄 finetune.yaml
+│   └── 📂 export/          # Export overlay'leri
+│       └── 📄 onnx_mobile.yaml
+├── 📂 layers/              # Model bilesenleri
 │   ├── 📄 bitlinear.py     # BitNet 1.58-bit kuantizasyon
-│   ├── 📄 bitnet_patch.py  # BitNet yama yardımcıları
-│   ├── 📄 mla.py           # Çok Başlı Latent Dikkat + Flash Attention 2
-│   ├── 📄 moe.py           # Seyrek MoE + LiquidRouter (bağlamsal MoE yönlendirme)
+│   ├── 📄 bitnet_patch.py  # BitNet patch yardimcilari
+│   ├── 📄 mla.py           # Multi-Head Latent Attention + Flash Attention 2
+│   ├── 📄 moe.py           # Sparse MoE + LiquidRouter (baglamsal routing)
 │   ├── 📄 liquid.py        # Liquid Neural Networks (CfC)
-│   ├── 📄 ffn.py           # Yoğun İleri Beslemeli (SwiGLU)
-│   ├── 📄 mertformer_block.py  # Transformer blok montajı
-│   ├── 📄 qinn.py          # Kuantum İlhamlı Üniter Katman
-│   └── 📄 __init__.py      # Paket işareti
-├── 📂 model/               # Model montajı
-│   ├── 📄 transformers.py  # MertFormer ana sınıfı
-│   └── 📄 __init__.py      # Paket işareti
-├── 📂 train/               # Eğitim hattı
-│   ├── 📄 train.py         # Ana eğitim döngüsü (1200+ satır, üretim kalitesi)
-│   └── 📄 __init__.py      # Paket işareti
-├── 📂 utils/               # Araçlar
-│   ├── 📄 logger.py        # Loglama altyapısı (WandB, CSV, JSONL)
-│   ├── 📄 safety.py        # Güvenlik yardımcıları (kill switch araçları)
-│   └── 📄 __init__.py      # Paket işareti
-├── 📂 scripts/             # Yardımcı betikler ve Raporlar
-│   ├── 📄 smart_runner.py  # Akıllı Paralel Orkestratör (Veri -> Damıtma -> Eğitim)
-│   ├── 📄 titan_preflight.py # 🦅 Nihai Sistem Test Pilotu (İz Bırakmayan Tam Doğrulama)
-│   ├── 📄 data_pipeline.py # Veri Simyası (5 Aşamalı Müfredatlı Öğrenme)
-│   ├── 📄 mobile_export.py # Üretim Seviyesi Mobil İhracatçı (S25 NPU Optimize ONNX)
-│   ├── 📄 chat.py          # Etkileşimli sohbet arayüzü
-│   ├── 📄 xray.py          # Akıllı Proje Denetçisi (Derin yapısal analiz ve döküm)
-│   ├── 📄 operator_mode_gate.py # Tek girişli operator-mode gate
-│   ├── 📄 overfit_gate.py  # 1MB overfit gate (full/safe)
-│   ├── 📄 golden_eval.py   # Golden sample değerlendirme (50 prompt)
-│   ├── 📄 benchmarks_internal.py # HumanEval/MBPP çıktı üretici
-│   ├── 📄 nan_kill_test.py # Sentetik NaN kill-switch testi
-│   ├── 📄 checkpoint_restore_drill.py # Checkpoint restore testi
-│   ├── 📄 failure_budget_drill.py # Failure budget testi
-│   ├── 📄 build_investor_deck.py # PPTX deck üretici
-│   ├── 📄 eval.py          # GSM8K değerlendirme stub
-│   ├── 📄 mac_simulation.py # Mac simülasyon koşusu
-│   ├── 📄 mini_titan_poc.py # Adli PoC logger
-│   ├── 📄 scaling_audit_math.py # Ölçekleme denetim matematiği
-│   ├── 📄 test_onnx_export.py # ONNX export testi
-│   ├── 📄 titan_onnx_stress_test.py # ONNX stres testi
-│   ├── 📄 train_tpu_turbo.py # TPU eğitim başlatıcı
-│   ├── 📄 verify_datasets.py # Veri seti sağlık kontrolleri
-│   ├── 📄 verify_onnx_local.py # ONNX doğrulama (lokal)
-│   ├── 📄 __init__.py      # Paket işareti
-│   ├── 📂 reports/         # Script üretimi raporlar
-│   └── 📂 runs/            # Script koşu çıktıları
-├── 📂 assets/              # Markalama ve Sinaptik Haritalar
-│   ├── 📄 header.png       # Fütüristik Başlık Görseli
-│   └── 📄 synaptic_map.png # Katman Hiyerarşisi Görselleştirmesi
-├── 📂 tests/               # Birim & entegrasyon testleri
-│   ├── 📄 test_architecture_integrity.py # Mimari bütünlük testleri
-│   ├── 📄 test_comprehensive.py # Uçtan uca sistem testleri
-│   └── 📄 test_model.py    # Model birim testleri
-├── 📂 orchestrator/        # Agentic çalışma zamanı (opsiyonel / hedef v5.2)
-│   ├── 📄 __init__.py      # Paket işareti
-│   ├── 📄 core.py          # Orchestrator giriş noktası
-│   ├── 📄 memory.py        # Hafıza depolama ve erişim
-│   ├── 📄 sense_engine.py  # Metin/görsel algı
+│   ├── 📄 ffn.py           # Dense FeedForward (SwiGLU)
+│   ├── 📄 mertformer_block.py  # Transformer blok
+│   ├── 📄 qinn.py          # Quantum-Inspired Unitary Layer
+│   └── 📄 __init__.py      # Paket isaretcisi
+├── 📂 model/               # Model montaji
+│   ├── 📄 transformers.py  # MertFormer ana sinif
+│   └── 📄 __init__.py      # Paket isaretcisi
+├── 📂 train/               # Egitim hatti
+│   ├── 📄 train.py         # Ana egitim dongusu (1200+ satir)
+│   └── 📄 __init__.py      # Paket isaretcisi
+├── 📂 utils/               # Yardimci araclar
+│   ├── 📄 logger.py        # Log altyapisi (WandB, CSV, JSONL)
+│   ├── 📄 safety.py        # Kill-switch yardimcilari
+│   └── 📄 __init__.py      # Paket isaretcisi
+├── 📂 scripts/             # Yardimci scriptler ve raporlar
+│   ├── 📄 smart_runner.py  # Parallel Orchestrator (Data -> Distill -> Train)
+│   ├── 📄 titan_preflight.py # Sistem testi
+│   ├── 📄 data_pipeline.py # Dataset Alchemy (5-asama mufredat)
+│   ├── 📄 mobile_export.py # Mobil ONNX export
+│   ├── 📄 chat.py          # Etkilesimli chat arayuzu
+│   ├── 📄 xray.py          # Proje denetleyici
+│   ├── 📄 operator_mode_gate.py # Tek girisli gate
+│   ├── 📄 overfit_gate.py  # 1MB overfit gate
+│   ├── 📄 golden_eval.py   # Golden sample evaluator
+│   ├── 📄 benchmarks_internal.py # HumanEval/MBPP
+│   ├── 📄 nan_kill_test.py # NaN kill-switch drill
+│   ├── 📄 checkpoint_restore_drill.py # Checkpoint restore drill
+│   ├── 📄 failure_budget_drill.py # Failure budget drill
+│   ├── 📄 build_investor_deck.py # PPTX deck generator
+│   ├── 📄 eval.py          # GSM8K eval stub
+│   ├── 📄 mac_simulation.py # Mac simulasyon
+│   ├── 📄 mini_titan_poc.py # Forensic PoC logger
+│   ├── 📄 scaling_audit_math.py # Scaling audit math
+│   ├── 📄 test_onnx_export.py # ONNX export test
+│   ├── 📄 titan_onnx_stress_test.py # ONNX stress test
+│   ├── 📄 train_tpu_turbo.py # TPU training launcher
+│   ├── 📄 verify_datasets.py # Dataset sanity checks
+│   ├── 📄 verify_onnx_local.py # ONNX verification
+│   ├── 📄 __init__.py      # Paket isaretcisi
+│   ├── 📂 reports/         # Script raporlari
+│   └── 📂 runs/            # Script ciktilari
+├── 📂 eval/                # Degerlendirme girisleri
+│   ├── 📄 gsm8k.py          # GSM8K evaluator (stub)
+│   ├── 📄 humaneval.py      # HumanEval wrapper
+│   ├── 📄 golden.py         # Golden evaluator wrapper
+│   └── 📄 report_builder.py # Ozet olusturucu
+├── 📂 ablations/           # Ablation sablonlari
+│   ├── 📄 results.md        # Sonuc tablosu (EN)
+│   ├── 📄 results_TR.md     # Sonuc tablosu (TR)
+│   ├── 📂 no_moe/
+│   │   ├── 📄 README.md
+│   │   └── 📄 README_TR.md
+│   ├── 📂 no_liquid/
+│   │   ├── 📄 README.md
+│   │   └── 📄 README_TR.md
+│   ├── 📂 dense_only/
+│   │   ├── 📄 README.md
+│   │   └── 📄 README_TR.md
+│   └── 📂 bitlinear_off/
+│       ├── 📄 README.md
+│       └── 📄 README_TR.md
+├── 📂 experiments/         # Deney kayitlari
+│   └── 📂 exp_001_baseline/
+│       ├── 📄 config.yaml
+│       ├── 📄 metrics.json
+│       ├── 📄 notes.md
+│       └── 📄 notes_TR.md
+├── 📂 assets/              # Branding & Synaptic Maps
+│   ├── 📄 header.png       # Header gorseli
+│   └── 📄 synaptic_map.png # Katman hiyerarsisi
+├── 📂 tests/               # Unit ve entegrasyon testleri
+│   ├── 📄 test_architecture_integrity.py # Mimari testler
+│   ├── 📄 test_comprehensive.py # Uctan uca testler
+│   └── 📄 test_model.py    # Model unit testleri
+├── 📂 orchestrator/        # Agentic runtime (opsiyonel / hedef v5.2)
+│   ├── 📄 __init__.py      # Paket isaretcisi
+│   ├── 📄 core.py          # Orchestrator girisi
+│   ├── 📄 memory.py        # Memory store & retrieval
+│   ├── 📄 sense_engine.py  # Text/vision sensing
 │   ├── 📄 web_sense.py     # Web retrieval (opsiyonel)
-│   ├── 📄 audio_sense.py   # Ses/TTS kancaları (opsiyonel)
-│   ├── 📄 cognitive.py     # Akıl yürütme yardımcıları
-│   ├── 📄 distillation_manager.py # Distillation pipeline yardımcısı
-│   ├── 📄 hardware.py      # Donanım anlık görüntü yardımcıları
-│   ├── 📄 paths.py         # Yol kayıtları
-│   ├── 📄 telemetry.py     # Telemetri yardımcıları (expected vs actual, snapshot)
-│   └── 📄 failure_budget.py # Failure budget izleyici
-├── 📂 reports/             # Yönetici Sağlık ve Doğrulama Raporları
+│   ├── 📄 audio_sense.py   # Audio/TTS hooks (opsiyonel)
+│   ├── 📄 cognitive.py     # Reasoning utilities
+│   ├── 📄 distillation_manager.py # Distillation helper
+│   ├── 📄 hardware.py      # Donanim snapshot
+│   ├── 📄 paths.py         # Path registry
+│   ├── 📄 telemetry.py     # Telemetry helpers
+│   └── 📄 failure_budget.py # Failure budget monitor
+├── 📂 interfaces/          # Cikartim sozlesmeleri
+│   ├── 📄 inference_contract.md
+│   ├── 📄 inference_contract_TR.md
+│   └── 📄 tokenizer_spec.json
+├── 📂 economics/           # Maliyet ve verimlilik
+│   ├── 📄 cost_model.md
+│   ├── 📄 cost_model_TR.md
+│   ├── 📄 efficiency_report.md
+│   ├── 📄 efficiency_report_TR.md
+│   └── 📄 flops_estimator.py
+├── 📂 limits/              # Scaling breakpoints
+│   ├── 📄 scaling_breakpoints.md
+│   ├── 📄 scaling_breakpoints_TR.md
+│   └── 📄 stress_curves.png
+├── 📂 postmortems/         # Olay sablonlari
+│   ├── 📄 README.md
+│   ├── 📄 README_TR.md
+│   ├── 📄 _template.md
+│   └── 📄 _template_TR.md
+├── 📂 prompts/             # Sistem prompt surumleri
+│   ├── 📄 system_v1.txt
+│   ├── 📄 changelog.md
+│   └── 📄 changelog_TR.md
+├── 📂 tokenizer/           # Tokenizer metadata
+│   ├── 📄 tokenizer.json
+│   ├── 📄 stats.md
+│   ├── 📄 stats_TR.md
+│   ├── 📄 drift_report.md
+│   └── 📄 drift_report_TR.md
+├── 📂 tools/               # Tool sandbox ve sozlesmeleri
+│   ├── 📄 abuse_tests.md
+│   ├── 📄 abuse_tests_TR.md
+│   ├── 📂 sandbox/
+│   │   ├── 📄 README.md
+│   │   └── 📄 README_TR.md
+│   └── 📂 contracts/
+│       ├── 📄 README.md
+│       └── 📄 README_TR.md
+├── 📂 training_dynamics/   # Egitim dinamikleri notlari
+│   ├── 📄 cold_vs_warm.md
+│   └── 📄 cold_vs_warm_TR.md
+├── 📂 repro/               # Reproducibility kilitleri
+│   ├── 📄 env.lock
+│   ├── 📄 cuda.lock
+│   ├── 📄 seed_policy.md
+│   └── 📄 seed_policy_TR.md
+├── 📂 registry/            # Model registry
+│   └── 📄 mertformer_v0.1.json
+├── 📂 reports/             # Executive Health & Validation Reports
 │   ├── 📄 one_pager.md      # One-pager (EN)
 │   ├── 📄 one_pager_TR.md   # One-pager (TR)
 │   ├── 📄 technical_snapshot.md # Technical snapshot (EN)
 │   ├── 📄 technical_snapshot_TR.md # Technical snapshot (TR)
 │   ├── 📄 demo_video_script.md # Demo video script (offline)
 │   ├── 📄 demo_video_script_TR.md # Demo video script (TR)
-│   ├── 📄 founders_hub_application.md # Founders Hub taslağı
-│   ├── 📄 founders_hub_application_TR.md # Founders Hub taslağı (TR)
-│   ├── 📄 security_compliance.md # Güvenlik & uyum özeti (EN)
-│   ├── 📄 security_compliance_TR.md # Güvenlik & uyum özeti (TR)
-│   ├── 📄 poc_protocol.md # Pilot/PoC protokolü (EN)
-│   ├── 📄 poc_protocol_TR.md # Pilot/PoC protokolü (TR)
+│   ├── 📄 founders_hub_application.md # Founders Hub draft
+│   ├── 📄 founders_hub_application_TR.md # Founders Hub draft (TR)
+│   ├── 📄 security_compliance.md # Security & compliance brief (EN)
+│   ├── 📄 security_compliance_TR.md # Security & compliance brief (TR)
+│   ├── 📄 poc_protocol.md # Pilot/PoC protocol (EN)
+│   ├── 📄 poc_protocol_TR.md # Pilot/PoC protocol (TR)
 │   ├── 📄 investor_deck.pptx # Investor deck (EN)
 │   ├── 📄 investor_deck_TR.pptx # Investor deck (TR)
-│   ├── 📄 asset_stack.md    # Asset stack indeksi
-│   ├── 📄 asset_stack_TR.md # Asset stack indeksi (TR)
-│   ├── 📄 dataset_health.md # Veri seti sağlık raporu (EN)
-│   ├── 📄 dataset_health_TR.md # Veri seti sağlık raporu (TR)
-│   ├── 📄 model_health.md  # Model sağlık raporu (EN)
-│   ├── 📄 model_health_TR.md # Model sağlık raporu (TR)
-│   ├── 📄 system_hardware.md # Sistem donanım raporu (EN)
-│   └── 📄 system_hardware_TR.md # Sistem donanım raporu (TR)
-├── 📂 checkpoints/         # Model kontrol noktaları
-├── 📂 datasets/            # Eğitim verileri (5 aşamalı müfredat)
-│   ├── 📂 stage1/          # Müfredat aşaması 1
-│   ├── 📂 stage2/          # Müfredat aşaması 2
-│   ├── 📂 stage3/          # Müfredat aşaması 3
-│   ├── 📂 stage4/          # Müfredat aşaması 4
-│   ├── 📂 stage4_soul/     # Müfredat aşaması 4 (alt)
-│   ├── 📂 stage5/          # Müfredat aşaması 5
-│   ├── 📂 stage5_tools/    # Araç kullanımı (alt)
-│   ├── 📂 logits/          # Ön-hesaplanmış logits önbelleği
-│   ├── 📄 validation.jsonl # Doğrulama seti
-│   └── 📄 golden_samples.jsonl # 50 golden prompt
-├── 📂 logs/                # Eğitim günlükleri
-├── 📄 Dockerfile           # Konteynırlaştırılmış Ortam
-├── 📄 run.sh               # Tek komutla başlatıcı (otomatik kurulum + NCCL tuning)
-├── 📄 requirements.txt     # Python bağımlılıkları
-├── 📄 PITCH.md             # Yatırımcı Sunumu (İngilizce)
-├── 📄 PITCH_TR.md          # Yatırımcı Sunumu (Türkçe)
-├── 📄 TRAINING_PLAN.md     # 3 Aşamalı Yol Haritası (İngilizce)
-├── 📄 TRAINING_PLAN_TR.md  # 3 Aşamalı Yol Haritası (Türkçe)
-├── 📄 TASK.md              # Operator Mode Görev Planı
-├── 📄 TASK_TR.md           # Operator Mode Görev Planı (TR)
-├── 📄 IMPLEMENTATION_PLAN.md # Uygulama Planı
-├── 📄 IMPLEMENTATION_PLAN_TR.md # Uygulama Planı (TR)
-├── 📄 WHITE_PAPER_LIQUIDROUTER.md # Teknik Derin Dalış (İngilizce)
-├── 📄 WHITE_PAPER_LIQUIDROUTER_TR.md # Teknik Derin Dalış (Türkçe)
-├── 📄 TECHNICAL_REPORT.md  # Detaylı Teknik Analiz (İngilizce)
-├── 📄 TECHNICAL_REPORT_TR.md # Detaylı Teknik Analiz (Türkçe)
-├── 📄 README.md            # İngilizce Dokümantasyon
-├── 📄 README_TR.md         # Türkçe Dokümantasyon
-├── 📄 README_CHECKLIST.md  # README denetim kontrol listesi (EN)
-├── 📄 README_CHECKLIST_TR.md # README denetim kontrol listesi (TR)
-├── 📄 LICENSE              # Özel Lisans (İngilizce)
-└── 📄 LICENSE_TR           # Özel Lisans (Türkçe)
+│   ├── 📄 asset_stack.md    # Asset stack index
+│   ├── 📄 asset_stack_TR.md # Asset stack index (TR)
+│   ├── 📄 dataset_health.md # Dataset health report (EN)
+│   ├── 📄 dataset_health_TR.md # Dataset health report (TR)
+│   ├── 📄 model_health.md  # Model health report (EN)
+│   ├── 📄 model_health_TR.md # Model health report (TR)
+│   ├── 📄 system_hardware.md # System hardware report (EN)
+│   └── 📄 system_hardware_TR.md # System hardware report (TR)
+├── 📂 checkpoints/         # Model checkpoints
+├── 📂 datasets/            # Training data (5-stage curriculum)
+│   ├── 📂 stage1/          # Curriculum stage 1
+│   ├── 📂 stage2/          # Curriculum stage 2
+│   ├── 📂 stage3/          # Curriculum stage 3
+│   ├── 📂 stage4/          # Curriculum stage 4
+│   ├── 📂 stage4_soul/     # Curriculum stage 4 (alt)
+│   ├── 📂 stage5/          # Curriculum stage 5
+│   ├── 📂 stage5_tools/    # Tool-use stage (alt)
+│   ├── 📂 logits/          # Precomputed logits cache
+│   ├── 📄 README.md        # Dataset overview (EN)
+│   ├── 📄 README_TR.md     # Dataset overview (TR)
+│   ├── 📄 SOURCES.md       # Sources (EN)
+│   ├── 📄 SOURCES_TR.md    # Sources (TR)
+│   ├── 📄 LICENSES.md      # Licenses (EN)
+│   ├── 📄 LICENSES_TR.md   # Licenses (TR)
+│   ├── 📄 filters.yaml     # Filtering policy
+│   ├── 📄 hashes.json      # Snapshot hashes
+│   ├── 📄 validation.jsonl # Validation set
+│   └── 📄 golden_samples.jsonl # 50 golden prompts
+├── 📂 logs/                # Training logs
+├── 📄 Dockerfile           # Containarized Environment
+├── 📄 run.sh               # Tek komut baslatici (auto-setup + NCCL tuning)
+├── 📄 requirements.txt     # Python dependencies
+├── 📄 SECURITY.md          # Security policy (EN)
+├── 📄 SECURITY_TR.md       # Security policy (TR)
+├── 📄 DECISIONS.md         # Architecture decisions (EN)
+├── 📄 DECISIONS_TR.md      # Architecture decisions (TR)
+├── 📄 PITCH.md             # Investor Pitch Deck (English)
+├── 📄 PITCH_TR.md          # Investor Pitch Deck (Turkish)
+├── 📄 TRAINING_PLAN.md     # 3-Phase Execution Roadmap (English)
+├── 📄 TRAINING_PLAN_TR.md  # 3-Phase Execution Roadmap (Turkish)
+├── 📄 TASK.md              # Operator Mode Task Plan
+├── 📄 TASK_TR.md           # Operator Mode Task Plan (TR)
+├── 📄 IMPLEMENTATION_PLAN.md # Implementation Plan
+├── 📄 IMPLEMENTATION_PLAN_TR.md # Implementation Plan (TR)
+├── 📄 WHITE_PAPER_LIQUIDROUTER.md # Technical Deep-Dive (English)
+├── 📄 WHITE_PAPER_LIQUIDROUTER_TR.md # Technical Deep-Dive (Turkish)
+├── 📄 TECHNICAL_REPORT.md  # Detailed Technical Analysis (English)
+├── 📄 TECHNICAL_REPORT_TR.md # Detailed Technical Analysis (Turkish)
+├── 📄 README.md            # English Documentation
+├── 📄 README_TR.md         # Turkish Documentation
+├── 📄 README_CHECKLIST.md  # README audit checklist (EN)
+├── 📄 README_CHECKLIST_TR.md # README audit checklist (TR)
+├── 📄 LICENSE              # Proprietary License (English)
+└── 📄 LICENSE_TR           # Ozel Lisans (Turkce)
 ```
 
 ---

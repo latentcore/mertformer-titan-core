@@ -1,0 +1,3 @@
+# Export override: mobile ONNX profile
+export_format: onnx_dynamic
+use_qinn: false

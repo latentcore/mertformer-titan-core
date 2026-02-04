@@ -1,0 +1,7 @@
+id: exp_001_baseline
+description: "Baseline run template (populate after first full training)"
+config_base: config/base.yaml
+model_override: null
+train_override: null
+export_override: null
+notes: "Fill with exact overrides used in the run."

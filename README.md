@@ -135,6 +135,58 @@
 - [reports/system_hardware.md](reports/system_hardware.md)
 - [reports/system_hardware_TR.md](reports/system_hardware_TR.md)
 
+**Ops & Governance**
+- [SECURITY.md](SECURITY.md)
+- [SECURITY_TR.md](SECURITY_TR.md)
+- [DECISIONS.md](DECISIONS.md)
+- [DECISIONS_TR.md](DECISIONS_TR.md)
+- [datasets/README.md](datasets/README.md)
+- [datasets/README_TR.md](datasets/README_TR.md)
+- [datasets/SOURCES.md](datasets/SOURCES.md)
+- [datasets/SOURCES_TR.md](datasets/SOURCES_TR.md)
+- [datasets/LICENSES.md](datasets/LICENSES.md)
+- [datasets/LICENSES_TR.md](datasets/LICENSES_TR.md)
+- [repro/seed_policy.md](repro/seed_policy.md)
+- [repro/seed_policy_TR.md](repro/seed_policy_TR.md)
+- [interfaces/inference_contract.md](interfaces/inference_contract.md)
+- [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md)
+- [economics/cost_model.md](economics/cost_model.md)
+- [economics/cost_model_TR.md](economics/cost_model_TR.md)
+- [economics/efficiency_report.md](economics/efficiency_report.md)
+- [economics/efficiency_report_TR.md](economics/efficiency_report_TR.md)
+- [limits/scaling_breakpoints.md](limits/scaling_breakpoints.md)
+- [limits/scaling_breakpoints_TR.md](limits/scaling_breakpoints_TR.md)
+- [postmortems/README.md](postmortems/README.md)
+- [postmortems/README_TR.md](postmortems/README_TR.md)
+- [postmortems/_template.md](postmortems/_template.md)
+- [postmortems/_template_TR.md](postmortems/_template_TR.md)
+- [prompts/changelog.md](prompts/changelog.md)
+- [prompts/changelog_TR.md](prompts/changelog_TR.md)
+- [tokenizer/stats.md](tokenizer/stats.md)
+- [tokenizer/stats_TR.md](tokenizer/stats_TR.md)
+- [tokenizer/drift_report.md](tokenizer/drift_report.md)
+- [tokenizer/drift_report_TR.md](tokenizer/drift_report_TR.md)
+- [ablations/results.md](ablations/results.md)
+- [ablations/results_TR.md](ablations/results_TR.md)
+- [ablations/no_moe/README.md](ablations/no_moe/README.md)
+- [ablations/no_moe/README_TR.md](ablations/no_moe/README_TR.md)
+- [ablations/no_liquid/README.md](ablations/no_liquid/README.md)
+- [ablations/no_liquid/README_TR.md](ablations/no_liquid/README_TR.md)
+- [ablations/dense_only/README.md](ablations/dense_only/README.md)
+- [ablations/dense_only/README_TR.md](ablations/dense_only/README_TR.md)
+- [ablations/bitlinear_off/README.md](ablations/bitlinear_off/README.md)
+- [ablations/bitlinear_off/README_TR.md](ablations/bitlinear_off/README_TR.md)
+- [experiments/exp_001_baseline/notes.md](experiments/exp_001_baseline/notes.md)
+- [experiments/exp_001_baseline/notes_TR.md](experiments/exp_001_baseline/notes_TR.md)
+- [tools/abuse_tests.md](tools/abuse_tests.md)
+- [tools/abuse_tests_TR.md](tools/abuse_tests_TR.md)
+- [tools/sandbox/README.md](tools/sandbox/README.md)
+- [tools/sandbox/README_TR.md](tools/sandbox/README_TR.md)
+- [tools/contracts/README.md](tools/contracts/README.md)
+- [tools/contracts/README_TR.md](tools/contracts/README_TR.md)
+- [training_dynamics/cold_vs_warm.md](training_dynamics/cold_vs_warm.md)
+- [training_dynamics/cold_vs_warm_TR.md](training_dynamics/cold_vs_warm_TR.md)
+
 ---
 
 <a id="overview"></a>
@@ -655,6 +707,8 @@ response = chat.generate(
 print(response)
 ```
 
+**Context limits**: default input limit is **4096 tokens** (`cfg.max_seq_len`). Output length is caller-defined; `scripts/chat.py` defaults to `--max_tokens=128`, and `scripts/benchmarks_internal.py` defaults to `--max-new-tokens=256`.
+
 ---
 
 <a id="benchmarks"></a>
@@ -774,7 +828,16 @@ Planlanan Türkçe veri kaynakları:
 ```bash
 NİHAİ/
 ├── 📂 config/              # Configuration files
-│   └── 📄 config.py        # Model & training hyperparameters (400+ lines)
+│   ├── 📄 config.py        # Model & training hyperparameters (400+ lines)
+│   ├── 📄 base.yaml        # Baseline configuration overlay
+│   ├── 📂 model/           # Model overlays
+│   │   ├── 📄 mertformer_small.yaml # Smaller debug variant
+│   │   └── 📄 mertformer_moe.yaml   # MoE baseline
+│   ├── 📂 train/           # Training overlays
+│   │   ├── 📄 pretrain.yaml
+│   │   └── 📄 finetune.yaml
+│   └── 📂 export/          # Export overlays
+│       └── 📄 onnx_mobile.yaml
 ├── 📂 layers/              # Model components
 │   ├── 📄 bitlinear.py     # BitNet 1.58-bit quantization
 │   ├── 📄 bitnet_patch.py  # BitNet patch helpers
@@ -822,6 +885,32 @@ NİHAİ/
 │   ├── 📄 __init__.py      # Package marker
 │   ├── 📂 reports/         # Script-generated reports
 │   └── 📂 runs/            # Script run artifacts
+├── 📂 eval/                # Evaluation entrypoints
+│   ├── 📄 gsm8k.py          # GSM8K evaluator (stub)
+│   ├── 📄 humaneval.py      # HumanEval wrapper
+│   ├── 📄 golden.py         # Golden evaluator wrapper
+│   └── 📄 report_builder.py # Eval summary builder
+├── 📂 ablations/           # Ablation templates
+│   ├── 📄 results.md        # Results table (EN)
+│   ├── 📄 results_TR.md     # Results table (TR)
+│   ├── 📂 no_moe/
+│   │   ├── 📄 README.md
+│   │   └── 📄 README_TR.md
+│   ├── 📂 no_liquid/
+│   │   ├── 📄 README.md
+│   │   └── 📄 README_TR.md
+│   ├── 📂 dense_only/
+│   │   ├── 📄 README.md
+│   │   └── 📄 README_TR.md
+│   └── 📂 bitlinear_off/
+│       ├── 📄 README.md
+│       └── 📄 README_TR.md
+├── 📂 experiments/         # Experiment registry
+│   └── 📂 exp_001_baseline/
+│       ├── 📄 config.yaml
+│       ├── 📄 metrics.json
+│       ├── 📄 notes.md
+│       └── 📄 notes_TR.md
 ├── 📂 assets/              # Branding & Synaptic Maps
 │   ├── 📄 header.png       # Futuristic Header Image
 │   └── 📄 synaptic_map.png # Layer Hierarchy Visualization
@@ -842,6 +931,54 @@ NİHAİ/
 │   ├── 📄 paths.py         # Path registry
 │   ├── 📄 telemetry.py     # Telemetry helpers (expected vs actual, snapshots)
 │   └── 📄 failure_budget.py # Failure budget monitor
+├── 📂 interfaces/          # Inference contracts
+│   ├── 📄 inference_contract.md
+│   ├── 📄 inference_contract_TR.md
+│   └── 📄 tokenizer_spec.json
+├── 📂 economics/           # Cost and efficiency modeling
+│   ├── 📄 cost_model.md
+│   ├── 📄 cost_model_TR.md
+│   ├── 📄 efficiency_report.md
+│   ├── 📄 efficiency_report_TR.md
+│   └── 📄 flops_estimator.py
+├── 📂 limits/              # Scaling breakpoints
+│   ├── 📄 scaling_breakpoints.md
+│   ├── 📄 scaling_breakpoints_TR.md
+│   └── 📄 stress_curves.png
+├── 📂 postmortems/         # Incident templates
+│   ├── 📄 README.md
+│   ├── 📄 README_TR.md
+│   ├── 📄 _template.md
+│   └── 📄 _template_TR.md
+├── 📂 prompts/             # System prompt versions
+│   ├── 📄 system_v1.txt
+│   ├── 📄 changelog.md
+│   └── 📄 changelog_TR.md
+├── 📂 tokenizer/           # Tokenizer metadata
+│   ├── 📄 tokenizer.json
+│   ├── 📄 stats.md
+│   ├── 📄 stats_TR.md
+│   ├── 📄 drift_report.md
+│   └── 📄 drift_report_TR.md
+├── 📂 tools/               # Tool sandbox & contracts
+│   ├── 📄 abuse_tests.md
+│   ├── 📄 abuse_tests_TR.md
+│   ├── 📂 sandbox/
+│   │   ├── 📄 README.md
+│   │   └── 📄 README_TR.md
+│   └── 📂 contracts/
+│       ├── 📄 README.md
+│       └── 📄 README_TR.md
+├── 📂 training_dynamics/   # Training dynamics notes
+│   ├── 📄 cold_vs_warm.md
+│   └── 📄 cold_vs_warm_TR.md
+├── 📂 repro/               # Reproducibility locks
+│   ├── 📄 env.lock
+│   ├── 📄 cuda.lock
+│   ├── 📄 seed_policy.md
+│   └── 📄 seed_policy_TR.md
+├── 📂 registry/            # Model registry
+│   └── 📄 mertformer_v0.1.json
 ├── 📂 reports/             # Executive Health & Validation Reports
 │   ├── 📄 one_pager.md      # One-pager (EN)
 │   ├── 📄 one_pager_TR.md   # One-pager (TR)
@@ -875,12 +1012,24 @@ NİHAİ/
 │   ├── 📂 stage5/          # Curriculum stage 5
 │   ├── 📂 stage5_tools/    # Tool-use stage (alt)
 │   ├── 📂 logits/          # Precomputed logits cache
+│   ├── 📄 README.md        # Dataset overview (EN)
+│   ├── 📄 README_TR.md     # Dataset overview (TR)
+│   ├── 📄 SOURCES.md       # Sources (EN)
+│   ├── 📄 SOURCES_TR.md    # Sources (TR)
+│   ├── 📄 LICENSES.md      # Licenses (EN)
+│   ├── 📄 LICENSES_TR.md   # Licenses (TR)
+│   ├── 📄 filters.yaml     # Filtering policy
+│   ├── 📄 hashes.json      # Snapshot hashes
 │   ├── 📄 validation.jsonl # Validation set
 │   └── 📄 golden_samples.jsonl # 50 golden prompts
 ├── 📂 logs/                # Training logs
 ├── 📄 Dockerfile           # Containarized Environment
 ├── 📄 run.sh               # One-command launcher (auto-setup + NCCL tuning)
 ├── 📄 requirements.txt     # Python dependencies
+├── 📄 SECURITY.md          # Security policy (EN)
+├── 📄 SECURITY_TR.md       # Security policy (TR)
+├── 📄 DECISIONS.md         # Architecture decisions (EN)
+├── 📄 DECISIONS_TR.md      # Architecture decisions (TR)
 ├── 📄 PITCH.md             # Investor Pitch Deck (English)
 ├── 📄 PITCH_TR.md          # Investor Pitch Deck (Turkish)
 ├── 📄 TRAINING_PLAN.md     # 3-Phase Execution Roadmap (English)
@@ -898,7 +1047,7 @@ NİHAİ/
 ├── 📄 README_CHECKLIST.md  # README audit checklist (EN)
 ├── 📄 README_CHECKLIST_TR.md # README audit checklist (TR)
 ├── 📄 LICENSE              # Proprietary License (English)
-└── 📄 LICENSE_TR           # Özel Lisans (Türkçe)
+└── 📄 LICENSE_TR           # Ozel Lisans (Turkce)
 ```
 
 ---
