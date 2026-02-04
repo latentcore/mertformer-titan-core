@@ -79,6 +79,7 @@
 - [Benchmarks](#benchmarks)
 - [Turkish Vision](#turkish-vision)
 - [FAQ](#faq)
+- [Appendix: Swarm Architecture (v5.2)](#appendix-swarm)
 - [License](#license)
 - [Contact](#contact)
 
@@ -895,6 +896,7 @@ To verify the authenticity of a shared run log or benchmark result:
 
 ---
 
+<a id="appendix-swarm"></a>
 ## 🏢 MertFormer Inc. - Autonomous Swarm Architecture (v5.2 - Sage Edition) [TARGET ARCHITECTURE] 🦉
 **Hardware**: NVIDIA RTX 5090 (45 Concurrent Agents)  
 **Software**: Multi-Agent Orchestrator (Python) + BitNet Workers (C++)

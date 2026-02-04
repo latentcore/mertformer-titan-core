@@ -79,6 +79,7 @@
 - [Kıyaslamalar (Benchmarks)](#kıyaslamalar-benchmarks)
 - [Türkiye Vizyonu](#türkiye-vizyonu)
 - [SSS](#sss)
+- [Ek: Sürü Mimarisi (v5.2)](#appendix-swarm)
 - [Lisans](#lisans)
 - [İletişim](#iletişim)
 
@@ -895,6 +896,7 @@ Paylaşılan bir eğitim sonucunun veya benchmark skorunun doğruluğunu teyit e
 
 ---
 
+<a id="appendix-swarm"></a>
 ## 🏢 MertFormer Inc. - Otonom Sürü Mimarisi (v5.2 - Bilge Sürümü) [HEDEF MİMARİ] 🦉
 **Donanım**: NVIDIA RTX 5090 (45 Eşzamanlı Ajan)  
 **Yazılım**: Çok Ajanlı Orkestratör (Python) + BitNet İşçileri (C++)
