@@ -774,19 +774,24 @@ NİHAİ/
 │   └── 📄 config.py        # Model & training hyperparameters (400+ lines)
 ├── 📂 layers/              # Model components
 │   ├── 📄 bitlinear.py     # BitNet 1.58-bit quantization
+│   ├── 📄 bitnet_patch.py  # BitNet patch helpers
 │   ├── 📄 mla.py           # Multi-Head Latent Attention + Flash Attention 2
 │   ├── 📄 moe.py           # Sparse MoE + LiquidRouter (contextual MoE routing)
 │   ├── 📄 liquid.py        # Liquid Neural Networks (CfC)
 │   ├── 📄 ffn.py           # Dense FeedForward (SwiGLU)
 │   ├── 📄 mertformer_block.py  # Transformer block assembly
-│   └── 📄 qinn.py          # Quantum-Inspired Unitary Layer
+│   ├── 📄 qinn.py          # Quantum-Inspired Unitary Layer
+│   └── 📄 __init__.py      # Package marker
 ├── 📂 model/               # Model assembly
-│   └── 📄 transformers.py  # MertFormer main class
+│   ├── 📄 transformers.py  # MertFormer main class
+│   └── 📄 __init__.py      # Package marker
 ├── 📂 train/               # Training pipeline
-│   └── 📄 train.py         # Main training loop (1200+ lines, production-grade)
+│   ├── 📄 train.py         # Main training loop (1200+ lines, production-grade)
+│   └── 📄 __init__.py      # Package marker
 ├── 📂 utils/               # Utilities
 │   ├── 📄 logger.py        # Logging infrastructure (WandB, CSV, JSONL)
-│   └── 📄 safety.py        # Safety helpers (kill switch utilities)
+│   ├── 📄 safety.py        # Safety helpers (kill switch utilities)
+│   └── 📄 __init__.py      # Package marker
 ├── 📂 scripts/             # Helper scripts & Reports
 │   ├── 📄 smart_runner.py  # Master Parallel Orchestrator (Data -> Distill -> Train)
 │   ├── 📄 titan_preflight.py # 🦅 Ultimate System Test Prophet (Zero-Footprint Full Verification)
@@ -802,12 +807,27 @@ NİHAİ/
 │   ├── 📄 checkpoint_restore_drill.py # Checkpoint restore drill
 │   ├── 📄 failure_budget_drill.py # Failure budget drill
 │   ├── 📄 build_investor_deck.py # PPTX deck generator
-│   └── 📂 reports/         # Dynamic system & health reports
+│   ├── 📄 eval.py          # GSM8K eval stub
+│   ├── 📄 mac_simulation.py # Mac simulation run
+│   ├── 📄 mini_titan_poc.py # Forensic PoC logger
+│   ├── 📄 scaling_audit_math.py # Scaling audit math
+│   ├── 📄 test_onnx_export.py # ONNX export test
+│   ├── 📄 titan_onnx_stress_test.py # ONNX stress test
+│   ├── 📄 train_tpu_turbo.py # TPU training launcher
+│   ├── 📄 verify_datasets.py # Dataset sanity checks
+│   ├── 📄 verify_onnx_local.py # ONNX verification (local)
+│   ├── 📄 __init__.py      # Package marker
+│   ├── 📂 reports/         # Script-generated reports
+│   └── 📂 runs/            # Script run artifacts
 ├── 📂 assets/              # Branding & Synaptic Maps
 │   ├── 📄 header.png       # Futuristic Header Image
 │   └── 📄 synaptic_map.png # Layer Hierarchy Visualization
 ├── 📂 tests/               # Unit & integration tests
+│   ├── 📄 test_architecture_integrity.py # Architecture integrity tests
+│   ├── 📄 test_comprehensive.py # End-to-end system tests
+│   └── 📄 test_model.py    # Model unit tests
 ├── 📂 orchestrator/        # Agentic runtime (optional / target v5.2)
+│   ├── 📄 __init__.py      # Package marker
 │   ├── 📄 core.py          # Orchestrator entrypoint
 │   ├── 📄 memory.py        # Memory store & retrieval
 │   ├── 📄 sense_engine.py  # Text/vision sensing
@@ -835,9 +855,24 @@ NİHAİ/
 │   ├── 📄 investor_deck.pptx # Investor deck (EN)
 │   ├── 📄 investor_deck_TR.pptx # Investor deck (TR)
 │   ├── 📄 asset_stack.md    # Asset stack index
-│   └── 📄 asset_stack_TR.md # Asset stack index (TR)
+│   ├── 📄 asset_stack_TR.md # Asset stack index (TR)
+│   ├── 📄 dataset_health.md # Dataset health report (EN)
+│   ├── 📄 dataset_health_TR.md # Dataset health report (TR)
+│   ├── 📄 model_health.md  # Model health report (EN)
+│   ├── 📄 model_health_TR.md # Model health report (TR)
+│   ├── 📄 system_hardware.md # System hardware report (EN)
+│   └── 📄 system_hardware_TR.md # System hardware report (TR)
 ├── 📂 checkpoints/         # Model checkpoints
 ├── 📂 datasets/            # Training data (5-stage curriculum)
+│   ├── 📂 stage1/          # Curriculum stage 1
+│   ├── 📂 stage2/          # Curriculum stage 2
+│   ├── 📂 stage3/          # Curriculum stage 3
+│   ├── 📂 stage4/          # Curriculum stage 4
+│   ├── 📂 stage4_soul/     # Curriculum stage 4 (alt)
+│   ├── 📂 stage5/          # Curriculum stage 5
+│   ├── 📂 stage5_tools/    # Tool-use stage (alt)
+│   ├── 📂 logits/          # Precomputed logits cache
+│   ├── 📄 validation.jsonl # Validation set
 │   └── 📄 golden_samples.jsonl # 50 golden prompts
 ├── 📂 logs/                # Training logs
 ├── 📄 Dockerfile           # Containarized Environment

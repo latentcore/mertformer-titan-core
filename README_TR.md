@@ -774,19 +774,24 @@ NİHAİ/
 │   └── 📄 config.py        # Model & eğitim hiperparametreleri (400+ satır)
 ├── 📂 layers/              # Model bileşenleri
 │   ├── 📄 bitlinear.py     # BitNet 1.58-bit kuantizasyon
+│   ├── 📄 bitnet_patch.py  # BitNet yama yardımcıları
 │   ├── 📄 mla.py           # Çok Başlı Latent Dikkat + Flash Attention 2
 │   ├── 📄 moe.py           # Seyrek MoE + LiquidRouter (bağlamsal MoE yönlendirme)
 │   ├── 📄 liquid.py        # Liquid Neural Networks (CfC)
 │   ├── 📄 ffn.py           # Yoğun İleri Beslemeli (SwiGLU)
 │   ├── 📄 mertformer_block.py  # Transformer blok montajı
-│   └── 📄 qinn.py          # Kuantum İlhamlı Üniter Katman
+│   ├── 📄 qinn.py          # Kuantum İlhamlı Üniter Katman
+│   └── 📄 __init__.py      # Paket işareti
 ├── 📂 model/               # Model montajı
-│   └── 📄 transformers.py  # MertFormer ana sınıfı
+│   ├── 📄 transformers.py  # MertFormer ana sınıfı
+│   └── 📄 __init__.py      # Paket işareti
 ├── 📂 train/               # Eğitim hattı
-│   └── 📄 train.py         # Ana eğitim döngüsü (1200+ satır, üretim kalitesi)
+│   ├── 📄 train.py         # Ana eğitim döngüsü (1200+ satır, üretim kalitesi)
+│   └── 📄 __init__.py      # Paket işareti
 ├── 📂 utils/               # Araçlar
 │   ├── 📄 logger.py        # Loglama altyapısı (WandB, CSV, JSONL)
-│   └── 📄 safety.py        # Güvenlik yardımcıları (kill switch araçları)
+│   ├── 📄 safety.py        # Güvenlik yardımcıları (kill switch araçları)
+│   └── 📄 __init__.py      # Paket işareti
 ├── 📂 scripts/             # Yardımcı betikler ve Raporlar
 │   ├── 📄 smart_runner.py  # Akıllı Paralel Orkestratör (Veri -> Damıtma -> Eğitim)
 │   ├── 📄 titan_preflight.py # 🦅 Nihai Sistem Test Pilotu (İz Bırakmayan Tam Doğrulama)
@@ -802,12 +807,27 @@ NİHAİ/
 │   ├── 📄 checkpoint_restore_drill.py # Checkpoint restore testi
 │   ├── 📄 failure_budget_drill.py # Failure budget testi
 │   ├── 📄 build_investor_deck.py # PPTX deck üretici
-│   └── 📂 reports/         # Dinamik sistem ve sağlık raporları
+│   ├── 📄 eval.py          # GSM8K değerlendirme stub
+│   ├── 📄 mac_simulation.py # Mac simülasyon koşusu
+│   ├── 📄 mini_titan_poc.py # Adli PoC logger
+│   ├── 📄 scaling_audit_math.py # Ölçekleme denetim matematiği
+│   ├── 📄 test_onnx_export.py # ONNX export testi
+│   ├── 📄 titan_onnx_stress_test.py # ONNX stres testi
+│   ├── 📄 train_tpu_turbo.py # TPU eğitim başlatıcı
+│   ├── 📄 verify_datasets.py # Veri seti sağlık kontrolleri
+│   ├── 📄 verify_onnx_local.py # ONNX doğrulama (lokal)
+│   ├── 📄 __init__.py      # Paket işareti
+│   ├── 📂 reports/         # Script üretimi raporlar
+│   └── 📂 runs/            # Script koşu çıktıları
 ├── 📂 assets/              # Markalama ve Sinaptik Haritalar
 │   ├── 📄 header.png       # Fütüristik Başlık Görseli
 │   └── 📄 synaptic_map.png # Katman Hiyerarşisi Görselleştirmesi
 ├── 📂 tests/               # Birim & entegrasyon testleri
+│   ├── 📄 test_architecture_integrity.py # Mimari bütünlük testleri
+│   ├── 📄 test_comprehensive.py # Uçtan uca sistem testleri
+│   └── 📄 test_model.py    # Model birim testleri
 ├── 📂 orchestrator/        # Agentic çalışma zamanı (opsiyonel / hedef v5.2)
+│   ├── 📄 __init__.py      # Paket işareti
 │   ├── 📄 core.py          # Orchestrator giriş noktası
 │   ├── 📄 memory.py        # Hafıza depolama ve erişim
 │   ├── 📄 sense_engine.py  # Metin/görsel algı
@@ -835,9 +855,24 @@ NİHAİ/
 │   ├── 📄 investor_deck.pptx # Investor deck (EN)
 │   ├── 📄 investor_deck_TR.pptx # Investor deck (TR)
 │   ├── 📄 asset_stack.md    # Asset stack indeksi
-│   └── 📄 asset_stack_TR.md # Asset stack indeksi (TR)
+│   ├── 📄 asset_stack_TR.md # Asset stack indeksi (TR)
+│   ├── 📄 dataset_health.md # Veri seti sağlık raporu (EN)
+│   ├── 📄 dataset_health_TR.md # Veri seti sağlık raporu (TR)
+│   ├── 📄 model_health.md  # Model sağlık raporu (EN)
+│   ├── 📄 model_health_TR.md # Model sağlık raporu (TR)
+│   ├── 📄 system_hardware.md # Sistem donanım raporu (EN)
+│   └── 📄 system_hardware_TR.md # Sistem donanım raporu (TR)
 ├── 📂 checkpoints/         # Model kontrol noktaları
 ├── 📂 datasets/            # Eğitim verileri (5 aşamalı müfredat)
+│   ├── 📂 stage1/          # Müfredat aşaması 1
+│   ├── 📂 stage2/          # Müfredat aşaması 2
+│   ├── 📂 stage3/          # Müfredat aşaması 3
+│   ├── 📂 stage4/          # Müfredat aşaması 4
+│   ├── 📂 stage4_soul/     # Müfredat aşaması 4 (alt)
+│   ├── 📂 stage5/          # Müfredat aşaması 5
+│   ├── 📂 stage5_tools/    # Araç kullanımı (alt)
+│   ├── 📂 logits/          # Ön-hesaplanmış logits önbelleği
+│   ├── 📄 validation.jsonl # Doğrulama seti
 │   └── 📄 golden_samples.jsonl # 50 golden prompt
 ├── 📂 logs/                # Eğitim günlükleri
 ├── 📄 Dockerfile           # Konteynırlaştırılmış Ortam
