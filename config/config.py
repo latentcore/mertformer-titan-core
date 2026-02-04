@@ -410,8 +410,9 @@ def _load_config_overlays() -> Dict[str, Any]:
     merged: Dict[str, Any] = {}
 
     base_override = os.environ.get("MERTFORMER_CONFIG")
-    base_path = _resolve_config_path(config_dir, base_override) if base_override else (config_dir / "base.yaml")
-    merged.update(_load_yaml(base_path))
+    if base_override:
+        base_path = _resolve_config_path(config_dir, base_override)
+        merged.update(_load_yaml(base_path))
 
     model_override = os.environ.get("MERTFORMER_MODEL_CONFIG")
     if model_override:
