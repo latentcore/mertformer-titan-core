@@ -1,7 +1,7 @@
 # ==============================================================================
 # MERTFORMER TITAN - REQUIREMENTS
 # ==============================================================================
-# Version: v26.5 - Production Ready
+# Version: v27.0 - Production Ready
 # Platform: CUDA / MPS / CPU
 # ==============================================================================
 
@@ -36,12 +36,14 @@ psutil>=5.9
 # requests>=2.31          # HTTP client
 # SpeechRecognition>=3.10 # Voice input
 # Pillow>=9.5             # Image processing
-bitsandbytes>=0.41.0
-flash-attn>=2.5.0
-huggingface_hub
-scipy
+# CUDA-specific (install via run.sh on Linux)
+# bitsandbytes>=0.41.0
+# flash-attn>=2.5.0
+
+huggingface_hub>=0.20
+scipy>=1.10
 onnx>=1.14
-onnxscript
+onnxscript>=0.1.0
 onnx-simplifier>=0.4.33  # Mobile Optimization (Critical)
 wandb>=0.15.0            # Experiment Tracking
-galore-torch             # GaLore Optimizer (VRAM Saver)
+galore-torch>=0.0.1      # GaLore Optimizer (VRAM Saver)
