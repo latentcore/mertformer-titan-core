@@ -6,10 +6,12 @@ __pycache__/
 .DS_Store
 .env
 venv/
+.titan-venv/
 .idea/
 .vscode/
 .ipynb_checkpoints/
 wandb/
+.pytest_cache/
 *.zip
 
 # Heavy Files (Models & Data)
