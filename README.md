@@ -67,60 +67,6 @@
 
 ---
 
-## 🏢 MertFormer Inc. - Autonomous Swarm Architecture (v5.2 - Sage Edition) [TARGET ARCHITECTURE] 🦉
-**Hardware**: NVIDIA RTX 5090 (45 Concurrent Agents)  
-**Software**: Multi-Agent Orchestrator (Python) + BitNet Workers (C++)
-
-### 🏔️ VİZYON: BİLGE VE ÖĞRENEN (SAGE & LEARNER)
-Bu sürüm, sadece üreten değil, her hatasından ders çıkaran ve her projede "Ustalık Seviyesi" artan bir sistemdir. **Bir hata sadece bir kez yapılır.**
-
-### 🚦 TIER: DEFCON PROTOKOLLERİ
-*   **Tier 1 (Nano)**: 3 Ajan.
-*   **Tier 2 (Micro)**: 15 Ajan.
-*   **Tier 3 (Omega)**: 45 Ajan.
-
-### 📊 ORGANİZASYON ŞEMASI (Total: 45 Ajan)
-
-#### 1. 🧠 YÖNETİM & STRATEJİ (EXECUTIVE) - [5 Ajan]
-*   **1x CEO (Grandmaster - DIGITAL TWIN)**: Senin dijital kopyan (15M Token Arşivi). Son kararı verir.
-*   **1x CTO (Architect)**: "Meta-Learning" Lideri. Her proje sonunda hataları analiz eder ve "Kurallar" koyar.
-*   **1x CSO (Chief Safety Officer)**: Kill Switch & Alignment.
-*   **2x PM (Task Broker)**: İş dağıtımı ve takibi.
-
-#### 2. 🏭 ÜRETİM HATTI (PRODUCTION) - [12 Ajan]
-*   **5x Frontend Dev / 4x Backend Dev / 3x DevOps**: Kod Üretimi ve CI/CD.
-
-#### 3. 🛡️ KALİTE & GÜVENLİK (QA & SEC) - [8 Ajan]
-*   **3x QA Tester / 3x Red Team / 2x Code Reviewer**: Sıkı denetim ve sızma testleri.
-
-#### 4. 🌍 İSTİHBARAT & BELLEK (INTEL) - [10 Ajan]
-*   **2x Researcher / 2x Oracle (Gemini) / 1x Legal**: Bilgi toplama ve hukuk.
-*   **3x JANITOR (MEMORY SURGEONS & HISTORIAN)**:
-    *   *Vector Implant*: Bilgileri saklar.
-    *   ***The Historian (YENİ)***: Proje bitince devreye girer. Hatanın kök nedenini (Root Cause) "Dersler DB"ye işler.
-*   **2x TOOLSMITH**: Eksik araçları (scraper, converter) o an yazar.
-
-#### 5. 🔮 SİMÜLASYON ve GELECEK (MATRIX) - [5 Ajan]
-*   **3x Persona Bot / 2x Market Analyst**: Kullanıcı simülasyonu ve pazar analizi.
-
-#### 6. 🎨 TASARIM (CREATIVE) - [3 Ajan]
-*   **2x Designer**: UI/UX.
-*   **1x Technical Writer (RAPORTÖR)**: Proje sonunda profesyonel "Post-Mortem Raporu" sunar.
-
-#### 7. 🏛️ HAZİNE VE ADALET (TREASURY) - [2 Ajan]
-*   **2x Ledger Keeper**: Blockchain tabanlı işlem kaydı.
-
----
-
-### 🧬 v5.2 SAGE MEKANİZMALARI
-
-1.  **🦉 The Wisdom Loop (Bilgelik Döngüsü)**: Sistem her resetlendiğinde tecrübesi artar. Hatalar kurala dönüşür.
-2.  **👤 The Mert Protocol (Digital Twin)**: 15M tokenlik arşiv ile senin gibi düşünür.
-3.  **🚦 Adaptive Scaling**: İhtiyaca göre kaynak tüketir (Nano/Micro/Omega).
-4.  **💰 Swarm Economy**: Ajanlar arası puanlama ile kaliteyi artırır.
-
----
-
 ## 📋 Table of Contents
 
 - [Overview](#overview)
@@ -946,6 +892,60 @@ To verify the authenticity of a shared run log or benchmark result:
 *   **v30.0**: Academic publication of the `LiquidRouter` architecture.
 *   **v31.0**: Comprehensive NLU benchmark suite (MMLU, HumanEval-TR).
 *   **v32.0+**: **Biological Intelligence Synthesis** (Synaptic Plasticity & Neuromodulation targets).
+
+---
+
+## 🏢 MertFormer Inc. - Autonomous Swarm Architecture (v5.2 - Sage Edition) [TARGET ARCHITECTURE] 🦉
+**Hardware**: NVIDIA RTX 5090 (45 Concurrent Agents)  
+**Software**: Multi-Agent Orchestrator (Python) + BitNet Workers (C++)
+
+### 🏔️ VİZYON: BİLGE VE ÖĞRENEN (SAGE & LEARNER)
+Bu sürüm, sadece üreten değil, her hatasından ders çıkaran ve her projede "Ustalık Seviyesi" artan bir sistemdir. **Bir hata sadece bir kez yapılır.**
+
+### 🚦 TIER: DEFCON PROTOKOLLERİ
+*   **Tier 1 (Nano)**: 3 Ajan.
+*   **Tier 2 (Micro)**: 15 Ajan.
+*   **Tier 3 (Omega)**: 45 Ajan.
+
+### 📊 ORGANİZASYON ŞEMASI (Total: 45 Ajan)
+
+#### 1. 🧠 YÖNETİM & STRATEJİ (EXECUTIVE) - [5 Ajan]
+*   **1x CEO (Grandmaster - DIGITAL TWIN)**: Senin dijital kopyan (15M Token Arşivi). Son kararı verir.
+*   **1x CTO (Architect)**: "Meta-Learning" Lideri. Her proje sonunda hataları analiz eder ve "Kurallar" koyar.
+*   **1x CSO (Chief Safety Officer)**: Kill Switch & Alignment.
+*   **2x PM (Task Broker)**: İş dağıtımı ve takibi.
+
+#### 2. 🏭 ÜRETİM HATTI (PRODUCTION) - [12 Ajan]
+*   **5x Frontend Dev / 4x Backend Dev / 3x DevOps**: Kod Üretimi ve CI/CD.
+
+#### 3. 🛡️ KALİTE & GÜVENLİK (QA & SEC) - [8 Ajan]
+*   **3x QA Tester / 3x Red Team / 2x Code Reviewer**: Sıkı denetim ve sızma testleri.
+
+#### 4. 🌍 İSTİHBARAT & BELLEK (INTEL) - [10 Ajan]
+*   **2x Researcher / 2x Oracle (Gemini) / 1x Legal**: Bilgi toplama ve hukuk.
+*   **3x JANITOR (MEMORY SURGEONS & HISTORIAN)**:
+    *   *Vector Implant*: Bilgileri saklar.
+    *   ***The Historian (YENİ)***: Proje bitince devreye girer. Hatanın kök nedenini (Root Cause) "Dersler DB"ye işler.
+*   **2x TOOLSMITH**: Eksik araçları (scraper, converter) o an yazar.
+
+#### 5. 🔮 SİMÜLASYON ve GELECEK (MATRIX) - [5 Ajan]
+*   **3x Persona Bot / 2x Market Analyst**: Kullanıcı simülasyonu ve pazar analizi.
+
+#### 6. 🎨 TASARIM (CREATIVE) - [3 Ajan]
+*   **2x Designer**: UI/UX.
+*   **1x Technical Writer (RAPORTÖR)**: Proje sonunda profesyonel "Post-Mortem Raporu" sunar.
+
+#### 7. 🏛️ HAZİNE VE ADALET (TREASURY) - [2 Ajan]
+*   **2x Ledger Keeper**: Blockchain tabanlı işlem kaydı.
+
+---
+
+### 🧬 v5.2 SAGE MEKANİZMALARI
+
+1.  **🦉 The Wisdom Loop (Bilgelik Döngüsü)**: Sistem her resetlendiğinde tecrübesi artar. Hatalar kurala dönüşür.
+2.  **👤 The Mert Protocol (Digital Twin)**: 15M tokenlik arşiv ile senin gibi düşünür.
+3.  **🚦 Adaptive Scaling**: İhtiyaca göre kaynak tüketir (Nano/Micro/Omega).
+4.  **💰 Swarm Economy**: Ajanlar arası puanlama ile kaliteyi artırır.
 
 ---
 

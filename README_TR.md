@@ -67,60 +67,6 @@
 
 ---
 
-## 🏢 MertFormer Inc. - Otonom Sürü Mimarisi (v5.2 - Bilge Sürümü) [HEDEF MİMARİ] 🦉
-**Donanım**: NVIDIA RTX 5090 (45 Eşzamanlı Ajan)  
-**Yazılım**: Çok Ajanlı Orkestratör (Python) + BitNet İşçileri (C++)
-
-### 🏔️ VİZYON: BİLGE VE ÖĞRENEN (SAGE & LEARNER)
-Bu sürüm, sadece üreten değil, her hatasından ders çıkaran ve her projede "Ustalık Seviyesi" artan bir sistemdir. **Bir hata sadece bir kez yapılır.**
-
-### 🚦 TIER: DEFCON PROTOKOLLERİ
-*   **Tier 1 (Nano)**: 3 Ajan.
-*   **Tier 2 (Micro)**: 15 Ajan.
-*   **Tier 3 (Omega)**: 45 Ajan.
-
-### 📊 ORGANİZASYON ŞEMASI (Toplam: 45 Ajan)
-
-#### 1. 🧠 YÖNETİM & STRATEJİ (EXECUTIVE) - [5 Ajan]
-*   **1x CEO (Grandmaster - DIGITAL TWIN)**: Senin dijital kopyan (15M Token Arşivi). Son kararı verir.
-*   **1x CTO (Architect)**: "Meta-Learning" Lideri. Her proje sonunda hataları analiz eder ve "Kurallar" koyar.
-*   **1x CSO (Chief Safety Officer)**: Kill Switch ve Hizalama (Alignment).
-*   **2x PM (Task Broker)**: İş dağıtımı ve takibi.
-
-#### 2. 🏭 ÜRETİM HATTI (PRODUCTION) - [12 Ajan]
-*   **5x Frontend Dev / 4x Backend Dev / 3x DevOps**: Kod Üretimi ve CI/CD süreçleri.
-
-#### 3. 🛡️ KALİTE & GÜVENLİK (QA & SEC) - [8 Ajan]
-*   **3x QA Tester / 3x Red Team / 2x Code Reviewer**: Sıkı denetim ve sızma testleri.
-
-#### 4. 🌍 İSTİHBARAT & BELLEK (INTEL) - [10 Ajan]
-*   **2x Researcher / 2x Oracle (Gemini) / 1x Legal**: Bilgi toplama ve hukuk süreçleri.
-*   **3x JANITOR (MEMORY SURGEONS & HISTORIAN)**:
-    *   *Vector Implant*: Bilgileri kalıcı saklar.
-    *   ***The Historian (YENİ)***: Proje bitince devreye girer. Hatanın kök nedenini "Dersler Veritabanı"na işler.
-*   **2x TOOLSMITH**: Eksik araçları (kazıyıcı, dönüştürücü) o an yazar.
-
-#### 5. 🔮 SİMÜLASYON ve GELECEK (MATRIX) - [5 Ajan]
-*   **3x Persona Bot / 2x Market Analyst**: Kullanıcı simülasyonu ve pazar analizi.
-
-#### 6. 🎨 TASARIM (CREATIVE) - [3 Ajan]
-*   **2x Designer**: UI/UX Tasarımı.
-*   **1x Technical Writer (RAPORTÖR)**: Proje sonunda profesyonel "Otopsi Raporu" sunar.
-
-#### 7. 🏛️ HAZİNE VE ADALET (TREASURY) - [2 Ajan]
-*   **2x Ledger Keeper**: Blockchain tabanlı şeffaf işlem kaydı.
-
----
-
-### 🧬 v5.2 BİLGE (SAGE) MEKANİZMALARI
-
-1.  **🦉 The Wisdom Loop (Bilgelik Döngüsü)**: Sistem her sıfırlandığında tecrübesi artar. Hatalar otomatik kurala dönüşür.
-2.  **👤 The Mert Protocol (Dijital İkiz)**: 15M tokenlik arşiv ile direkt senin gibi karar verir.
-3.  **🚦 Adaptif Ölçekleme**: Görevin büyüklüğüne göre kaynak tüketir (Nano/Micro/Omega).
-4.  **💰 Sürü Ekonomisi**: Ajanlar arası performans puanlama ile kaliteyi maksimize eder.
-
----
-
 ## 📋 İçindekiler
 
 - [Genel Bakış](#genel-bakış)
@@ -946,6 +892,60 @@ Paylaşılan bir eğitim sonucunun veya benchmark skorunun doğruluğunu teyit e
 *   **v30.0**: `LiquidRouter` mimarisinin akademik yayın ve makale süreci.
 *   **v31.0**: Kapsamlı NLU kıyaslama paketi (MMLU, HumanEval-TR).
 *   **v32.0+**: **Biyolojik Zeka Sentezi** (Sinaptik Plastisite ve Nöromodülasyon hedefleri).
+
+---
+
+## 🏢 MertFormer Inc. - Otonom Sürü Mimarisi (v5.2 - Bilge Sürümü) [HEDEF MİMARİ] 🦉
+**Donanım**: NVIDIA RTX 5090 (45 Eşzamanlı Ajan)  
+**Yazılım**: Çok Ajanlı Orkestratör (Python) + BitNet İşçileri (C++)
+
+### 🏔️ VİZYON: BİLGE VE ÖĞRENEN (SAGE & LEARNER)
+Bu sürüm, sadece üreten değil, her hatasından ders çıkaran ve her projede "Ustalık Seviyesi" artan bir sistemdir. **Bir hata sadece bir kez yapılır.**
+
+### 🚦 TIER: DEFCON PROTOKOLLERİ
+*   **Tier 1 (Nano)**: 3 Ajan.
+*   **Tier 2 (Micro)**: 15 Ajan.
+*   **Tier 3 (Omega)**: 45 Ajan.
+
+### 📊 ORGANİZASYON ŞEMASI (Toplam: 45 Ajan)
+
+#### 1. 🧠 YÖNETİM & STRATEJİ (EXECUTIVE) - [5 Ajan]
+*   **1x CEO (Grandmaster - DIGITAL TWIN)**: Senin dijital kopyan (15M Token Arşivi). Son kararı verir.
+*   **1x CTO (Architect)**: "Meta-Learning" Lideri. Her proje sonunda hataları analiz eder ve "Kurallar" koyar.
+*   **1x CSO (Chief Safety Officer)**: Kill Switch ve Hizalama (Alignment).
+*   **2x PM (Task Broker)**: İş dağıtımı ve takibi.
+
+#### 2. 🏭 ÜRETİM HATTI (PRODUCTION) - [12 Ajan]
+*   **5x Frontend Dev / 4x Backend Dev / 3x DevOps**: Kod Üretimi ve CI/CD süreçleri.
+
+#### 3. 🛡️ KALİTE & GÜVENLİK (QA & SEC) - [8 Ajan]
+*   **3x QA Tester / 3x Red Team / 2x Code Reviewer**: Sıkı denetim ve sızma testleri.
+
+#### 4. 🌍 İSTİHBARAT & BELLEK (INTEL) - [10 Ajan]
+*   **2x Researcher / 2x Oracle (Gemini) / 1x Legal**: Bilgi toplama ve hukuk süreçleri.
+*   **3x JANITOR (MEMORY SURGEONS & HISTORIAN)**:
+    *   *Vector Implant*: Bilgileri kalıcı saklar.
+    *   ***The Historian (YENİ)***: Proje bitince devreye girer. Hatanın kök nedenini "Dersler Veritabanı"na işler.
+*   **2x TOOLSMITH**: Eksik araçları (kazıyıcı, dönüştürücü) o an yazar.
+
+#### 5. 🔮 SİMÜLASYON ve GELECEK (MATRIX) - [5 Ajan]
+*   **3x Persona Bot / 2x Market Analyst**: Kullanıcı simülasyonu ve pazar analizi.
+
+#### 6. 🎨 TASARIM (CREATIVE) - [3 Ajan]
+*   **2x Designer**: UI/UX Tasarımı.
+*   **1x Technical Writer (RAPORTÖR)**: Proje sonunda profesyonel "Otopsi Raporu" sunar.
+
+#### 7. 🏛️ HAZİNE VE ADALET (TREASURY) - [2 Ajan]
+*   **2x Ledger Keeper**: Blockchain tabanlı şeffaf işlem kaydı.
+
+---
+
+### 🧬 v5.2 BİLGE (SAGE) MEKANİZMALARI
+
+1.  **🦉 The Wisdom Loop (Bilgelik Döngüsü)**: Sistem her sıfırlandığında tecrübesi artar. Hatalar otomatik kurala dönüşür.
+2.  **👤 The Mert Protocol (Dijital İkiz)**: 15M tokenlik arşiv ile direkt senin gibi karar verir.
+3.  **🚦 Adaptif Ölçekleme**: Görevin büyüklüğüne göre kaynak tüketir (Nano/Micro/Omega).
+4.  **💰 Sürü Ekonomisi**: Ajanlar arası performans puanlama ile kaliteyi maksimize eder.
 
 ---
 
