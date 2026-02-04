@@ -286,6 +286,70 @@ else
     echo "⚠️ Benchmarks skipped (BENCHMARK_SKIP set)."
 fi
 
+# ------------------------------------------------------------------------------
+# 🧪 6.7. GOLDEN SAMPLE EVAL (BEST + LATEST)
+# ------------------------------------------------------------------------------
+if [ -z "$GOLDEN_EVAL_SKIP" ]; then
+    echo "🧪 Running golden sample eval (best + latest)..."
+    readarray -t GOLDEN_CKPTS < <(python3 - <<'PY'
+from pathlib import Path
+import os
+
+def pick_checkpoint(suffix: str) -> str:
+    candidates = []
+    env_key = f"GOLDEN_EVAL_CKPT_{suffix.upper()}"
+    env_ckpt = os.environ.get(env_key)
+    if env_ckpt:
+        candidates.append(Path(env_ckpt))
+
+    try:
+        from config.config import cfg
+        save_dir = Path(cfg.save_dir)
+        model_name = cfg.model_name
+    except Exception:
+        save_dir = Path("checkpoints")
+        model_name = None
+
+    if model_name:
+        candidates.append(save_dir / f"{model_name}_{suffix}.pt")
+
+    if save_dir.exists():
+        candidates += sorted(save_dir.glob(f"*_{suffix}.pt"))
+
+    root = Path("checkpoints")
+    if root.exists():
+        candidates += sorted(root.rglob(f"*_{suffix}.pt"))
+
+    for c in candidates:
+        if c and c.exists():
+            return str(c)
+    return ""
+
+best = pick_checkpoint("best")
+latest = pick_checkpoint("latest")
+
+seen = set()
+ordered = []
+for ckpt in (best, latest):
+    if ckpt and ckpt not in seen:
+        ordered.append(ckpt)
+        seen.add(ckpt)
+
+print("\n".join(ordered))
+PY
+    )
+    if [ "${#GOLDEN_CKPTS[@]}" -eq 0 ]; then
+        echo "⚠️ Golden eval skipped (checkpoint not found)."
+    else
+        for ckpt in "${GOLDEN_CKPTS[@]}"; do
+            echo "🧪 Golden eval on: $ckpt"
+            python3 scripts/golden_eval.py --run-model --ckpt "$ckpt" 2>&1 | tee -a logs/golden_eval.log
+        done
+    fi
+else
+    echo "⚠️ Golden eval skipped (GOLDEN_EVAL_SKIP set)."
+fi
+
 # Eğitim bitti, şimdi paketle ve temizle
 echo "🚀 EĞİTİM TAMAMLANDI. MOBİL EXPORT BAŞLATILIYOR..."
 python3 scripts/mobile_export.py

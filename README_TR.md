@@ -90,12 +90,14 @@
 ## 📚 Doküman Dizini
 
 **Çekirdek**
+Ana giriş dokümanları ve checklistler.
 - [README.md](README.md)
 - [README_TR.md](README_TR.md)
 - [README_CHECKLIST.md](README_CHECKLIST.md)
 - [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md)
 
 **Planlar**
+Yol haritaları ve operatör planları.
 - [TASK.md](TASK.md)
 - [TASK_TR.md](TASK_TR.md)
 - [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)
@@ -104,12 +106,14 @@
 - [TRAINING_PLAN_TR.md](TRAINING_PLAN_TR.md)
 
 **Teknik**
+Derin teknik analiz ve araştırma referansları.
 - [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md)
 - [TECHNICAL_REPORT_TR.md](TECHNICAL_REPORT_TR.md)
 - [WHITE_PAPER_LIQUIDROUTER.md](WHITE_PAPER_LIQUIDROUTER.md)
 - [WHITE_PAPER_LIQUIDROUTER_TR.md](WHITE_PAPER_LIQUIDROUTER_TR.md)
 
 **Sunum & Asset**
+Yatırımcı materyalleri ve lansman varlıkları.
 - [PITCH.md](PITCH.md)
 - [PITCH_TR.md](PITCH_TR.md)
 - [reports/investor_deck.pptx](reports/investor_deck.pptx)
@@ -136,6 +140,7 @@
 - [reports/system_hardware_TR.md](reports/system_hardware_TR.md)
 
 **Operasyon & Yönetişim**
+Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 - [SECURITY.md](SECURITY.md)
 - [SECURITY_TR.md](SECURITY_TR.md)
 - [DECISIONS.md](DECISIONS.md)
@@ -1172,7 +1177,8 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 - **Microsoft Research**: BitNet kuantizasyon araştırması
 - **Liquid AI**: Liquid Neural Networks (CfC) ilhamı
 - **DeepSeek**: Çok Başlı Latent Dikkat (MLA) mimarisi
-- **NVIDIA**: Flash Attention 2, Apex optimizasyonları, NCCL
+- **HazyResearch / Stanford (Tri Dao ve ekip)**: Flash Attention 2
+- **NVIDIA**: Apex optimizasyonları, NCCL
 - **Hugging Face**: Transformers, Accelerate, Datasets kütüphaneleri
 - **Türkçe Yapay Zeka Topluluğu**: Destek ve geri bildirim
 
@@ -1230,4 +1236,3 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 **"Tohumu ektik, şimdi ormanı izleme vakti."**
 
 </div>
-

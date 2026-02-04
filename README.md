@@ -90,12 +90,14 @@
 ## 📚 Docs Index
 
 **Core**
+Primary entry docs and checklists.
 - [README.md](README.md)
 - [README_TR.md](README_TR.md)
 - [README_CHECKLIST.md](README_CHECKLIST.md)
 - [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md)
 
 **Plans**
+Execution roadmaps and operator plans.
 - [TASK.md](TASK.md)
 - [TASK_TR.md](TASK_TR.md)
 - [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)
@@ -104,12 +106,14 @@
 - [TRAINING_PLAN_TR.md](TRAINING_PLAN_TR.md)
 
 **Technical**
+Deep-dive architecture and research references.
 - [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md)
 - [TECHNICAL_REPORT_TR.md](TECHNICAL_REPORT_TR.md)
 - [WHITE_PAPER_LIQUIDROUTER.md](WHITE_PAPER_LIQUIDROUTER.md)
 - [WHITE_PAPER_LIQUIDROUTER_TR.md](WHITE_PAPER_LIQUIDROUTER_TR.md)
 
 **Pitch & Assets**
+Investor-facing materials and launch assets.
 - [PITCH.md](PITCH.md)
 - [PITCH_TR.md](PITCH_TR.md)
 - [reports/investor_deck.pptx](reports/investor_deck.pptx)
@@ -136,6 +140,7 @@
 - [reports/system_hardware_TR.md](reports/system_hardware_TR.md)
 
 **Ops & Governance**
+Security, provenance, reproducibility, and ops notes.
 - [SECURITY.md](SECURITY.md)
 - [SECURITY_TR.md](SECURITY_TR.md)
 - [DECISIONS.md](DECISIONS.md)
@@ -1172,7 +1177,8 @@ This project is **confidential and proprietary**. All rights are reserved by the
 - **Microsoft Research**: BitNet quantization research
 - **Liquid AI**: Liquid Neural Networks (CfC) inspiration
 - **DeepSeek**: Multi-Head Latent Attention (MLA) architecture
-- **NVIDIA**: Flash Attention 2, Apex optimizations, NCCL
+- **HazyResearch / Stanford (Tri Dao et al.)**: Flash Attention 2
+- **NVIDIA**: Apex optimizations, NCCL
 - **Hugging Face**: Transformers, Accelerate, Datasets libraries
 - **Turkish AI Community**: Support and feedback
 
