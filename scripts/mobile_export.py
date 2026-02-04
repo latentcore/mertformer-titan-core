@@ -251,20 +251,13 @@ def export_production_model(ckpt_override=None, output_dir=None, bitpack: bool =
     # -------------------------------------------------------------------------
     # 4.5 ONNX METADATA (BITPACK HOOK)
     # -------------------------------------------------------------------------
-    if (bitpack or os.getenv("MERTFORMER_BITPACK", "0") == "1") and 'onnx' in sys.modules:
+    if bitpack or os.getenv("MERTFORMER_BITPACK", "0") == "1":
         try:
-            def _add_metadata(path):
-                model_onnx = onnx.load(path)
-                meta = model_onnx.metadata_props
-                meta.clear()
-                meta.add(key="mertformer.bitpack", value="ternary5in8")
-                meta.add(key="mertformer.bitpack_meta", value="titan_s25_bitpack.json")
-                onnx.save(model_onnx, path)
-
+            from mertformer_sdk.utils.onnx_meta import add_bitpack_metadata
             if os.path.exists(output_fp32):
-                _add_metadata(output_fp32)
+                add_bitpack_metadata(output_fp32)
             if os.path.exists(output_int8):
-                _add_metadata(output_int8)
+                add_bitpack_metadata(output_int8)
             print("✅ ONNX metadata updated for bitpack.")
         except Exception as e:
             print(f"⚠️  ONNX metadata update failed: {e}")
