@@ -56,7 +56,8 @@
 [![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg?style=flat-square)](./LICENSE)
 [![Repository: Private](https://img.shields.io/badge/Repository-Private-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
-[![Architecture: BitNet 1.58b](https://img.shields.io/badge/Architecture-BitNet%201.58b-orange.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
+[![Architecture: BitNet 1.58b](https://img.shields.io/badge/Architecture-BitNet%201.58b-orange.svg?style=flat-square)](https://www.microsoft.com/en-us/research/publication/the-era-of-1-bit-llms-all-large-language-models-are-in-1-58-bits/)
+[![Reference: BitNet 1-bit](https://img.shields.io/badge/Reference-BitNet%201--bit-lightgrey.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
 
 ## 🏗️ Design Principles
 *   **Production-First Mindset**: Built for stability, security, and scalability from Day 1.
@@ -806,7 +807,16 @@ NİHAİ/
 │   ├── 📄 header.png       # Futuristic Header Image
 │   └── 📄 synaptic_map.png # Layer Hierarchy Visualization
 ├── 📂 tests/               # Unit & integration tests
-├── 📂 orchestrator/        # Agentic Brain (Target Architecture v5.2)
+├── 📂 orchestrator/        # Agentic runtime (optional / target v5.2)
+│   ├── 📄 core.py          # Orchestrator entrypoint
+│   ├── 📄 memory.py        # Memory store & retrieval
+│   ├── 📄 sense_engine.py  # Text/vision sensing
+│   ├── 📄 web_sense.py     # Web retrieval (optional)
+│   ├── 📄 audio_sense.py   # Audio/TTS hooks (optional)
+│   ├── 📄 cognitive.py     # Reasoning utilities
+│   ├── 📄 distillation_manager.py # Distillation pipeline helper
+│   ├── 📄 hardware.py      # Hardware snapshot helpers
+│   ├── 📄 paths.py         # Path registry
 │   ├── 📄 telemetry.py     # Telemetry helpers (expected vs actual, snapshots)
 │   └── 📄 failure_budget.py # Failure budget monitor
 ├── 📂 reports/             # Executive Health & Validation Reports

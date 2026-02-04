@@ -56,7 +56,8 @@
 [![Lisans: Özel (Proprietary)](https://img.shields.io/badge/Lisans-%C3%96zel-red.svg?style=flat-square)](./LICENSE)
 [![Depo: Gizli](https://img.shields.io/badge/Depo-Gizli-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
 [![Durum: Üretime Hazır](https://img.shields.io/badge/Durum-%C3%9Cretime%20Haz%C4%B1r-brightgreen.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
-[![Mimari: BitNet 1.58b](https://img.shields.io/badge/Mimari-BitNet%201.58b-orange.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
+[![Mimari: BitNet 1.58b](https://img.shields.io/badge/Mimari-BitNet%201.58b-orange.svg?style=flat-square)](https://www.microsoft.com/en-us/research/publication/the-era-of-1-bit-llms-all-large-language-models-are-in-1-58-bits/)
+[![Referans: BitNet 1-bit](https://img.shields.io/badge/Referans-BitNet%201--bit-lightgrey.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
 
 ## 🏗️ Tasarım İlkeleri
 *   **Önce Üretim (Production-First)**: İlk günden itibaren stabilite, güvenlik ve ölçeklenebilirlik için tasarlandı.
@@ -806,7 +807,16 @@ NİHAİ/
 │   ├── 📄 header.png       # Fütüristik Başlık Görseli
 │   └── 📄 synaptic_map.png # Katman Hiyerarşisi Görselleştirmesi
 ├── 📂 tests/               # Birim & entegrasyon testleri
-├── 📂 orchestrator/        # Agentic Beyin (Hedef Mimari v5.2)
+├── 📂 orchestrator/        # Agentic çalışma zamanı (opsiyonel / hedef v5.2)
+│   ├── 📄 core.py          # Orchestrator giriş noktası
+│   ├── 📄 memory.py        # Hafıza depolama ve erişim
+│   ├── 📄 sense_engine.py  # Metin/görsel algı
+│   ├── 📄 web_sense.py     # Web retrieval (opsiyonel)
+│   ├── 📄 audio_sense.py   # Ses/TTS kancaları (opsiyonel)
+│   ├── 📄 cognitive.py     # Akıl yürütme yardımcıları
+│   ├── 📄 distillation_manager.py # Distillation pipeline yardımcısı
+│   ├── 📄 hardware.py      # Donanım anlık görüntü yardımcıları
+│   ├── 📄 paths.py         # Yol kayıtları
 │   ├── 📄 telemetry.py     # Telemetri yardımcıları (expected vs actual, snapshot)
 │   └── 📄 failure_budget.py # Failure budget izleyici
 ├── 📂 reports/             # Yönetici Sağlık ve Doğrulama Raporları
