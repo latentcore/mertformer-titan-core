@@ -839,6 +839,8 @@ NİHAİ/
 ├── 📄 TECHNICAL_REPORT_TR.md # Detailed Technical Analysis (Turkish)
 ├── 📄 README.md            # English Documentation
 ├── 📄 README_TR.md         # Turkish Documentation
+├── 📄 README_CHECKLIST.md  # README audit checklist (EN)
+├── 📄 README_CHECKLIST_TR.md # README audit checklist (TR)
 ├── 📄 LICENSE              # Proprietary License (English)
 └── 📄 LICENSE_TR           # Özel Lisans (Türkçe)
 ```
