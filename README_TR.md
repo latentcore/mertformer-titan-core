@@ -112,6 +112,11 @@ Derin teknik analiz ve araştırma referansları.
 - [WHITE_PAPER_LIQUIDROUTER.md](WHITE_PAPER_LIQUIDROUTER.md)
 - [WHITE_PAPER_LIQUIDROUTER_TR.md](WHITE_PAPER_LIQUIDROUTER_TR.md)
 
+**Dahili**
+Dahili yol haritası ve yetenek boşluk haritalaması (kamusal değil).
+- [INTERNAL_AGI_GAP.md](INTERNAL_AGI_GAP.md)
+- [INTERNAL_AGI_GAP_TR.md](INTERNAL_AGI_GAP_TR.md)
+
 **Sunum & Asset**
 Yatırımcı materyalleri ve lansman varlıkları.
 - [PITCH.md](PITCH.md)
@@ -1036,6 +1041,8 @@ NİHAİ/
 ├── 📄 SECURITY_TR.md       # Security policy (TR)
 ├── 📄 DECISIONS.md         # Architecture decisions (EN)
 ├── 📄 DECISIONS_TR.md      # Architecture decisions (TR)
+├── 📄 INTERNAL_AGI_GAP.md  # Internal AGI gap map (EN)
+├── 📄 INTERNAL_AGI_GAP_TR.md # Internal AGI gap map (TR)
 ├── 📄 PITCH.md             # Investor Pitch Deck (English)
 ├── 📄 PITCH_TR.md          # Investor Pitch Deck (Turkish)
 ├── 📄 TRAINING_PLAN.md     # 3-Phase Execution Roadmap (English)
