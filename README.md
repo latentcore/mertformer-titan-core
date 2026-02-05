@@ -1281,6 +1281,11 @@ This project is **confidential and proprietary**. All rights are reserved by the
 - **Liquid AI**: Liquid Neural Networks (CfC) inspiration
 - **DeepSeek**: Multi-Head Latent Attention (MLA) architecture
 - **HazyResearch / Stanford (Tri Dao et al.)**: Flash Attention 2
+- **PyTorch**: Core training and inference framework
+- **Triton**: Experimental low-bit kernel research
+- **ONNX / ONNX Runtime**: Export and verification tooling
+- **SentencePiece**: Tokenization tooling
+- **Weights & Biases (WandB)**: Experiment tracking
 - **NVIDIA**: Apex optimizations, NCCL
 - **Hugging Face**: Transformers, Accelerate, Datasets libraries
 - **Turkish AI Community**: Support and feedback

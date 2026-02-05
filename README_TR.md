@@ -1279,6 +1279,11 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 - **Liquid AI**: Liquid Neural Networks (CfC) ilhamı
 - **DeepSeek**: Çok Başlı Latent Dikkat (MLA) mimarisi
 - **HazyResearch / Stanford (Tri Dao ve ekip)**: Flash Attention 2
+- **PyTorch**: Temel eğitim ve çıkarım çerçevesi
+- **Triton**: Deneysel düşük-bit kernel çalışmaları
+- **ONNX / ONNX Runtime**: Export ve doğrulama araçları
+- **SentencePiece**: Tokenization aracı
+- **Weights & Biases (WandB)**: Deney takip sistemi
 - **NVIDIA**: Apex optimizasyonları, NCCL
 - **Hugging Face**: Transformers, Accelerate, Datasets kütüphaneleri
 - **Türkçe Yapay Zeka Topluluğu**: Destek ve geri bildirim
