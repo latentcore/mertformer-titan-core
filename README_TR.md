@@ -976,7 +976,7 @@ NİHAİ/
 │   ├── 📂 reports/         # Script raporlari
 │   └── 📂 runs/            # Script ciktilari
 ├── 📂 eval/                # Degerlendirme girisleri
-│   ├── 📄 gsm8k.py          # GSM8K evaluator (stub)
+│   ├── 📄 gsm8k.py          # GSM8K değerlendirici (çalıştırma + skor)
 │   ├── 📄 humaneval.py      # HumanEval wrapper
 │   ├── 📄 golden.py         # Golden evaluator wrapper
 │   └── 📄 report_builder.py # Ozet olusturucu

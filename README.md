@@ -899,7 +899,7 @@ Planned Turkish data sources:
 ## 📂 Project Structure
 
 ```bash
-NİHAİ/
+NİHAİ/                     # Project root
 ├── 📄 MODEL_CARD.md         # Model card (EN)
 ├── 📄 MODEL_CARD_TR.md      # Model card (TR)
 ├── 📄 USE_POLICY.md         # Use policy (EN)
@@ -911,10 +911,10 @@ NİHAİ/
 │   │   ├── 📄 mertformer_small.yaml # Smaller debug variant
 │   │   └── 📄 mertformer_moe.yaml   # MoE baseline
 │   ├── 📂 train/           # Training overlays
-│   │   ├── 📄 pretrain.yaml
-│   │   └── 📄 finetune.yaml
+│   │   ├── 📄 pretrain.yaml   # Pretraining config overlay
+│   │   └── 📄 finetune.yaml   # Finetuning config overlay
 │   └── 📂 export/          # Export overlays
-│       └── 📄 onnx_mobile.yaml
+│       └── 📄 onnx_mobile.yaml # ONNX mobile export overlay
 ├── 📂 layers/              # Model components
 │   ├── 📄 bitlinear.py     # BitNet 1.58-bit quantization
 │   ├── 📄 bitnet_patch.py  # BitNet patch helpers
@@ -929,17 +929,17 @@ NİHAİ/
 │   ├── 📄 transformers.py  # MertFormer main class
 │   └── 📄 __init__.py      # Package marker
 ├── 📂 mertformer_sdk/      # SDK package (API + CLI + kernels)
-│   ├── 📄 __init__.py
-│   ├── 📄 api.py
-│   ├── 📄 cli.py
-│   ├── 📄 export.py
-│   ├── 📂 kernels/
-│   │   ├── 📄 __init__.py
-│   │   └── 📄 triton_ternary.py
-│   └── 📂 utils/
-│       └── 📄 bitpack.py
+│   ├── 📄 __init__.py         # SDK package marker
+│   ├── 📄 api.py              # SDK public API
+│   ├── 📄 cli.py              # SDK CLI entrypoint
+│   ├── 📄 export.py           # SDK export helpers
+│   ├── 📂 kernels/            # Kernel implementations
+│   │   ├── 📄 __init__.py      # Kernel package marker
+│   │   └── 📄 triton_ternary.py # Triton ternary kernel (experimental)
+│   └── 📂 utils/              # SDK utilities
+│       └── 📄 bitpack.py       # Bit packing helpers
 ├── 📂 train/               # Training pipeline
-│   ├── 📄 train.py         # Main training loop (1200+ lines, production-grade)
+│   ├── 📄 train.py         # Main training loop (1200+ lines)
 │   └── 📄 __init__.py      # Package marker
 ├── 📂 utils/               # Utilities
 │   ├── 📄 logger.py        # Logging infrastructure (WandB, CSV, JSONL)
@@ -979,31 +979,31 @@ NİHAİ/
 │   ├── 📂 reports/         # Script-generated reports
 │   └── 📂 runs/            # Script run artifacts
 ├── 📂 eval/                # Evaluation entrypoints
-│   ├── 📄 gsm8k.py          # GSM8K evaluator (stub)
+│   ├── 📄 gsm8k.py          # GSM8K evaluator (runner + scoring)
 │   ├── 📄 humaneval.py      # HumanEval wrapper
 │   ├── 📄 golden.py         # Golden evaluator wrapper
 │   └── 📄 report_builder.py # Eval summary builder
 ├── 📂 ablations/           # Ablation templates
 │   ├── 📄 results.md        # Results table (EN)
 │   ├── 📄 results_TR.md     # Results table (TR)
-│   ├── 📂 no_moe/
-│   │   ├── 📄 README.md
-│   │   └── 📄 README_TR.md
-│   ├── 📂 no_liquid/
-│   │   ├── 📄 README.md
-│   │   └── 📄 README_TR.md
-│   ├── 📂 dense_only/
-│   │   ├── 📄 README.md
-│   │   └── 📄 README_TR.md
-│   └── 📂 bitlinear_off/
-│       ├── 📄 README.md
-│       └── 📄 README_TR.md
+│   ├── 📂 no_moe/              # Ablation: no MoE
+│   │   ├── 📄 README.md        # Sandbox guide (EN)
+│   │   └── 📄 README_TR.md     # Sandbox guide (TR)
+│   ├── 📂 no_liquid/           # Ablation: no Liquid
+│   │   ├── 📄 README.md        # Sandbox guide (EN)
+│   │   └── 📄 README_TR.md     # Sandbox guide (TR)
+│   ├── 📂 dense_only/          # Ablation: dense-only
+│   │   ├── 📄 README.md        # Sandbox guide (EN)
+│   │   └── 📄 README_TR.md     # Sandbox guide (TR)
+│   └── 📂 bitlinear_off/       # Ablation: BitLinear off
+│       ├── 📄 README.md        # Contracts (EN)
+│       └── 📄 README_TR.md     # Contracts (TR)
 ├── 📂 experiments/         # Experiment registry
-│   └── 📂 exp_001_baseline/
-│       ├── 📄 config.yaml
-│       ├── 📄 metrics.json
-│       ├── 📄 notes.md
-│       └── 📄 notes_TR.md
+│   └── 📂 exp_001_baseline/    # Baseline experiment
+│       ├── 📄 config.yaml      # Experiment config
+│       ├── 📄 metrics.json     # Metrics snapshot
+│       ├── 📄 notes.md         # Experiment notes (EN)
+│       └── 📄 notes_TR.md      # Experiment notes (TR)
 ├── 📂 assets/              # Branding & Synaptic Maps
 │   ├── 📄 header.png       # Futuristic Header Image
 │   └── 📄 synaptic_map.png # Layer Hierarchy Visualization
@@ -1025,61 +1025,61 @@ NİHAİ/
 │   ├── 📄 telemetry.py     # Telemetry helpers (expected vs actual, snapshots)
 │   └── 📄 failure_budget.py # Failure budget monitor
 ├── 📂 interfaces/          # Inference contracts
-│   ├── 📄 inference_contract.md
-│   ├── 📄 inference_contract_TR.md
-│   └── 📄 tokenizer_spec.json
+│   ├── 📄 inference_contract.md    # Inference contract (EN)
+│   ├── 📄 inference_contract_TR.md # Inference contract (TR)
+│   └── 📄 tokenizer_spec.json      # Tokenizer spec
 ├── 📂 economics/           # Cost and efficiency modeling
-│   ├── 📄 cost_model.md
-│   ├── 📄 cost_model_TR.md
-│   ├── 📄 efficiency_report.md
-│   ├── 📄 efficiency_report_TR.md
-│   └── 📄 flops_estimator.py
+│   ├── 📄 cost_model.md        # Cost model (EN)
+│   ├── 📄 cost_model_TR.md     # Cost model (TR)
+│   ├── 📄 efficiency_report.md # Efficiency report (EN)
+│   ├── 📄 efficiency_report_TR.md # Efficiency report (TR)
+│   └── 📄 flops_estimator.py   # FLOPs estimator
 ├── 📂 limits/              # Scaling breakpoints
-│   ├── 📄 scaling_breakpoints.md
-│   ├── 📄 scaling_breakpoints_TR.md
-│   └── 📄 stress_curves.png
+│   ├── 📄 scaling_breakpoints.md   # Scaling breakpoints (EN)
+│   ├── 📄 scaling_breakpoints_TR.md # Scaling breakpoints (TR)
+│   └── 📄 stress_curves.png    # Stress curves (placeholder)
 ├── 📂 postmortems/         # Incident templates
-│   ├── 📄 README.md
-│   ├── 📄 README_TR.md
-│   ├── 📄 _template.md
-│   └── 📄 _template_TR.md
+│   ├── 📄 README.md            # Postmortem guide (EN)
+│   ├── 📄 README_TR.md         # Postmortem guide (TR)
+│   ├── 📄 _template.md         # Postmortem template (EN)
+│   └── 📄 _template_TR.md      # Postmortem template (TR)
 ├── 📂 prompts/             # System prompt versions
-│   ├── 📄 system_v1.txt
-│   ├── 📄 changelog.md
-│   └── 📄 changelog_TR.md
+│   ├── 📄 system_v1.txt        # System prompt v1
+│   ├── 📄 changelog.md         # Prompt changelog (EN)
+│   └── 📄 changelog_TR.md      # Prompt changelog (TR)
 ├── 📂 tokenizer/           # Tokenizer metadata
-│   ├── 📄 tokenizer.json
-│   ├── 📄 stats.md
-│   ├── 📄 stats_TR.md
-│   ├── 📄 drift_report.md
-│   ├── 📄 drift_report_TR.md
+│   ├── 📄 tokenizer.json       # Tokenizer config
+│   ├── 📄 stats.md             # Tokenizer stats (EN)
+│   ├── 📄 stats_TR.md          # Tokenizer stats (TR)
+│   ├── 📄 drift_report.md      # Tokenizer drift report (EN)
+│   ├── 📄 drift_report_TR.md   # Tokenizer drift report (TR)
 │   └── 📂 tr/              # Turkish tokenizer cache (opt-in)
-│       ├── 📄 README.md
-│       ├── 📄 README_TR.md
-│       ├── 📄 tokenizer.json
-│       ├── 📄 tokenizer_config.json
-│       ├── 📄 special_tokens_map.json
-│       └── 📄 vocab.txt
+│       ├── 📄 README.md        # Contracts (EN)
+│       ├── 📄 README_TR.md     # TR tokenizer note (TR)
+│       ├── 📄 tokenizer.json   # TR tokenizer
+│       ├── 📄 tokenizer_config.json # TR tokenizer config
+│       ├── 📄 special_tokens_map.json # TR special tokens
+│       └── 📄 vocab.txt        # TR vocab
 ├── 📂 tools/               # Tool sandbox & contracts
-│   ├── 📄 abuse_tests.md
-│   ├── 📄 abuse_tests_TR.md
-│   ├── 📂 sandbox/
-│   │   ├── 📄 README.md
-│   │   └── 📄 README_TR.md
-│   └── 📂 contracts/
-│       ├── 📄 README.md
-│       └── 📄 README_TR.md
+│   ├── 📄 abuse_tests.md       # Tool abuse tests (EN)
+│   ├── 📄 abuse_tests_TR.md    # Tool abuse tests (TR)
+│   ├── 📂 sandbox/             # Tool sandbox docs
+│   │   ├── 📄 README.md        # Sandbox guide (EN)
+│   │   └── 📄 README_TR.md     # Sandbox guide (TR)
+│   └── 📂 contracts/           # Tool contracts docs
+│       ├── 📄 README.md        # Contracts (EN)
+│       └── 📄 README_TR.md     # Contracts (TR)
 ├── 📂 training_dynamics/   # Training dynamics notes
-│   ├── 📄 cold_vs_warm.md
-│   └── 📄 cold_vs_warm_TR.md
+│   ├── 📄 cold_vs_warm.md      # Training dynamics (EN)
+│   └── 📄 cold_vs_warm_TR.md   # Training dynamics (TR)
 ├── 📂 repro/               # Reproducibility locks
-│   ├── 📄 env.lock
-│   ├── 📄 cuda.lock
-│   ├── 📄 seed_policy.md
-│   ├── 📄 seed_policy_TR.md
+│   ├── 📄 env.lock             # Environment lockfile
+│   ├── 📄 cuda.lock            # CUDA lockfile
+│   ├── 📄 seed_policy.md       # Seed policy (EN)
+│   ├── 📄 seed_policy_TR.md    # Seed policy (TR)
 │   └── 📄 pip_freeze.txt    # Environment snapshot (pip freeze)
 ├── 📂 registry/            # Model registry
-│   └── 📄 mertformer_v0.1.json
+│   └── 📄 mertformer_v0.1.json # Model registry entry
 ├── 📂 reports/             # Executive Health & Validation Reports
 │   ├── 📄 one_pager.md      # One-pager (EN)
 │   ├── 📄 one_pager_TR.md   # One-pager (TR)
