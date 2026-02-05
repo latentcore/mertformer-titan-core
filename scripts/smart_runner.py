@@ -36,7 +36,7 @@ def run_command(cmd, desc):
         sys.exit(1)
 
 def data_pipeline_thread():
-    run_command(["python", "scripts/data_pipeline.py"], "DATA PIPELINE")
+    run_command([sys.executable, "scripts/data_pipeline.py"], "DATA PIPELINE")
 
 def distillation_monitor():
     print("👀 DISTILLATION MONITOR: Watching for ready datasets...")
@@ -63,7 +63,7 @@ def distillation_monitor():
                 print(f"⚡ DETECTED: Stage {stage} Started! Launching Concurrent Distillation...")
                 
                 # Run Distillation Manager for this stage
-                cmd = ["python", "orchestrator/distillation_manager.py", "--stage", str(stage)]
+                cmd = [sys.executable, "orchestrator/distillation_manager.py", "--stage", str(stage)]
                 run_command(cmd, f"DISTILL STAGE {stage}")
                 
                 stages_processed.add(stage)
@@ -74,6 +74,11 @@ def distillation_monitor():
     print("🎉 ALL STAGES DISTILLED! Ready for Training.")
 
 def main():
+    if os.environ.get("TITAN_OFFLINE", "1") != "0":
+        print("❌ TITAN_OFFLINE=1 (offline-first). smart_runner performs dataset downloads and training.")
+        print("   Set TITAN_OFFLINE=0 to proceed.")
+        sys.exit(2)
+
     print("================================================================")
     print("🔥 MERTFORMER TITAN - SMART PARALLEL ORCHESTRATOR")
     print("================================================================")
@@ -98,7 +103,8 @@ def main():
     
     # 4. Launch Training
     # Ensure config uses precomputed logits
-    training_cmd = ["accelerate", "launch", "--main_process_port", "29501", "train/train.py"]
+    # Use `python -m accelerate` so the venv interpreter is always used.
+    training_cmd = [sys.executable, "-m", "accelerate", "launch", "--main_process_port", "29501", "train/train.py"]
     run_command(training_cmd, "TRAINING")
 
 if __name__ == "__main__":

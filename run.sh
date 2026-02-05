@@ -19,22 +19,71 @@ if [[ "$1" == "--test" ]] || [[ "$1" == "--verify" ]]; then
 fi
 
 # ------------------------------------------------------------------------------
-# 🔑 1. KİMLİK BİLGİLERİ (SECURE ENV LOADER)
+# 🔧 1.1 OFFLINE-FIRST MODE + PYTHON SELECTION
 # ------------------------------------------------------------------------------
-if [ -f .env ]; then
-    echo "🔐 Loading secrets from .env file..."
-    export $(grep -v '^#' .env | xargs)
-else
-    echo "⚠️  .env file not found! Checking environment variables..."
+# Default: offline-first (no external logins/downloads unless explicitly enabled).
+if [[ -z "${TITAN_OFFLINE+x}" ]]; then
+    export TITAN_OFFLINE=1
 fi
 
-# Validation
-if [[ -z "$HF_TOKEN" ]]; then
-    echo "❌ ERROR: HF_TOKEN is missing. Please set it in .env or environment."
-    exit 1
+# Default: WandB is off in offline mode, on in online mode (unless overridden).
+if [[ -z "${TITAN_WANDB+x}" ]]; then
+    if [[ "${TITAN_OFFLINE}" == "0" ]]; then
+        export TITAN_WANDB=1
+    else
+        export TITAN_WANDB=0
+    fi
 fi
-if [[ -z "$WANDB_API_KEY" ]]; then
-    echo "⚠️  WARNING: WANDB_API_KEY is missing. Logging will be disabled/offline."
+
+# Prefer repo venv python if present (avoids broken shebang CLIs).
+PYTHON_BIN="${TITAN_PYTHON:-}"
+if [[ -z "${PYTHON_BIN}" ]]; then
+    if [[ -x ".titan-venv/bin/python" ]]; then
+        PYTHON_BIN=".titan-venv/bin/python"
+    else
+        # Best-effort bootstrap for a single-command experience.
+        if [[ "${TITAN_BOOTSTRAP:-1}" == "1" ]] && [[ -f "scripts/bootstrap_venv.sh" ]]; then
+            echo "🧪 Bootstrapping local venv (.titan-venv) ..."
+            bash scripts/bootstrap_venv.sh || { echo "❌ Venv bootstrap failed."; exit 1; }
+            PYTHON_BIN=".titan-venv/bin/python"
+        else
+            PYTHON_BIN="python3"
+        fi
+    fi
+fi
+
+# ------------------------------------------------------------------------------
+# 🔑 1.2 ENV LOADER (SAFE)
+# ------------------------------------------------------------------------------
+if [ -f .env ]; then
+    echo "🔐 Loading env from .env file..."
+    while IFS= read -r line; do
+        # Skip comments/empty
+        [[ -z "${line}" ]] && continue
+        [[ "${line}" =~ ^[[:space:]]*# ]] && continue
+        if [[ "${line}" == *"="* ]]; then
+            key="${line%%=*}"
+            val="${line#*=}"
+            # strip surrounding quotes
+            val="${val%\"}"; val="${val#\"}"
+            val="${val%\'}"; val="${val#\'}"
+            export "${key}=${val}"
+        fi
+    done < .env
+else
+    echo "ℹ️  .env file not found. Using existing environment variables."
+fi
+
+# Secrets validation: required only in online mode (or if preflight explicitly requires).
+if [[ "${TITAN_OFFLINE}" == "0" ]]; then
+    if [[ -z "${HF_TOKEN:-}" ]]; then
+        echo "❌ ERROR: HF_TOKEN is missing (online mode). Set it in .env or environment."
+        exit 1
+    fi
+fi
+if [[ "${TITAN_WANDB}" == "1" ]] && [[ -z "${WANDB_API_KEY:-}" ]]; then
+    echo "⚠️  WARNING: WANDB_API_KEY missing; disabling WandB (set TITAN_WANDB=0 to silence)."
+    export TITAN_WANDB=0
 fi
 
 # Proje Adı
@@ -48,55 +97,77 @@ echo "🖥️  Detected OS: $OS_TYPE"
 echo "ℹ️  Defaults: use_tr_tokenizer=false | low-bit kernel opt-in (MERTFORMER_LOWBIT_KERNEL=1) | tensorcore opt-in (MERTFORMER_TENSORCORE=1) | BENCHMARK_SAMPLES=0"
 
 # Version consistency check (best-effort but fail on mismatch)
-python3 scripts/version_checker.py || { echo "❌ Version check failed."; exit 1; }
+"$PYTHON_BIN" scripts/version_checker.py || { echo "❌ Version check failed."; exit 1; }
 
-# Update local hardware report (best-effort)
-python3 scripts/update_system_hardware.py || echo "⚠️  system_hardware report update failed (continuing)"
+# Update local hardware report (best-effort).
+# NOTE: This writes tracked docs under `reports/`. Avoid dirtying the repo during
+# preflight-only runs (review/CI friendly).
+if [ "$RUN_TEST" = true ]; then
+    echo "ℹ️  Skipping system_hardware report update in --test/--verify mode."
+else
+    "$PYTHON_BIN" scripts/update_system_hardware.py || echo "⚠️  system_hardware report update failed (continuing)"
+fi
 
 # Bellek Yönetimi (OOM Riskini Azaltır)
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 # Tokenizer Deadlock Önleyici
 export TOKENIZERS_PARALLELISM=false
 
-# WandB Giriş (Otomatik)
-echo "🔐 Logging into WandB..."
-pip install wandb --quiet
-wandb login "$WANDB_API_KEY" --relogin
+# WandB Login (explicit + online-only)
+if [[ "${TITAN_OFFLINE}" == "0" ]] && [[ "${TITAN_WANDB}" == "1" ]]; then
+    echo "🔐 Logging into WandB..."
+    "$PYTHON_BIN" -m pip install wandb --quiet
+    "$PYTHON_BIN" -m wandb login "$WANDB_API_KEY" --relogin
+else
+    echo "ℹ️  WandB login skipped (offline/default)."
+fi
 
 # ------------------------------------------------------------------------------
 # 📦 3. KURULUMLAR (AKILLI MOD)
 # ------------------------------------------------------------------------------
-echo "📦 Installing Dependencies..."
+if [[ "${TITAN_INSTALL:-0}" == "1" ]]; then
+    echo "📦 Installing Dependencies (TITAN_INSTALL=1)..."
+else
+    echo "ℹ️  Skipping dependency installation (set TITAN_INSTALL=1 to install)."
+fi
 
 # PyTorch Kontrolü
-if ! python3 -c "import torch" &> /dev/null; then
-    echo "📦 PyTorch kuruluyor..."
-    pip install "torch>=2.0" --quiet
+if [[ "${TITAN_INSTALL:-0}" == "1" ]]; then
+    if ! "$PYTHON_BIN" -c "import torch" &> /dev/null; then
+        echo "📦 PyTorch kuruluyor..."
+        "$PYTHON_BIN" -m pip install "torch>=2.0" --quiet
+    fi
 fi
 
 # Temel Paketler (requirements.txt)
-pip install -r requirements.txt --quiet
+if [[ "${TITAN_INSTALL:-0}" == "1" ]]; then
+    "$PYTHON_BIN" -m pip install -r requirements.txt --quiet
+fi
 
 # Accelerate & BitsAndBytes (Linux vs Mac Ayrımı)
-if ! python3 -c "import accelerate" &> /dev/null; then
-    if [[ "$OS_TYPE" == "Darwin" ]]; then
-         pip install accelerate
-         echo "⚠️  Mac detected: Bitsandbytes skipped."
-    else
-         pip install accelerate bitsandbytes
+if [[ "${TITAN_INSTALL:-0}" == "1" ]]; then
+    if ! "$PYTHON_BIN" -c "import accelerate" &> /dev/null; then
+        if [[ "$OS_TYPE" == "Darwin" ]]; then
+            "$PYTHON_BIN" -m pip install accelerate
+            echo "⚠️  Mac detected: Bitsandbytes skipped."
+        else
+            "$PYTHON_BIN" -m pip install accelerate bitsandbytes
+        fi
     fi
 fi
 
 # FLASH ATTENTION 2 (Sadece Linux/A100 için - Otomatik Kurulum)
-if [[ "$OS_TYPE" == "Linux" ]]; then
-    if ! python3 -c "import flash_attn" &> /dev/null; then
-        echo "⚡ Installing Flash Attention 2 (Bu işlem 5-10 dk sürebilir, LÜTFEN BEKLE!)..."
-        pip install flash-attn --no-build-isolation || echo "⚠️ Flash Attention installation failed. Continuing without it..."
+if [[ "${TITAN_INSTALL:-0}" == "1" ]]; then
+    if [[ "$OS_TYPE" == "Linux" ]]; then
+        if ! "$PYTHON_BIN" -c "import flash_attn" &> /dev/null; then
+            echo "⚡ Installing Flash Attention 2 (Bu işlem 5-10 dk sürebilir, LÜTFEN BEKLE!)..."
+            "$PYTHON_BIN" -m pip install flash-attn --no-build-isolation || echo "⚠️ Flash Attention installation failed. Continuing without it..."
+        else
+            echo "⚡ Flash Attention zaten kurulu. Devam ediliyor..."
+        fi
     else
-        echo "⚡ Flash Attention zaten kurulu. Devam ediliyor..."
+        echo "🍎 Mac Detected: Skipping Flash Attention."
     fi
-else
-    echo "🍎 Mac Detected: Skipping Flash Attention."
 fi
 
 # ------------------------------------------------------------------------------
@@ -201,7 +272,7 @@ echo "🔍 Performing Ultimate Pre-Flight Check..."
 
 # Her durumda (test modu olsa da olmasa da) preflight çalışır. 
 # Sadece --test modunda ise test bitince durur, normal modda ise başarılıysa eğitime geçer.
-python3 scripts/titan_preflight.py
+"$PYTHON_BIN" scripts/titan_preflight.py
 if [ $? -ne 0 ]; then
     echo "❌ ULTIMATE PREFLIGHT FAILED! Check logs at logs/preflight/titan_preflight.log"
     exit 1
@@ -212,12 +283,19 @@ if [ "$RUN_TEST" = true ]; then
     exit 0 # Sadece test istenmişse burada dur.
 fi
 
+# Offline-first safety: do not start network-heavy training pipeline by accident.
+if [[ "${TITAN_OFFLINE}" != "0" ]]; then
+    echo "❌ Offline-first mode active (TITAN_OFFLINE=1). Training pipeline is disabled by default."
+    echo "   To start training, run with: TITAN_OFFLINE=0 (and optionally TITAN_WANDB=1)."
+    exit 2
+fi
+
 # ------------------------------------------------------------------------------
 # 🛡️ 5.5 OPERATOR MODE GATE (FULL)
 # ------------------------------------------------------------------------------
 if [ -z "$OPERATOR_GATE_SKIP" ]; then
     echo "🛡️  OPERATOR MODE GATE (FULL) STARTING..."
-    python3 scripts/operator_mode_gate.py --full --no-pytest
+    "$PYTHON_BIN" scripts/operator_mode_gate.py --full --no-pytest
     if [ $? -ne 0 ]; then
         echo "❌ OPERATOR MODE GATE FAILED! Aborting launch."
         exit 1
@@ -235,7 +313,7 @@ mkdir -p logs
 
 # Port 29501 çakışmayı önler, logları hem ekrana hem dosyaya yazar.
 # V27.0 SMART RUNNER: Starts Parallel Data Pipeline -> Distillation -> Training
-python3 scripts/smart_runner.py 2>&1 | tee logs/production_run.log
+"$PYTHON_BIN" scripts/smart_runner.py 2>&1 | tee logs/production_run.log
 
 # ------------------------------------------------------------------------------
 # 📊 6.5. INTERNAL BENCHMARKS (HUMANEVAL/MBPP)
@@ -243,7 +321,7 @@ python3 scripts/smart_runner.py 2>&1 | tee logs/production_run.log
 if [ -z "$BENCHMARK_SKIP" ]; then
     echo "📊 Running internal benchmarks (HumanEval/MBPP)..."
     BENCHMARK_SAMPLES=${BENCHMARK_SAMPLES:-0}
-    BENCHMARK_CKPT_PATH=$(python3 - <<'PY'
+    BENCHMARK_CKPT_PATH=$("$PYTHON_BIN" - <<'PY'
 from pathlib import Path
 import os
 
@@ -287,7 +365,7 @@ PY
     if [ -z "$BENCHMARK_CKPT_PATH" ]; then
         echo "⚠️ Benchmarks skipped (checkpoint not found)."
     else
-        python3 scripts/benchmarks_internal.py --run --samples "$BENCHMARK_SAMPLES" --ckpt "$BENCHMARK_CKPT_PATH" || echo "⚠️ Benchmarks failed or unavailable. Continuing..."
+        "$PYTHON_BIN" scripts/benchmarks_internal.py --run --samples "$BENCHMARK_SAMPLES" --ckpt "$BENCHMARK_CKPT_PATH" || echo "⚠️ Benchmarks failed or unavailable. Continuing..."
     fi
 else
     echo "⚠️ Benchmarks skipped (BENCHMARK_SKIP set)."
@@ -298,7 +376,7 @@ fi
 # ------------------------------------------------------------------------------
 if [ -z "$GOLDEN_EVAL_SKIP" ]; then
     echo "🧪 Running golden sample eval (best + latest)..."
-    readarray -t GOLDEN_CKPTS < <(python3 - <<'PY'
+    readarray -t GOLDEN_CKPTS < <("$PYTHON_BIN" - <<'PY'
 from pathlib import Path
 import os
 
@@ -350,7 +428,7 @@ PY
     else
         for ckpt in "${GOLDEN_CKPTS[@]}"; do
             echo "🧪 Golden eval on: $ckpt"
-            python3 scripts/golden_eval.py --run-model --ckpt "$ckpt" 2>&1 | tee -a logs/golden_eval.log
+            "$PYTHON_BIN" scripts/golden_eval.py --run-model --ckpt "$ckpt" 2>&1 | tee -a logs/golden_eval.log
         done
     fi
 else
@@ -359,7 +437,7 @@ fi
 
 # Eğitim bitti, şimdi paketle ve temizle
 echo "🚀 EĞİTİM TAMAMLANDI. MOBİL EXPORT BAŞLATILIYOR..."
-python3 scripts/mobile_export.py
+"$PYTHON_BIN" scripts/mobile_export.py
 echo "🧾 Updating unified logbook..."
-python3 scripts/logbook_build.py --append || echo "⚠️ Logbook update failed (continuing)"
+"$PYTHON_BIN" scripts/logbook_build.py --append || echo "⚠️ Logbook update failed (continuing)"
 echo "✅ TÜM İŞLEMLER BİTTİ. TELEFONA HAZIR!"
