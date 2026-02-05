@@ -95,6 +95,8 @@
 Primary entry docs and checklists.
 - [README.md](README.md) — English overview.
 - [README_TR.md](README_TR.md) — Turkish overview.
+- [CITATION.cff](CITATION.cff) — Citation metadata (Cite this repository).
+- [CONTRIBUTING.md](CONTRIBUTING.md) — Contribution guidelines (internal use).
 - [README_CHECKLIST.md](README_CHECKLIST.md) — README audit checklist (EN).
 - [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README audit checklist (TR).
 - [scripts/README.md](scripts/README.md) — Scripts catalog (EN).
@@ -1171,6 +1173,8 @@ NİHAİ/                     # Project root
 ├── 📄 TECHNICAL_REPORT_TR.md # Detailed Technical Analysis (Turkish)
 ├── 📄 README.md            # English Documentation
 ├── 📄 README_TR.md         # Turkish Documentation
+├── 📄 CITATION.cff          # Citation metadata
+├── 📄 CONTRIBUTING.md       # Contribution guidelines
 ├── 📄 README_CHECKLIST.md  # README audit checklist (EN)
 ├── 📄 README_CHECKLIST_TR.md # README audit checklist (TR)
 ├── 📄 LICENSE              # Proprietary License (English)

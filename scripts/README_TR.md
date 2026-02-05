@@ -40,6 +40,7 @@ Bazıları GPU, HF_TOKEN veya WANDB_API_KEY ister. Emin değilsen `run.sh` ile b
 - `train_tpu_turbo.py` — TPU eğitim başlatıcı (experimental).
 - `download_tr_tokenizer.py` — Türkçe tokenizer indirme (opt‑in).
 - `logbook_build.py` — Birleşik logbook üreticisi (`logs/ALL_LOGS.jsonl`).
+- `version_checker.py` — Sürüm tutarlılık kontrolü (deprecated marker bulursa hata verir).
 
 ## Varlıklar
 - `build_investor_deck.py` — PPTX yatırımcı deck üretimi.

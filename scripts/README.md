@@ -40,6 +40,7 @@ Some scripts require GPU, HF_TOKEN, or WANDB_API_KEY. When in doubt, run `run.sh
 - `train_tpu_turbo.py` — TPU training launcher (experimental).
 - `download_tr_tokenizer.py` — Turkish tokenizer download (opt-in).
 - `logbook_build.py` — Unified logbook builder (writes `logs/ALL_LOGS.jsonl`).
+- `version_checker.py` — Version consistency checker (fails on deprecated markers).
 
 ## Assets
 - `build_investor_deck.py` — Generates the PPTX investor deck.

@@ -95,6 +95,8 @@
 Ana giriş dokümanları ve checklistler.
 - [README.md](README.md) — İngilizce genel bakış.
 - [README_TR.md](README_TR.md) — Türkçe genel bakış.
+- [CITATION.cff](CITATION.cff) — Atıf metadata dosyası.
+- [CONTRIBUTING.md](CONTRIBUTING.md) — Katkı yönergeleri (dahili kullanım).
 - [README_CHECKLIST.md](README_CHECKLIST.md) — README denetim checklisti (EN).
 - [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README denetim checklisti (TR).
 - [scripts/README.md](scripts/README.md) — Script kataloğu (EN).
@@ -1168,6 +1170,8 @@ NİHAİ/
 ├── 📄 TECHNICAL_REPORT_TR.md # Detailed Technical Analysis (Turkish)
 ├── 📄 README.md            # English Documentation
 ├── 📄 README_TR.md         # Turkish Documentation
+├── 📄 CITATION.cff          # Atıf metadata dosyası
+├── 📄 CONTRIBUTING.md       # Katkı yönergeleri
 ├── 📄 README_CHECKLIST.md  # README audit checklist (EN)
 ├── 📄 README_CHECKLIST_TR.md # README audit checklist (TR)
 ├── 📄 LICENSE              # Proprietary License (English)
