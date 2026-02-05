@@ -6,5 +6,5 @@ date-released: "2026-02-05"
 authors:
   - family-names: "Yunlu"
     given-names: "Mert"
-repository-code: "https://github.com/latentcore/mertformer-titan-v27"
-url: "https://github.com/latentcore/mertformer-titan-v27"
+repository-code: "https://github.com/latentcore/mertformer-titan"
+url: "https://github.com/latentcore/mertformer-titan"

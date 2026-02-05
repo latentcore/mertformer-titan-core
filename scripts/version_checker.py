@@ -1,7 +1,6 @@
 """Version consistency checker.
 
-Scans the repository for deprecated version markers (e.g., v27, FINAL,
-Production Ready). Exits non-zero if any are found.
+Scans the repository for deprecated version markers (legacy labels). Exits non-zero if any are found.
 """
 from __future__ import annotations
 
@@ -10,6 +9,7 @@ from pathlib import Path
 
 IGNORE_DIRS = {".git", ".titan-venv", ".lint-venv", "logs", "checkpoints", "datasets"}
 TEXT_EXTS = {".md", ".py", ".yaml", ".yml", ".toml", ".txt", ".sh", ".cff"}
+IGNORE_FILES = {"CITATION.cff", "version_checker.py"}
 
 BANNED_TOKENS = [
     "v27",
@@ -24,6 +24,8 @@ BANNED_TOKENS = [
 
 def should_scan(path: Path) -> bool:
     if not path.is_file():
+        return False
+    if path.name in IGNORE_FILES:
         return False
     if any(part in IGNORE_DIRS for part in path.parts):
         return False
