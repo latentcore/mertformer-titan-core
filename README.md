@@ -43,6 +43,8 @@
 *   **🛡️ Data Sovereignty**: Data is designed to be processed on-device. This is a structural advantage for markets with high security standards, such as defense, law, and finance.
 *   **🌍 Scalable Access (Target)**: An autonomous system aiming for GPT-3.5-class capability after training, even in low-bandwidth regions without always-on internet.
 
+*Note: All performance and training-duration figures are pre-training estimates and will be empirically validated after full runs.*
+
 ---
 
 ### 🏰 The Strategic Moat
