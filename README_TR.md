@@ -95,6 +95,8 @@ Ana giriş dokümanları ve checklistler.
 - [README_TR.md](README_TR.md) — Türkçe genel bakış.
 - [README_CHECKLIST.md](README_CHECKLIST.md) — README denetim checklisti (EN).
 - [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README denetim checklisti (TR).
+- [scripts/README.md](scripts/README.md) — Script kataloğu (EN).
+- [scripts/README_TR.md](scripts/README_TR.md) — Script kataloğu (TR).
 
 **SDK**
 Edge dağıtım için paket + CLI.
@@ -938,6 +940,8 @@ NİHAİ/
 │   ├── 📄 safety.py        # Kill-switch yardimcilari
 │   └── 📄 __init__.py      # Paket isaretcisi
 ├── 📂 scripts/             # Yardimci scriptler ve raporlar
+│   ├── 📄 README.md        # Script katalogu (EN)
+│   ├── 📄 README_TR.md     # Script katalogu (TR)
 │   ├── 📄 smart_runner.py  # Parallel Orchestrator (Data -> Distill -> Train)
 │   ├── 📄 titan_preflight.py # Sistem testi
 │   ├── 📄 data_pipeline.py # Dataset Alchemy (5-asama mufredat)

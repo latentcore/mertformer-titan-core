@@ -95,6 +95,8 @@ Primary entry docs and checklists.
 - [README_TR.md](README_TR.md) — Turkish overview.
 - [README_CHECKLIST.md](README_CHECKLIST.md) — README audit checklist (EN).
 - [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README audit checklist (TR).
+- [scripts/README.md](scripts/README.md) — Scripts catalog (EN).
+- [scripts/README_TR.md](scripts/README_TR.md) — Scripts catalog (TR).
 
 **SDK**
 Package + CLI for edge deployments.
@@ -940,6 +942,8 @@ NİHAİ/
 │   ├── 📄 safety.py        # Safety helpers (kill switch utilities)
 │   └── 📄 __init__.py      # Package marker
 ├── 📂 scripts/             # Helper scripts & Reports
+│   ├── 📄 README.md        # Scripts catalog (EN)
+│   ├── 📄 README_TR.md     # Scripts catalog (TR)
 │   ├── 📄 smart_runner.py  # Master Parallel Orchestrator (Data -> Distill -> Train)
 │   ├── 📄 titan_preflight.py # 🦅 Ultimate System Test Prophet (Zero-Footprint Full Verification)
 │   ├── 📄 data_pipeline.py # Dataset Alchemy (5-Stage Curriculum Learning)
