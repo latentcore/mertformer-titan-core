@@ -1,45 +1,45 @@
 {
-  "note": "Populate with file hashes for each dataset snapshot before production training.",
+  "note": "Populate with file hashes after local dataset snapshots are recorded. Keep status as 'pending_snapshot' until hashes are computed.",
   "sources": {
     "uonlp/CulturaX:tr": {
       "snapshot": null,
       "sha256": null,
-      "status": "pending"
+      "status": "pending_snapshot"
     },
     "wikimedia/wikipedia:tr": {
       "snapshot": null,
       "sha256": null,
-      "status": "pending"
+      "status": "pending_snapshot"
     },
     "openai/gsm8k:main": {
       "snapshot": null,
       "sha256": null,
-      "status": "pending"
+      "status": "pending_snapshot"
     },
     "openai_humaneval:default": {
       "snapshot": null,
       "sha256": null,
-      "status": "pending"
+      "status": "pending_snapshot"
     },
     "mbpp:sanitized": {
       "snapshot": null,
       "sha256": null,
-      "status": "pending"
+      "status": "pending_snapshot"
     },
     "wikitext:wikitext-2-raw-v1": {
       "snapshot": null,
       "sha256": null,
-      "status": "pending"
+      "status": "pending_snapshot"
     },
     "internal:stage_sets": {
       "snapshot": null,
       "sha256": null,
-      "status": "pending"
+      "status": "pending_snapshot"
     },
     "internal:golden_samples": {
       "snapshot": null,
       "sha256": null,
-      "status": "pending"
+      "status": "pending_snapshot"
     }
   }
 }

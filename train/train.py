@@ -6,8 +6,8 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v27.0-FINAL (Titan Locked & Sealed)
-Status : PRODUCTION READY (LOCKED)
+Version: v27.0-FINAL (Pre-Training)
+Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
@@ -1352,7 +1352,8 @@ def train():
                             "alpha": alpha,
                             "stage": current_curriculum_stage
                         }
-                        logger.log_step(metrics, global_step)
+                        metrics["global_step"] = global_step
+                        logger.log_step(metrics)
 
                     # Logging only on Main Process
                     if global_step % cfg.log_interval == 0 and accelerator.is_main_process:

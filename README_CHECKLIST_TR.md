@@ -17,8 +17,8 @@
 - [x] **ASCII Sanatı:** "MertFormer Titan" başlığı kontrol edildi.
 
 ## 4️⃣ Metrikler / SSS / Karşılaştırmalar
-- [x] **Adli Veriler:** SHA256 Hash (`6de12247`) ve Gerçek Kayıp (Loss: `6.6085`) eklendi.
-- [x] **Öngörüler:** Uygun yerlerde "Tahmini" veya "Ön Değerlendirme" olarak işaretlendi.
+- [x] **Adli Veriler:** Örnek PoC hash'i eklendi; üretim metrikleri beklemede.
+- [x] **Öngörüler:** Eğitim öncesi tahmin/ hedef olarak işaretlendi.
 - [x] **Karşılaştırmalar:** Llama-3/Phi-3 tablosu tutarlı.
 - [x] **SSS (FAQ):** 1.58-bit kalitesi ve Mobil kapasite konuları ele alındı.
 
@@ -33,6 +33,6 @@
 - [x] **Adli Mühür:** Güvenli günlük doğrulama bölümü eklendi.
 
 ---
-**Durum:** 🟢 **SÜRÜME HAZIR**
+**Durum:** 🟡 **EĞİTİM ÖNCESİ / TASLAK**
 **Doğrulayan:** Antigravity Ajanı
-**Tarih:** 2026-02-03
+**Tarih:** 2026-02-05

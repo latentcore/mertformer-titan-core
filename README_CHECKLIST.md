@@ -17,8 +17,8 @@
 - [x] **ASCII Art:** "MertFormer Titan" banner checked.
 
 ## 4️⃣ Metrics / FAQ / Benchmarks
-- [x] **Forensic Data:** SHA256 Hash (`6de12247`) and Real Loss (`6.6085`) added.
-- [x] **Projections:** Marked as "Preliminary" or "Estimated" where appropriate.
+- [x] **Forensic Data:** Sample PoC hash included; production metrics marked as pending.
+- [x] **Projections:** Marked as pre-training estimates or targets where appropriate.
 - [x] **Comparisons:** Llama-3/Phi-3 table is consistent.
 - [x] **FAQ:** Addressed 1.58-bit quality and Mobile capability.
 
@@ -33,6 +33,6 @@
 - [x] **Forensic Seal:** Added secure logging verification section.
 
 ---
-**Status:** 🟢 **READY FOR RELEASE**
+**Status:** 🟡 **PRE-TRAINING / DRAFT**
 **Verified By:** Antigravity Agent
-**Date:** 2026-01-31
+**Date:** 2026-02-05

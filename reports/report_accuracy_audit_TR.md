@@ -1,42 +1,43 @@
 # Rapor Dogruluk Denetimi (v27.0)
 
 Bu denetim, rapordaki iddialari repo kanitlariyla eslestirir. Etiketler:
-- DOGRU
-- KISMI / Kanit eksik
-- YANLIS / Abartili
+- DOGRU (uygulama var, kanitli)
+- HEDEF / TAHMIN (acikca hedef olarak yazildi; olcum bekliyor)
+- DOGRULAMA BEKLIYOR (egitim/cihaz olcumu gerekir)
+- KALDIRILDI (iddia dokumandan cikarildi veya yumuşatildi)
 
 ## A) Yonetici Ozeti / Durum
 - "Cekirdek muhendislik isi." DOGRU
   - Kanit: `scripts/titan_preflight.py`, `scripts/operator_mode_gate.py`, `orchestrator/failure_budget.py`
-- "S25/M4 uzerinde GPT-3.5 sinifi." YANLIS / Kanit eksik
-  - Gercek cihaz olcumu yok.
-- "Production-grade / locked & sealed." KISMI
-  - Gate'ler var, gercek egitim sonucu yok.
+- "S25/M4 uzerinde GPT-3.5 sinifi." HEDEF / TAHMIN
+  - Egitim sonrasi hedef olarak sunuluyor; cihaz benchmark'i yok.
+- "Production-grade / locked & sealed." KALDIRILDI
+  - Dokumanlarda durum egitim oncesi olarak guncellendi.
 
 ## B) BitNet b1.58 / Enerji
 - "Ternary agirliklar uygulanmis." DOGRU
   - Kanit: `layers/bitlinear.py`
-- "0.65 GB agirlik / %93.75 tasarruf." KISMI
-  - Teorik; olcum yok.
-- "Carpma yerine toplama, ~70x enerji." KISMI
+- "0.65 GB agirlik / %93.75 tasarruf." HEDEF / TAHMIN
+  - Teorik; olcum bekliyor.
+- "Carpma yerine toplama, ~70x enerji." DOGRULAMA BEKLIYOR
   - Low-bit kernel yolu var, ama enerji/TOPS olcumu yok.
 
 ## C) NPU / Kernel Uyumlulugu
-- "Ternary icin ozel kernel gerekir." KISMI
-  - Bitpack hook'lari var, fakat vendor kernel hala gerekli.
+- "Ternary icin ozel kernel gerekir." DOGRULAMA BEKLIYOR
+  - Bitpack hook'lari var, vendor kernel hala gerekli.
   - Kanit: `scripts/mobile_export.py` (bitpack metadata)
 
 ## D) LiquidRouter / MoE Stabilitesi
 - "CfC tabanli router var." DOGRU
   - Kanit: `layers/liquid.py`
-- "Jitter/entropy otomatik duzeltme." KISMI
-  - Izleme var, otomatik duzeltme yok.
+- "Jitter/entropy otomatik duzeltme." DOGRULAMA BEKLIYOR
+  - Izleme var; otomatik duzeltme henuz dogrulanmadi.
 
 ## E) Offline Distillation
 - "Offline logits hatti var." DOGRU
   - Kanit: `orchestrator/distillation_manager.py`, `train/train.py`
-- "%75 maliyet dususu." YANLIS / Kanit eksik
-  - Olcum yok.
+- "%75 maliyet dususu." KALDIRILDI
+  - Olcum olmadan iddia edilmez.
 
 ## F) Yol Haritasi / Assetler
 - "Founders Hub basvurusu hazir." DOGRU
@@ -45,4 +46,4 @@ Bu denetim, rapordaki iddialari repo kanitlariyla eslestirir. Etiketler:
   - Kanit: `reports/demo_video_script.md`
 
 ## Ozet
-Mimari ve safety altyapisi gercek. Performans ve cihaz iddialari olculmeden kesin kabul edilmemelidir.
+Mimari ve safety altyapisi gercek. Performans ve cihaz iddialari hedef olarak yazildi; tam egitim ve cihaz profili ile dogrulanmalidir.

@@ -1,8 +1,8 @@
 {
   "model_id": "mertformer_titan_v27_base",
   "version": "v27.0-TITAN-FINAL",
-  "status": "template",
+  "status": "pretraining-ready",
   "checkpoint": null,
   "config": "config/base.yaml",
-  "notes": "Populate after first master run."
+  "notes": "Pre-training ready. Populate checkpoint and metrics after the first master run."
 }

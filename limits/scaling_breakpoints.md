@@ -1,6 +1,12 @@
-# Scaling Breakpoints (Template)
+# Scaling Breakpoints
 
-Status: **Not measured yet**. Fill after production runs.
+Status: **Pending measurement** (requires production runs).
+
+Fill after training hardware runs:
+- Record max stable batch size per GPU.
+- Capture NaN/Inf thresholds and failure modes.
+- Measure context length stability and degradation onset.
+- Note expert collapse thresholds and mitigations.
 
 ## Batch Size
 - Max stable batch size:

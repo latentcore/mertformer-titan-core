@@ -55,7 +55,7 @@
 
 [![Lisans: Özel (Proprietary)](https://img.shields.io/badge/Lisans-%C3%96zel-red.svg?style=flat-square)](./LICENSE)
 [![Depo: Gizli](https://img.shields.io/badge/Depo-Gizli-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
-[![Durum: Üretime Hazır](https://img.shields.io/badge/Durum-%C3%9Cretime%20Haz%C4%B1r-brightgreen.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
+[![Durum: Eğitim Öncesi](https://img.shields.io/badge/Durum-E%C4%9Fitim%20%C3%96ncesi-yellow.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
 [![Mimari: BitNet 1.58b](https://img.shields.io/badge/Mimari-BitNet%201.58b-orange.svg?style=flat-square)](https://www.microsoft.com/en-us/research/publication/the-era-of-1-bit-llms-all-large-language-models-are-in-1-58-bits/)
 [![Referans: BitNet 1-bit](https://img.shields.io/badge/Referans-BitNet%201--bit-lightgrey.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
 
@@ -129,6 +129,8 @@ Dahili yol haritası ve yetenek boşluk haritalaması (kamusal değil).
 Rapor doğruluk denetimi ve stratejik değer özeti.
 - [reports/report_accuracy_audit.md](reports/report_accuracy_audit.md) — Rapor doğruluk denetimi (EN).
 - [reports/report_accuracy_audit_TR.md](reports/report_accuracy_audit_TR.md) — Rapor doğruluk denetimi (TR).
+- [reports/benchmarks/README.md](reports/benchmarks/README.md) — Benchmark çıktıları rehberi (EN).
+- [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark çıktıları rehberi (TR).
 - [reports/strategic_value.md](reports/strategic_value.md) — Stratejik değer özeti (EN).
 - [reports/strategic_value_TR.md](reports/strategic_value_TR.md) — Stratejik değer özeti (TR).
 
@@ -291,13 +293,13 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 - **Dinamik Alpha**: Aşamalı damıtma ağırlığı ayarlaması
 
 ### 7. **Performans Optimizasyonları (v27.0)** ⚡
-- ✅ **Flash Attention 2**: +%30 hızlanma (A100/H100)
-- ✅ **Fused RMSNorm**: +%10 hızlanma (torch.compile)
-- ✅ **torch.compile (max-autotune)**: +%15 hızlanma
-- ✅ **CUDA TF32 + cuDNN**: +%10 hızlanma
-- ✅ **Geliştirilmiş DataLoader**: +%5 hızlanma (16 işçi, prefetch=4)
-- ✅ **NCCL Tuning**: +%5-10 hızlanma (multi-GPU, otomatik algılama)
-- **Toplam: %70-80 daha hızlı eğitim!**
+- ✅ **Flash Attention 2**: Tahmini +%30 hızlanma (A100/H100)
+- ✅ **Fused RMSNorm**: Tahmini +%10 hızlanma (torch.compile)
+- ✅ **torch.compile (max-autotune)**: Tahmini +%15 hızlanma
+- ✅ **CUDA TF32 + cuDNN**: Tahmini +%10 hızlanma
+- ✅ **Geliştirilmiş DataLoader**: Tahmini +%5 hızlanma (16 işçi, prefetch=4)
+- ✅ **NCCL Tuning**: Tahmini +%5-10 hızlanma (multi-GPU, otomatik algılama)
+- **Tahmini toplam: %70-80 daha hızlı eğitim.**
 
 ### 8. **Güvenlik & Güvenilirlik** 🛡️
 - ✅ **OOM Kurtarma**: Otomatik toplu iş boyutu (batch size) azaltma
@@ -765,7 +767,8 @@ print(response)
 
 <a id="kıyaslamalar-benchmarks"></a>
 ## 🏆 Kıyaslamalar (Benchmarks)
-**Durum: Ön değerlendirme (Pre-training projection)**
+**Durum: Eğitim öncesi tahmin (Pre-training projection)**
+*Not: Aşağıdaki metrikler eğitim öncesi tahmin/ hedef değerlerdir; tam eğitim sonrası doğrulanacaktır.*
 
 ### Benzer Modellerle Karşılaştırma
 
@@ -799,7 +802,7 @@ MertFormer Titan, **Türkiye'nin dijital egemenliği** için kritik bir adımdı
 **MertFormer Titan farkı:**
 - ✅ **%100 Cihaz İçi**: Verileriniz telefonunuzdan çıkmaz
 - ✅ **Türkçe Optimizasyonu**: Türk kültürü ve dili için özel eğitim
-- ✅ **Milli Teknoloji**: Yerli geliştirme, açık kaynak
+- ✅ **Milli Teknoloji**: Yerli geliştirme; lisans politikası `LICENSE` dosyasında
 - ✅ **Bağımsızlık**: Bulut bağımlılığı yok, internet gereksiz
 
 ### Vizyon: Dijital Bağımsızlık
@@ -1175,14 +1178,14 @@ Paylaşılan bir eğitim sonucunun veya benchmark skorunun doğruluğunu teyit e
    ```
 3. **Resmi Kayıtla Karşılaştırma**:
 
-### Benchmark Anlık Görünüm (Hedef / Doğrulanmamış):
-*Not: Aşağıdaki tablo **hedef/ön üretim** değerleridir. Tam üretim koşusu tamamlanıp imzalandıktan sonra **ölçülen sonuçlarla** güncellenecektir.*
+### Benchmark Anlık Görünüm (Örnek / Doğrulanmamış):
+*Not: Aşağıdaki tablo **örnek/ön üretim** amaçlı bir placeholder'dır. Tam üretim koşusu tamamlanıp imzalandıktan sonra **ölçülen sonuçlarla** güncellenecektir.*
 | Metrik | Full Titan (Liquid) | No-Liquid | Fark |
 | :--- | :---: | :---: | :---: |
-| **Final Loss** | **6.6085** | 6.4368 | +0.17 |
-| **Ortalama Tau** | **1.626** (Dinamik) | 0.0 (Statik) | **Liquid Aktif** |
-| **Durum** | 🟢 Stabil | 🟢 Stabil | - |
-| **Adli Hash** | `6de12247` | - | - |
+| **Final Loss** | TBD (eğitim sonrası) | TBD | - |
+| **Ortalama Tau** | TBD | TBD | - |
+| **Durum** | ⚪ Beklemede | ⚪ Beklemede | - |
+| **Adli Hash** | beklemede | - | - |
    
 > **Not:** Resmi hash değerleri, ilk üretim eğitimi tamamlandıktan ve imzalandıktan sonra buraya eklenecektir.
 
@@ -1293,8 +1296,8 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 ## 📧 İletişim
 
 **Proje**: MertFormer Titan (Onyx Storm)
-**Sürüm**: v27.0 FİNAL (Üretime Hazır)
-**Durum**: 🔒 KİLİTLİ & MÜHÜRLÜ
+**Sürüm**: v27.0 FİNAL (Eğitim Öncesi)  
+**Durum**: 🟡 EĞİTİM ÖNCESİ (Doğrulanmadı)
 **Türkiye'de** ❤️ **ile yapıldı** 🇹🇷
 
 ---

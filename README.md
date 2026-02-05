@@ -39,9 +39,9 @@
 ### 💼 Executive Brief
 **MertFormer Titan is a structural efficiency standard that decentralizes enterprise intelligence by minimizing AI inference costs at the device level.**
 
-*   **💰 Targeted ~90% Operational Savings (Estimate)**: Cloud server expenses are minimized. MertFormer aims to reduce processing costs by optimizing energy at the NPU level.
-*   **🛡️ Data Sovereignty**: Data is processed on-device. This is a structural advantage for markets with high security standards, such as defense, law, and finance.
-*   **🌍 Scalable Access (Target)**: An autonomous system aiming for GPT-3.5 level intelligence even in low-bandwidth regions without internet dependency.
+*   **💰 Targeted ~90% Operational Savings (Estimate)**: Cloud server expenses can be minimized in target deployments. MertFormer aims to reduce processing costs by optimizing energy at the NPU level.
+*   **🛡️ Data Sovereignty**: Data is designed to be processed on-device. This is a structural advantage for markets with high security standards, such as defense, law, and finance.
+*   **🌍 Scalable Access (Target)**: An autonomous system aiming for GPT-3.5-class capability after training, even in low-bandwidth regions without always-on internet.
 
 ---
 
@@ -49,13 +49,13 @@
 **Why MertFormer Titan remains unparalleled:**
 1.  **Edge-Native Architecture**: Models from Big Tech are optimized for massive compute on the cloud. Titan's 1.58-bit layers are designed as hardware-aware components from the ground up, creating a clear efficiency gap compared to post-quantized models.
 2.  **Liquid Momentum**: The proprietary `LiquidRouter` treats data as a temporal flow (momentum), not just a static input. This mathematical approach positions the system with an advantage that competitors cannot close with hardware power alone.
-3.  **Forensic Trust**: Chained training logs and cryptographic outputs verify the project's transparency and compliance with enterprise and defense-grade trust standards.
+3.  **Forensic Trust**: Chained training logs and cryptographic outputs are designed to support transparency and compliance verification once real runs are produced.
 
 ---
 
 [![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg?style=flat-square)](./LICENSE)
 [![Repository: Private](https://img.shields.io/badge/Repository-Private-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
-[![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
+[![Status: Pre-Training](https://img.shields.io/badge/Status-Pre--Training-yellow.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
 [![Architecture: BitNet 1.58b](https://img.shields.io/badge/Architecture-BitNet%201.58b-orange.svg?style=flat-square)](https://www.microsoft.com/en-us/research/publication/the-era-of-1-bit-llms-all-large-language-models-are-in-1-58-bits/)
 [![Reference: BitNet 1-bit](https://img.shields.io/badge/Reference-BitNet%201--bit-lightgrey.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
 
@@ -129,6 +129,8 @@ Internal roadmap and capability gap mapping (non-public).
 Report accuracy audit and strategic value summary.
 - [reports/report_accuracy_audit.md](reports/report_accuracy_audit.md) — Report accuracy audit (EN).
 - [reports/report_accuracy_audit_TR.md](reports/report_accuracy_audit_TR.md) — Report accuracy audit (TR).
+- [reports/benchmarks/README.md](reports/benchmarks/README.md) — Benchmark outputs guide (EN).
+- [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark outputs guide (TR).
 - [reports/strategic_value.md](reports/strategic_value.md) — Strategic value summary (EN).
 - [reports/strategic_value_TR.md](reports/strategic_value_TR.md) — Strategic value summary (TR).
 
@@ -293,13 +295,13 @@ MertFormer Titan is a cutting-edge **2.64B parameter** language model designed f
 - **Dynamic Alpha**: Progressive distillation weight adjustment
 
 ### 7. **Performance Optimizations (v27.0)** ⚡
-- ✅ **Flash Attention 2**: +30% speedup (A100/H100)
-- ✅ **Fused RMSNorm**: +10% speedup (torch.compile)
-- ✅ **torch.compile (max-autotune)**: +15% speedup
-- ✅ **CUDA TF32 + cuDNN**: +10% speedup
-- ✅ **Enhanced DataLoader**: +5% speedup (16 workers, prefetch=4)
-- ✅ **NCCL Tuning**: +5-10% speedup (multi-GPU, auto-detection)
-- **Total: 70-80% faster training!**
+- ✅ **Flash Attention 2**: Projected +30% speedup (A100/H100)
+- ✅ **Fused RMSNorm**: Projected +10% speedup (torch.compile)
+- ✅ **torch.compile (max-autotune)**: Projected +15% speedup
+- ✅ **CUDA TF32 + cuDNN**: Projected +10% speedup
+- ✅ **Enhanced DataLoader**: Projected +5% speedup (16 workers, prefetch=4)
+- ✅ **NCCL Tuning**: Projected +5-10% speedup (multi-GPU, auto-detection)
+- **Projected total: 70-80% faster training (estimate).**
 
 ### 8. **Safety & Reliability** 🛡️
 - ✅ **OOM Recovery**: Auto batch size reduction
@@ -768,6 +770,7 @@ print(response)
 <a id="benchmarks"></a>
 ## 🏆 Benchmarks
 **Status: Preliminary Evaluation (Pre-training projection)**
+*All metrics below are pre-training projections or targets and require empirical validation after full training.*
 
 ### Comparison with Similar Models
 
@@ -792,39 +795,40 @@ print(response)
 ---
 
 <a id="turkish-vision"></a>
-## 🇹🇷 Türkiye Vizyonu & Milli Egemenlik
+## 🇹🇷 Turkish Vision & Digital Sovereignty
 
-### Neden MertFormer Titan?
+### Why MertFormer Titan?
 
-MertFormer Titan, **Türkiye'nin dijital egemenliği** için kritik bir adımdır. Bugün dünyada AI, birkaç dev şirketin (OpenAI, Google, Meta) bulut sunucularında çalışıyor ve **tüm verileriniz onların elinde**. 
+MertFormer Titan is a critical step toward Türkiye's digital sovereignty. Today, AI runs on cloud servers owned by a few big companies (OpenAI, Google, Meta), which means your data is handled by them.
 
-**MertFormer Titan farkı:**
-- ✅ **100% On-Device**: Verileriniz telefonunuzdan çıkmaz
-- ✅ **Türkçe Optimizasyonu**: Türk kültürü ve dili için özel eğitim
-- ✅ **Milli Teknoloji**: Yerli geliştirme, açık kaynak
-- ✅ **Bağımsızlık**: Bulut bağımlılığı yok, internet gereksiz
+**The MertFormer Titan difference:**
+- ✅ **100% On-Device**: Data is processed on-device; no cloud dependency for inference.
+- ✅ **Turkish Optimization**: Training focus for Turkish language and culture.
+- ✅ **National Technology**: Built locally with governance and licensing defined in `LICENSE`.
+- ✅ **Independence**: Designed to operate without always-on internet.
 
-### Vizyon: Dijital Bağımsızlık
+### Vision: Digital Independence
 
-> **"Tohumu ektik, şimdi ormanı izleme vakti."**
+> "Tohumu ektik, şimdi ormanı izleme vakti."
+> "We planted the seed; now it's time to watch the forest."
 
-MertFormer Titan, sadece bir AI modeli değil, **dijital bağımsızlık manifestosu**dur:
+MertFormer Titan is not just an AI model; it is a digital sovereignty manifesto:
 
-1. **Veri Egemenliği**: Türk vatandaşlarının verileri Türkiye'de kalır
-2. **Teknoloji Bağımsızlığı**: Yabancı bulut servislerine bağımlılık sıfır
-3. **Kültürel Koruma**: Türk dili ve kültürü AI'da temsil edilir
-4. **Ekonomik Tasarruf**: Bulut maliyeti yok, cihazda çalışır
+1. **Data Sovereignty**: Citizen data can remain on-device and within local jurisdiction.
+2. **Technology Independence**: Reduced reliance on foreign cloud providers.
+3. **Cultural Preservation**: Turkish language and culture represented in AI.
+4. **Economic Efficiency**: Lower cloud costs through edge inference.
 
-### Türkçe Corpus (Roadmap v28.0)
+### Turkish Corpus (Roadmap v28.0)
 
-Planlanan Türkçe veri kaynakları:
-- **Wikipedia TR**: ~500K makale
-- **Turkish News**: Haber arşivleri
-- **Literature**: Türk edebiyatı klasikleri
-- **Social Media**: Twitter/X Türkçe corpus (filtrelenmiş)
-- **Government**: Resmi belgeler (açık kaynak)
+Planned Turkish data sources:
+- **Wikipedia TR**: ~500K articles
+- **Turkish News**: News archives
+- **Literature**: Turkish literary classics
+- **Social Media**: Filtered Turkish social corpus
+- **Government**: Public official documents
 
-**Hedef**: %30+ Türkçe performans artışı
+**Target**: 30%+ Turkish performance uplift after training.
 
 ---
 
@@ -1177,14 +1181,14 @@ To verify the authenticity of a shared run log or benchmark result:
    ```
 3. **Compare with Official Record**:
 
-### Benchmark Snapshot (Target / Unverified):
-*Note: The table below is a **target snapshot** (pre-production / unverified). It will be replaced with **measured results** once a full production run is completed and signed.*
+### Benchmark Snapshot (Example / Unverified)
+*Note: The table below is an illustrative placeholder (pre-production / unverified). It will be replaced with measured results once a full production run is completed and signed.*
 | Metric | Full Titan (Liquid) | No-Liquid | Delta |
 | :--- | :---: | :---: | :---: |
-| **Final Loss** | **6.6085** | 6.4368 | +0.17 |
-| **Avg Tau** | **1.626** (Dynamic) | 0.0 (Static) | **Liquid Active** |
-| **Status** | 🟢 Stable | 🟢 Stable | - |
-| **Forensic Hash** | `6de12247` | - | - |
+| **Final Loss** | TBD (post-training) | TBD | - |
+| **Avg Tau** | TBD | TBD | - |
+| **Status** | ⚪ Pending | ⚪ Pending | - |
+| **Forensic Hash** | pending | - | - |
    
 > **Note:** Official hashes will be updated here after the initial production run log is generated and signed.
 
@@ -1217,53 +1221,53 @@ To verify the authenticity of a shared run log or benchmark result:
 **Hardware**: NVIDIA RTX 5090 (45 Concurrent Agents)  
 **Software**: Multi-Agent Orchestrator (Python) + BitNet Workers (C++)
 
-### 🏔️ VİZYON: BİLGE VE ÖĞRENEN (SAGE & LEARNER)
-Bu sürüm, sadece üreten değil, her hatasından ders çıkaran ve her projede "Ustalık Seviyesi" artan bir sistemdir. **Bir hata sadece bir kez yapılır.**
+### 🏔️ VISION: SAGE & LEARNER
+This version is designed to learn from every mistake and raise its mastery level with every project. A mistake should happen only once.
 
-### 🚦 TIER: DEFCON PROTOKOLLERİ
-*   **Tier 1 (Nano)**: 3 Ajan.
-*   **Tier 2 (Micro)**: 15 Ajan.
-*   **Tier 3 (Omega)**: 45 Ajan.
+### 🚦 TIER: DEFCON PROTOCOLS
+*   **Tier 1 (Nano)**: 3 Agents.
+*   **Tier 2 (Micro)**: 15 Agents.
+*   **Tier 3 (Omega)**: 45 Agents.
 
-### 📊 ORGANİZASYON ŞEMASI (Total: 45 Ajan)
+### 📊 ORGANIZATIONAL CHART (Total: 45 Agents)
 
-#### 1. 🧠 YÖNETİM & STRATEJİ (EXECUTIVE) - [5 Ajan]
-*   **1x CEO (Grandmaster - DIGITAL TWIN)**: Senin dijital kopyan (15M Token Arşivi). Son kararı verir.
-*   **1x CTO (Architect)**: "Meta-Learning" Lideri. Her proje sonunda hataları analiz eder ve "Kurallar" koyar.
-*   **1x CSO (Chief Safety Officer)**: Kill Switch & Alignment.
-*   **2x PM (Task Broker)**: İş dağıtımı ve takibi.
+#### 1. 🧠 EXECUTIVE & STRATEGY - [5 Agents]
+*   **1x CEO (Grandmaster - DIGITAL TWIN)**: Your digital double (15M-token archive). Makes final decisions.
+*   **1x CTO (Architect)**: Meta-learning lead. Analyzes mistakes after each project and establishes rules.
+*   **1x CSO (Chief Safety Officer)**: Kill switch and alignment.
+*   **2x PM (Task Broker)**: Task distribution and tracking.
 
-#### 2. 🏭 ÜRETİM HATTI (PRODUCTION) - [12 Ajan]
-*   **5x Frontend Dev / 4x Backend Dev / 3x DevOps**: Kod Üretimi ve CI/CD.
+#### 2. 🏭 PRODUCTION LINE - [12 Agents]
+*   **5x Frontend Dev / 4x Backend Dev / 3x DevOps**: Code generation and CI/CD.
 
-#### 3. 🛡️ KALİTE & GÜVENLİK (QA & SEC) - [8 Ajan]
-*   **3x QA Tester / 3x Red Team / 2x Code Reviewer**: Sıkı denetim ve sızma testleri.
+#### 3. 🛡️ QA & SECURITY - [8 Agents]
+*   **3x QA Tester / 3x Red Team / 2x Code Reviewer**: Strict auditing and penetration testing.
 
-#### 4. 🌍 İSTİHBARAT & BELLEK (INTEL) - [10 Ajan]
-*   **2x Researcher / 2x Oracle (Gemini) / 1x Legal**: Bilgi toplama ve hukuk.
+#### 4. 🌍 INTEL & MEMORY - [10 Agents]
+*   **2x Researcher / 2x Oracle (Gemini) / 1x Legal**: Information gathering and compliance.
 *   **3x JANITOR (MEMORY SURGEONS & HISTORIAN)**:
-    *   *Vector Implant*: Bilgileri saklar.
-    *   ***The Historian (YENİ)***: Proje bitince devreye girer. Hatanın kök nedenini (Root Cause) "Dersler DB"ye işler.
-*   **2x TOOLSMITH**: Eksik araçları (scraper, converter) o an yazar.
+    *   *Vector Implant*: Handles data storage.
+    *   ***The Historian (NEW)***: Activates post-project and logs root causes into the Lessons DB.
+*   **2x TOOLSMITH**: Builds missing tools (scrapers, converters) on demand.
 
-#### 5. 🔮 SİMÜLASYON ve GELECEK (MATRIX) - [5 Ajan]
-*   **3x Persona Bot / 2x Market Analyst**: Kullanıcı simülasyonu ve pazar analizi.
+#### 5. 🔮 SIMULATION & FUTURE (MATRIX) - [5 Agents]
+*   **3x Persona Bot / 2x Market Analyst**: User simulation and market analysis.
 
-#### 6. 🎨 TASARIM (CREATIVE) - [3 Ajan]
+#### 6. 🎨 CREATIVE - [3 Agents]
 *   **2x Designer**: UI/UX.
-*   **1x Technical Writer (RAPORTÖR)**: Proje sonunda profesyonel "Post-Mortem Raporu" sunar.
+*   **1x Technical Writer (RAPPORTEUR)**: Delivers a professional post-mortem report at project end.
 
-#### 7. 🏛️ HAZİNE VE ADALET (TREASURY) - [2 Ajan]
-*   **2x Ledger Keeper**: Blockchain tabanlı işlem kaydı.
+#### 7. 🏛️ TREASURY & JUSTICE - [2 Agents]
+*   **2x Ledger Keeper**: Blockchain-based transaction logging.
 
 ---
 
-### 🧬 v5.2 SAGE MEKANİZMALARI
+### 🧬 v5.2 SAGE MECHANISMS
 
-1.  **🦉 The Wisdom Loop (Bilgelik Döngüsü)**: Sistem her resetlendiğinde tecrübesi artar. Hatalar kurala dönüşür.
-2.  **👤 The Mert Protocol (Digital Twin)**: 15M tokenlik arşiv ile senin gibi düşünür.
-3.  **🚦 Adaptive Scaling**: İhtiyaca göre kaynak tüketir (Nano/Micro/Omega).
-4.  **💰 Swarm Economy**: Ajanlar arası puanlama ile kaliteyi artırır.
+1.  **🦉 The Wisdom Loop**: Experience grows with every reset; mistakes turn into rules.
+2.  **👤 The Mert Protocol (Digital Twin)**: Thinks like you, powered by a 15M-token archive.
+3.  **🚦 Adaptive Scaling**: Consumes resources based on need (Nano/Micro/Omega).
+4.  **💰 Swarm Economy**: Improves quality through inter-agent scoring.
 
 ---
 
@@ -1295,8 +1299,8 @@ This project is **confidential and proprietary**. All rights are reserved by the
 ## 📧 Contact
 
 **Project**: MertFormer Titan (Onyx Storm)  
-**Version**: v27.0 FINAL (Production Ready)  
-**Status**: 🔒 LOCKED & SEALED  
+**Version**: v27.0 FINAL (Pre-Training)  
+**Status**: 🟡 PRE-TRAINING (Unverified)  
 **Made with** ❤️ **in Turkey** 🇹🇷
 
 ---
