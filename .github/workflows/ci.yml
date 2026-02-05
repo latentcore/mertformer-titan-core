@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip wheel setuptools
+          python -m pip install -r requirements.txt
+          python -m pip install -e ".[dev]"
+
+      - name: Secret scan (tracked files)
+        run: |
+          python scripts/secret_scan.py
+
+      - name: Ruff (lightweight)
+        run: |
+          python -m ruff check .
+
+      - name: Preflight (offline)
+        env:
+          TITAN_OFFLINE: "1"
+          TITAN_WANDB: "0"
+        run: |
+          python scripts/titan_preflight.py
+
+      - name: Pytest
+        run: |
+          python -m pytest -q
+
+      - name: Operator Gate (safe, offline)
+        env:
+          TITAN_OFFLINE: "1"
+          TITAN_WANDB: "0"
+        run: |
+          python scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl
