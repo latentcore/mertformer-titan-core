@@ -3,8 +3,8 @@
 # 🚀 MERTFORMER TITAN (ONYX STORM) - ULTIMATE LAUNCHPAD
 # ------------------------------------------------------------------------------
 # Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
-# Version: v27.0-FINAL (Locked & Sealed)
-# Status : PRODUCTION READY (LOCKED)
+# Version: v27.0-FINAL (Pre-Training)
+# Status : PRE-TRAINING (UNVERIFIED)
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -357,4 +357,6 @@ fi
 # Eğitim bitti, şimdi paketle ve temizle
 echo "🚀 EĞİTİM TAMAMLANDI. MOBİL EXPORT BAŞLATILIYOR..."
 python3 scripts/mobile_export.py
+echo "🧾 Updating unified logbook..."
+python3 scripts/logbook_build.py --append || echo "⚠️ Logbook update failed (continuing)"
 echo "✅ TÜM İŞLEMLER BİTTİ. TELEFONA HAZIR!"

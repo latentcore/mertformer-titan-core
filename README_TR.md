@@ -184,6 +184,8 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 - [repro/seed_policy.md](repro/seed_policy.md) — Seed politikası (EN).
 - [repro/seed_policy_TR.md](repro/seed_policy_TR.md) — Seed politikası (TR).
 - [repro/pip_freeze.txt](repro/pip_freeze.txt) — Ortam envanteri (pip freeze).
+- [logs/README.md](logs/README.md) — Log dizini + birleşik logbook notları.
+- [logs/ALL_LOGS.jsonl](logs/ALL_LOGS.jsonl) — Birleşik logbook (tüm loglar tek dosyada).
 - [interfaces/inference_contract.md](interfaces/inference_contract.md) — Çıkarım sözleşmesi (EN).
 - [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md) — Çıkarım sözleşmesi (TR).
 - [economics/cost_model.md](economics/cost_model.md) — Maliyet modeli (EN).
@@ -651,6 +653,15 @@ MertFormer Titan, profesyonel düzeyde bir tanı koyma sistemine sahiptir. `./ru
 
 ---
 
+### 🧾 Birleşik Logbook
+Tüm loglar tek dosyada birleştirilir: `logs/ALL_LOGS.jsonl`.
+Oluşturma/ekleme:
+`python3 scripts/logbook_build.py --append`
+
+Bu dosya her log satırı için kaynak metadata içerir ve denetim‑seviyesi izlenebilirlik sağlar.
+
+---
+
 ### 💻 İnteraktif Terminal Simülasyonu
 Aşağıdaki blok, bir MertFormer Ajanının karmaşık bir hatayı nasıl analiz edip çözdüğünü temsil eder:
 
@@ -726,6 +737,7 @@ Eğitim metrikleri şuralara kaydedilir:
 - 📈 **WandB**: Gerçek zamanlı panolar (loss, grad norm, MoE sağlığı vb.)
 - 📄 **CSV**: `logs/run_*.csv`
 - 📋 **JSONL**: `logs/run_*.jsonl`
+- 🧾 **Birleşik logbook**: `logs/ALL_LOGS.jsonl`
 - 💻 **Konsol**: Adım adım ilerleme
 
 ---
@@ -1127,6 +1139,7 @@ NİHAİ/
 │   ├── 📄 validation.jsonl # Validation set
 │   └── 📄 golden_samples.jsonl # 50 golden prompts
 ├── 📂 logs/                # Training logs
+│   └── 📄 ALL_LOGS.jsonl   # Birleşik logbook (tüm loglar tek dosyada)
 ├── 📄 Dockerfile           # Containarized Environment
 ├── 📄 run.sh               # Tek komut baslatici (auto-setup + NCCL tuning)
 ├── 📄 requirements.txt     # Python dependencies

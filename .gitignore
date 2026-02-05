@@ -55,6 +55,7 @@ logs/*
 !logs/operator_mode/*.manifest.json
 !logs/run_*.jsonl
 !logs/run_*.csv
+!logs/ALL_LOGS.jsonl
 
 # Temporary
 *.tmp

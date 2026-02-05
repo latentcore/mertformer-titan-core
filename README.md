@@ -184,6 +184,8 @@ Security, provenance, reproducibility, and ops notes.
 - [repro/seed_policy.md](repro/seed_policy.md) — Seed policy (EN).
 - [repro/seed_policy_TR.md](repro/seed_policy_TR.md) — Seed policy (TR).
 - [repro/pip_freeze.txt](repro/pip_freeze.txt) — Environment snapshot (pip freeze).
+- [logs/README.md](logs/README.md) — Logs index + unified logbook notes.
+- [logs/ALL_LOGS.jsonl](logs/ALL_LOGS.jsonl) — Unified logbook (all logs in one file).
 - [interfaces/inference_contract.md](interfaces/inference_contract.md) — Inference contract (EN).
 - [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md) — Inference contract (TR).
 - [economics/cost_model.md](economics/cost_model.md) — Cost model (EN).
@@ -653,6 +655,15 @@ MertFormer Titan includes a professional-grade diagnostic judge. Run `./run.sh -
 
 ---
 
+### 🧾 Unified Logbook
+All logs are aggregated into a single file: `logs/ALL_LOGS.jsonl`.
+Build or append with:
+`python3 scripts/logbook_build.py --append`
+
+This file includes source metadata for every log line and is designed for audit-grade traceability.
+
+---
+
 ### 💻 Interactive Terminal Simulation
 The following block demonstrates how a MertFormer Agent analyzes and resolves a complex failure:
 
@@ -728,6 +739,7 @@ Training metrics are logged to:
 - 📈 **WandB**: Real-time dashboards (loss, grad norm, MoE health, etc.)
 - 📄 **CSV**: `logs/run_*.csv`
 - 📋 **JSONL**: `logs/run_*.jsonl`
+- 🧾 **Unified logbook**: `logs/ALL_LOGS.jsonl`
 - 💻 **Console**: Step-by-step progress
 
 ---
@@ -1130,6 +1142,7 @@ NİHAİ/                     # Project root
 │   ├── 📄 validation.jsonl # Validation set
 │   └── 📄 golden_samples.jsonl # 50 golden prompts
 ├── 📂 logs/                # Training logs
+│   └── 📄 ALL_LOGS.jsonl   # Unified logbook (all logs in one file)
 ├── 📄 Dockerfile           # Containarized Environment
 ├── 📄 run.sh               # One-command launcher (auto-setup + NCCL tuning)
 ├── 📄 requirements.txt     # Python dependencies

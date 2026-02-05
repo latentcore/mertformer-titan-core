@@ -107,6 +107,60 @@ def atomic_write_json(path: Union[str, Path], data: Dict[str, Any]) -> None:
     tmp.replace(p)
 
 
+def _redact_text(text: str) -> str:
+    patterns = ["hf_", "wandb_", "sk-"]
+    out = text
+    for token in patterns:
+        if token in out:
+            out = out.replace(token, "REDACTED_")
+    return out
+
+
+def _redact_obj(obj: Any) -> Any:
+    if obj is None:
+        return None
+    if isinstance(obj, str):
+        return _redact_text(obj)
+    if isinstance(obj, (int, float, bool)):
+        return obj
+    if isinstance(obj, dict):
+        return {k: _redact_obj(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_redact_obj(v) for v in obj]
+    return _redact_text(str(obj))
+
+
+def _ensure_logbook_header(path: Path) -> None:
+    header = {
+        "type": "logbook_header",
+        "title": "MertFormer Unified Logbook",
+        "schema_version": "1.0",
+        "created_at_utc": _utc_iso(),
+        "note": "Unified logbook for all logs under logs/. New entries append automatically.",
+        "redaction_policy": "Simple token redaction for hf_/wandb_/sk- patterns.",
+    }
+    if not path.exists() or path.stat().st_size == 0:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(header, ensure_ascii=False) + "\n", encoding="utf-8")
+        return
+
+    try:
+        with path.open("r", encoding="utf-8") as f:
+            first = f.readline().strip()
+        obj = json.loads(first) if first else {}
+    except Exception:
+        obj = {}
+
+    if obj.get("type") != "logbook_header":
+        tmp = path.with_suffix(path.suffix + ".tmp")
+        with tmp.open("w", encoding="utf-8") as out:
+            out.write(json.dumps(header, ensure_ascii=False) + "\n")
+            with path.open("r", encoding="utf-8") as src:
+                for line in src:
+                    out.write(line)
+        tmp.replace(path)
+
+
 class RunLogger:
     def __init__(
         self,
@@ -130,6 +184,9 @@ class RunLogger:
 
         self.log_dir = Path(log_dir)
         self.log_dir.mkdir(parents=True, exist_ok=True)
+        self.logbook_path = self.log_dir / "ALL_LOGS.jsonl"
+        self._logbook_ready = False
+        self._logbook_enabled = os.environ.get("MERTFORMER_LOGBOOK", "1") != "0"
 
         stamp = _local_stamp()
         self.run_id = run_name or f"run_{stamp}"
@@ -212,6 +269,32 @@ class RunLogger:
         except Exception as e:
             if self.fail_safe:
                 self._warn(f"JSONL yazılamadı: {e}")
+            else:
+                raise
+
+    def _append_logbook(self, entry_type: str, payload: Dict[str, Any], source_kind: str) -> None:
+        if not self._logbook_enabled:
+            return
+        try:
+            if not self._logbook_ready:
+                _ensure_logbook_header(self.logbook_path)
+                self._logbook_ready = True
+
+            record = {
+                "type": entry_type,
+                "timestamp_utc": _utc_iso(),
+                "run_id": self.run_id,
+                "source_kind": source_kind,
+                "source_file": str(self.jsonl_path),
+                "source_sha256": None,
+                "source_sha256_status": "pending",
+                "payload": _redact_obj(payload),
+            }
+            with self.logbook_path.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(record, ensure_ascii=False) + "\n")
+        except Exception as e:
+            if self.fail_safe:
+                self._warn(f"logbook append failed: {e}")
             else:
                 raise
 
@@ -300,6 +383,7 @@ class RunLogger:
             meta["extra"] = _safe_json(extra)
 
         self._write_line(meta)
+        self._append_logbook("live_meta", meta, "meta")
         self._maybe_flush(force=True)
 
     def log_event(self, name: str, data: Optional[Dict[str, Any]] = None) -> None:
@@ -311,6 +395,7 @@ class RunLogger:
         }
         self._write_line(rec)
         self._maybe_flush(force=False)
+        self._append_logbook("live_event", rec, "event")
 
     def log_step(self, metrics: Dict[str, Any]) -> None:
         self._step_count += 1
@@ -327,6 +412,7 @@ class RunLogger:
         self._write_line(rec)
         self._write_csv(rec)
         self._maybe_flush(force=False)
+        self._append_logbook("live_step", rec, "step")
 
     def _maybe_flush(self, force: bool) -> None:
         if self._fh is None:
@@ -371,6 +457,7 @@ class RunLogger:
 
         self._write_line(end)
         self._maybe_flush(force=True)
+        self._append_logbook("live_final", end, "final")
 
         try:
             size = self.jsonl_path.stat().st_size if self.jsonl_path.exists() else None

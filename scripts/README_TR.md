@@ -13,7 +13,7 @@ Bazıları GPU, HF_TOKEN veya WANDB_API_KEY ister. Emin değilsen `run.sh` ile b
 ## Değerlendirme & Benchmark
 - `golden_eval.py` — Golden sample evaluator (50 prompt).
 - `benchmarks_internal.py` — HumanEval / MBPP çıktı üretimi.
-- `eval.py` — GSM8K eval stub (entegrasyon placeholder).
+- `eval.py` — GSM8K eval wrapper (legacy; bkz: `eval/gsm8k.py`).
 
 ## Export & ONNX
 - `mobile_export.py` — Mobil/edge ONNX export.
@@ -39,6 +39,7 @@ Bazıları GPU, HF_TOKEN veya WANDB_API_KEY ister. Emin değilsen `run.sh` ile b
 - `mac_simulation.py` — Mac simulasyon koşusu (CPU/MPS).
 - `train_tpu_turbo.py` — TPU eğitim başlatıcı (experimental).
 - `download_tr_tokenizer.py` — Türkçe tokenizer indirme (opt‑in).
+- `logbook_build.py` — Birleşik logbook üreticisi (`logs/ALL_LOGS.jsonl`).
 
 ## Varlıklar
 - `build_investor_deck.py` — PPTX yatırımcı deck üretimi.

@@ -13,7 +13,7 @@ Some scripts require GPU, HF_TOKEN, or WANDB_API_KEY. When in doubt, run `run.sh
 ## Evaluation & Benchmarks
 - `golden_eval.py` — Golden sample evaluator (50 prompts).
 - `benchmarks_internal.py` — HumanEval / MBPP output generator.
-- `eval.py` — GSM8K evaluator stub (integration placeholder).
+- `eval.py` — GSM8K eval wrapper (legacy; see `eval/gsm8k.py`).
 
 ## Export & ONNX
 - `mobile_export.py` — ONNX export for mobile/edge.
@@ -39,6 +39,7 @@ Some scripts require GPU, HF_TOKEN, or WANDB_API_KEY. When in doubt, run `run.sh
 - `mac_simulation.py` — Mac simulation run (CPU/MPS).
 - `train_tpu_turbo.py` — TPU training launcher (experimental).
 - `download_tr_tokenizer.py` — Turkish tokenizer download (opt-in).
+- `logbook_build.py` — Unified logbook builder (writes `logs/ALL_LOGS.jsonl`).
 
 ## Assets
 - `build_investor_deck.py` — Generates the PPTX investor deck.
