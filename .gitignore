@@ -28,6 +28,16 @@ tokenizer/tr/*
 *.pth
 *.ckpt
 /datasets/
+!/datasets/
+!/datasets/README.md
+!/datasets/README_TR.md
+!/datasets/SOURCES.md
+!/datasets/SOURCES_TR.md
+!/datasets/LICENSES.md
+!/datasets/LICENSES_TR.md
+!/datasets/filters.yaml
+!/datasets/hashes.json
+!/datasets/validation.jsonl
 /data/
 /dataset/
 /weights/

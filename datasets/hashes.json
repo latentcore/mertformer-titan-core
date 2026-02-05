@@ -1,0 +1,45 @@
+{
+  "note": "Populate with file hashes for each dataset snapshot before production training.",
+  "sources": {
+    "uonlp/CulturaX:tr": {
+      "snapshot": null,
+      "sha256": null,
+      "status": "pending"
+    },
+    "wikimedia/wikipedia:tr": {
+      "snapshot": null,
+      "sha256": null,
+      "status": "pending"
+    },
+    "openai/gsm8k:main": {
+      "snapshot": null,
+      "sha256": null,
+      "status": "pending"
+    },
+    "openai_humaneval:default": {
+      "snapshot": null,
+      "sha256": null,
+      "status": "pending"
+    },
+    "mbpp:sanitized": {
+      "snapshot": null,
+      "sha256": null,
+      "status": "pending"
+    },
+    "wikitext:wikitext-2-raw-v1": {
+      "snapshot": null,
+      "sha256": null,
+      "status": "pending"
+    },
+    "internal:stage_sets": {
+      "snapshot": null,
+      "sha256": null,
+      "status": "pending"
+    },
+    "internal:golden_samples": {
+      "snapshot": null,
+      "sha256": null,
+      "status": "pending"
+    }
+  }
+}

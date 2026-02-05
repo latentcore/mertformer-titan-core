@@ -1393,37 +1393,36 @@ def train():
                             "max_grad_norm": max_grad_norm_seen
                         }
 
+                        # [V26.6 TELEMETRY] MoE Router Health (log-interval only)
+                        moe_loads = []
+                        # Handle DDP/Compile wrappers
+                        model_ref = student.module if hasattr(student, "module") else student
+                        model_ref = model_ref._orig_mod if hasattr(model_ref, "_orig_mod") else model_ref
 
-                    # [V26.6 TELEMETRY] MoE Router Health
-                    # Check expert load distribution to detect collapse
-                    moe_loads = []
-                    # Handle DDP/Compile wrappers
-                    model_ref = student.module if hasattr(student, "module") else student
-                    model_ref = model_ref._orig_mod if hasattr(model_ref, "_orig_mod") else model_ref
-                    
-                    for m in model_ref.modules():
-                        if hasattr(m, "get_expert_load"):
-                            moe_loads.append(m.get_expert_load())
-                    
-                    if moe_loads:
-                        # Stack: [Layers, Experts]
-                        loads = torch.stack(moe_loads) # (L, E)
-                        # Metrics
-                        max_load = loads.max().item() # Worst case imbalance
-                        avg_std = loads.std(dim=1).mean().item() # Overall balance score (lower is better)
-                        
-                        log_data["moe_max_load"] = max_load
-                        log_data["moe_avg_std"] = avg_std
-                        
-                        print(f"   🧠 MoE Health: MaxLoad={max_load:.2f} | Balance(std)={avg_std:.3f}")
-                        
-                        # Router Collapse Warning + ACTION
-                        if max_load > 0.85 and getattr(cfg, "active_experts", 1) < getattr(cfg, "num_experts", 4):
-                            print(f"⚠️  ROUTER COLLAPSE DETECTED: Max Load {max_load:.2f} (Target: {1.0/cfg.num_experts:.2f})")
-                            print(f"   🔧 ACTION: Jitter boost activated via MoE module (see moe.py collapse_detected)")
-                            log_data["router_collapse"] = True
+                        for m in model_ref.modules():
+                            if hasattr(m, "get_expert_load"):
+                                moe_loads.append(m.get_expert_load())
 
-                        logger.log_step(log_data)
+                        if moe_loads:
+                            # Stack: [Layers, Experts]
+                            loads = torch.stack(moe_loads)  # (L, E)
+                            # Metrics
+                            max_load = loads.max().item()  # Worst case imbalance
+                            avg_std = loads.std(dim=1).mean().item()  # Overall balance score (lower is better)
+
+                            log_data["moe_max_load"] = max_load
+                            log_data["moe_avg_std"] = avg_std
+
+                            print(f"   🧠 MoE Health: MaxLoad={max_load:.2f} | Balance(std)={avg_std:.3f}")
+
+                            # Router Collapse Warning + ACTION
+                            if max_load > 0.85 and getattr(cfg, "active_experts", 1) < getattr(cfg, "num_experts", 4):
+                                print(f"⚠️  ROUTER COLLAPSE DETECTED: Max Load {max_load:.2f} (Target: {1.0/cfg.num_experts:.2f})")
+                                print(f"   🔧 ACTION: Jitter boost activated via MoE module (see moe.py collapse_detected)")
+                                log_data["router_collapse"] = True
+
+                        if logger:
+                            logger.log_step(log_data)
 
                         accum_loss = 0.0
                         accum_count = 0  # [FIX] Reset counter
@@ -1436,54 +1435,54 @@ def train():
                         val_loss = 0.0
                         val_samples = 0
                         val_steps = 10
+                        try:
+                            # [PRO] Use dedicated validation dataloader if available
+                            val_iter = iter(val_dl)
+                            for _ in range(val_steps):
+                                try:
+                                    val_input_ids, val_labels = next(val_iter)
+                                except StopIteration:
+                                    val_iter = iter(val_dl)
+                                    val_input_ids, val_labels = next(val_iter)
 
-                    try:
-                        # [PRO] Use dedicated validation dataloader if available
-                        val_iter = iter(val_dl)
-                        for _ in range(val_steps):
-                            try:
-                                val_input_ids, val_labels = next(val_iter)
-                            except StopIteration:
-                                val_iter = iter(val_dl)
-                                val_input_ids, val_labels = next(val_iter)
+                                val_input_ids = val_input_ids.to(student_device)
+                                val_labels = val_labels.to(student_device)
 
-                            val_input_ids = val_input_ids.to(student_device)
-                            val_labels = val_labels.to(student_device)
+                                with torch.no_grad():
+                                    val_logits, _, _ = student(val_input_ids, use_cache=False)
+                                    val_shift_logits = val_logits[..., :-1, :].contiguous()
+                                    val_shift_labels = val_labels[..., 1:].contiguous()
+                                    val_batch_loss = F.cross_entropy(
+                                        val_shift_logits.view(-1, cfg.vocab_size),
+                                        val_shift_labels.view(-1),
+                                        ignore_index=teacher_tokenizer.pad_token_id if teacher_tokenizer and teacher_tokenizer.pad_token_id is not None else 0
+                                    )
+                                    val_loss += val_batch_loss.item()
+                                    val_samples += 1
+                        except Exception as e:
+                            print(f"⚠️  Validation error: {e}, skipping early stopping check")
+                            val_loss = float('inf')
 
-                            with torch.no_grad():
-                                val_logits, _, _ = student(val_input_ids, use_cache=False)
-                                val_shift_logits = val_logits[..., :-1, :].contiguous()
-                                val_shift_labels = val_labels[..., 1:].contiguous()
-                                val_batch_loss = F.cross_entropy(
-                                    val_shift_logits.view(-1, cfg.vocab_size),
-                                    val_shift_labels.view(-1),
-                                    ignore_index=teacher_tokenizer.pad_token_id if teacher_tokenizer and teacher_tokenizer.pad_token_id is not None else 0
-                                )
-                                val_loss += val_batch_loss.item()
-                                val_samples += 1
-                    except Exception as e:
-                        print(f"⚠️  Validation error: {e}, skipping early stopping check")
-                        val_loss = float('inf')
+                        if val_samples > 0:
+                            val_loss = val_loss / val_samples
+                            print(f"📊 Validation Loss: {val_loss:.4f} (Best: {best_val_loss:.4f})")
 
-                    if val_samples > 0:
-                        val_loss = val_loss / val_samples
-                        print(f"📊 Validation Loss: {val_loss:.4f} (Best: {best_val_loss:.4f})")
+                            # EVAL-DRIVEN EARLY STOPPING
+                            if val_loss < best_val_loss:
+                                best_val_loss = val_loss
+                                patience_counter = 0
+                                print(f"✅ New best validation loss! Saving checkpoint...")
+                                best_val_loss = save_checkpoint_smart(student, opt, scheduler, global_step, cfg, keep_last_n=3, val_loss=val_loss, best_val_loss=best_val_loss)
+                            else:
+                                patience_counter += 1
+                                print(f"⏳ No improvement ({patience_counter}/{early_stop_patience})")
 
-                        # EVAL-DRIVEN EARLY STOPPING
-                        if val_loss < best_val_loss:
-                            best_val_loss = val_loss
-                            patience_counter = 0
-                            print(f"✅ New best validation loss! Saving checkpoint...")
-                            best_val_loss = save_checkpoint_smart(student, opt, scheduler, global_step, cfg, keep_last_n=3, val_loss=val_loss, best_val_loss=best_val_loss)
-                        else:
-                            patience_counter += 1
-                            print(f"⏳ No improvement ({patience_counter}/{early_stop_patience})")
-
-                            if patience_counter >= early_stop_patience:
-                                print(f"🛑 Early stopping triggered! Best val loss: {best_val_loss:.4f}")
-                                # [PRO] Respect Early Stopping - Finalize ONLY if we return
-                                logger.finalize("early_stopped", extra={"best_val_loss": best_val_loss})
-                                return 
+                                if patience_counter >= early_stop_patience:
+                                    print(f"🛑 Early stopping triggered! Best val loss: {best_val_loss:.4f}")
+                                    # [PRO] Respect Early Stopping - Finalize ONLY if we return
+                                    if logger:
+                                        logger.finalize("early_stopped", extra={"best_val_loss": best_val_loss})
+                                    return
 
                         student.train()
 
