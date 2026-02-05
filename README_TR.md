@@ -25,12 +25,15 @@
 # 🦅 MertFormer Titan: Otonom Sürü Mimarisi
 > **Hedef: Mobil maliyetle, sınır-üstü kodlama yeteneği (eğitim/benchmark sonrası).**
 
-| Mevcut Durum | `ALFA / EĞİTİM ÖNCESİ` |
+| Mühendislik Durumu | `ALFA / EĞİTİM ÖNCESİ` |
 | :--- | :--- |
-| **Mimari** | ✅ Tasarlandı & Doğrulandı |
-| **Kod Tabanı** | ✅ Tamamlandı |
-| **Eğitim Hattı** | ✅ Ölçeklemeye Hazır |
-| **Benchmarklar** | ⏳ Eğitim Sonrası Bekleniyor |
+| **Kod Tabanı** | ✅ Uygulandı (testler + offline preflight geçiyor) |
+| **Offline Doğrulama** | ✅ PASS (`bash scripts/verify_all.sh`) |
+| **Dataset Uyumu** | ⚠️ Devam ediyor (lisans/hash tamamlanmadan eğitim yok) |
+| **Tam Eğitim Koşusu** | ⏳ Koşulmadı (donanım + snapshot veri gerekiyor) |
+| **Benchmarklar** | ⏳ Checkpoint sonrası (runner SKIP destekler) |
+
+Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 
 > **MertFormer Titan, yapay zeka çıkarım maliyetlerini cihaz düzeyinde minimize ederek kurumsal zekayı merkezsizleştiren yapısal bir verimlilik standardıdır.**
 
@@ -101,6 +104,7 @@ Ana giriş dokümanları ve checklistler.
 - [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README denetim checklisti (TR).
 - [scripts/README.md](scripts/README.md) — Script kataloğu (EN).
 - [scripts/README_TR.md](scripts/README_TR.md) — Script kataloğu (TR).
+- [snake_demo.py](snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
 
 **SDK**
 Edge dağıtım için paket + CLI.
@@ -133,6 +137,14 @@ Dahili yol haritası ve yetenek boşluk haritalaması (kamusal değil).
 Rapor doğruluk denetimi ve stratejik değer özeti.
 - [reports/report_accuracy_audit.md](reports/report_accuracy_audit.md) — Rapor doğruluk denetimi (EN).
 - [reports/report_accuracy_audit_TR.md](reports/report_accuracy_audit_TR.md) — Rapor doğruluk denetimi (TR).
+- [reports/codex_deep_audit_DE.md](reports/codex_deep_audit_DE.md) — Derin mühendislik denetimi (DE).
+- [reports/codex_deep_audit_TR.md](reports/codex_deep_audit_TR.md) — Derin mühendislik denetimi (TR).
+- [reports/verified_matrix.md](reports/verified_matrix.md) — Verified vs Target matrisi (EN).
+- [reports/verified_matrix_TR.md](reports/verified_matrix_TR.md) — Verified vs Target matrisi (TR).
+- [reports/review_checklist.md](reports/review_checklist.md) — Dış inceleme checklisti (EN).
+- [reports/review_checklist_TR.md](reports/review_checklist_TR.md) — Dış inceleme checklisti (TR).
+- [reports/release_snapshot.md](reports/release_snapshot.md) — Release snapshot (EN).
+- [reports/release_snapshot_TR.md](reports/release_snapshot_TR.md) — Release snapshot (TR).
 - [reports/benchmarks/README.md](reports/benchmarks/README.md) — Benchmark çıktıları rehberi (EN).
 - [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark çıktıları rehberi (TR).
 - [reports/strategic_value.md](reports/strategic_value.md) — Stratejik değer özeti (EN).
@@ -185,11 +197,18 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 - [datasets/SOURCES_TR.md](datasets/SOURCES_TR.md) — Veri kaynakları (TR).
 - [datasets/LICENSES.md](datasets/LICENSES.md) — Lisanslar (EN).
 - [datasets/LICENSES_TR.md](datasets/LICENSES_TR.md) — Lisanslar (TR).
+- [datasets/inventory.md](datasets/inventory.md) — Dataset envanteri (otomatik, EN).
+- [datasets/inventory_TR.md](datasets/inventory_TR.md) — Dataset envanteri (otomatik, TR).
+- [datasets/inventory.json](datasets/inventory.json) — Dataset envanteri (otomatik, makine-okur).
 - [repro/seed_policy.md](repro/seed_policy.md) — Seed politikası (EN).
 - [repro/seed_policy_TR.md](repro/seed_policy_TR.md) — Seed politikası (TR).
+- [repro/python.md](repro/python.md) — Python 3.11 baseline kurulum (EN).
+- [repro/python_TR.md](repro/python_TR.md) — Python 3.11 baseline kurulum (TR).
+- [repro/accelerate_default.yaml](repro/accelerate_default.yaml) — Örnek accelerate config (lokal).
 - [repro/pip_freeze.txt](repro/pip_freeze.txt) — Ortam envanteri (pip freeze).
 - [logs/README.md](logs/README.md) — Log dizini + birleşik logbook notları.
-- [logs/ALL_LOGS.jsonl](logs/ALL_LOGS.jsonl) — Birleşik logbook (tüm loglar tek dosyada).
+- `logs/ALL_LOGS.jsonl` — Birleşik logbook artifact (gitignored; `.titan-venv/bin/python scripts/logbook_build.py --append` ile üretilir).
+- [.github/workflows/ci.yml](.github/workflows/ci.yml) — CI pipeline (pytest + preflight + secret scan).
 - [interfaces/inference_contract.md](interfaces/inference_contract.md) — Çıkarım sözleşmesi (EN).
 - [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md) — Çıkarım sözleşmesi (TR).
 - [economics/cost_model.md](economics/cost_model.md) — Maliyet modeli (EN).
@@ -528,63 +547,58 @@ BitNet mimarisi sayesinde MertFormer, sadece amiral gemilerinde değil, **nerede
 <a id="hızlı-başlangıç"></a>
 ## 🚀 Hızlı Başlangıç
 
-### Ön Koşullar
-- Python 3.10+
-- PyTorch 2.0+
-- CUDA 11.8+ (GPU eğitimi için)
-- 50GB+ disk alanı
-- (Opsiyonel) Tam eğitim için 8x A100 80GB
+### Baseline (Review-Ready)
+- Python **3.11** (bkz: `repro/python_TR.md`)
+- Varsayılan çalışma şekli offline-first (`TITAN_OFFLINE=1`): HF/WandB login veya dataset download ancak açıkça etkinleştirilirse.
 
-### Kurulum
+### Kurulum (Önerilen)
+Python 3.11 ile `.titan-venv` oluşturur/günceller ve deps + dev tooling kurar:
 
 ```bash
-# 1. Proje dizinini klonlayın (yerel)
-cd NİHAİ
-
-# 2. Uzman Bağımlılıklarını Yükleyin
-pip install -r requirements.txt
-
-# 3. (Opsiyonel) Flash Attention 2 Kurun (Sadece Linux, 5-10 dk)
-pip install flash-attn --no-build-isolation
+bash scripts/bootstrap_venv.sh
 ```
 
-### SDK (Opsiyonel)
+Opsiyonel demo bağımlılıkları (pygame):
 
 ```bash
-# SDK'yı editable modda kur
-pip install -e .
-
-# (Opsiyonel) CUDA + ONNX ekstralari
-pip install -e ".[cuda,onnx]"
-
-# CLI bilgi
-mertformer info
+bash scripts/bootstrap_venv.sh --demo
 ```
 
-### Eğitimi Başlatma
+### Doğrula (Offline-First, Tek Komut)
 
 ```bash
-# 1. Nihai Sistem Testi (Preflight) - Her şeyden önce bunu çalıştırın
-bash run.sh --test
-
-# 2. Üretim Eğitimini Başlatma
-bash run.sh
+bash scripts/verify_all.sh
 ```
 
-`run.sh` komut dosyası otomatik olarak şunları yapar:
-1. ✅ Hugging Face & WandB'ye giriş yapar
-2. ✅ Bağımlılıkları kurar (PyTorch, Accelerate, Flash Attention)
-3. ✅ Accelerate'i çoklu GPU için yapılandırır
-4. ✅ NCCL ayarlamasını uygular (çoklu GPU optimizasyonu)
-5. ✅ Duman testi (smoke test) çalıştırır (kalkış öncesi kontrol)
-6. ✅ Eğitimi tüm optimizasyonlarla başlatır
-7. ✅ Eğitimden sonra **checkpoint bulunursa** dahili benchmarkları (HumanEval/MBPP) çalıştırır. Varsayılan **tam veri seti** (`BENCHMARK_SAMPLES=0`); `BENCHMARK_SAMPLES` ve `BENCHMARK_SKIP` ile kontrol edilir.
+### LIVE DEMO (Snake Autoplayer)
+
+```bash
+bash scripts/bootstrap_venv.sh --demo
+.titan-venv/bin/python snake_demo.py
+```
+
+### Sadece Preflight
+
+```bash
+TITAN_OFFLINE=1 bash run.sh --test
+```
+
+### Eğitim (Online / Eğitim Donanımı)
+
+```bash
+# Online modu açıkça etkinleştir + (opsiyonel) WandB + kurulum
+TITAN_OFFLINE=0 TITAN_WANDB=1 TITAN_INSTALL=1 bash run.sh
+```
+
+Notlar:
+- Online mod `HF_TOKEN` gerektirir. WandB opsiyoneldir (`TITAN_WANDB=0`).
+- Bağımlılık kurulumu `TITAN_INSTALL=1` ile opt-in. Deterministik kurulum için bootstrap önerilir.
 
 ### Operator Modu Gate
 Tek girişli güvenlik ve hazır olma süiti (varsayılan güvenli mod):
 
 ```bash
-python scripts/operator_mode_gate.py
+TITAN_OFFLINE=1 .titan-venv/bin/python scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl
 # Eğitim donanımında tam mod için --full kullanın
 ```
 
@@ -614,53 +628,38 @@ Aşağıdaki maddeler uygulanmıştır ve kanıt dosyaları ile eşlenmiştir:
 - Verification Plan
 - Sanity Drills: `scripts/checkpoint_restore_drill.py`, `scripts/failure_budget_drill.py`
 
-Son operator-mode logları:
-- `logs/operator_mode/`
-Özet (son lokal koşu):
-- Gate durumu: PASS (güvenli mod)
-- Log paketi: `logs/operator_mode/operator_2026-02-03_22-09-00.jsonl` ve `.manifest.json`
+Operator-mode artifact'leri:
+- `logs/operator_mode/` altında üretilir (varsayılan gitignored; commit edilmez).
+- Script stdout'a JSON özet basar; inceleme eki olarak onu kullanın.
 
 ### 🛡️ Tanısal Mükemmellik (Uçuş Öncesi Kontrol)
-MertFormer Titan, profesyonel düzeyde bir tanı koyma sistemine sahiptir. `./run.sh --test` çalıştırdığınızda şu çıktıyı alırsınız:
-```text
-2026-01-31 16:47:39,881 - [INFO] - ✈️ ============================================================
-2026-01-31 16:47:39,881 - [INFO] - ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
-2026-01-31 16:47:39,881 - [INFO] - ✈️ ============================================================
-2026-01-31 16:47:39,881 - [INFO] - ✈️ STEP 1: SECRET SCAN...
-2026-01-31 16:47:39,881 - [INFO] - 🛡️ HF_TOKEN detected (starts with hf_Bg...)
-2026-01-31 16:47:39,881 - [INFO] - 🛡️ WANDB_API_KEY detected (ends with ...kTBr)
-2026-01-31 16:47:39,881 - [INFO] - ✅ Secrets validated.
-2026-01-31 16:47:39,881 - [INFO] - ✈️ STEP 2: ARCHITECTURAL AUDIT...
-2026-01-31 16:47:39,881 - [INFO] - ✅ Layer configuration validated: No Liquid/MoE conflicts.
-2026-01-31 16:47:39,881 - [INFO] - ✅ MLA Dimensions: Consistent (2048 features).
-2026-01-31 16:47:39,881 - [INFO] - ✅ BitNet b1.58 logic: ACTIVE (Locked).
-2026-01-31 16:47:39,882 - [INFO] - ✈️ STEP 3: DATA & DISTILLATION TEST...
-2026-01-31 16:50:25,090 - [INFO] - ✅ Connection to uonlp/CulturaX successful.
-2026-01-31 16:50:54,272 - [INFO] - 🛡️ Teacher Model mocked (Prevented 140GB download).
-2026-01-31 16:50:54,272 - [INFO] - ⚙️  Pre-computing logits for preflight...
-2026-01-31 16:50:54,348 - [INFO] - ✅ Saved Final Chunk 0: .../temp_preflight_logits/preflight_test_part_0.pt
-2026-01-31 16:50:54,348 - [INFO] - ✅ Distillation pipeline: PROVEN (Logits generated/saved).
-2026-01-31 16:50:54,354 - [INFO] - ✈️ STEP 4: MOE GURU LEARNING TEST...
-2026-01-31 16:50:54,354 - [INFO] - ✈️ 🏗️  CONFIG: Using 'Mini-Titan' (2 Layers, 256 Hidden, forced MoE/Liquid) for RAM safety.
-2026-01-31 16:50:55,482 - [INFO] - ✈️ Checking Architectural Gradient Health...
-2026-01-31 16:50:55,488 - [INFO] - ✅ MoE Learning: PROVEN (48 expert params receiving gradients).
-2026-01-31 16:50:55,488 - [INFO] - ✅ Liquid Dynamics: PROVEN (7 liquid params receiving gradients).
-2026-01-31 16:50:55,489 - [INFO] - ✈️ Shared Expert Grad: OK
-2026-01-31 16:50:55,489 - [INFO] - ✅ MertFormer forward/backward pass verified.
-2026-01-31 16:50:55,489 - [INFO] - ✅ OVERALL SYSTEM STATUS: 100% PROTECTED & READY.
-2026-01-31 16:50:55,490 - [INFO] - ✈️ ============================================================
-2026-01-31 16:50:55,490 - [INFO] - ✈️ RESULT: 🏆 ALL GREEN
-2026-01-31 16:50:55,490 - [INFO] - ✈️ ============================================================
+Preflight (offline-first):
+
+```bash
+TITAN_OFFLINE=1 .titan-venv/bin/python scripts/titan_preflight.py
+# veya:
+TITAN_OFFLINE=1 bash run.sh --test
 ```
 
-*Not: Yukarıdaki örnek log 2026-01-31 tarihinden. Güncel ortam için `./run.sh --test` çalıştırın.*
+Neleri doğrular:
+- Secrets kontrolü (token parçası yazdırmaz; offline modda secrets yoksa `TITAN_PREFLIGHT_REQUIRE_SECRETS=1` haricinde FAIL etmez)
+- Mimari audit (cfg + MLA boyutları)
+- Distillation dry-run (teacher mock; geçici logits; cleanup)
+- MoE/Liquid gradient sağlığı
+
+Artifact:
+- `logs/preflight/titan_preflight.log` (gitignored; üretilen çıktı)
 
 ---
 
 ### 🧾 Birleşik Logbook
-Tüm loglar tek dosyada birleştirilir: `logs/ALL_LOGS.jsonl`.
+Tüm loglar tek bir artifact dosyasında birleştirilebilir: `logs/ALL_LOGS.jsonl` (gitignored).
+
 Oluşturma/ekleme:
-`python3 scripts/logbook_build.py --append`
+
+```bash
+.titan-venv/bin/python scripts/logbook_build.py --append
+```
 
 Bu dosya her log satırı için kaynak metadata içerir ve denetim‑seviyesi izlenebilirlik sağlar.
 
@@ -739,10 +738,12 @@ Bu eğitim sırası ve token bütçesi, **güçlü bir temel için yeterli** ola
 
 Eğitim metrikleri şuralara kaydedilir:
 - 📈 **WandB**: Gerçek zamanlı panolar (loss, grad norm, MoE sağlığı vb.)
-- 📄 **CSV**: `logs/run_*.csv`
-- 📋 **JSONL**: `logs/run_*.jsonl`
-- 🧾 **Birleşik logbook**: `logs/ALL_LOGS.jsonl`
+- 📄 **CSV**: `logs/run_*.csv` (artifact; gitignored)
+- 📋 **JSONL**: `logs/run_*.jsonl` (artifact; gitignored)
+- 🧾 **Birleşik logbook**: `logs/ALL_LOGS.jsonl` (artifact; gitignored)
 - 💻 **Konsol**: Adım adım ilerleme
+
+Not: Politika gereği `logs/` altında sadece **artifact** tutulur ve commit edilmez (`logs/README.md` hariç).
 
 ---
 
@@ -913,6 +914,10 @@ Planlanan Türkçe veri kaynakları:
 
 ```bash
 NİHAİ/
+├── 📂 .github/              # CI workflow'leri
+│   └── 📂 workflows/        # GitHub Actions
+│       └── 📄 ci.yml        # CI: secret scan + ruff + offline preflight + pytest + operator gate
+├── 🐍 snake_demo.py          # Pygame cyberpunk Snake autoplayer (LIVE DEMO)
 ├── 📄 MODEL_CARD.md         # Model karti (EN)
 ├── 📄 MODEL_CARD_TR.md      # Model karti (TR)
 ├── 📄 USE_POLICY.md         # Kullanim politikasi (EN)
@@ -961,14 +966,19 @@ NİHAİ/
 ├── 📂 scripts/             # Yardimci scriptler ve raporlar
 │   ├── 📄 README.md        # Script katalogu (EN)
 │   ├── 📄 README_TR.md     # Script katalogu (TR)
+│   ├── 📄 bootstrap_venv.sh # `.titan-venv` bootstrap (Python 3.11 baseline)
+│   ├── 📄 verify_all.sh    # Offline-first verify-all pipeline
+│   ├── 📄 secret_scan.py   # Track'li dosyalarda secret scan (CI gate)
 │   ├── 📄 smart_runner.py  # Parallel Orchestrator (Data -> Distill -> Train)
 │   ├── 📄 titan_preflight.py # Sistem testi
 │   ├── 📄 data_pipeline.py # Dataset Alchemy (5-asama mufredat)
+│   ├── 📄 extract_dataset_refs.py # Kod referanslarindan dataset envanteri
 │   ├── 📄 mobile_export.py # Mobil ONNX export
 │   ├── 📄 chat.py          # Etkilesimli chat arayuzu
 │   ├── 📄 xray.py          # Proje denetleyici
 │   ├── 📄 operator_mode_gate.py # Tek girisli gate
 │   ├── 📄 overfit_gate.py  # 1MB overfit gate
+│   ├── 📄 train_smoke.py   # Kucuk offline training smoke test (CPU/MPS)
 │   ├── 📄 golden_eval.py   # Golden sample evaluator
 │   ├── 📄 benchmarks_internal.py # HumanEval/MBPP
 │   ├── 📄 nan_kill_test.py # NaN kill-switch drill
@@ -1088,14 +1098,25 @@ NİHAİ/
 ├── 📂 repro/               # Reproducibility kilitleri
 │   ├── 📄 env.lock
 │   ├── 📄 cuda.lock
+│   ├── 📄 accelerate_default.yaml # Ornek accelerate config (lokal)
 │   ├── 📄 seed_policy.md
 │   ├── 📄 seed_policy_TR.md
+│   ├── 📄 python.md        # Python 3.11 baseline (EN)
+│   ├── 📄 python_TR.md     # Python 3.11 baseline (TR)
 │   └── 📄 pip_freeze.txt   # Ortam envanteri (pip freeze)
 ├── 📂 registry/            # Model registry
 │   └── 📄 mertformer_v0.1.json
 ├── 📂 reports/             # Executive Health & Validation Reports
 │   ├── 📄 one_pager.md      # One-pager (EN)
 │   ├── 📄 one_pager_TR.md   # One-pager (TR)
+│   ├── 📄 codex_deep_audit_DE.md # Derin muhendislik denetimi (DE)
+│   ├── 📄 codex_deep_audit_TR.md # Derin muhendislik denetimi (TR)
+│   ├── 📄 verified_matrix.md # Verified vs Target matrisi (EN)
+│   ├── 📄 verified_matrix_TR.md # Verified vs Target matrisi (TR)
+│   ├── 📄 review_checklist.md # Dis inceleme checklisti (EN)
+│   ├── 📄 review_checklist_TR.md # Dis inceleme checklisti (TR)
+│   ├── 📄 release_snapshot.md # Release snapshot (EN)
+│   ├── 📄 release_snapshot_TR.md # Release snapshot (TR)
 │   ├── 📄 technical_snapshot.md # Technical snapshot (EN)
 │   ├── 📄 technical_snapshot_TR.md # Technical snapshot (TR)
 │   ├── 📄 report_accuracy_audit.md # Report accuracy audit (EN)
@@ -1138,12 +1159,15 @@ NİHAİ/
 │   ├── 📄 SOURCES_TR.md    # Sources (TR)
 │   ├── 📄 LICENSES.md      # Licenses (EN)
 │   ├── 📄 LICENSES_TR.md   # Licenses (TR)
+│   ├── 📄 inventory.md     # Dataset envanteri (otomatik, EN)
+│   ├── 📄 inventory_TR.md  # Dataset envanteri (otomatik, TR)
+│   ├── 📄 inventory.json   # Dataset envanteri (otomatik, makine-okur)
 │   ├── 📄 filters.yaml     # Filtering policy
 │   ├── 📄 hashes.json      # Snapshot hashes
 │   ├── 📄 validation.jsonl # Validation set
 │   └── 📄 golden_samples.jsonl # 50 golden prompts
-├── 📂 logs/                # Training logs
-│   └── 📄 ALL_LOGS.jsonl   # Birleşik logbook (tüm loglar tek dosyada)
+├── 📂 logs/                # Log artifact'leri (varsayılan gitignored)
+│   └── 📄 README.md        # Log politikası / index (track'li)
 ├── 📄 Dockerfile           # Containarized Environment
 ├── 📄 run.sh               # Tek komut baslatici (auto-setup + NCCL tuning)
 ├── 📄 requirements.txt     # Python dependencies

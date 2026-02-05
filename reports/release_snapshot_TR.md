@@ -1,0 +1,39 @@
+# Release Snapshot (Review-Ready) [TR]
+
+Bu dosya, repo'nun inceleme anındaki durumunu (point-in-time) insan-okur bir formatta özetler.
+
+## Snapshot
+
+- Tarih (lokal): 2026-02-06
+- Git SHA (kısa): TBD
+- Baseline Python: 3.11 (bkz: `repro/python_TR.md`)
+- Varsayılan mod: offline-first (`TITAN_OFFLINE=1`)
+
+## Verified (Run)
+
+Runbook:
+
+```bash
+bash scripts/bootstrap_venv.sh
+bash scripts/verify_all.sh
+```
+
+Beklenen:
+- Secret scan: PASS
+- Pytest: PASS
+- Preflight (offline): PASS
+- Operator gate (safe, offline): PASS
+
+## Önemli Dokümanlar
+
+- Mühendislik denetimi: `reports/codex_deep_audit_DE.md`, `reports/codex_deep_audit_TR.md`
+- Verified vs Target matrisi: `reports/verified_matrix.md`, `reports/verified_matrix_TR.md`
+- Dış inceleme checklisti: `reports/review_checklist.md`, `reports/review_checklist_TR.md`
+- Dataset uyum dokümanları: `datasets/SOURCES*.md`, `datasets/LICENSES*.md`, `datasets/hashes.json`, `datasets/inventory*`
+
+## Bilinen Gate / Blokerler
+
+- Üretim eğitimi şu şartlar sağlanmadan başlatılmamalı:
+  - Eğitim datasetlerinin lisansları doğrulanmış olmalı (`datasets/LICENSES*.md` içinde `TBD` kalmamalı)
+  - Eğitimde kullanılacak snapshotlar için metadata + hash kayıtları `datasets/hashes.json` içine girilmiş olmalı
+

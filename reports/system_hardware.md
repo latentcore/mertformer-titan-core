@@ -1,9 +1,9 @@
 # 💻 TITAN SYSTEM & HARDWARE REPORT
-**Date:** 2026-02-05 07:27:41
+**Date:** 2026-02-06 00:16:11
 **Status:** ✅ LOCAL VERIFIED
 
 ## 🖥️ Hardware Specification
-- **Device:** Unknown (Apple Silicon)
+- **Device:** MacBook Air (Apple Silicon)
 - **Chip:** Apple M4 (10 (4 performance and 6 efficiency))
 - **GPU:** Apple M4 (8 cores, Metal supported)
 - **Total RAM:** 16 GB

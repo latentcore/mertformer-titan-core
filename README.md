@@ -25,12 +25,15 @@
 # 🦅 MertFormer Titan: Autonomous Swarm Architecture
 > **Target: near-frontier coding capability at mobile compute cost (pending training/benchmarks).**
 
-| Current Status | `ALPHA / PRE-TRAINING` |
+| Engineering Status | `ALPHA / PRE-TRAINING` |
 | :--- | :--- |
-| **Architecture** | ✅ Designed & Verified |
-| **Codebase** | ✅ Fully Implemented |
-| **Pipeline** | ✅ Scale-Ready |
-| **Benchmarks** | ⏳ Pending Full Training Run |
+| **Codebase** | ✅ Implemented (tests + offline preflight passing) |
+| **Offline Verification** | ✅ PASS (`bash scripts/verify_all.sh`) |
+| **Dataset Compliance** | ⚠️ In progress (licenses/hashes must be completed before training) |
+| **Full Training Run** | ⏳ Not executed (requires hardware + snapshot data) |
+| **Benchmarks** | ⏳ Pending checkpoint (runner supports SKIP) |
+
+Engineering truth (strict): see `reports/verified_matrix.md`.
 
 > **MertFormer is a structural efficiency standard that decentralizes enterprise intelligence by minimizing AI inference costs at the device level.**
 
@@ -101,6 +104,7 @@ Primary entry docs and checklists.
 - [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README audit checklist (TR).
 - [scripts/README.md](scripts/README.md) — Scripts catalog (EN).
 - [scripts/README_TR.md](scripts/README_TR.md) — Scripts catalog (TR).
+- [snake_demo.py](snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
 
 **SDK**
 Package + CLI for edge deployments.
@@ -133,6 +137,14 @@ Internal roadmap and capability gap mapping (non-public).
 Report accuracy audit and strategic value summary.
 - [reports/report_accuracy_audit.md](reports/report_accuracy_audit.md) — Report accuracy audit (EN).
 - [reports/report_accuracy_audit_TR.md](reports/report_accuracy_audit_TR.md) — Report accuracy audit (TR).
+- [reports/codex_deep_audit_DE.md](reports/codex_deep_audit_DE.md) — Deep engineering audit (DE).
+- [reports/codex_deep_audit_TR.md](reports/codex_deep_audit_TR.md) — Deep engineering audit (TR).
+- [reports/verified_matrix.md](reports/verified_matrix.md) — Verified vs Target matrix (EN).
+- [reports/verified_matrix_TR.md](reports/verified_matrix_TR.md) — Verified vs Target matrix (TR).
+- [reports/review_checklist.md](reports/review_checklist.md) — External review checklist (EN).
+- [reports/review_checklist_TR.md](reports/review_checklist_TR.md) — External review checklist (TR).
+- [reports/release_snapshot.md](reports/release_snapshot.md) — Release snapshot (EN).
+- [reports/release_snapshot_TR.md](reports/release_snapshot_TR.md) — Release snapshot (TR).
 - [reports/benchmarks/README.md](reports/benchmarks/README.md) — Benchmark outputs guide (EN).
 - [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark outputs guide (TR).
 - [reports/strategic_value.md](reports/strategic_value.md) — Strategic value summary (EN).
@@ -185,11 +197,18 @@ Security, provenance, reproducibility, and ops notes.
 - [datasets/SOURCES_TR.md](datasets/SOURCES_TR.md) — Data sources (TR).
 - [datasets/LICENSES.md](datasets/LICENSES.md) — Data licenses (EN).
 - [datasets/LICENSES_TR.md](datasets/LICENSES_TR.md) — Data licenses (TR).
+- [datasets/inventory.md](datasets/inventory.md) — Dataset inventory (auto, EN).
+- [datasets/inventory_TR.md](datasets/inventory_TR.md) — Dataset inventory (auto, TR).
+- [datasets/inventory.json](datasets/inventory.json) — Dataset inventory (auto, machine-readable).
 - [repro/seed_policy.md](repro/seed_policy.md) — Seed policy (EN).
 - [repro/seed_policy_TR.md](repro/seed_policy_TR.md) — Seed policy (TR).
+- [repro/python.md](repro/python.md) — Python 3.11 baseline setup (EN).
+- [repro/python_TR.md](repro/python_TR.md) — Python 3.11 baseline setup (TR).
+- [repro/accelerate_default.yaml](repro/accelerate_default.yaml) — Example accelerate config (local).
 - [repro/pip_freeze.txt](repro/pip_freeze.txt) — Environment snapshot (pip freeze).
 - [logs/README.md](logs/README.md) — Logs index + unified logbook notes.
-- [logs/ALL_LOGS.jsonl](logs/ALL_LOGS.jsonl) — Unified logbook (all logs in one file).
+- `logs/ALL_LOGS.jsonl` — Unified logbook artifact (gitignored; generated via `.titan-venv/bin/python scripts/logbook_build.py --append`).
+- [.github/workflows/ci.yml](.github/workflows/ci.yml) — CI pipeline (pytest + preflight + secret scan).
 - [interfaces/inference_contract.md](interfaces/inference_contract.md) — Inference contract (EN).
 - [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md) — Inference contract (TR).
 - [economics/cost_model.md](economics/cost_model.md) — Cost model (EN).
@@ -530,63 +549,58 @@ Thanks to the BitNet architecture, MertFormer runs not just on flagships, but on
 <a id="quick-start"></a>
 ## 🚀 Quick Start
 
-### Prerequisites
-- Python 3.10+
-- PyTorch 2.0+
-- CUDA 11.8+ (for GPU training)
-- 50GB+ disk space
-- (Optional) 8x A100 80GB for full training
+### Baseline (Review-Ready)
+- Python **3.11** (see `repro/python.md`)
+- Offline-first runtime is default (`TITAN_OFFLINE=1`): no HF/WandB logins or dataset downloads unless explicitly enabled.
 
-### Installation
+### Installation (Recommended)
+Creates/updates `.titan-venv` using Python 3.11 and installs deps + dev tooling:
 
 ```bash
-# 1. Clone your project directory (local)
-cd NİHAİ
-
-# 2. Install Expert Dependencies
-pip install -r requirements.txt
-
-# 3. (Optional) Install Flash Attention 2 (Linux only, 5-10 min)
-pip install flash-attn --no-build-isolation
+bash scripts/bootstrap_venv.sh
 ```
 
-### SDK (Optional)
+Optional demo deps (pygame):
 
 ```bash
-# Install SDK in editable mode
-pip install -e .
-
-# (Optional) CUDA + ONNX extras
-pip install -e ".[cuda,onnx]"
-
-# CLI info
-mertformer info
+bash scripts/bootstrap_venv.sh --demo
 ```
 
-### Run Training
+### Verify (Offline-First, Single Command)
 
 ```bash
-# 1. Ultimate Preflight (Diagnostic) - Run this first to verify everything
-bash run.sh --test
-
-# 2. Launch Production Training
-bash run.sh
+bash scripts/verify_all.sh
 ```
 
-The `run.sh` script automatically:
-1. ✅ Logs into Hugging Face & WandB
-2. ✅ Installs dependencies (PyTorch, Accelerate, Flash Attention)
-3. ✅ Configures Accelerate for multi-GPU
-4. ✅ Applies NCCL tuning (multi-GPU optimization)
-5. ✅ Runs smoke test (pre-flight check)
-6. ✅ Launches training with all optimizations
-7. ✅ Runs internal benchmarks (HumanEval/MBPP) after training **if a checkpoint is found**. Defaults to **full dataset** (`BENCHMARK_SAMPLES=0`); control with `BENCHMARK_SAMPLES` and `BENCHMARK_SKIP`.
+### LIVE DEMO (Snake Autoplayer)
+
+```bash
+bash scripts/bootstrap_venv.sh --demo
+.titan-venv/bin/python snake_demo.py
+```
+
+### Preflight Only
+
+```bash
+TITAN_OFFLINE=1 bash run.sh --test
+```
+
+### Training (Online / Training Hardware)
+
+```bash
+# Explicitly enable online mode + (optional) WandB + installs
+TITAN_OFFLINE=0 TITAN_WANDB=1 TITAN_INSTALL=1 bash run.sh
+```
+
+Notes:
+- Online mode requires `HF_TOKEN`. WandB is optional (set `TITAN_WANDB=0`).
+- Dependency installs are opt-in via `TITAN_INSTALL=1` (recommended to install once via bootstrap).
 
 ### Operator Mode Gate
 Run the single-entry safety and readiness suite (safe mode by default):
 
 ```bash
-python scripts/operator_mode_gate.py
+TITAN_OFFLINE=1 .titan-venv/bin/python scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl
 # Use --full on training hardware
 ```
 
@@ -616,55 +630,40 @@ The following items are implemented and tied to concrete files/logs:
 - Verification Plan
 - Sanity Drills: `scripts/checkpoint_restore_drill.py`, `scripts/failure_budget_drill.py`
 
-Latest operator-mode run logs:
-- `logs/operator_mode/`
-Summary (latest local run):
-- Gate status: PASS (safe mode)
-- Log bundle: `logs/operator_mode/operator_2026-02-03_22-09-00.jsonl` and `.manifest.json`
+Operator-mode artifacts:
+- Written under `logs/operator_mode/` (gitignored by default; artifacts are not committed).
+- The script prints a JSON summary to stdout; use that as the review attachment.
 
 ### 🛡️ Diagnostic Excellence (Pre-Flight)
-MertFormer Titan includes a professional-grade diagnostic judge. Run `./run.sh --test` to see:
-```text
-2026-01-31 16:47:39,881 - [INFO] - ✈️ ============================================================
-2026-01-31 16:47:39,881 - [INFO] - ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
-2026-01-31 16:47:39,881 - [INFO] - ✈️ ============================================================
-2026-01-31 16:47:39,881 - [INFO] - ✈️ STEP 1: SECRET SCAN...
-2026-01-31 16:47:39,881 - [INFO] - 🛡️ HF_TOKEN detected (starts with hf_Bg...)
-2026-01-31 16:47:39,881 - [INFO] - 🛡️ WANDB_API_KEY detected (ends with ...kTBr)
-2026-01-31 16:47:39,881 - [INFO] - ✅ Secrets validated.
-2026-01-31 16:47:39,881 - [INFO] - ✈️ STEP 2: ARCHITECTURAL AUDIT...
-2026-01-31 16:47:39,881 - [INFO] - ✅ Layer configuration validated: No Liquid/MoE conflicts.
-2026-01-31 16:47:39,881 - [INFO] - ✅ MLA Dimensions: Consistent (2048 features).
-2026-01-31 16:47:39,881 - [INFO] - ✅ BitNet b1.58 logic: ACTIVE (Locked).
-2026-01-31 16:47:39,882 - [INFO] - ✈️ STEP 3: DATA & DISTILLATION TEST...
-2026-01-31 16:50:25,090 - [INFO] - ✅ Connection to uonlp/CulturaX successful.
-2026-01-31 16:50:54,272 - [INFO] - 🛡️ Teacher Model mocked (Prevented 140GB download).
-2026-01-31 16:50:54,272 - [INFO] - ⚙️  Pre-computing logits for preflight...
-2026-01-31 16:50:54,348 - [INFO] - ✅ Saved Final Chunk 0: .../temp_preflight_logits/preflight_test_part_0.pt
-2026-01-31 16:50:54,348 - [INFO] - ✅ Distillation pipeline: PROVEN (Logits generated/saved).
-2026-01-31 16:50:54,354 - [INFO] - ✈️ STEP 4: MOE GURU LEARNING TEST...
-2026-01-31 16:50:54,354 - [INFO] - ✈️ 🏗️  CONFIG: Using 'Mini-Titan' (2 Layers, 256 Hidden, forced MoE/Liquid) for RAM safety.
-2026-01-31 16:50:55,482 - [INFO] - ✈️ Checking Architectural Gradient Health...
-2026-01-31 16:50:55,488 - [INFO] - ✅ MoE Learning: PROVEN (48 expert params receiving gradients).
-2026-01-31 16:50:55,488 - [INFO] - ✅ Liquid Dynamics: PROVEN (7 liquid params receiving gradients).
-2026-01-31 16:50:55,489 - [INFO] - ✈️ Shared Expert Grad: OK
-2026-01-31 16:50:55,489 - [INFO] - ✅ MertFormer forward/backward pass verified.
-2026-01-31 16:50:55,489 - [INFO] - ✅ OVERALL SYSTEM STATUS: 100% PROTECTED & READY.
-2026-01-31 16:50:55,490 - [INFO] - ✈️ ============================================================
-2026-01-31 16:50:55,490 - [INFO] - ✈️ RESULT: 🏆 ALL GREEN
-2026-01-31 16:50:55,490 - [INFO] - ✈️ ============================================================
+Run preflight (offline-first):
+
+```bash
+TITAN_OFFLINE=1 .titan-venv/bin/python scripts/titan_preflight.py
+# or:
+TITAN_OFFLINE=1 bash run.sh --test
 ```
 
-*Note: Sample log above is from 2026-01-31. Run `./run.sh --test` to refresh with current environment.*
+What it verifies:
+- Secrets check (never prints token fragments; offline mode tolerates missing secrets unless `TITAN_PREFLIGHT_REQUIRE_SECRETS=1`)
+- Architecture audit (cfg + MLA dims)
+- Distillation pipeline dry-run (teacher mocked; temporary logits; cleanup)
+- MoE/Liquid gradient health
+
+Artifacts:
+- `logs/preflight/titan_preflight.log` (gitignored; generated artifact)
 
 ---
 
 ### 🧾 Unified Logbook
-All logs are aggregated into a single file: `logs/ALL_LOGS.jsonl`.
-Build or append with:
-`python3 scripts/logbook_build.py --append`
+All logs can be aggregated into a single artifact file: `logs/ALL_LOGS.jsonl` (gitignored).
 
-This file includes source metadata for every log line and is designed for audit-grade traceability.
+Build or append with:
+
+```bash
+.titan-venv/bin/python scripts/logbook_build.py --append
+```
+
+This file includes source metadata for every imported log line and is designed for audit-grade traceability.
 
 ---
 
@@ -741,10 +740,12 @@ For **niche or proprietary domains**, we recommend **targeted fine-tuning** on d
 
 Training metrics are logged to:
 - 📈 **WandB**: Real-time dashboards (loss, grad norm, MoE health, etc.)
-- 📄 **CSV**: `logs/run_*.csv`
-- 📋 **JSONL**: `logs/run_*.jsonl`
-- 🧾 **Unified logbook**: `logs/ALL_LOGS.jsonl`
+- 📄 **CSV**: `logs/run_*.csv` (artifact; gitignored)
+- 📋 **JSONL**: `logs/run_*.jsonl` (artifact; gitignored)
+- 🧾 **Unified logbook**: `logs/ALL_LOGS.jsonl` (artifact; gitignored)
 - 💻 **Console**: Step-by-step progress
+
+Note: By policy, `logs/` contains **artifacts only** and is not committed (except `logs/README.md`).
 
 ---
 
@@ -916,6 +917,10 @@ Planned Turkish data sources:
 
 ```bash
 NİHAİ/                     # Project root
+├── 📂 .github/             # CI workflows
+│   └── 📂 workflows/       # GitHub Actions
+│       └── 📄 ci.yml       # CI: secret scan + ruff + offline preflight + pytest + operator gate
+├── 🐍 snake_demo.py         # Pygame cyberpunk Snake autoplayer (LIVE DEMO)
 ├── 📄 MODEL_CARD.md         # Model card (EN)
 ├── 📄 MODEL_CARD_TR.md      # Model card (TR)
 ├── 📄 USE_POLICY.md         # Use policy (EN)
@@ -964,14 +969,19 @@ NİHAİ/                     # Project root
 ├── 📂 scripts/             # Helper scripts & Reports
 │   ├── 📄 README.md        # Scripts catalog (EN)
 │   ├── 📄 README_TR.md     # Scripts catalog (TR)
+│   ├── 📄 bootstrap_venv.sh # Bootstrap `.titan-venv` (Python 3.11 baseline)
+│   ├── 📄 verify_all.sh    # Offline-first verify-all pipeline
+│   ├── 📄 secret_scan.py   # Tracked-file secret scan (CI gate)
 │   ├── 📄 smart_runner.py  # Master Parallel Orchestrator (Data -> Distill -> Train)
 │   ├── 📄 titan_preflight.py # 🦅 Ultimate System Test Prophet (Zero-Footprint Full Verification)
 │   ├── 📄 data_pipeline.py # Dataset Alchemy (5-Stage Curriculum Learning)
+│   ├── 📄 extract_dataset_refs.py # Dataset ID inventory from code references
 │   ├── 📄 mobile_export.py # Production-Grade Mobile Exporter (S25 NPU Optimized ONNX)
 │   ├── 📄 chat.py          # Interactive chat interface
 │   ├── 📄 xray.py          # Smart Project Auditor (Deep structural analysis & dump)
 │   ├── 📄 operator_mode_gate.py # Single-entry operator-mode gate runner
 │   ├── 📄 overfit_gate.py  # 1MB overfit gate (full/safe modes)
+│   ├── 📄 train_smoke.py   # Tiny offline training smoke test (CPU/MPS)
 │   ├── 📄 golden_eval.py   # Golden sample evaluator (50 prompts)
 │   ├── 📄 benchmarks_internal.py # HumanEval/MBPP output generator
 │   ├── 📄 nan_kill_test.py # Synthetic NaN kill-switch drill
@@ -1091,14 +1101,25 @@ NİHAİ/                     # Project root
 ├── 📂 repro/               # Reproducibility locks
 │   ├── 📄 env.lock             # Environment lockfile
 │   ├── 📄 cuda.lock            # CUDA lockfile
+│   ├── 📄 accelerate_default.yaml # Example accelerate config (local)
 │   ├── 📄 seed_policy.md       # Seed policy (EN)
 │   ├── 📄 seed_policy_TR.md    # Seed policy (TR)
-│   └── 📄 pip_freeze.txt    # Environment snapshot (pip freeze)
+│   ├── 📄 python.md            # Python 3.11 baseline (EN)
+│   ├── 📄 python_TR.md         # Python 3.11 baseline (TR)
+│   └── 📄 pip_freeze.txt       # Environment snapshot (pip freeze)
 ├── 📂 registry/            # Model registry
 │   └── 📄 mertformer_v0.1.json # Model registry entry
 ├── 📂 reports/             # Executive Health & Validation Reports
 │   ├── 📄 one_pager.md      # One-pager (EN)
 │   ├── 📄 one_pager_TR.md   # One-pager (TR)
+│   ├── 📄 codex_deep_audit_DE.md # Deep engineering audit (DE)
+│   ├── 📄 codex_deep_audit_TR.md # Deep engineering audit (TR)
+│   ├── 📄 verified_matrix.md # Verified vs Target matrix (EN)
+│   ├── 📄 verified_matrix_TR.md # Verified vs Target matrix (TR)
+│   ├── 📄 review_checklist.md # External review checklist (EN)
+│   ├── 📄 review_checklist_TR.md # External review checklist (TR)
+│   ├── 📄 release_snapshot.md # Release snapshot (EN)
+│   ├── 📄 release_snapshot_TR.md # Release snapshot (TR)
 │   ├── 📄 technical_snapshot.md # Technical snapshot (EN)
 │   ├── 📄 technical_snapshot_TR.md # Technical snapshot (TR)
 │   ├── 📄 report_accuracy_audit.md # Report accuracy audit (EN)
@@ -1141,12 +1162,15 @@ NİHAİ/                     # Project root
 │   ├── 📄 SOURCES_TR.md    # Sources (TR)
 │   ├── 📄 LICENSES.md      # Licenses (EN)
 │   ├── 📄 LICENSES_TR.md   # Licenses (TR)
+│   ├── 📄 inventory.md     # Dataset inventory (auto, EN)
+│   ├── 📄 inventory_TR.md  # Dataset inventory (auto, TR)
+│   ├── 📄 inventory.json   # Dataset inventory (auto, machine-readable)
 │   ├── 📄 filters.yaml     # Filtering policy
 │   ├── 📄 hashes.json      # Snapshot hashes
 │   ├── 📄 validation.jsonl # Validation set
 │   └── 📄 golden_samples.jsonl # 50 golden prompts
-├── 📂 logs/                # Training logs
-│   └── 📄 ALL_LOGS.jsonl   # Unified logbook (all logs in one file)
+├── 📂 logs/                # Log artifacts (gitignored by default)
+│   └── 📄 README.md        # Logs policy / index (tracked)
 ├── 📄 Dockerfile           # Containarized Environment
 ├── 📄 run.sh               # One-command launcher (auto-setup + NCCL tuning)
 ├── 📄 requirements.txt     # Python dependencies

@@ -45,6 +45,6 @@ huggingface_hub>=0.20
 scipy>=1.10
 onnx>=1.14
 onnxscript>=0.1.0
-onnx-simplifier>=0.4.33  # Mobile Optimization (Critical)
+onnx-simplifier>=0.4.33; python_version < "3.13"  # Mobile Optimization (Critical); not available on 3.13+
 wandb>=0.15.0            # Experiment Tracking
 galore-torch>=0.0.1      # GaLore Optimizer (VRAM Saver)

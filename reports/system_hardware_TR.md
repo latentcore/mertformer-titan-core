@@ -1,9 +1,9 @@
 # 💻 TITAN SİSTEM & DONANIM RAPORU
-**Tarih:** 2026-02-05 07:27:41
+**Tarih:** 2026-02-06 00:16:11
 **Durum:** ✅ YEREL DOĞRULANDI
 
 ## 🖥️ Donanım Özellikleri
-- **Cihaz:** Unknown (Apple Silicon)
+- **Cihaz:** MacBook Air (Apple Silicon)
 - **Çip:** Apple M4 (10 (4 performance and 6 efficiency))
 - **GPU:** Apple M4 (8 çekirdek, Metal destekli)
 - **Toplam RAM:** 16 GB

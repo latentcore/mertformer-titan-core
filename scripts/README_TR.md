@@ -1,7 +1,12 @@
 # Script Kataloğu
 
-Tüm scriptler repo kökünden `python3 scripts/<ad>.py` şeklinde çalıştırılır.
-Bazıları GPU, HF_TOKEN veya WANDB_API_KEY ister. Emin değilsen `run.sh` ile başla.
+Tüm scriptler repo kökünden çalıştırılmak üzere tasarlanmıştır.
+
+Konvansiyonlar:
+- Tercihen `.titan-venv/bin/python scripts/<ad>.py` kullanın (bkz: `scripts/bootstrap_venv.sh`).
+- Varsayılan çalışma şekli offline-first: `TITAN_OFFLINE=1` (HF/WandB login veya dataset download ancak açıkça etkinleştirilirse).
+
+Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verify_all.sh`.
 
 ## Çekirdek Akışlar
 - `smart_runner.py` — Ana orkestratör: veri → distill → eğitim.
@@ -9,10 +14,16 @@ Bazıları GPU, HF_TOKEN veya WANDB_API_KEY ister. Emin değilsen `run.sh` ile b
 - `titan_preflight.py` — Uçtan uca preflight doğrulama.
 - `operator_mode_gate.py` — Tek girişli ops gate (güvenlik + sanity checks).
 - `overfit_gate.py` — 1MB overfit gate (safe/full mod).
+- `train_smoke.py` — Küçük offline training sanity loop (CPU/MPS).
+
+## Review-Ready Araçlar
+- `bootstrap_venv.sh` — `.titan-venv` üretir (Python 3.11 baseline). Demo için `--demo` ile `pygame` kurar.
+- `verify_all.sh` — Offline-first verify-all: secret scan → pytest → preflight → operator gate (safe).
+- `secret_scan.py` — Track'li dosyalarda olası secret pattern taraması (CI gate).
 
 ## Değerlendirme & Benchmark
 - `golden_eval.py` — Golden sample evaluator (50 prompt).
-- `benchmarks_internal.py` — HumanEval / MBPP çıktı üretimi.
+- `benchmarks_internal.py` — HumanEval / MBPP çıktı üretimi (checkpoint/dataset yoksa SKIP).
 - `eval.py` — GSM8K eval wrapper (legacy; bkz: `eval/gsm8k.py`).
 
 ## Export & ONNX
@@ -20,6 +31,10 @@ Bazıları GPU, HF_TOKEN veya WANDB_API_KEY ister. Emin değilsen `run.sh` ile b
 - `test_onnx_export.py` — ONNX export test.
 - `verify_onnx_local.py` — Yerel ONNX doğrulama.
 - `titan_onnx_stress_test.py` — ONNX stres testi.
+
+## Dataset Uyum / Provenans
+- `extract_dataset_refs.py` — Kodun referansladığı dataset ID'lerini `datasets/inventory*` dosyalarına çıkarır (default offline).
+- `verify_datasets.py` — Online dataset erişim sanity kontrolleri (`--login` ile HF login opt-in).
 
 ## Ops Drill’leri
 - `nan_kill_test.py` — Yapay NaN kill‑switch drill.
@@ -29,9 +44,8 @@ Bazıları GPU, HF_TOKEN veya WANDB_API_KEY ister. Emin değilsen `run.sh` ile b
 ## Artefact & Raporlar
 - `mini_titan_poc.py` — Adli PoC logger (hash zincirli loglar).
 - `scaling_audit_math.py` — Scaling audit matematiği.
-- `update_system_hardware.py` — `reports/system_hardware*.md` günceller.
+- `update_system_hardware.py` — `reports/system_hardware*.md` günceller (`run.sh --test` modunda atlanır).
 - `write_cuda_lock.py` — Mevcut sistemden `repro/cuda.lock` üretir.
-- `verify_datasets.py` — Dataset sanity kontrolleri.
 
 ## Yardımcılar
 - `chat.py` — Etkileşimli chat arayüzü.
@@ -39,7 +53,7 @@ Bazıları GPU, HF_TOKEN veya WANDB_API_KEY ister. Emin değilsen `run.sh` ile b
 - `mac_simulation.py` — Mac simulasyon koşusu (CPU/MPS).
 - `train_tpu_turbo.py` — TPU eğitim başlatıcı (experimental).
 - `download_tr_tokenizer.py` — Türkçe tokenizer indirme (opt‑in).
-- `logbook_build.py` — Birleşik logbook üreticisi (`logs/ALL_LOGS.jsonl`).
+- `logbook_build.py` — Birleşik logbook üreticisi (çıktı `logs/` altında gitignored artifact).
 - `version_checker.py` — Sürüm tutarlılık kontrolü (deprecated marker bulursa hata verir).
 
 ## Varlıklar
@@ -52,4 +66,4 @@ Bazıları GPU, HF_TOKEN veya WANDB_API_KEY ister. Emin değilsen `run.sh` ile b
 
 ---
 
-Not: `run.sh` ana otomasyon yolunu kapsar (env + preflight + eğitim).
+Not: `run.sh` ana otomasyon yolunu kapsar (env + preflight + eğitim). Review için `scripts/verify_all.sh` önerilir.
