@@ -6,12 +6,12 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v27.0-FINAL (Locked & Sealed)
-Status : PRODUCTION READY (LOCKED)
+Version: v1.0 (Build 27) — Pre-Training
+Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "27.0-FINAL"
+__version__ = "1.0-BUILD27"
 __author__ = "Mert"
 
 import onnxruntime as ort

@@ -6,12 +6,12 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v27.0-FINAL (Pre-Training)
+Version: v1.0 (Build 27) — Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "27.0-FINAL"
+__version__ = "1.0-BUILD27"
 __author__ = "Mert"
 
 import glob
@@ -1213,7 +1213,7 @@ def train():
                      if "tau" in n or "liquid" in n:
                          p.requires_grad = True
                  
-                 # V26.6 FINAL POLISH: Rebuild Optimizer to sync groups
+                 # Build 27 polish: Rebuild Optimizer to sync groups
                  # Note: With Accelerate, optimizer rebuilding is tricky. 
                  # We simply update params requires_grad, Accelerate/AdamW should handle it mostly.
                  # Full rebuild requires re-wrap with Accelerate. Skipping for safety in DDP.
@@ -1238,7 +1238,7 @@ def train():
                          if "tau" in n or "liquid" in n:
                              p.requires_grad = True
                       
-                     # V26.6 FINAL POLISH: Rebuild Optimizer to sync groups
+                     # Build 27 polish: Rebuild Optimizer to sync groups
                      rebuild_optimizer(student, opt, cfg)
                       
                      liquid_frozen_until = 0

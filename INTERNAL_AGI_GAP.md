@@ -1,6 +1,6 @@
-# Internal AGI Gap Map (v27)
+# Internal AGI Gap Map (v1.0 (Build 27))
 
-This document is an internal reality-check mapping **AGI-style capability areas** to the current state of MertFormer v27.
+This document is an internal reality-check mapping **AGI-style capability areas** to the current state of MertFormer v1.0 (Build 27).
 It is **not a public claim** and should be treated as an internal roadmap reference.
 
 Legend:
@@ -8,9 +8,9 @@ Legend:
 - 🟡 Partial / infrastructure exists
 - 🔴 Missing / planned
 
-## MertFormer v27 vs. AGI Capability Map
+## MertFormer v1.0 (Build 27) vs. AGI Capability Map
 
-| Area | AGI Target | MertFormer v27 | Evidence | Gap / Risk | Next Step |
+| Area | AGI Target | MertFormer v1.0 (Build 27) | Evidence | Gap / Risk | Next Step |
 | --- | --- | --- | --- | --- | --- |
 | General reasoning | Strong transfer across domains | 🟡 Architecture ready, training proof missing | README, config | No real run proof | Master Run + benchmarks |
 | Long-term memory | Persistent recall | 🟡 Orchestrator memory exists | orchestrator/memory.py | No production proof | Retrieval demo |

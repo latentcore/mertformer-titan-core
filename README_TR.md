@@ -56,8 +56,8 @@
 ---
 
 [![Lisans: Özel (Proprietary)](https://img.shields.io/badge/Lisans-%C3%96zel-red.svg?style=flat-square)](./LICENSE)
-[![Depo: Gizli](https://img.shields.io/badge/Depo-Gizli-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
-[![Durum: Eğitim Öncesi](https://img.shields.io/badge/Durum-E%C4%9Fitim%20%C3%96ncesi-yellow.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
+[![Depo: Gizli](https://img.shields.io/badge/Depo-Gizli-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v1.0 (Build 27))
+[![Durum: Eğitim Öncesi](https://img.shields.io/badge/Durum-E%C4%9Fitim%20%C3%96ncesi-yellow.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v1.0 (Build 27))
 [![Mimari: BitNet 1.58b](https://img.shields.io/badge/Mimari-BitNet%201.58b-orange.svg?style=flat-square)](https://www.microsoft.com/en-us/research/publication/the-era-of-1-bit-llms-all-large-language-models-are-in-1-58-bits/)
 [![Referans: BitNet 1-bit](https://img.shields.io/badge/Referans-BitNet%201--bit-lightgrey.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
 
@@ -296,7 +296,7 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 - **Erken Durdurma**: Sabır tabanlı en iyi kontrol noktası kaydı
 - **Dinamik Alpha**: Aşamalı damıtma ağırlığı ayarlaması
 
-### 7. **Performans Optimizasyonları (v27.0)** ⚡
+### 7. **Performans Optimizasyonları (v1.0 (Build 27))** ⚡
 - ✅ **Flash Attention 2**: Tahmini +%30 hızlanma (A100/H100)
 - ✅ **Fused RMSNorm**: Tahmini +%10 hızlanma (torch.compile)
 - ✅ **torch.compile (max-autotune)**: Tahmini +%15 hızlanma
@@ -328,7 +328,7 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 ```text
       ╔═══════════════════════════════════════════════════════════════════════════╗
       ║  M E R T F O R M E R   T I T A N   (O N Y X   S T O R M)                  ║
-      ║  » TEKNİK PLAN v27.0 // HEDEF: SAMSUNG S25 NPU (SNAPDRAGON 8 ELITE) «     ║
+      ║  » TEKNİK PLAN v1.0 (Build 27) // HEDEF: SAMSUNG S25 NPU (SNAPDRAGON 8 ELITE) «     ║
       ╚═══════════════════════════════════════════════════════════════════════════╝
                                             │
       ┌─────────────────────────────────────▼─────────────────────────────────────┐
@@ -484,7 +484,7 @@ MertFormer Titan (2.64B Parametre)
 | Yapılandırma | Süre/Adım | Verim (Throughput) | GPU Kullanımı | VRAM Kullanımı |
 | :--- | :---: | :---: | :---: | :---: |
 | **Temel (Baseline)** | 2.0 sn | 64 tok/sn | %47 | 38 GB |
-| **v27.0 (Optimize)** | **~1.2 sn** (Tahmini) | **~107 tok/sn** (Tahmini) | **~%95** (Hedef) | **~76 GB** (Hedef) |
+| **v1.0 (Build 27) (Optimize)** | **~1.2 sn** (Tahmini) | **~107 tok/sn** (Tahmini) | **~%95** (Hedef) | **~76 GB** (Hedef) |
 | **Hızlanma (Öngörü)** | **+%67** | **+%67** | **+%102** | **+%100** |
 *Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir. BitNet 1.58 çıkarımı opsiyonel düşük-bit kernel yolu içerir; Tensor Core yolu **deneysel** ve opt-in’dir (`MERTFORMER_TENSORCORE=1`). Enerji/TOPS kazanımları gerçek cihaz ölçümü gerektirir. Kernel eleştirisi sadece inference için geçerlidir; BitNet eğitim katmanı mevcut, low-bit inference ise açıkça yol haritası maddesidir. **Eğitim hâlâ standart PyTorch matmul yollarıyla yürür; düşük-bit kernel eğitimi hızlandırmaz.** Ayrıca, **Residual Scaling Etkisi** ile 18 katman boyunca sinyal kararlılığı, $1/\sqrt{2}$ formülüyle korunarak en derin katmanda bile gradyan akışının stabil kalması hedeflenmektedir.*
 
@@ -647,7 +647,7 @@ MertFormer Titan, profesyonel düzeyde bir tanı koyma sistemine sahiptir. `./ru
 2026-01-31 16:50:55,489 - [INFO] - ✅ MertFormer forward/backward pass verified.
 2026-01-31 16:50:55,489 - [INFO] - ✅ OVERALL SYSTEM STATUS: 100% PROTECTED & READY.
 2026-01-31 16:50:55,490 - [INFO] - ✈️ ============================================================
-2026-01-31 16:50:55,490 - [INFO] - ✈️ FINAL RESULT: 🏆 ALL GREEN
+2026-01-31 16:50:55,490 - [INFO] - ✈️ RESULT: 🏆 ALL GREEN
 2026-01-31 16:50:55,490 - [INFO] - ✈️ ============================================================
 ```
 
@@ -754,7 +754,7 @@ python scripts/mobile_export.py
 ```
 
 Şunları oluşturur:
-- `checkpoints/nano_titan_v27.onnx` (Dinamik eksenler)
+- `checkpoints/nano_titan_build27.onnx` (Dinamik eksenler)
 - Samsung S25 NPU için optimize edildi
 - INT8 kuantizasyon hazır
 
@@ -764,7 +764,7 @@ python scripts/mobile_export.py
 from titan_chat import TitanChat
 
 # Modeli yükle
-chat = TitanChat(checkpoint="checkpoints/nano_titan_v27_best.pt")
+chat = TitanChat(checkpoint="checkpoints/nano_titan_build27_best.pt")
 
 # Üret
 response = chat.generate(
@@ -879,7 +879,7 @@ Planlanan Türkçe veri kaynakları:
 
 **C**: **8x A100 80GB'de**:
 - Temel: ~25 saat (45K adım × 2 sn/adım)
-- v27.0 Optimize: **~15 saat** (45K adım × 1.2 sn/adım)
+- v1.0 (Build 27) Optimize: **~15 saat** (45K adım × 1.2 sn/adım)
 - **10 saat tasarruf!**
 
 ### S: Samsung S25'te gerçekten çalışır mı?
@@ -1213,13 +1213,13 @@ Paylaşılan bir eğitim sonucunun veya benchmark skorunun doğruluğunu teyit e
 
 ## 📈 Teknik Yol Haritası (Roadmap)
 
-### ✅ Mevcut Sürüm (v27.0-FINAL)
+### ✅ Mevcut Sürüm (v1.0 (Build 27))
 *   **Optimizasyon**: Flash Attention, `torch.compile` ve NCCL çoklu-GPU ölçeklendirme.
 *   **Dayanıklılık**: Proaktif OOM kurtarma, NaN tespiti ve disk duyarlı kontrol noktası kaydı.
 *   **Çekirdek**: LiquidRouter MoE ve MLA ile BitNet 1.58-bit katmanları.
 
 ### 🚀 Gelecek Dönem Hedefleri
-*   **v27.x**: Tam eğitim setinin tamamlanması ve Benchmark sonuçlarının yayınlanması.
+*   **v1.0 (Build 27).x**: Tam eğitim setinin tamamlanması ve Benchmark sonuçlarının yayınlanması.
 *   **v28.0**: Uzun bağlam (16K token) genişletmesi ve Türkçe veri kümesi optimizasyonu.
 *   **v29.0**: Yerel NPU dağıtımı ve gerçek cihaz performansı (Samsung S25).
 *   **v30.0**: `LiquidRouter` mimarisinin akademik yayın ve makale süreci.
@@ -1311,7 +1311,7 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 ## 📧 İletişim
 
 **Proje**: MertFormer Titan (Onyx Storm)
-**Sürüm**: v27.0 FİNAL (Eğitim Öncesi)  
+**Sürüm**: v1.0 (Build 27) FİNAL (Eğitim Öncesi)  
 **Durum**: 🟡 EĞİTİM ÖNCESİ (Doğrulanmadı)
 **Türkiye'de** ❤️ **ile yapıldı** 🇹🇷
 
@@ -1358,7 +1358,7 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
   year = {2026},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{https://github.com/latentcore/mertformer-titan-v27}}
+  howpublished = {\url{https://github.com/latentcore/mertformer-titan-v1.0 (Build 27)}}
 }
 ```
 

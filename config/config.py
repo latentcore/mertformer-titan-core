@@ -6,12 +6,12 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v27.0-FINAL (Locked & Sealed)
-Status : PRODUCTION READY (LOCKED)
+Version: v1.0 (Build 27) — Pre-Training
+Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "27.0-FINAL"
+__version__ = "1.0-BUILD27"
 __author__ = "Mert"
 
 import os
@@ -141,7 +141,7 @@ def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None):
         max_micro_batch = max(1, max_micro_batch)
 
     # -------------------------------------------------------------------------
-    # 4. FINAL OPTIMIZATION
+    # 4. BUILD 27 OPTIMIZATION
     # -------------------------------------------------------------------------
     ideal_micro_batch = target_global_batch // max(1, num_gpus)
     
@@ -178,7 +178,7 @@ class MertFormerConfig:
     # TR: 1. SİSTEM KİMLİĞİ / EN: 1. SYSTEM IDENTITY
     # -------------------------------------------------------------------------
     model_name: str = "MertFormer_Titan_S25_Prod"
-    version: str = "v27.0-TITAN-FINAL"
+    version: str = "v1.0-TITAN-BUILD27"
 
     # TR: Cihazı Otomatik Bul (Once NVIDIA, Yoksa Mac MPS, Yoksa CPU)
     # EN: Auto-detect device (First NVIDIA, then Mac MPS, then CPU)
@@ -517,7 +517,7 @@ except ValueError as e:
     raise
 
 if __name__ == "__main__":
-    print(f"🔒 MERTFORMER SYSTEM LOCKED: {cfg.model_name}")
+    print(f"🔒 MERTFORMER SYSTEM SEALED (Pre-Training): {cfg.model_name}")
     print(f"✅ SAFETY CHECK: QINN={'ON' if cfg.use_qinn else 'OFF'} | MoE={cfg.num_experts}x{cfg.num_experts_per_tok}")
     print(f"⚙️  AUTO-DETECT: Device={cfg.device.upper()} | Dtype={cfg.param_dtype}")
     print(f"🚀 READY TO TRAIN")

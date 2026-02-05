@@ -167,7 +167,7 @@ def run_mac_simulation():
     duration = end_infer - start_infer
     tps = total_tokens / duration
     
-    print(f"\n📊 FINAL VERDICT (MacBook M4):")
+    print(f"\n📊 BUILD 27 VERDICT (MacBook M4):")
     print(f"   ----------------------------------------")
     print(f"   ⏱️  Time Taken    : {duration:.2f}s")
     print(f"   ⚡ GENERATION SPEED: {tps:.2f} tokens/sec")
@@ -192,7 +192,7 @@ def run_mac_simulation():
         # Log Architecture Meta
         logger.log_event("benchmark_start", {
             "device": "mps",
-            "model": "MertFormer Titan v27.0",
+            "model": "MertFormer Titan v1.0 (Build 27)",
             "seq_len": cfg.max_seq_len,
             "params": "2.64B"
         })

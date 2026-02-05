@@ -41,7 +41,7 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 - Golden sample seti 50 prompt içerir.
 - Asset stack eksiksizdir.
 
-## Acil Kapanis Protokolu (v27)
+## Acil Kapanis Protokolu (v1.0 (Build 27))
 - Egitim/teacher akisi zorunlu olmadikca degistirilmez.
 - Tum kernel yolları opt-in ve deneysel kalir.
 - README/README_TR uyumu (Docs Index + Dizin) saglanir.

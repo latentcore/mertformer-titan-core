@@ -1,10 +1,10 @@
-# Base configuration (v27)
+# Base configuration (Build 27)
 # Notes:
 # - This file provides a stable baseline.
 # - Any key not present here falls back to config/config.py defaults.
 
 model_name: MertFormer_Titan_S25_Prod
-version: v27.0-TITAN-FINAL
+version: v1.0-TITAN-BUILD27
 seed: 1453
 
 # Dimensions

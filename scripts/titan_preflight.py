@@ -6,12 +6,12 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v27.0-FINAL (Locked & Sealed)
-Status : PRODUCTION READY (LOCKED)
+Version: v1.0 (Build 27) — Pre-Training
+Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "27.0-FINAL"
+__version__ = "1.0-BUILD27"
 __author__ = "Mert"
 
 import os
@@ -292,7 +292,7 @@ def main():
         elapsed = time.time() - start_time
         log(f"Preflight Duration: {elapsed:.2f}s", "info")
         log("============================================================")
-        log(f"FINAL RESULT: {'🏆 ALL GREEN' if success else '🚨 RED ALERT'}")
+        log(f"RESULT: {'🏆 ALL GREEN' if success else '🚨 RED ALERT'}")
         log(f"Full Report: {TEST_LOG_PATH}", "info")
         log("============================================================")
         

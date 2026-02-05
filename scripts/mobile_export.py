@@ -1,13 +1,13 @@
 """
 ==============================================================================
-MERTFORMER TITAN (ONYX STORM) - PRODUCTION MOBILE EXPORTER
+MERTFORMER TITAN (ONYX STORM) - MOBILE EXPORTER
 -------------------------------------------------------------------------------
 Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v27.0-FINAL (Locked & Sealed)
-Status : PRODUCTION READY (CLOUD MODE)
+Version: v1.0 (Build 27) — Pre-Training
+Status : PRE-TRAINING (CLOUD MODE)
 ==============================================================================
 
 PURPOSE:
@@ -23,7 +23,7 @@ FEATURES:
 NOTE: Requires ~32GB RAM for 3B parameter models during optimization.
 """
 
-__version__ = "27.0-FINAL"
+__version__ = "1.0-BUILD27"
 __author__ = "Mert"
 
 import os
@@ -63,7 +63,7 @@ def export_production_model(ckpt_override=None, output_dir=None, bitpack: bool =
     # -------------------------------------------------------------------------
     # 1. SETUP & MODEL LOADING
     # -------------------------------------------------------------------------
-    # Target the FINAL production checkpoint
+    # Target the Build 27 pre-training checkpoint
     ckpt_dir = output_dir or os.path.join(project_root, "checkpoints", "mertformer_titan_prod")
     ckpt_path = os.path.join(ckpt_dir, "MertFormer_Titan_Nano_Final.pt")
     

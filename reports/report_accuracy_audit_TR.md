@@ -1,4 +1,4 @@
-# Rapor Dogruluk Denetimi (v27.0)
+# Rapor Dogruluk Denetimi (v1.0 (Build 27))
 
 Bu denetim, rapordaki iddialari repo kanitlariyla eslestirir. Etiketler:
 - DOGRU (uygulama var, kanitli)

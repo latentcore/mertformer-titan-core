@@ -56,8 +56,8 @@
 ---
 
 [![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg?style=flat-square)](./LICENSE)
-[![Repository: Private](https://img.shields.io/badge/Repository-Private-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
-[![Status: Pre-Training](https://img.shields.io/badge/Status-Pre--Training-yellow.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
+[![Repository: Private](https://img.shields.io/badge/Repository-Private-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v1.0 (Build 27))
+[![Status: Pre-Training](https://img.shields.io/badge/Status-Pre--Training-yellow.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v1.0 (Build 27))
 [![Architecture: BitNet 1.58b](https://img.shields.io/badge/Architecture-BitNet%201.58b-orange.svg?style=flat-square)](https://www.microsoft.com/en-us/research/publication/the-era-of-1-bit-llms-all-large-language-models-are-in-1-58-bits/)
 [![Reference: BitNet 1-bit](https://img.shields.io/badge/Reference-BitNet%201--bit-lightgrey.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
 
@@ -298,7 +298,7 @@ MertFormer Titan is a cutting-edge **2.64B parameter** language model designed f
 - **Early Stopping**: Patience-based with best checkpoint saving
 - **Dynamic Alpha**: Progressive distillation weight adjustment
 
-### 7. **Performance Optimizations (v27.0)** ⚡
+### 7. **Performance Optimizations (v1.0 (Build 27))** ⚡
 - ✅ **Flash Attention 2**: Projected +30% speedup (A100/H100)
 - ✅ **Fused RMSNorm**: Projected +10% speedup (torch.compile)
 - ✅ **torch.compile (max-autotune)**: Projected +15% speedup
@@ -330,7 +330,7 @@ MertFormer Titan is a cutting-edge **2.64B parameter** language model designed f
 ```text
       ╔═══════════════════════════════════════════════════════════════════════════╗
       ║  M E R T F O R M E R   T I T A N   (O N Y X   S T O R M)                  ║
-      ║  » ARCHITECTURE BLUEPRINT v27.0 // TARGET: SAMSUNG S25 NPU «              ║
+      ║  » ARCHITECTURE BLUEPRINT v1.0 (Build 27) // TARGET: SAMSUNG S25 NPU «              ║
       ╚═══════════════════════════════════════════════════════════════════════════╝
                                             │
       ┌─────────────────────────────────────▼─────────────────────────────────────┐
@@ -486,7 +486,7 @@ MertFormer Titan (2.64B Parameters)
 | Configuration | Time/Step | Throughput | GPU Utilization | VRAM Usage |
 | :--- | :---: | :---: | :---: | :---: |
 | **Baseline** | 2.0 sec | 64 tok/s | 47% | 38 GB |
-| **v27.0 (Optimized)** | **~1.2 sec** (Est.) | **~107 tok/s** (Est.) | **~95%** (Target) | **~76 GB** (Target) |
+| **v1.0 (Build 27) (Optimized)** | **~1.2 sec** (Est.) | **~107 tok/s** (Est.) | **~95%** (Target) | **~76 GB** (Target) |
 | **Speedup (Proj.)** | **+67%** | **+67%** | **+102%** | **+100%** |
 *Note: Performance metrics are pre-training estimates based on architecture simulation. BitNet 1.58 inference now includes an optional low-bit kernel path; the Tensor Core path is **experimental** and opt-in (`MERTFORMER_TENSORCORE=1`). Energy/TOPS gains still require real device measurement. Kernel criticism applies to inference only; BitNet training exists as a separate layer, and low-bit inference is explicitly a roadmap item. **Training still runs on standard PyTorch matmul paths; the low-bit kernel does not accelerate training.** Furthermore, the **Residual Scaling Effect** maintains signal stability throughout 18 layers using the $1/\sqrt{2}$ formula, aiming to keep gradient flow stable even in the deepest layer.*
 
@@ -649,7 +649,7 @@ MertFormer Titan includes a professional-grade diagnostic judge. Run `./run.sh -
 2026-01-31 16:50:55,489 - [INFO] - ✅ MertFormer forward/backward pass verified.
 2026-01-31 16:50:55,489 - [INFO] - ✅ OVERALL SYSTEM STATUS: 100% PROTECTED & READY.
 2026-01-31 16:50:55,490 - [INFO] - ✈️ ============================================================
-2026-01-31 16:50:55,490 - [INFO] - ✈️ FINAL RESULT: 🏆 ALL GREEN
+2026-01-31 16:50:55,490 - [INFO] - ✈️ RESULT: 🏆 ALL GREEN
 2026-01-31 16:50:55,490 - [INFO] - ✈️ ============================================================
 ```
 
@@ -756,7 +756,7 @@ python scripts/mobile_export.py
 ```
 
 Generates:
-- `checkpoints/nano_titan_v27.onnx` (Dynamic axes)
+- `checkpoints/nano_titan_build27.onnx` (Dynamic axes)
 - Optimized for Samsung S25 NPU
 - INT8 quantization ready
 
@@ -766,7 +766,7 @@ Generates:
 from titan_chat import TitanChat
 
 # Load model
-chat = TitanChat(checkpoint="checkpoints/nano_titan_v27_best.pt")
+chat = TitanChat(checkpoint="checkpoints/nano_titan_build27_best.pt")
 
 # Generate
 response = chat.generate(
@@ -882,7 +882,7 @@ Planned Turkish data sources:
 
 **A**: **8x A100 80GB'de**:
 - Baseline: ~25 saat (45K steps × 2 sec/step)
-- v27.0 Optimized: **~15 saat** (45K steps × 1.2 sec/step)
+- v1.0 (Build 27) Optimized: **~15 saat** (45K steps × 1.2 sec/step)
 - **10 saat tasarruf!**
 
 ### Q: Samsung S25'te gerçekten çalışır mı?
@@ -1216,13 +1216,13 @@ To verify the authenticity of a shared run log or benchmark result:
 
 ## 📈 Technical Roadmap
 
-### ✅ Current Release (v27.0-FINAL)
+### ✅ Current Release (v1.0 (Build 27))
 *   **Optimization**: Flash Attention, `torch.compile`, and NCCL multi-GPU scaling.
 *   **Resilience**: Proactive OOM recovery, NaN detection, and disk-aware checkpointing.
 *   **Core**: BitNet 1.58-bit layers with LiquidRouter MoE and MLA.
 
 ### 🚀 Upcoming Milestones
-*   **v27.x**: Full training suite completion and Benchmark publication.
+*   **v1.0 (Build 27).x**: Full training suite completion and Benchmark publication.
 *   **v28.0**: Long-context expansion (16K tokens) and Turkish corpus enrichment.
 *   **v29.0**: Native NPU deployment and real-device profiling (Samsung S25).
 *   **v30.0**: Academic publication of the `LiquidRouter` architecture.
@@ -1314,7 +1314,7 @@ This project is **confidential and proprietary**. All rights are reserved by the
 ## 📧 Contact
 
 **Project**: MertFormer Titan (Onyx Storm)  
-**Version**: v27.0 FINAL (Pre-Training)  
+**Version**: v1.0 (Build 27) (Pre-Training)  
 **Status**: 🟡 PRE-TRAINING (Unverified)  
 **Made with** ❤️ **in Turkey** 🇹🇷
 
@@ -1361,7 +1361,7 @@ To be **100% sales-ready**, the following must be completed on training hardware
   year = {2026},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{https://github.com/latentcore/mertformer-titan-v27}}
+  howpublished = {\url{https://github.com/latentcore/mertformer-titan-v1.0 (Build 27)}}
 }
 ```
 

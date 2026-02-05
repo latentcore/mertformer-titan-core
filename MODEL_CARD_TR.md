@@ -1,4 +1,4 @@
-# Model Kartı — MertFormer Titan (v27.0)
+# Model Kartı — MertFormer Titan (v1.0 (Build 27))
 
 ## Genel Bakış
 MertFormer Titan, BitNet 1.58-bit katmanları, LiquidRouter MoE ve MLA temelli,

@@ -1,6 +1,6 @@
-# Dahili AGI Bosluk Haritasi (v27)
+# Dahili AGI Bosluk Haritasi (v1.0 (Build 27))
 
-Bu dokuman, **AGI-turu yetenek alanlarini** MertFormer v27 durumuyla eslestiren dahili bir gerceklik kontroludur.
+Bu dokuman, **AGI-turu yetenek alanlarini** MertFormer v1.0 (Build 27) durumuyla eslestiren dahili bir gerceklik kontroludur.
 **Kamusal bir iddia degildir** ve dahili yol haritasi referansi olarak tutulmalidir.
 
 Gosterge:
@@ -8,9 +8,9 @@ Gosterge:
 - 🟡 Kismi / altyapi var
 - 🔴 Yok / plan asamasinda
 
-## MertFormer v27 vs. AGI Yetenek Haritasi
+## MertFormer v1.0 (Build 27) vs. AGI Yetenek Haritasi
 
-| Alan | AGI Hedefi | MertFormer v27 | Kanit | Bosluk / Risk | Sonraki Adim |
+| Alan | AGI Hedefi | MertFormer v1.0 (Build 27) | Kanit | Bosluk / Risk | Sonraki Adim |
 | --- | --- | --- | --- | --- | --- |
 | Genel akil yurutme | Alanlar arasi transfer | 🟡 Mimari hazir, egitim kaniti yok | README, config | Gercek run yok | Master Run + bench |
 | Uzun sureli bellek | Kalici geri cagirma | 🟡 Orchestrator memory var | orchestrator/memory.py | Uretim kaniti yok | Retrieval demo |

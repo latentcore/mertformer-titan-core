@@ -2,19 +2,19 @@ from __future__ import annotations
 
 """
 ==============================================================================
-MERTFORMER TITAN (ONYX STORM) - LOCKED RUN LOGGER (Mini-Titan v5.0)
+MERTFORMER TITAN (ONYX STORM) - RUN LOGGER (Mini-Titan v5.0)
 -------------------------------------------------------------------------------
 Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v5.0-FORENSIC (Locked & Sealed)
-Status : PRODUCTION READY (LOCKED)
+Version: v5.0-FORENSIC (Pre-Training)
+Status : PRE-TRAINING (UNVERIFIED)
 Target : Rigorous Benchmark with Cryptographic Proof
 ==============================================================================
 """
 
-__version__ = "27.0-FINAL"
+__version__ = "1.0-BUILD27"
 __author__ = "Mert"
 
 import os
@@ -422,7 +422,7 @@ def main():
         l1, t1 = train_phase("PHASE 1 (LIQUID)", True, train_set, cfg.max_steps, logger)
         l2, t2 = train_phase("PHASE 2 (NO-LIQUID)", False, train_set, cfg.max_steps, logger)
         
-        print("\n📊 FINAL RESULTS")
+        print("\n📊 RESULTS")
         print(f"Full Titan: Loss {l1:.4f} ({t1:.1f}s)")
         print(f"No-Liquid : Loss {l2:.4f} ({t2:.1f}s)")
         print(f"💾 PROOF SAVED TO: {logger.jsonl_path}")
