@@ -7,7 +7,8 @@ name = "mertformer-sdk"
 version = "1.0.0a0"
 description = "MertFormer Titan SDK"
 readme = "README.md"
-requires-python = ">=3.9"
+# Review-ready baseline: Python 3.11 (ecosystem + pygame wheels + fewer surprises).
+requires-python = ">=3.11,<3.12"
 license = {file = "LICENSE"}
 authors = [{name = "MertFormer AI Team"}]
 dependencies = [
@@ -22,9 +23,26 @@ dependencies = [
 cuda = ["triton>=2.1"]
 onnx = ["onnx>=1.14", "onnxruntime>=1.16"]
 cli = ["tqdm>=4.65"]
+dev = [
+  "pytest>=7.3",
+  "pytest-cov>=4.1",
+  "ruff>=0.6.0",
+]
+demo = ["pygame==2.6.1"]
 
 [project.scripts]
 mertformer = "mertformer_sdk.cli:main"
 
 [tool.setuptools]
 packages = ["mertformer_sdk", "mertformer_sdk.kernels", "mertformer_sdk.utils"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+# Keep CI lint lightweight and low-risk (no massive reformat churn).
+# NOTE: The existing codebase contains many legacy/experimental scripts with
+# unused imports and other low-signal warnings. CI focuses on syntax errors and
+# undefined names (high-signal).
+select = ["E9", "F821", "F822", "F823"]
