@@ -959,6 +959,7 @@ NİHAİ/
 │   ├── 📄 mac_simulation.py # Mac simulation run
 │   ├── 📄 mini_titan_poc.py # Forensic PoC logger
 │   ├── 📄 download_tr_tokenizer.py # Turkish tokenizer download (opt-in)
+│   ├── 📄 update_system_hardware.py # Auto-refresh system hardware report
 │   ├── 📄 scaling_audit_math.py # Scaling audit math
 │   ├── 📄 test_onnx_export.py # ONNX export test
 │   ├── 📄 titan_onnx_stress_test.py # ONNX stress test
@@ -1046,7 +1047,11 @@ NİHAİ/
 │   ├── 📄 drift_report_TR.md
 │   └── 📂 tr/              # Turkish tokenizer cache (opt-in)
 │       ├── 📄 README.md
-│       └── 📄 README_TR.md
+│       ├── 📄 README_TR.md
+│       ├── 📄 tokenizer.json
+│       ├── 📄 tokenizer_config.json
+│       ├── 📄 special_tokens_map.json
+│       └── 📄 vocab.txt
 ├── 📂 tools/               # Tool sandbox & contracts
 │   ├── 📄 abuse_tests.md
 │   ├── 📄 abuse_tests_TR.md
