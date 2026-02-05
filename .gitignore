@@ -60,3 +60,4 @@ logs/*
 # Temporary
 *.tmp
 *.bak
+*.zip
