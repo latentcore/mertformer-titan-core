@@ -5,7 +5,7 @@ Bu dosya, repo'nun inceleme anındaki durumunu (point-in-time) insan-okur bir fo
 ## Snapshot
 
 - Tarih (lokal): 2026-02-06
-- Git SHA (kısa): TBD
+- Base Git SHA (kısa): 63e47a2
 - Baseline Python: 3.11 (bkz: `repro/python_TR.md`)
 - Varsayılan mod: offline-first (`TITAN_OFFLINE=1`)
 
@@ -20,9 +20,16 @@ bash scripts/verify_all.sh
 
 Beklenen:
 - Secret scan: PASS
-- Pytest: PASS
+- Pytest: PASS (`21 passed, 4 skipped`)
 - Preflight (offline): PASS
 - Operator gate (safe, offline): PASS
+
+Ek spot-check:
+
+```bash
+TITAN_OFFLINE=1 bash run.sh --test
+.titan-venv/bin/python scripts/train_smoke.py --cleanup
+```
 
 ## Önemli Dokümanlar
 
@@ -36,4 +43,3 @@ Beklenen:
 - Üretim eğitimi şu şartlar sağlanmadan başlatılmamalı:
   - Eğitim datasetlerinin lisansları doğrulanmış olmalı (`datasets/LICENSES*.md` içinde `TBD` kalmamalı)
   - Eğitimde kullanılacak snapshotlar için metadata + hash kayıtları `datasets/hashes.json` içine girilmiş olmalı
-

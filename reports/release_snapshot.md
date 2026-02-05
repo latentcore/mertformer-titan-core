@@ -5,7 +5,7 @@ This file is a human-readable snapshot of the repository at a review point-in-ti
 ## Snapshot
 
 - Date (local): 2026-02-06
-- Git SHA (short): TBD
+- Base Git SHA (short): 63e47a2
 - Baseline Python: 3.11 (see `repro/python.md`)
 - Default mode: offline-first (`TITAN_OFFLINE=1`)
 
@@ -20,9 +20,16 @@ bash scripts/verify_all.sh
 
 Expected outputs:
 - Secret scan: PASS
-- Pytest: PASS
+- Pytest: PASS (`21 passed, 4 skipped`)
 - Preflight (offline): PASS
 - Operator gate (safe, offline): PASS
+
+Additional spot checks:
+
+```bash
+TITAN_OFFLINE=1 bash run.sh --test
+.titan-venv/bin/python scripts/train_smoke.py --cleanup
+```
 
 ## Key Docs
 
@@ -36,4 +43,3 @@ Expected outputs:
 - Production training is blocked until:
   - All training datasets have verified licenses (no `TBD` in `datasets/LICENSES*.md`)
   - Snapshot metadata + hashes are recorded in `datasets/hashes.json`
-
