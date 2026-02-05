@@ -1,21 +1,23 @@
 # Logs Overview
 
-This directory contains **selected** run logs for reproducibility and audit trails.
+This directory contains **generated artifacts** (run logs, preflight output, operator-gate evidence).
 
-## Included in GitHub
-- `logs/preflight/` (preflight diagnostics)
-- `logs/operator_mode/` (operator gate evidence)
-- `logs/run_*.jsonl` and `logs/run_*.csv` (lightweight local run logs)
-- `logs/ALL_LOGS.jsonl` (unified logbook, all logs in one file)
+Policy:
+- `logs/` is **gitignored by default** (artifacts are not committed).
+- The only tracked file under `logs/` is this `logs/README.md`.
 
-## Not included by default
-- `logs/production_run.log` (can be large; kept local unless explicitly requested)
+## Common Artifacts (Untracked)
+- `logs/preflight/titan_preflight.log` (preflight diagnostics)
+- `logs/operator_mode/*.jsonl` + `*.manifest.json` (operator gate evidence)
+- `logs/run_*.jsonl` and `logs/run_*.csv` (training loop metrics)
+- `logs/production_run.log` (can be large)
+- `logs/ALL_LOGS.jsonl` (unified logbook)
 
 ## Unified Logbook
-- Build/append: `python3 scripts/logbook_build.py --append`
-- Rebuild from scratch: `python3 scripts/logbook_build.py --rebuild`
-- The logbook is **append-only** and includes source metadata for each log line.
+- Build/append: `.titan-venv/bin/python scripts/logbook_build.py --append`
+- Rebuild from scratch: `.titan-venv/bin/python scripts/logbook_build.py --rebuild`
+- The logbook is **append-only** and includes source metadata for each imported log line.
 
 ## Notes
 - Logs are **sanitized** (tokens are masked in preflight output).
-- For fresh runs, regenerate logs via `run.sh --test` or `run.sh`.
+- For fresh runs, regenerate artifacts via `run.sh --test` or `run.sh`.

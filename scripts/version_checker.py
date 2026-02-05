@@ -7,7 +7,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-IGNORE_DIRS = {".git", ".titan-venv", ".lint-venv", "logs", "checkpoints", "datasets"}
+IGNORE_DIRS = {".git", "logs", "checkpoints", "datasets"}
 TEXT_EXTS = {".md", ".py", ".yaml", ".yml", ".toml", ".txt", ".sh", ".cff"}
 IGNORE_FILES = {"CITATION.cff", "version_checker.py"}
 
@@ -27,8 +27,12 @@ def should_scan(path: Path) -> bool:
         return False
     if path.name in IGNORE_FILES:
         return False
-    if any(part in IGNORE_DIRS for part in path.parts):
-        return False
+    for part in path.parts:
+        if part in IGNORE_DIRS:
+            return False
+        # Ignore local venvs and their backups (they may contain "FINAL"/"LOCKED" etc).
+        if part.startswith(".titan-venv") or part.startswith(".lint-venv") or part.startswith(".venv"):
+            return False
     return path.suffix in TEXT_EXTS
 
 

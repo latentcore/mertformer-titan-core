@@ -6,7 +6,10 @@ __pycache__/
 .DS_Store
 .env
 venv/
+.venv/
+.venv*/
 .titan-venv/
+.titan-venv*/
 .idea/
 .vscode/
 .ipynb_checkpoints/
@@ -24,6 +27,7 @@ tokenizer/tr/*
 
 # Heavy Files (Models & Data)
 *.onnx
+*.onnx.data
 *.pt
 *.pth
 *.ckpt
@@ -44,18 +48,9 @@ tokenizer/tr/*
 /checkpoints/
 !datasets/golden_samples.jsonl
 
-# Logs (Ignore all except selected evidence)
+# Logs (Keep only documentation in git; generated logs are artifacts)
 logs/*
 !logs/README.md
-!logs/TITAN_POC_PROOF.jsonl
-!logs/preflight/
-!logs/preflight/*.log
-!logs/operator_mode/
-!logs/operator_mode/*.jsonl
-!logs/operator_mode/*.manifest.json
-!logs/run_*.jsonl
-!logs/run_*.csv
-!logs/ALL_LOGS.jsonl
 
 # Temporary
 *.tmp
