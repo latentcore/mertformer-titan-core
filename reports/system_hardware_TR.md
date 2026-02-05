@@ -1,13 +1,15 @@
 # 💻 TITAN SİSTEM & DONANIM RAPORU
-**Tarih:** 2026-02-05 07:15:09  
+**Tarih:** 2026-02-05 07:27:41
 **Durum:** ✅ YEREL DOĞRULANDI
 
 ## 🖥️ Donanım Özellikleri
-- **Cihaz:** MacBook Air (Apple Silicon)
-- **Çip:** Apple M4 (10 çekirdek: 4 performans + 6 verim)
+- **Cihaz:** Unknown (Apple Silicon)
+- **Çip:** Apple M4 (10 (4 performance and 6 efficiency))
 - **GPU:** Apple M4 (8 çekirdek, Metal destekli)
 - **Toplam RAM:** 16 GB
-- **İşletim Sistemi:** macOS 26.2 (Build 25C56)
+- **İşletim Sistemi:** ProductName:  macOS
+ProductVersion:  26.2
+BuildVersion:  25C56
 - **Kernel:** Darwin 25.2.0 (arm64)
 
 ## 🛠️ Kontrol Edilen Bileşenler
