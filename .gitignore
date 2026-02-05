@@ -15,6 +15,14 @@ venv/
 .ipynb_checkpoints/
 wandb/
 .pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.cache/
+.lint-venv/
 *.zip
 dist/
 build/
@@ -41,12 +49,15 @@ tokenizer/tr/*
 !/datasets/LICENSES_TR.md
 !/datasets/filters.yaml
 !/datasets/hashes.json
+!/datasets/inventory.json
+!/datasets/inventory.md
+!/datasets/inventory_TR.md
 !/datasets/validation.jsonl
 /data/
 /dataset/
 /weights/
 /checkpoints/
-!datasets/golden_samples.jsonl
+!/datasets/golden_samples.jsonl
 
 # Logs (Keep only documentation in git; generated logs are artifacts)
 logs/*
@@ -55,4 +66,5 @@ logs/*
 # Temporary
 *.tmp
 *.bak
-*.zip
+temp_preflight_data/
+temp_preflight_logits/
