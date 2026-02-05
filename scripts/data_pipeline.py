@@ -24,6 +24,8 @@ from typing import Dict, List
 from datasets import load_dataset
 from tqdm import tqdm
 
+from utils.dataset_registry import get_hf_revision
+
 
 # =============================================================================
 # TR: STAGE CONFİGÜRASYONU / EN: STAGE CONFIGURATION
@@ -249,11 +251,15 @@ def download_stage(stage_num, sources, target_samples_per_source):
     for i, src in enumerate(sources):
         print(f"   🔌 Connecting to stream: {src['dataset']}...")
         try:
+            revision = get_hf_revision(src["dataset"])
+            if revision:
+                print(f"      📌 Pinned revision: {revision}")
             # [FIX] Pass subset/config name if it exists (Crucial for Wikipedia)
             ds = load_dataset(
                 src["dataset"],
                 name=src.get("subset", None), # Pass config name (e.g. '20231101.tr')
                 split=src["split"],
+                revision=revision,
                 streaming=True
             ).shuffle(seed=42, buffer_size=10_000) # Use shuffle buffer instead of expensive skip
             iterators[i] = iter(ds)

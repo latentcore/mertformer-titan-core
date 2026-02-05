@@ -29,8 +29,8 @@ Legend:
 | `run.sh --test` offline-first (external login/download yok) | ✅ Verified (Run) | `TITAN_OFFLINE=1 bash run.sh --test` |
 | Koddan dataset ID envanteri | ✅ Verified (Run) | `python scripts/extract_dataset_refs.py` → `datasets/inventory*` |
 | Dataset kaynakları dokümante | ✅ Verified (Code) | `datasets/SOURCES*.md` |
-| Dataset lisans checklisti | 🔎 Verified (Code) | `datasets/LICENSES*.md` (`TBD` girdiler eğitim için blokerdır) |
-| Dataset snapshot hash kayıtları | 🎯 Target / Claim | Üretim eğitimi öncesi `datasets/hashes.json` doldurulmalı |
+| Dataset lisans checklisti | 🔎 Verified (Code) | `datasets/LICENSES*.md` (eğitim datasetleri için `TBD` yok) |
+| Dataset snapshot hash kayıtları | ✅ Verified (Run) | `python scripts/record_dataset_hashes.py` → `datasets/hashes.json` |
 | Training “tiny smoke” (CPU/MPS) | ✅ Verified (Run) | `python scripts/train_smoke.py --cleanup` |
 | Tam eğitim koşusu (uçtan uca) | 🎯 Target / Claim | Eğitim donanımı + gerçek dataset snapshotları gerektirir |
 | Benchmarklar (HumanEval/MBPP) | 🔎 Verified (Code) | `scripts/benchmarks_internal.py` (checkpoint yoksa SKIP) |
@@ -40,5 +40,5 @@ Legend:
 
 ## Notlar / Blokerler (Tarafsız)
 
-- Eğitim, üretim/review için **hazır değildir**: Eğitimde kullanılacak tüm datasetlerin lisansı doğrulanmalı ( `TBD` kalmamalı ) ve `datasets/hashes.json` snapshot hash’leriyle doldurulmalıdır.
+- Dataset uyum kapısı (lisans + snapshot registry) şu an pinlenen HF revision'ları için sağlanmıştır (bkz: `datasets/hashes.json`).
 - Performans rakamları, tam eğitim + benchmark raporu olmadan **hedef** olarak kalır.

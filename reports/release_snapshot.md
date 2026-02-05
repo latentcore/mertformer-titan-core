@@ -40,6 +40,9 @@ TITAN_OFFLINE=1 bash run.sh --test
 
 ## Known Gates / Blockers
 
-- Production training is blocked until:
-  - All training datasets have verified licenses (no `TBD` in `datasets/LICENSES*.md`)
-  - Snapshot metadata + hashes are recorded in `datasets/hashes.json`
+- Dataset compliance gate:
+  - ✅ Licenses verified (no `TBD` in `datasets/LICENSES*.md`)
+  - ✅ Snapshot registry recorded in `datasets/hashes.json` (pinned revisions + manifest fingerprints)
+- Remaining work is operational and post-training:
+  - Run production training on target hardware
+  - Generate benchmark reports from the produced checkpoints

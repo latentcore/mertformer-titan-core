@@ -16,10 +16,12 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 def load_dataset_safe(name: str, config: str):
     from datasets import load_dataset
+    from utils.dataset_registry import get_hf_revision
+    revision = get_hf_revision(name)
     try:
-        return load_dataset(name, config, split="test")
+        return load_dataset(name, config, split="test", revision=revision)
     except Exception:
-        return load_dataset(name, split="test")
+        return load_dataset(name, split="test", revision=revision)
 
 
 def run_generation(dataset, tokenizer, model, device, out_path: Path, max_new_tokens: int, samples: int) -> int:

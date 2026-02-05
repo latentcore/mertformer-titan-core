@@ -1221,16 +1221,16 @@ Paylaşılan bir eğitim sonucunun veya benchmark skorunun doğruluğunu teyit e
    ```
 3. **Resmi Kayıtla Karşılaştırma**:
 
-### Benchmark Anlık Görünüm (Örnek / Doğrulanmamış):
-*Not: Aşağıdaki tablo **örnek/ön üretim** amaçlı bir placeholder'dır. Tam üretim koşusu tamamlanıp imzalandıktan sonra **ölçülen sonuçlarla** güncellenecektir.*
+### Benchmark Anlık Görünüm (Smoke / Verified (Run))
+*Not: Aşağıdaki tablo, **dokümantasyon için smoke** amaçlı sentetik token'larla üretilmiş bir snapshot'tır (model kalitesi iddiası değildir). Kaynak: `reports/benchmarks/smoke_train_metrics.json` ( `python scripts/smoke_train_benchmark.py` ile üretildi ).*
 | Metrik | Full Titan (Liquid) | No-Liquid | Fark |
 | :--- | :---: | :---: | :---: |
-| **Final Loss** | TBD (eğitim sonrası) | TBD | - |
-| **Ortalama Tau** | TBD | TBD | - |
-| **Durum** | ⚪ Beklemede | ⚪ Beklemede | - |
-| **Adli Hash** | beklemede | - | - |
+| **Final Loss** | 118.8729 (20-step smoke) | 120.0548 (20-step smoke) | -1.1819 |
+| **Ortalama Tau** | 0.9752 (softplus(tau_bias), ort) | N/A | N/A |
+| **Durum** | ✅ Smoke Verified | ✅ Smoke Verified | - |
+| **Adli Hash** | `3013eeaf58191d3eac53cb7b08039e6cfc8af432a6205d5a99ea909b72fa49a9` | - | - |
    
-> **Not:** Resmi hash değerleri, ilk üretim eğitimi tamamlandıktan ve imzalandıktan sonra buraya eklenecektir.
+> **Üretim Notu:** Tam üretim eğitimi tamamlanıp benchmark raporu alındıktan sonra bu tablo post-training sonuçlarla güncellenmelidir.
 
 ### 🛡️ Adli Doğrulama ve Güvenlik (Forensic Verification)
 - **Kriptografik Proof-of-Life:** Eğitim sürecindeki her adım, bir önceki adımın SHA256 özetiyle zincirlenerek `TITAN_POC_PROOF.jsonl` dosyasına mühürlenir.

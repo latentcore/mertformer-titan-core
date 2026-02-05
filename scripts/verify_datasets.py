@@ -25,6 +25,8 @@ from datasets import load_dataset
 # Add project root to path
 sys.path.append(str(Path(__file__).parent.parent))
 
+from utils.dataset_registry import get_hf_revision
+
 # Import sources
 try:
     from scripts.data_pipeline import (
@@ -54,10 +56,14 @@ def check_source(stage_name, source, log_file):
     log(f"   📡 Connecting to {ds_name} ({subset if subset else 'default'})...", log_file)
     
     try:
+        revision = get_hf_revision(ds_name)
+        if revision:
+            log(f"      📌 Revision pinned: {revision}", log_file)
         ds = load_dataset(
             ds_name, 
             name=subset, 
             split=split, 
+            revision=revision,
         )
         item = next(iter(ds))
         content = item.get(field)

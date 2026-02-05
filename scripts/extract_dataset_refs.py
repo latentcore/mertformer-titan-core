@@ -83,9 +83,11 @@ def _fetch_metadata(dataset_id: str, token: str | None) -> dict[str, Any]:
 
         api = HfApi()
         info = api.dataset_info(dataset_id, token=token)
-        card = getattr(info, "cardData", None) or {}
+        card = getattr(info, "card_data", None) or {}
+        tags = list(getattr(info, "tags", None) or [])
+        license_tags = [t[len("license:") :] for t in tags if t.startswith("license:")]
         return {
-            "license": card.get("license") or card.get("licenses") or None,
+            "license": card.get("license") or card.get("licenses") or license_tags or None,
             "homepage": card.get("homepage") or None,
             "gated": bool(getattr(info, "gated", False)),
             "sha": getattr(info, "sha", None),
@@ -95,8 +97,34 @@ def _fetch_metadata(dataset_id: str, token: str | None) -> dict[str, Any]:
     except Exception:
         return {"license": None, "homepage": None, "gated": None, "sha": None, "private": None, "hf_url": f"https://huggingface.co/datasets/{dataset_id}"}
 
+def _load_license_map(repo_root: Path) -> dict[str, str]:
+    """Load dataset->license mapping from datasets/LICENSES.md (best-effort, offline).
 
-def _write_md(path: Path, title: str, items: list[dict[str, Any]], lang: str) -> None:
+    This keeps the auto inventory consistent with the human-maintained compliance table.
+    """
+    path = repo_root / "datasets" / "LICENSES.md"
+    if not path.exists():
+        return {}
+
+    rx_ds = re.compile(r"""\|\s*`([^`]+)`""")
+
+    mapping: dict[str, str] = {}
+    for line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+        m = rx_ds.search(line)
+        if not m:
+            continue
+        ds = m.group(1).strip()
+        # Extract the License cell (2nd column) from the markdown row.
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) < 2:
+            continue
+        lic = cells[1].strip()
+        if lic:
+            mapping[ds] = lic
+    return mapping
+
+
+def _write_md(path: Path, title: str, items: list[dict[str, Any]], lang: str, license_map: dict[str, str]) -> None:
     lines: list[str] = []
     lines.append(f"# {title}")
     lines.append("")
@@ -111,8 +139,12 @@ def _write_md(path: Path, title: str, items: list[dict[str, Any]], lang: str) ->
     lines.append("| --- | --- | --- | --- |")
     for it in items:
         ds = it["dataset"]
-        lic = it.get("metadata", {}).get("license")
-        lic_str = "TBD" if not lic else (lic if isinstance(lic, str) else ", ".join(lic))
+        lic_from_table = license_map.get(ds)
+        if lic_from_table:
+            lic_str = lic_from_table
+        else:
+            lic = it.get("metadata", {}).get("license")
+            lic_str = "Unknown" if not lic else (lic if isinstance(lic, str) else ", ".join(lic))
         url = it.get("metadata", {}).get("hf_url") or f"https://huggingface.co/datasets/{ds}"
         refs = str(it.get("ref_count", 0))
         lines.append(f"| `{ds}` | {lic_str} | {url} | {refs} |")
@@ -139,6 +171,7 @@ def main() -> int:
     args = parser.parse_args()
 
     root = Path(args.root).resolve()
+    license_map = _load_license_map(root)
     refs: list[Ref] = []
     for p in _iter_py_files(root):
         refs.extend(_scan_file(p))
@@ -166,8 +199,8 @@ def main() -> int:
     out_json.parent.mkdir(parents=True, exist_ok=True)
     out_json.write_text(json.dumps({"generated_from": list(SCAN_DIRS), "items": items}, indent=2), encoding="utf-8")
 
-    _write_md(Path(args.out_md), "Dataset Inventory (Auto)", items, lang="en")
-    _write_md(Path(args.out_md_tr), "Dataset Envanteri (Otomatik)", items, lang="tr")
+    _write_md(Path(args.out_md), "Dataset Inventory (Auto)", items, lang="en", license_map=license_map)
+    _write_md(Path(args.out_md_tr), "Dataset Envanteri (Otomatik)", items, lang="tr", license_map=license_map)
 
     print(f"Wrote: {out_json} ({len(items)} datasets)")
     return 0

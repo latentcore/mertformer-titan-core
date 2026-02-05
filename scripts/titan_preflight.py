@@ -188,12 +188,15 @@ def data_distill_test():
             # Optional deep check (opt-in)
             if os.environ.get("TITAN_PREFLIGHT_STREAM_SAMPLE") == "1":
                 from datasets import load_dataset
+                from utils.dataset_registry import get_hf_revision
 
+                revision = get_hf_revision("uonlp/CulturaX")
                 ds = load_dataset(
                     "uonlp/CulturaX",
                     "tr",
                     split="train",
                     streaming=True,
+                    revision=revision,
                     token=hf_token,
                 )
                 next(iter(ds))

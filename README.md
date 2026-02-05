@@ -1224,16 +1224,16 @@ To verify the authenticity of a shared run log or benchmark result:
    ```
 3. **Compare with Official Record**:
 
-### Benchmark Snapshot (Example / Unverified)
-*Note: The table below is an illustrative placeholder (pre-production / unverified). It will be replaced with measured results once a full production run is completed and signed.*
+### Benchmark Snapshot (Smoke / Verified (Run))
+*Note: The table below is a **documentation-only smoke snapshot** generated from synthetic tokens (not a model-quality claim). Source: `reports/benchmarks/smoke_train_metrics.json` (generated via `python scripts/smoke_train_benchmark.py`).*
 | Metric | Full Titan (Liquid) | No-Liquid | Delta |
 | :--- | :---: | :---: | :---: |
-| **Final Loss** | TBD (post-training) | TBD | - |
-| **Avg Tau** | TBD | TBD | - |
-| **Status** | ⚪ Pending | ⚪ Pending | - |
-| **Forensic Hash** | pending | - | - |
+| **Final Loss** | 118.8729 (20-step smoke) | 120.0548 (20-step smoke) | -1.1819 |
+| **Avg Tau** | 0.9752 (softplus(tau_bias), avg) | N/A | N/A |
+| **Status** | ✅ Smoke Verified | ✅ Smoke Verified | - |
+| **Forensic Hash** | `3013eeaf58191d3eac53cb7b08039e6cfc8af432a6205d5a99ea909b72fa49a9` | - | - |
    
-> **Note:** Official hashes will be updated here after the initial production run log is generated and signed.
+> **Production Note:** Replace this table with post-training benchmark results once a full training run is completed and a benchmark report is generated.
 
 ### 🛡️ Forensic Verification & Safety
 - **Cryptographic Proof-of-Life:** Every step in the training process is chained with the SHA256 hash of the previous step and sealed in the `TITAN_POC_PROOF.jsonl` file.

@@ -40,6 +40,9 @@ TITAN_OFFLINE=1 bash run.sh --test
 
 ## Bilinen Gate / Blokerler
 
-- Üretim eğitimi şu şartlar sağlanmadan başlatılmamalı:
-  - Eğitim datasetlerinin lisansları doğrulanmış olmalı (`datasets/LICENSES*.md` içinde `TBD` kalmamalı)
-  - Eğitimde kullanılacak snapshotlar için metadata + hash kayıtları `datasets/hashes.json` içine girilmiş olmalı
+- Dataset uyum kapısı:
+  - ✅ Lisanslar doğrulandı (`datasets/LICENSES*.md` içinde `TBD` yok)
+  - ✅ Snapshot registry `datasets/hashes.json` içinde kayitli (pinlenen revision + manifest fingerprint)
+- Kalan iş, operasyonel ve eğitim sonrası:
+  - Hedef donanımda üretim eğitimini çalıştırmak
+  - Üretilen checkpoint'lerden benchmark raporlarını almak

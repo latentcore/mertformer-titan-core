@@ -39,14 +39,15 @@ tokenizer/tr/*
 *.pt
 *.pth
 *.ckpt
-/datasets/
-!/datasets/
+/datasets/*
 !/datasets/README.md
 !/datasets/README_TR.md
 !/datasets/SOURCES.md
 !/datasets/SOURCES_TR.md
 !/datasets/LICENSES.md
 !/datasets/LICENSES_TR.md
+!/datasets/INTERNAL_POLICY.md
+!/datasets/INTERNAL_POLICY_TR.md
 !/datasets/filters.yaml
 !/datasets/hashes.json
 !/datasets/inventory.json

@@ -358,9 +358,13 @@ class MiniTitan(nn.Module):
 # ==============================================================================
 def get_dataset():
     try:
+        from utils.dataset_registry import get_hf_revision
         from datasets import load_dataset
         print("🌍 Downloading WikiText-2...")
-        ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="train")
+        revision = get_hf_revision("wikitext")
+        if revision:
+            print(f"   📌 Pinned revision: {revision}")
+        ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="train", revision=revision)
         tokens = torch.tensor([hash(w) % cfg.vocab_size for w in "\n".join(ds["text"]).split()], dtype=torch.long)
         print(f"✅ Real Data: {len(tokens)} tokens")
         class DS(Dataset):

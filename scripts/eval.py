@@ -33,7 +33,11 @@ from config.config import cfg
 
 def evaluate_gsm8k(model, tokenizer, device, num_samples=100):
     print(f"\n📚 Evaluating GSM8K (Zero-Shot) - {num_samples} samples...")
-    ds = load_dataset("openai/gsm8k", "main", split="test", streaming=True)
+    from utils.dataset_registry import get_hf_revision
+    revision = get_hf_revision("openai/gsm8k")
+    if revision:
+        print(f"   📌 Pinned revision: {revision}")
+    ds = load_dataset("openai/gsm8k", "main", split="test", streaming=True, revision=revision)
     
     correct = 0
     total = 0

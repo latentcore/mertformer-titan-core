@@ -60,10 +60,12 @@ def _numbers_match(a: str | None, b: str | None) -> bool:
 
 def _load_dataset():
     from datasets import load_dataset
+    from utils.dataset_registry import get_hf_revision
+    revision = get_hf_revision("openai/gsm8k")
     try:
-        return load_dataset("openai/gsm8k", "main", split="test")
+        return load_dataset("openai/gsm8k", "main", split="test", revision=revision)
     except Exception:
-        return load_dataset("openai/gsm8k", split="test")
+        return load_dataset("openai/gsm8k", split="test", revision=revision)
 
 
 def _load_model_and_tokenizer(ckpt: str):

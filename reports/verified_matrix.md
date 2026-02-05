@@ -29,8 +29,8 @@ Legend used below:
 | `run.sh --test` offline-first (no external login/download) | ✅ Verified (Run) | `TITAN_OFFLINE=1 bash run.sh --test` |
 | Dataset IDs inventory from code | ✅ Verified (Run) | `python scripts/extract_dataset_refs.py` → `datasets/inventory*` |
 | Dataset sources documented | ✅ Verified (Code) | `datasets/SOURCES*.md` |
-| Dataset licenses documented (checklist) | 🔎 Verified (Code) | `datasets/LICENSES*.md` (contains `TBD` items that are training blockers) |
-| Dataset snapshot hashes recorded | 🎯 Target / Claim | `datasets/hashes.json` must be filled before production training |
+| Dataset licenses documented (checklist) | 🔎 Verified (Code) | `datasets/LICENSES*.md` (no `TBD` entries for training datasets) |
+| Dataset snapshot hashes recorded | ✅ Verified (Run) | `python scripts/record_dataset_hashes.py` → `datasets/hashes.json` |
 | Training “tiny smoke” (CPU/MPS) | ✅ Verified (Run) | `python scripts/train_smoke.py --cleanup` |
 | Full training run (end-to-end) | 🎯 Target / Claim | Requires training hardware + real data snapshots |
 | Benchmarks (HumanEval/MBPP) | 🔎 Verified (Code) | `scripts/benchmarks_internal.py` (SKIP behavior if checkpoint missing) |
@@ -40,5 +40,5 @@ Legend used below:
 
 ## Notes / Blockers (Truthful)
 
-- Training is **not review-ready** until all training datasets have verified licenses (no `TBD`) and snapshot hashes are recorded in `datasets/hashes.json`.
+- Dataset compliance gate (licenses + snapshot registry) is satisfied for the currently pinned HF revisions (see `datasets/hashes.json`).
 - Performance numbers remain **targets** until a full training run and benchmark report exist.

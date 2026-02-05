@@ -1,0 +1,27 @@
+{
+  "elapsed_sec": 2.211,
+  "env": {
+    "device": "mps",
+    "python": "3.11.14",
+    "torch": "2.10.0"
+  },
+  "forensic_sha256": "3013eeaf58191d3eac53cb7b08039e6cfc8af432a6205d5a99ea909b72fa49a9",
+  "generated_at_utc": "2026-02-05T23:52:13Z",
+  "liquid": {
+    "avg_loss": 119.49088973999024,
+    "avg_tau": 0.9751526713371277,
+    "final_aux_loss": 0.0,
+    "final_loss": 118.87294006347656,
+    "steps": 20,
+    "use_liquid": true
+  },
+  "no_liquid": {
+    "avg_loss": 120.63782119750977,
+    "avg_tau": null,
+    "final_aux_loss": 0.0,
+    "final_loss": 120.05484008789062,
+    "steps": 20,
+    "use_liquid": false
+  },
+  "note": "Documentation-only smoke benchmark on synthetic tokens. Not a model-quality claim."
+}
