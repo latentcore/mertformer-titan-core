@@ -25,7 +25,11 @@ LOGBOOK_PATH = LOG_DIR / "ALL_LOGS.jsonl"
 REDACT_PATTERNS = [
     re.compile(r"hf_[A-Za-z0-9]{8,}"),
     re.compile(r"wandb_[A-Za-z0-9]{8,}"),
+    # WandB API keys are often 40 hex chars; also catches accidental full git SHAs in logs (acceptable).
+    re.compile(r"\b[0-9a-fA-F]{40}\b"),
     re.compile(r"sk-[A-Za-z0-9]{10,}"),
+    re.compile(r"\bghp_[A-Za-z0-9]{20,}\b"),  # GitHub tokens (best-effort)
+    re.compile(r"\bAIza[0-9A-Za-z\-_]{20,}\b"),  # Google API keys (best-effort)
 ]
 
 
