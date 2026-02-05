@@ -50,7 +50,7 @@ except ImportError:
     print("   -> pip install onnx onnxruntime")
     # We continue strictly for PyTorch export part, but verification will fail.
     
-from model.transformers import MertFormer, MertFormerConfig
+from model.transformers import MertFormer
 from config.config import cfg
 
 def export_production_model(ckpt_override=None, output_dir=None, bitpack: bool = False):

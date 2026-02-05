@@ -1298,6 +1298,11 @@ def train():
                     opt.zero_grad()
                     continue
 
+                # Track micro-batch stats (for accurate averages)
+                accum_loss += total_loss.item()
+                accum_count += 1
+                tokens_processed += input_ids.numel()
+
                 # Backward (Accelerate handles scaling and division by accum steps AUTOMATICALLY)
                 accelerator.backward(total_loss)
 
@@ -1305,16 +1310,36 @@ def train():
                 if accelerator.sync_gradients:
                     # Clipping
                     grad_norm = accelerator.clip_grad_norm_(student.parameters(), cfg.grad_clip)
-                    
+
                     opt.step()
                     scheduler.step()
                     opt.zero_grad()
-                    
+
                     global_step += 1
-                    
+
                     # Update Stats
                     grad_norm_val = grad_norm.item() if isinstance(grad_norm, torch.Tensor) else grad_norm
-                    
+
+                    max_grad_norm_seen = max(max_grad_norm_seen, grad_norm_val)
+                    grad_norm_history.append(grad_norm_val)
+                    loss_history.append(total_loss.item())  # V26.2 FIX: Use total_loss.item()
+                    if len(grad_norm_history) > 100:
+                        grad_norm_history.pop(0)
+                    if len(loss_history) > 100:
+                        loss_history.pop(0)
+
+                    # GRADIENT NORM COLLAPSE DETECTION
+                    if len(grad_norm_history) >= 10:
+                        avg_recent = sum(grad_norm_history[-10:]) / 10
+                        if avg_recent < grad_norm_collapse_threshold:
+                            print(f"⚠️  WARNING: Gradient norm collapse detected! Avg: {avg_recent:.6f}")
+                            print(f"   Model may have stopped learning. Consider adjusting learning rate.")
+
+                    # Engine Overheating Protection
+                    if grad_norm_val > 10.0:
+                        print(f"⚠️  CRITICAL: Gradient norm {grad_norm_val:.2f} exceeds safety threshold! Reducing clip threshold.")
+                        cfg.grad_clip = max(cfg.grad_clip * 0.7, 0.1)
+
                     # Log Metrics (Main Process)
                     if global_step % cfg.log_interval == 0 and logger and accelerator.is_main_process:
                         metrics = {
@@ -1329,72 +1354,44 @@ def train():
                         }
                         logger.log_step(metrics, global_step)
 
-                micro_step += 1
+                    # Logging only on Main Process
+                    if global_step % cfg.log_interval == 0 and accelerator.is_main_process:
+                        dt = time.time() - start_time
+                        tok_s = tokens_processed / max(dt, 1e-6)
+                        # [FIX] Use counter for proper averaging
+                        avg_loss = accum_loss / max(1, accum_count)
+                        lr_now = scheduler.get_last_lr()[0]
 
-                max_grad_norm_seen = max(max_grad_norm_seen, grad_norm_val)
-                grad_norm_history.append(grad_norm_val)
-                loss_history.append(total_loss.item()) # V26.2 FIX: Use total_loss.item()
-                if len(grad_norm_history) > 100:
-                    grad_norm_history.pop(0)
-                if len(loss_history) > 100:
-                    loss_history.pop(0)
+                        distill_val = loss_distill.item() if isinstance(loss_distill, torch.Tensor) else 0.0
+                        aux_val = aux_loss.item() if isinstance(aux_loss, torch.Tensor) else 0.0
+                        avg_grad_norm = sum(grad_norm_history[-10:]) / len(grad_norm_history[-10:]) if grad_norm_history else 0.0
 
-                # GRADIENT NORM COLLAPSE DETECTION
-                if len(grad_norm_history) >= 10:
-                    avg_recent = sum(grad_norm_history[-10:]) / 10
-                    if avg_recent < grad_norm_collapse_threshold:
-                        print(f"⚠️  WARNING: Gradient norm collapse detected! Avg: {avg_recent:.6f}")
-                        print(f"   Model may have stopped learning. Consider adjusting learning rate.")
+                        print(f"Step {global_step} | Stage {current_curriculum_stage} | Loss: {avg_loss:.4f} | "
+                              f"Tok/s: {tok_s:.0f} | LR: {lr_now:.2e} | GradNorm: {avg_grad_norm:.3f}")
 
-                # Engine Overheating Protection
-                if grad_norm_val > 10.0:
-                    print(f"⚠️  CRITICAL: Gradient norm {grad_norm_val:.2f} exceeds safety threshold! Reducing clip threshold.")
-                    cfg.grad_clip = max(cfg.grad_clip * 0.7, 0.1)
+                        # V27.0: Periodic Safety Checks
+                        if global_step % 1000 == 0:
+                            # Disk space check
+                            if not check_disk_space(min_gb=50):
+                                print("   ⚠️  Consider cleaning old checkpoints!")
 
-                scheduler.step()
-                opt.zero_grad()
-                global_step += 1
+                            # GPU memory report
+                            if torch.cuda.is_available():
+                                alloc, res = get_gpu_memory_usage()
+                                print(f"   📊 GPU Memory: {alloc:.1f} GB / {res:.1f} GB")
 
-                # Logging only on Main Process
-                if global_step % cfg.log_interval == 0 and accelerator.is_main_process:
-                    dt = time.time() - start_time
-                    tok_s = tokens_processed / max(dt, 1e-6)
-                    # [FIX] Use counter for proper averaging
-                    avg_loss = accum_loss / max(1, accum_count)
-                    # avg_loss calculated above with proper counter
-                    lr_now = scheduler.get_last_lr()[0]
-
-                    distill_val = loss_distill.item() if isinstance(loss_distill, torch.Tensor) else 0.0
-                    aux_val = aux_loss.item() if isinstance(aux_loss, torch.Tensor) else 0.0
-                    avg_grad_norm = sum(grad_norm_history[-10:]) / len(grad_norm_history[-10:]) if grad_norm_history else 0.0
-                    # (duplicate line removed)
-
-                    print(f"Step {global_step} | Stage {current_curriculum_stage} | Loss: {avg_loss:.4f} | "
-                          f"Tok/s: {tok_s:.0f} | LR: {lr_now:.2e} | GradNorm: {avg_grad_norm:.3f}")
-                    
-                    # V27.0: Periodic Safety Checks
-                    if global_step % 1000 == 0:
-                        # Disk space check
-                        if not check_disk_space(min_gb=50):
-                            print("   ⚠️  Consider cleaning old checkpoints!")
-                        
-                        # GPU memory report
-                        if torch.cuda.is_available():
-                            alloc, res = get_gpu_memory_usage()
-                            print(f"   📊 GPU Memory: {alloc:.1f} GB / {res:.1f} GB")
-
-                    log_data = {
-                        "step": global_step,
-                        "curriculum_stage": current_curriculum_stage,
-                        "loss": avg_loss,
-                        "ce": loss_ce.item(),
-                        "kd": distill_val,
-                        "aux": aux_val,
-                        "tok_s": tok_s,
-                        "lr": lr_now,
-                        "grad_norm": avg_grad_norm,
-                        "max_grad_norm": max_grad_norm_seen
-                    }
+                        log_data = {
+                            "step": global_step,
+                            "curriculum_stage": current_curriculum_stage,
+                            "loss": avg_loss,
+                            "ce": loss_ce.item(),
+                            "kd": distill_val,
+                            "aux": aux_val,
+                            "tok_s": tok_s,
+                            "lr": lr_now,
+                            "grad_norm": avg_grad_norm,
+                            "max_grad_norm": max_grad_norm_seen
+                        }
 
 
                     # [V26.6 TELEMETRY] MoE Router Health
@@ -1426,19 +1423,19 @@ def train():
                             print(f"   🔧 ACTION: Jitter boost activated via MoE module (see moe.py collapse_detected)")
                             log_data["router_collapse"] = True
 
-                    logger.log_step(log_data)
+                        logger.log_step(log_data)
 
-                    accum_loss = 0.0
-                    accum_count = 0  # [FIX] Reset counter
-                    tokens_processed = 0
-                    start_time = time.time()
+                        accum_loss = 0.0
+                        accum_count = 0  # [FIX] Reset counter
+                        tokens_processed = 0
+                        start_time = time.time()
 
-                # Validation & Early Stopping
-                if global_step % val_check_interval == 0 and global_step > 0:
-                    student.eval()
-                    val_loss = 0.0
-                    val_samples = 0
-                    val_steps = 10
+                    # Validation & Early Stopping
+                    if global_step % val_check_interval == 0 and global_step > 0:
+                        student.eval()
+                        val_loss = 0.0
+                        val_samples = 0
+                        val_steps = 10
 
                     try:
                         # [PRO] Use dedicated validation dataloader if available
@@ -1488,11 +1485,13 @@ def train():
                                 logger.finalize("early_stopped", extra={"best_val_loss": best_val_loss})
                                 return 
 
-                    student.train()
+                        student.train()
 
-                if global_step % cfg.save_interval == 0 and accelerator.is_main_process:
-                    unwrapped_model = accelerator.unwrap_model(student)
-                    best_val_loss = save_checkpoint_smart(unwrapped_model, opt, scheduler, global_step, cfg, keep_last_n=3, val_loss=None, best_val_loss=best_val_loss)
+                    if global_step % cfg.save_interval == 0 and accelerator.is_main_process:
+                        unwrapped_model = accelerator.unwrap_model(student)
+                        best_val_loss = save_checkpoint_smart(unwrapped_model, opt, scheduler, global_step, cfg, keep_last_n=3, val_loss=None, best_val_loss=best_val_loss)
+
+                micro_step += 1
 
         if accelerator.is_main_process:
             logger.finalize("completed")
