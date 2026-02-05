@@ -25,20 +25,20 @@ The cornerstone of the MertFormer Titan project is its hardware-aware structure 
 ### 2.1 BitNet b1.58 and the Ternary Computing Revolution
 While traditional models use 16-bit (BF16), MertFormer Titan reduces weights to values of $\{-1, 0, 1\}$ based on **BitNet b1.58** technology.
 
-*   **Memory Savings:** 93.75% reduction.
-*   **VRAM Requirement:** ~0.65 GB (for 2.64B parameters).
-*   **Energy Efficiency:** Up to 70x energy savings on NPUs due to addition operations instead of multiplication.
+*   **Memory Savings (Estimate):** 93.75% theoretical reduction.
+*   **VRAM Requirement (Estimate):** ~0.65 GB (for 2.64B parameters, requires low-bit inference path).
+*   **Energy Efficiency (Target):** Up to 70x energy savings on NPUs if ternary math runs on optimized kernels.
 
 **Mathematical Quantization Formula (`bitlinear.py`):**
 $$w_q = \text{clamp}(\text{round}(\frac{w}{\gamma + \epsilon}), -1, 1)$$
 
-*   **Residual Scaling Effect:** Signal stability is maintained across 18 layers using the $1/\sqrt{2}$ formula, targeting 100% gradient health even in the deepest layer.
+*   **Residual Scaling Effect (Target):** Signal stability is maintained across 18 layers using the $1/\sqrt{2}$ formula; empirical validation required.
 
 ### 2.2 Multi-Head Latent Attention (MLA)
 It resolves the KV Cache bottleneck—the biggest obstacle in on-device inference—with `mla.py`. Utilizing the DeepSeek-V2 logic, it compresses KV tensors into low-rank latent vectors.
 
-*   **KV Cache Reduction:** 93.3%
-*   **Result:** Even with context lengths of 4096+ tokens, it does not clog the memory of the Samsung S25.
+*   **KV Cache Reduction (Estimate):** 93.3%
+*   **Result (Target):** Even with context lengths of 4096+ tokens, it aims to stay within mobile memory limits; requires device validation.
 *   **RoPE:** Long-context support with $\theta = 100,000$.
 
 ### 2.3 Liquid Neural Networks (CfC)
@@ -65,7 +65,7 @@ While traditional routers look at the "current" token, the **LiquidRouter** make
 **Strategic Edge of LiquidRouter:**
 *   **Momentum-Based Routing:** Unlike standard "stateless" routers, it analyzes the data's arrival speed and temporal momentum (`Fluid Path`).
 *   **Causal Conv1d Integration:** Displays strategic intelligence by considering the past 4-token window (`history_window`) during expert selection.
-*   **Hardware Efficiency:** Provides 40% energy savings on the NPU.
+*   **Hardware Efficiency (Target):** Aims for material NPU energy savings; requires device profiling.
 
 ### 2.5 Synaptic Layer Hierarchy (Layer-by-Layer Taxonomy)
 MertFormer Titan's 18-layer structure transforms data into gradual "wisdom":

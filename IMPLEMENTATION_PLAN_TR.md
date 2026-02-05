@@ -49,14 +49,21 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 
 ## QAT Plani (Ne Zaman / Nasil)
 - Ne zaman: Stabil bir temel checkpoint alindiktan sonra.
-- Nasil: Kucuk veri altkumesinde QAT dene, baseline ile karsilastir, sonra genislet.
+- Nasil:
+  - Faz A (Pilot, 1-2 gun): 1-5% alt kume ile QAT ac, sabit seed kullan.
+  - Faz B (Karsilastirma, 1 gun): loss/throughput degerlerini baseline ile karsilastir.
+  - Faz C (Yayginlastirma, 2-3 gun): Faz B olumluysa tam mufredat icin ac.
 - Hedef: Low-bit inference kalitesini artirirken stabiliteyi korumak.
+- Cikis kriteri: Val loss gerilemesin, stabilite spike olmasin.
 
 ## Turkce Tokenizer POC (Risk Kontrollu)
 - Varsayilan ogretmen tokenizer kalir.
 - Opt-in bayrak ile `tokenizer/tr` kullanilir.
-- Kucuk dogrulama setinde token uzunlugu ve kalite karsilastirilir.
-- Distillation kalitesi dusersen geri donulur.
+- Pilot adimlari:
+  - Faz A (30-60 dk): 500-1,000 sample tokenize et, ortalama token uzunlugunu karsilastir.
+  - Faz B (1-2 saat): 200-step mini-train (CPU/MPS), loss trendini karsilastir.
+  - Faz C (ayni gun): loss bozulursa otomatik geri donus.
+- Cikis kriteri: %5'ten fazla token uzunlugu sismegi yok ve loss stabil.
 
 ## Kernel Deneysel + Tensor Core Opt-in
 - Deneysel low-bit kernel opt-in (CUDA + Triton gerekli).

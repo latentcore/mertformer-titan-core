@@ -49,14 +49,21 @@ Boring stability and learning speed. Success is operational discipline measured 
 
 ## QAT Plan (When/How)
 - When: After a stable baseline checkpoint exists and metrics are logged.
-- How: Enable QAT on a smaller subset first, compare with baseline, then scale.
+- How:
+  - Phase A (Pilot, 1-2 days): enable QAT on a 1-5% subset with fixed seed.
+  - Phase B (Compare, 1 day): compare loss/throughput vs baseline checkpoint.
+  - Phase C (Scale, 2-3 days): expand to full curriculum if Phase B is neutral or positive.
 - Goal: Improve low-bit inference quality without destabilizing training.
+- Exit criteria: no regression on validation loss; no instability spikes.
 
 ## Turkish Tokenizer POC (Risk-Controlled)
 - Default remains teacher tokenizer.
 - Opt-in flag loads Turkish tokenizer cache from `tokenizer/tr`.
-- Run a small validation set to compare tokenization length and quality.
-- If distillation quality drops, revert to teacher tokenizer.
+- Pilot steps:
+  - Phase A (30-60 minutes): tokenize 500-1,000 samples, compare avg token length.
+  - Phase B (1-2 hours): run 200-step mini-train on CPU/MPS, compare loss trend.
+  - Phase C (same day): if loss degrades, auto-revert to teacher tokenizer.
+- Exit criteria: no >5% token-length inflation and stable loss curve.
 
 ## Kernel Experimental + Tensor Core Opt-in
 - Experimental low-bit kernels remain opt-in (CUDA + Triton required).

@@ -23,7 +23,7 @@
 ```
 
 # 🦅 MertFormer Titan: Otonom Sürü Mimarisi
-> **Mobil maliyetle, sınır-üstü kodlama yeteneği.**
+> **Hedef: Mobil maliyetle, sınır-üstü kodlama yeteneği (eğitim/benchmark sonrası).**
 
 | Mevcut Durum | `ALFA / EĞİTİM ÖNCESİ` |
 | :--- | :--- |
@@ -39,9 +39,9 @@
 ### 💼 Yönetici Özeti (Executive Brief)
 **MertFormer Titan, yapay zeka çıkarım (inference) maliyetlerini cihaz düzeyinde minimize ederek kurumsal zekayı merkezsizleştiren yapısal bir verimlilik standardıdır.**
 
-*   **💰 Hedeflenen ~%90 Operasyonel Tasarruf**: Bulut sunucu masrafları minimize edilir. MertFormer, enerjiyi NPU düzeyinde optimize ederek işlem maliyetlerini azaltmayı hedefler.
+*   **💰 Hedeflenen ~%90 Operasyonel Tasarruf (Tahmini/Hedef)**: Bulut sunucu masrafları minimize edilir. MertFormer, enerjiyi NPU düzeyinde optimize ederek işlem maliyetlerini azaltmayı hedefler.
 *   **🛡️ Veri Egemenliği**: Veriler cihazda işlenir. Bu, savunma sanayi, hukuk ve finans gibi "yüksek güvenlik" standartlarına sahip pazarlar için yapısal bir avantajdır.
-*   **🌍 Ölçeklenebilir Erişim**: İnternet bağımlılığı olmadan, düşük bant genişliğine sahip bölgelerde bile GPT-3.5 düzeyini hedefleyen otonom bir sistemdir.
+*   **🌍 Ölçeklenebilir Erişim (Hedef)**: İnternet bağımlılığı olmadan, düşük bant genişliğine sahip bölgelerde bile GPT-3.5 düzeyini hedefleyen otonom bir sistemdir.
 
 ---
 
@@ -156,11 +156,17 @@ Yatırımcı materyalleri ve lansman varlıkları.
 - [reports/model_health_TR.md](reports/model_health_TR.md) — Model sağlık raporu (TR).
 - [reports/system_hardware.md](reports/system_hardware.md) — Sistem donanım raporu (EN).
 - [reports/system_hardware_TR.md](reports/system_hardware_TR.md) — Sistem donanım raporu (TR).
+- [reports/cli_smoke_log.md](reports/cli_smoke_log.md) — CLI smoke log (EN).
+- [reports/cli_smoke_log_TR.md](reports/cli_smoke_log_TR.md) — CLI smoke log (TR).
 
 *Not: Bu adımda PPTX dosyalarına dokunulmadı (plan gereği). Gerekirse sonra tek satır ekleriz.*
 
 **Operasyon & Yönetişim**
 Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
+- [MODEL_CARD.md](MODEL_CARD.md) — Model kartı (EN).
+- [MODEL_CARD_TR.md](MODEL_CARD_TR.md) — Model kartı (TR).
+- [USE_POLICY.md](USE_POLICY.md) — Kullanım politikası (EN).
+- [USE_POLICY_TR.md](USE_POLICY_TR.md) — Kullanım politikası (TR).
 - [SECURITY.md](SECURITY.md) — Güvenlik politikası (EN).
 - [SECURITY_TR.md](SECURITY_TR.md) — Güvenlik politikası (TR).
 - [DECISIONS.md](DECISIONS.md) — Mimari kararlar (EN).
@@ -173,6 +179,7 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 - [datasets/LICENSES_TR.md](datasets/LICENSES_TR.md) — Lisanslar (TR).
 - [repro/seed_policy.md](repro/seed_policy.md) — Seed politikası (EN).
 - [repro/seed_policy_TR.md](repro/seed_policy_TR.md) — Seed politikası (TR).
+- [repro/pip_freeze.txt](repro/pip_freeze.txt) — Ortam envanteri (pip freeze).
 - [interfaces/inference_contract.md](interfaces/inference_contract.md) — Çıkarım sözleşmesi (EN).
 - [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md) — Çıkarım sözleşmesi (TR).
 - [economics/cost_model.md](economics/cost_model.md) — Maliyet modeli (EN).
@@ -185,6 +192,8 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 - [postmortems/README_TR.md](postmortems/README_TR.md) — Olay raporu dizini (TR).
 - [postmortems/_template.md](postmortems/_template.md) — Postmortem şablonu (EN).
 - [postmortems/_template_TR.md](postmortems/_template_TR.md) — Postmortem şablonu (TR).
+- [postmortems/example_001.md](postmortems/example_001.md) — Postmortem örneği (EN).
+- [postmortems/example_001_TR.md](postmortems/example_001_TR.md) — Postmortem örneği (TR).
 - [prompts/changelog.md](prompts/changelog.md) — Prompt değişim günlüğü (EN).
 - [prompts/changelog_TR.md](prompts/changelog_TR.md) — Prompt değişim günlüğü (TR).
 - [tokenizer/stats.md](tokenizer/stats.md) — Tokenizer istatistikleri (EN).
@@ -217,7 +226,7 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 <a id="genel-bakış"></a>
 ## 🎯 Genel Bakış
 
-MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** için tasarlanmış, son teknoloji ürünü **2.64B parametreli** bir dil modelidir. **BitNet 1.58-bit kuantizasyon**, **Liquid Neural Networks**, **Seyrek Uzmanlar Karışımı (MoE)** ve **Çok Başlı Latent Dikkat (MLA)** teknolojilerini birleştirerek, tamamen bir akıllı telefonda çalışırken **GPT-3.5 seviyesinde performans hedefler**.
+MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** için tasarlanmış, son teknoloji ürünü **2.64B parametreli** bir dil modelidir. **BitNet 1.58-bit kuantizasyon**, **Liquid Neural Networks**, **Seyrek Uzmanlar Karışımı (MoE)** ve **Çok Başlı Latent Dikkat (MLA)** teknolojilerini birleştirerek, tamamen bir akıllı telefonda çalışırken **GPT-3.5 seviyesinde performans hedefler (egitim oncesi hedef)**.
 
 ### Neden MertFormer Titan?
 
@@ -236,7 +245,7 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 ### 1. **BitNet 1.58-bit Kuantizasyon** 🤏
 - Üçlü (Ternary) ağırlıklar: `{-1, 0, +1}`
 - INT8 aktivasyonlar: `[-127, 127]`
-- **teorik %93.75 bellek azaltma** (32-bit → 1.58-bit)
+- **teorik %93.75 bellek azaltma** (32-bit → 1.58-bit; low-bit inference yolu gerektirir)
 - Gradyan akışı için Straight-Through Estimator (STE)
 - Stabilite için RMS ölçekleme (v26.0 yükseltmesi)
 
@@ -469,12 +478,12 @@ MertFormer Titan (2.64B Parametre)
 | **Temel (Baseline)** | 2.0 sn | 64 tok/sn | %47 | 38 GB |
 | **v27.0 (Optimize)** | **~1.2 sn** (Tahmini) | **~107 tok/sn** (Tahmini) | **~%95** (Hedef) | **~76 GB** (Hedef) |
 | **Hızlanma (Öngörü)** | **+%67** | **+%67** | **+%102** | **+%100** |
-*Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir. BitNet 1.58 çıkarımı opsiyonel düşük-bit kernel yolu içerir; Tensor Core yolu **deneysel** ve opt-in’dir (`MERTFORMER_TENSORCORE=1`). Enerji/TOPS kazanımları gerçek cihaz ölçümü gerektirir. Ayrıca, **Residual Scaling Etkisi** ile 18 katman boyunca sinyal kararlılığı, $1/\sqrt{2}$ formülüyle korunarak en derin katmanda bile gradyan akışının stabil kalması hedeflenmektedir.*
+*Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir. BitNet 1.58 çıkarımı opsiyonel düşük-bit kernel yolu içerir; Tensor Core yolu **deneysel** ve opt-in’dir (`MERTFORMER_TENSORCORE=1`). Enerji/TOPS kazanımları gerçek cihaz ölçümü gerektirir. Kernel eleştirisi sadece inference için geçerlidir; BitNet eğitim katmanı mevcut, low-bit inference ise açıkça yol haritası maddesidir. Ayrıca, **Residual Scaling Etkisi** ile 18 katman boyunca sinyal kararlılığı, $1/\sqrt{2}$ formülüyle korunarak en derin katmanda bile gradyan akışının stabil kalması hedeflenmektedir.*
 
 ### Bellek Ayak İzi
 | Bileşen | FP32 | BF16 | BitNet 1.58 |
 | :--- | :---: | :---: | :---: |
-| Ağırlıklar | 10.4 GB | 5.2 GB | **0.65 GB** |
+| Ağırlıklar | 10.4 GB | 5.2 GB | **~0.65 GB (tahmini)** |
 | Optimizasyoncu (AdamW) | 41.6 GB | 20.8 GB | **20.8 GB** (dağıtık) |
 | Aktivasyonlar | 40 GB | 20 GB | **12 GB** (checkpointing ile) |
 | **Toplam (GPU başına)** | 92 GB | 46 GB | **33.45 GB** |
@@ -499,7 +508,7 @@ BitNet mimarisi sayesinde MertFormer, sadece amiral gemilerinde değil, **nerede
 | **Tier 4 (Legacy)** | Samsung M51 (Snapdragon 730G) | **~12 tok/sn** | CPU (BitNet) |
 
 **Minimum Gereksinimler:**
-- **RAM**: 2GB (Sadece 0.65GB VRAM kullanır)
+- **RAM**: 2GB (Hedef; ~0.65GB VRAM tahmini)
 - **Depolama**: 2GB boş alan
 - **OS**: Android 10+ / iOS 15+ / Windows / macOS / Linux
 
@@ -822,7 +831,7 @@ Planlanan Türkçe veri kaynakları:
 
 **C**: 2.64B, **mobil cihazlar için optimal nokta**dır:
 - Samsung S25 (16GB RAM) rahatça çalıştırır
-- BitNet ile 0.65GB weights (çok küçük!)
+- BitNet ile ~0.65GB weights (tahmini)
 - Hız/kalite dengesi mükemmel
 - Daha büyük modeller (7B+) mobilde yavaş
 
@@ -883,6 +892,10 @@ Planlanan Türkçe veri kaynakları:
 
 ```bash
 NİHAİ/
+├── 📄 MODEL_CARD.md         # Model karti (EN)
+├── 📄 MODEL_CARD_TR.md      # Model karti (TR)
+├── 📄 USE_POLICY.md         # Kullanim politikasi (EN)
+├── 📄 USE_POLICY_TR.md      # Kullanim politikasi (TR)
 ├── 📂 config/              # Yapilandirma dosyalari
 │   ├── 📄 config.py        # Model ve egitim hiperparametreleri (400+ satir)
 │   ├── 📄 base.yaml        # Temel konfigurasyon overlay
@@ -1048,7 +1061,8 @@ NİHAİ/
 │   ├── 📄 env.lock
 │   ├── 📄 cuda.lock
 │   ├── 📄 seed_policy.md
-│   └── 📄 seed_policy_TR.md
+│   ├── 📄 seed_policy_TR.md
+│   └── 📄 pip_freeze.txt   # Ortam envanteri (pip freeze)
 ├── 📂 registry/            # Model registry
 │   └── 📄 mertformer_v0.1.json
 ├── 📂 reports/             # Executive Health & Validation Reports
@@ -1077,7 +1091,9 @@ NİHAİ/
 │   ├── 📄 model_health.md  # Model health report (EN)
 │   ├── 📄 model_health_TR.md # Model health report (TR)
 │   ├── 📄 system_hardware.md # System hardware report (EN)
-│   └── 📄 system_hardware_TR.md # System hardware report (TR)
+│   ├── 📄 system_hardware_TR.md # System hardware report (TR)
+│   ├── 📄 cli_smoke_log.md # CLI smoke log (EN)
+│   └── 📄 cli_smoke_log_TR.md # CLI smoke log (TR)
 ├── 📂 checkpoints/         # Model checkpoints
 ├── 📂 datasets/            # Training data (5-stage curriculum)
 │   ├── 📂 stage1/          # Curriculum stage 1

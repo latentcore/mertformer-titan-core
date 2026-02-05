@@ -25,19 +25,19 @@ MertFormer Titan projesinin temel taşı, standart transformatör bloklarının 
 ### 2.1 BitNet b1.58 ve Ternary Hesaplama Devrimi
 Geleneksel modeller 16-bit (BF16) kullanırken, MertFormer Titan **BitNet b1.58** teknolojisini temel alarak ağırlıkları $\{-1, 0, 1\}$ değerlerine indirger.
 
-*   **Bellek Tasarrufu:** %93.75 oranında azalma.
-*   **VRAM İhtiyacı:** ~0.65 GB (2.64B parametre için).
-*   **Enerji Verimliliği:** Çarpma (multiplication) yerine toplama (addition) işlemleri sayesinde NPU üzerinde 70 kat enerji tasarrufu.
+*   **Bellek Tasarrufu (Tahmini):** %93.75 teorik azalma.
+*   **VRAM İhtiyacı (Tahmini):** ~0.65 GB (2.64B parametre için; low-bit inference yolu gerektirir).
+*   **Enerji Verimliliği (Hedef):** Ternary matematik optimize kernel ile çalışırsa NPU üzerinde 70 kat enerji tasarrufu hedefi.
 
 $$w_q = \text{clamp}(\text{round}(\frac{w}{\gamma + \epsilon}), -1, 1)$$
 
-*   **Residual Scaling Etkisi:** 18 katman boyunca sinyal kararlılığı, $1/\sqrt{2}$ formülüyle korunarak en derin katmanda bile %100 gradyan sağlığı hedeflenmektedir.
+*   **Residual Scaling Etkisi (Hedef):** 18 katman boyunca sinyal kararlılığı, $1/\sqrt{2}$ formülüyle korunur; gerçek doğrulama gerekir.
 
 ### 2.2 Çok Başlı Latent Dikkat (MLA)
 Cihaz içi çıkarımda en büyük engel olan KV Cache darboğazını `mla.py` ile çözer. DeepSeek-V2 mantığını kullanarak KV tensörlerini düşük dereceli (low-rank) latent vektörlere sıkıştırır.
 
-*   **KV Cache Küçülmesi:** %93.3
-*   **Sonuç:** 4096+ token uzunluklarında bile Samsung S25 belleğini tıkamaz.
+*   **KV Cache Küçülmesi (Tahmini):** %93.3
+*   **Sonuç (Hedef):** 4096+ token uzunluklarında mobil bellek limitlerine sığması hedeflenir; cihaz doğrulaması gerekir.
 *   **RoPE:** $\theta = 100,000$ ile uzun bağlam desteği.
 
 ### 2.3 Liquid Neural Networks (CfC)
@@ -64,7 +64,7 @@ Geleneksel yönlendiriciler "o anki" tokena bakarken, **LiquidRouter** geçmiş 
 **LiquidRouter'ın Stratejik Farkı:**
 *   **Momentum Bazlı Yönlendirme:** Standart "hafızasız" yönlendiricilerin aksine, verinin geliş hızını ve zamansal momentumunu (`Fluid Path`) analiz eder.
 *   **Causal Conv1d Entegrasyonu:** Uzman seçimi sırasında geçmiş 4 token'lık pencereyi (`history_window`) dikkate alarak stratejik bir zeka sergiler.
-*   **Donanım Verimliliği:** NPU üzerinde %40 enerji tasarrufu sağlar.
+*   **Donanım Verimliliği (Hedef):** NPU üzerinde anlamlı enerji tasarrufu hedeflenir; cihaz profili gerekir.
 
 ### 2.5 Sinaptik Katman Hiyerarşisi (Layer-by-Layer Taxonomy)
 MertFormer Titan'ın 18 katmanlı yapısı, veriyi kademeli bir "bilgeliğe" dönüştürür:

@@ -23,7 +23,7 @@
 ```
 
 # 🦅 MertFormer Titan: Autonomous Swarm Architecture
-> **Near-frontier coding capability at mobile compute cost.**
+> **Target: near-frontier coding capability at mobile compute cost (pending training/benchmarks).**
 
 | Current Status | `ALPHA / PRE-TRAINING` |
 | :--- | :--- |
@@ -39,9 +39,9 @@
 ### 💼 Executive Brief
 **MertFormer Titan is a structural efficiency standard that decentralizes enterprise intelligence by minimizing AI inference costs at the device level.**
 
-*   **💰 Targeted ~90% Operational Savings**: Cloud server expenses are minimized. MertFormer aims to reduce processing costs by optimizing energy at the NPU level.
+*   **💰 Targeted ~90% Operational Savings (Estimate)**: Cloud server expenses are minimized. MertFormer aims to reduce processing costs by optimizing energy at the NPU level.
 *   **🛡️ Data Sovereignty**: Data is processed on-device. This is a structural advantage for markets with high security standards, such as defense, law, and finance.
-*   **🌍 Scalable Access**: An autonomous system aiming for GPT-3.5 level intelligence even in low-bandwidth regions without internet dependency.
+*   **🌍 Scalable Access (Target)**: An autonomous system aiming for GPT-3.5 level intelligence even in low-bandwidth regions without internet dependency.
 
 ---
 
@@ -156,11 +156,17 @@ Investor-facing materials and launch assets.
 - [reports/model_health_TR.md](reports/model_health_TR.md) — Model health report (TR).
 - [reports/system_hardware.md](reports/system_hardware.md) — System hardware report (EN).
 - [reports/system_hardware_TR.md](reports/system_hardware_TR.md) — System hardware report (TR).
+- [reports/cli_smoke_log.md](reports/cli_smoke_log.md) — CLI smoke log (EN).
+- [reports/cli_smoke_log_TR.md](reports/cli_smoke_log_TR.md) — CLI smoke log (TR).
 
 *Note: This step did not modify PPTX files (per plan). We can add a one-line update later if needed.*
 
 **Ops & Governance**
 Security, provenance, reproducibility, and ops notes.
+- [MODEL_CARD.md](MODEL_CARD.md) — Model card (EN).
+- [MODEL_CARD_TR.md](MODEL_CARD_TR.md) — Model card (TR).
+- [USE_POLICY.md](USE_POLICY.md) — Use policy (EN).
+- [USE_POLICY_TR.md](USE_POLICY_TR.md) — Use policy (TR).
 - [SECURITY.md](SECURITY.md) — Security policy (EN).
 - [SECURITY_TR.md](SECURITY_TR.md) — Security policy (TR).
 - [DECISIONS.md](DECISIONS.md) — Architecture decisions (EN).
@@ -173,6 +179,7 @@ Security, provenance, reproducibility, and ops notes.
 - [datasets/LICENSES_TR.md](datasets/LICENSES_TR.md) — Data licenses (TR).
 - [repro/seed_policy.md](repro/seed_policy.md) — Seed policy (EN).
 - [repro/seed_policy_TR.md](repro/seed_policy_TR.md) — Seed policy (TR).
+- [repro/pip_freeze.txt](repro/pip_freeze.txt) — Environment snapshot (pip freeze).
 - [interfaces/inference_contract.md](interfaces/inference_contract.md) — Inference contract (EN).
 - [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md) — Inference contract (TR).
 - [economics/cost_model.md](economics/cost_model.md) — Cost model (EN).
@@ -185,6 +192,8 @@ Security, provenance, reproducibility, and ops notes.
 - [postmortems/README_TR.md](postmortems/README_TR.md) — Postmortem guide (TR).
 - [postmortems/_template.md](postmortems/_template.md) — Postmortem template (EN).
 - [postmortems/_template_TR.md](postmortems/_template_TR.md) — Postmortem template (TR).
+- [postmortems/example_001.md](postmortems/example_001.md) — Example postmortem (EN).
+- [postmortems/example_001_TR.md](postmortems/example_001_TR.md) — Example postmortem (TR).
 - [prompts/changelog.md](prompts/changelog.md) — Prompt change log (EN).
 - [prompts/changelog_TR.md](prompts/changelog_TR.md) — Prompt change log (TR).
 - [tokenizer/stats.md](tokenizer/stats.md) — Tokenizer stats (EN).
@@ -219,7 +228,7 @@ Security, provenance, reproducibility, and ops notes.
 <a id="overview"></a>
 ## 🎯 Overview
 
-MertFormer Titan is a cutting-edge **2.64B parameter** language model designed for **on-device inference** on mobile platforms. Combining **BitNet 1.58-bit quantization**, **Liquid Neural Networks**, **Sparse Mixture of Experts (MoE)**, and **Multi-Head Latent Attention (MLA)**, it **targets GPT-3.5 level performance** while running entirely on a smartphone.
+MertFormer Titan is a cutting-edge **2.64B parameter** language model designed for **on-device inference** on mobile platforms. Combining **BitNet 1.58-bit quantization**, **Liquid Neural Networks**, **Sparse Mixture of Experts (MoE)**, and **Multi-Head Latent Attention (MLA)**, it **targets GPT-3.5 level performance (pre-training target)** while running entirely on a smartphone.
 
 ### Why MertFormer Titan?
 
@@ -238,7 +247,7 @@ MertFormer Titan is a cutting-edge **2.64B parameter** language model designed f
 ### 1. **BitNet 1.58-bit Quantization** 🤏
 - Ternary weights: `{-1, 0, +1}`
 - INT8 activations: `[-127, 127]`
-- **theoretical 93.75% memory reduction** (32-bit → 1.58-bit)
+- **theoretical 93.75% memory reduction** (32-bit → 1.58-bit; requires low-bit inference path)
 - Straight-Through Estimator (STE) for gradient flow
 - RMS scaling for stability (v26.0 upgrade)
 
@@ -471,12 +480,12 @@ MertFormer Titan (2.64B Parameters)
 | **Baseline** | 2.0 sec | 64 tok/s | 47% | 38 GB |
 | **v27.0 (Optimized)** | **~1.2 sec** (Est.) | **~107 tok/s** (Est.) | **~95%** (Target) | **~76 GB** (Target) |
 | **Speedup (Proj.)** | **+67%** | **+67%** | **+102%** | **+100%** |
-*Note: Performance metrics are pre-training estimates based on architecture simulation. BitNet 1.58 inference now includes an optional low-bit kernel path; the Tensor Core path is **experimental** and opt-in (`MERTFORMER_TENSORCORE=1`). Energy/TOPS gains still require real device measurement. Furthermore, the **Residual Scaling Effect** maintains signal stability throughout 18 layers using the $1/\sqrt{2}$ formula, aiming to keep gradient flow stable even in the deepest layer.*
+*Note: Performance metrics are pre-training estimates based on architecture simulation. BitNet 1.58 inference now includes an optional low-bit kernel path; the Tensor Core path is **experimental** and opt-in (`MERTFORMER_TENSORCORE=1`). Energy/TOPS gains still require real device measurement. Kernel criticism applies to inference only; BitNet training exists as a separate layer, and low-bit inference is explicitly a roadmap item. Furthermore, the **Residual Scaling Effect** maintains signal stability throughout 18 layers using the $1/\sqrt{2}$ formula, aiming to keep gradient flow stable even in the deepest layer.*
 
 ### Memory Footprint
 | Component | FP32 | BF16 | BitNet 1.58 |
 | :--- | :---: | :---: | :---: |
-| Weights | 10.4 GB | 5.2 GB | **0.65 GB** |
+| Weights | 10.4 GB | 5.2 GB | **~0.65 GB (estimate)** |
 | Optimizer (AdamW) | 41.6 GB | 20.8 GB | **20.8 GB** (distributed) |
 | Activations | 40 GB | 20 GB | **12 GB** (w/ checkpointing) |
 | **Total (per GPU)** | 92 GB | 46 GB | **33.45 GB** |
@@ -501,7 +510,7 @@ Thanks to the BitNet architecture, MertFormer runs not just on flagships, but on
 | **Tier 4 (Legacy)** | Samsung M51 (Snapdragon 730G) | **~12 tok/s** | CPU (BitNet) |
 
 **Minimum Requirements:**
-- **RAM**: 2GB (Uses only 0.65GB VRAM)
+- **RAM**: 2GB (Target; uses ~0.65GB VRAM estimate)
 - **Storage**: 2GB free space
 - **OS**: Android 10+ / iOS 15+ / Windows / macOS / Linux
 
@@ -824,7 +833,7 @@ Planlanan Türkçe veri kaynakları:
 
 **A**: 2.64B, **mobil cihazlar için optimal nokta**dır:
 - Samsung S25 (16GB RAM) rahatça çalıştırır
-- BitNet ile 0.65GB weights (çok küçük!)
+- BitNet ile ~0.65GB weights (estimate)
 - Hız/kalite dengesi mükemmel
 - Daha büyük modeller (7B+) mobilde yavaş
 
@@ -885,6 +894,10 @@ Planlanan Türkçe veri kaynakları:
 
 ```bash
 NİHAİ/
+├── 📄 MODEL_CARD.md         # Model card (EN)
+├── 📄 MODEL_CARD_TR.md      # Model card (TR)
+├── 📄 USE_POLICY.md         # Use policy (EN)
+├── 📄 USE_POLICY_TR.md      # Use policy (TR)
 ├── 📂 config/              # Configuration files
 │   ├── 📄 config.py        # Model & training hyperparameters (400+ lines)
 │   ├── 📄 base.yaml        # Baseline configuration overlay
@@ -1050,7 +1063,8 @@ NİHAİ/
 │   ├── 📄 env.lock
 │   ├── 📄 cuda.lock
 │   ├── 📄 seed_policy.md
-│   └── 📄 seed_policy_TR.md
+│   ├── 📄 seed_policy_TR.md
+│   └── 📄 pip_freeze.txt    # Environment snapshot (pip freeze)
 ├── 📂 registry/            # Model registry
 │   └── 📄 mertformer_v0.1.json
 ├── 📂 reports/             # Executive Health & Validation Reports
@@ -1062,6 +1076,8 @@ NİHAİ/
 │   ├── 📄 report_accuracy_audit_TR.md # Report accuracy audit (TR)
 │   ├── 📄 strategic_value.md # Strategic value summary (EN)
 │   ├── 📄 strategic_value_TR.md # Strategic value summary (TR)
+│   ├── 📄 cli_smoke_log.md  # CLI smoke log (EN)
+│   ├── 📄 cli_smoke_log_TR.md # CLI smoke log (TR)
 │   ├── 📄 demo_video_script.md # Demo video script (offline)
 │   ├── 📄 demo_video_script_TR.md # Demo video script (TR)
 │   ├── 📄 founders_hub_application.md # Founders Hub draft
