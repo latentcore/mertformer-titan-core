@@ -381,7 +381,8 @@ MertFormer Titan is a cutting-edge **2.64B parameter** language model designed f
              │
       ┌──────▼────────────────────────────────────────────────────────────────────┐
       │ [RMSNorm] + [LM HEAD] 1.58-bit Projection ──► OUTPUT LOGITS [B, S, 128k]  │
-      └───────────────────────────────────────────────────────────────────────────┘```
+      └───────────────────────────────────────────────────────────────────────────┘
+```
 
 ### 🦅 MertFormer Titan: Synaptic Layer Hierarchy
 
