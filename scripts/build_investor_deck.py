@@ -229,8 +229,11 @@ NS_R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
 
 def paragraph(text: str, size: int, color: str, bold: bool = False, bullet: bool = False) -> str:
     bold_attr = ' b="1"' if bold else ''
+    # Python 3.11 f-string expressions have limitations (PEP 701 lands in 3.12).
+    # Build the bullet XML outside the f-string expression to avoid quote reuse issues.
+    bullet_xml = "<a:buChar char='•'/>" if bullet else "<a:buNone/>"
     return (
-        f"<a:p><a:pPr>{'<a:buChar char="•"/>' if bullet else '<a:buNone/>'}</a:pPr>"
+        f"<a:p><a:pPr>{bullet_xml}</a:pPr>"
         f"<a:r><a:rPr sz=\"{size}\"{bold_attr}><a:solidFill><a:srgbClr val=\"{color}\"/></a:solidFill></a:rPr>"
         f"<a:t>{escape(text)}</a:t></a:r><a:endParaRPr sz=\"{size}\"/>"
         f"</a:p>"

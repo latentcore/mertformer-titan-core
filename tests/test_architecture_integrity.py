@@ -28,6 +28,7 @@ def patched_cfg():
     orig_dev = cfg.device
     orig_nh = cfg.num_heads
     orig_hd = cfg.head_dim
+    orig_kv = getattr(cfg, "num_kv_heads", orig_nh)
     
     # Set tiny values
     cfg.hidden_size = 128
@@ -40,6 +41,8 @@ def patched_cfg():
     # [FIX] Ensure MLA shape consistency: 4 * 32 = 128
     cfg.num_heads = 4
     cfg.head_dim = 32
+    # [FIX] Keep KV heads <= Q heads and divisible for GQA repeat_interleave
+    cfg.num_kv_heads = 2
     
     yield cfg
     
@@ -52,6 +55,7 @@ def patched_cfg():
     cfg.device = orig_dev
     cfg.num_heads = orig_nh
     cfg.head_dim = orig_hd
+    cfg.num_kv_heads = orig_kv
 
 # -----------------------------------------------------------------------------
 # 1. BITNET 1.58-BIT INTEGRITY TEST

@@ -15,6 +15,7 @@ __version__ = "1.0-BUILD27"
 __author__ = "Mert"
 
 import math
+import os
 from typing import Optional, Tuple
 
 import torch
@@ -31,7 +32,8 @@ try:
     FLASH_ATTN_AVAILABLE = True
 except ImportError:
     FLASH_ATTN_AVAILABLE = False
-    print("⚠️  TR: Flash Attention 2 mevcut değil. / EN: Flash Attention 2 not available.")
+    if os.environ.get("TITAN_VERBOSE", "0") == "1":
+        print("⚠️  TR: Flash Attention 2 mevcut değil. / EN: Flash Attention 2 not available.")
 
 
 
@@ -149,6 +151,19 @@ class MLA(nn.Module):
         self.head_dim = getattr(cfg, "head_dim", self.hidden_size // self.num_heads)
         self.num_kv_heads = getattr(cfg, "num_kv_heads", self.num_heads)
         self.rope_theta = getattr(cfg, "rope_theta", 10000.0)
+
+        # Guard against invalid GQA configs that would silently produce zero KV heads.
+        # Requirement: 1 <= num_kv_heads <= num_heads and num_heads % num_kv_heads == 0.
+        if int(self.num_kv_heads) <= 0:
+            raise ValueError(f"num_kv_heads must be >= 1, got {self.num_kv_heads}")
+        if int(self.num_kv_heads) > int(self.num_heads):
+            raise ValueError(
+                f"num_kv_heads ({self.num_kv_heads}) must be <= num_heads ({self.num_heads}) for GQA."
+            )
+        if int(self.num_heads) % int(self.num_kv_heads) != 0:
+            raise ValueError(
+                f"num_heads ({self.num_heads}) must be divisible by num_kv_heads ({self.num_kv_heads}) for GQA."
+            )
         
         # RoPE settings
         self.rope_dim = getattr(cfg, "rope_dim", None) # Default to full head_dim

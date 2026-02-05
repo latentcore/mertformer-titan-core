@@ -38,9 +38,24 @@ def test_export():
     print("📦 TESTING ONNX EXPORT (Tiny Mode)...")
     
     # Patch Config for Speed
+    orig = {
+        "hidden_size": cfg.hidden_size,
+        "num_layers": cfg.num_layers,
+        "num_heads": cfg.num_heads,
+        "num_kv_heads": getattr(cfg, "num_kv_heads", cfg.num_heads),
+        "head_dim": cfg.head_dim,
+        "vocab_size": cfg.vocab_size,
+        "num_experts": cfg.num_experts,
+        "active_experts": getattr(cfg, "active_experts", getattr(cfg, "num_experts_per_tok", 1)),
+        "device": cfg.device,
+        "use_moe": cfg.use_moe,
+        "use_liquid": cfg.use_liquid,
+    }
+
     cfg.hidden_size = 64
     cfg.num_layers = 2
     cfg.num_heads = 4
+    cfg.num_kv_heads = 2  # Keep KV heads <= Q heads and divisible for GQA
     cfg.head_dim = 16
     cfg.vocab_size = 1000
     cfg.num_experts = 2
@@ -54,9 +69,11 @@ def test_export():
     model.eval()
     
     wrapper = MertFormerInferenceWrapper(model)
+    wrapper.eval()
     
     dummy_input = torch.randint(0, cfg.vocab_size, (1, 32))
     save_path = "test_export.onnx"
+    data_path = save_path + ".data"  # Torch may emit external tensor data here.
     
     print("   Exporting...")
     try:
@@ -81,18 +98,32 @@ def test_export():
         print(f"   Size: {size:.2f} KB")
         
         # Clean up
+        if os.path.exists(data_path):
+            os.remove(data_path)
         os.remove(save_path)
         print("   Cleanup OK.")
-        return True
+        assert True
         
     except Exception as e:
         print(f"❌ ONNX Export Failed: {e}")
         import traceback
         traceback.print_exc()
-        return False
+        raise
+    finally:
+        # Best-effort cleanup in case export failed mid-way.
+        try:
+            if os.path.exists(data_path):
+                os.remove(data_path)
+        except Exception:
+            pass
+        try:
+            if os.path.exists(save_path):
+                os.remove(save_path)
+        except Exception:
+            pass
+        for k, v in orig.items():
+            setattr(cfg, k, v)
 
 if __name__ == "__main__":
-    if test_export():
-        sys.exit(0)
-    else:
-        sys.exit(1)
+    test_export()
+    sys.exit(0)

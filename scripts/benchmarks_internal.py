@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 import sys
 
@@ -52,6 +53,7 @@ def main() -> None:
     parser.add_argument("--samples", type=int, default=0)
     parser.add_argument("--max-new-tokens", type=int, default=256)
     parser.add_argument("--ckpt", type=str, default="checkpoints/latest.pt")
+    parser.add_argument("--allow-random", action="store_true", help="Run even if checkpoint is missing (random weights).")
     args = parser.parse_args()
 
     try:
@@ -79,15 +81,26 @@ def main() -> None:
         checkpoint = torch.load(ckpt_path, map_location=device)
         model.load_state_dict(checkpoint.get("model", checkpoint))
     else:
-        print(f"⚠️  Checkpoint not found: {ckpt_path}. Benchmarks will run on random weights.")
+        if not args.allow_random:
+            print(f"SKIP: checkpoint not found: {ckpt_path}")
+            return
+        print(f"⚠️  Checkpoint not found: {ckpt_path}. Running on random weights (--allow-random).")
     model.eval()
 
-    tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
+    hf_token = os.environ.get("HF_TOKEN")
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token)
+    except Exception:
+        tokenizer = AutoTokenizer.from_pretrained("hf-internal-testing/llama-tokenizer")
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    humaneval = load_dataset_safe("openai_humaneval", "openai_humaneval")
-    mbpp = load_dataset_safe("mbpp", "sanitized")
+    try:
+        humaneval = load_dataset_safe("openai_humaneval", "openai_humaneval")
+        mbpp = load_dataset_safe("mbpp", "sanitized")
+    except Exception as exc:
+        print(f"SKIP: benchmark datasets unavailable ({exc})")
+        return
 
     humaneval_count = run_generation(
         humaneval,

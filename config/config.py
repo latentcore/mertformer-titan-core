@@ -22,6 +22,16 @@ from typing import Any, Dict
 import torch
 
 
+def _cfg_verbose() -> bool:
+    """Return True if config module should emit console output."""
+    return os.environ.get("TITAN_CONFIG_VERBOSE", "0") == "1"
+
+
+def _cfg_print(msg: str) -> None:
+    if _cfg_verbose():
+        print(msg)
+
+
 def get_auto_dtype() -> Any:
     """
     TR: Donanıma göre en iyi ve en güvenli veri tipini otomatik seçer.
@@ -88,11 +98,11 @@ def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None):
 
     # Critical Decision fallback
     if gpu_memory_gb < 1.0:
-        print("\n⛔ CRITICAL: NO GPU DETECTED OR VRAM UNREADABLE.")
-        print("   -> Switching to CPU/MPS Safe Mode (Very Slow)")
+        _cfg_print("\n⛔ CRITICAL: NO GPU DETECTED OR VRAM UNREADABLE.")
+        _cfg_print("   -> Switching to CPU/MPS Safe Mode (Very Slow)")
         return 1, target_global_batch  # Micro=1, Accum=Target
         
-    print(f"🔍 DEEP SCAN: {num_gpus}x GPU Detected | VRAM: {gpu_memory_gb:.2f} GB")
+    _cfg_print(f"🔍 DEEP SCAN: {num_gpus}x GPU Detected | VRAM: {gpu_memory_gb:.2f} GB")
 
     # -------------------------------------------------------------------------
     # 2. PHYSICS-BASED MEMORY MODELING
@@ -134,7 +144,7 @@ def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None):
     usable_vram = available_vram - static_mem_gb
     
     if usable_vram <= 0:
-        print("⚠️  WARNING: Model might be too large for this GPU even with Batch=1!")
+        _cfg_print("⚠️  WARNING: Model might be too large for this GPU even with Batch=1!")
         max_micro_batch = 1
     else:
         max_micro_batch = int(usable_vram / mem_per_sample_gb)
@@ -158,13 +168,13 @@ def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None):
     final_global = micro_batch * grad_accum * max(1, num_gpus)
     
     # Report
-    print(f"📊 AUTO-PILOT SOLUTION:")
-    print(f"   ► Static Memory  : {static_mem_gb:.2f} GB (Weights+Opt+Ctx)")
-    print(f"   ► Sample Cost    : {mem_per_sample_gb:.2f} GB (seq_len={max_seq_len})")
-    print(f"   ► Max Fits VRAM  : {max_micro_batch} samples")
-    print(f"   ► Selected Micro : {micro_batch}")
-    print(f"   ► Grad Accum     : {grad_accum}")
-    print(f"   ► Final Global   : {final_global}")
+    _cfg_print(f"📊 AUTO-PILOT SOLUTION:")
+    _cfg_print(f"   ► Static Memory  : {static_mem_gb:.2f} GB (Weights+Opt+Ctx)")
+    _cfg_print(f"   ► Sample Cost    : {mem_per_sample_gb:.2f} GB (seq_len={max_seq_len})")
+    _cfg_print(f"   ► Max Fits VRAM  : {max_micro_batch} samples")
+    _cfg_print(f"   ► Selected Micro : {micro_batch}")
+    _cfg_print(f"   ► Grad Accum     : {grad_accum}")
+    _cfg_print(f"   ► Final Global   : {final_global}")
     
     return micro_batch, grad_accum
 
@@ -505,15 +515,14 @@ def validate_layer_config(cfg: MertFormerConfig) -> None:
     # TITAN: Strictly enforce BF16 for CUDA (S25 memory optimization)
     if cfg.device == "cuda" and torch.cuda.is_bf16_supported():
         if cfg.param_dtype != torch.bfloat16:
-            print(f"⚠️  Enforcing bfloat16 for S25 optimization (Overriding User Pref)")
+            _cfg_print("⚠️  Enforcing bfloat16 for S25 optimization (Overriding User Pref)")
             cfg.param_dtype = torch.bfloat16
 
 # Validate on import
 try:
     validate_layer_config(cfg)
-    print(f"✅ Layer configuration validated: No Liquid/MoE conflicts")
+    _cfg_print("✅ Layer configuration validated: No Liquid/MoE conflicts")
 except ValueError as e:
-    print(f"❌ {e}")
     raise
 
 if __name__ == "__main__":

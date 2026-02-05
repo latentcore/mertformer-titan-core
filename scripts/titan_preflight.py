@@ -95,22 +95,28 @@ def cleanup():
 
 def check_secrets():
     log("STEP 1: SECRET SCAN...", "info")
+    offline = os.environ.get("TITAN_OFFLINE", "1") != "0"
+    require = os.environ.get("TITAN_PREFLIGHT_REQUIRE_SECRETS", "0") == "1"
     hf_token = os.environ.get("HF_TOKEN")
     wandb_key = os.environ.get("WANDB_API_KEY")
     
     if not hf_token or len(hf_token) < 10:
-        log("HF_TOKEN missing or invalid!", "error")
-        return False
+        if require or not offline:
+            log("HF_TOKEN missing or invalid!", "error")
+            return False
+        log("HF_TOKEN missing (offline mode): OK (online checks will be skipped).", "warning")
     else:
-        log(f"HF_TOKEN detected (starts with {hf_token[:5]}...)", "security")
-        
+        log("HF_TOKEN detected (redacted)", "security")
+
     if not wandb_key or len(wandb_key) < 10:
-        log("WANDB_API_KEY missing or invalid!", "error")
-        return False
+        if require:
+            log("WANDB_API_KEY missing or invalid!", "error")
+            return False
+        log("WANDB_API_KEY missing (offline mode): OK (WandB checks disabled).", "warning")
     else:
-        log(f"WANDB_API_KEY detected (ends with ...{wandb_key[-4:]})", "security")
-        
-    log("Secrets validated.", "success")
+        log("WANDB_API_KEY detected (redacted)", "security")
+
+    log("Secrets check completed.", "success")
     return True
 
 def architectural_audit():
@@ -137,30 +143,99 @@ def architectural_audit():
 
 def data_distill_test():
     log("STEP 3: DATA & DISTILLATION TEST...", "info")
+    offline = os.environ.get("TITAN_OFFLINE", "1") != "0"
     
-    # 1. Connection Check
-    from datasets import load_dataset
+    # Reduce noisy HTTP logs in preflight output/logs (best-effort).
     try:
-        ds = load_dataset("uonlp/CulturaX", "tr", split="train", streaming=True, token=os.environ.get("HF_TOKEN"))
-        next(iter(ds))
-        log("Connection to uonlp/CulturaX successful.", "success")
-    except Exception as e:
-        log(f"Data access warning (might be gated): {e}", "warning")
-        log("Falling back to internal mock data for pipeline verification.")
+        from huggingface_hub.utils import logging as hf_logging
+        hf_logging.set_verbosity_error()
+        hf_logging.disable_default_handler()
+        hf_logging.disable_propagation()
+    except Exception:
+        pass
+    try:
+        from datasets.utils import logging as ds_logging
+        ds_logging.set_verbosity_error()
+        ds_logging.disable_default_handler()
+        ds_logging.disable_propagation()
+    except Exception:
+        pass
+    # Underlying HTTP clients (httpx/httpcore/urllib3) may still emit INFO logs.
+    for name in ("httpx", "httpcore", "urllib3"):
+        logging.getLogger(name).setLevel(logging.WARNING)
+
+    # 1. Connection Check (lightweight by default)
+    # NOTE: Avoid streaming a parquet sample here. In some environments this can
+    # leave background transfers running and the process may never exit even
+    # after printing "ALL GREEN".
+    hf_token = os.environ.get("HF_TOKEN")
+    if offline:
+        log("Offline mode: skipping Hugging Face connectivity checks.", "info")
+    else:
+        try:
+            from huggingface_hub import HfApi
+
+            api = HfApi()
+
+            # Auth check (no sensitive output)
+            if hf_token:
+                api.whoami(token=hf_token)
+
+            # Metadata check (small request)
+            api.dataset_info("uonlp/CulturaX", token=hf_token)
+            log("Connection to uonlp/CulturaX metadata successful.", "success")
+
+            # Optional deep check (opt-in)
+            if os.environ.get("TITAN_PREFLIGHT_STREAM_SAMPLE") == "1":
+                from datasets import load_dataset
+
+                ds = load_dataset(
+                    "uonlp/CulturaX",
+                    "tr",
+                    split="train",
+                    streaming=True,
+                    token=hf_token,
+                )
+                next(iter(ds))
+                log("Connection to uonlp/CulturaX streaming sample successful.", "success")
+        except Exception as e:
+            log(f"Data access warning (might be gated): {e}", "warning")
+            log("Falling back to internal mock data for pipeline verification.")
         
     # 2. Pipeline Dry Run
     TEMP_DATA_DIR.mkdir(exist_ok=True)
     TEMP_LOGITS_DIR.mkdir(exist_ok=True)
     
     # Mock Manager
-    from transformers import AutoTokenizer
-    try:
-        tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
-    except:
-        log("Teacher Tokenizer not found, using generic Llama-3-Tokenizer mock.", "warning")
-        tokenizer = AutoTokenizer.from_pretrained("hf-internal-testing/llama-tokenizer")
-        
-    if tokenizer.pad_token is None: tokenizer.pad_token = tokenizer.eos_token
+    # Tokenizer: avoid network in offline mode by using a tiny local mock.
+    if offline:
+        class _MockTokenizer:
+            pad_token_id = 0
+            eos_token_id = 1
+            pad_token = "<pad>"
+            eos_token = "</s>"
+
+            def __call__(self, text, return_tensors="pt", max_length=None, truncation=False):
+                import torch
+                b = text.encode("utf-8", errors="ignore")
+                ids = [(x % 250) + 2 for x in b]
+                if max_length:
+                    ids = ids[:max_length]
+                if not ids:
+                    ids = [self.eos_token_id]
+                return type("TokOut", (), {"input_ids": torch.tensor([ids], dtype=torch.long)})()
+
+        tokenizer = _MockTokenizer()
+    else:
+        from transformers import AutoTokenizer
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token)
+        except Exception:
+            log("Teacher Tokenizer not found, using generic Llama-3 tokenizer mock.", "warning")
+            tokenizer = AutoTokenizer.from_pretrained("hf-internal-testing/llama-tokenizer")
+
+        if tokenizer.pad_token is None:
+            tokenizer.pad_token = tokenizer.eos_token
     
     manager = DistillationManager(cfg, tokenizer)
     manager.logits_dir = TEMP_LOGITS_DIR
