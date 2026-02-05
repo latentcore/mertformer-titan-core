@@ -17,6 +17,7 @@ __author__ = "Mert"
 import os
 import sys
 import datetime
+import argparse
 from pathlib import Path
 from huggingface_hub import login
 from datasets import load_dataset
@@ -84,6 +85,10 @@ def check_source(stage_name, source, log_file):
         return False
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--login", action="store_true", help="Explicitly login to Hugging Face via HF_TOKEN")
+    args = parser.parse_args()
+
     # Setup Logging
     log_dir = Path(__file__).parent.parent / "logs"
     log_dir.mkdir(exist_ok=True)
@@ -95,11 +100,14 @@ def main():
         log(f"🚀 TITAN DATASET VERIFICATION REPORT - {timestamp}", f)
         log("=================================================================", f)
         
-        if os.environ.get("HF_TOKEN"):
-            login(token=os.environ.get("HF_TOKEN"))
-            log("🔑 Authenticated with HF_TOKEN", f)
+        if args.login:
+            if os.environ.get("HF_TOKEN"):
+                login(token=os.environ.get("HF_TOKEN"))
+                log("🔑 Authenticated with HF_TOKEN (explicit --login)", f)
+            else:
+                log("⚠️  --login requested but HF_TOKEN not found (continuing unauthenticated)", f)
         else:
-            log("⚠️  No HF_TOKEN found", f)
+            log("ℹ️  HF login skipped (default offline-first). Use --login to authenticate.", f)
 
         stages = [
             ("STAGE 1: Logic", STAGE1_SOURCES),

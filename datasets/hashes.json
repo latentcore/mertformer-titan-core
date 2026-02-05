@@ -1,43 +1,122 @@
 {
   "note": "Populate with file hashes after local dataset snapshots are recorded. Keep status as 'pending_snapshot' until hashes are computed.",
   "sources": {
-    "uonlp/CulturaX:tr": {
+    "bigcode/the-stack-v2:train": {
       "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
       "sha256": null,
       "status": "pending_snapshot"
     },
-    "wikimedia/wikipedia:tr": {
+    "TIGER-Lab/MathInstruct:train": {
       "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
       "sha256": null,
       "status": "pending_snapshot"
     },
     "openai/gsm8k:main": {
       "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
+      "sha256": null,
+      "status": "pending_snapshot"
+    },
+    "HuggingFaceFW/fineweb-edu:train": {
+      "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
+      "sha256": null,
+      "status": "pending_snapshot"
+    },
+    "wikimedia/wikipedia:20231101.tr": {
+      "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
+      "sha256": null,
+      "status": "pending_snapshot"
+    },
+    "uonlp/CulturaX:tr": {
+      "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
+      "sha256": null,
+      "status": "pending_snapshot"
+    },
+    "HuggingFaceTB/cosmopedia:stories": {
+      "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
+      "sha256": null,
+      "status": "pending_snapshot"
+    },
+    "OpenAssistant/oasst_top1_2023-08-25:train": {
+      "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
+      "sha256": null,
+      "status": "pending_snapshot"
+    },
+    "mlabonne/guanaco-llama2-1k:train": {
+      "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
+      "sha256": null,
+      "status": "pending_snapshot"
+    },
+    "TFLai/Turkish-Alpaca:train": {
+      "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
+      "sha256": null,
+      "status": "pending_snapshot"
+    },
+    "turkish-nlp-suite/InstrucTurca:train": {
+      "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
+      "sha256": null,
+      "status": "pending_snapshot"
+    },
+    "glaiveai/glaive-function-calling-v2:train": {
+      "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
       "sha256": null,
       "status": "pending_snapshot"
     },
     "openai_humaneval:default": {
       "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
       "sha256": null,
       "status": "pending_snapshot"
     },
     "mbpp:sanitized": {
       "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
       "sha256": null,
       "status": "pending_snapshot"
     },
     "wikitext:wikitext-2-raw-v1": {
       "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
       "sha256": null,
       "status": "pending_snapshot"
     },
     "internal:stage_sets": {
       "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
       "sha256": null,
       "status": "pending_snapshot"
     },
     "internal:golden_samples": {
       "snapshot": null,
+      "revision": null,
+      "snapshot_date_utc": null,
       "sha256": null,
       "status": "pending_snapshot"
     }

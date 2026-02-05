@@ -14,22 +14,9 @@ Status : PRE-TRAINING (UNVERIFIED)
 __version__ = "1.0-BUILD27"
 __author__ = "Mert"
 
-import os
-from huggingface_hub import login
-"""
-==============================================================================
-MERTFORMER TITAN (ONYX STORM)
--------------------------------------------------------------------------------
-Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
-Proprietary - All Rights Reserved.
-
-Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v25.0-TITAN-GOLD
-Status : PRE-TRAINING (UNVERIFIED)
-==============================================================================
-"""
-
+import argparse
 import json
+import os
 import random
 from pathlib import Path
 from typing import Dict, List
@@ -383,7 +370,7 @@ def download_stage(stage_num, sources, target_samples_per_source):
 # =============================================================================
 # TR: ANA YÜRÜTME / EN: MAIN EXECUTION
 # =============================================================================
-def main() -> None:
+def main(target_samples: int = 12_000_000, login_hf: bool = False) -> None:
     # [V27.6 FIX] Reproducibility
     random.seed(42)
 
@@ -402,6 +389,15 @@ def main() -> None:
     print("🚀 TITAN ONYX STORM - CURRICULUM LEARNING DATA PIPELINE")
     print("="*60)
     
+    # Optional HF login (never at import time)
+    if login_hf:
+        if os.environ.get("HF_TOKEN"):
+            print("🔑 Authenticating with Hugging Face (explicit --login)...")
+            from huggingface_hub import login as hf_login
+            hf_login(token=os.environ.get("HF_TOKEN"))
+        else:
+            print("⚠️  --login requested but HF_TOKEN not found; continuing unauthenticated.")
+
     # Create directories
     create_stage_directories()
     
@@ -409,7 +405,7 @@ def main() -> None:
     # Target sample budget (adjust based on your token budget and compute).
     # Approx tokens ~= samples * avg_tokens_per_sample (e.g., 12M * ~500 ~= ~6B tokens).
     # If your training plan targets higher total tokens, increase TARGET_SAMPLES accordingly.
-    TARGET_SAMPLES = 12_000_000 
+    TARGET_SAMPLES = int(target_samples)
     
     # Stage 1: Pure Logic (45% = 450,000 samples)
     stage1_target = int(TARGET_SAMPLES * 0.45)
@@ -441,11 +437,9 @@ def main() -> None:
     print(f"{'='*60}")
 
 
-
-# [TITAN AUTO-AUTH]
-if os.environ.get("HF_TOKEN"):
-    print("🔑 Authenticating with Hugging Face...")
-    login(token=os.environ.get("HF_TOKEN"))
-
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--target-samples", type=int, default=12_000_000)
+    parser.add_argument("--login", action="store_true", help="Explicitly login to Hugging Face via HF_TOKEN")
+    args = parser.parse_args()
+    main(target_samples=args.target_samples, login_hf=args.login)

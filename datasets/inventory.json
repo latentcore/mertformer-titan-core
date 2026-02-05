@@ -1,0 +1,293 @@
+{
+  "generated_from": [
+    "scripts",
+    "eval",
+    "train",
+    "orchestrator"
+  ],
+  "items": [
+    {
+      "dataset": "HuggingFaceFW/fineweb-edu",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "HuggingFaceFW/fineweb-edu",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
+          "line": 94,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"HuggingFaceFW/fineweb-edu\","
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu"
+      }
+    },
+    {
+      "dataset": "HuggingFaceTB/cosmopedia",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "HuggingFaceTB/cosmopedia",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
+          "line": 132,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"HuggingFaceTB/cosmopedia\","
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/HuggingFaceTB/cosmopedia"
+      }
+    },
+    {
+      "dataset": "OpenAssistant/oasst_top1_2023-08-25",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "OpenAssistant/oasst_top1_2023-08-25",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
+          "line": 151,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"OpenAssistant/oasst_top1_2023-08-25\","
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/OpenAssistant/oasst_top1_2023-08-25"
+      }
+    },
+    {
+      "dataset": "TFLai/Turkish-Alpaca",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "TFLai/Turkish-Alpaca",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
+          "line": 169,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"TFLai/Turkish-Alpaca\", # [FIX] Replaced broken link with active repo"
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/TFLai/Turkish-Alpaca"
+      }
+    },
+    {
+      "dataset": "TIGER-Lab/MathInstruct",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "TIGER-Lab/MathInstruct",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
+          "line": 68,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"TIGER-Lab/MathInstruct\", # [FIX] Nvidia repo removed, switched to TIGER-Lab"
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/TIGER-Lab/MathInstruct"
+      }
+    },
+    {
+      "dataset": "bigcode/the-stack-v2",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "bigcode/the-stack-v2",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
+          "line": 59,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"bigcode/the-stack-v2\","
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/bigcode/the-stack-v2"
+      }
+    },
+    {
+      "dataset": "glaiveai/glaive-function-calling-v2",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "glaiveai/glaive-function-calling-v2",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
+          "line": 194,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"glaiveai/glaive-function-calling-v2\","
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2"
+      }
+    },
+    {
+      "dataset": "mbpp",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "mbpp",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/benchmarks_internal.py",
+          "line": 90,
+          "kind": "load_dataset_safe",
+          "snippet": "mbpp = load_dataset_safe(\"mbpp\", \"sanitized\")"
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/mbpp"
+      }
+    },
+    {
+      "dataset": "mlabonne/guanaco-llama2-1k",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "mlabonne/guanaco-llama2-1k",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
+          "line": 160,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"mlabonne/guanaco-llama2-1k\","
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/mlabonne/guanaco-llama2-1k"
+      }
+    },
+    {
+      "dataset": "openai/gsm8k",
+      "ref_count": 4,
+      "refs": [
+        {
+          "dataset": "openai/gsm8k",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
+          "line": 77,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"openai/gsm8k\","
+        },
+        {
+          "dataset": "openai/gsm8k",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/eval.py",
+          "line": 36,
+          "kind": "load_dataset",
+          "snippet": "ds = load_dataset(\"openai/gsm8k\", \"main\", split=\"test\", streaming=True)"
+        },
+        {
+          "dataset": "openai/gsm8k",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/eval/gsm8k.py",
+          "line": 64,
+          "kind": "load_dataset",
+          "snippet": "return load_dataset(\"openai/gsm8k\", \"main\", split=\"test\")"
+        },
+        {
+          "dataset": "openai/gsm8k",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/eval/gsm8k.py",
+          "line": 66,
+          "kind": "load_dataset",
+          "snippet": "return load_dataset(\"openai/gsm8k\", split=\"test\")"
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/openai/gsm8k"
+      }
+    },
+    {
+      "dataset": "openai_humaneval",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "openai_humaneval",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/benchmarks_internal.py",
+          "line": 89,
+          "kind": "load_dataset_safe",
+          "snippet": "humaneval = load_dataset_safe(\"openai_humaneval\", \"openai_humaneval\")"
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/openai_humaneval"
+      }
+    },
+    {
+      "dataset": "turkish-nlp-suite/InstrucTurca",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "turkish-nlp-suite/InstrucTurca",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
+          "line": 178,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"turkish-nlp-suite/InstrucTurca\","
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/turkish-nlp-suite/InstrucTurca"
+      }
+    },
+    {
+      "dataset": "uonlp/CulturaX",
+      "ref_count": 2,
+      "refs": [
+        {
+          "dataset": "uonlp/CulturaX",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
+          "line": 122,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"uonlp/CulturaX\", # [NEW] Massive Web Scale Turkish"
+        },
+        {
+          "dataset": "uonlp/CulturaX",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/titan_preflight.py",
+          "line": 185,
+          "kind": "dataset_info",
+          "snippet": "api.dataset_info(\"uonlp/CulturaX\", token=hf_token)"
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/uonlp/CulturaX"
+      }
+    },
+    {
+      "dataset": "wikimedia/wikipedia",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "wikimedia/wikipedia",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
+          "line": 112,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"wikimedia/wikipedia\","
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/wikimedia/wikipedia"
+      }
+    },
+    {
+      "dataset": "wikitext",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "wikitext",
+          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/mini_titan_poc.py",
+          "line": 363,
+          "kind": "load_dataset",
+          "snippet": "ds = load_dataset(\"wikitext\", \"wikitext-2-raw-v1\", split=\"train\")"
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/wikitext"
+      }
+    }
+  ]
+}
