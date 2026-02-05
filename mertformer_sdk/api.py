@@ -54,7 +54,17 @@ def load_model(
         model.load_state_dict(state)
     # else: keep random weights; caller can decide
 
-    tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
+    use_tr = bool(getattr(cfg, "use_tr_tokenizer", False))
+    tr_id = getattr(cfg, "tr_tokenizer_id", "tokenizer/tr")
+    tokenizer = None
+    if use_tr:
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(tr_id, local_files_only=True)
+        except Exception:
+            print("⚠️  Turkish tokenizer not found or incompatible. Falling back to teacher tokenizer.")
+            tokenizer = None
+    if tokenizer is None:
+        tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 

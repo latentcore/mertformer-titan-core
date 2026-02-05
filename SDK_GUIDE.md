@@ -37,6 +37,7 @@ mertformer benchmark --ckpt latest --samples 0
 - Python: `enable_lowbit_kernels(True)`
 - CLI: `mertformer run --lowbit ...`
 - Env: `MERTFORMER_LOWBIT_KERNEL=1`
+- Tensor Core (experimental): `MERTFORMER_TENSORCORE=1`
 
 **Note:** Low-bit kernels are **experimental**. If CUDA/Triton is unavailable, the SDK falls back to the float path.
 
@@ -55,9 +56,11 @@ On CPU-only systems, low-bit kernels are disabled automatically and the SDK uses
 A: Quantization-Aware Training. It simulates quantization during training to improve low-bit inference quality.
 It is **optional** and usually applied **after** a stable baseline model exists.
 
-**Q: Should we add a Turkish tokenizer now?**
-A: Not yet. It can improve Turkish efficiency, but can hurt distillation with Llama teacher and add extra risk.
-Treat it as a later optimization step.
+**Q: Is there a Turkish tokenizer?**
+A: Yes, **opt-in**. Default is off.
+- Download with `scripts/download_tr_tokenizer.py`
+- Enable via `use_tr_tokenizer=true` in `config/config.py`
+- Recommended as a risk-controlled POC to protect distillation stability.
 
 **Q: Is the kernel production-ready?**
 A: It is an **experimental reference kernel** (correctness-first). Performance claims require real profiling.

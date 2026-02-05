@@ -272,6 +272,14 @@ class MertFormerConfig:
     distill_alpha: float = 0.8 # [USER OPTIMIZATION] Teacher'a %80 güven
     distill_intermediate_layers: bool = True
 
+    # -------------------------------------------------------------------------
+    # 7. TOKENIZER OPTIONS (OPT-IN)
+    # -------------------------------------------------------------------------
+    # TR: Varsayilan ogretmen tokenizer kullanilir. Turkce tokenizer sadece opt-in.
+    # EN: Default is teacher tokenizer. Turkish tokenizer is opt-in only.
+    use_tr_tokenizer: bool = False
+    tr_tokenizer_id: str = "tokenizer/tr"
+
     # [KRİTİK DÜZELTME]
     # [RAPOR DÜZELTME] 1.3 -> 1.0 (BitNet için keskin öğretmen gerekir)
     # [RAPOR DÜZELTME] 1.3 -> 1.0 (BitNet için keskin öğretmen gerekir)

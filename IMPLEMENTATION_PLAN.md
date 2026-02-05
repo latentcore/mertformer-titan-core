@@ -40,3 +40,25 @@ Boring stability and learning speed. Success is operational discipline measured 
 - Overfit gate reaches target loss or 80% loss improvement.
 - Golden sample set contains exactly 50 prompts.
 - Asset stack present and internally consistent.
+
+## Emergency Finalization Protocol (v27 Closeout)
+- Do not change training/teacher path unless explicitly required.
+- Keep all kernel paths opt-in and experimental by default.
+- Ensure README/README_TR are aligned (Docs Index + Project Structure).
+- Run tests and clean caches before final delivery.
+
+## QAT Plan (When/How)
+- When: After a stable baseline checkpoint exists and metrics are logged.
+- How: Enable QAT on a smaller subset first, compare with baseline, then scale.
+- Goal: Improve low-bit inference quality without destabilizing training.
+
+## Turkish Tokenizer POC (Risk-Controlled)
+- Default remains teacher tokenizer.
+- Opt-in flag loads Turkish tokenizer cache from `tokenizer/tr`.
+- Run a small validation set to compare tokenization length and quality.
+- If distillation quality drops, revert to teacher tokenizer.
+
+## Kernel Experimental + Tensor Core Opt-in
+- Experimental low-bit kernels remain opt-in (CUDA + Triton required).
+- Tensor-core path is opt-in (`MERTFORMER_TENSORCORE=1`) and correctness-first.
+- Performance claims require real device profiling.

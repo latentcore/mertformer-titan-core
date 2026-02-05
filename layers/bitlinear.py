@@ -21,6 +21,7 @@ import torch.nn.functional as F
 from typing import Tuple
 
 _LOWBIT_KERNEL_ENABLED = os.getenv("MERTFORMER_LOWBIT_KERNEL", "0") == "1"
+_TENSORCORE_ENABLED = os.getenv("MERTFORMER_TENSORCORE", "0") == "1"
 
 
 def set_lowbit_kernel_enabled(enabled: bool) -> None:
@@ -41,7 +42,7 @@ def _try_lowbit_kernel(x: torch.Tensor, w: torch.Tensor, bias: torch.Tensor | No
         from mertformer_sdk.kernels.triton_ternary import triton_ternary_linear, is_triton_available
         if not is_triton_available():
             return None
-        return triton_ternary_linear(x, w, bias)
+        return triton_ternary_linear(x, w, bias, use_tensorcore=_TENSORCORE_ENABLED)
     except Exception:
         return None
 

@@ -37,6 +37,7 @@ mertformer benchmark --ckpt latest --samples 0
 - Python: `enable_lowbit_kernels(True)`
 - CLI: `mertformer run --lowbit ...`
 - Env: `MERTFORMER_LOWBIT_KERNEL=1`
+- Tensor Core (deneysel): `MERTFORMER_TENSORCORE=1`
 
 **Not:** Low-bit kernel **deneysel**dir. CUDA/Triton yoksa otomatik olarak float yola geri doner.
 
@@ -55,9 +56,11 @@ CPU-only sistemlerde low-bit kernel otomatik kapatilir ve standart float yol kul
 C: Quantization-Aware Training. Egitim sirasinda quantization simulasyonu yaparak low-bit inference kalitesini artirir.
 Genelde **stabil bir temel model** olustuktan sonra uygulanir.
 
-**S: Turkce tokenizer simdi gerekir mi?**
-C: Hayir. Turkce verimde artisa yol acabilir ama Llama ogretmenle uyum, distillation ve risk acisindan erken.
-Daha sonra optimizasyon adimi olarak dusun.
+**S: Turkce tokenizer var mi?**
+C: Evet, **opt-in**. Varsayilan kapali.
+- `scripts/download_tr_tokenizer.py` ile indir
+- `config/config.py` icinde `use_tr_tokenizer=true`
+- Distillation stabilitesi icin risk kontrollu POC onerilir.
 
 **S: Kernel production-ready mi?**
 C: **Deneysel referans kernel** (dogruluk oncelikli). Performans iddialari icin gercek profil gerekir.

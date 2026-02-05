@@ -91,124 +91,126 @@
 
 **Çekirdek**
 Ana giriş dokümanları ve checklistler.
-- [README.md](README.md)
-- [README_TR.md](README_TR.md)
-- [README_CHECKLIST.md](README_CHECKLIST.md)
-- [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md)
+- [README.md](README.md) — İngilizce genel bakış.
+- [README_TR.md](README_TR.md) — Türkçe genel bakış.
+- [README_CHECKLIST.md](README_CHECKLIST.md) — README denetim checklisti (EN).
+- [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README denetim checklisti (TR).
 
 **SDK**
 Edge dağıtım için paket + CLI.
-- [mertformer_sdk/](mertformer_sdk/)
-- [SDK_GUIDE.md](SDK_GUIDE.md)
-- [SDK_GUIDE_TR.md](SDK_GUIDE_TR.md)
+- [mertformer_sdk/](mertformer_sdk/) — SDK paketi (API + CLI + kernel).
+- [SDK_GUIDE.md](SDK_GUIDE.md) — SDK hızlı kılavuz (EN).
+- [SDK_GUIDE_TR.md](SDK_GUIDE_TR.md) — SDK hızlı kılavuz (TR).
 
 **Planlar**
 Yol haritaları ve operatör planları.
-- [TASK.md](TASK.md)
-- [TASK_TR.md](TASK_TR.md)
-- [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)
-- [IMPLEMENTATION_PLAN_TR.md](IMPLEMENTATION_PLAN_TR.md)
-- [TRAINING_PLAN.md](TRAINING_PLAN.md)
-- [TRAINING_PLAN_TR.md](TRAINING_PLAN_TR.md)
+- [TASK.md](TASK.md) — Operatör Modu görev planı (EN).
+- [TASK_TR.md](TASK_TR.md) — Operatör Modu görev planı (TR).
+- [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) — Uygulama planı (EN).
+- [IMPLEMENTATION_PLAN_TR.md](IMPLEMENTATION_PLAN_TR.md) — Uygulama planı (TR).
+- [TRAINING_PLAN.md](TRAINING_PLAN.md) — Eğitim yol haritası (EN).
+- [TRAINING_PLAN_TR.md](TRAINING_PLAN_TR.md) — Eğitim yol haritası (TR).
 
 **Teknik**
 Derin teknik analiz ve araştırma referansları.
-- [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md)
-- [TECHNICAL_REPORT_TR.md](TECHNICAL_REPORT_TR.md)
-- [WHITE_PAPER_LIQUIDROUTER.md](WHITE_PAPER_LIQUIDROUTER.md)
-- [WHITE_PAPER_LIQUIDROUTER_TR.md](WHITE_PAPER_LIQUIDROUTER_TR.md)
+- [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md) — Teknik derin inceleme (EN).
+- [TECHNICAL_REPORT_TR.md](TECHNICAL_REPORT_TR.md) — Teknik derin inceleme (TR).
+- [WHITE_PAPER_LIQUIDROUTER.md](WHITE_PAPER_LIQUIDROUTER.md) — LiquidRouter white paper (EN).
+- [WHITE_PAPER_LIQUIDROUTER_TR.md](WHITE_PAPER_LIQUIDROUTER_TR.md) — LiquidRouter white paper (TR).
 
 **Dahili**
 Dahili yol haritası ve yetenek boşluk haritalaması (kamusal değil).
-- [INTERNAL_AGI_GAP.md](INTERNAL_AGI_GAP.md)
-- [INTERNAL_AGI_GAP_TR.md](INTERNAL_AGI_GAP_TR.md)
+- [INTERNAL_AGI_GAP.md](INTERNAL_AGI_GAP.md) — Dahili AGI boşluk haritası (EN).
+- [INTERNAL_AGI_GAP_TR.md](INTERNAL_AGI_GAP_TR.md) — Dahili AGI boşluk haritası (TR).
 
 **Denetim & Strateji**
 Rapor doğruluk denetimi ve stratejik değer özeti.
-- [reports/report_accuracy_audit.md](reports/report_accuracy_audit.md)
-- [reports/report_accuracy_audit_TR.md](reports/report_accuracy_audit_TR.md)
-- [reports/strategic_value.md](reports/strategic_value.md)
-- [reports/strategic_value_TR.md](reports/strategic_value_TR.md)
+- [reports/report_accuracy_audit.md](reports/report_accuracy_audit.md) — Rapor doğruluk denetimi (EN).
+- [reports/report_accuracy_audit_TR.md](reports/report_accuracy_audit_TR.md) — Rapor doğruluk denetimi (TR).
+- [reports/strategic_value.md](reports/strategic_value.md) — Stratejik değer özeti (EN).
+- [reports/strategic_value_TR.md](reports/strategic_value_TR.md) — Stratejik değer özeti (TR).
 
 **Sunum & Asset**
 Yatırımcı materyalleri ve lansman varlıkları.
-- [PITCH.md](PITCH.md)
-- [PITCH_TR.md](PITCH_TR.md)
-- [reports/investor_deck.pptx](reports/investor_deck.pptx)
-- [reports/investor_deck_TR.pptx](reports/investor_deck_TR.pptx)
-- [reports/one_pager.md](reports/one_pager.md)
-- [reports/one_pager_TR.md](reports/one_pager_TR.md)
-- [reports/technical_snapshot.md](reports/technical_snapshot.md)
-- [reports/technical_snapshot_TR.md](reports/technical_snapshot_TR.md)
-- [reports/asset_stack.md](reports/asset_stack.md)
-- [reports/asset_stack_TR.md](reports/asset_stack_TR.md)
-- [reports/demo_video_script.md](reports/demo_video_script.md)
-- [reports/demo_video_script_TR.md](reports/demo_video_script_TR.md)
-- [reports/founders_hub_application.md](reports/founders_hub_application.md)
-- [reports/founders_hub_application_TR.md](reports/founders_hub_application_TR.md)
-- [reports/security_compliance.md](reports/security_compliance.md)
-- [reports/security_compliance_TR.md](reports/security_compliance_TR.md)
-- [reports/poc_protocol.md](reports/poc_protocol.md)
-- [reports/poc_protocol_TR.md](reports/poc_protocol_TR.md)
-- [reports/dataset_health.md](reports/dataset_health.md)
-- [reports/dataset_health_TR.md](reports/dataset_health_TR.md)
-- [reports/model_health.md](reports/model_health.md)
-- [reports/model_health_TR.md](reports/model_health_TR.md)
-- [reports/system_hardware.md](reports/system_hardware.md)
-- [reports/system_hardware_TR.md](reports/system_hardware_TR.md)
+- [PITCH.md](PITCH.md) — Yatırımcı pitch (EN).
+- [PITCH_TR.md](PITCH_TR.md) — Yatırımcı pitch (TR).
+- [reports/investor_deck.pptx](reports/investor_deck.pptx) — Yatırımcı deck (EN).
+- [reports/investor_deck_TR.pptx](reports/investor_deck_TR.pptx) — Yatırımcı deck (TR).
+- [reports/one_pager.md](reports/one_pager.md) — One-pager (EN).
+- [reports/one_pager_TR.md](reports/one_pager_TR.md) — One-pager (TR).
+- [reports/technical_snapshot.md](reports/technical_snapshot.md) — Teknik snapshot (EN).
+- [reports/technical_snapshot_TR.md](reports/technical_snapshot_TR.md) — Teknik snapshot (TR).
+- [reports/asset_stack.md](reports/asset_stack.md) — Asset index (EN).
+- [reports/asset_stack_TR.md](reports/asset_stack_TR.md) — Asset index (TR).
+- [reports/demo_video_script.md](reports/demo_video_script.md) — Demo video script (EN).
+- [reports/demo_video_script_TR.md](reports/demo_video_script_TR.md) — Demo video script (TR).
+- [reports/founders_hub_application.md](reports/founders_hub_application.md) — Founders Hub taslağı (EN).
+- [reports/founders_hub_application_TR.md](reports/founders_hub_application_TR.md) — Founders Hub taslağı (TR).
+- [reports/security_compliance.md](reports/security_compliance.md) — Güvenlik & uyum özeti (EN).
+- [reports/security_compliance_TR.md](reports/security_compliance_TR.md) — Güvenlik & uyum özeti (TR).
+- [reports/poc_protocol.md](reports/poc_protocol.md) — Pilot/PoC protokolü (EN).
+- [reports/poc_protocol_TR.md](reports/poc_protocol_TR.md) — Pilot/PoC protokolü (TR).
+- [reports/dataset_health.md](reports/dataset_health.md) — Dataset sağlık raporu (EN).
+- [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset sağlık raporu (TR).
+- [reports/model_health.md](reports/model_health.md) — Model sağlık raporu (EN).
+- [reports/model_health_TR.md](reports/model_health_TR.md) — Model sağlık raporu (TR).
+- [reports/system_hardware.md](reports/system_hardware.md) — Sistem donanım raporu (EN).
+- [reports/system_hardware_TR.md](reports/system_hardware_TR.md) — Sistem donanım raporu (TR).
+
+*Not: Bu adımda PPTX dosyalarına dokunulmadı (plan gereği). Gerekirse sonra tek satır ekleriz.*
 
 **Operasyon & Yönetişim**
 Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
-- [SECURITY.md](SECURITY.md)
-- [SECURITY_TR.md](SECURITY_TR.md)
-- [DECISIONS.md](DECISIONS.md)
-- [DECISIONS_TR.md](DECISIONS_TR.md)
-- [datasets/README.md](datasets/README.md)
-- [datasets/README_TR.md](datasets/README_TR.md)
-- [datasets/SOURCES.md](datasets/SOURCES.md)
-- [datasets/SOURCES_TR.md](datasets/SOURCES_TR.md)
-- [datasets/LICENSES.md](datasets/LICENSES.md)
-- [datasets/LICENSES_TR.md](datasets/LICENSES_TR.md)
-- [repro/seed_policy.md](repro/seed_policy.md)
-- [repro/seed_policy_TR.md](repro/seed_policy_TR.md)
-- [interfaces/inference_contract.md](interfaces/inference_contract.md)
-- [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md)
-- [economics/cost_model.md](economics/cost_model.md)
-- [economics/cost_model_TR.md](economics/cost_model_TR.md)
-- [economics/efficiency_report.md](economics/efficiency_report.md)
-- [economics/efficiency_report_TR.md](economics/efficiency_report_TR.md)
-- [limits/scaling_breakpoints.md](limits/scaling_breakpoints.md)
-- [limits/scaling_breakpoints_TR.md](limits/scaling_breakpoints_TR.md)
-- [postmortems/README.md](postmortems/README.md)
-- [postmortems/README_TR.md](postmortems/README_TR.md)
-- [postmortems/_template.md](postmortems/_template.md)
-- [postmortems/_template_TR.md](postmortems/_template_TR.md)
-- [prompts/changelog.md](prompts/changelog.md)
-- [prompts/changelog_TR.md](prompts/changelog_TR.md)
-- [tokenizer/stats.md](tokenizer/stats.md)
-- [tokenizer/stats_TR.md](tokenizer/stats_TR.md)
-- [tokenizer/drift_report.md](tokenizer/drift_report.md)
-- [tokenizer/drift_report_TR.md](tokenizer/drift_report_TR.md)
-- [ablations/results.md](ablations/results.md)
-- [ablations/results_TR.md](ablations/results_TR.md)
-- [ablations/no_moe/README.md](ablations/no_moe/README.md)
-- [ablations/no_moe/README_TR.md](ablations/no_moe/README_TR.md)
-- [ablations/no_liquid/README.md](ablations/no_liquid/README.md)
-- [ablations/no_liquid/README_TR.md](ablations/no_liquid/README_TR.md)
-- [ablations/dense_only/README.md](ablations/dense_only/README.md)
-- [ablations/dense_only/README_TR.md](ablations/dense_only/README_TR.md)
-- [ablations/bitlinear_off/README.md](ablations/bitlinear_off/README.md)
-- [ablations/bitlinear_off/README_TR.md](ablations/bitlinear_off/README_TR.md)
-- [experiments/exp_001_baseline/notes.md](experiments/exp_001_baseline/notes.md)
-- [experiments/exp_001_baseline/notes_TR.md](experiments/exp_001_baseline/notes_TR.md)
-- [tools/abuse_tests.md](tools/abuse_tests.md)
-- [tools/abuse_tests_TR.md](tools/abuse_tests_TR.md)
-- [tools/sandbox/README.md](tools/sandbox/README.md)
-- [tools/sandbox/README_TR.md](tools/sandbox/README_TR.md)
-- [tools/contracts/README.md](tools/contracts/README.md)
-- [tools/contracts/README_TR.md](tools/contracts/README_TR.md)
-- [training_dynamics/cold_vs_warm.md](training_dynamics/cold_vs_warm.md)
-- [training_dynamics/cold_vs_warm_TR.md](training_dynamics/cold_vs_warm_TR.md)
+- [SECURITY.md](SECURITY.md) — Güvenlik politikası (EN).
+- [SECURITY_TR.md](SECURITY_TR.md) — Güvenlik politikası (TR).
+- [DECISIONS.md](DECISIONS.md) — Mimari kararlar (EN).
+- [DECISIONS_TR.md](DECISIONS_TR.md) — Mimari kararlar (TR).
+- [datasets/README.md](datasets/README.md) — Dataset genel bakış (EN).
+- [datasets/README_TR.md](datasets/README_TR.md) — Dataset genel bakış (TR).
+- [datasets/SOURCES.md](datasets/SOURCES.md) — Veri kaynakları (EN).
+- [datasets/SOURCES_TR.md](datasets/SOURCES_TR.md) — Veri kaynakları (TR).
+- [datasets/LICENSES.md](datasets/LICENSES.md) — Lisanslar (EN).
+- [datasets/LICENSES_TR.md](datasets/LICENSES_TR.md) — Lisanslar (TR).
+- [repro/seed_policy.md](repro/seed_policy.md) — Seed politikası (EN).
+- [repro/seed_policy_TR.md](repro/seed_policy_TR.md) — Seed politikası (TR).
+- [interfaces/inference_contract.md](interfaces/inference_contract.md) — Çıkarım sözleşmesi (EN).
+- [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md) — Çıkarım sözleşmesi (TR).
+- [economics/cost_model.md](economics/cost_model.md) — Maliyet modeli (EN).
+- [economics/cost_model_TR.md](economics/cost_model_TR.md) — Maliyet modeli (TR).
+- [economics/efficiency_report.md](economics/efficiency_report.md) — Verim raporu (EN).
+- [economics/efficiency_report_TR.md](economics/efficiency_report_TR.md) — Verim raporu (TR).
+- [limits/scaling_breakpoints.md](limits/scaling_breakpoints.md) — Ölçek kırılma noktaları (EN).
+- [limits/scaling_breakpoints_TR.md](limits/scaling_breakpoints_TR.md) — Ölçek kırılma noktaları (TR).
+- [postmortems/README.md](postmortems/README.md) — Olay raporu dizini (EN).
+- [postmortems/README_TR.md](postmortems/README_TR.md) — Olay raporu dizini (TR).
+- [postmortems/_template.md](postmortems/_template.md) — Postmortem şablonu (EN).
+- [postmortems/_template_TR.md](postmortems/_template_TR.md) — Postmortem şablonu (TR).
+- [prompts/changelog.md](prompts/changelog.md) — Prompt değişim günlüğü (EN).
+- [prompts/changelog_TR.md](prompts/changelog_TR.md) — Prompt değişim günlüğü (TR).
+- [tokenizer/stats.md](tokenizer/stats.md) — Tokenizer istatistikleri (EN).
+- [tokenizer/stats_TR.md](tokenizer/stats_TR.md) — Tokenizer istatistikleri (TR).
+- [tokenizer/drift_report.md](tokenizer/drift_report.md) — Tokenizer drift raporu (EN).
+- [tokenizer/drift_report_TR.md](tokenizer/drift_report_TR.md) — Tokenizer drift raporu (TR).
+- [ablations/results.md](ablations/results.md) — Ablation sonuçları (EN).
+- [ablations/results_TR.md](ablations/results_TR.md) — Ablation sonuçları (TR).
+- [ablations/no_moe/README.md](ablations/no_moe/README.md) — MoE kapalı ablation (EN).
+- [ablations/no_moe/README_TR.md](ablations/no_moe/README_TR.md) — MoE kapalı ablation (TR).
+- [ablations/no_liquid/README.md](ablations/no_liquid/README.md) — Liquid kapalı ablation (EN).
+- [ablations/no_liquid/README_TR.md](ablations/no_liquid/README_TR.md) — Liquid kapalı ablation (TR).
+- [ablations/dense_only/README.md](ablations/dense_only/README.md) — Dense-only ablation (EN).
+- [ablations/dense_only/README_TR.md](ablations/dense_only/README_TR.md) — Dense-only ablation (TR).
+- [ablations/bitlinear_off/README.md](ablations/bitlinear_off/README.md) — BitNet kapalı ablation (EN).
+- [ablations/bitlinear_off/README_TR.md](ablations/bitlinear_off/README_TR.md) — BitNet kapalı ablation (TR).
+- [experiments/exp_001_baseline/notes.md](experiments/exp_001_baseline/notes.md) — Deney notları (EN).
+- [experiments/exp_001_baseline/notes_TR.md](experiments/exp_001_baseline/notes_TR.md) — Deney notları (TR).
+- [tools/abuse_tests.md](tools/abuse_tests.md) — Tool abuse testleri (EN).
+- [tools/abuse_tests_TR.md](tools/abuse_tests_TR.md) — Tool abuse testleri (TR).
+- [tools/sandbox/README.md](tools/sandbox/README.md) — Tool sandbox (EN).
+- [tools/sandbox/README_TR.md](tools/sandbox/README_TR.md) — Tool sandbox (TR).
+- [tools/contracts/README.md](tools/contracts/README.md) — Tool sözleşmeleri (EN).
+- [tools/contracts/README_TR.md](tools/contracts/README_TR.md) — Tool sözleşmeleri (TR).
+- [training_dynamics/cold_vs_warm.md](training_dynamics/cold_vs_warm.md) — Eğitim dinamiği notu (EN).
+- [training_dynamics/cold_vs_warm_TR.md](training_dynamics/cold_vs_warm_TR.md) — Eğitim dinamiği notu (TR).
 
 ---
 
@@ -467,7 +469,7 @@ MertFormer Titan (2.64B Parametre)
 | **Temel (Baseline)** | 2.0 sn | 64 tok/sn | %47 | 38 GB |
 | **v27.0 (Optimize)** | **~1.2 sn** (Tahmini) | **~107 tok/sn** (Tahmini) | **~%95** (Hedef) | **~76 GB** (Hedef) |
 | **Hızlanma (Öngörü)** | **+%67** | **+%67** | **+%102** | **+%100** |
-*Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir. BitNet 1.58 çıkarımı artık opsiyonel düşük-bit kernel yolu içerir; ancak enerji/TOPS kazanımları gerçek cihaz ölçümü gerektirir. Ayrıca, **Residual Scaling Etkisi** ile 18 katman boyunca sinyal kararlılığı, $1/\sqrt{2}$ formülüyle korunarak en derin katmanda bile gradyan akışının stabil kalması hedeflenmektedir.*
+*Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir. BitNet 1.58 çıkarımı opsiyonel düşük-bit kernel yolu içerir; Tensor Core yolu **deneysel** ve opt-in’dir (`MERTFORMER_TENSORCORE=1`). Enerji/TOPS kazanımları gerçek cihaz ölçümü gerektirir. Ayrıca, **Residual Scaling Etkisi** ile 18 katman boyunca sinyal kararlılığı, $1/\sqrt{2}$ formülüyle korunarak en derin katmanda bile gradyan akışının stabil kalması hedeflenmektedir.*
 
 ### Bellek Ayak İzi
 | Bileşen | FP32 | BF16 | BitNet 1.58 |
@@ -585,6 +587,7 @@ Aşağıdaki maddeler uygulanmıştır ve kanıt dosyaları ile eşlenmiştir:
 - Internal Truth Benchmarks (HumanEval/MBPP): `scripts/benchmarks_internal.py`
 - Phase 2: Asset Stack
 - Demo Video Script (offline): `reports/demo_video_script.md`
+- Opsiyonel Otomatik Demo Video: `scripts/auto_demo_video.py` (ffmpeg gerekli)
 - One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`, `PITCH.md`
 - Founders Hub Başvuru Taslağı: `reports/founders_hub_application.md`
 - Phase 3: Future Horizons
@@ -630,6 +633,8 @@ MertFormer Titan, profesyonel düzeyde bir tanı koyma sistemine sahiptir. `./ru
 2026-01-31 16:50:55,490 - [INFO] - ✈️ FINAL RESULT: 🏆 ALL GREEN
 2026-01-31 16:50:55,490 - [INFO] - ✈️ ============================================================
 ```
+
+*Not: Yukarıdaki örnek log 2026-01-31 tarihinden. Güncel ortam için `./run.sh --test` çalıştırın.*
 
 ---
 
@@ -856,6 +861,21 @@ Planlanan Türkçe veri kaynakları:
 - NPU optimizasyonu planlandı
 - Gerçek cihaz testi: Yol Haritası v29.0
 
+### S: Low-bit kernel production-ready mi?
+
+**C**: **Deneysel referans kernel** (doğruluk öncelikli):
+- BitNet eğitim yolu ayrı bir katman (mevcut)
+- Low-bit inference yolu **opt-in**
+- Tensor Core yolu **deneysel** (`MERTFORMER_TENSORCORE=1`)
+- Gerçek profil/ölçüm olmadan hız/enerji iddiası yapılmaz
+
+### S: Türkçe tokenizer var mı?
+
+**C**: **Opt-in** (varsayılan kapalı):
+- `use_tr_tokenizer=false` (default)
+- `scripts/download_tr_tokenizer.py` ile indirilebilir
+- Distillation uyumu için risk kontrollü POC önerilir
+
 ---
 
 <a id="proje-yapısı"></a>
@@ -919,9 +939,11 @@ NİHAİ/
 │   ├── 📄 checkpoint_restore_drill.py # Checkpoint restore drill
 │   ├── 📄 failure_budget_drill.py # Failure budget drill
 │   ├── 📄 build_investor_deck.py # PPTX deck generator
+│   ├── 📄 auto_demo_video.py # Opsiyonel demo video otomasyonu (ffmpeg)
 │   ├── 📄 eval.py          # GSM8K eval stub
 │   ├── 📄 mac_simulation.py # Mac simulasyon
 │   ├── 📄 mini_titan_poc.py # Forensic PoC logger
+│   ├── 📄 download_tr_tokenizer.py # Turkce tokenizer indirme (opt-in)
 │   ├── 📄 scaling_audit_math.py # Scaling audit math
 │   ├── 📄 test_onnx_export.py # ONNX export test
 │   ├── 📄 titan_onnx_stress_test.py # ONNX stress test
@@ -1006,7 +1028,10 @@ NİHAİ/
 │   ├── 📄 stats.md
 │   ├── 📄 stats_TR.md
 │   ├── 📄 drift_report.md
-│   └── 📄 drift_report_TR.md
+│   ├── 📄 drift_report_TR.md
+│   └── 📂 tr/              # Turkce tokenizer cache (opt-in)
+│       ├── 📄 README.md
+│       └── 📄 README_TR.md
 ├── 📂 tools/               # Tool sandbox ve sozlesmeleri
 │   ├── 📄 abuse_tests.md
 │   ├── 📄 abuse_tests_TR.md

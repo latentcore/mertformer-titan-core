@@ -62,6 +62,56 @@ if _TRITON_AVAILABLE:
         c_ptrs = c_ptr + (offs_m[:, None] * stride_cm + offs_n[None, :] * stride_cn)
         tl.store(c_ptrs, acc, mask=(offs_m[:, None] < M) & (offs_n[None, :] < N))
 
+    @triton.jit
+    def _matmul_kernel_tc(
+        a_ptr,
+        b_ptr,
+        c_ptr,
+        M,
+        N,
+        K,
+        stride_am,
+        stride_ak,
+        stride_bk,
+        stride_bn,
+        stride_cm,
+        stride_cn,
+        BLOCK_M: tl.constexpr,
+        BLOCK_N: tl.constexpr,
+        BLOCK_K: tl.constexpr,
+    ):
+        pid_m = tl.program_id(0)
+        pid_n = tl.program_id(1)
+
+        offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)
+        offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)
+        offs_k = tl.arange(0, BLOCK_K)
+
+        a_ptrs = a_ptr + (offs_m[:, None] * stride_am + offs_k[None, :] * stride_ak)
+        b_ptrs = b_ptr + (offs_k[:, None] * stride_bk + offs_n[None, :] * stride_bn)
+
+        acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)
+        k = 0
+        while k < K:
+            a = tl.load(
+                a_ptrs,
+                mask=(offs_m[:, None] < M) & (offs_k[None, :] + k < K),
+                other=0.0,
+            ).to(tl.float16)
+            b = tl.load(
+                b_ptrs,
+                mask=(offs_k[:, None] + k < K) & (offs_n[None, :] < N),
+                other=0.0,
+            ).to(tl.float16)
+            # Tensor-core friendly dot (experimental)
+            acc += tl.dot(a, b)
+            k += BLOCK_K
+            a_ptrs += BLOCK_K * stride_ak
+            b_ptrs += BLOCK_K * stride_bk
+
+        c_ptrs = c_ptr + (offs_m[:, None] * stride_cm + offs_n[None, :] * stride_cn)
+        tl.store(c_ptrs, acc, mask=(offs_m[:, None] < M) & (offs_n[None, :] < N))
+
 
 def _quantize_activation(x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
     max_abs = x.detach().abs().amax(dim=-1, keepdim=True).clamp(min=1e-5)
@@ -77,8 +127,13 @@ def _quantize_weight(w: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
     return w_q, scale.squeeze(1)
 
 
-def triton_ternary_linear(x: torch.Tensor, w: torch.Tensor, bias: Optional[torch.Tensor] = None) -> torch.Tensor:
-    """Ternary weight + INT8 activation GEMM using Triton."""
+def triton_ternary_linear(
+    x: torch.Tensor,
+    w: torch.Tensor,
+    bias: Optional[torch.Tensor] = None,
+    use_tensorcore: bool = False,
+) -> torch.Tensor:
+    """Ternary weight + INT8 activation GEMM using Triton (experimental)."""
     if not _TRITON_AVAILABLE:
         raise RuntimeError("Triton is not available")
     if not x.is_cuda or not w.is_cuda:
@@ -96,31 +151,51 @@ def triton_ternary_linear(x: torch.Tensor, w: torch.Tensor, bias: Optional[torch
     M, K = x_q.shape
     N = w_q.shape[0]
 
-    # output int32
-    out = torch.empty((M, N), device=x_q.device, dtype=torch.int32)
+    # output buffer
+    out_dtype = torch.float32 if use_tensorcore else torch.int32
+    out = torch.empty((M, N), device=x_q.device, dtype=out_dtype)
 
     BLOCK_M = 128
     BLOCK_N = 128
     BLOCK_K = 32
     grid = (triton.cdiv(M, BLOCK_M), triton.cdiv(N, BLOCK_N))
 
-    _matmul_kernel[grid](
-        x_q,
-        w_q,
-        out,
-        M,
-        N,
-        K,
-        x_q.stride(0),
-        x_q.stride(1),
-        w_q.stride(1),
-        w_q.stride(0),
-        out.stride(0),
-        out.stride(1),
-        BLOCK_M=BLOCK_M,
-        BLOCK_N=BLOCK_N,
-        BLOCK_K=BLOCK_K,
-    )
+    if use_tensorcore:
+        _matmul_kernel_tc[grid](
+            x_q,
+            w_q,
+            out,
+            M,
+            N,
+            K,
+            x_q.stride(0),
+            x_q.stride(1),
+            w_q.stride(1),
+            w_q.stride(0),
+            out.stride(0),
+            out.stride(1),
+            BLOCK_M=BLOCK_M,
+            BLOCK_N=BLOCK_N,
+            BLOCK_K=BLOCK_K,
+        )
+    else:
+        _matmul_kernel[grid](
+            x_q,
+            w_q,
+            out,
+            M,
+            N,
+            K,
+            x_q.stride(0),
+            x_q.stride(1),
+            w_q.stride(1),
+            w_q.stride(0),
+            out.stride(0),
+            out.stride(1),
+            BLOCK_M=BLOCK_M,
+            BLOCK_N=BLOCK_N,
+            BLOCK_K=BLOCK_K,
+        )
 
     # dequant
     scale = w_scale.view(1, -1) / x_scale

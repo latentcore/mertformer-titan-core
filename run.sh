@@ -45,6 +45,7 @@ export WANDB_PROJECT="mertformer-titan"
 # ------------------------------------------------------------------------------
 OS_TYPE=$(uname -s)
 echo "🖥️  Detected OS: $OS_TYPE"
+echo "ℹ️  Defaults: use_tr_tokenizer=false | low-bit kernel opt-in (MERTFORMER_LOWBIT_KERNEL=1) | tensorcore opt-in (MERTFORMER_TENSORCORE=1) | BENCHMARK_SAMPLES=0"
 
 # Bellek Yönetimi (OOM Riskini Azaltır)
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True

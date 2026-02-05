@@ -40,3 +40,25 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 - Overfit gate hedef loss veya %80+ iyileşme.
 - Golden sample seti 50 prompt içerir.
 - Asset stack eksiksizdir.
+
+## Acil Kapanis Protokolu (v27)
+- Egitim/teacher akisi zorunlu olmadikca degistirilmez.
+- Tum kernel yolları opt-in ve deneysel kalir.
+- README/README_TR uyumu (Docs Index + Dizin) saglanir.
+- Testler kosulur ve cache temizligi yapilir.
+
+## QAT Plani (Ne Zaman / Nasil)
+- Ne zaman: Stabil bir temel checkpoint alindiktan sonra.
+- Nasil: Kucuk veri altkumesinde QAT dene, baseline ile karsilastir, sonra genislet.
+- Hedef: Low-bit inference kalitesini artirirken stabiliteyi korumak.
+
+## Turkce Tokenizer POC (Risk Kontrollu)
+- Varsayilan ogretmen tokenizer kalir.
+- Opt-in bayrak ile `tokenizer/tr` kullanilir.
+- Kucuk dogrulama setinde token uzunlugu ve kalite karsilastirilir.
+- Distillation kalitesi dusersen geri donulur.
+
+## Kernel Deneysel + Tensor Core Opt-in
+- Deneysel low-bit kernel opt-in (CUDA + Triton gerekli).
+- Tensor-core yolu opt-in (`MERTFORMER_TENSORCORE=1`) ve dogruluk oncelikli.
+- Performans iddialari icin gercek profil gerekir.

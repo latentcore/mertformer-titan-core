@@ -18,6 +18,9 @@ build/
 *.egg-info/
 *.so
 .triton/
+tokenizer/tr/*
+!tokenizer/tr/README.md
+!tokenizer/tr/README_TR.md
 
 # Heavy Files (Models & Data)
 *.onnx

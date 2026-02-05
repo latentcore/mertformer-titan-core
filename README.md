@@ -91,124 +91,128 @@
 
 **Core**
 Primary entry docs and checklists.
-- [README.md](README.md)
-- [README_TR.md](README_TR.md)
-- [README_CHECKLIST.md](README_CHECKLIST.md)
-- [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md)
+- [README.md](README.md) — English overview.
+- [README_TR.md](README_TR.md) — Turkish overview.
+- [README_CHECKLIST.md](README_CHECKLIST.md) — README audit checklist (EN).
+- [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README audit checklist (TR).
 
 **SDK**
 Package + CLI for edge deployments.
-- [mertformer_sdk/](mertformer_sdk/)
-- [SDK_GUIDE.md](SDK_GUIDE.md)
-- [SDK_GUIDE_TR.md](SDK_GUIDE_TR.md)
+- [mertformer_sdk/](mertformer_sdk/) — SDK package (API + CLI + kernels).
+- [SDK_GUIDE.md](SDK_GUIDE.md) — SDK quick guide (EN).
+- [SDK_GUIDE_TR.md](SDK_GUIDE_TR.md) — SDK quick guide (TR).
 
 **Plans**
 Execution roadmaps and operator plans.
-- [TASK.md](TASK.md)
-- [TASK_TR.md](TASK_TR.md)
-- [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)
-- [IMPLEMENTATION_PLAN_TR.md](IMPLEMENTATION_PLAN_TR.md)
-- [TRAINING_PLAN.md](TRAINING_PLAN.md)
-- [TRAINING_PLAN_TR.md](TRAINING_PLAN_TR.md)
+- [TASK.md](TASK.md) — Operator Mode task plan (EN).
+- [TASK_TR.md](TASK_TR.md) — Operator Mode task plan (TR).
+- [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) — Implementation plan (EN).
+- [IMPLEMENTATION_PLAN_TR.md](IMPLEMENTATION_PLAN_TR.md) — Implementation plan (TR).
+- [TRAINING_PLAN.md](TRAINING_PLAN.md) — Training roadmap (EN).
+- [TRAINING_PLAN_TR.md](TRAINING_PLAN_TR.md) — Training roadmap (TR).
 
 **Technical**
 Deep-dive architecture and research references.
-- [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md)
-- [TECHNICAL_REPORT_TR.md](TECHNICAL_REPORT_TR.md)
-- [WHITE_PAPER_LIQUIDROUTER.md](WHITE_PAPER_LIQUIDROUTER.md)
-- [WHITE_PAPER_LIQUIDROUTER_TR.md](WHITE_PAPER_LIQUIDROUTER_TR.md)
+- [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md) — Technical deep dive (EN).
+- [TECHNICAL_REPORT_TR.md](TECHNICAL_REPORT_TR.md) — Technical deep dive (TR).
+- [WHITE_PAPER_LIQUIDROUTER.md](WHITE_PAPER_LIQUIDROUTER.md) — LiquidRouter white paper (EN).
+- [WHITE_PAPER_LIQUIDROUTER_TR.md](WHITE_PAPER_LIQUIDROUTER_TR.md) — LiquidRouter white paper (TR).
 
 **Internal**
 Internal roadmap and capability gap mapping (non-public).
-- [INTERNAL_AGI_GAP.md](INTERNAL_AGI_GAP.md)
-- [INTERNAL_AGI_GAP_TR.md](INTERNAL_AGI_GAP_TR.md)
+- [INTERNAL_AGI_GAP.md](INTERNAL_AGI_GAP.md) — Internal AGI gap map (EN).
+- [INTERNAL_AGI_GAP_TR.md](INTERNAL_AGI_GAP_TR.md) — Internal AGI gap map (TR).
 
 **Audit & Strategy**
 Report accuracy audit and strategic value summary.
-- [reports/report_accuracy_audit.md](reports/report_accuracy_audit.md)
-- [reports/report_accuracy_audit_TR.md](reports/report_accuracy_audit_TR.md)
-- [reports/strategic_value.md](reports/strategic_value.md)
-- [reports/strategic_value_TR.md](reports/strategic_value_TR.md)
+- [reports/report_accuracy_audit.md](reports/report_accuracy_audit.md) — Report accuracy audit (EN).
+- [reports/report_accuracy_audit_TR.md](reports/report_accuracy_audit_TR.md) — Report accuracy audit (TR).
+- [reports/strategic_value.md](reports/strategic_value.md) — Strategic value summary (EN).
+- [reports/strategic_value_TR.md](reports/strategic_value_TR.md) — Strategic value summary (TR).
 
 **Pitch & Assets**
 Investor-facing materials and launch assets.
-- [PITCH.md](PITCH.md)
-- [PITCH_TR.md](PITCH_TR.md)
-- [reports/investor_deck.pptx](reports/investor_deck.pptx)
-- [reports/investor_deck_TR.pptx](reports/investor_deck_TR.pptx)
-- [reports/one_pager.md](reports/one_pager.md)
-- [reports/one_pager_TR.md](reports/one_pager_TR.md)
-- [reports/technical_snapshot.md](reports/technical_snapshot.md)
-- [reports/technical_snapshot_TR.md](reports/technical_snapshot_TR.md)
-- [reports/asset_stack.md](reports/asset_stack.md)
-- [reports/asset_stack_TR.md](reports/asset_stack_TR.md)
-- [reports/demo_video_script.md](reports/demo_video_script.md)
-- [reports/demo_video_script_TR.md](reports/demo_video_script_TR.md)
-- [reports/founders_hub_application.md](reports/founders_hub_application.md)
-- [reports/founders_hub_application_TR.md](reports/founders_hub_application_TR.md)
-- [reports/security_compliance.md](reports/security_compliance.md)
-- [reports/security_compliance_TR.md](reports/security_compliance_TR.md)
-- [reports/poc_protocol.md](reports/poc_protocol.md)
-- [reports/poc_protocol_TR.md](reports/poc_protocol_TR.md)
-- [reports/dataset_health.md](reports/dataset_health.md)
-- [reports/dataset_health_TR.md](reports/dataset_health_TR.md)
-- [reports/model_health.md](reports/model_health.md)
-- [reports/model_health_TR.md](reports/model_health_TR.md)
-- [reports/system_hardware.md](reports/system_hardware.md)
-- [reports/system_hardware_TR.md](reports/system_hardware_TR.md)
+- [PITCH.md](PITCH.md) — Investor pitch (EN).
+- [PITCH_TR.md](PITCH_TR.md) — Investor pitch (TR).
+- [reports/investor_deck.pptx](reports/investor_deck.pptx) — Investor deck (EN).
+- [reports/investor_deck_TR.pptx](reports/investor_deck_TR.pptx) — Investor deck (TR).
+- [reports/one_pager.md](reports/one_pager.md) — One-pager (EN).
+- [reports/one_pager_TR.md](reports/one_pager_TR.md) — One-pager (TR).
+- [reports/technical_snapshot.md](reports/technical_snapshot.md) — Technical snapshot (EN).
+- [reports/technical_snapshot_TR.md](reports/technical_snapshot_TR.md) — Technical snapshot (TR).
+- [reports/asset_stack.md](reports/asset_stack.md) — Asset index (EN).
+- [reports/asset_stack_TR.md](reports/asset_stack_TR.md) — Asset index (TR).
+- [reports/demo_video_script.md](reports/demo_video_script.md) — Demo video script (EN).
+- [reports/demo_video_script_TR.md](reports/demo_video_script_TR.md) — Demo video script (TR).
+- [reports/founders_hub_application.md](reports/founders_hub_application.md) — Founders Hub draft (EN).
+- [reports/founders_hub_application_TR.md](reports/founders_hub_application_TR.md) — Founders Hub draft (TR).
+- [reports/security_compliance.md](reports/security_compliance.md) — Security & compliance brief (EN).
+- [reports/security_compliance_TR.md](reports/security_compliance_TR.md) — Security & compliance brief (TR).
+- [reports/poc_protocol.md](reports/poc_protocol.md) — Pilot/PoC protocol (EN).
+- [reports/poc_protocol_TR.md](reports/poc_protocol_TR.md) — Pilot/PoC protocol (TR).
+- [reports/dataset_health.md](reports/dataset_health.md) — Dataset health report (EN).
+- [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset health report (TR).
+- [reports/model_health.md](reports/model_health.md) — Model health report (EN).
+- [reports/model_health_TR.md](reports/model_health_TR.md) — Model health report (TR).
+- [reports/system_hardware.md](reports/system_hardware.md) — System hardware report (EN).
+- [reports/system_hardware_TR.md](reports/system_hardware_TR.md) — System hardware report (TR).
+
+*Note: This step did not modify PPTX files (per plan). We can add a one-line update later if needed.*
 
 **Ops & Governance**
 Security, provenance, reproducibility, and ops notes.
-- [SECURITY.md](SECURITY.md)
-- [SECURITY_TR.md](SECURITY_TR.md)
-- [DECISIONS.md](DECISIONS.md)
-- [DECISIONS_TR.md](DECISIONS_TR.md)
-- [datasets/README.md](datasets/README.md)
-- [datasets/README_TR.md](datasets/README_TR.md)
-- [datasets/SOURCES.md](datasets/SOURCES.md)
-- [datasets/SOURCES_TR.md](datasets/SOURCES_TR.md)
-- [datasets/LICENSES.md](datasets/LICENSES.md)
-- [datasets/LICENSES_TR.md](datasets/LICENSES_TR.md)
-- [repro/seed_policy.md](repro/seed_policy.md)
-- [repro/seed_policy_TR.md](repro/seed_policy_TR.md)
-- [interfaces/inference_contract.md](interfaces/inference_contract.md)
-- [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md)
-- [economics/cost_model.md](economics/cost_model.md)
-- [economics/cost_model_TR.md](economics/cost_model_TR.md)
-- [economics/efficiency_report.md](economics/efficiency_report.md)
-- [economics/efficiency_report_TR.md](economics/efficiency_report_TR.md)
-- [limits/scaling_breakpoints.md](limits/scaling_breakpoints.md)
-- [limits/scaling_breakpoints_TR.md](limits/scaling_breakpoints_TR.md)
-- [postmortems/README.md](postmortems/README.md)
-- [postmortems/README_TR.md](postmortems/README_TR.md)
-- [postmortems/_template.md](postmortems/_template.md)
-- [postmortems/_template_TR.md](postmortems/_template_TR.md)
-- [prompts/changelog.md](prompts/changelog.md)
-- [prompts/changelog_TR.md](prompts/changelog_TR.md)
-- [tokenizer/stats.md](tokenizer/stats.md)
-- [tokenizer/stats_TR.md](tokenizer/stats_TR.md)
-- [tokenizer/drift_report.md](tokenizer/drift_report.md)
-- [tokenizer/drift_report_TR.md](tokenizer/drift_report_TR.md)
-- [ablations/results.md](ablations/results.md)
-- [ablations/results_TR.md](ablations/results_TR.md)
-- [ablations/no_moe/README.md](ablations/no_moe/README.md)
-- [ablations/no_moe/README_TR.md](ablations/no_moe/README_TR.md)
-- [ablations/no_liquid/README.md](ablations/no_liquid/README.md)
-- [ablations/no_liquid/README_TR.md](ablations/no_liquid/README_TR.md)
-- [ablations/dense_only/README.md](ablations/dense_only/README.md)
-- [ablations/dense_only/README_TR.md](ablations/dense_only/README_TR.md)
-- [ablations/bitlinear_off/README.md](ablations/bitlinear_off/README.md)
-- [ablations/bitlinear_off/README_TR.md](ablations/bitlinear_off/README_TR.md)
-- [experiments/exp_001_baseline/notes.md](experiments/exp_001_baseline/notes.md)
-- [experiments/exp_001_baseline/notes_TR.md](experiments/exp_001_baseline/notes_TR.md)
-- [tools/abuse_tests.md](tools/abuse_tests.md)
-- [tools/abuse_tests_TR.md](tools/abuse_tests_TR.md)
-- [tools/sandbox/README.md](tools/sandbox/README.md)
-- [tools/sandbox/README_TR.md](tools/sandbox/README_TR.md)
-- [tools/contracts/README.md](tools/contracts/README.md)
-- [tools/contracts/README_TR.md](tools/contracts/README_TR.md)
-- [training_dynamics/cold_vs_warm.md](training_dynamics/cold_vs_warm.md)
-- [training_dynamics/cold_vs_warm_TR.md](training_dynamics/cold_vs_warm_TR.md)
+- [SECURITY.md](SECURITY.md) — Security policy (EN).
+- [SECURITY_TR.md](SECURITY_TR.md) — Security policy (TR).
+- [DECISIONS.md](DECISIONS.md) — Architecture decisions (EN).
+- [DECISIONS_TR.md](DECISIONS_TR.md) — Architecture decisions (TR).
+- [datasets/README.md](datasets/README.md) — Dataset overview (EN).
+- [datasets/README_TR.md](datasets/README_TR.md) — Dataset overview (TR).
+- [datasets/SOURCES.md](datasets/SOURCES.md) — Data sources (EN).
+- [datasets/SOURCES_TR.md](datasets/SOURCES_TR.md) — Data sources (TR).
+- [datasets/LICENSES.md](datasets/LICENSES.md) — Data licenses (EN).
+- [datasets/LICENSES_TR.md](datasets/LICENSES_TR.md) — Data licenses (TR).
+- [repro/seed_policy.md](repro/seed_policy.md) — Seed policy (EN).
+- [repro/seed_policy_TR.md](repro/seed_policy_TR.md) — Seed policy (TR).
+- [interfaces/inference_contract.md](interfaces/inference_contract.md) — Inference contract (EN).
+- [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md) — Inference contract (TR).
+- [economics/cost_model.md](economics/cost_model.md) — Cost model (EN).
+- [economics/cost_model_TR.md](economics/cost_model_TR.md) — Cost model (TR).
+- [economics/efficiency_report.md](economics/efficiency_report.md) — Efficiency report (EN).
+- [economics/efficiency_report_TR.md](economics/efficiency_report_TR.md) — Efficiency report (TR).
+- [limits/scaling_breakpoints.md](limits/scaling_breakpoints.md) — Scaling breakpoints (EN).
+- [limits/scaling_breakpoints_TR.md](limits/scaling_breakpoints_TR.md) — Scaling breakpoints (TR).
+- [postmortems/README.md](postmortems/README.md) — Postmortem guide (EN).
+- [postmortems/README_TR.md](postmortems/README_TR.md) — Postmortem guide (TR).
+- [postmortems/_template.md](postmortems/_template.md) — Postmortem template (EN).
+- [postmortems/_template_TR.md](postmortems/_template_TR.md) — Postmortem template (TR).
+- [prompts/changelog.md](prompts/changelog.md) — Prompt change log (EN).
+- [prompts/changelog_TR.md](prompts/changelog_TR.md) — Prompt change log (TR).
+- [tokenizer/stats.md](tokenizer/stats.md) — Tokenizer stats (EN).
+- [tokenizer/stats_TR.md](tokenizer/stats_TR.md) — Tokenizer stats (TR).
+- [tokenizer/drift_report.md](tokenizer/drift_report.md) — Tokenizer drift report (EN).
+- [tokenizer/drift_report_TR.md](tokenizer/drift_report_TR.md) — Tokenizer drift report (TR).
+- [tokenizer/tr/README.md](tokenizer/tr/README.md) — Turkish tokenizer cache note (EN).
+- [tokenizer/tr/README_TR.md](tokenizer/tr/README_TR.md) — Turkish tokenizer cache note (TR).
+- [ablations/results.md](ablations/results.md) — Ablation results (EN).
+- [ablations/results_TR.md](ablations/results_TR.md) — Ablation results (TR).
+- [ablations/no_moe/README.md](ablations/no_moe/README.md) — Ablation: no MoE (EN).
+- [ablations/no_moe/README_TR.md](ablations/no_moe/README_TR.md) — Ablation: no MoE (TR).
+- [ablations/no_liquid/README.md](ablations/no_liquid/README.md) — Ablation: no Liquid (EN).
+- [ablations/no_liquid/README_TR.md](ablations/no_liquid/README_TR.md) — Ablation: no Liquid (TR).
+- [ablations/dense_only/README.md](ablations/dense_only/README.md) — Ablation: dense-only (EN).
+- [ablations/dense_only/README_TR.md](ablations/dense_only/README_TR.md) — Ablation: dense-only (TR).
+- [ablations/bitlinear_off/README.md](ablations/bitlinear_off/README.md) — Ablation: BitLinear off (EN).
+- [ablations/bitlinear_off/README_TR.md](ablations/bitlinear_off/README_TR.md) — Ablation: BitLinear off (TR).
+- [experiments/exp_001_baseline/notes.md](experiments/exp_001_baseline/notes.md) — Experiment notes (EN).
+- [experiments/exp_001_baseline/notes_TR.md](experiments/exp_001_baseline/notes_TR.md) — Experiment notes (TR).
+- [tools/abuse_tests.md](tools/abuse_tests.md) — Tool abuse tests (EN).
+- [tools/abuse_tests_TR.md](tools/abuse_tests_TR.md) — Tool abuse tests (TR).
+- [tools/sandbox/README.md](tools/sandbox/README.md) — Tool sandbox guide (EN).
+- [tools/sandbox/README_TR.md](tools/sandbox/README_TR.md) — Tool sandbox guide (TR).
+- [tools/contracts/README.md](tools/contracts/README.md) — Tool contracts (EN).
+- [tools/contracts/README_TR.md](tools/contracts/README_TR.md) — Tool contracts (TR).
+- [training_dynamics/cold_vs_warm.md](training_dynamics/cold_vs_warm.md) — Training dynamics notes (EN).
+- [training_dynamics/cold_vs_warm_TR.md](training_dynamics/cold_vs_warm_TR.md) — Training dynamics notes (TR).
 
 ---
 
@@ -467,7 +471,7 @@ MertFormer Titan (2.64B Parameters)
 | **Baseline** | 2.0 sec | 64 tok/s | 47% | 38 GB |
 | **v27.0 (Optimized)** | **~1.2 sec** (Est.) | **~107 tok/s** (Est.) | **~95%** (Target) | **~76 GB** (Target) |
 | **Speedup (Proj.)** | **+67%** | **+67%** | **+102%** | **+100%** |
-*Note: Performance metrics are pre-training estimates based on architecture simulation. BitNet 1.58 inference now includes an optional low-bit kernel path, but energy/TOPS gains still require real device measurement. Furthermore, the **Residual Scaling Effect** maintains signal stability throughout 18 layers using the $1/\sqrt{2}$ formula, aiming to keep gradient flow stable even in the deepest layer.*
+*Note: Performance metrics are pre-training estimates based on architecture simulation. BitNet 1.58 inference now includes an optional low-bit kernel path; the Tensor Core path is **experimental** and opt-in (`MERTFORMER_TENSORCORE=1`). Energy/TOPS gains still require real device measurement. Furthermore, the **Residual Scaling Effect** maintains signal stability throughout 18 layers using the $1/\sqrt{2}$ formula, aiming to keep gradient flow stable even in the deepest layer.*
 
 ### Memory Footprint
 | Component | FP32 | BF16 | BitNet 1.58 |
@@ -585,6 +589,7 @@ The following items are implemented and tied to concrete files/logs:
 - Internal Truth Benchmarks (HumanEval/MBPP): `scripts/benchmarks_internal.py`
 - Phase 2: Asset Stack
 - Demo Video Script (offline): `reports/demo_video_script.md`
+- Optional Auto Demo Video: `scripts/auto_demo_video.py` (ffmpeg required)
 - One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`, `PITCH.md`
 - Founders Hub Application Draft: `reports/founders_hub_application.md`
 - Phase 3: Future Horizons
@@ -630,6 +635,8 @@ MertFormer Titan includes a professional-grade diagnostic judge. Run `./run.sh -
 2026-01-31 16:50:55,490 - [INFO] - ✈️ FINAL RESULT: 🏆 ALL GREEN
 2026-01-31 16:50:55,490 - [INFO] - ✈️ ============================================================
 ```
+
+*Note: Sample log above is from 2026-01-31. Run `./run.sh --test` to refresh with current environment.*
 
 ---
 
@@ -856,6 +863,21 @@ Planlanan Türkçe veri kaynakları:
 - NPU optimization planlandı
 - Gerçek cihaz testi: Roadmap v29.0
 
+### Q: Low-bit kernel production-ready mi?
+
+**A**: **Experimental reference kernel** (correctness-first):
+- BitNet training path ayrı bir katman (mevcut)
+- Low-bit inference path **opt-in**
+- Tensor Core path **deneysel** (`MERTFORMER_TENSORCORE=1`)
+- Gerçek profil/ölçüm olmadan hız/enerji iddiası yapılmaz
+
+### Q: Türkçe tokenizer var mı?
+
+**A**: **Opt-in** (varsayılan kapalı):
+- `use_tr_tokenizer=false` (default)
+- `scripts/download_tr_tokenizer.py` ile indirilebilir
+- Distillation uyumu için risk kontrollü POC önerilir
+
 ---
 
 <a id="project-structure"></a>
@@ -919,9 +941,11 @@ NİHAİ/
 │   ├── 📄 checkpoint_restore_drill.py # Checkpoint restore drill
 │   ├── 📄 failure_budget_drill.py # Failure budget drill
 │   ├── 📄 build_investor_deck.py # PPTX deck generator
+│   ├── 📄 auto_demo_video.py # Optional demo video automation (ffmpeg)
 │   ├── 📄 eval.py          # GSM8K eval stub
 │   ├── 📄 mac_simulation.py # Mac simulation run
 │   ├── 📄 mini_titan_poc.py # Forensic PoC logger
+│   ├── 📄 download_tr_tokenizer.py # Turkish tokenizer download (opt-in)
 │   ├── 📄 scaling_audit_math.py # Scaling audit math
 │   ├── 📄 test_onnx_export.py # ONNX export test
 │   ├── 📄 titan_onnx_stress_test.py # ONNX stress test
@@ -1006,7 +1030,10 @@ NİHAİ/
 │   ├── 📄 stats.md
 │   ├── 📄 stats_TR.md
 │   ├── 📄 drift_report.md
-│   └── 📄 drift_report_TR.md
+│   ├── 📄 drift_report_TR.md
+│   └── 📂 tr/              # Turkish tokenizer cache (opt-in)
+│       ├── 📄 README.md
+│       └── 📄 README_TR.md
 ├── 📂 tools/               # Tool sandbox & contracts
 │   ├── 📄 abuse_tests.md
 │   ├── 📄 abuse_tests_TR.md
