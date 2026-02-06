@@ -31,7 +31,7 @@ Geleneksel modeller 16-bit (BF16) kullanırken, MertFormer Titan **BitNet b1.58*
 
 $$w_q = \text{clamp}(\text{round}(\frac{w}{\gamma + \epsilon}), -1, 1)$$
 
-*   **Residual Scaling Etkisi (Hedef):** 18 katman boyunca sinyal kararlılığı, $1/\sqrt{2}$ formülüyle korunur; gerçek doğrulama gerekir.
+*   **Residual Scaling Etkisi (Hedef):** 18 katman boyunca sinyal kararlılığı, 1/√2 (1/sqrt(2)) katsayısı ile korunur; gerçek doğrulama gerekir.
 
 ### 2.2 Çok Başlı Latent Dikkat (MLA)
 Cihaz içi çıkarımda en büyük engel olan KV Cache darboğazını `mla.py` ile çözer. DeepSeek-V2 mantığını kullanarak KV tensörlerini düşük dereceli (low-rank) latent vektörlere sıkıştırır.

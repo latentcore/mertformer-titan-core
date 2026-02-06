@@ -1,10 +1,10 @@
 # Codex Deep Audit — MertFormer Titan (v1.0 Build 27)
 **Repo:** `/Users/mertyunlu/Desktop/NİHAİ`  
 **Audit-Datum (lokal):** 2026-02-06  
-**Audit-Typ:** Code + Dokumentation + Run-Verifikation (Preflight/Operator Gate/Pytest)
+**Audit-Typ:** Code + Dokumentation + Run-Verifikation (offline-first)
 
 ## Kisa TR Ozet (6-10 satir)
-Bu repo; “mobile-first / NPU hedefli” bir LLM mimarisi icin BitLinear (dusuk-bit agirlik simülasyonu), MLA attention, MoE + LiquidRouter routing ve Liquid/CfC dinamik katmanlari bir araya getiren kapsamli bir Ar-Ge + engineering PoC calismasi. Mimari ve egitim iskeleti gercek: preflight PASS, operator-mode gate PASS, pytest PASS (21 passed, 4 skipped). Dokumantasyon genis ama performans/NPU hiz/enerji gibi rakamlar su an “hedef/iddia” seviyesinde (cihaz profili + gercek egitim/ckpt yok). En buyuk teknik riskler: (1) dataset kaynak/lisans envanteri kodda referanslanan tum kaynaklarla uyumlu degil, (2) Python 3.14+’ta `torch.jit.script` uyarisi (gelecekte kirilma riski), (3) global `cfg` ve import-side-effect’ler (test/SDK entegrasyonunda surpriz). Seviye olarak: **Engineering PoC / Ar-Ge (Pre-Training)**; pilot/urun icin snapshot’li veri, benchmark ve ops guvenlik standardizasyonu gerekli. Git gecmisi tek author gosteriyor; en olasi ekip: 1 kisi (belirsizlik payi: tool/yardimci katkilar görünmeyebilir). Not: Audit sirasinda bazi stabilite/guvenlik duzeltmeleri uygulandi (secret redaction, GQA guard, preflight’in daha deterministik bitmesi).
+Bu repo; “mobile-first / NPU hedefli” bir LLM mimarisi icin BitLinear (dusuk-bit agirlik simulasyonu), MLA attention, MoE + LiquidRouter routing ve Liquid/CfC dinamik katmanlarini bir araya getiren kapsamli bir Ar-Ge + engineering PoC calismasi. Mimarinin ve egitim iskeletinin calistigi dogrulandi: secret scan PASS, preflight PASS, operator-mode gate PASS, pytest PASS (`21 passed, 4 skipped`) ve `run.sh --test` offline-first PASS. Dataset kaynak/lisans envanteri artik kodla hizali (inventory + LICENSES + snapshot/hash registry mevcut; `datasets/hashes.json` pinlenmis revision + manifest fingerprint iceriyor); bununla birlikte `bigcode/the-stack-v2` gibi gated/karma lisansli kaynaklar kurumsal egitimde hukuki onay sureci gerektirir. Dokumantasyon genis ama performans/NPU hiz/enerji gibi rakamlar su an “hedef/iddia” seviyesinde (reprodusibl checkpoint + benchmark raporu yok). Seviye: **Engineering PoC / Ar-Ge (Pre-Training)**; “review-ready” (muhendislik incelemesi ve egitime baslamak icin) ama “production-ready” degil (egitim + benchmark + cihaz profili eksik). Git gecmisi tek author gosteriyor; en olasi ekip: 1 kisi (belirsizlik payi: tool/yardimci katkilar Git’te gorunmeyebilir).
 
 ---
 
@@ -21,31 +21,33 @@ Nicht-Ziel: Volltraining (Tage/Wochen) oder echte Device-/Benchmark-Validierung 
 ---
 
 ## 2) Repository Snapshot (Metriken)
-### 2.1 Umgebung (Verified (Run))
+### 2.1 Verification Baseline (Verified (Run))
 - Host: MacBook Air (Apple Silicon M4), 16 GB RAM, macOS 26.2 (arm64) (`reports/system_hardware.md`)
-- Python: 3.14.0
-- Torch: 2.10.0 (MPS verfuegbar, CUDA nicht verfuegbar)
+- Python (baseline): **3.11.14** (`.titan-venv/bin/python -V`)
+- Default: **offline-first** (`TITAN_OFFLINE=1`)
+- Single-command verification: `bash scripts/verify_all.sh`
 
-### 2.2 Inhalte (Verified (Run))
-Erfasst (ohne `.git/`, `.titan-venv/`, `.lint-venv/`, `.pytest_cache/`, `__pycache__/`):
-- Dateien gesamt: **266**
-- Markdown: **113**, Python: **82**, JSON: **15**, JSONL: **18**, YAML: **8**, TOML: **1**, Shell: **1**
-- Tests: **8** Dateien unter `tests/`
-- Skripte: **30** Dateien unter `scripts/`
+### 2.2 Tracked Contents (Verified (Run))
+Metriken basieren auf `git ls-files` (nur tracked; keine lokalen Artefakte):
+- Tracked files total: **254**
+- Markdown: **126**, Python: **89**, JSON: **8**, JSONL: **2**, YAML: **9**, YML: **1**, TOML: **1**, Shell: **3**, TXT: **3**, Other: **12**
+- `scripts/*.py`: **35**
+- `tests/*.py`: **8**
 
-Text-Zeilen (grob, nach Endung; inkl. Daten-Dateien wie `tokenizer/tr/tokenizer.json`):
-- Python: **13,259** Zeilen
-- Markdown: **5,851** Zeilen
+Text-Zeilen (tracked, grob nach Endung; Binaerdateien ignoriert):
+- Python: **14,610** Zeilen
+- Markdown: **7,009** Zeilen
 
-Groesste Dateien (Auszug, lokal; Verified (Run)):
-- `test_export.onnx.data` (~43.6 MB, untracked Run-Artefakt)
-- `MertFormer_Titan_OnyxStorm_v1.0_B27_Locked.zip` (~3.7 MB, per `.gitignore` ignoriert)
-- `tokenizer/tr/tokenizer.json` (~3.3 MB, per `.gitignore` ignoriert)
-- `assets/synaptic_map.png` (~0.9 MB)
+Groesste tracked Dateien (Auszug, lokal; Verified (Run)):
+- `assets/synaptic_map.png` (~0.93 MB)
+- `assets/header.png` (~0.86 MB)
+- `README.md` / `README_TR.md` (~78 KB)
+- `train/train.py` (~68 KB)
 
 ### 2.3 Git-Analyse (Verified (Run))
-- Autor:innen laut Git-Historie: **1** (91 Commits)
-- Sichtbarer Zeitraum: **2026-02-02** bis **2026-02-05**
+- Commits: **103**
+- Autor:innen laut Git-Historie: **1** (`git shortlog -sne HEAD`)
+- Sichtbarer Zeitraum: **2026-02-02** bis **2026-02-06**
 
 Interpretation (Assumption):
 - Sehr wahrscheinlich 1 Hauptentwickler (ggf. mit Tools/Assistenten), da Single-Author-Historie + konsistente Struktur.
@@ -64,7 +66,8 @@ Interpretation (Assumption):
   - `qinn.py`: optionaler unitary Layer (Cayley Transform)
   - `mertformer_block.py`: Block-Komposition (Norm -> MLA -> optional Liquid -> FFN/MoE -> optional QINN)
 - **Training:** `train/train.py` (Accelerate, Curriculum, Offline/Online Distillation, Checkpoints, Export)
-- **Scripts/Ops:** `run.sh`, `scripts/titan_preflight.py`, `scripts/operator_mode_gate.py`, `scripts/overfit_gate.py`, `scripts/checkpoint_restore_drill.py`, `scripts/failure_budget_drill.py`
+- **Scripts/Ops:** `run.sh`, `scripts/bootstrap_venv.sh`, `scripts/verify_all.sh`, `scripts/titan_preflight.py`, `scripts/operator_mode_gate.py`, `scripts/overfit_gate.py`, `scripts/checkpoint_restore_drill.py`, `scripts/failure_budget_drill.py`
+- **Dataset Compliance:** `scripts/extract_dataset_refs.py` (Inventory), `scripts/record_dataset_hashes.py` (Snapshot/Hash Registry), `datasets/SOURCES*.md`, `datasets/LICENSES*.md`, `datasets/hashes.json`
 - **SDK/CLI:** `mertformer_sdk/` (API + CLI Wrapper)
 - **Orchestrator (optional):** `orchestrator/` (Memory/RAG/Web/Audio/SenseEngine; teils optional deps)
 
@@ -80,12 +83,13 @@ Interpretation (Assumption):
 ## 4) Build/Run-Pipeline (Wie wird es gestartet?)
 ### 4.1 `run.sh` (Verified (Code))
 High-Level Ablauf:
-1. Laedt `.env` (HF/WandB Secrets)
-2. Installiert Dependencies (via `python -m pip`)
-3. Auto-configure Accelerate
-4. Fuehrt `scripts/titan_preflight.py` aus
-5. Normalmodus: Operator Gate (full) + Smart Runner (Data -> Distill -> Train)
-6. `--test`: Exit nach Preflight
+1. Waehlt bevorzugt `.titan-venv/bin/python` (sonst optionales Bootstrap via `scripts/bootstrap_venv.sh`)
+2. Laedt `.env` (Secrets werden nicht ausgegeben; offline-first Default)
+3. `scripts/version_checker.py` (lokale Konsistenz)
+4. Optional: WandB Login nur wenn `TITAN_OFFLINE=0` und `TITAN_WANDB=1`
+5. Fuehrt `scripts/titan_preflight.py` aus (offline: keine HF-Connectivity)
+6. `--test/--verify`: Exit nach Preflight
+7. Normalmodus: Training-Pipeline ist **deaktiviert** solange `TITAN_OFFLINE=1` (Safety Gate)
 
 ### 4.2 Ops-Hinweis: Venv-Relocation (Verified (Code)+Assumption)
 Die Repo-`/.titan-venv` wirkt verschoben/relocated (einige venv-CLIs koennen Shebang-Probleme haben).  
@@ -97,12 +101,14 @@ Mit `python -m pip` / `python -m wandb` ist `run.sh` robuster, aber direkte CLI-
 ### 5.1 Ergebnis-Tabelle (Verified (Run))
 | Schritt | Command | Ergebnis | Notizen |
 | --- | --- | --- | --- |
-| Preflight | `./.titan-venv/bin/python scripts/titan_preflight.py` | **PASS (Exit 0)** | Secrets redacted; waehrend Audit von Streaming-Sample auf metadata-basierten Check umgestellt (vorher: moeglicher “hang”) |
-| Operator Gate (safe) | `./.titan-venv/bin/python scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl` | **PASS (Exit 0)** | Overfit-Gate passt (Loss faellt), Golden Samples PASS, Benchmarks “ready” |
+| Secret Scan (tracked) | `./.titan-venv/bin/python scripts/secret_scan.py` | **PASS (Exit 0)** | Keine Secret-Patterns in tracked Dateien |
 | Unit Tests | `./.titan-venv/bin/python -m pytest -q` | **PASS** | `21 passed, 4 skipped` |
+| Preflight (offline) | `TITAN_OFFLINE=1 ./.titan-venv/bin/python scripts/titan_preflight.py` | **PASS (Exit 0)** | HF/WandB Connectivity wird im Offline-Default uebersprungen; keine Token-Ausgabe |
+| Operator Gate (safe, offline) | `./.titan-venv/bin/python scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl` | **PASS (Exit 0)** | Overfit-Gate PASS (Loss faellt), Golden Samples PASS, Benchmarks “ready” |
+| `run.sh --test` offline-first | `TITAN_OFFLINE=1 bash run.sh --test` | **PASS (Exit 0)** | Keine externen Logins/Downloads; Exit nach Preflight |
 
 ### 5.2 Pytest-Warnungen (Verified (Run))
-- Python 3.14+: `torch.jit.script` DeprecationWarning (JIT kann brechen; betrifft `layers/liquid.py`)
+- `torch.jit.script` DeprecationWarning (Torch): betrifft JIT-Pfad in `layers/liquid.py`
 - Torch ONNX Export: Warnungen bzgl. `dynamic_axes` / dynamo-Exporter (kein Fail)
 
 ---
@@ -115,22 +121,26 @@ Mit `python -m pip` / `python -m wandb` ist `run.sh` robuster, aber direkte CLI-
 | BitNet 1.58-bit “weights” | Ja | `layers/bitlinear.py` (ternary quant im forward) | Verified (Code) als Simulation |
 | MoE (8 Experten, top-2) | Ja | `config/config.py`, `layers/moe.py` | Verified (Code) |
 | Offline Distillation (precomputed logits) | Ja | `train/train.py`, `orchestrator/distillation_manager.py` | Verified (Code) |
-| Dataset Lineage/Lizenzen “vollstaendig” | implizit | `scripts/data_pipeline.py` referenziert deutlich mehr Datasets als `datasets/SOURCES.md` listet | **Verified (Code) Finding** |
+| Dataset Lineage/Lizenzen “vollstaendig” | implizit | `scripts/extract_dataset_refs.py` → `datasets/inventory*` + `datasets/SOURCES*.md` + `datasets/LICENSES*.md` + `datasets/hashes.json` | **Verified (Code)+Verified (Run)** (Registry vorhanden) |
 | NPU Speed / Energy Zahlen | Ja | keine Messungen/Benchmarks im Repo | Claim (Docs) |
 
 ---
 
 ## 7) Findings (Neutral, priorisiert)
-### P0 — Compliance/Provenance: Dataset-Inventar ist nicht deckungsgleich zur Pipeline
-**Beobachtung (Verified (Code)):** `scripts/data_pipeline.py` referenziert u.a. `bigcode/the-stack-v2`, `HuggingFaceFW/fineweb-edu`, `OpenAssistant/oasst_top1_2023-08-25`, `glaiveai/glaive-function-calling-v2`, `TFLai/Turkish-Alpaca`, `turkish-nlp-suite/InstrucTurca`, `HuggingFaceTB/cosmopedia`, `TIGER-Lab/MathInstruct`.  
-**Aber:** `datasets/SOURCES.md`/`datasets/LICENSES.md` enthalten nur einen Teil.  
-**Risiko:** Lizenz-/Nutzungs- und Reproduzierbarkeitsluecken (Snapshot/Hash/License-Audit ist unvollstaendig).  
-**Empfehlung:** SOURCES/LICENSES aus Pipeline automatisiert generieren oder manuell angleichen; pro Release Hash-Snapshots dokumentieren.
+### P0 — Post-Training Evidenz fehlt (Checkpoints/Benchmarks/Device-Profiling)
+**Beobachtung (Verified (Code)):** Repo ist bewusst “Pre-Training”; es gibt keine reproduzierbaren Trainings-Checkpoints oder Benchmark-Outputs.  
+**Risiko:** Performance-/NPU-/Energy-Zahlen bleiben Targets; technische Bewertung ist pipeline-zentriert.  
+**Empfehlung:** Erste Trainings-Session auf Zielhardware + `scripts/benchmarks_internal.py` Outputs unter `reports/benchmarks/` ablegen; danach README Targets → Verified umstellen.
 
-### P1 — Plattform-Risiko: `torch.jit.script` unter Python 3.14+
-**Beobachtung (Verified (Run)):** DeprecationWarning: JIT kann brechen.  
-**Impact:** zukuenftige Python/Torch Updates koennen preflight/tests/training brechen.  
-**Empfehlung:** Python-Version pinnen (<=3.13) oder JIT-Pfad mittelfristig auf `torch.compile`/`torch.export` migrieren.
+### P0 — Compliance Prozess (gated / mixed-license Quellen)
+**Beobachtung (Verified (Code)):** `datasets/LICENSES*.md` und `datasets/hashes.json` sind vorhanden; `bigcode/the-stack-v2` ist jedoch gated und hat gemischte Upstream-Lizenzen.  
+**Risiko:** Kuratorische/legale Freigabe ist fuer kuratierte/denetimli Trainingslaeufe erforderlich.  
+**Empfehlung:** Interne Freigabe dokumentieren (Policy + Sign-off) oder alternative, einfacher lizenzierbare Datenquellen pinnen.
+
+### P1 — Plattform: `torch.jit.script` Deprecation (Torch)
+**Beobachtung (Verified (Run)):** Warnungen im Testlauf; JIT ist langfristig “legacy”.  
+**Impact:** mittelfristig Migrationsaufwand (z.B. `torch.compile` / `torch.export`).  
+**Empfehlung:** JIT-Pfad optional halten und Roadmap fuer Ersatz definieren.
 
 ### P1 — Konfig/Robustheit: GQA/KV-Head Validierung muss hart failen (jetzt abgesichert)
 **Beobachtung (Verified (Code)+Verified (Run)):** Ohne Guards kann `num_kv_heads > num_heads` zu invaliden Shapes fuehren.  
@@ -155,17 +165,17 @@ Mit `python -m pip` / `python -m wandb` ist `run.sh` robuster, aber direkte CLI-
 ---
 
 ## 8) Reifegrad-Einstufung (Kategorie)
-**Einstufung:** **Engineering PoC / R&D (Pre-Training)**  
+**Einstufung:** **Engineering PoC / R&D (Pre-Training), review-ready**  
 Begruendung (Verified (Code)+Verified (Run)):
-- **Plus:** Architekturbausteine + Trainings-Skeleton + Operator Gates + SDK sind implementiert; Preflight/Operator Gate/Pytest laufen.
-- **Minus:** Kein reproduzierbarer Trainings-Checkpoint/Benchmark-Report im Repo; Dataset compliance unvollstaendig; Plattformrisiko (Python 3.14 JIT).
+- **Plus:** Architekturbausteine + Trainings-Skeleton + Operator Gates + SDK sind implementiert; offline-first Verify-Pipeline ist gruen.
+- **Minus:** Kein reproduzierbarer Trainings-Checkpoint/Benchmark-Report im Repo; Targets bleiben Targets bis Training/Benchmarks vorliegen.
 
-Kurz: Sehr stark als technische Machbarkeits- und Pipeline-Demo, aber (noch) nicht “pilot/production ready”.
+Kurz: Stark als technische Machbarkeits- und Pipeline-Demo sowie fuer Engineering Review; nicht “production ready” ohne Training + Benchmarks.
 
 ---
 
 ## 9) Team-Estimate (Wie viele Personen?)
-**Evidence (Verified (Run)):** Git-Historie zeigt **1 Autor** (91 Commits).  
+**Evidence (Verified (Run)):** Git-Historie zeigt **1 Autor** (103 Commits).  
 **Wahrscheinlich:** **1 Person** als Hauptentwickler.  
 **Alternative (Assumption):** 1 Kernentwickler + gelegentliche Reviewer/Tools (nicht sichtbar in Git).  
 **Sichere Aussage:** “Mindestens 1, sehr wahrscheinlich 1”.
@@ -174,14 +184,14 @@ Kurz: Sehr stark als technische Machbarkeits- und Pipeline-Demo, aber (noch) nic
 
 ## 10) Konkrete Empfehlungen (2 Wochen / 2 Monate)
 ### 10.1 In 2 Wochen (P0/P1)
-- Dataset-Compliance: SOURCES/LICENSES erweitern (alle Pipeline-Quellen) + Snapshot/Hash Prozess definieren.
-- Plattform-Pinning: Python/Torch Versionen pinnen; JIT-Pfad planen.
-- Ops: `run.sh` test-mode ohne externe Logins (WandB) moeglich machen; Artefakte (`*.onnx.data`) sauber ignorieren/aufräumen.
+- Erste Trainings-Session auf Zielhardware durchfuehren (mit pinnten Datasets aus `datasets/hashes.json`).
+- Benchmark-Outputs erzeugen und unter `reports/benchmarks/` ablegen; README Targets -> Verified aktualisieren.
+- Compliance Sign-off fuer gated/mixed-license Quellen dokumentieren (oder Datenquelle anpassen).
 
 ### 10.2 In 2 Monaten (Pilot-Vorbereitung)
-- Reproduzierbare Dataset-Snapshots + Hashes (pro Stage) + Lizenzbelege.
-- Minimaler “Tiny Titan” Checkpoint + Benchmark-Report (HumanEval/MBPP/GSM8K) end-to-end.
-- Threat Model + “no secrets in logs” Gate, inkl. sichere Log-Retention.
+- Wiederholbare Trainingslaeufe (Resume/Restore Drill) mit “run manifest” + feste Seeds.
+- Device-Profiling (NPU/CPU) + Energy/Latency Messprotokoll.
+- Reifegrad-Check gegen externe Review-Checklist (`reports/review_checklist.md`).
 
 ---
 

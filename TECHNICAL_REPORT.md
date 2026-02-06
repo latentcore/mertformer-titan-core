@@ -32,7 +32,7 @@ While traditional models use 16-bit (BF16), MertFormer Titan reduces weights to 
 **Mathematical Quantization Formula (`bitlinear.py`):**
 $$w_q = \text{clamp}(\text{round}(\frac{w}{\gamma + \epsilon}), -1, 1)$$
 
-*   **Residual Scaling Effect (Target):** Signal stability is maintained across 18 layers using the $1/\sqrt{2}$ formula; empirical validation required.
+*   **Residual Scaling Effect (Target):** Signal stability is maintained across 18 layers using the 1/√2 (1/sqrt(2)) factor; empirical validation required.
 
 ### 2.2 Multi-Head Latent Attention (MLA)
 It resolves the KV Cache bottleneck—the biggest obstacle in on-device inference—with `mla.py`. Utilizing the DeepSeek-V2 logic, it compresses KV tensors into low-rank latent vectors.
