@@ -5,7 +5,7 @@ Bu dosya, repo'nun inceleme anındaki durumunu (point-in-time) insan-okur bir fo
 ## Snapshot
 
 - Tarih (lokal): 2026-02-06
-- Base Git SHA (kısa): 63e47a2
+- Base Git SHA (kısa): 91c925f
 - Baseline Python: 3.11 (bkz: `repro/python_TR.md`)
 - Varsayılan mod: offline-first (`TITAN_OFFLINE=1`)
 
@@ -33,7 +33,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 
 ## Önemli Dokümanlar
 
-- Mühendislik denetimi: `reports/codex_deep_audit_DE.md`, `reports/codex_deep_audit_TR.md`
+- Mühendislik denetimi: `reports/codex_deep_audit_EN.md`, `reports/codex_deep_audit_DE.md`, `reports/codex_deep_audit_TR.md`
 - Verified vs Target matrisi: `reports/verified_matrix.md`, `reports/verified_matrix_TR.md`
 - Dış inceleme checklisti: `reports/review_checklist.md`, `reports/review_checklist_TR.md`
 - Dataset uyum dokümanları: `datasets/SOURCES*.md`, `datasets/LICENSES*.md`, `datasets/hashes.json`, `datasets/inventory*`

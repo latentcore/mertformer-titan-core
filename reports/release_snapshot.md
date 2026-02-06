@@ -5,7 +5,7 @@ This file is a human-readable snapshot of the repository at a review point-in-ti
 ## Snapshot
 
 - Date (local): 2026-02-06
-- Base Git SHA (short): 63e47a2
+- Base Git SHA (short): 91c925f
 - Baseline Python: 3.11 (see `repro/python.md`)
 - Default mode: offline-first (`TITAN_OFFLINE=1`)
 
@@ -33,7 +33,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 
 ## Key Docs
 
-- Engineering audit: `reports/codex_deep_audit_DE.md`, `reports/codex_deep_audit_TR.md`
+- Engineering audit: `reports/codex_deep_audit_EN.md`, `reports/codex_deep_audit_DE.md`, `reports/codex_deep_audit_TR.md`
 - Verified vs Target matrix: `reports/verified_matrix.md`, `reports/verified_matrix_TR.md`
 - External review checklist: `reports/review_checklist.md`, `reports/review_checklist_TR.md`
 - Dataset compliance: `datasets/SOURCES*.md`, `datasets/LICENSES*.md`, `datasets/hashes.json`, `datasets/inventory*`
