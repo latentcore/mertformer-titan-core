@@ -63,6 +63,7 @@ tokenizer/tr/*
 # Logs (Keep only documentation in git; generated logs are artifacts)
 logs/*
 !logs/README.md
+!logs/README_TR.md
 
 # Temporary
 *.tmp
