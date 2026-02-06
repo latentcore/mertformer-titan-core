@@ -261,7 +261,7 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 ### Neden MertFormer Titan?
 
 - 🛡️ **Önce Gizlilik**: %100 cihaz içi, sıfır bulut bağımlılığı
-- ⚡ **Ultra Verimli**: BitNet kuantizasyonu ile teorik %93.75 bellek tasarrufu
+- ⚡ **Ultra Verimli**: BitNet kuantizasyonu ile teorik **FP32’ye göre ~20x daha küçük** (32-bit → 1.58-bit; low-bit inference yolu gerektirir)
 - 🏭 **Endüstriyel Sınıf**: Endüstri standardı optimizasyonlar (Flash Attention 2, torch.compile, NCCL tuning)
 - 📱 **Mobil Optimize**: Samsung S25 NPU için JIT derlemesi
 - 🧪 **Araştırma Düzeyi**: Özgün LiquidRouter mimarisi (bağlamsal MoE yönlendirme)
@@ -275,7 +275,7 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 ### 1. **BitNet 1.58-bit Kuantizasyon** 🤏
 - Üçlü (Ternary) ağırlıklar: `{-1, 0, +1}`
 - INT8 aktivasyonlar: `[-127, 127]`
-- **teorik %93.75 bellek azaltma** (32-bit → 1.58-bit; low-bit inference yolu gerektirir)
+- **FP32’ye göre teorik ~20x daha küçük** (32-bit → 1.58-bit; low-bit inference yolu gerektirir)
 - Gradyan akışı için Straight-Through Estimator (STE)
 - Stabilite için RMS ölçekleme (v26.0 yükseltmesi)
 
@@ -502,7 +502,7 @@ MertFormer Titan (2.64B Parametre)
 <a id="performans"></a>
 ## 📊 Performans
 
-### Eğitim Hızı (8x A100 80GB)
+### Performans Hedefleri (Projected vs Baseline) — Eğitim Hızı (8x A100 80GB)
 | Yapılandırma | Süre/Adım | Verim (Throughput) | GPU Kullanımı | VRAM Kullanımı |
 | :--- | :---: | :---: | :---: | :---: |
 | **Temel (Baseline)** | 2.0 sn | 64 tok/sn | %47 | 38 GB |

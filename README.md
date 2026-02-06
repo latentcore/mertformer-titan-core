@@ -263,7 +263,7 @@ MertFormer Titan is a cutting-edge **2.64B parameter** language model designed f
 ### Why MertFormer Titan?
 
 - 🛡️ **Privacy-First**: 100% on-device, zero cloud dependency
-- ⚡ **Ultra-Efficient**: theoretical 93.75% memory reduction via BitNet quantization
+- ⚡ **Ultra-Efficient**: theoretical **~20x smaller than FP32** (32-bit → 1.58-bit; requires low-bit inference path)
 - 🏭 **Industrial-Grade**: Industry-standard optimizations (Flash Attention 2, torch.compile, NCCL tuning)
 - 📱 **Mobile-Optimized**: JIT compilation for Samsung S25 NPU
 - 🧪 **Research-Grade**: Novel LiquidRouter architecture (contextual MoE routing)
@@ -277,7 +277,7 @@ MertFormer Titan is a cutting-edge **2.64B parameter** language model designed f
 ### 1. **BitNet 1.58-bit Quantization** 🤏
 - Ternary weights: `{-1, 0, +1}`
 - INT8 activations: `[-127, 127]`
-- **theoretical 93.75% memory reduction** (32-bit → 1.58-bit; requires low-bit inference path)
+- **theoretical ~20x smaller than FP32** (32-bit → 1.58-bit; requires low-bit inference path)
 - Straight-Through Estimator (STE) for gradient flow
 - RMS scaling for stability (v26.0 upgrade)
 
@@ -504,7 +504,7 @@ MertFormer Titan (2.64B Parameters)
 <a id="performance"></a>
 ## 📊 Performance
 
-### Training Speed (8x A100 80GB)
+### Performance Targets (Projected vs Baseline) — Training Speed (8x A100 80GB)
 | Configuration | Time/Step | Throughput | GPU Utilization | VRAM Usage |
 | :--- | :---: | :---: | :---: | :---: |
 | **Baseline** | 2.0 sec | 64 tok/s | 47% | 38 GB |
