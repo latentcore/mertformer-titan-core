@@ -29,6 +29,13 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 def _sha256_hexdigest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
+def _sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
 
 def _utc_now_iso() -> str:
     return _dt.datetime.now(tz=_dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -123,16 +130,39 @@ def main() -> int:
         p = PROJECT_ROOT / rel
         if not p.exists():
             continue
-        data = p.read_bytes()
         sources[f"internal:{rel}"] = {
             "kind": "local_file",
             "snapshot": str(p.as_posix()),
             "revision": None,
             "snapshot_date_utc": generated_at,
-            "sha256": _sha256_hexdigest(data),
+            "sha256": _sha256_file(p),
             "status": "verified",
             "ref_url": None,
-            "bytes": len(data),
+            "bytes": p.stat().st_size,
+        }
+
+    # Internal, local stage snapshots (gitignored artifacts, but hashable for air-gapped runs).
+    stage_candidates = [
+        "datasets/stage1/stage1_data.jsonl",
+        "datasets/stage2/stage2_data.jsonl",
+        "datasets/stage3/stage3_data.jsonl",
+        "datasets/stage4_soul/stage4_data.jsonl",
+        "datasets/stage5_tools/stage5_data.jsonl",
+        "datasets/training_data.jsonl",  # legacy fallback
+    ]
+    for rel in stage_candidates:
+        p = PROJECT_ROOT / rel
+        if not p.exists():
+            continue
+        sources[f"internal:{rel}"] = {
+            "kind": "local_file",
+            "snapshot": str(p.as_posix()),
+            "revision": None,
+            "snapshot_date_utc": generated_at,
+            "sha256": _sha256_file(p),
+            "status": "verified",
+            "ref_url": None,
+            "bytes": p.stat().st_size,
         }
 
     out = Path(args.out)
