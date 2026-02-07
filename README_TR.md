@@ -1054,13 +1054,20 @@ NİHAİ/
 │       ├── 📄 metrics.json
 │       ├── 📄 notes.md
 │       └── 📄 notes_TR.md
-├── 📂 assets/              # Branding & Synaptic Maps
-│   ├── 📄 header.png       # Header gorseli
-│   └── 📄 synaptic_map.png # Katman hiyerarsisi
+├── 📂 assets/              # Branding, gorsel varliklar ve demo kanitlari
+│   ├── 📄 header.png            # Header görseli
+│   ├── 📄 synaptic_map.png      # Katman hiyerarşisi
+│   ├── 📄 snake_demo_proof.mp4  # Snake demo video kanıtı
+│   └── 📄 snake_demo_preview.gif # Snake demo hafif önizleme
 ├── 📂 tests/               # Unit ve entegrasyon testleri
 │   ├── 📄 test_architecture_integrity.py # Mimari testler
-│   ├── 📄 test_comprehensive.py # Uctan uca testler
-│   └── 📄 test_model.py    # Model unit testleri
+│   ├── 📄 test_comprehensive.py # Uçtan uca testler
+│   ├── 📄 test_export_metadata.py # Export metadata testleri
+│   ├── 📄 test_kernel_equivalence.py # Kernel eşdeğerlik testleri
+│   ├── 📄 test_model.py    # Model unit testleri
+│   ├── 📄 test_onnx_metadata_hook.py # ONNX metadata hook testleri
+│   ├── 📄 test_sdk_api.py  # SDK API testleri
+│   └── 📄 test_train_loop_sanity.py # Training loop sanity testleri
 ├── 📂 orchestrator/        # Agentic runtime (opsiyonel / hedef mimari)
 │   ├── 📄 __init__.py      # Paket isaretcisi
 │   ├── 📄 core.py          # Orchestrator girisi
@@ -1136,14 +1143,19 @@ NİHAİ/
 ├── 📂 reports/             # Executive Health & Validation Reports
 │   ├── 📄 one_pager.md      # One-pager (EN)
 │   ├── 📄 one_pager_TR.md   # One-pager (TR)
-│   ├── 📄 codex_deep_audit_DE.md # Derin muhendislik denetimi (DE)
-│   ├── 📄 codex_deep_audit_TR.md # Derin muhendislik denetimi (TR)
+│   ├── 📄 codex_deep_audit_EN.md # Derin mühendislik denetimi (EN)
+│   ├── 📄 codex_deep_audit_EN_TR.md # Derin mühendislik denetimi (EN->TR)
+│   ├── 📄 codex_deep_audit_DE.md # Derin mühendislik denetimi (DE)
+│   ├── 📄 codex_deep_audit_DE_TR.md # Derin mühendislik denetimi (DE->TR)
+│   ├── 📄 codex_deep_audit_TR.md # Derin mühendislik denetimi (TR)
 │   ├── 📄 verified_matrix.md # Verified vs Target matrisi (EN)
 │   ├── 📄 verified_matrix_TR.md # Verified vs Target matrisi (TR)
 │   ├── 📄 review_checklist.md # Dis inceleme checklisti (EN)
 │   ├── 📄 review_checklist_TR.md # Dis inceleme checklisti (TR)
 │   ├── 📄 release_snapshot.md # Release snapshot (EN)
 │   ├── 📄 release_snapshot_TR.md # Release snapshot (TR)
+│   ├── 📄 final_sync_matrix.md # Son senkron matrisi (EN)
+│   ├── 📄 final_sync_matrix_TR.md # Son senkron matrisi (TR)
 │   ├── 📄 technical_snapshot.md # Technical snapshot (EN)
 │   ├── 📄 technical_snapshot_TR.md # Technical snapshot (TR)
 │   ├── 📄 report_accuracy_audit.md # Report accuracy audit (EN)
@@ -1193,9 +1205,12 @@ NİHAİ/
 │   ├── 📄 hashes.json      # Snapshot hashes
 │   ├── 📄 validation.jsonl # Validation set
 │   └── 📄 golden_samples.jsonl # 50 golden prompts
-├── 📂 logs/                # Log artifact'leri (varsayılan gitignored)
-│   └── 📄 README.md        # Log politikası / index (track'li)
-├── 📄 Dockerfile           # Containarized Environment
+├── 📂 logs/                # Log artifact'leri (politika + yakalanan run ciktilari)
+│   ├── 📄 README.md        # Log politikasi / index (EN)
+│   ├── 📄 README_TR.md     # Log politikasi / index (TR)
+│   ├── 📂 operator_mode/   # Operator-mode manifest ve zincirli loglar
+│   └── 📂 preflight/       # Preflight loglari
+├── 📄 Dockerfile           # Containerized environment
 ├── 📄 run.sh               # Tek komut baslatici (auto-setup + NCCL tuning)
 ├── 📄 requirements.txt     # Python dependencies
 ├── 📄 pyproject.toml       # SDK paketleme metadatasi

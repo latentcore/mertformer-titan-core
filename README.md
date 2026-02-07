@@ -1057,13 +1057,20 @@ NİHAİ/                     # Project root
 │       ├── 📄 metrics.json     # Metrics snapshot
 │       ├── 📄 notes.md         # Experiment notes (EN)
 │       └── 📄 notes_TR.md      # Experiment notes (TR)
-├── 📂 assets/              # Branding & Synaptic Maps
-│   ├── 📄 header.png       # Futuristic Header Image
-│   └── 📄 synaptic_map.png # Layer Hierarchy Visualization
+├── 📂 assets/              # Branding, visual assets, and demo proofs
+│   ├── 📄 header.png            # Futuristic Header Image
+│   ├── 📄 synaptic_map.png      # Layer Hierarchy Visualization
+│   ├── 📄 snake_demo_proof.mp4  # Snake demo video proof
+│   └── 📄 snake_demo_preview.gif # Snake demo lightweight preview
 ├── 📂 tests/               # Unit & integration tests
 │   ├── 📄 test_architecture_integrity.py # Architecture integrity tests
 │   ├── 📄 test_comprehensive.py # End-to-end system tests
-│   └── 📄 test_model.py    # Model unit tests
+│   ├── 📄 test_export_metadata.py # Export metadata tests
+│   ├── 📄 test_kernel_equivalence.py # Kernel equivalence tests
+│   ├── 📄 test_model.py    # Model unit tests
+│   ├── 📄 test_onnx_metadata_hook.py # ONNX metadata hook tests
+│   ├── 📄 test_sdk_api.py  # SDK API tests
+│   └── 📄 test_train_loop_sanity.py # Training loop sanity tests
 ├── 📂 orchestrator/        # Agentic runtime (optional / target architecture)
 │   ├── 📄 __init__.py      # Package marker
 │   ├── 📄 core.py          # Orchestrator entrypoint
@@ -1139,7 +1146,10 @@ NİHAİ/                     # Project root
 ├── 📂 reports/             # Executive Health & Validation Reports
 │   ├── 📄 one_pager.md      # One-pager (EN)
 │   ├── 📄 one_pager_TR.md   # One-pager (TR)
+│   ├── 📄 codex_deep_audit_EN.md # Deep engineering audit (EN)
+│   ├── 📄 codex_deep_audit_EN_TR.md # Deep engineering audit (EN->TR)
 │   ├── 📄 codex_deep_audit_DE.md # Deep engineering audit (DE)
+│   ├── 📄 codex_deep_audit_DE_TR.md # Deep engineering audit (DE->TR)
 │   ├── 📄 codex_deep_audit_TR.md # Deep engineering audit (TR)
 │   ├── 📄 verified_matrix.md # Verified vs Target matrix (EN)
 │   ├── 📄 verified_matrix_TR.md # Verified vs Target matrix (TR)
@@ -1147,6 +1157,8 @@ NİHAİ/                     # Project root
 │   ├── 📄 review_checklist_TR.md # External review checklist (TR)
 │   ├── 📄 release_snapshot.md # Release snapshot (EN)
 │   ├── 📄 release_snapshot_TR.md # Release snapshot (TR)
+│   ├── 📄 final_sync_matrix.md # Final sync matrix (EN)
+│   ├── 📄 final_sync_matrix_TR.md # Final sync matrix (TR)
 │   ├── 📄 technical_snapshot.md # Technical snapshot (EN)
 │   ├── 📄 technical_snapshot_TR.md # Technical snapshot (TR)
 │   ├── 📄 report_accuracy_audit.md # Report accuracy audit (EN)
@@ -1196,9 +1208,12 @@ NİHAİ/                     # Project root
 │   ├── 📄 hashes.json      # Snapshot hashes
 │   ├── 📄 validation.jsonl # Validation set
 │   └── 📄 golden_samples.jsonl # 50 golden prompts
-├── 📂 logs/                # Log artifacts (gitignored by default)
-│   └── 📄 README.md        # Logs policy / index (tracked)
-├── 📄 Dockerfile           # Containarized Environment
+├── 📂 logs/                # Log artifacts (policy + captured run outputs)
+│   ├── 📄 README.md        # Logs policy / index (EN)
+│   ├── 📄 README_TR.md     # Logs policy / index (TR)
+│   ├── 📂 operator_mode/   # Operator-mode manifests and chained logs
+│   └── 📂 preflight/       # Preflight logs
+├── 📄 Dockerfile           # Containerized environment
 ├── 📄 run.sh               # One-command launcher (auto-setup + NCCL tuning)
 ├── 📄 requirements.txt     # Python dependencies
 ├── 📄 pyproject.toml       # SDK packaging metadata
