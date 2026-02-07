@@ -271,6 +271,10 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 
 MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** için tasarlanmış, son teknoloji ürünü **2.64B parametreli** bir dil modelidir. **BitNet 1.58-bit kuantizasyon**, **Liquid Neural Networks**, **Seyrek Uzmanlar Karışımı (MoE)** ve **Çok Başlı Latent Dikkat (MLA)** teknolojilerini birleştirerek, tamamen bir akıllı telefonda çalışırken **GPT-3.5 seviyesinde performans hedefler (egitim oncesi hedef)**.
 
+Isim acilimi:
+- **MERT**: **Moduler Ucta Akil Yurutme Transformer**
+- **MertFormer**: **Cihaz Ustu Moduler Yurutme ve Guvenilirlik icin Moduler Ucta Akil Yurutme Transformer Catisi**
+
 ### Neden MertFormer Titan?
 
 - 🛡️ **Önce Gizlilik**: %100 cihaz içi, sıfır bulut bağımlılığı

@@ -273,6 +273,10 @@ Security, provenance, reproducibility, and ops notes.
 
 MertFormer Titan is a cutting-edge **2.64B parameter** language model designed for **on-device inference** on mobile platforms. Combining **BitNet 1.58-bit quantization**, **Liquid Neural Networks**, **Sparse Mixture of Experts (MoE)**, and **Multi-Head Latent Attention (MLA)**, it **targets GPT-3.5 level performance (pre-training target)** while running entirely on a smartphone.
 
+Name expansion:
+- **MERT**: **Modular Edge Reasoning Transformer**
+- **MertFormer**: **Modular Edge Reasoning Transformer Framework for On-device Modular Execution and Reliability**
+
 ### Why MertFormer Titan?
 
 - 🛡️ **Privacy-First**: 100% on-device, zero cloud dependency
