@@ -44,3 +44,11 @@ Kural: uygun olan her tracked `X.md` dosyasının `X_TR.md` karşılığı olmal
 | Temiz zip içinde venv/cache/log/.env yok | PASS |
 | Hamdi paketi ekstra `AUDIT_MEMO.md` sadece paket içinde | PASS |
 | Zip SHA-256 özeti üretildi | PASS |
+
+## 6) Release Kimlikleri
+
+- Final git SHA (main): `8d29263`
+- Temiz zip: `/Users/mertyunlu/Desktop/NIHAI_clean_build27.zip`
+- Temiz zip SHA-256: `bf4ac8a263fb451e3058858307e311409de76999c9bc8ad61d5c85c37d05e3c2`
+- Hamdi zip: `/Users/mertyunlu/Desktop/NIHAI_hamdi_clean.zip`
+- Hamdi zip SHA-256: `ae8b522415436288306e389ddcec2a34c987f18e5f1c517556d788ad34e07dba`

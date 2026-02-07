@@ -44,3 +44,11 @@ Rule: every tracked `X.md` has `X_TR.md` pair where applicable.
 | Clean zip excludes venv/cache/log/.env | PASS |
 | Hamdi package includes extra `AUDIT_MEMO.md` only in package | PASS |
 | SHA-256 created for generated zips | PASS |
+
+## 6) Release Identifiers
+
+- Final git SHA (main): `8d29263`
+- Clean zip: `/Users/mertyunlu/Desktop/NIHAI_clean_build27.zip`
+- Clean zip SHA-256: `bf4ac8a263fb451e3058858307e311409de76999c9bc8ad61d5c85c37d05e3c2`
+- Hamdi zip: `/Users/mertyunlu/Desktop/NIHAI_hamdi_clean.zip`
+- Hamdi zip SHA-256: `ae8b522415436288306e389ddcec2a34c987f18e5f1c517556d788ad34e07dba`

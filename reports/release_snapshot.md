@@ -5,7 +5,7 @@ This file is a human-readable snapshot of the repository at a review point-in-ti
 ## Snapshot
 
 - Date (local): 2026-02-07
-- Base Git SHA (short): 91c925f
+- Base Git SHA (short): 8d29263
 - Baseline Python: 3.11 (see `repro/python.md`)
 - Default mode: offline-first (`TITAN_OFFLINE=1`)
 
