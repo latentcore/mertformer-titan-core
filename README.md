@@ -882,7 +882,7 @@ Planned Turkish data sources:
 ### Q: Neden 2.64B parametre? Daha büyük olabilir miydi?
 
 **A**: 2.64B, **mobil cihazlar için optimal nokta**dır:
-- Samsung S25 (16GB RAM) rahatça çalıştırır
+- Samsung S25 (12GB RAM) rahatça çalıştırır
 - BitNet ile ~0.65GB weights (estimate)
 - Hız/kalite dengesi mükemmel
 - Daha büyük modeller (7B+) mobilde yavaş

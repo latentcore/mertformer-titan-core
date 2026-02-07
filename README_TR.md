@@ -269,11 +269,11 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 <a id="genel-bakış"></a>
 ## 🎯 Genel Bakış
 
-MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** için tasarlanmış, son teknoloji ürünü **2.64B parametreli** bir dil modelidir. **BitNet 1.58-bit kuantizasyon**, **Liquid Neural Networks**, **Seyrek Uzmanlar Karışımı (MoE)** ve **Çok Başlı Latent Dikkat (MLA)** teknolojilerini birleştirerek, tamamen bir akıllı telefonda çalışırken **GPT-3.5 seviyesinde performans hedefler (egitim oncesi hedef)**.
+MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** için tasarlanmış, son teknoloji ürünü **2.64B parametreli** bir dil modelidir. **BitNet 1.58-bit kuantizasyon**, **Liquid Neural Networks**, **Seyrek Uzmanlar Karışımı (MoE)** ve **Çok Başlı Latent Dikkat (MLA)** teknolojilerini birleştirerek, tamamen bir akıllı telefonda çalışırken **GPT-3.5 seviyesinde performans hedefler (eğitim öncesi hedef)**.
 
-Isim acilimi:
-- **MERT**: **Moduler Ucta Akil Yurutme Transformer**
-- **MertFormer**: **Cihaz Ustu Moduler Yurutme ve Guvenilirlik icin Moduler Ucta Akil Yurutme Transformer Catisi**
+İsim açılımı:
+- **MERT**: **Modüler Uçta Akıl Yürütme Transformer**
+- **MertFormer**: **Cihaz Üstü Modüler Yürütme ve Güvenilirlik için Modüler Uçta Akıl Yürütme Transformer Çatısı**
 
 ### Neden MertFormer Titan?
 
@@ -879,7 +879,7 @@ Planlanan Türkçe veri kaynakları:
 ### S: Neden 2.64B parametre? Daha büyük olabilir miydi?
 
 **C**: 2.64B, **mobil cihazlar için optimal nokta**dır:
-- Samsung S25 (16GB RAM) rahatça çalıştırır
+- Samsung S25 (12GB RAM) rahatça çalıştırır
 - BitNet ile ~0.65GB weights (tahmini)
 - Hız/kalite dengesi mükemmel
 - Daha büyük modeller (7B+) mobilde yavaş
