@@ -85,7 +85,7 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 - [Kıyaslamalar (Benchmarks)](#kıyaslamalar-benchmarks)
 - [Türkiye Vizyonu](#türkiye-vizyonu)
 - [SSS](#sss)
-- [Ek: Sürü Mimarisi (v5.2)](#appendix-swarm)
+- [Ek: Sürü Mimarisi (Hedef Mimari)](#appendix-swarm)
 - [Lisans](#lisans)
 - [İletişim](#iletişim)
 
@@ -105,6 +105,8 @@ Ana giriş dokümanları ve checklistler.
 - [scripts/README.md](scripts/README.md) — Script kataloğu (EN).
 - [scripts/README_TR.md](scripts/README_TR.md) — Script kataloğu (TR).
 - [snake_demo.py](snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
+- [USAGE_GUIDE.md](USAGE_GUIDE.md) — Operasyonel kullanım kılavuzu (EN).
+- [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md) — Operasyonel kullanım kılavuzu (TR).
 
 **SDK**
 Edge dağıtım için paket + CLI.
@@ -140,12 +142,16 @@ Rapor doğruluk denetimi ve stratejik değer özeti.
 - [reports/codex_deep_audit_EN.md](reports/codex_deep_audit_EN.md) — Derin mühendislik denetimi (EN).
 - [reports/codex_deep_audit_DE.md](reports/codex_deep_audit_DE.md) — Derin mühendislik denetimi (DE).
 - [reports/codex_deep_audit_TR.md](reports/codex_deep_audit_TR.md) — Derin mühendislik denetimi (TR).
+- [reports/codex_deep_audit_EN_TR.md](reports/codex_deep_audit_EN_TR.md) — EN denetim raporunun TR karşılığı.
+- [reports/codex_deep_audit_DE_TR.md](reports/codex_deep_audit_DE_TR.md) — DE denetim raporunun TR karşılığı.
 - [reports/verified_matrix.md](reports/verified_matrix.md) — Verified vs Target matrisi (EN).
 - [reports/verified_matrix_TR.md](reports/verified_matrix_TR.md) — Verified vs Target matrisi (TR).
 - [reports/review_checklist.md](reports/review_checklist.md) — Dış inceleme checklisti (EN).
 - [reports/review_checklist_TR.md](reports/review_checklist_TR.md) — Dış inceleme checklisti (TR).
 - [reports/release_snapshot.md](reports/release_snapshot.md) — Release snapshot (EN).
 - [reports/release_snapshot_TR.md](reports/release_snapshot_TR.md) — Release snapshot (TR).
+- [reports/final_sync_matrix.md](reports/final_sync_matrix.md) — Final senkron matris (EN).
+- [reports/final_sync_matrix_TR.md](reports/final_sync_matrix_TR.md) — Final senkron matris (TR).
 - [reports/benchmarks/README.md](reports/benchmarks/README.md) — Benchmark çıktıları rehberi (EN).
 - [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark çıktıları rehberi (TR).
 - [reports/strategic_value.md](reports/strategic_value.md) — Stratejik değer özeti (EN).
@@ -165,6 +171,7 @@ Yatırımcı materyalleri ve lansman varlıkları.
 - [reports/asset_stack_TR.md](reports/asset_stack_TR.md) — Asset index (TR).
 - [reports/demo_video_script.md](reports/demo_video_script.md) — Demo video script (EN).
 - [reports/demo_video_script_TR.md](reports/demo_video_script_TR.md) — Demo video script (TR).
+- [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4) — 30 saniyelik snake demo kanıt videosu.
 - [reports/founders_hub_application.md](reports/founders_hub_application.md) — Founders Hub taslağı (EN).
 - [reports/founders_hub_application_TR.md](reports/founders_hub_application_TR.md) — Founders Hub taslağı (TR).
 - [reports/security_compliance.md](reports/security_compliance.md) — Güvenlik & uyum özeti (EN).
@@ -277,7 +284,7 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 - INT8 aktivasyonlar: `[-127, 127]`
 - **FP32’ye göre teorik ~20x daha küçük** (32-bit → 1.58-bit; low-bit inference yolu gerektirir)
 - Gradyan akışı için Straight-Through Estimator (STE)
-- Stabilite için RMS ölçekleme (v26.0 yükseltmesi)
+- Stabilite için RMS ölçekleme (legacy yol Build 27 içine entegre edildi)
 
 ### 2. **LiquidRouter (Dünyada İlk)** 🌍
 - **Yenilik**: Liquid Sinir Ağlarının **MoE Yönlendirmesi** için kullanıldığı ilk mimari.
@@ -622,6 +629,7 @@ Aşağıdaki maddeler uygulanmıştır ve kanıt dosyaları ile eşlenmiştir:
 - Phase 2: Asset Stack
 - Demo Video Script (offline): `reports/demo_video_script.md`
 - Opsiyonel Otomatik Demo Video: `scripts/auto_demo_video.py` (ffmpeg gerekli)
+- Snake kanıt videosu üretimi: `.titan-venv/bin/python snake_demo.py --headless --record assets/snake_demo_proof.mp4 --record-seconds 30`
 - One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`, `PITCH.md`
 - Founders Hub Başvuru Taslağı: `reports/founders_hub_application.md`
 - Phase 3: Future Horizons
@@ -834,7 +842,7 @@ MertFormer Titan, sadece bir AI modeli değil, **dijital bağımsızlık manifes
 3. **Kültürel Koruma**: Türk dili ve kültürü AI'da temsil edilir
 4. **Ekonomik Tasarruf**: Bulut maliyeti yok, cihazda çalışır
 
-### Türkçe Corpus (Yol Haritası v28.0)
+### Türkçe Corpus (Build 27 Sonrası Yol Haritası)
 
 Planlanan Türkçe veri kaynakları:
 - **Vikipedi TR**: ~500K makale
@@ -891,7 +899,7 @@ Planlanan Türkçe veri kaynakları:
 **C**: **Evet, teorik olarak**:
 - ONNX export hazır
 - NPU optimizasyonu planlandı
-- Gerçek cihaz testi: Yol Haritası v29.0
+- Gerçek cihaz testi: Build 27 sonrası yol haritası
 
 ### S: Low-bit kernel production-ready mi?
 
@@ -1035,7 +1043,7 @@ NİHAİ/
 │   ├── 📄 test_architecture_integrity.py # Mimari testler
 │   ├── 📄 test_comprehensive.py # Uctan uca testler
 │   └── 📄 test_model.py    # Model unit testleri
-├── 📂 orchestrator/        # Agentic runtime (opsiyonel / hedef v5.2)
+├── 📂 orchestrator/        # Agentic runtime (opsiyonel / hedef mimari)
 │   ├── 📄 __init__.py      # Paket isaretcisi
 │   ├── 📄 core.py          # Orchestrator girisi
 │   ├── 📄 memory.py        # Memory store & retrieval
@@ -1248,17 +1256,17 @@ Paylaşılan bir eğitim sonucunun veya benchmark skorunun doğruluğunu teyit e
 *   **Çekirdek**: LiquidRouter MoE ve MLA ile BitNet 1.58-bit katmanları.
 
 ### 🚀 Gelecek Dönem Hedefleri
-*   **v1.0 (Build 27).x**: Tam eğitim setinin tamamlanması ve Benchmark sonuçlarının yayınlanması.
-*   **v28.0**: Uzun bağlam (16K token) genişletmesi ve Türkçe veri kümesi optimizasyonu.
-*   **v29.0**: Yerel NPU dağıtımı ve gerçek cihaz performansı (Samsung S25).
-*   **v30.0**: `LiquidRouter` mimarisinin akademik yayın ve makale süreci.
-*   **v31.0**: Kapsamlı NLU kıyaslama paketi (MMLU, HumanEval-TR).
-*   **v32.0+**: **Biyolojik Zeka Sentezi** (Sinaptik Plastisite ve Nöromodülasyon hedefleri).
+*   **Build 27.x**: Tam eğitim setinin tamamlanması ve benchmark sonuçlarının yayınlanması.
+*   **Sonraki Hedef A**: Uzun bağlam (16K token) genişletmesi ve Türkçe veri kümesi optimizasyonu.
+*   **Sonraki Hedef B**: Yerel NPU dağıtımı ve gerçek cihaz performansı (Samsung S25).
+*   **Sonraki Hedef C**: `LiquidRouter` mimarisinin akademik yayın ve makale süreci.
+*   **Sonraki Hedef D**: Kapsamlı NLU kıyaslama paketi (MMLU, HumanEval-TR).
+*   **Uzun Vade**: **Biyolojik Zeka Sentezi** (Sinaptik Plastisite ve Nöromodülasyon hedefleri).
 
 ---
 
 <a id="appendix-swarm"></a>
-## 🏢 MertFormer Inc. - Otonom Sürü Mimarisi (v5.2 - Bilge Sürümü) [HEDEF MİMARİ] 🦉
+## 🏢 MertFormer Inc. - Otonom Sürü Mimarisi (Bilge Sürümü) [HEDEF MİMARİ] 🦉
 **Donanım**: NVIDIA RTX 5090 (45 Eşzamanlı Ajan)  
 **Yazılım**: Çok Ajanlı Orkestratör (Python) + BitNet İşçileri (C++)
 
@@ -1303,7 +1311,7 @@ Bu sürüm, sadece üreten değil, her hatasından ders çıkaran ve her projede
 
 ---
 
-### 🧬 v5.2 BİLGE (SAGE) MEKANİZMALARI
+### 🧬 BİLGE (SAGE) MEKANİZMALARI
 
 1.  **🦉 The Wisdom Loop (Bilgelik Döngüsü)**: Sistem her sıfırlandığında tecrübesi artar. Hatalar otomatik kurala dönüşür.
 2.  **👤 The Mert Protocol (Dijital İkiz)**: 15M tokenlik arşiv ile direkt senin gibi karar verir.

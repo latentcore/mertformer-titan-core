@@ -85,7 +85,7 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 - [Benchmarks](#benchmarks)
 - [Turkish Vision](#turkish-vision)
 - [FAQ](#faq)
-- [Appendix: Swarm Architecture (v5.2)](#appendix-swarm)
+- [Appendix: Swarm Architecture (Target)](#appendix-swarm)
 - [License](#license)
 - [Contact](#contact)
 
@@ -105,6 +105,8 @@ Primary entry docs and checklists.
 - [scripts/README.md](scripts/README.md) — Scripts catalog (EN).
 - [scripts/README_TR.md](scripts/README_TR.md) — Scripts catalog (TR).
 - [snake_demo.py](snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
+- [USAGE_GUIDE.md](USAGE_GUIDE.md) — Operational usage guide (EN).
+- [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md) — Operational usage guide (TR).
 
 **SDK**
 Package + CLI for edge deployments.
@@ -140,12 +142,16 @@ Report accuracy audit and strategic value summary.
 - [reports/codex_deep_audit_EN.md](reports/codex_deep_audit_EN.md) — Deep engineering audit (EN).
 - [reports/codex_deep_audit_DE.md](reports/codex_deep_audit_DE.md) — Deep engineering audit (DE).
 - [reports/codex_deep_audit_TR.md](reports/codex_deep_audit_TR.md) — Deep engineering audit (TR).
+- [reports/codex_deep_audit_EN_TR.md](reports/codex_deep_audit_EN_TR.md) — EN audit Turkish counterpart (TR).
+- [reports/codex_deep_audit_DE_TR.md](reports/codex_deep_audit_DE_TR.md) — DE audit Turkish counterpart (TR).
 - [reports/verified_matrix.md](reports/verified_matrix.md) — Verified vs Target matrix (EN).
 - [reports/verified_matrix_TR.md](reports/verified_matrix_TR.md) — Verified vs Target matrix (TR).
 - [reports/review_checklist.md](reports/review_checklist.md) — External review checklist (EN).
 - [reports/review_checklist_TR.md](reports/review_checklist_TR.md) — External review checklist (TR).
 - [reports/release_snapshot.md](reports/release_snapshot.md) — Release snapshot (EN).
 - [reports/release_snapshot_TR.md](reports/release_snapshot_TR.md) — Release snapshot (TR).
+- [reports/final_sync_matrix.md](reports/final_sync_matrix.md) — Final sync matrix (EN).
+- [reports/final_sync_matrix_TR.md](reports/final_sync_matrix_TR.md) — Final sync matrix (TR).
 - [reports/benchmarks/README.md](reports/benchmarks/README.md) — Benchmark outputs guide (EN).
 - [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark outputs guide (TR).
 - [reports/strategic_value.md](reports/strategic_value.md) — Strategic value summary (EN).
@@ -165,6 +171,7 @@ Investor-facing materials and launch assets.
 - [reports/asset_stack_TR.md](reports/asset_stack_TR.md) — Asset index (TR).
 - [reports/demo_video_script.md](reports/demo_video_script.md) — Demo video script (EN).
 - [reports/demo_video_script_TR.md](reports/demo_video_script_TR.md) — Demo video script (TR).
+- [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4) — 30-second snake demo proof clip.
 - [reports/founders_hub_application.md](reports/founders_hub_application.md) — Founders Hub draft (EN).
 - [reports/founders_hub_application_TR.md](reports/founders_hub_application_TR.md) — Founders Hub draft (TR).
 - [reports/security_compliance.md](reports/security_compliance.md) — Security & compliance brief (EN).
@@ -279,7 +286,7 @@ MertFormer Titan is a cutting-edge **2.64B parameter** language model designed f
 - INT8 activations: `[-127, 127]`
 - **theoretical ~20x smaller than FP32** (32-bit → 1.58-bit; requires low-bit inference path)
 - Straight-Through Estimator (STE) for gradient flow
-- RMS scaling for stability (v26.0 upgrade)
+- RMS scaling for stability (legacy path integrated into Build 27)
 
 ### 2. **LiquidRouter (World's First)** 🌍
 - **Novelty**: First-ever use of Liquid Neural Networks for **MoE Routing** (Traffic control, not just memory).
@@ -624,6 +631,7 @@ The following items are implemented and tied to concrete files/logs:
 - Phase 2: Asset Stack
 - Demo Video Script (offline): `reports/demo_video_script.md`
 - Optional Auto Demo Video: `scripts/auto_demo_video.py` (ffmpeg required)
+- Snake proof video generator: `.titan-venv/bin/python snake_demo.py --headless --record assets/snake_demo_proof.mp4 --record-seconds 30`
 - One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`, `PITCH.md`
 - Founders Hub Application Draft: `reports/founders_hub_application.md`
 - Phase 3: Future Horizons
@@ -837,7 +845,7 @@ MertFormer Titan is not just an AI model; it is a digital sovereignty manifesto:
 3. **Cultural Preservation**: Turkish language and culture represented in AI.
 4. **Economic Efficiency**: Lower cloud costs through edge inference.
 
-### Turkish Corpus (Roadmap v28.0)
+### Turkish Corpus (Post-Build-27 Roadmap)
 
 Planned Turkish data sources:
 - **Wikipedia TR**: ~500K articles
@@ -894,7 +902,7 @@ Planned Turkish data sources:
 **A**: **Evet, teorik olarak**:
 - ONNX export hazır
 - NPU optimization planlandı
-- Gerçek cihaz testi: Roadmap v29.0
+- Real-device validation: Post-Build-27 roadmap
 
 ### Q: Low-bit kernel production-ready mi?
 
@@ -1038,7 +1046,7 @@ NİHAİ/                     # Project root
 │   ├── 📄 test_architecture_integrity.py # Architecture integrity tests
 │   ├── 📄 test_comprehensive.py # End-to-end system tests
 │   └── 📄 test_model.py    # Model unit tests
-├── 📂 orchestrator/        # Agentic runtime (optional / target v5.2)
+├── 📂 orchestrator/        # Agentic runtime (optional / target architecture)
 │   ├── 📄 __init__.py      # Package marker
 │   ├── 📄 core.py          # Orchestrator entrypoint
 │   ├── 📄 memory.py        # Memory store & retrieval
@@ -1251,17 +1259,17 @@ To verify the authenticity of a shared run log or benchmark result:
 *   **Core**: BitNet 1.58-bit layers with LiquidRouter MoE and MLA.
 
 ### 🚀 Upcoming Milestones
-*   **v1.0 (Build 27).x**: Full training suite completion and Benchmark publication.
-*   **v28.0**: Long-context expansion (16K tokens) and Turkish corpus enrichment.
-*   **v29.0**: Native NPU deployment and real-device profiling (Samsung S25).
-*   **v30.0**: Academic publication of the `LiquidRouter` architecture.
-*   **v31.0**: Comprehensive NLU benchmark suite (MMLU, HumanEval-TR).
-*   **v32.0+**: **Biological Intelligence Synthesis** (Synaptic Plasticity & Neuromodulation targets).
+*   **Build 27.x**: Full training suite completion and benchmark publication.
+*   **Next Milestone A**: Long-context expansion (16K tokens) and Turkish corpus enrichment.
+*   **Next Milestone B**: Native NPU deployment and real-device profiling (Samsung S25).
+*   **Next Milestone C**: Academic publication of the `LiquidRouter` architecture.
+*   **Next Milestone D**: Comprehensive NLU benchmark suite (MMLU, HumanEval-TR).
+*   **Long Horizon**: **Biological Intelligence Synthesis** (Synaptic Plasticity & Neuromodulation targets).
 
 ---
 
 <a id="appendix-swarm"></a>
-## 🏢 MertFormer Inc. - Autonomous Swarm Architecture (v5.2 - Sage Edition) [TARGET ARCHITECTURE] 🦉
+## 🏢 MertFormer Inc. - Autonomous Swarm Architecture (Sage Edition) [TARGET ARCHITECTURE] 🦉
 **Hardware**: NVIDIA RTX 5090 (45 Concurrent Agents)  
 **Software**: Multi-Agent Orchestrator (Python) + BitNet Workers (C++)
 
@@ -1306,7 +1314,7 @@ This version is designed to learn from every mistake and raise its mastery level
 
 ---
 
-### 🧬 v5.2 SAGE MECHANISMS
+### 🧬 SAGE MECHANISMS
 
 1.  **🦉 The Wisdom Loop**: Experience grows with every reset; mistakes turn into rules.
 2.  **👤 The Mert Protocol (Digital Twin)**: Thinks like you, powered by a 15M-token archive.
