@@ -6,7 +6,7 @@
 - **Device:** MacBook Air (Apple Silicon)
 - **Chip:** Apple M4 (10 (4 performance and 6 efficiency))
 - **GPU:** Apple M4 (8 cores, Metal supported)
-- **Total RAM:** 12 GB
+- **Total RAM:** 16 GB
 - **OS:** ProductName:  macOS
 ProductVersion:  26.2
 BuildVersion:  25C56

@@ -22,7 +22,7 @@ Nicht-Ziel: Volltraining (Tage/Wochen) oder echte Device-/Benchmark-Validierung 
 
 ## 2) Repository Snapshot (Metriken)
 ### 2.1 Verification Baseline (Verified (Run))
-- Host: MacBook Air (Apple Silicon M4), 12 GB RAM, macOS 26.2 (arm64) (`reports/system_hardware.md`)
+- Host: MacBook Air (Apple Silicon M4), 16 GB RAM, macOS 26.2 (arm64) (`reports/system_hardware.md`)
 - Python (baseline): **3.11.14** (`.titan-venv/bin/python -V`)
 - Default: **offline-first** (`TITAN_OFFLINE=1`)
 - Single-command verification: `bash scripts/verify_all.sh`

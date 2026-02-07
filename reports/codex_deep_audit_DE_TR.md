@@ -22,7 +22,7 @@ Kapsam disi: Tam egitim kosmak (gunler/haftalar) veya gercek cihaz/benchmark val
 
 ## 2) Repo Snapshot (Metrikler)
 ### 2.1 Dogrulama Baseline (Verified (Run))
-- Host: MacBook Air (Apple Silicon M4), 12 GB RAM, macOS 26.2 (arm64) (`reports/system_hardware.md`)
+- Host: MacBook Air (Apple Silicon M4), 16 GB RAM, macOS 26.2 (arm64) (`reports/system_hardware.md`)
 - Python (baseline): **3.11.14** (`.titan-venv/bin/python -V`)
 - Varsayilan: **offline-first** (`TITAN_OFFLINE=1`)
 - Tek komut dogrulama: `bash scripts/verify_all.sh`

@@ -6,7 +6,7 @@
 - **Cihaz:** MacBook Air (Apple Silicon)
 - **Çip:** Apple M4 (10 (4 performance and 6 efficiency))
 - **GPU:** Apple M4 (8 çekirdek, Metal destekli)
-- **Toplam RAM:** 12 GB
+- **Toplam RAM:** 16 GB
 - **İşletim Sistemi:** ProductName:  macOS
 ProductVersion:  26.2
 BuildVersion:  25C56
