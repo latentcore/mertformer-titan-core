@@ -76,6 +76,7 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 
 - [Doküman Dizini](#docs-index)
 - [Genel Bakış](#genel-bakış)
+- [Gerçek Dünya Uygulaması (Deneysel)](#real-world-application-experimental-tr)
 - [Temel Özellikler](#temel-özellikler)
 - [Mimari](#mimari)
 - [Performans](#performans)
@@ -278,6 +279,14 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 - 📱 **Mobil Optimize**: Samsung S25 NPU için JIT derlemesi
 - 🧪 **Araştırma Düzeyi**: Özgün LiquidRouter mimarisi (bağlamsal MoE yönlendirme)
 - 🇹🇷 **Türkiye'ye Hazır**: Türk dili ve kültürü için optimize edildi
+
+<a id="real-world-application-experimental-tr"></a>
+### 🚁 Gerçek Dünya Uygulaması (Deneysel)
+
+- **Proof-of-system hedefi:** Gerçek dünya kısıtlarında, otonom UAV/drone sınıfı platformlarda doğrulanabilir olacak şekilde tasarlanmıştır.
+- **Sistem odağı:** Kısıtlı donanım, gecikme ve sensör belirsizliği altında algı → karar → kontrol hattının çalışmasıdır.
+- **Güvenlik önceliği:** Risk/güven eşiği aşıldığında fail-safe guardrail ve watchdog benzeri override mekanizmalarıyla deterministik fallback davranışı hedeflenir.
+- **Konumlandırma:** Bu sürüm mühendislik doğrulama kapsamındadır; sertifikalı/production dağıtım iddiası sunmaz.
 
 ---
 
@@ -1267,6 +1276,7 @@ Paylaşılan bir eğitim sonucunun veya benchmark skorunun doğruluğunu teyit e
 *   **Sonraki Hedef C**: `LiquidRouter` mimarisinin akademik yayın ve makale süreci.
 *   **Sonraki Hedef D**: Kapsamlı NLU kıyaslama paketi (MMLU, HumanEval-TR).
 *   **Uzun Vade**: **Biyolojik Zeka Sentezi** (Sinaptik Plastisite ve Nöromodülasyon hedefleri).
+*   **Compute desteği:** Tam ölçekli eğitim ve benchmark kanıtlarının tekrarlanabilir üretilmesi için ek hesaplama iş birliği memnuniyetle karşılanır.
 
 ---
 
@@ -1372,6 +1382,9 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 ---
 
 ## 🛡️ Stratejik Şeffaflık ve Yol Haritası
+
+### Nihai Kapsam ve Niyet
+Bu proje, tasarım gereği proof-of-system seviyesinde tamamlanır. Amaç, gerçek dünya kısıtları altında çalışan bütüncül bir otonom akıl yürütme hattını göstermek; production-ready veya sertifikalı bir platform iddiası sunmak değildir. Mimari sınırlar, güvenlik davranışı, gerçek zaman kısıtları ve hata modları birincil mühendislik konusu olarak ele alınır. Büyük ölçekli dağıtım, sertifikasyon ve uzun süreli saha doğrulaması bu sürüm için bilinçli olarak kapsam dışıdır.
 
 ### ⚠️ Teknik Risk Faktörleri
 *   **Performans Projeksiyonu**: Mobil NPU metrikleri (<50ms/token) şu an için mimari simülasyon bazlıdır ve eğitim sonrası fiziksel testlerle doğrulanacaktır.
