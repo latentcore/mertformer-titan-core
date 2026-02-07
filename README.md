@@ -172,6 +172,11 @@ Investor-facing materials and launch assets.
 - [reports/demo_video_script.md](reports/demo_video_script.md) — Demo video script (EN).
 - [reports/demo_video_script_TR.md](reports/demo_video_script_TR.md) — Demo video script (TR).
 - [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4) — 30-second snake demo proof clip.
+- [assets/snake_demo_preview.gif](assets/snake_demo_preview.gif) — Embedded snake demo preview (GIF).
+
+![Snake Demo Preview](assets/snake_demo_preview.gif)
+
+Open full clip: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
 - [reports/founders_hub_application.md](reports/founders_hub_application.md) — Founders Hub draft (EN).
 - [reports/founders_hub_application_TR.md](reports/founders_hub_application_TR.md) — Founders Hub draft (TR).
 - [reports/security_compliance.md](reports/security_compliance.md) — Security & compliance brief (EN).
