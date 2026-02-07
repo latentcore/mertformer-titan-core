@@ -4,7 +4,7 @@ Bu dosya, repo'nun inceleme anındaki durumunu (point-in-time) insan-okur bir fo
 
 ## Snapshot
 
-- Tarih (lokal): 2026-02-06
+- Tarih (lokal): 2026-02-07
 - Base Git SHA (kısa): 91c925f
 - Baseline Python: 3.11 (bkz: `repro/python_TR.md`)
 - Varsayılan mod: offline-first (`TITAN_OFFLINE=1`)
@@ -34,8 +34,12 @@ TITAN_OFFLINE=1 bash run.sh --test
 ## Önemli Dokümanlar
 
 - Mühendislik denetimi: `reports/codex_deep_audit_EN.md`, `reports/codex_deep_audit_DE.md`, `reports/codex_deep_audit_TR.md`
+- Denetim raporlarının TR eşleri: `reports/codex_deep_audit_EN_TR.md`, `reports/codex_deep_audit_DE_TR.md`
 - Verified vs Target matrisi: `reports/verified_matrix.md`, `reports/verified_matrix_TR.md`
 - Dış inceleme checklisti: `reports/review_checklist.md`, `reports/review_checklist_TR.md`
+- Final senkron matrisi: `reports/final_sync_matrix.md`, `reports/final_sync_matrix_TR.md`
+- Kullanım kılavuzu: `USAGE_GUIDE.md`, `USAGE_GUIDE_TR.md`
+- Demo kanıt videosu: `assets/snake_demo_proof.mp4`
 - Dataset uyum dokümanları: `datasets/SOURCES*.md`, `datasets/LICENSES*.md`, `datasets/hashes.json`, `datasets/inventory*`
 
 ## Bilinen Gate / Blokerler

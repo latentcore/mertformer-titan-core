@@ -13,11 +13,16 @@ Deps:
 
 from __future__ import annotations
 
+import argparse
+import os
 import random
+import shutil
+import subprocess
 import sys
 import time
 from collections import deque
 from dataclasses import dataclass
+from pathlib import Path
 
 import pygame
 
@@ -150,6 +155,60 @@ class SimulatedAI:
         return best
 
 
+class FrameRecorder:
+    """Streams RGB frames to ffmpeg and writes an .mp4 proof video."""
+
+    def __init__(self, output_path: str, width: int, height: int, fps: int) -> None:
+        self.output_path = Path(output_path)
+        self.output_path.parent.mkdir(parents=True, exist_ok=True)
+        self.proc: subprocess.Popen | None = None
+        self.width = width
+        self.height = height
+        self.fps = fps
+
+    def start(self) -> None:
+        ffmpeg = shutil.which("ffmpeg")
+        if ffmpeg is None:
+            raise RuntimeError("ffmpeg not found. Install ffmpeg to use --record.")
+        cmd = [
+            ffmpeg,
+            "-y",
+            "-f",
+            "rawvideo",
+            "-vcodec",
+            "rawvideo",
+            "-pix_fmt",
+            "rgb24",
+            "-s",
+            f"{self.width}x{self.height}",
+            "-r",
+            str(self.fps),
+            "-i",
+            "-",
+            "-an",
+            "-c:v",
+            "libx264",
+            "-pix_fmt",
+            "yuv420p",
+            str(self.output_path),
+        ]
+        self.proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    def write_frame(self, surface: pygame.Surface) -> None:
+        if self.proc is None or self.proc.stdin is None:
+            return
+        rgb_bytes = pygame.image.tobytes(surface, "RGB")
+        self.proc.stdin.write(rgb_bytes)
+
+    def close(self) -> None:
+        if self.proc is None:
+            return
+        if self.proc.stdin:
+            self.proc.stdin.close()
+        self.proc.wait(timeout=30)
+        self.proc = None
+
+
 @dataclass
 class GameState:
     snake: list[tuple[int, int]]
@@ -206,7 +265,20 @@ def _load_font(size: int) -> pygame.font.Font:
     return pygame.font.SysFont(None, size)
 
 
-def main() -> int:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="MertFormer Titan snake demo")
+    parser.add_argument("--fps", type=int, default=FPS, help="Game FPS (default: 15)")
+    parser.add_argument("--record", default="", help="Optional .mp4 output path (uses ffmpeg)")
+    parser.add_argument("--record-seconds", type=int, default=30, help="Recording duration in seconds")
+    parser.add_argument("--headless", action="store_true", help="Use SDL dummy driver (for CI/video render)")
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    if args.headless:
+        os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
+
     pygame.init()
     pygame.display.set_caption("MertFormer Titan — LIVE DEMO")
     screen = pygame.display.set_mode((W, H))
@@ -219,90 +291,105 @@ def main() -> int:
     state = _new_game()
 
     last_restart = time.time()
+    start_time = time.time()
 
-    while True:
-        for ev in pygame.event.get():
-            if ev.type == pygame.QUIT:
-                pygame.quit()
-                return 0
-            if ev.type == pygame.KEYDOWN:
-                if ev.key == pygame.K_ESCAPE:
+    recorder = None
+    if args.record:
+        recorder = FrameRecorder(args.record, W, H, args.fps)
+        recorder.start()
+
+    try:
+        while True:
+            for ev in pygame.event.get():
+                if ev.type == pygame.QUIT:
                     pygame.quit()
                     return 0
+                if ev.type == pygame.KEYDOWN:
+                    if ev.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        return 0
 
-        # AI decides next move
-        state.direction = ai.choose(state.snake, state.direction, state.food)
+            # AI decides next move
+            state.direction = ai.choose(state.snake, state.direction, state.food)
 
-        head = state.snake[0]
-        new_head = (head[0] + state.direction[0], head[1] + state.direction[1])
+            head = state.snake[0]
+            new_head = (head[0] + state.direction[0], head[1] + state.direction[1])
 
-        dead = False
-        if not _in_bounds(new_head):
-            dead = True
-        else:
-            body = set(state.snake)
-            tail = state.snake[-1]
-            will_eat = new_head == state.food
-            if new_head in body and not (not will_eat and new_head == tail):
+            dead = False
+            if not _in_bounds(new_head):
                 dead = True
-
-        if dead:
-            # Auto-restart immediately
-            state = _new_game()
-            last_restart = time.time()
-        else:
-            if new_head == state.food:
-                state.snake = [new_head] + state.snake
-                state.score += 1
-                state.food = _rand_food(set(state.snake))
             else:
-                state.snake = [new_head] + state.snake[:-1]
+                body = set(state.snake)
+                tail = state.snake[-1]
+                will_eat = new_head == state.food
+                if new_head in body and not (not will_eat and new_head == tail):
+                    dead = True
 
-        # Render
-        screen.fill(BG)
-
-        # Header bar
-        pygame.draw.rect(screen, (0, 10, 0), pygame.Rect(0, 0, W, HEADER_H))
-        title = font_h.render(HEADER, True, TXT)
-        screen.blit(title, (16, 10))
-
-        # Telemetry
-        score_txt = f"Score: {state.score}"
-        t1 = font_t.render(REASONING, True, TXT_DIM)
-        t2 = font_t.render(TOKENS, True, TXT_DIM)
-        t3 = font_t.render(score_txt, True, TXT)
-        screen.blit(t1, (16, 40))
-        screen.blit(t2, (260, 40))
-        screen.blit(t3, (W - t3.get_width() - 16, 40))
-
-        _draw_grid(screen)
-
-        # Food (glow)
-        fr = _cell_rect(state.food)
-        pygame.draw.rect(screen, FOOD_DIM, fr.inflate(10, 10), border_radius=6)
-        pygame.draw.rect(screen, FOOD, fr.inflate(2, 2), border_radius=4)
-
-        # Snake (glow-ish)
-        for idx, seg in enumerate(state.snake):
-            r = _cell_rect(seg)
-            if idx == 0:
-                pygame.draw.rect(screen, NEON_DIM, r.inflate(10, 10), border_radius=6)
-                pygame.draw.rect(screen, NEON, r.inflate(2, 2), border_radius=4)
+            if dead:
+                # Auto-restart immediately
+                state = _new_game()
+                last_restart = time.time()
             else:
-                pygame.draw.rect(screen, (0, 70, 30), r.inflate(6, 6), border_radius=6)
-                pygame.draw.rect(screen, NEON_DIM, r.inflate(2, 2), border_radius=4)
+                if new_head == state.food:
+                    state.snake = [new_head] + state.snake
+                    state.score += 1
+                    state.food = _rand_food(set(state.snake))
+                else:
+                    state.snake = [new_head] + state.snake[:-1]
 
-        # Restart hint (subtle)
-        if time.time() - last_restart < 1.0:
-            hint = font_t.render("AUTO-RESTART", True, (80, 200, 120))
-            screen.blit(hint, (W - hint.get_width() - 16, 10))
+            # Render
+            screen.fill(BG)
 
-        _draw_scanlines(screen)
+            # Header bar
+            pygame.draw.rect(screen, (0, 10, 0), pygame.Rect(0, 0, W, HEADER_H))
+            title = font_h.render(HEADER, True, TXT)
+            screen.blit(title, (16, 10))
 
-        pygame.display.flip()
-        clock.tick(FPS)
+            # Telemetry
+            score_txt = f"Score: {state.score}"
+            t1 = font_t.render(REASONING, True, TXT_DIM)
+            t2 = font_t.render(TOKENS, True, TXT_DIM)
+            t3 = font_t.render(score_txt, True, TXT)
+            screen.blit(t1, (16, 40))
+            screen.blit(t2, (260, 40))
+            screen.blit(t3, (W - t3.get_width() - 16, 40))
+
+            _draw_grid(screen)
+
+            # Food (glow)
+            fr = _cell_rect(state.food)
+            pygame.draw.rect(screen, FOOD_DIM, fr.inflate(10, 10), border_radius=6)
+            pygame.draw.rect(screen, FOOD, fr.inflate(2, 2), border_radius=4)
+
+            # Snake (glow-ish)
+            for idx, seg in enumerate(state.snake):
+                r = _cell_rect(seg)
+                if idx == 0:
+                    pygame.draw.rect(screen, NEON_DIM, r.inflate(10, 10), border_radius=6)
+                    pygame.draw.rect(screen, NEON, r.inflate(2, 2), border_radius=4)
+                else:
+                    pygame.draw.rect(screen, (0, 70, 30), r.inflate(6, 6), border_radius=6)
+                    pygame.draw.rect(screen, NEON_DIM, r.inflate(2, 2), border_radius=4)
+
+            # Restart hint (subtle)
+            if time.time() - last_restart < 1.0:
+                hint = font_t.render("AUTO-RESTART", True, (80, 200, 120))
+                screen.blit(hint, (W - hint.get_width() - 16, 10))
+
+            _draw_scanlines(screen)
+
+            if recorder is not None:
+                recorder.write_frame(screen)
+
+            pygame.display.flip()
+            clock.tick(max(1, args.fps))
+
+            if recorder is not None and (time.time() - start_time) >= max(1, args.record_seconds):
+                return 0
+    finally:
+        if recorder is not None:
+            recorder.close()
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
-
+    raise SystemExit(main(sys.argv[1:]))
