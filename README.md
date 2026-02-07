@@ -76,6 +76,7 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 
 - [Docs Index](#docs-index)
 - [Overview](#overview)
+- [Real-World Application (Experimental)](#real-world-application-experimental)
 - [Key Features](#key-features)
 - [Architecture](#architecture)
 - [Performance](#performance)
@@ -280,6 +281,14 @@ MertFormer Titan is a cutting-edge **2.64B parameter** language model designed f
 - 📱 **Mobile-Optimized**: JIT compilation for Samsung S25 NPU
 - 🧪 **Research-Grade**: Novel LiquidRouter architecture (contextual MoE routing)
 - 🇹🇷 **Turkish-Ready**: Optimized for Turkish language and culture
+
+<a id="real-world-application-experimental"></a>
+### 🚁 Real-World Application (Experimental)
+
+- **Proof-of-system target:** Designed to be validated on autonomous UAV/drone-class platforms under real-world constraints.
+- **System focus:** Perception → decision → control chain under constrained hardware, latency, and sensor uncertainty.
+- **Safety-first behavior:** Fail-safe guardrails and watchdog-style overrides are expected to force deterministic fallback when risk/confidence thresholds are breached.
+- **Positioning:** Engineering validation scope only; this is not presented as a certified or production deployment claim.
 
 ---
 
@@ -1270,6 +1279,7 @@ To verify the authenticity of a shared run log or benchmark result:
 *   **Next Milestone C**: Academic publication of the `LiquidRouter` architecture.
 *   **Next Milestone D**: Comprehensive NLU benchmark suite (MMLU, HumanEval-TR).
 *   **Long Horizon**: **Biological Intelligence Synthesis** (Synaptic Plasticity & Neuromodulation targets).
+*   **Compute support:** Additional compute collaboration is welcome for reproducible full-scale training and benchmark evidence generation.
 
 ---
 
@@ -1375,6 +1385,9 @@ To be **100% sales-ready**, the following must be completed on training hardware
 ---
 
 ## 🛡️ Strategic Transparency & Roadmap
+
+### Final Scope & Intent
+This project intentionally concludes at the proof-of-system level. The goal is to demonstrate a complete and working autonomous reasoning stack under real-world constraints, not to claim a production-ready or certified platform. Architecture boundaries, safety behavior, real-time constraints, and failure modes are treated as first-class engineering concerns. Large-scale deployment, certification, and long-horizon field validation are explicitly out of scope for this release by design.
 
 ### ⚠️ Technical Risk Factors
 *   **Performance Projection**: Mobile NPU metrics (<50ms/token) are currently architecture-modeled and will be empirically validated post-training.
