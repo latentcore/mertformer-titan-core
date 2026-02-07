@@ -18,6 +18,7 @@ import torch
 import torch.nn as nn
 import os
 import sys
+import inspect
 
 # Add project root to path
 sys.path.append(os.getcwd())
@@ -33,6 +34,32 @@ class MertFormerInferenceWrapper(nn.Module):
     def forward(self, input_ids):
         logits, _, _ = self.model(input_ids)
         return logits
+
+
+def _onnx_export_compat(wrapper, dummy_input, save_path):
+    """Export with stable defaults across Torch/ONNX exporter variants."""
+    export_kwargs = dict(
+        export_params=True,
+        opset_version=12,  # Legacy stable opset for project smoke testing.
+        do_constant_folding=False,
+        input_names=["input_ids"],
+        output_names=["logits"],
+        dynamic_axes={
+            "input_ids": {0: "batch_size", 1: "sequence_length"},
+            "logits": {0: "batch_size", 1: "sequence_length"},
+        },
+    )
+
+    export_sig = inspect.signature(torch.onnx.export)
+    if "dynamo" in export_sig.parameters:
+        export_kwargs["dynamo"] = False
+
+    torch.onnx.export(
+        wrapper,
+        dummy_input,
+        save_path,
+        **export_kwargs,
+    )
 
 def test_export():
     print("📦 TESTING ONNX EXPORT (Tiny Mode)...")
@@ -77,20 +104,7 @@ def test_export():
     
     print("   Exporting...")
     try:
-        torch.onnx.export(
-            wrapper,
-            dummy_input,
-            save_path,
-            export_params=True,
-            opset_version=12, # [FIX] Legacy Stable Opset
-            do_constant_folding=False, # [FIX] Disable folding to avoid graph capture errors
-            input_names=['input_ids'],
-            output_names=['logits'],
-            dynamic_axes={
-                'input_ids': {0: 'batch_size', 1: 'sequence_length'},
-                'logits': {0: 'batch_size', 1: 'sequence_length'}
-            }
-        )
+        _onnx_export_compat(wrapper, dummy_input, save_path)
         print(f"✅ ONNX Export Successful: {save_path}")
         
         # Verify File Exists and Size

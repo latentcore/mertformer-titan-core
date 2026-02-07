@@ -69,7 +69,20 @@ SKIP_CONTENT_EXTENSIONS = {
     ".png", ".jpg", ".jpeg", ".gif", ".ico", ".mp3", ".wav", ".mp4",
     # Sıkıştırılmış / Binary Veri
     ".zip", ".tar", ".gz", ".rar", ".7z", ".pdf", ".exe", ".dll", ".so",
-    ".db", ".sqlite", ".bin", ".pkl", ".pt", ".pth", ".ckpt"
+    ".db", ".sqlite", ".bin", ".pkl", ".pt", ".pth", ".ckpt",
+
+    # 🚨 DEV METİN DOSYALARI (LLM / Dataset / Tokenizer)
+    ".jsonl",   # en büyük suçlu genelde
+    ".parquet",
+    ".arrow",
+    ".feather",
+
+    # tokenizer / vocab dump'ları
+    ".vocab",
+    ".model",
+
+    # dev log / freeze
+    ".log",
 }
 
 # Büyük klasörleri tamamen atla (içerik ve alt dizinler)
@@ -80,11 +93,18 @@ SKIP_DIR_NAMES = {
     "logs",
     "datasets",
     "checkpoints",
+
+    # 🚨 tokenizer cache bazen dev olur
+    "tokenizer_cache",
+    "wandb",
+
+    # 🚨 node / web bağımlılıkları (devasa)
+    "node_modules",
 }
 
 # Büyük dosyalar için içerik limiti (bytes)
 # Varsayılan: 200 KB, istersen çevre değişkeni ile artırılabilir.
-MAX_TEXT_FILE_BYTES = int(os.environ.get("XRAY_MAX_TEXT_BYTES", "200000"))
+MAX_TEXT_FILE_BYTES = int(os.environ.get("XRAY_MAX_TEXT_BYTES", "120000"))
 
 
 # -------------------------------------------------------------------------
@@ -155,10 +175,27 @@ def should_skip_content(path: Path) -> bool:
     parts = {p.lower() for p in path.parts}
     if "logs" in parts or "datasets" in parts or "checkpoints" in parts:
         return True
+
+    # Tokenizer artefact'larını audit dışı bırak (dump %80 şişirir, audit değeri düşüktür)
+    if "tokenizer" in parts:
+        return True
+
+    # Virtualenv / backup venv yakala (repo değil, dependency dump'ı)
+    if any("venv" in p for p in parts):
+        return True
+    if "site-packages" in parts or "dist-info" in parts or "egg-info" in parts:
+        return True
+
+    if path.name.lower() in {"vocab.txt", "merges.txt"}:
+        return True
+
     return False
 
 
 def should_skip_dir(path: Path) -> bool:
+    # Virtualenv / backup venv klasörlerini direkt atla (adil ve hızlı)
+    if "venv" in path.name.lower():
+        return True
     return path.name in SKIP_DIR_NAMES
 
 
@@ -201,11 +238,21 @@ def write_tree(path: Path, file_handle, prefix: str = ""):
                     if should_skip_content(entry):
                         file_size = entry.stat().st_size
                         log(
-                            f"{new_prefix}    [İÇERİK GİZLENDİ: Klasör politikası (logs/datasets/checkpoints), {file_size} bytes]",
+                            f"{new_prefix}    [İÇERİK GİZLENDİ: Klasör/artefact politikası (logs/datasets/checkpoints/tokenizer/venv), {file_size} bytes]",
                             file_handle
                         )
                         continue
+
                     file_size = entry.stat().st_size
+
+                    # 🚨 Aşırı büyük text dosyaları tamamen binary gibi davran
+                    if file_size > 1_000_000:  # 1MB üstü = muhtemelen dataset/tokenizer/log/artefact
+                        log(
+                            f"{new_prefix}    [İÇERİK GİZLENDİ: Aşırı büyük dosya ({file_size} bytes)]",
+                            file_handle
+                        )
+                        continue
+
                     if file_size > MAX_TEXT_FILE_BYTES:
                         log(
                             f"{new_prefix}    [İÇERİK GİZLENDİ: Dosya çok büyük ({file_size} bytes, limit {MAX_TEXT_FILE_BYTES} bytes)]",
@@ -244,11 +291,12 @@ def write_tree(path: Path, file_handle, prefix: str = ""):
 
 def main():
     print("\n" + "=" * 60)
-    print("🧠 MERTFORMER SMART AUDITOR (V18.0)")
+    print("🧠 MERTFORMER SMART AUDITOR (Build 27)")
     print("-" * 60)
     print(f"Hedef: {ROOT_DIR}")
     print("MOD: Tüm dosya yapısını gösterir, sadece METİN içeriklerini okur.")
     print("     (.pyc, .DS_Store gibi gereksizlerin içeriği atlanır.)")
+    print("     (venv/site-packages/dist-info/tokenizer/logs/datasets/checkpoints otomatik dışlanır.)")
     print(f"TEXT LIMIT: {MAX_TEXT_FILE_BYTES} bytes (XRAY_MAX_TEXT_BYTES ile değiştirilebilir)")
 
     choice = timed_input(f"👉 Başlatılsın mı? (y/n, {TIMEOUT_SECONDS}s): ", TIMEOUT_SECONDS)
