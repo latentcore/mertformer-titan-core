@@ -132,7 +132,7 @@ def main() -> int:
             continue
         sources[f"internal:{rel}"] = {
             "kind": "local_file",
-            "snapshot": str(p.as_posix()),
+            "snapshot": rel,
             "revision": None,
             "snapshot_date_utc": generated_at,
             "sha256": _sha256_file(p),
@@ -156,7 +156,7 @@ def main() -> int:
             continue
         sources[f"internal:{rel}"] = {
             "kind": "local_file",
-            "snapshot": str(p.as_posix()),
+            "snapshot": rel,
             "revision": None,
             "snapshot_date_utc": generated_at,
             "sha256": _sha256_file(p),

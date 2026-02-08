@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mertformer.ai/schemas/pilot_report_v1.json",
+  "title": "pilot_report_v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "generated_at_utc",
+    "run_id",
+    "git_sha",
+    "gate_results",
+    "risk_flags",
+    "benchmark_eligibility"
+  ],
+  "properties": {
+    "schema": {
+      "const": "pilot_report_v1"
+    },
+    "generated_at_utc": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "git_sha": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "project_root": {
+      "type": "string"
+    },
+    "gate_results": {
+      "type": "object",
+      "required": [
+        "verify_all",
+        "operator_mode_steps"
+      ],
+      "properties": {
+        "verify_all": {
+          "type": "object",
+          "required": [
+            "status",
+            "exit_code",
+            "secret_scan_pass",
+            "pytest_pass",
+            "pytest_summary",
+            "preflight_pass",
+            "operator_gate_pass",
+            "verify_script_pass"
+          ],
+          "properties": {
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "exit_code": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "secret_scan_pass": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "pytest_pass": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "pytest_summary": {
+              "type": "object",
+              "properties": {
+                "passed": {
+                  "type": "integer"
+                },
+                "skipped": {
+                  "type": "integer"
+                },
+                "warnings": {
+                  "type": "integer"
+                }
+              },
+              "additionalProperties": false
+            },
+            "preflight_pass": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "operator_gate_pass": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "verify_script_pass": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "operator_mode_steps": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "risk_flags": {
+      "type": "object",
+      "required": [
+        "missing_checkpoint",
+        "missing_stage_datasets",
+        "missing_stage_dataset_files",
+        "benchmark_not_eligible_for_claim"
+      ],
+      "properties": {
+        "missing_checkpoint": {
+          "type": "boolean"
+        },
+        "missing_stage_datasets": {
+          "type": "boolean"
+        },
+        "missing_stage_dataset_files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "benchmark_not_eligible_for_claim": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "benchmark_eligibility": {
+      "type": "object",
+      "required": [
+        "eligible_for_claim",
+        "reasons"
+      ],
+      "properties": {
+        "eligible_for_claim": {
+          "type": "boolean"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

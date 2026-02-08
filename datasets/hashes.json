@@ -93,7 +93,7 @@
       "ref_url": null,
       "revision": null,
       "sha256": "ec09cd23ef28db7c118ca0b972b31db1150a2c0a5f09abc020835eb011b9fbfa",
-      "snapshot": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/datasets/golden_samples.jsonl",
+      "snapshot": "datasets/golden_samples.jsonl",
       "snapshot_date_utc": "2026-02-05T23:45:43Z",
       "status": "verified"
     },
@@ -103,7 +103,7 @@
       "ref_url": null,
       "revision": null,
       "sha256": "25fe2ed6c9cf5e48722b060d660a254eacc656b292a4741683b6b48db353bde5",
-      "snapshot": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/datasets/validation.jsonl",
+      "snapshot": "datasets/validation.jsonl",
       "snapshot_date_utc": "2026-02-05T23:45:43Z",
       "status": "verified"
     },

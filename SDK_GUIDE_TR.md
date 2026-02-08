@@ -25,13 +25,21 @@ text = generate(model, tokenizer, "Merhaba MertFormer!", max_new_tokens=64)
 print(text)
 ```
 
+`load_model(..., strict_checkpoint=True)` varsayilan davranistir. Checkpoint yoksa `FileNotFoundError` verir.
+Sadece random-weight demo/smoke amaciyla `load_model(..., strict_checkpoint=False)` kullanin.
+
 ## CLI Hizli Baslangic
 ```bash
 mertformer info
 mertformer run --prompt "Merhaba MertFormer" --ckpt latest
 mertformer export --ckpt latest --bitpack
 mertformer benchmark --ckpt latest --samples 0
+mertformer verify
+mertformer pilot-report --out reports/pilot_report.json
 ```
+
+CLI tarafinda `run` ve `benchmark` komutlari varsayilan olarak checkpoint ister.
+Sadece claim disi demo icin `--allow-random` kullanin.
 
 ## Low-bit Kernel (Opt-in)
 - Python: `enable_lowbit_kernels(True)`

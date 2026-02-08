@@ -84,7 +84,11 @@ def main() -> None:
         model.load_state_dict(checkpoint.get("model", checkpoint))
     else:
         if not args.allow_random:
-            print(f"SKIP: checkpoint not found: {ckpt_path}")
+            print(f"NOT ELIGIBLE FOR CLAIM: checkpoint not found: {ckpt_path}")
+            print(
+                "Reason: benchmark outputs without a trained checkpoint are not valid "
+                "for external quality/performance claims."
+            )
             return
         print(f"⚠️  Checkpoint not found: {ckpt_path}. Running on random weights (--allow-random).")
     model.eval()

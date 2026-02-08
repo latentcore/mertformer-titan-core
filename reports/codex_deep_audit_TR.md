@@ -1,5 +1,5 @@
 # Codex Derin Denetim — MertFormer Titan (v1.0 Build 27)
-**Repo:** `/Users/mertyunlu/Desktop/NİHAİ`  
+**Repo:** `.`  
 **Denetim Tarihi (lokal):** 2026-02-06  
 **Denetim Tipi:** Kod + Dokumantasyon + Calistirmali Dogrulama (offline-first)
 

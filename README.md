@@ -31,7 +31,7 @@
 | **Offline Verification** | ✅ PASS (`bash scripts/verify_all.sh`) |
 | **Dataset Compliance** | ⚠️ In progress (licenses/hashes must be completed before training) |
 | **Full Training Run** | ⏳ Not executed (requires hardware + snapshot data) |
-| **Benchmarks** | ⏳ Pending checkpoint (runner supports SKIP) |
+| **Benchmarks** | ⛔ Not eligible for claim without a trained checkpoint (`NOT ELIGIBLE FOR CLAIM`) |
 
 Engineering truth (strict): see `reports/verified_matrix.md`.
 
@@ -184,6 +184,9 @@ Open full clip: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
 - [reports/security_compliance_TR.md](reports/security_compliance_TR.md) — Security & compliance brief (TR).
 - [reports/poc_protocol.md](reports/poc_protocol.md) — Pilot/PoC protocol (EN).
 - [reports/poc_protocol_TR.md](reports/poc_protocol_TR.md) — Pilot/PoC protocol (TR).
+- [reports/pilot_readiness_kit.md](reports/pilot_readiness_kit.md) — Pilot readiness kit (EN).
+- [reports/pilot_offer_packages.md](reports/pilot_offer_packages.md) — Standard pilot offer packages (EN).
+- [reports/sales_funnel_90d.md](reports/sales_funnel_90d.md) — 90-day B2B pilot sales funnel (EN).
 - [reports/dataset_health.md](reports/dataset_health.md) — Dataset health report (EN).
 - [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset health report (TR).
 - [reports/model_health.md](reports/model_health.md) — Model health report (EN).
@@ -225,6 +228,7 @@ Security, provenance, reproducibility, and ops notes.
 - [.github/workflows/ci.yml](.github/workflows/ci.yml) — CI pipeline (pytest + preflight + secret scan).
 - [interfaces/inference_contract.md](interfaces/inference_contract.md) — Inference contract (EN).
 - [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md) — Inference contract (TR).
+- [interfaces/pilot_report_v1.schema.json](interfaces/pilot_report_v1.schema.json) — Pilot report JSON schema.
 - [economics/cost_model.md](economics/cost_model.md) — Cost model (EN).
 - [economics/cost_model_TR.md](economics/cost_model_TR.md) — Cost model (TR).
 - [economics/efficiency_report.md](economics/efficiency_report.md) — Efficiency report (EN).
@@ -530,7 +534,9 @@ MertFormer Titan (2.64B Parameters)
 <a id="performance"></a>
 ## 📊 Performance
 
-### Performance Targets (Projected vs Baseline) — Training Speed (8x A100 80GB)
+**Claim policy:** Unless explicitly marked as measured, values in this section are targets/estimates and are not benchmark claim evidence.
+
+### Performance Targets (Projected vs Baseline, Not Measured) — Training Speed (8x A100 80GB)
 | Configuration | Time/Step | Throughput | GPU Utilization | VRAM Usage |
 | :--- | :---: | :---: | :---: | :---: |
 | **Baseline** | 2.0 sec | 64 tok/s | 47% | 38 GB |
@@ -597,6 +603,13 @@ bash scripts/bootstrap_venv.sh --demo
 
 ```bash
 bash scripts/verify_all.sh
+```
+
+SDK-level verification and pilot reporting:
+
+```bash
+mertformer verify
+mertformer pilot-report --out reports/pilot_report.json
 ```
 
 ### LIVE DEMO (Snake Autoplayer)
@@ -737,10 +750,9 @@ distill_alpha = 0.8  # Dynamic (0.8 → 0.15)
 teacher_temp = 1.0
 
 # Optimizations
-use_torch_compile = True
+use_torch_compile = False
 torch_compile_mode = "max-autotune"
 use_gradient_checkpointing = True
-gradient_checkpoint_policy = "selective"
 
 # Safety
 early_stop_patience = 5
@@ -814,8 +826,8 @@ print(response)
 
 <a id="benchmarks"></a>
 ## 🏆 Benchmarks
-**Status: Preliminary Evaluation (Pre-training projection)**
-*All metrics below are pre-training projections or targets and require empirical validation after full training.*
+**Status: Pre-Training Projection (Not Eligible for Claim)**
+*All metrics below are targets/estimates and require empirical validation after a full training run with a real checkpoint.*
 
 ### Comparison with Similar Models
 
@@ -1392,15 +1404,16 @@ This project is **confidential and proprietary**. All rights are reserved by the
 
 ---
 
-## ✅ Sales-Ready Checklist (Post-Training)
+## ✅ Sales-Ready Checklist (B2B Pilot Mode)
 
-To be **100% sales-ready**, the following must be completed on training hardware:
+For paid pilots in pre-training stage, the minimum acceptance set is:
 
-- **Master Run (2.6B)** real training run
-- **Full 1MB Overfit Gate** on training hardware
-- **Real benchmark outputs** (auto-generated + logged)
-- **Demo video** (offline + working example)
-- **README/reports updated with measured metrics** (replace estimates)
+- `bash scripts/verify_all.sh` must pass in offline mode.
+- Operator mode gate logs must be attached to pilot delivery.
+- `mertformer pilot-report --out <json>` must be delivered as `pilot_report_v1`.
+- If trained checkpoint is missing, benchmark status must stay `NOT ELIGIBLE FOR CLAIM`.
+- Customer-side offline execution (`mertformer verify`) must be demonstrated.
+- Commercial closure target: 2 paid pilot contracts or signed PoC LOI.
 
 ---
 

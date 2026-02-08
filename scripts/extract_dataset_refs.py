@@ -46,7 +46,7 @@ def _iter_py_files(root: Path) -> list[Path]:
     return out
 
 
-def _scan_file(path: Path) -> list[Ref]:
+def _scan_file(path: Path, root: Path) -> list[Ref]:
     refs: list[Ref] = []
     try:
         text = path.read_text(encoding="utf-8", errors="ignore")
@@ -67,7 +67,7 @@ def _scan_file(path: Path) -> list[Ref]:
             refs.append(
                 Ref(
                     dataset=ds,
-                    file=str(path.as_posix()),
+                    file=str(path.relative_to(root).as_posix()),
                     line=i,
                     kind=kind,
                     snippet=line.strip()[:200],
@@ -174,7 +174,7 @@ def main() -> int:
     license_map = _load_license_map(root)
     refs: list[Ref] = []
     for p in _iter_py_files(root):
-        refs.extend(_scan_file(p))
+        refs.extend(_scan_file(p, root=root))
 
     by_ds: dict[str, list[Ref]] = {}
     for r in refs:

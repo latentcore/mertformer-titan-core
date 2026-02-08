@@ -31,28 +31,40 @@ def _resolve_device(preferred: Optional[str] = None) -> str:
     return "cpu"
 
 
+def _resolve_ckpt_path(ckpt: str | Path) -> Path:
+    if isinstance(ckpt, Path):
+        return ckpt
+    if ckpt == "latest":
+        return Path(cfg.save_dir) / f"{cfg.model_name}_latest.pt"
+    return Path(ckpt)
+
+
 def load_model(
     ckpt: str | Path = "latest",
     device: Optional[str] = None,
+    strict_checkpoint: bool = True,
 ) -> Tuple[MertFormer, AutoTokenizer, str]:
-    """Load model + tokenizer with optional checkpoint."""
+    """Load model + tokenizer with optional checkpoint.
+
+    When ``strict_checkpoint`` is True (default), missing checkpoints raise an error.
+    This prevents accidental random-weight usage in commercial/pilot flows.
+    """
     device = _resolve_device(device)
+    ckpt_path = _resolve_ckpt_path(ckpt)
+
+    if strict_checkpoint and not ckpt_path.exists():
+        raise FileNotFoundError(
+            f"Checkpoint not found: {ckpt_path}. "
+            "Use a valid checkpoint path or pass strict_checkpoint=False for random-weight mode."
+        )
+
     model = MertFormer().to(device)
     model.eval()
 
-    ckpt_path: Optional[Path] = None
-    if isinstance(ckpt, Path):
-        ckpt_path = ckpt
-    elif ckpt == "latest":
-        ckpt_path = Path(cfg.save_dir) / f"{cfg.model_name}_latest.pt"
-    else:
-        ckpt_path = Path(ckpt)
-
-    if ckpt_path and ckpt_path.exists():
+    if ckpt_path.exists():
         checkpoint = torch.load(ckpt_path, map_location=device)
         state = checkpoint.get("model", checkpoint)
         model.load_state_dict(state)
-    # else: keep random weights; caller can decide
 
     use_tr = bool(getattr(cfg, "use_tr_tokenizer", False))
     tr_id = getattr(cfg, "tr_tokenizer_id", "tokenizer/tr")
@@ -116,11 +128,15 @@ def benchmark(
     out_dir: str | Path = "reports/benchmarks",
     samples: int = 0,
     max_new_tokens: int = 256,
+    strict_checkpoint: bool = True,
 ) -> dict:
     """Run HumanEval/MBPP generation and return counts."""
     from scripts.benchmarks_internal import load_dataset_safe, run_generation
 
-    model, tokenizer, device = load_model(ckpt=ckpt)
+    model, tokenizer, device = load_model(
+        ckpt=ckpt,
+        strict_checkpoint=strict_checkpoint,
+    )
     out_dir = Path(out_dir)
 
     humaneval = load_dataset_safe("openai_humaneval", "openai_humaneval")

@@ -1,5 +1,5 @@
 # Codex Deep Audit — MertFormer Titan (v1.0 Build 27)
-**Repo:** `/Users/mertyunlu/Desktop/NİHAİ`  
+**Repo:** `.`  
 **Audit-Datum (lokal):** 2026-02-06  
 **Audit-Typ:** Code + Dokumentation + Run-Verifikation (offline-first)
 

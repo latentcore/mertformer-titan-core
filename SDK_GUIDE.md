@@ -25,13 +25,21 @@ text = generate(model, tokenizer, "Hello from MertFormer!", max_new_tokens=64)
 print(text)
 ```
 
+`load_model(..., strict_checkpoint=True)` is the default. If the checkpoint is missing, it raises `FileNotFoundError`.
+For random-weight smoke/demo usage only, call `load_model(..., strict_checkpoint=False)`.
+
 ## CLI Quick Start
 ```bash
 mertformer info
 mertformer run --prompt "Hello MertFormer" --ckpt latest
 mertformer export --ckpt latest --bitpack
 mertformer benchmark --ckpt latest --samples 0
+mertformer verify
+mertformer pilot-report --out reports/pilot_report.json
 ```
+
+CLI commands now enforce checkpoint presence by default (`run` and `benchmark`).
+Use `--allow-random` only for non-claim demos.
 
 ## Low-bit Kernel Toggle (Opt-in)
 - Python: `enable_lowbit_kernels(True)`

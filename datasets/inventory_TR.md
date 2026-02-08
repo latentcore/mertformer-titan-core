@@ -24,51 +24,51 @@ Lisans/provenans dogrulamasi icin `datasets/SOURCES*.md` ve `datasets/LICENSES*.
 ## Reference Details
 
 ### `HuggingFaceFW/fineweb-edu`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/data_pipeline.py:80 (pipeline_source)
+- scripts/data_pipeline.py:82 (pipeline_source)
 
 ### `HuggingFaceTB/cosmopedia`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/data_pipeline.py:118 (pipeline_source)
+- scripts/data_pipeline.py:120 (pipeline_source)
 
 ### `OpenAssistant/oasst_top1_2023-08-25`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/data_pipeline.py:137 (pipeline_source)
+- scripts/data_pipeline.py:139 (pipeline_source)
 
 ### `TFLai/Turkish-Alpaca`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/data_pipeline.py:155 (pipeline_source)
+- scripts/data_pipeline.py:157 (pipeline_source)
 
 ### `TIGER-Lab/MathInstruct`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/data_pipeline.py:54 (pipeline_source)
+- scripts/data_pipeline.py:56 (pipeline_source)
 
 ### `bigcode/the-stack-v2`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/data_pipeline.py:45 (pipeline_source)
+- scripts/data_pipeline.py:47 (pipeline_source)
 
 ### `glaiveai/glaive-function-calling-v2`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/data_pipeline.py:180 (pipeline_source)
+- scripts/data_pipeline.py:182 (pipeline_source)
 
 ### `mbpp`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/benchmarks_internal.py:100 (load_dataset_safe)
+- scripts/benchmarks_internal.py:106 (load_dataset_safe)
 
 ### `mlabonne/guanaco-llama2-1k`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/data_pipeline.py:146 (pipeline_source)
+- scripts/data_pipeline.py:148 (pipeline_source)
 
 ### `openai/gsm8k`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/data_pipeline.py:63 (pipeline_source)
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/eval.py:36 (load_dataset)
-- /Users/mertyunlu/Desktop/NİHAİ/eval/gsm8k.py:64 (load_dataset)
-- /Users/mertyunlu/Desktop/NİHAİ/eval/gsm8k.py:66 (load_dataset)
+- scripts/data_pipeline.py:65 (pipeline_source)
+- scripts/eval.py:40 (load_dataset)
+- eval/gsm8k.py:66 (load_dataset)
+- eval/gsm8k.py:68 (load_dataset)
 
 ### `openai_humaneval`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/benchmarks_internal.py:99 (load_dataset_safe)
+- scripts/benchmarks_internal.py:105 (load_dataset_safe)
 
 ### `turkish-nlp-suite/InstrucTurca`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/data_pipeline.py:164 (pipeline_source)
+- scripts/data_pipeline.py:166 (pipeline_source)
 
 ### `uonlp/CulturaX`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/data_pipeline.py:108 (pipeline_source)
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/titan_preflight.py:185 (dataset_info)
+- scripts/data_pipeline.py:110 (pipeline_source)
+- scripts/titan_preflight.py:185 (dataset_info)
 
 ### `wikimedia/wikipedia`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/data_pipeline.py:98 (pipeline_source)
+- scripts/data_pipeline.py:100 (pipeline_source)
 
 ### `wikitext`
-- /Users/mertyunlu/Desktop/NİHAİ/scripts/mini_titan_poc.py:363 (load_dataset)
+- scripts/mini_titan_poc.py:367 (load_dataset)
 

@@ -12,8 +12,8 @@
       "refs": [
         {
           "dataset": "HuggingFaceFW/fineweb-edu",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
-          "line": 80,
+          "file": "scripts/data_pipeline.py",
+          "line": 82,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"HuggingFaceFW/fineweb-edu\","
         }
@@ -29,8 +29,8 @@
       "refs": [
         {
           "dataset": "HuggingFaceTB/cosmopedia",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
-          "line": 118,
+          "file": "scripts/data_pipeline.py",
+          "line": 120,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"HuggingFaceTB/cosmopedia\","
         }
@@ -46,8 +46,8 @@
       "refs": [
         {
           "dataset": "OpenAssistant/oasst_top1_2023-08-25",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
-          "line": 137,
+          "file": "scripts/data_pipeline.py",
+          "line": 139,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"OpenAssistant/oasst_top1_2023-08-25\","
         }
@@ -63,8 +63,8 @@
       "refs": [
         {
           "dataset": "TFLai/Turkish-Alpaca",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
-          "line": 155,
+          "file": "scripts/data_pipeline.py",
+          "line": 157,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"TFLai/Turkish-Alpaca\", # [FIX] Replaced broken link with active repo"
         }
@@ -80,8 +80,8 @@
       "refs": [
         {
           "dataset": "TIGER-Lab/MathInstruct",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
-          "line": 54,
+          "file": "scripts/data_pipeline.py",
+          "line": 56,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"TIGER-Lab/MathInstruct\", # [FIX] Nvidia repo removed, switched to TIGER-Lab"
         }
@@ -97,8 +97,8 @@
       "refs": [
         {
           "dataset": "bigcode/the-stack-v2",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
-          "line": 45,
+          "file": "scripts/data_pipeline.py",
+          "line": 47,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"bigcode/the-stack-v2\","
         }
@@ -114,8 +114,8 @@
       "refs": [
         {
           "dataset": "glaiveai/glaive-function-calling-v2",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
-          "line": 180,
+          "file": "scripts/data_pipeline.py",
+          "line": 182,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"glaiveai/glaive-function-calling-v2\","
         }
@@ -131,8 +131,8 @@
       "refs": [
         {
           "dataset": "mbpp",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/benchmarks_internal.py",
-          "line": 100,
+          "file": "scripts/benchmarks_internal.py",
+          "line": 106,
           "kind": "load_dataset_safe",
           "snippet": "mbpp = load_dataset_safe(\"mbpp\", \"sanitized\")"
         }
@@ -148,8 +148,8 @@
       "refs": [
         {
           "dataset": "mlabonne/guanaco-llama2-1k",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
-          "line": 146,
+          "file": "scripts/data_pipeline.py",
+          "line": 148,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"mlabonne/guanaco-llama2-1k\","
         }
@@ -165,31 +165,31 @@
       "refs": [
         {
           "dataset": "openai/gsm8k",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
-          "line": 63,
+          "file": "scripts/data_pipeline.py",
+          "line": 65,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"openai/gsm8k\","
         },
         {
           "dataset": "openai/gsm8k",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/eval.py",
-          "line": 36,
+          "file": "scripts/eval.py",
+          "line": 40,
           "kind": "load_dataset",
-          "snippet": "ds = load_dataset(\"openai/gsm8k\", \"main\", split=\"test\", streaming=True)"
+          "snippet": "ds = load_dataset(\"openai/gsm8k\", \"main\", split=\"test\", streaming=True, revision=revision)"
         },
         {
           "dataset": "openai/gsm8k",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/eval/gsm8k.py",
-          "line": 64,
-          "kind": "load_dataset",
-          "snippet": "return load_dataset(\"openai/gsm8k\", \"main\", split=\"test\")"
-        },
-        {
-          "dataset": "openai/gsm8k",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/eval/gsm8k.py",
+          "file": "eval/gsm8k.py",
           "line": 66,
           "kind": "load_dataset",
-          "snippet": "return load_dataset(\"openai/gsm8k\", split=\"test\")"
+          "snippet": "return load_dataset(\"openai/gsm8k\", \"main\", split=\"test\", revision=revision)"
+        },
+        {
+          "dataset": "openai/gsm8k",
+          "file": "eval/gsm8k.py",
+          "line": 68,
+          "kind": "load_dataset",
+          "snippet": "return load_dataset(\"openai/gsm8k\", split=\"test\", revision=revision)"
         }
       ],
       "metadata": {
@@ -203,8 +203,8 @@
       "refs": [
         {
           "dataset": "openai_humaneval",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/benchmarks_internal.py",
-          "line": 99,
+          "file": "scripts/benchmarks_internal.py",
+          "line": 105,
           "kind": "load_dataset_safe",
           "snippet": "humaneval = load_dataset_safe(\"openai_humaneval\", \"openai_humaneval\")"
         }
@@ -220,8 +220,8 @@
       "refs": [
         {
           "dataset": "turkish-nlp-suite/InstrucTurca",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
-          "line": 164,
+          "file": "scripts/data_pipeline.py",
+          "line": 166,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"turkish-nlp-suite/InstrucTurca\","
         }
@@ -237,14 +237,14 @@
       "refs": [
         {
           "dataset": "uonlp/CulturaX",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
-          "line": 108,
+          "file": "scripts/data_pipeline.py",
+          "line": 110,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"uonlp/CulturaX\", # [NEW] Massive Web Scale Turkish"
         },
         {
           "dataset": "uonlp/CulturaX",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/titan_preflight.py",
+          "file": "scripts/titan_preflight.py",
           "line": 185,
           "kind": "dataset_info",
           "snippet": "api.dataset_info(\"uonlp/CulturaX\", token=hf_token)"
@@ -261,8 +261,8 @@
       "refs": [
         {
           "dataset": "wikimedia/wikipedia",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/data_pipeline.py",
-          "line": 98,
+          "file": "scripts/data_pipeline.py",
+          "line": 100,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"wikimedia/wikipedia\","
         }
@@ -278,10 +278,10 @@
       "refs": [
         {
           "dataset": "wikitext",
-          "file": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/scripts/mini_titan_poc.py",
-          "line": 363,
+          "file": "scripts/mini_titan_poc.py",
+          "line": 367,
           "kind": "load_dataset",
-          "snippet": "ds = load_dataset(\"wikitext\", \"wikitext-2-raw-v1\", split=\"train\")"
+          "snippet": "ds = load_dataset(\"wikitext\", \"wikitext-2-raw-v1\", split=\"train\", revision=revision)"
         }
       ],
       "metadata": {
