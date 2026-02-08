@@ -8,7 +8,7 @@ Yeni bir clone üzerinde, temel kalite kapılarının izole bir path'te tekrar �
 - Temiz clone yolu: `/tmp/nihai_cleanroom_b27`
 - Python: `3.11.14`
 - Venv: `.cleanroom-venv`
-- Test edilen commit: `83a7834`
+- Test edilen commit: `a07a8c1`
 
 ## Çalıştırılan Komutlar
 ```bash

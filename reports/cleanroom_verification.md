@@ -8,7 +8,7 @@ Validate that a fresh clone can reproduce the core quality gates on an isolated 
 - Clean clone path: `/tmp/nihai_cleanroom_b27`
 - Python: `3.11.14`
 - Venv: `.cleanroom-venv`
-- Commit under test: `83a7834`
+- Commit under test: `a07a8c1`
 
 ## Commands Executed
 ```bash
