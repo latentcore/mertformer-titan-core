@@ -5,37 +5,54 @@ Bu matris, repoda tamamen biten işleri ve dış/operasyonel olarak kalan işler
 
 ## A) Pilot Teslim Hazırlığı (A1-A20)
 
-| ID | Durum | Repo içinde tamamlanamadıysa nedeni |
+| ID | Durum | Kanıt / Gerekçe |
 | --- | --- | --- |
-| A1-A18 | ✅ | Teknik ve dokümantasyon kapıları repo içinde tamamlandı. |
-| A19 | ❌ | Hukuki onay dış danışman/imza gerektirir; kod ile otomatik tamamlanamaz. |
-| A20 | ❌ | 2 ücretli pilot sözleşmesi veya 2 imzalı LOI gerekir; bu repo dışı ticari icradır. |
+| A1 | ✅ | Repo temiz ve senkron (`git status --short` hem Desktop hem NİHAİ_Deneme temiz). |
+| A2 | ✅ | `strict_checkpoint=True` varsayılanı: `mertformer_sdk/api.py`. |
+| A3 | ✅ | `mertformer verify` komutu: `mertformer_sdk/cli.py`. |
+| A4 | ✅ | `mertformer pilot-report --out ...` komutu: `mertformer_sdk/cli.py`. |
+| A5 | ✅ | Pilot şeması mevcut: `interfaces/pilot_report_v1.schema.json`. |
+| A6 | ✅ | Claim kapısı var: `scripts/benchmarks_internal.py` içinde `NOT ELIGIBLE FOR CLAIM`. |
+| A7 | ✅ | Desktop absolute-path temiz (takipli dosyalarda hardcoded Desktop yolu yok). |
+| A8 | ✅ | Claim policy + pilot checklist net: `README.md`. |
+| A9 | ✅ | README config örneği kodla uyumlu (`use_torch_compile = False`): `config/config.py`. |
+| A10 | ✅ | Pilot doküman seti hazır: `reports/pilot_readiness_kit.md`, `reports/pilot_offer_packages.md`, `reports/sales_funnel_90d.md`. |
+| A11 | ✅ | Test kapısı geçti: `30 passed, 4 skipped`. |
+| A12 | ✅ | Lint kapısı geçti: `ruff check` yeşil. |
+| A13 | ✅ | Full gate geçti: `bash scripts/verify_all.sh` -> `[verify] OK`. |
+| A14 | ✅ | SDK EN/TR senkron: `SDK_GUIDE.md`, `SDK_GUIDE_TR.md`. |
+| A15 | ✅ | Release commitleri `main` üstünde push edildi (son commit: `5dfb08b`). |
+| A16 | ✅ | Tag/release işareti push edildi (`v0.1.3-review-fix`) + changelog dosyaları mevcut. |
+| A17 | ✅ | Clean-room doğrulaması tamam: `reports/cleanroom_verification.md`. |
+| A18 | ✅ | Pilot teslim klasör standardı mevcut: `reports/pilots/`. |
+| A19 | ❌ | Hukuki imza dış danışman/onay sürecidir; kodla otomatik tamamlanamaz. |
+| A20 | ❌ | 2 ücretli pilot veya 2 imzalı LOI gerekir; repo dışı ticari icradır. |
 
 ## B) Ürün/Benchmark Claim Hazırlığı (B1-B10)
 
-| ID | Durum | Repo içinde tamamlanamadıysa nedeni |
+| ID | Durum | Kanıt / Gerekçe |
 | --- | --- | --- |
-| B1 | ❌ | Gerçek stage snapshot ve final hash pinleme üretim veri akışından gelmelidir. |
-| B2 | ❌ | Hedef eğitim donanımında tam pretrain/finetune koşusu gerekir. |
+| B1 | ❌ | Gerçek stage snapshot + final pinli hash üretim veri akışından gelmelidir. |
+| B2 | ❌ | Hedef donanımda tam pretrain/finetune koşusu gerekir. |
 | B3 | ❌ | Eğitilmiş üretim checkpoint artefaktı gerekir. |
 | B4 | ❌ | Benchmark çıktıları eğitilmiş checkpoint üzerinden üretilmelidir. |
 | B5 | ❌ | Gerçek cihazda latency/power ölçümü gerekir. |
-| B6 | ✅ | Claim dili ayrıştırıldı (ölçülmüş vs hedef/tahmin). |
+| B6 | ✅ | Claim dili dokümanda ayrıştırıldı (ölçülmüş vs hedef/tahmin). |
 | B7 | ❌ | Üçüncü taraf tekrar doğrulama dış doğrulayıcı ekip gerektirir. |
-| B8 | ❌ | Nihai ticari lisans uyumu hukuk onayı gerektirir. |
-| B9 | ❌ | Güvenlik/pentest raporu için ayrı güvenlik test kapsamı gerekir. |
+| B8 | ❌ | Nihai lisans/compliance onayı hukuk imzası gerektirir. |
+| B9 | ❌ | Güvenlik/pentest raporu için harici güvenlik test kapsamı gerekir. |
 | B10 | ❌ | SLA/incident/rollback sözleşme paketi iş/hukuk icrası gerektirir. |
 
-## C) Pilot Teslim Paketi
+## C) Pilot Teslim Paketi (Müşteri Başına)
 
-| Kalem | Durum |
-| --- | --- |
-| verify_all özet/log | ✅ |
-| operator gate JSON özeti | ✅ |
-| pilot_report_v1 JSON | ✅ |
-| offline tekrar çalıştırma adımları | ✅ |
-| risk/limit notu | ✅ |
-| kabul imza sayfası şablonu | ✅ |
+| Kalem | Durum | Kanıt |
+| --- | --- | --- |
+| verify_all özet/log | ✅ | `scripts/verify_all.sh` + pilot report payload |
+| operator gate JSON özeti | ✅ | `scripts/operator_mode_gate.py` çıktısı |
+| pilot_report_v1 JSON | ✅ | `interfaces/pilot_report_v1.schema.json` |
+| offline tekrar çalıştırma adımları | ✅ | `USAGE_GUIDE.md` |
+| risk/limit notu | ✅ | README + benchmark eligibility kapısı |
+| kabul imza sayfası | ✅ | `reports/pilot_acceptance_signoff_TR.md` |
 
 ## Güncel Kapı Kararı
 - **Pilot teknik hazırlık:** GO

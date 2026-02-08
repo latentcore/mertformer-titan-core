@@ -5,37 +5,54 @@ This matrix tracks what is fully completed in-repo and what remains external/ope
 
 ## A) Pilot Delivery Readiness (A1-A20)
 
-| ID | Status | Reason if not completed in-repo |
+| ID | Status | Evidence / Reason |
 | --- | --- | --- |
-| A1-A18 | ✅ | Technical and documentation gates are completed in repo. |
-| A19 | ❌ | Legal approval requires external counsel sign-off; cannot be auto-completed by code. |
-| A20 | ❌ | Requires 2 paid pilot contracts or 2 signed LOIs; this is commercial execution outside repo. |
+| A1 | ✅ | Repo clean and synced (`git status --short` clean on both Desktop + NİHAİ_Deneme). |
+| A2 | ✅ | `strict_checkpoint=True` default in `mertformer_sdk/api.py`. |
+| A3 | ✅ | `mertformer verify` command in `mertformer_sdk/cli.py`. |
+| A4 | ✅ | `mertformer pilot-report --out ...` in `mertformer_sdk/cli.py`. |
+| A5 | ✅ | Pilot schema exists: `interfaces/pilot_report_v1.schema.json`. |
+| A6 | ✅ | Claim gate text: `NOT ELIGIBLE FOR CLAIM` in `scripts/benchmarks_internal.py`. |
+| A7 | ✅ | Desktop absolute-path gate is clean (no hardcoded Desktop path in tracked files). |
+| A8 | ✅ | Claim policy + pilot checklist are explicit in `README.md`. |
+| A9 | ✅ | README config sample aligned (`use_torch_compile = False`) with `config/config.py`. |
+| A10 | ✅ | Pilot docs set exists: `reports/pilot_readiness_kit.md`, `reports/pilot_offer_packages.md`, `reports/sales_funnel_90d.md`. |
+| A11 | ✅ | Test gate pass: `30 passed, 4 skipped`. |
+| A12 | ✅ | Lint gate pass: `ruff check` all green. |
+| A13 | ✅ | Full gate pass: `bash scripts/verify_all.sh` -> `[verify] OK`. |
+| A14 | ✅ | SDK EN/TR aligned: `SDK_GUIDE.md`, `SDK_GUIDE_TR.md`. |
+| A15 | ✅ | Release commits pushed on `main` (latest: `5dfb08b`). |
+| A16 | ✅ | Tag/release marker pushed (`v0.1.3-review-fix`) + changelog files present. |
+| A17 | ✅ | Clean-room verification completed (`reports/cleanroom_verification.md`). |
+| A18 | ✅ | Pilot delivery folder standard exists under `reports/pilots/`. |
+| A19 | ❌ | Legal sign-off is external counsel workflow; cannot be auto-completed by code. |
+| A20 | ❌ | Requires 2 paid pilots or 2 signed LOIs; this is commercial execution outside repo. |
 
 ## B) Product/Benchmark Claim Readiness (B1-B10)
 
-| ID | Status | Reason if not completed in-repo |
+| ID | Status | Evidence / Reason |
 | --- | --- | --- |
-| B1 | ❌ | Needs real staged dataset snapshots and final pinned hashes from production data flow. |
+| B1 | ❌ | Needs real staged dataset snapshots + final pinned hashes from production data flow. |
 | B2 | ❌ | Needs full pretrain/finetune run on target training hardware. |
 | B3 | ❌ | Requires trained production checkpoint artifacts. |
 | B4 | ❌ | Requires benchmark outputs generated from trained checkpoints. |
 | B5 | ❌ | Requires real-device latency/power measurements. |
-| B6 | ✅ | Claim language is now separated (measured vs target/estimate). |
+| B6 | ✅ | Claim language is separated (measured vs target/estimate) in docs. |
 | B7 | ❌ | Third-party reproduction requires an external validator team. |
-| B8 | ❌ | Final commercial license approval requires legal sign-off. |
-| B9 | ❌ | Security/pentest report requires dedicated security assessment scope. |
+| B8 | ❌ | Final commercial license/compliance approval requires legal sign-off. |
+| B9 | ❌ | Security/pentest report requires dedicated external security assessment scope. |
 | B10 | ❌ | SLA/incident/rollback contract package requires business/legal execution. |
 
-## C) Pilot Delivery Bundle
+## C) Pilot Delivery Bundle (Per-Customer)
 
-| Item | Status |
-| --- | --- |
-| verify_all summary/log | ✅ |
-| operator gate JSON summary | ✅ |
-| pilot_report_v1 JSON | ✅ |
-| offline rerun instructions | ✅ |
-| risk/limit note | ✅ |
-| acceptance signoff page template | ✅ |
+| Item | Status | Evidence |
+| --- | --- | --- |
+| verify_all summary/log | ✅ | `scripts/verify_all.sh` + pilot report payload |
+| operator gate JSON summary | ✅ | `scripts/operator_mode_gate.py` output |
+| pilot_report_v1 JSON | ✅ | `interfaces/pilot_report_v1.schema.json` |
+| offline rerun instructions | ✅ | `USAGE_GUIDE.md` |
+| risk/limit note | ✅ | README + benchmark eligibility gate |
+| acceptance signoff page | ✅ | `reports/pilot_acceptance_signoff.md` |
 
 ## Current Gate Decision
 - **Pilot technical readiness:** GO
