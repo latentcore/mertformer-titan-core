@@ -205,6 +205,8 @@ Tam video: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
 - [reports/pilots/README_TR.md](reports/pilots/README_TR.md) — Pilot kanıt klasörü standardı (TR).
 - [reports/pilot_acceptance_signoff.md](reports/pilot_acceptance_signoff.md) — Pilot kabul imza şablonu (EN).
 - [reports/pilot_acceptance_signoff_TR.md](reports/pilot_acceptance_signoff_TR.md) — Pilot kabul imza şablonu (TR).
+- [reports/ip_licensing_split.md](reports/ip_licensing_split.md) — Sektörel fikri hak ayrımı çerçevesi (EN).
+- [reports/ip_licensing_split_TR.md](reports/ip_licensing_split_TR.md) — Sektörel fikri hak ayrımı çerçevesi (TR).
 - [reports/dataset_health.md](reports/dataset_health.md) — Dataset sağlık raporu (EN).
 - [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset sağlık raporu (TR).
 - [reports/model_health.md](reports/model_health.md) — Model sağlık raporu (EN).
@@ -1236,6 +1238,8 @@ NİHAİ/
 │   ├── 📄 drone_sitl_demo_TR.md # SITL drone protokolü (TR)
 │   ├── 📄 pilot_acceptance_signoff.md # Pilot kabul imza sayfası (EN)
 │   ├── 📄 pilot_acceptance_signoff_TR.md # Pilot kabul imza sayfası (TR)
+│   ├── 📄 ip_licensing_split.md # Sektörel fikri hak ayrımı çerçevesi (EN)
+│   ├── 📄 ip_licensing_split_TR.md # Sektörel fikri hak ayrımı çerçevesi (TR)
 │   ├── 📂 pilots/          # Pilot kanıt paketleri
 │   │   ├── 📄 README.md    # Pilot kanıt yapısı (EN)
 │   │   └── 📄 README_TR.md # Pilot kanıt yapısı (TR)

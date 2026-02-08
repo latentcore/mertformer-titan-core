@@ -205,6 +205,8 @@ Open full clip: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
 - [reports/pilots/README_TR.md](reports/pilots/README_TR.md) — Pilot evidence folder standard (TR).
 - [reports/pilot_acceptance_signoff.md](reports/pilot_acceptance_signoff.md) — Pilot acceptance signature template (EN).
 - [reports/pilot_acceptance_signoff_TR.md](reports/pilot_acceptance_signoff_TR.md) — Pilot acceptance signature template (TR).
+- [reports/ip_licensing_split.md](reports/ip_licensing_split.md) — Sectoral IP split framework (EN).
+- [reports/ip_licensing_split_TR.md](reports/ip_licensing_split_TR.md) — Sectoral IP split framework (TR).
 - [reports/dataset_health.md](reports/dataset_health.md) — Dataset health report (EN).
 - [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset health report (TR).
 - [reports/model_health.md](reports/model_health.md) — Model health report (EN).
@@ -1240,6 +1242,8 @@ NİHAİ/                     # Project root
 │   ├── 📄 drone_sitl_demo_TR.md # SITL drone protocol (TR)
 │   ├── 📄 pilot_acceptance_signoff.md # Pilot acceptance signoff (EN)
 │   ├── 📄 pilot_acceptance_signoff_TR.md # Pilot acceptance signoff (TR)
+│   ├── 📄 ip_licensing_split.md # Sectoral IP split framework (EN)
+│   ├── 📄 ip_licensing_split_TR.md # Sectoral IP split framework (TR)
 │   ├── 📂 pilots/          # Pilot evidence bundles
 │   │   ├── 📄 README.md    # Pilot evidence structure (EN)
 │   │   └── 📄 README_TR.md # Pilot evidence structure (TR)
