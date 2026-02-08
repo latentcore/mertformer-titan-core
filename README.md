@@ -164,6 +164,8 @@ Report accuracy audit and strategic value summary.
 - [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark outputs guide (TR).
 - [reports/strategic_value.md](reports/strategic_value.md) — Strategic value summary (EN).
 - [reports/strategic_value_TR.md](reports/strategic_value_TR.md) — Strategic value summary (TR).
+- [reports/efficiency_convergence_analysis.md](reports/efficiency_convergence_analysis.md) — Convergence analysis (BitNet/Liquid/MoE, forecast, EN).
+- [reports/efficiency_convergence_analysis_TR.md](reports/efficiency_convergence_analysis_TR.md) — Convergence analysis (BitNet/Liquid/MoE, forecast, TR).
 
 **Pitch & Assets**
 Investor-facing materials and launch assets.
@@ -1216,6 +1218,8 @@ NİHAİ/                     # Project root
 │   ├── 📄 report_accuracy_audit_TR.md # Report accuracy audit (TR)
 │   ├── 📄 strategic_value.md # Strategic value summary (EN)
 │   ├── 📄 strategic_value_TR.md # Strategic value summary (TR)
+│   ├── 📄 efficiency_convergence_analysis.md # BitNet/Liquid/MoE convergence analysis (forecast, EN)
+│   ├── 📄 efficiency_convergence_analysis_TR.md # BitNet/Liquid/MoE convergence analysis (forecast, TR)
 │   ├── 📄 cli_smoke_log.md  # CLI smoke log (EN)
 │   ├── 📄 cli_smoke_log_TR.md # CLI smoke log (TR)
 │   ├── 📄 demo_video_script.md # Demo video script (offline)

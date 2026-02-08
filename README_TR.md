@@ -164,6 +164,8 @@ Rapor doğruluk denetimi ve stratejik değer özeti.
 - [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark çıktıları rehberi (TR).
 - [reports/strategic_value.md](reports/strategic_value.md) — Stratejik değer özeti (EN).
 - [reports/strategic_value_TR.md](reports/strategic_value_TR.md) — Stratejik değer özeti (TR).
+- [reports/efficiency_convergence_analysis.md](reports/efficiency_convergence_analysis.md) — Yakınsama analizi (BitNet/Liquid/MoE, öngörü, EN).
+- [reports/efficiency_convergence_analysis_TR.md](reports/efficiency_convergence_analysis_TR.md) — Yakınsama analizi (BitNet/Liquid/MoE, öngörü, TR).
 
 **Sunum & Asset**
 Yatırımcı materyalleri ve lansman varlıkları.
@@ -1214,6 +1216,8 @@ NİHAİ/
 │   ├── 📄 report_accuracy_audit_TR.md # Report accuracy audit (TR)
 │   ├── 📄 strategic_value.md # Strategic value summary (EN)
 │   ├── 📄 strategic_value_TR.md # Strategic value summary (TR)
+│   ├── 📄 efficiency_convergence_analysis.md # BitNet/Liquid/MoE yakınsama analizi (öngörü, EN)
+│   ├── 📄 efficiency_convergence_analysis_TR.md # BitNet/Liquid/MoE yakınsama analizi (öngörü, TR)
 │   ├── 📄 demo_video_script.md # Demo video script (offline)
 │   ├── 📄 demo_video_script_TR.md # Demo video script (TR)
 │   ├── 📄 founders_hub_application.md # Founders Hub draft
