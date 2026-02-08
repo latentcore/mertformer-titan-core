@@ -293,6 +293,8 @@ Name expansion:
 - **System focus:** Perception → decision → control chain under constrained hardware, latency, and sensor uncertainty.
 - **Safety-first behavior:** Fail-safe guardrails and watchdog-style overrides are expected to force deterministic fallback when risk/confidence thresholds are breached.
 - **Positioning:** Engineering validation scope only; this is not presented as a certified or production deployment claim.
+- **Current constraint:** Validation throughput is currently limited by access to GPU/edge hardware and controlled field-test resources.
+- **Collaboration request:** We welcome collaboration for compute support, controlled test environments, and engineering mentorship to accelerate milestones.
 
 ---
 
