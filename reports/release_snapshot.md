@@ -50,9 +50,9 @@ TITAN_OFFLINE=1 bash run.sh --test
 - `MertFormer_Titan_OnyxStorm_v1.0_B27_Hamdi_Package_Release.zip`
 - `MertFormer_Titan_OnyxStorm_v1.0_B27_Locked.secure.age`
 - SHA-256:
-  - `756e13d4bad64eb399b207d886edcfa35721bfffd0a533535216266956274fb2` (`MertFormer_Titan_OnyxStorm_v1.0_B27_Release.zip`)
-  - `cd4575028c56eaf7130786d19ed9ddee9565d93a5e878b5942db02c3eb7a728d` (`MertFormer_Titan_OnyxStorm_v1.0_B27_Hamdi_Package_Release.zip`)
-  - `f778b3446f7b3b80a60b88cd69fdf46085035825ce2204fe4c7617a39ef2d39a` (`MertFormer_Titan_OnyxStorm_v1.0_B27_Locked.secure.age`)
+  - `785854fafafb2120e5373e4d8bdcbac0f02d5d269a38883f0fa09255648b03b9` (`MertFormer_Titan_OnyxStorm_v1.0_B27_Release.zip`)
+  - `49c95d2bebefdbcb184044acfaaaabec7800026116f3f5d1836707485b1bcc40` (`MertFormer_Titan_OnyxStorm_v1.0_B27_Hamdi_Package_Release.zip`)
+  - `e260307e32b6d1f9aa940ef08a500b4d832168c861598e23022d693b97ed515b` (`MertFormer_Titan_OnyxStorm_v1.0_B27_Locked.secure.age`)
 
 ## Known Gates / Blockers
 
