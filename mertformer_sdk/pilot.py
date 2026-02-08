@@ -12,9 +12,7 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-_PYTEST_RE = re.compile(
-    r"(?P<passed>\d+)\s+passed(?:,\s*(?P<skipped>\d+)\s+skipped)?(?:,\s*(?P<warnings>\d+)\s+warnings?)?"
-)
+_PYTEST_COUNT_RE = re.compile(r"(?P<count>\d+)\s+(?P<label>passed|failed|errors?|skipped|warnings?)")
 
 
 def _utc_iso() -> str:
@@ -50,14 +48,27 @@ def _extract_operator_summary_json(output: str) -> dict[str, Any] | None:
 
 
 def _extract_pytest_summary(output: str) -> dict[str, int]:
-    result = {"passed": 0, "skipped": 0, "warnings": 0}
+    result = {"passed": 0, "failed": 0, "errors": 0, "skipped": 0, "warnings": 0}
     for line in output.splitlines():
-        match = _PYTEST_RE.search(line)
-        if not match:
+        if " passed" not in line and " failed" not in line and " error" not in line:
             continue
-        result["passed"] = int(match.group("passed") or 0)
-        result["skipped"] = int(match.group("skipped") or 0)
-        result["warnings"] = int(match.group("warnings") or 0)
+        counts = _PYTEST_COUNT_RE.findall(line)
+        if not counts:
+            continue
+        for count_s, label in counts:
+            count = int(count_s)
+            key = label.rstrip("s")
+            if key == "warning":
+                key = "warnings"
+            elif key == "error":
+                key = "errors"
+            elif key == "passed":
+                key = "passed"
+            elif key == "failed":
+                key = "failed"
+            elif key == "skipped":
+                key = "skipped"
+            result[key] = count
     return result
 
 
@@ -106,7 +117,11 @@ def parse_verify_output(output: str, exit_code: int) -> dict[str, Any]:
         "status": "pass" if exit_code == 0 else "fail",
         "exit_code": int(exit_code),
         "secret_scan_pass": "OK: no secret patterns detected in tracked files." in output,
-        "pytest_pass": pytest_summary["passed"] > 0,
+        "pytest_pass": (
+            pytest_summary["passed"] > 0
+            and pytest_summary["failed"] == 0
+            and pytest_summary["errors"] == 0
+        ),
         "pytest_summary": pytest_summary,
         "preflight_pass": (
             "RESULT: 🏆 ALL GREEN" in output

@@ -10,12 +10,19 @@ cd "$ROOT_DIR"
 export TITAN_OFFLINE="${TITAN_OFFLINE:-1}"
 export TITAN_WANDB="${TITAN_WANDB:-0}"
 
-if [[ ! -x ".titan-venv/bin/python" ]]; then
-  echo "[verify] .titan-venv missing; bootstrapping with Python 3.11 ..."
-  bash scripts/bootstrap_venv.sh
+if [[ -n "${TITAN_PYTHON:-}" ]]; then
+  if [[ ! -x "${TITAN_PYTHON}" ]]; then
+    echo "[verify] TITAN_PYTHON is set but not executable: ${TITAN_PYTHON}" >&2
+    exit 2
+  fi
+  PY="${TITAN_PYTHON}"
+else
+  if [[ ! -x ".titan-venv/bin/python" ]]; then
+    echo "[verify] .titan-venv missing; bootstrapping with Python 3.11 ..."
+    bash scripts/bootstrap_venv.sh
+  fi
+  PY=".titan-venv/bin/python"
 fi
-
-PY=".titan-venv/bin/python"
 
 echo "[verify] Python: $("$PY" -V)"
 echo "[verify] TITAN_OFFLINE=$TITAN_OFFLINE"

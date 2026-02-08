@@ -5,7 +5,7 @@ This file is a human-readable snapshot of the repository at a review point-in-ti
 ## Snapshot
 
 - Date (local): 2026-02-08
-- Base Git SHA (short): `git rev-parse --short HEAD`
+- Base Git SHA (short): `83a7834`
 - Baseline Python: 3.11 (see `repro/python.md`)
 - Default mode: offline-first (`TITAN_OFFLINE=1`)
 
@@ -20,7 +20,7 @@ bash scripts/verify_all.sh
 
 Expected outputs:
 - Secret scan: PASS
-- Pytest: PASS (`29 passed, 4 skipped`)
+- Pytest: PASS (`30 passed, 4 skipped`)
 - Preflight (offline): PASS
 - Operator gate (safe, offline): PASS
 

@@ -61,6 +61,20 @@ RESULT: 🏆 ALL GREEN
     assert operator_steps["overfit_gate"] == "pass_fast"
 
 
+def test_parse_verify_output_marks_pytest_failures_false():
+    verify_output = """
+[verify] Pytest ...
+27 passed, 1 failed, 4 skipped in 6.48s
+[verify] Preflight (offline) ...
+RESULT: 🏆 ALL GREEN
+[verify] OK
+""".strip()
+    summary = pilot.parse_verify_output(verify_output, 1)
+    assert summary["pytest_summary"]["passed"] == 27
+    assert summary["pytest_summary"]["failed"] == 1
+    assert summary["pytest_pass"] is False
+
+
 def test_cli_pilot_report_writes_output(monkeypatch, tmp_path: Path):
     fake_summary = {
         "status": "pass",

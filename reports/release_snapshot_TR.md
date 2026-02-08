@@ -5,7 +5,7 @@ Bu dosya, repo'nun inceleme anındaki durumunu (point-in-time) insan-okur bir fo
 ## Snapshot
 
 - Tarih (yerel): 2026-02-08
-- Base Git SHA (kısa): `git rev-parse --short HEAD`
+- Base Git SHA (kısa): `83a7834`
 - Baseline Python: 3.11 (bkz: `repro/python_TR.md`)
 - Varsayılan mod: offline-first (`TITAN_OFFLINE=1`)
 
@@ -20,7 +20,7 @@ bash scripts/verify_all.sh
 
 Beklenen:
 - Secret scan: PASS
-- Pytest: PASS (`29 passed, 4 skipped`)
+- Pytest: PASS (`30 passed, 4 skipped`)
 - Preflight (offline): PASS
 - Operator gate (safe, offline): PASS
 

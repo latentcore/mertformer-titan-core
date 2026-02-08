@@ -8,11 +8,12 @@ Validate that a fresh clone can reproduce the core quality gates on an isolated 
 - Clean clone path: `/tmp/nihai_cleanroom_b27`
 - Python: `3.11.14`
 - Venv: `.cleanroom-venv`
-- Commit under test: `7824734`
+- Commit under test: `83a7834`
 
 ## Commands Executed
 ```bash
-git clone /Users/mertyunlu/Desktop/NİHAİ /tmp/nihai_cleanroom_b27
+SOURCE_REPO="<repo-url-or-local-path>"
+git clone "$SOURCE_REPO" /tmp/nihai_cleanroom_b27
 cd /tmp/nihai_cleanroom_b27
 python3.11 -m venv .cleanroom-venv
 .cleanroom-venv/bin/python -m pip install -U pip
@@ -25,7 +26,7 @@ TITAN_PYTHON="$PWD/.cleanroom-venv/bin/python" TITAN_OFFLINE=1 bash scripts/veri
 ```
 
 ## Results
-- `pytest`: `29 passed, 4 skipped`
+- `pytest`: `30 passed, 4 skipped`
 - `ruff`: `All checks passed!`
 - `verify_all`: `[verify] OK`
 
