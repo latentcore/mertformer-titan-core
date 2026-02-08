@@ -5,5 +5,5 @@
 - **Etkisi**:
 - **Kok Sebep**:
 - **Tespit**:
-- **Cozum**:
+- **Çözüm**:
 - **Onleme**:

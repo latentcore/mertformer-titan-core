@@ -1,6 +1,6 @@
 # Tool Sozlesmeleri
 
-Tool cagirilari icin giris/cikis sozlesmelerini tanimlar.
+Tool cagirilari için giris/cikis sözleşmelerini tanimlar.
 
 ## Sozlesme Sablonu
 - **name**: tool adi (string)
@@ -8,7 +8,7 @@ Tool cagirilari icin giris/cikis sozlesmelerini tanimlar.
 - **outputs**: JSON obje, schema tanimli
 - **errors**: olasi hata kodlari listesi
 
-## Ornek
+## Örnek
 ```
 name: "benchmark.run"
 inputs:

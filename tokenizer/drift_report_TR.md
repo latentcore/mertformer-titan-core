@@ -1,3 +1,3 @@
-# Tokenizer Drift Raporu (Sablon)
+# Tokenizer Drift Raporu (Şablon)
 
 Tokenizer surumu veya merge değişikliklerini kaydedin.

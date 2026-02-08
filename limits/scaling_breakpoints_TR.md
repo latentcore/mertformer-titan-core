@@ -1,8 +1,8 @@
 # Olcekleme Kirilma Noktalari
 
-Durum: **Olcum bekliyor** (uretim kosulari gerekir).
+Durum: **Ölçüm bekliyor** (üretim koşuları gerekir).
 
-Egitim donanimi ile kosu sonrasi doldurun:
+Eğitim donanımı ile kosu sonrasi doldurun:
 - GPU basina max stabil batch size.
 - NaN/Inf esikleri ve hata senaryolari.
 - Baglam uzunlugu stabilitesi ve bozulma baslangici.
@@ -20,4 +20,4 @@ Egitim donanimi ile kosu sonrasi doldurun:
 - Expert collapse esigi:
 - Mitigasyon notlari:
 
-`limits/stress_curves.png` grafikleri, kosular tamamlandiginda guncellenecek.
+`limits/stress_curves.png` grafikleri, koşular tamamlandığında güncellenecek.

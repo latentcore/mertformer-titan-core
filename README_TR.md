@@ -101,8 +101,8 @@ Ana giriş dokümanları ve checklistler.
 - [README_TR.md](README_TR.md) — Türkçe genel bakış.
 - [CITATION.cff](CITATION.cff) — Atıf metadata dosyası.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — Katkı yönergeleri (dahili kullanım).
-- [README_CHECKLIST.md](README_CHECKLIST.md) — README denetim checklisti (EN).
-- [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README denetim checklisti (TR).
+- [README_CHECKLIST.md](README_CHECKLIST.md) — README denetim checklist'i (EN).
+- [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README denetim checklist'i (TR).
 - [scripts/README.md](scripts/README.md) — Script kataloğu (EN).
 - [scripts/README_TR.md](scripts/README_TR.md) — Script kataloğu (TR).
 - [snake_demo.py](snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
@@ -145,10 +145,11 @@ Rapor doğruluk denetimi ve stratejik değer özeti.
 - [reports/codex_deep_audit_TR.md](reports/codex_deep_audit_TR.md) — Derin mühendislik denetimi (TR).
 - [reports/codex_deep_audit_EN_TR.md](reports/codex_deep_audit_EN_TR.md) — EN denetim raporunun TR karşılığı.
 - [reports/codex_deep_audit_DE_TR.md](reports/codex_deep_audit_DE_TR.md) — DE denetim raporunun TR karşılığı.
+- DE dilindeki denetim dosyaları, Almanca konuşan paydaşlar için dış inceleme artifact’i olarak korunur.
 - [reports/verified_matrix.md](reports/verified_matrix.md) — Verified vs Target matrisi (EN).
 - [reports/verified_matrix_TR.md](reports/verified_matrix_TR.md) — Verified vs Target matrisi (TR).
-- [reports/review_checklist.md](reports/review_checklist.md) — Dış inceleme checklisti (EN).
-- [reports/review_checklist_TR.md](reports/review_checklist_TR.md) — Dış inceleme checklisti (TR).
+- [reports/review_checklist.md](reports/review_checklist.md) — Dış inceleme checklist'i (EN).
+- [reports/review_checklist_TR.md](reports/review_checklist_TR.md) — Dış inceleme checklist'i (TR).
 - [reports/release_snapshot.md](reports/release_snapshot.md) — Release snapshot (EN).
 - [reports/release_snapshot_TR.md](reports/release_snapshot_TR.md) — Release snapshot (TR).
 - [reports/final_sync_matrix.md](reports/final_sync_matrix.md) — Final senkron matris (EN).
@@ -185,8 +186,15 @@ Tam video: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
 - [reports/poc_protocol.md](reports/poc_protocol.md) — Pilot/PoC protokolü (EN).
 - [reports/poc_protocol_TR.md](reports/poc_protocol_TR.md) — Pilot/PoC protokolü (TR).
 - [reports/pilot_readiness_kit.md](reports/pilot_readiness_kit.md) — Pilot hazırlık kiti (EN).
+- [reports/pilot_readiness_kit_TR.md](reports/pilot_readiness_kit_TR.md) — Pilot hazırlık kiti (TR).
 - [reports/pilot_offer_packages.md](reports/pilot_offer_packages.md) — Standart pilot teklif paketleri (EN).
+- [reports/pilot_offer_packages_TR.md](reports/pilot_offer_packages_TR.md) — Standart pilot teklif paketleri (TR).
 - [reports/sales_funnel_90d.md](reports/sales_funnel_90d.md) — 90 günlük B2B pilot satış hunisi (EN).
+- [reports/sales_funnel_90d_TR.md](reports/sales_funnel_90d_TR.md) — 90 günlük B2B pilot satış hunisi (TR).
+- [reports/drone_sitl_demo.md](reports/drone_sitl_demo.md) — SITL drone kanıt protokolü (EN).
+- [reports/drone_sitl_demo_TR.md](reports/drone_sitl_demo_TR.md) — SITL drone kanıt protokolü (TR).
+- [reports/pilots/README.md](reports/pilots/README.md) — Pilot kanıt klasörü standardı (EN).
+- [reports/pilots/README_TR.md](reports/pilots/README_TR.md) — Pilot kanıt klasörü standardı (TR).
 - [reports/dataset_health.md](reports/dataset_health.md) — Dataset sağlık raporu (EN).
 - [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset sağlık raporu (TR).
 - [reports/model_health.md](reports/model_health.md) — Model sağlık raporu (EN).
@@ -221,7 +229,7 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 - [repro/seed_policy_TR.md](repro/seed_policy_TR.md) — Seed politikası (TR).
 - [repro/python.md](repro/python.md) — Python 3.11 baseline kurulum (EN).
 - [repro/python_TR.md](repro/python_TR.md) — Python 3.11 baseline kurulum (TR).
-- [repro/accelerate_default.yaml](repro/accelerate_default.yaml) — Örnek accelerate config (lokal).
+- [repro/accelerate_default.yaml](repro/accelerate_default.yaml) — Örnek accelerate config (yerel).
 - [repro/pip_freeze.txt](repro/pip_freeze.txt) — Ortam envanteri (pip freeze).
 - [logs/README.md](logs/README.md) — Log dizini + birleşik logbook notları.
 - `logs/ALL_LOGS.jsonl` — Birleşik logbook artifact (gitignored; `.titan-venv/bin/python scripts/logbook_build.py --append` ile üretilir).
@@ -456,7 +464,7 @@ Verinin 0'dan 17'ye kadar olan yolculuğu:
 *   **Katman 9 (Niyet Analizi):** Karar mekanizmaları güçlenir; model kullanıcı niyetini ve sorunun arka planını kavramaya başlar.
 *   **Katman 10 (İkinci Liquid Teması):** **Kritik Eşik.** İkinci `LiquidMixer` burada aktifleşir; karmaşık mantık yürütme sırasında verinin zamansal hafızası ve hızı dinamik olarak tazelenir.
 *   **Katman 11 (Stratejik Karar):** Akışkanlık kazanan mantık, `MoE` uzmanları tarafından stratejik yanıt parametrelerine dönüştürülür.
-*   **Katman 12 (Üst Seviye Anlam):** Bilgi "bilgelik" seviyesine yaklaşır; cümlenin tonu, amacı ve hedefi bu aşamada netleşir.
+*   **Katman 12 (Üst Seviye Anlam):** Bilgi "bilgelik" seviyesine yaklaşır; cümlenin tonu, amaçı ve hedefi bu aşamada netleşir.
 *   **Katman 13 (Yanıt İnşası):** Üretilecek cevabın iskeleti kurulur; `MLA` cevabın en kritik noktalarına odaklanır.
 *   **Katman 14 (Kültürel Adaptasyon):** Teknik detaylar ile Türkçe kültürel ve deyimsel yapılar bu aşamada modele enjekte edilir.
 *   **Katman 15 (Ön Final Analizi):** Cevap son formunu almadan önceki son büyük denetim ve kalite kontrol katmanıdır.
@@ -617,6 +625,14 @@ bash scripts/bootstrap_venv.sh --demo
 .titan-venv/bin/python snake_demo.py
 ```
 
+### Drone SITL Kanıt Demosu (Offline, Fiziksel Drone Gerekmez)
+
+```bash
+python3 scripts/drone_sitl_demo.py --pilot-id pilot_001 --runs 3 --steps 120
+```
+
+Çıktılar `reports/pilots/<pilot_id>/sitl_<timestamp>/` klasörüne yazılır.
+
 ### Sadece Preflight
 
 ```bash
@@ -656,7 +672,7 @@ Aşağıdaki maddeler uygulanmıştır ve kanıt dosyaları ile eşlenmiştir:
 - Golden Sample Eval (50 prompt): `datasets/golden_samples.jsonl`, `scripts/golden_eval.py`
 - Phase 1: Telemetry-Driven Execution
 - Expected vs Actual altyapısı: `orchestrator/telemetry.py`
-- Master Training (2.6B): eğitim donanımında çalıştırılacak (lokalde koşulmadı)
+- Master Training (2.6B): eğitim donanımında çalıştırılacak (yerelde koşulmadı)
 - Internal Truth Benchmarks (HumanEval/MBPP): `scripts/benchmarks_internal.py`
 - Phase 2: Asset Stack
 - Demo Video Script (offline): `reports/demo_video_script.md`
@@ -720,7 +736,7 @@ Aşağıdaki blok, bir MertFormer Ajanının karmaşık bir hatayı nasıl anali
 
 ---
 
-<a id="egitim"></a>
+<a id="eğitim"></a>
 ## 🎓 Eğitim
 
 ### Eğitim Yapılandırması
@@ -773,7 +789,7 @@ liquid_spike_threshold = 5.0
 *Not: Damıtma, token başına etkin öğrenmeyi artırır; ancak ham token sayısını artırmaz.*
 
 Bu eğitim sırası ve token bütçesi, **güçlü bir temel için yeterli** olacak şekilde tasarlanmıştır.  
-**Niş veya özel alanlar** için, en yüksek uzmanlık seviyesine çıkmak amacıyla **hedefli fine‑tune** önerilir.
+**Niş veya özel alanlar** için, en yüksek uzmanlık seviyesine çıkmak amaçıyla **hedefli fine‑tune** önerilir.
 
 ### İzleme
 
@@ -961,15 +977,15 @@ NİHAİ/
 ├── 🐍 snake_demo.py          # Pygame cyberpunk Snake autoplayer (LIVE DEMO)
 ├── 📄 MODEL_CARD.md         # Model karti (EN)
 ├── 📄 MODEL_CARD_TR.md      # Model karti (TR)
-├── 📄 USE_POLICY.md         # Kullanim politikasi (EN)
-├── 📄 USE_POLICY_TR.md      # Kullanim politikasi (TR)
-├── 📂 config/              # Yapilandirma dosyalari
-│   ├── 📄 config.py        # Model ve egitim hiperparametreleri (400+ satir)
-│   ├── 📄 base.yaml        # Temel konfigurasyon overlay
+├── 📄 USE_POLICY.md         # Kullanım politikasi (EN)
+├── 📄 USE_POLICY_TR.md      # Kullanım politikasi (TR)
+├── 📂 config/              # Yapılandırma dosyaları
+│   ├── 📄 config.py        # Model ve eğitim hiperparametreleri (400+ satir)
+│   ├── 📄 base.yaml        # Temel konfigürasyon overlay
 │   ├── 📂 model/           # Model overlay'leri
-│   │   ├── 📄 mertformer_small.yaml # Kucuk debug varyanti
+│   │   ├── 📄 mertformer_small.yaml # Küçük debug varyantı
 │   │   └── 📄 mertformer_moe.yaml   # MoE baseline
-│   ├── 📂 train/           # Egitim overlay'leri
+│   ├── 📂 train/           # Eğitim overlay'leri
 │   │   ├── 📄 pretrain.yaml
 │   │   └── 📄 finetune.yaml
 │   └── 📂 export/          # Export overlay'leri
@@ -983,10 +999,10 @@ NİHAİ/
 │   ├── 📄 ffn.py           # Dense FeedForward (SwiGLU)
 │   ├── 📄 mertformer_block.py  # Transformer blok
 │   ├── 📄 qinn.py          # Quantum-Inspired Unitary Layer
-│   └── 📄 __init__.py      # Paket isaretcisi
+│   └── 📄 __init__.py      # Paket işaretçisi
 ├── 📂 model/               # Model montaji
 │   ├── 📄 transformers.py  # MertFormer ana sinif
-│   └── 📄 __init__.py      # Paket isaretcisi
+│   └── 📄 __init__.py      # Paket işaretçisi
 ├── 📂 mertformer_sdk/      # SDK paketi (API + CLI + kernel)
 │   ├── 📄 __init__.py
 │   ├── 📄 api.py
@@ -997,29 +1013,29 @@ NİHAİ/
 │   │   └── 📄 triton_ternary.py
 │   └── 📂 utils/
 │       └── 📄 bitpack.py
-├── 📂 train/               # Egitim hatti
-│   ├── 📄 train.py         # Ana egitim dongusu (1200+ satir)
-│   └── 📄 __init__.py      # Paket isaretcisi
+├── 📂 train/               # Eğitim hatti
+│   ├── 📄 train.py         # Ana eğitim dongusu (1200+ satir)
+│   └── 📄 __init__.py      # Paket işaretçisi
 ├── 📂 utils/               # Yardimci araclar
 │   ├── 📄 logger.py        # Log altyapisi (WandB, CSV, JSONL)
 │   ├── 📄 safety.py        # Kill-switch yardimcilari
-│   └── 📄 __init__.py      # Paket isaretcisi
+│   └── 📄 __init__.py      # Paket işaretçisi
 ├── 📂 scripts/             # Yardimci scriptler ve raporlar
-│   ├── 📄 README.md        # Script katalogu (EN)
-│   ├── 📄 README_TR.md     # Script katalogu (TR)
+│   ├── 📄 README.md        # Script kataloğu (EN)
+│   ├── 📄 README_TR.md     # Script kataloğu (TR)
 │   ├── 📄 bootstrap_venv.sh # `.titan-venv` bootstrap (Python 3.11 baseline)
 │   ├── 📄 verify_all.sh    # Offline-first verify-all pipeline
 │   ├── 📄 secret_scan.py   # Track'li dosyalarda secret scan (CI gate)
 │   ├── 📄 smart_runner.py  # Parallel Orchestrator (Data -> Distill -> Train)
 │   ├── 📄 titan_preflight.py # Sistem testi
-│   ├── 📄 data_pipeline.py # Dataset Alchemy (5-asama mufredat)
-│   ├── 📄 extract_dataset_refs.py # Kod referanslarindan dataset envanteri
+│   ├── 📄 data_pipeline.py # Dataset Alchemy (5-aşama müfredat)
+│   ├── 📄 extract_dataset_refs.py # Kod referanslarından dataset envanteri
 │   ├── 📄 mobile_export.py # Mobil ONNX export
-│   ├── 📄 chat.py          # Etkilesimli chat arayuzu
+│   ├── 📄 chat.py          # Etkileşimli chat arayüzü
 │   ├── 📄 xray.py          # Proje denetleyici
-│   ├── 📄 operator_mode_gate.py # Tek girisli gate
+│   ├── 📄 operator_mode_gate.py # Tek girişli gate
 │   ├── 📄 overfit_gate.py  # 1MB overfit gate
-│   ├── 📄 train_smoke.py   # Kucuk offline training smoke test (CPU/MPS)
+│   ├── 📄 train_smoke.py   # Küçük offline training smoke test (CPU/MPS)
 │   ├── 📄 golden_eval.py   # Golden sample evaluator
 │   ├── 📄 benchmarks_internal.py # HumanEval/MBPP
 │   ├── 📄 nan_kill_test.py # NaN kill-switch drill
@@ -1027,11 +1043,12 @@ NİHAİ/
 │   ├── 📄 failure_budget_drill.py # Failure budget drill
 │   ├── 📄 build_investor_deck.py # PPTX deck generator
 │   ├── 📄 auto_demo_video.py # Opsiyonel demo video otomasyonu (ffmpeg)
+│   ├── 📄 drone_sitl_demo.py # Deterministik SITL kanıt koşturucusu (offline + fail-safe logları)
 │   ├── 📄 eval.py          # GSM8K eval stub
-│   ├── 📄 mac_simulation.py # Mac simulasyon
+│   ├── 📄 mac_simulation.py # Mac simülasyon
 │   ├── 📄 mini_titan_poc.py # Forensic PoC logger
-│   ├── 📄 download_tr_tokenizer.py # Turkce tokenizer indirme (opt-in)
-│   ├── 📄 update_system_hardware.py # Sistem donanimi raporu guncelleme
+│   ├── 📄 download_tr_tokenizer.py # Türkçe tokenizer indirme (opt-in)
+│   ├── 📄 update_system_hardware.py # Sistem donanımı raporu güncelleme
 │   ├── 📄 scaling_audit_math.py # Scaling audit math
 │   ├── 📄 test_onnx_export.py # ONNX export test
 │   ├── 📄 titan_onnx_stress_test.py # ONNX stress test
@@ -1039,15 +1056,15 @@ NİHAİ/
 │   ├── 📄 verify_datasets.py # Dataset sanity checks
 │   ├── 📄 verify_onnx_local.py # ONNX verification
 │   ├── 📄 write_cuda_lock.py # repro/cuda.lock otomatik yazma
-│   ├── 📄 __init__.py      # Paket isaretcisi
+│   ├── 📄 __init__.py      # Paket işaretçisi
 │   ├── 📂 reports/         # Script raporlari
-│   └── 📂 runs/            # Script ciktilari
-├── 📂 eval/                # Degerlendirme girisleri
+│   └── 📂 runs/            # Script çıktıları
+├── 📂 eval/                # Değerlendirme girisleri
 │   ├── 📄 gsm8k.py          # GSM8K değerlendirici (çalıştırma + skor)
 │   ├── 📄 humaneval.py      # HumanEval wrapper
 │   ├── 📄 golden.py         # Golden evaluator wrapper
 │   └── 📄 report_builder.py # Ozet olusturucu
-├── 📂 ablations/           # Ablation sablonlari
+├── 📂 ablations/           # Ablation şablonları
 │   ├── 📄 results.md        # Sonuc tablosu (EN)
 │   ├── 📄 results_TR.md     # Sonuc tablosu (TR)
 │   ├── 📂 no_moe/
@@ -1062,13 +1079,13 @@ NİHAİ/
 │   └── 📂 bitlinear_off/
 │       ├── 📄 README.md
 │       └── 📄 README_TR.md
-├── 📂 experiments/         # Deney kayitlari
+├── 📂 experiments/         # Deney kayıtları
 │   └── 📂 exp_001_baseline/
 │       ├── 📄 config.yaml
 │       ├── 📄 metrics.json
 │       ├── 📄 notes.md
 │       └── 📄 notes_TR.md
-├── 📂 assets/              # Branding, gorsel varliklar ve demo kanitlari
+├── 📂 assets/              # Branding, gorsel varliklar ve demo kanıtları
 │   ├── 📄 header.png            # Header görseli
 │   ├── 📄 synaptic_map.png      # Katman hiyerarşisi
 │   ├── 📄 snake_demo_proof.mp4  # Snake demo video kanıtı
@@ -1083,8 +1100,8 @@ NİHAİ/
 │   ├── 📄 test_sdk_api.py  # SDK API testleri
 │   └── 📄 test_train_loop_sanity.py # Training loop sanity testleri
 ├── 📂 orchestrator/        # Agentic runtime (opsiyonel / hedef mimari)
-│   ├── 📄 __init__.py      # Paket isaretcisi
-│   ├── 📄 core.py          # Orchestrator girisi
+│   ├── 📄 __init__.py      # Paket işaretçisi
+│   ├── 📄 core.py          # Orchestrator girişi
 │   ├── 📄 memory.py        # Memory store & retrieval
 │   ├── 📄 sense_engine.py  # Text/vision sensing
 │   ├── 📄 web_sense.py     # Web retrieval (opsiyonel)
@@ -1095,9 +1112,10 @@ NİHAİ/
 │   ├── 📄 paths.py         # Path registry
 │   ├── 📄 telemetry.py     # Telemetry helpers
 │   └── 📄 failure_budget.py # Failure budget monitor
-├── 📂 interfaces/          # Cikartim sozlesmeleri
+├── 📂 interfaces/          # Çıkarım sözleşmeleri
 │   ├── 📄 inference_contract.md
 │   ├── 📄 inference_contract_TR.md
+│   ├── 📄 pilot_report_v1.schema.json # Pilot teslim raporu şeması
 │   └── 📄 tokenizer_spec.json
 ├── 📂 economics/           # Maliyet ve verimlilik
 │   ├── 📄 cost_model.md
@@ -1109,12 +1127,12 @@ NİHAİ/
 │   ├── 📄 scaling_breakpoints.md
 │   ├── 📄 scaling_breakpoints_TR.md
 │   └── 📄 stress_curves.png
-├── 📂 postmortems/         # Olay sablonlari
+├── 📂 postmortems/         # Olay şablonları
 │   ├── 📄 README.md
 │   ├── 📄 README_TR.md
 │   ├── 📄 _template.md
 │   └── 📄 _template_TR.md
-├── 📂 prompts/             # Sistem prompt surumleri
+├── 📂 prompts/             # Sistem prompt sürümleri
 │   ├── 📄 system_v1.txt
 │   ├── 📄 changelog.md
 │   └── 📄 changelog_TR.md
@@ -1124,14 +1142,14 @@ NİHAİ/
 │   ├── 📄 stats_TR.md
 │   ├── 📄 drift_report.md
 │   ├── 📄 drift_report_TR.md
-│   └── 📂 tr/              # Turkce tokenizer cache (opt-in)
+│   └── 📂 tr/              # Türkçe tokenizer cache (opt-in)
 │       ├── 📄 README.md
 │       ├── 📄 README_TR.md
 │       ├── 📄 tokenizer.json
 │       ├── 📄 tokenizer_config.json
 │       ├── 📄 special_tokens_map.json
 │       └── 📄 vocab.txt
-├── 📂 tools/               # Tool sandbox ve sozlesmeleri
+├── 📂 tools/               # Tool sandbox ve sözleşmeleri
 │   ├── 📄 abuse_tests.md
 │   ├── 📄 abuse_tests_TR.md
 │   ├── 📂 sandbox/
@@ -1140,13 +1158,13 @@ NİHAİ/
 │   └── 📂 contracts/
 │       ├── 📄 README.md
 │       └── 📄 README_TR.md
-├── 📂 training_dynamics/   # Egitim dinamikleri notlari
+├── 📂 training_dynamics/   # Eğitim dinamikleri notlari
 │   ├── 📄 cold_vs_warm.md
 │   └── 📄 cold_vs_warm_TR.md
 ├── 📂 repro/               # Reproducibility kilitleri
 │   ├── 📄 env.lock
 │   ├── 📄 cuda.lock
-│   ├── 📄 accelerate_default.yaml # Ornek accelerate config (lokal)
+│   ├── 📄 accelerate_default.yaml # Örnek accelerate config (yerel)
 │   ├── 📄 seed_policy.md
 │   ├── 📄 seed_policy_TR.md
 │   ├── 📄 python.md        # Python 3.11 baseline (EN)
@@ -1164,8 +1182,8 @@ NİHAİ/
 │   ├── 📄 codex_deep_audit_TR.md # Derin mühendislik denetimi (TR)
 │   ├── 📄 verified_matrix.md # Verified vs Target matrisi (EN)
 │   ├── 📄 verified_matrix_TR.md # Verified vs Target matrisi (TR)
-│   ├── 📄 review_checklist.md # Dis inceleme checklisti (EN)
-│   ├── 📄 review_checklist_TR.md # Dis inceleme checklisti (TR)
+│   ├── 📄 review_checklist.md # Dış inceleme checklist'i (EN)
+│   ├── 📄 review_checklist_TR.md # Dış inceleme checklist'i (TR)
 │   ├── 📄 release_snapshot.md # Release snapshot (EN)
 │   ├── 📄 release_snapshot_TR.md # Release snapshot (TR)
 │   ├── 📄 final_sync_matrix.md # Son senkron matrisi (EN)
@@ -1184,6 +1202,17 @@ NİHAİ/
 │   ├── 📄 security_compliance_TR.md # Security & compliance brief (TR)
 │   ├── 📄 poc_protocol.md # Pilot/PoC protocol (EN)
 │   ├── 📄 poc_protocol_TR.md # Pilot/PoC protocol (TR)
+│   ├── 📄 pilot_readiness_kit.md # Pilot hazırlık kiti (EN)
+│   ├── 📄 pilot_readiness_kit_TR.md # Pilot hazırlık kiti (TR)
+│   ├── 📄 pilot_offer_packages.md # Pilot teklif paketleri (EN)
+│   ├── 📄 pilot_offer_packages_TR.md # Pilot teklif paketleri (TR)
+│   ├── 📄 sales_funnel_90d.md # 90 günlük satış hunisi (EN)
+│   ├── 📄 sales_funnel_90d_TR.md # 90 günlük satış hunisi (TR)
+│   ├── 📄 drone_sitl_demo.md # SITL drone protokolü (EN)
+│   ├── 📄 drone_sitl_demo_TR.md # SITL drone protokolü (TR)
+│   ├── 📂 pilots/          # Pilot kanıt paketleri
+│   │   ├── 📄 README.md    # Pilot kanıt yapısı (EN)
+│   │   └── 📄 README_TR.md # Pilot kanıt yapısı (TR)
 │   ├── 📄 investor_deck.pptx # Investor deck (EN)
 │   ├── 📄 investor_deck_TR.pptx # Investor deck (TR)
 │   ├── 📄 asset_stack.md    # Asset stack index
@@ -1219,7 +1248,7 @@ NİHAİ/
 │   ├── 📄 hashes.json      # Snapshot hashes
 │   ├── 📄 validation.jsonl # Validation set
 │   └── 📄 golden_samples.jsonl # 50 golden prompts
-├── 📂 logs/                # Log artifact'leri (politika + yakalanan run ciktilari)
+├── 📂 logs/                # Log artifact'leri (politika + yakalanan run çıktıları)
 │   ├── 📄 README.md        # Log politikasi / index (EN)
 │   ├── 📄 README_TR.md     # Log politikasi / index (TR)
 │   ├── 📂 operator_mode/   # Operator-mode manifest ve zincirli loglar
@@ -1255,7 +1284,7 @@ NİHAİ/
 ├── 📄 README_CHECKLIST.md  # README audit checklist (EN)
 ├── 📄 README_CHECKLIST_TR.md # README audit checklist (TR)
 ├── 📄 LICENSE              # Proprietary License (English)
-└── 📄 LICENSE_TR           # Ozel Lisans (Turkce)
+└── 📄 LICENSE_TR           # Ozel Lisans (Türkçe)
 ```
 
 ---

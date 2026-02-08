@@ -1,4 +1,4 @@
-# Tokenizer Istatistikleri (Sablon)
+# Tokenizer Istatistikleri (Şablon)
 
 Tokenizer snapshot sonrasi doldurun:
 - vocab size

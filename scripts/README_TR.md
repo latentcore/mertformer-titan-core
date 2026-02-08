@@ -50,7 +50,7 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 ## Yardımcılar
 - `chat.py` — Etkileşimli chat arayüzü.
 - `xray.py` — Proje denetleyici (yapı dump).
-- `mac_simulation.py` — Mac simulasyon koşusu (CPU/MPS).
+- `mac_simulation.py` — Mac simülasyon koşusu (CPU/MPS).
 - `train_tpu_turbo.py` — TPU eğitim başlatıcı (experimental).
 - `download_tr_tokenizer.py` — Türkçe tokenizer indirme (opt‑in).
 - `logbook_build.py` — Birleşik logbook üreticisi (çıktı `logs/` altında gitignored artifact).

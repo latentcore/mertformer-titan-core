@@ -24,6 +24,7 @@ htmlcov/
 .cache/
 .lint-venv/
 *.zip
+*.age
 dist/
 build/
 *.egg-info/
@@ -64,6 +65,11 @@ tokenizer/tr/*
 logs/*
 !logs/README.md
 !logs/README_TR.md
+
+# Pilot runtime artifacts (keep only folder standards in git)
+reports/pilots/**
+!reports/pilots/README.md
+!reports/pilots/README_TR.md
 
 # Temporary
 *.tmp

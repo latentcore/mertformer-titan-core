@@ -1,6 +1,6 @@
 # Python Baseline (Review-Ready)
 
-Bu repo, ekosistem surprizlerini azaltmak icin **Python 3.11** baseline’ina pinlenmistir
+Bu repo, ekosistem surprizlerini azaltmak için **Python 3.11** baseline’ina pinlenmistir
 (PyTorch/Transformers uyumu, stabil wheel’ler, `snake_demo.py` pygame demosu).
 
 ## Lokal Kurulum (macOS/Linux)
@@ -27,4 +27,4 @@ bash scripts/bootstrap_venv.sh --demo # dev + demo (pygame)
 
 ## Notlar
 - Offline-first runtime: `TITAN_OFFLINE=1` (default).
-- Online mod icin `HF_TOKEN` gerekir (ve `TITAN_WANDB=1` ise opsiyonel `WANDB_API_KEY`).
+- Online mod için `HF_TOKEN` gerekir (ve `TITAN_WANDB=1` ise opsiyonel `WANDB_API_KEY`).

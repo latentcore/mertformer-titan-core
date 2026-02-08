@@ -1,8 +1,8 @@
 # MertFormer SDK Kilavuzu (Hizli)
 
 ## SDK Nedir?
-MertFormer Titan icin model yukleme, uretim, export ve benchmark adimlarini saran hafif bir Python paketidir.
-**Opt-in** calisir ve egitim pipeline'ina **dokunmaz**.
+MertFormer Titan için model yukleme, üretim, export ve benchmark adimlarini saran hafif bir Python paketidir.
+**Opt-in** çalışir ve eğitim pipeline'ina **dokunmaz**.
 
 ## Kurulum (repo kokunden)
 ```bash
@@ -39,7 +39,7 @@ mertformer pilot-report --out reports/pilot_report.json
 ```
 
 CLI tarafinda `run` ve `benchmark` komutlari varsayilan olarak checkpoint ister.
-Sadece claim disi demo icin `--allow-random` kullanin.
+Sadece claim disi demo için `--allow-random` kullanin.
 
 ## Low-bit Kernel (Opt-in)
 - Python: `enable_lowbit_kernels(True)`
@@ -53,7 +53,7 @@ Sadece claim disi demo icin `--allow-random` kullanin.
 - `mertformer export --bitpack` uretir:
   - `titan_s25_bitpack.bin`
   - `titan_s25_bitpack.json`
-- ONNX dosyalarina metadata eklenir:
+- ONNX dosyalarına metadata eklenir:
   - `mertformer.bitpack=ternary5in8`
 
 ## CPU Fallback
@@ -61,14 +61,14 @@ CPU-only sistemlerde low-bit kernel otomatik kapatilir ve standart float yol kul
 
 ## SSS
 **S: QAT nedir?**
-C: Quantization-Aware Training. Egitim sirasinda quantization simulasyonu yaparak low-bit inference kalitesini artirir.
+C: Quantization-Aware Training. Eğitim sirasinda quantization simülasyonu yaparak low-bit inference kalitesini artirir.
 Genelde **stabil bir temel model** olustuktan sonra uygulanir.
 
-**S: Turkce tokenizer var mi?**
+**S: Türkçe tokenizer var mi?**
 C: Evet, **opt-in**. Varsayilan kapali.
 - `scripts/download_tr_tokenizer.py` ile indir
 - `config/config.py` icinde `use_tr_tokenizer=true`
-- Distillation stabilitesi icin risk kontrollu POC onerilir.
+- Distillation stabilitesi için risk kontrollu POC onerilir.
 
 **S: Kernel production-ready mi?**
-C: **Deneysel referans kernel** (dogruluk oncelikli). Performans iddialari icin gercek profil gerekir.
+C: **Deneysel referans kernel** (dogruluk oncelikli). Performans iddialari için gerçek profil gerekir.

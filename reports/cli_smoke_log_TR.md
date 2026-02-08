@@ -20,4 +20,4 @@ python3 -m mertformer_sdk.cli info
 
 ## Notlar
 - `run` ve `export` komutlari checkpoint ve/veya tokenizer indirmesi gerektirir.
-- Bu adim, buyuk indirmelerden kacinmak icin **bilerek** calistirilmadi.
+- Bu adim, buyuk indirmelerden kacinmak için **bilerek** çalıştirilmadi.

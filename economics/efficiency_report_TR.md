@@ -1,12 +1,12 @@
 # Verimlilik Raporu
 
-Durum: **Olcum bekliyor** (uretim kosulari gerekir).
+Durum: **Ölçüm bekliyor** (üretim koşuları gerekir).
 
-Egitim kosulari sonrasi doldurun:
+Eğitim koşuları sonrasi doldurun:
 - Tokens/sec
-- GPU kullanimi
+- GPU kullanımi
 - Bellek ayak izi
 - Enerji tahminleri
 - 1M token maliyeti
 
-Kullanilan run konfigurasyonu, donanim profili ve dataset snapshot bilgisini ekleyin.
+Kullanilan run konfigürasyonu, donanim profili ve dataset snapshot bilgisini ekleyin.

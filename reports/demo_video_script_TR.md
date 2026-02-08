@@ -13,7 +13,7 @@
 ## Adım Adım
 1. Terminalde `python scripts/operator_mode_gate.py` (safe mod).
 2. Golden sample setinin yüklendiğini ve doğrulandığını göster.
-3. `chat.py` veya `eval.py` ile kısa bir lokal prompt çalıştır.
+3. `chat.py` veya `eval.py` ile kısa bir yerel prompt çalıştır.
 4. Telemetry snapshot çıktısını göster (CPU/RAM/VRAM).
 5. Asset stack listesiyle bitir.
 
@@ -21,7 +21,7 @@
 1. Başlık kartı (5sn): “MertFormer Titan — Edge‑Native Coding”
 2. Sistem durumu (10sn): terminalde CPU/RAM
 3. Operator gate (20–30sn): PASS özeti
-4. Canlı prompt (30–45sn): kısa lokal prompt
+4. Canlı prompt (30–45sn): kısa yerel prompt
 5. Golden samples (10sn): sayım + PASS
 6. Kapanış kartı (5sn): “Offline‑ready, privacy‑first, operator‑mode verified”
 

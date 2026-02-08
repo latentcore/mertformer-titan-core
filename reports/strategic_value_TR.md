@@ -11,7 +11,7 @@
 - Deger **runtime + verimlilik IP**'sidir ve lisanslanabilir.
 
 ## Neden Bu, Neden Digerleri Degil
-- Genel amacli araclar bulut merkezlidir ve olcekli kullanimda pahalidir.
+- Genel amacli araclar bulut merkezlidir ve olcekli kullanımda pahalidir.
 - Bu sistem **edge-native** ve ozel routing/quantization mimarisine sahiptir.
 
 ## Gelir Senaryolari

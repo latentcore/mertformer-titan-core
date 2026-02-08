@@ -1,6 +1,6 @@
-# Turkce Tokenizer Onbellek (Opt-in)
+# Türkçe Tokenizer Onbellek (Opt-in)
 
-Bu klasor Turkce tokenizer onbellek alani icindir. Indirmek icin:
+Bu klasor Türkçe tokenizer onbellek alani icindir. Indirmek için:
 
 ```bash
 python scripts/download_tr_tokenizer.py

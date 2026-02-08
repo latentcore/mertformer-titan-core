@@ -4,7 +4,7 @@
 - Her koşu metadata dosyasında seed değerini kaydet.
 - Not: GPU çekirdekleri arasında tam determinism garanti edilmez.
 
-## Ornek Log Kaydi
+## Örnek Log Kaydi
 ```
 2026-02-05 07:12:44,021 - [INFO] - seed=1337
 2026-02-05 07:12:44,021 - [INFO] - torch.deterministic=False

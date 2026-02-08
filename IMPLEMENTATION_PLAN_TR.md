@@ -28,7 +28,7 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 - White paper ve defense licensing (validation sonrası).
 
 ## Çalıştırma Sırası (Operator Mode)
-1. `scripts/operator_mode_gate.py` (safe mod, lokal).
+1. `scripts/operator_mode_gate.py` (safe mod, yerel).
 2. `scripts/operator_mode_gate.py --full` (eğitim donanımı).
 3. Master run (2.6B) telemetry + failure budget ile.
 4. Benchmark ve asset güncellemeleri.
@@ -42,7 +42,7 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 - Asset stack eksiksizdir.
 
 ## Acil Kapanis Protokolu (v1.0 (Build 27))
-- Egitim/teacher akisi zorunlu olmadikca degistirilmez.
+- Eğitim/teacher akisi zorunlu olmadikca degistirilmez.
 - Tum kernel yolları opt-in ve deneysel kalir.
 - README/README_TR uyumu (Docs Index + Dizin) saglanir.
 - Testler kosulur ve cache temizligi yapilir.
@@ -52,11 +52,11 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 - Nasil:
   - Faz A (Pilot, 1-2 gun): 1-5% alt kume ile QAT ac, sabit seed kullan.
   - Faz B (Karsilastirma, 1 gun): loss/throughput degerlerini baseline ile karsilastir.
-  - Faz C (Yayginlastirma, 2-3 gun): Faz B olumluysa tam mufredat icin ac.
+  - Faz C (Yayginlastirma, 2-3 gun): Faz B olumluysa tam müfredat için ac.
 - Hedef: Low-bit inference kalitesini artirirken stabiliteyi korumak.
 - Cikis kriteri: Val loss gerilemesin, stabilite spike olmasin.
 
-## Turkce Tokenizer POC (Risk Kontrollu)
+## Türkçe Tokenizer POC (Risk Kontrollu)
 - Varsayilan ogretmen tokenizer kalir.
 - Opt-in bayrak ile `tokenizer/tr` kullanilir.
 - Pilot adimlari:
@@ -68,4 +68,4 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 ## Kernel Deneysel + Tensor Core Opt-in
 - Deneysel low-bit kernel opt-in (CUDA + Triton gerekli).
 - Tensor-core yolu opt-in (`MERTFORMER_TENSORCORE=1`) ve dogruluk oncelikli.
-- Performans iddialari icin gercek profil gerekir.
+- Performans iddialari için gerçek profil gerekir.

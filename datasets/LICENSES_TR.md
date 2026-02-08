@@ -1,11 +1,11 @@
-# Dataset Lisanslari (Egitim Oncesi Kontrol Listesi)
+# Dataset Lisanslari (Eğitim Öncesi Kontrol Listesi)
 
 Tum datasetler kendi lisanslari/terimleri ile uyumlu olmalidir (gated datasetler dahil).
-Bu tablo, gercek egitim oncesi **tek kaynaktan kontrol listesi** olarak kullanilir.
+Bu tablo, gerçek eğitim öncesi **tek kaynaktan kontrol listesi** olarak kullanilir.
 
 Notlar:
-- “TBD” olan satirlar, production egitim icin **blocker** kabul edilir (dataset card / upstream repo’dan dogrulanmadan egitime girilmez).
-- Snapshot hash’leri `datasets/hashes.json` icinde tutulur ve egitim oncesi doldurulmalidir.
+- “TBD” olan satirlar, production eğitim için **blocker** kabul edilir (dataset card / upstream repo’dan dogrulanmadan eğitime girilmez).
+- Snapshot hash’leri `datasets/hashes.json` icinde tutulur ve eğitim öncesi doldurulmalidir.
 
 | Dataset | Lisans | Referans URL | Durum |
 | --- | --- | --- | --- |
