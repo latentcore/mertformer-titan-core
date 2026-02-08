@@ -17,9 +17,25 @@ __author__ = "Mert"
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import sys
+import warnings
 from typing import Tuple, List
 
 from layers.bitlinear import BitLinear
+
+
+def _jit_script_if_supported(fn):
+    """Use TorchScript where supported; fall back cleanly on Python 3.14+."""
+    if sys.version_info >= (3, 14):
+        return fn
+    try:
+        return torch.jit.script(fn)
+    except Exception as exc:
+        warnings.warn(
+            f"TorchScript disabled for liquid kernel due to: {exc}",
+            RuntimeWarning,
+        )
+        return fn
 
 
 class LiquidCell(nn.Module):
@@ -81,7 +97,7 @@ class LiquidCell(nn.Module):
 # TR: JIT DERLENMİŞ ÇEKİRDEK (NPU HIZLANDIRICI)
 # EN: JIT COMPILED CORE (NPU ACCELERATOR)
 # -----------------------------------------------------------------------------
-@torch.jit.script
+@_jit_script_if_supported
 def jit_quant(w: torch.Tensor) -> torch.Tensor:
     """JIT-compatible weight quantization (1.58-bit BitNet)"""
     # [V26.0 FIX] RMS Scale for consistency with BitLinear
@@ -90,7 +106,7 @@ def jit_quant(w: torch.Tensor) -> torch.Tensor:
     return w_q * scale
 
 
-@torch.jit.script
+@_jit_script_if_supported
 def jit_liquid_loop(
     input_seq: torch.Tensor,
     h_init: torch.Tensor,

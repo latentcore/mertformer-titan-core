@@ -19,6 +19,7 @@ import torch.nn as nn
 import os
 import sys
 import inspect
+import warnings
 
 # Add project root to path
 sys.path.append(os.getcwd())
@@ -50,16 +51,36 @@ def _onnx_export_compat(wrapper, dummy_input, save_path):
         },
     )
 
+    def _run_export(**kwargs):
+        # Keep smoke output clean in CI by suppressing known exporter deprecations.
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=DeprecationWarning)
+            warnings.filterwarnings("ignore", category=torch.jit.TracerWarning)
+            warnings.filterwarnings("ignore", category=UserWarning, message=".*dynamic_axes.*dynamo=True.*")
+            torch.onnx.export(
+                wrapper,
+                dummy_input,
+                save_path,
+                **kwargs,
+            )
+
     export_sig = inspect.signature(torch.onnx.export)
     if "dynamo" in export_sig.parameters:
-        export_kwargs["dynamo"] = False
+        modern_kwargs = dict(export_kwargs)
+        modern_kwargs["dynamo"] = True
+        try:
+            _run_export(**modern_kwargs)
+            return
+        except Exception as exc:
+            # Fall back to legacy exporter for compatibility in constrained envs.
+            print(f"⚠️ Modern ONNX exporter fallback activated: {exc}")
 
-    torch.onnx.export(
-        wrapper,
-        dummy_input,
-        save_path,
-        **export_kwargs,
-    )
+        legacy_kwargs = dict(export_kwargs)
+        legacy_kwargs["dynamo"] = False
+        _run_export(**legacy_kwargs)
+        return
+
+    _run_export(**export_kwargs)
 
 def test_export():
     print("📦 TESTING ONNX EXPORT (Tiny Mode)...")

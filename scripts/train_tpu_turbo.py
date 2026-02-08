@@ -84,7 +84,7 @@ def train_tpu():
             try:
                 # We import and monkeypatch to avoid high storage usage
                 import scripts.data_pipeline as dp
-                # [HACK] Force a tiny target for testing
+                # Keep target intentionally small for TPU smoke verification.
                 TEST_TARGET = 10000 
                 dp.create_stage_directories()
                 
