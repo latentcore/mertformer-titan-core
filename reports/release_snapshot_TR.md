@@ -4,8 +4,8 @@ Bu dosya, repo'nun inceleme anındaki durumunu (point-in-time) insan-okur bir fo
 
 ## Snapshot
 
-- Tarih (yerel): 2026-02-08
-- Base Git SHA (kısa): `a07a8c1`
+- Tarih (yerel): 2026-02-09
+- Base Git SHA (kısa): `git rev-parse --short HEAD`
 - Baseline Python: 3.11 (bkz: `repro/python_TR.md`)
 - Varsayılan mod: offline-first (`TITAN_OFFLINE=1`)
 
@@ -38,6 +38,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 - Verified vs Target matrisi: `reports/verified_matrix.md`, `reports/verified_matrix_TR.md`
 - Dış inceleme checklisti: `reports/review_checklist.md`, `reports/review_checklist_TR.md`
 - Final senkron matrisi: `reports/final_sync_matrix.md`, `reports/final_sync_matrix_TR.md`
+- Verimlilik yakınsama analizi: `reports/efficiency_convergence_analysis.md`, `reports/efficiency_convergence_analysis_TR.md`
 - Kullanım kılavuzu: `USAGE_GUIDE.md`, `USAGE_GUIDE_TR.md`
 - Demo kanıt videosu: `assets/snake_demo_proof.mp4`
 - Clean-room doğrulama: `reports/cleanroom_verification_TR.md`
@@ -48,6 +49,10 @@ TITAN_OFFLINE=1 bash run.sh --test
 - `MertFormer_Titan_OnyxStorm_v1.0_B27_Release.zip`
 - `MertFormer_Titan_OnyxStorm_v1.0_B27_Hamdi_Package_Release.zip`
 - `MertFormer_Titan_OnyxStorm_v1.0_B27_Locked.secure.age`
+- SHA-256:
+  - `756e13d4bad64eb399b207d886edcfa35721bfffd0a533535216266956274fb2` (`MertFormer_Titan_OnyxStorm_v1.0_B27_Release.zip`)
+  - `cd4575028c56eaf7130786d19ed9ddee9565d93a5e878b5942db02c3eb7a728d` (`MertFormer_Titan_OnyxStorm_v1.0_B27_Hamdi_Package_Release.zip`)
+  - `f778b3446f7b3b80a60b88cd69fdf46085035825ce2204fe4c7617a39ef2d39a` (`MertFormer_Titan_OnyxStorm_v1.0_B27_Locked.secure.age`)
 
 ## Bilinen Gate / Blokerler
 
