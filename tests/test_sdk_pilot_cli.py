@@ -110,7 +110,15 @@ def test_pilot_report_skip_verify_reason(tmp_path: Path):
 
 def test_no_desktop_paths_in_tracked_files():
     result = subprocess.run(
-        ["git", "grep", "-n", "/Users/mertyunlu/Desktop/"],
+        [
+            "git",
+            "grep",
+            "-n",
+            "/Users/mertyunlu/Desktop/",
+            "--",
+            ".",
+            ":(exclude)tests/test_sdk_pilot_cli.py",
+        ],
         capture_output=True,
         text=True,
         check=False,

@@ -145,6 +145,7 @@ Report accuracy audit and strategic value summary.
 - [reports/codex_deep_audit_TR.md](reports/codex_deep_audit_TR.md) — Deep engineering audit (TR).
 - [reports/codex_deep_audit_EN_TR.md](reports/codex_deep_audit_EN_TR.md) — EN audit Turkish counterpart (TR).
 - [reports/codex_deep_audit_DE_TR.md](reports/codex_deep_audit_DE_TR.md) — DE audit Turkish counterpart (TR).
+- DE-language audit files are retained as external review artifacts for German-speaking stakeholders.
 - [reports/verified_matrix.md](reports/verified_matrix.md) — Verified vs Target matrix (EN).
 - [reports/verified_matrix_TR.md](reports/verified_matrix_TR.md) — Verified vs Target matrix (TR).
 - [reports/review_checklist.md](reports/review_checklist.md) — External review checklist (EN).
@@ -185,8 +186,15 @@ Open full clip: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
 - [reports/poc_protocol.md](reports/poc_protocol.md) — Pilot/PoC protocol (EN).
 - [reports/poc_protocol_TR.md](reports/poc_protocol_TR.md) — Pilot/PoC protocol (TR).
 - [reports/pilot_readiness_kit.md](reports/pilot_readiness_kit.md) — Pilot readiness kit (EN).
+- [reports/pilot_readiness_kit_TR.md](reports/pilot_readiness_kit_TR.md) — Pilot readiness kit (TR).
 - [reports/pilot_offer_packages.md](reports/pilot_offer_packages.md) — Standard pilot offer packages (EN).
+- [reports/pilot_offer_packages_TR.md](reports/pilot_offer_packages_TR.md) — Standard pilot offer packages (TR).
 - [reports/sales_funnel_90d.md](reports/sales_funnel_90d.md) — 90-day B2B pilot sales funnel (EN).
+- [reports/sales_funnel_90d_TR.md](reports/sales_funnel_90d_TR.md) — 90-day B2B pilot sales funnel (TR).
+- [reports/drone_sitl_demo.md](reports/drone_sitl_demo.md) — SITL drone proof protocol (EN).
+- [reports/drone_sitl_demo_TR.md](reports/drone_sitl_demo_TR.md) — SITL drone proof protocol (TR).
+- [reports/pilots/README.md](reports/pilots/README.md) — Pilot evidence folder standard (EN).
+- [reports/pilots/README_TR.md](reports/pilots/README_TR.md) — Pilot evidence folder standard (TR).
 - [reports/dataset_health.md](reports/dataset_health.md) — Dataset health report (EN).
 - [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset health report (TR).
 - [reports/model_health.md](reports/model_health.md) — Model health report (EN).
@@ -619,6 +627,14 @@ bash scripts/bootstrap_venv.sh --demo
 .titan-venv/bin/python snake_demo.py
 ```
 
+### Drone SITL Proof Demo (Offline, No Physical Drone Required)
+
+```bash
+python3 scripts/drone_sitl_demo.py --pilot-id pilot_001 --runs 3 --steps 120
+```
+
+Artifacts are written to `reports/pilots/<pilot_id>/sitl_<timestamp>/`.
+
 ### Preflight Only
 
 ```bash
@@ -1029,6 +1045,7 @@ NİHAİ/                     # Project root
 │   ├── 📄 failure_budget_drill.py # Failure budget drill
 │   ├── 📄 build_investor_deck.py # PPTX deck generator
 │   ├── 📄 auto_demo_video.py # Optional demo video automation (ffmpeg)
+│   ├── 📄 drone_sitl_demo.py # Deterministic SITL proof runner (offline + fail-safe logs)
 │   ├── 📄 eval.py          # GSM8K eval stub
 │   ├── 📄 mac_simulation.py # Mac simulation run
 │   ├── 📄 mini_titan_poc.py # Forensic PoC logger
@@ -1100,6 +1117,7 @@ NİHAİ/                     # Project root
 ├── 📂 interfaces/          # Inference contracts
 │   ├── 📄 inference_contract.md    # Inference contract (EN)
 │   ├── 📄 inference_contract_TR.md # Inference contract (TR)
+│   ├── 📄 pilot_report_v1.schema.json # Pilot delivery report schema
 │   └── 📄 tokenizer_spec.json      # Tokenizer spec
 ├── 📂 economics/           # Cost and efficiency modeling
 │   ├── 📄 cost_model.md        # Cost model (EN)
@@ -1188,6 +1206,17 @@ NİHAİ/                     # Project root
 │   ├── 📄 security_compliance_TR.md # Security & compliance brief (TR)
 │   ├── 📄 poc_protocol.md # Pilot/PoC protocol (EN)
 │   ├── 📄 poc_protocol_TR.md # Pilot/PoC protocol (TR)
+│   ├── 📄 pilot_readiness_kit.md # Pilot readiness kit (EN)
+│   ├── 📄 pilot_readiness_kit_TR.md # Pilot readiness kit (TR)
+│   ├── 📄 pilot_offer_packages.md # Pilot offer packages (EN)
+│   ├── 📄 pilot_offer_packages_TR.md # Pilot offer packages (TR)
+│   ├── 📄 sales_funnel_90d.md # 90-day sales funnel (EN)
+│   ├── 📄 sales_funnel_90d_TR.md # 90-day sales funnel (TR)
+│   ├── 📄 drone_sitl_demo.md # SITL drone protocol (EN)
+│   ├── 📄 drone_sitl_demo_TR.md # SITL drone protocol (TR)
+│   ├── 📂 pilots/          # Pilot evidence bundles
+│   │   ├── 📄 README.md    # Pilot evidence structure (EN)
+│   │   └── 📄 README_TR.md # Pilot evidence structure (TR)
 │   ├── 📄 investor_deck.pptx # Investor deck (EN)
 │   ├── 📄 investor_deck_TR.pptx # Investor deck (TR)
 │   ├── 📄 asset_stack.md    # Asset stack index
