@@ -5,7 +5,7 @@ Bu dosya, repo'nun inceleme anındaki durumunu (point-in-time) insan-okur bir fo
 ## Snapshot
 
 - Tarih (yerel): 2026-02-08
-- Base Git SHA (kısa): 7824734
+- Base Git SHA (kısa): `git rev-parse --short HEAD`
 - Baseline Python: 3.11 (bkz: `repro/python_TR.md`)
 - Varsayılan mod: offline-first (`TITAN_OFFLINE=1`)
 
