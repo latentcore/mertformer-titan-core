@@ -10,7 +10,7 @@ Kural: uygun olan her tracked `X.md` dosyasının `X_TR.md` karşılığı olmal
 | --- | --- |
 | Eksik eşleşme | 0 |
 | Yetim `_TR.md` dosyası | 1 (`reports/codex_deep_audit_TR.md`, bilinçli ana TR denetim dosyası) |
-| Bu final geçişinde eklenenler | `reports/codex_deep_audit_EN_TR.md`, `reports/codex_deep_audit_DE_TR.md`, `USAGE_GUIDE_TR.md`, `reports/final_sync_matrix_TR.md` |
+| Bu final geçişinde eklenenler | `reports/pilot_readiness_kit_TR.md`, `reports/pilot_offer_packages_TR.md`, `reports/sales_funnel_90d_TR.md`, `reports/drone_sitl_demo_TR.md`, `reports/cleanroom_verification_TR.md`, `reports/go_status_matrix_TR.md` |
 
 ## 2) Build Etiketi Tutarlılığı
 
@@ -43,12 +43,13 @@ Kural: uygun olan her tracked `X.md` dosyasının `X_TR.md` karşılığı olmal
 | --- | --- |
 | Temiz zip içinde venv/cache/log/.env yok | PASS |
 | Hamdi paketi ekstra `AUDIT_MEMO.md` sadece paket içinde | PASS |
-| Zip SHA-256 özeti üretildi | PASS |
+| `.age` paketi gerçek age formatında (`age-encryption.org/v1`) | PASS |
+| 3 paket için SHA-256 özeti üretildi | PASS |
 
 ## 6) Release Kimlikleri
 
-- Final git SHA (main): `8d29263`
-- Temiz zip: `./NIHAI_clean_build27.zip`
-- Temiz zip SHA-256: `bf4ac8a263fb451e3058858307e311409de76999c9bc8ad61d5c85c37d05e3c2`
-- Hamdi zip: `./NIHAI_hamdi_clean.zip`
-- Hamdi zip SHA-256: `ae8b522415436288306e389ddcec2a34c987f18e5f1c517556d788ad34e07dba`
+- Final git SHA (main): `git rev-parse --short HEAD`
+- Release zip: `MertFormer_Titan_OnyxStorm_v1.0_B27_Release.zip`
+- Hamdi paket zip: `MertFormer_Titan_OnyxStorm_v1.0_B27_Hamdi_Package_Release.zip`
+- Kilitli güvenli paket: `MertFormer_Titan_OnyxStorm_v1.0_B27_Locked.secure.age`
+- SHA-256 kayıtları: `reports/release_snapshot_TR.md` (Release Artefaktları bölümü).

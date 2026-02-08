@@ -123,6 +123,8 @@ Execution roadmaps and operator plans.
 - [IMPLEMENTATION_PLAN_TR.md](IMPLEMENTATION_PLAN_TR.md) — Implementation plan (TR).
 - [TRAINING_PLAN.md](TRAINING_PLAN.md) — Training roadmap (EN).
 - [TRAINING_PLAN_TR.md](TRAINING_PLAN_TR.md) — Training roadmap (TR).
+- [CHANGELOG.md](CHANGELOG.md) — Release changelog (EN).
+- [CHANGELOG_TR.md](CHANGELOG_TR.md) — Release changelog (TR).
 
 **Technical**
 Deep-dive architecture and research references.
@@ -154,6 +156,10 @@ Report accuracy audit and strategic value summary.
 - [reports/release_snapshot_TR.md](reports/release_snapshot_TR.md) — Release snapshot (TR).
 - [reports/final_sync_matrix.md](reports/final_sync_matrix.md) — Final sync matrix (EN).
 - [reports/final_sync_matrix_TR.md](reports/final_sync_matrix_TR.md) — Final sync matrix (TR).
+- [reports/go_status_matrix.md](reports/go_status_matrix.md) — GO/NO-GO status matrix (EN).
+- [reports/go_status_matrix_TR.md](reports/go_status_matrix_TR.md) — GO/NO-GO status matrix (TR).
+- [reports/cleanroom_verification.md](reports/cleanroom_verification.md) — Fresh-clone reproducibility evidence (EN).
+- [reports/cleanroom_verification_TR.md](reports/cleanroom_verification_TR.md) — Fresh-clone reproducibility evidence (TR).
 - [reports/benchmarks/README.md](reports/benchmarks/README.md) — Benchmark outputs guide (EN).
 - [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark outputs guide (TR).
 - [reports/strategic_value.md](reports/strategic_value.md) — Strategic value summary (EN).
@@ -195,6 +201,8 @@ Open full clip: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
 - [reports/drone_sitl_demo_TR.md](reports/drone_sitl_demo_TR.md) — SITL drone proof protocol (TR).
 - [reports/pilots/README.md](reports/pilots/README.md) — Pilot evidence folder standard (EN).
 - [reports/pilots/README_TR.md](reports/pilots/README_TR.md) — Pilot evidence folder standard (TR).
+- [reports/pilot_acceptance_signoff.md](reports/pilot_acceptance_signoff.md) — Pilot acceptance signature template (EN).
+- [reports/pilot_acceptance_signoff_TR.md](reports/pilot_acceptance_signoff_TR.md) — Pilot acceptance signature template (TR).
 - [reports/dataset_health.md](reports/dataset_health.md) — Dataset health report (EN).
 - [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset health report (TR).
 - [reports/model_health.md](reports/model_health.md) — Model health report (EN).
@@ -631,9 +639,16 @@ bash scripts/bootstrap_venv.sh --demo
 
 ```bash
 python3 scripts/drone_sitl_demo.py --pilot-id pilot_001 --runs 3 --steps 120
+bash run.sh --sitl-demo
 ```
 
 Artifacts are written to `reports/pilots/<pilot_id>/sitl_<timestamp>/`.
+
+### Clean-Room Verification (Fresh Clone + New Venv)
+
+```bash
+bash run.sh --cleanroom-verify
+```
 
 ### Preflight Only
 
@@ -1046,6 +1061,7 @@ NİHAİ/                     # Project root
 │   ├── 📄 build_investor_deck.py # PPTX deck generator
 │   ├── 📄 auto_demo_video.py # Optional demo video automation (ffmpeg)
 │   ├── 📄 drone_sitl_demo.py # Deterministic SITL proof runner (offline + fail-safe logs)
+│   ├── 📄 cleanroom_verify.sh # Fresh-clone reproducibility gate runner
 │   ├── 📄 eval.py          # GSM8K eval stub
 │   ├── 📄 mac_simulation.py # Mac simulation run
 │   ├── 📄 mini_titan_poc.py # Forensic PoC logger
@@ -1190,6 +1206,10 @@ NİHAİ/                     # Project root
 │   ├── 📄 release_snapshot_TR.md # Release snapshot (TR)
 │   ├── 📄 final_sync_matrix.md # Final sync matrix (EN)
 │   ├── 📄 final_sync_matrix_TR.md # Final sync matrix (TR)
+│   ├── 📄 go_status_matrix.md # GO/NO-GO status matrix (EN)
+│   ├── 📄 go_status_matrix_TR.md # GO/NO-GO status matrix (TR)
+│   ├── 📄 cleanroom_verification.md # Fresh-clone verification report (EN)
+│   ├── 📄 cleanroom_verification_TR.md # Fresh-clone verification report (TR)
 │   ├── 📄 technical_snapshot.md # Technical snapshot (EN)
 │   ├── 📄 technical_snapshot_TR.md # Technical snapshot (TR)
 │   ├── 📄 report_accuracy_audit.md # Report accuracy audit (EN)
@@ -1214,6 +1234,8 @@ NİHAİ/                     # Project root
 │   ├── 📄 sales_funnel_90d_TR.md # 90-day sales funnel (TR)
 │   ├── 📄 drone_sitl_demo.md # SITL drone protocol (EN)
 │   ├── 📄 drone_sitl_demo_TR.md # SITL drone protocol (TR)
+│   ├── 📄 pilot_acceptance_signoff.md # Pilot acceptance signoff (EN)
+│   ├── 📄 pilot_acceptance_signoff_TR.md # Pilot acceptance signoff (TR)
 │   ├── 📂 pilots/          # Pilot evidence bundles
 │   │   ├── 📄 README.md    # Pilot evidence structure (EN)
 │   │   └── 📄 README_TR.md # Pilot evidence structure (TR)
@@ -1267,6 +1289,8 @@ NİHAİ/                     # Project root
 ├── 📄 DECISIONS_TR.md      # Architecture decisions (TR)
 ├── 📄 INTERNAL_AGI_GAP.md  # Internal AGI gap map (EN)
 ├── 📄 INTERNAL_AGI_GAP_TR.md # Internal AGI gap map (TR)
+├── 📄 CHANGELOG.md         # Release changelog (EN)
+├── 📄 CHANGELOG_TR.md      # Release changelog (TR)
 ├── 📄 PITCH.md             # Investor Pitch Deck (English)
 ├── 📄 PITCH_TR.md          # Investor Pitch Deck (Turkish)
 ├── 📄 TRAINING_PLAN.md     # 3-Phase Execution Roadmap (English)

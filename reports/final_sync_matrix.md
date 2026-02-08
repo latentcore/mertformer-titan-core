@@ -10,7 +10,7 @@ Rule: every tracked `X.md` has `X_TR.md` pair where applicable.
 | --- | --- |
 | Missing pairs | 0 |
 | Orphan `_TR.md` files | 1 (`reports/codex_deep_audit_TR.md`, intentional canonical TR audit) |
-| Added in this final pass | `reports/codex_deep_audit_EN_TR.md`, `reports/codex_deep_audit_DE_TR.md`, `USAGE_GUIDE_TR.md`, `reports/final_sync_matrix_TR.md` |
+| Added in this final pass | `reports/pilot_readiness_kit_TR.md`, `reports/pilot_offer_packages_TR.md`, `reports/sales_funnel_90d_TR.md`, `reports/drone_sitl_demo_TR.md`, `reports/cleanroom_verification_TR.md`, `reports/go_status_matrix_TR.md` |
 
 ## 2) Build Label Consistency
 
@@ -43,12 +43,13 @@ Rule: every tracked `X.md` has `X_TR.md` pair where applicable.
 | --- | --- |
 | Clean zip excludes venv/cache/log/.env | PASS |
 | Hamdi package includes extra `AUDIT_MEMO.md` only in package | PASS |
-| SHA-256 created for generated zips | PASS |
+| `.age` package is valid age format (`age-encryption.org/v1`) | PASS |
+| SHA-256 created for all 3 packages | PASS |
 
 ## 6) Release Identifiers
 
-- Final git SHA (main): `8d29263`
-- Clean zip: `./NIHAI_clean_build27.zip`
-- Clean zip SHA-256: `bf4ac8a263fb451e3058858307e311409de76999c9bc8ad61d5c85c37d05e3c2`
-- Hamdi zip: `./NIHAI_hamdi_clean.zip`
-- Hamdi zip SHA-256: `ae8b522415436288306e389ddcec2a34c987f18e5f1c517556d788ad34e07dba`
+- Final git SHA (main): `git rev-parse --short HEAD`
+- Release zip: `MertFormer_Titan_OnyxStorm_v1.0_B27_Release.zip`
+- Hamdi package zip: `MertFormer_Titan_OnyxStorm_v1.0_B27_Hamdi_Package_Release.zip`
+- Locked secure package: `MertFormer_Titan_OnyxStorm_v1.0_B27_Locked.secure.age`
+- SHA-256 registry: see `reports/release_snapshot.md` (Release Artifacts section).

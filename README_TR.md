@@ -123,6 +123,8 @@ Yol haritaları ve operatör planları.
 - [IMPLEMENTATION_PLAN_TR.md](IMPLEMENTATION_PLAN_TR.md) — Uygulama planı (TR).
 - [TRAINING_PLAN.md](TRAINING_PLAN.md) — Eğitim yol haritası (EN).
 - [TRAINING_PLAN_TR.md](TRAINING_PLAN_TR.md) — Eğitim yol haritası (TR).
+- [CHANGELOG.md](CHANGELOG.md) — Sürüm değişiklik kaydı (EN).
+- [CHANGELOG_TR.md](CHANGELOG_TR.md) — Sürüm değişiklik kaydı (TR).
 
 **Teknik**
 Derin teknik analiz ve araştırma referansları.
@@ -154,6 +156,10 @@ Rapor doğruluk denetimi ve stratejik değer özeti.
 - [reports/release_snapshot_TR.md](reports/release_snapshot_TR.md) — Release snapshot (TR).
 - [reports/final_sync_matrix.md](reports/final_sync_matrix.md) — Final senkron matris (EN).
 - [reports/final_sync_matrix_TR.md](reports/final_sync_matrix_TR.md) — Final senkron matris (TR).
+- [reports/go_status_matrix.md](reports/go_status_matrix.md) — GO/NO-GO durum matrisi (EN).
+- [reports/go_status_matrix_TR.md](reports/go_status_matrix_TR.md) — GO/NO-GO durum matrisi (TR).
+- [reports/cleanroom_verification.md](reports/cleanroom_verification.md) — Temiz clone tekrar üretim kanıtı (EN).
+- [reports/cleanroom_verification_TR.md](reports/cleanroom_verification_TR.md) — Temiz clone tekrar üretim kanıtı (TR).
 - [reports/benchmarks/README.md](reports/benchmarks/README.md) — Benchmark çıktıları rehberi (EN).
 - [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark çıktıları rehberi (TR).
 - [reports/strategic_value.md](reports/strategic_value.md) — Stratejik değer özeti (EN).
@@ -195,6 +201,8 @@ Tam video: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
 - [reports/drone_sitl_demo_TR.md](reports/drone_sitl_demo_TR.md) — SITL drone kanıt protokolü (TR).
 - [reports/pilots/README.md](reports/pilots/README.md) — Pilot kanıt klasörü standardı (EN).
 - [reports/pilots/README_TR.md](reports/pilots/README_TR.md) — Pilot kanıt klasörü standardı (TR).
+- [reports/pilot_acceptance_signoff.md](reports/pilot_acceptance_signoff.md) — Pilot kabul imza şablonu (EN).
+- [reports/pilot_acceptance_signoff_TR.md](reports/pilot_acceptance_signoff_TR.md) — Pilot kabul imza şablonu (TR).
 - [reports/dataset_health.md](reports/dataset_health.md) — Dataset sağlık raporu (EN).
 - [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset sağlık raporu (TR).
 - [reports/model_health.md](reports/model_health.md) — Model sağlık raporu (EN).
@@ -629,9 +637,16 @@ bash scripts/bootstrap_venv.sh --demo
 
 ```bash
 python3 scripts/drone_sitl_demo.py --pilot-id pilot_001 --runs 3 --steps 120
+bash run.sh --sitl-demo
 ```
 
 Çıktılar `reports/pilots/<pilot_id>/sitl_<timestamp>/` klasörüne yazılır.
+
+### Clean-Room Doğrulama (Temiz Clone + Yeni Venv)
+
+```bash
+bash run.sh --cleanroom-verify
+```
 
 ### Sadece Preflight
 
@@ -1044,6 +1059,7 @@ NİHAİ/
 │   ├── 📄 build_investor_deck.py # PPTX deck generator
 │   ├── 📄 auto_demo_video.py # Opsiyonel demo video otomasyonu (ffmpeg)
 │   ├── 📄 drone_sitl_demo.py # Deterministik SITL kanıt koşturucusu (offline + fail-safe logları)
+│   ├── 📄 cleanroom_verify.sh # Temiz clone tekrar üretim kapısı
 │   ├── 📄 eval.py          # GSM8K eval stub
 │   ├── 📄 mac_simulation.py # Mac simülasyon
 │   ├── 📄 mini_titan_poc.py # Forensic PoC logger
@@ -1188,6 +1204,10 @@ NİHAİ/
 │   ├── 📄 release_snapshot_TR.md # Release snapshot (TR)
 │   ├── 📄 final_sync_matrix.md # Son senkron matrisi (EN)
 │   ├── 📄 final_sync_matrix_TR.md # Son senkron matrisi (TR)
+│   ├── 📄 go_status_matrix.md # GO/NO-GO durum matrisi (EN)
+│   ├── 📄 go_status_matrix_TR.md # GO/NO-GO durum matrisi (TR)
+│   ├── 📄 cleanroom_verification.md # Temiz clone doğrulama raporu (EN)
+│   ├── 📄 cleanroom_verification_TR.md # Temiz clone doğrulama raporu (TR)
 │   ├── 📄 technical_snapshot.md # Technical snapshot (EN)
 │   ├── 📄 technical_snapshot_TR.md # Technical snapshot (TR)
 │   ├── 📄 report_accuracy_audit.md # Report accuracy audit (EN)
@@ -1210,6 +1230,8 @@ NİHAİ/
 │   ├── 📄 sales_funnel_90d_TR.md # 90 günlük satış hunisi (TR)
 │   ├── 📄 drone_sitl_demo.md # SITL drone protokolü (EN)
 │   ├── 📄 drone_sitl_demo_TR.md # SITL drone protokolü (TR)
+│   ├── 📄 pilot_acceptance_signoff.md # Pilot kabul imza sayfası (EN)
+│   ├── 📄 pilot_acceptance_signoff_TR.md # Pilot kabul imza sayfası (TR)
 │   ├── 📂 pilots/          # Pilot kanıt paketleri
 │   │   ├── 📄 README.md    # Pilot kanıt yapısı (EN)
 │   │   └── 📄 README_TR.md # Pilot kanıt yapısı (TR)
@@ -1265,6 +1287,8 @@ NİHAİ/
 ├── 📄 DECISIONS_TR.md      # Architecture decisions (TR)
 ├── 📄 INTERNAL_AGI_GAP.md  # Internal AGI gap map (EN)
 ├── 📄 INTERNAL_AGI_GAP_TR.md # Internal AGI gap map (TR)
+├── 📄 CHANGELOG.md         # Sürüm değişiklik kaydı (EN)
+├── 📄 CHANGELOG_TR.md      # Sürüm değişiklik kaydı (TR)
 ├── 📄 PITCH.md             # Investor Pitch Deck (English)
 ├── 📄 PITCH_TR.md          # Investor Pitch Deck (Turkish)
 ├── 📄 TRAINING_PLAN.md     # 3-Phase Execution Roadmap (English)

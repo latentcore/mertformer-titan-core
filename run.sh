@@ -13,10 +13,23 @@
 
 # Argument Parsing
 RUN_TEST=false
-if [[ "$1" == "--test" ]] || [[ "$1" == "--verify" ]]; then
-    RUN_TEST=true
-    echo "🔍 ULTIMATE PREFLIGHT MODE ACTIVE"
-fi
+RUN_SITL=false
+RUN_CLEANROOM=false
+
+case "${1:-}" in
+    --test|--verify)
+        RUN_TEST=true
+        echo "🔍 ULTIMATE PREFLIGHT MODE ACTIVE"
+        ;;
+    --sitl-demo)
+        RUN_SITL=true
+        echo "🚁 SITL DEMO MODE ACTIVE"
+        ;;
+    --cleanroom-verify)
+        RUN_CLEANROOM=true
+        echo "🧪 CLEAN-ROOM VERIFY MODE ACTIVE"
+        ;;
+esac
 
 # ------------------------------------------------------------------------------
 # 🔧 1.1 OFFLINE-FIRST MODE + PYTHON SELECTION
@@ -50,6 +63,23 @@ if [[ -z "${PYTHON_BIN}" ]]; then
             PYTHON_BIN="python3"
         fi
     fi
+fi
+
+# Fast path: deterministic SITL proof flow (offline, no training start).
+if [ "$RUN_SITL" = true ]; then
+    PILOT_ID="${SITL_PILOT_ID:-pilot_001}"
+    SITL_RUNS="${SITL_RUNS:-3}"
+    SITL_STEPS="${SITL_STEPS:-120}"
+    "$PYTHON_BIN" scripts/drone_sitl_demo.py --pilot-id "$PILOT_ID" --runs "$SITL_RUNS" --steps "$SITL_STEPS"
+    exit $?
+fi
+
+# Fast path: clean-room reproducibility gate on a fresh local clone.
+if [ "$RUN_CLEANROOM" = true ]; then
+    CLEANROOM_WORKDIR="${CLEANROOM_WORKDIR:-/tmp/nihai_cleanroom_b27}"
+    TITAN_CLEANROOM_PYTHON="${TITAN_CLEANROOM_PYTHON:-python3.11}" \
+        bash scripts/cleanroom_verify.sh "$CLEANROOM_WORKDIR"
+    exit $?
 fi
 
 # ------------------------------------------------------------------------------

@@ -4,8 +4,8 @@ Bu dosya, repo'nun inceleme anındaki durumunu (point-in-time) insan-okur bir fo
 
 ## Snapshot
 
-- Tarih (yerel): 2026-02-07
-- Base Git SHA (kısa): 8d29263
+- Tarih (yerel): 2026-02-08
+- Base Git SHA (kısa): 7824734
 - Baseline Python: 3.11 (bkz: `repro/python_TR.md`)
 - Varsayılan mod: offline-first (`TITAN_OFFLINE=1`)
 
@@ -20,7 +20,7 @@ bash scripts/verify_all.sh
 
 Beklenen:
 - Secret scan: PASS
-- Pytest: PASS (`21 passed, 4 skipped`)
+- Pytest: PASS (`29 passed, 4 skipped`)
 - Preflight (offline): PASS
 - Operator gate (safe, offline): PASS
 
@@ -40,7 +40,14 @@ TITAN_OFFLINE=1 bash run.sh --test
 - Final senkron matrisi: `reports/final_sync_matrix.md`, `reports/final_sync_matrix_TR.md`
 - Kullanım kılavuzu: `USAGE_GUIDE.md`, `USAGE_GUIDE_TR.md`
 - Demo kanıt videosu: `assets/snake_demo_proof.mp4`
+- Clean-room doğrulama: `reports/cleanroom_verification_TR.md`
 - Dataset uyum dokümanları: `datasets/SOURCES*.md`, `datasets/LICENSES*.md`, `datasets/hashes.json`, `datasets/inventory*`
+
+## Release Artefaktları (Desktop)
+
+- `MertFormer_Titan_OnyxStorm_v1.0_B27_Release.zip`
+- `MertFormer_Titan_OnyxStorm_v1.0_B27_Hamdi_Package_Release.zip`
+- `MertFormer_Titan_OnyxStorm_v1.0_B27_Locked.secure.age`
 
 ## Bilinen Gate / Blokerler
 
