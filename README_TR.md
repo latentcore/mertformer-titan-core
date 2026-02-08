@@ -31,7 +31,7 @@
 | **Offline Doğrulama** | ✅ PASS (`bash scripts/verify_all.sh`) |
 | **Dataset Uyumu** | ⚠️ Devam ediyor (lisans/hash tamamlanmadan eğitim yok) |
 | **Tam Eğitim Koşusu** | ⏳ Koşulmadı (donanım + snapshot veri gerekiyor) |
-| **Benchmarklar** | ⏳ Checkpoint sonrası (runner SKIP destekler) |
+| **Benchmarklar** | ⛔ Eğitimli checkpoint olmadan iddia için uygun değil (`NOT ELIGIBLE FOR CLAIM`) |
 
 Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 
@@ -184,6 +184,9 @@ Tam video: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
 - [reports/security_compliance_TR.md](reports/security_compliance_TR.md) — Güvenlik & uyum özeti (TR).
 - [reports/poc_protocol.md](reports/poc_protocol.md) — Pilot/PoC protokolü (EN).
 - [reports/poc_protocol_TR.md](reports/poc_protocol_TR.md) — Pilot/PoC protokolü (TR).
+- [reports/pilot_readiness_kit.md](reports/pilot_readiness_kit.md) — Pilot hazırlık kiti (EN).
+- [reports/pilot_offer_packages.md](reports/pilot_offer_packages.md) — Standart pilot teklif paketleri (EN).
+- [reports/sales_funnel_90d.md](reports/sales_funnel_90d.md) — 90 günlük B2B pilot satış hunisi (EN).
 - [reports/dataset_health.md](reports/dataset_health.md) — Dataset sağlık raporu (EN).
 - [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset sağlık raporu (TR).
 - [reports/model_health.md](reports/model_health.md) — Model sağlık raporu (EN).
@@ -225,6 +228,7 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 - [.github/workflows/ci.yml](.github/workflows/ci.yml) — CI pipeline (pytest + preflight + secret scan).
 - [interfaces/inference_contract.md](interfaces/inference_contract.md) — Çıkarım sözleşmesi (EN).
 - [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md) — Çıkarım sözleşmesi (TR).
+- [interfaces/pilot_report_v1.schema.json](interfaces/pilot_report_v1.schema.json) — Pilot raporu JSON şeması.
 - [economics/cost_model.md](economics/cost_model.md) — Maliyet modeli (EN).
 - [economics/cost_model_TR.md](economics/cost_model_TR.md) — Maliyet modeli (TR).
 - [economics/efficiency_report.md](economics/efficiency_report.md) — Verim raporu (EN).
@@ -528,7 +532,9 @@ MertFormer Titan (2.64B Parametre)
 <a id="performans"></a>
 ## 📊 Performans
 
-### Performans Hedefleri (Projected vs Baseline) — Eğitim Hızı (8x A100 80GB)
+**İddia politikası:** Bu bölümde açıkça ölçülmüş olarak işaretlenmeyen tüm değerler hedef/tahmindir ve benchmark iddiası kanıtı değildir.
+
+### Performans Hedefleri (Öngörülen vs Temel, Ölçülmemiş) — Eğitim Hızı (8x A100 80GB)
 | Yapılandırma | Süre/Adım | Verim (Throughput) | GPU Kullanımı | VRAM Kullanımı |
 | :--- | :---: | :---: | :---: | :---: |
 | **Temel (Baseline)** | 2.0 sn | 64 tok/sn | %47 | 38 GB |
@@ -595,6 +601,13 @@ bash scripts/bootstrap_venv.sh --demo
 
 ```bash
 bash scripts/verify_all.sh
+```
+
+SDK düzeyi doğrulama ve pilot raporlama:
+
+```bash
+mertformer verify
+mertformer pilot-report --out reports/pilot_report.json
 ```
 
 ### LIVE DEMO (Snake Autoplayer)
@@ -812,8 +825,8 @@ print(response)
 
 <a id="kıyaslamalar-benchmarks"></a>
 ## 🏆 Kıyaslamalar (Benchmarks)
-**Durum: Eğitim öncesi tahmin (Pre-training projection)**
-*Not: Aşağıdaki metrikler eğitim öncesi tahmin/ hedef değerlerdir; tam eğitim sonrası doğrulanacaktır.*
+**Durum: Eğitim Öncesi Projeksiyon (İddia İçin Uygun Değil)**
+*Not: Aşağıdaki metrikler hedef/tahmin değerleridir; gerçek benchmark iddiası için tam eğitim koşusu ve gerçek checkpoint ile ampirik doğrulama gerekir.*
 
 ### Benzer Modellerle Karşılaştırma
 
@@ -1389,15 +1402,16 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 
 ---
 
-## ✅ Satışa Hazır Checklist (Eğitim Sonrası)
+## ✅ Satışa Hazır Checklist (B2B Pilot Modu)
 
-**%100 satışa hazır** olmak için, aşağıdakiler eğitim donanımında tamamlanmalıdır:
+Eğitim öncesi aşamada ücretli pilot için minimum kabul seti:
 
-- **Master Run (2.6B)** gerçek eğitim koşusu
-- **Full 1MB Overfit Gate** (training hardware)
-- **Gerçek benchmark çıktıları** (otomatik üretilen + loglanan)
-- **Demo video** (offline + çalışan örnek)
-- **README/raporlar ölçülen metriklerle güncellenecek** (tahminler yerine)
+- `bash scripts/verify_all.sh` offline modda geçmelidir.
+- Operator mode gate logları pilot teslimine eklenmelidir.
+- `mertformer pilot-report --out <json>` çıktısı `pilot_report_v1` olarak teslim edilmelidir.
+- Eğitimli checkpoint yoksa benchmark durumu `NOT ELIGIBLE FOR CLAIM` olarak kalmalıdır.
+- Müşteri tarafında offline çalıştırma (`mertformer verify`) canlı gösterilmelidir.
+- Ticari kapanış hedefi: 2 ücretli pilot sözleşmesi veya imzalı PoC niyet mektubu.
 
 ---
 
