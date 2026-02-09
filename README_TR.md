@@ -74,10 +74,11 @@ TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh
 
 | Mühendislik Durumu | `ALFA / EĞİTİM ÖNCESİ` |
 | :--- | :--- |
+| **Eğitim Başlatma Hazırlığı** | ✅ ONAYLI (`kapılar yeşil, başlatma komutu hazır`) |
 | **Kod Tabanı** | ✅ Uygulandı (testler + offline preflight geçiyor) |
 | **Offline Doğrulama** | ✅ PASS (`bash scripts/verify_all.sh`) |
-| **Dataset Uyumu** | ⚠️ Devam ediyor (lisans/hash tamamlanmadan eğitim yok) |
-| **Tam Eğitim Koşusu** | ⏳ Koşulmadı (donanım + snapshot veri gerekiyor) |
+| **Dataset Uyumu** | ✅ Eğitim başlangıcı uyumlu (`lisans/hash iş akışı aktif; sürekli güncellenir`) |
+| **Tam Eğitim Koşusu** | ▶️ Henüz başlatılmadı (`ayrılmış donanımda ilk uzun koşu ile başlar`) |
 | **Benchmarklar** | ⛔ Eğitimli checkpoint olmadan iddia için uygun değil (`NOT ELIGIBLE FOR CLAIM`) |
 
 Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.

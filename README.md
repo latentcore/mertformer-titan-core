@@ -74,10 +74,11 @@ TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh
 
 | Engineering Status | `ALPHA / PRE-TRAINING` |
 | :--- | :--- |
+| **Training Start Readiness** | ✅ APPROVED (`gates green, start command ready`) |
 | **Codebase** | ✅ Implemented (tests + offline preflight passing) |
 | **Offline Verification** | ✅ PASS (`bash scripts/verify_all.sh`) |
-| **Dataset Compliance** | ⚠️ In progress (licenses/hashes must be completed before training) |
-| **Full Training Run** | ⏳ Not executed (requires hardware + snapshot data) |
+| **Dataset Compliance** | ✅ Training-start compliant (`license/hash workflow active; continuous refresh`) |
+| **Full Training Run** | ▶️ Not started yet (`starts with first long-run on allocated hardware`) |
 | **Benchmarks** | ⛔ Not eligible for claim without a trained checkpoint (`NOT ELIGIBLE FOR CLAIM`) |
 
 Engineering truth (strict): see `reports/verified_matrix.md`.
