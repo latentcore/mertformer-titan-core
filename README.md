@@ -697,6 +697,13 @@ bash run.sh --sitl-demo
 ```
 
 Artifacts are written to `reports/pilots/<pilot_id>/sitl_<timestamp>/`.
+Default policy engine is `mertformer_liquidrouter` (BitLinear + LiquidRouter action proposal with fail-safe override).
+
+Baseline comparison:
+
+```bash
+python3 scripts/drone_sitl_demo.py --pilot-id pilot_001 --policy-engine baseline
+```
 
 ### Clean-Room Verification (Fresh Clone + New Venv)
 

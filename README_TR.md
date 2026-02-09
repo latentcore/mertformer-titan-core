@@ -695,6 +695,13 @@ bash run.sh --sitl-demo
 ```
 
 Çıktılar `reports/pilots/<pilot_id>/sitl_<timestamp>/` klasörüne yazılır.
+Varsayılan politika motoru `mertformer_liquidrouter` (BitLinear + LiquidRouter aksiyon önerisi, fail-safe override aktif).
+
+Baseline karşılaştırması:
+
+```bash
+python3 scripts/drone_sitl_demo.py --pilot-id pilot_001 --policy-engine baseline
+```
 
 ### Clean-Room Doğrulama (Temiz Clone + Yeni Venv)
 
