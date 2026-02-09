@@ -149,6 +149,7 @@ Primary entry docs and checklists.
 - [README_TR.md](README_TR.md) — Turkish overview.
 - [CITATION.cff](CITATION.cff) — Citation metadata (Cite this repository).
 - [CONTRIBUTING.md](CONTRIBUTING.md) — Contribution guidelines (internal use).
+- [CONTRIBUTING_TR.md](CONTRIBUTING_TR.md) — Contribution guidelines (TR).
 - [README_CHECKLIST.md](README_CHECKLIST.md) — README audit checklist (EN).
 - [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README audit checklist (TR).
 - [scripts/README.md](scripts/README.md) — Scripts catalog (EN).
@@ -210,6 +211,7 @@ Report accuracy audit and strategic value summary.
 - [reports/cleanroom_verification_TR.md](reports/cleanroom_verification_TR.md) — Fresh-clone reproducibility evidence (TR).
 - [reports/benchmarks/README.md](reports/benchmarks/README.md) — Benchmark outputs guide (EN).
 - [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark outputs guide (TR).
+- [reports/benchmarks/smoke_train_metrics.json](reports/benchmarks/smoke_train_metrics.json) — Smoke benchmark metrics snapshot (machine-readable).
 - [reports/strategic_value.md](reports/strategic_value.md) — Strategic value summary (EN).
 - [reports/strategic_value_TR.md](reports/strategic_value_TR.md) — Strategic value summary (TR).
 - [reports/efficiency_convergence_analysis.md](reports/efficiency_convergence_analysis.md) — Convergence analysis (BitNet/Liquid/MoE, forecast, EN).
@@ -1091,7 +1093,9 @@ NİHAİ/                     # Project root
 │   │   ├── 📄 __init__.py      # Kernel package marker
 │   │   └── 📄 triton_ternary.py # Triton ternary kernel (experimental)
 │   └── 📂 utils/              # SDK utilities
-│       └── 📄 bitpack.py       # Bit packing helpers
+│       ├── 📄 __init__.py      # SDK utils package marker
+│       ├── 📄 bitpack.py       # Bit packing helpers
+│       └── 📄 onnx_meta.py     # ONNX metadata helpers
 ├── 📂 train/               # Training pipeline
 │   ├── 📄 train.py         # Main training loop (1200+ lines)
 │   └── 📄 __init__.py      # Package marker
@@ -1174,10 +1178,12 @@ NİHAİ/                     # Project root
 │   ├── 📄 test_architecture_integrity.py # Architecture integrity tests
 │   ├── 📄 test_comprehensive.py # End-to-end system tests
 │   ├── 📄 test_export_metadata.py # Export metadata tests
+│   ├── 📄 test_drone_sitl_demo.py # Drone SITL demo tests
 │   ├── 📄 test_kernel_equivalence.py # Kernel equivalence tests
 │   ├── 📄 test_model.py    # Model unit tests
 │   ├── 📄 test_onnx_metadata_hook.py # ONNX metadata hook tests
 │   ├── 📄 test_sdk_api.py  # SDK API tests
+│   ├── 📄 test_sdk_pilot_cli.py # SDK pilot CLI tests
 │   └── 📄 test_train_loop_sanity.py # Training loop sanity tests
 ├── 📂 orchestrator/        # Agentic runtime (optional / target architecture)
 │   ├── 📄 __init__.py      # Package marker
@@ -1255,6 +1261,10 @@ NİHAİ/                     # Project root
 ├── 📂 reports/             # Executive Health & Validation Reports
 │   ├── 📄 one_pager.md      # One-pager (EN)
 │   ├── 📄 one_pager_TR.md   # One-pager (TR)
+│   ├── 📂 benchmarks/       # Benchmark outputs
+│   │   ├── 📄 README.md     # Benchmark outputs guide (EN)
+│   │   ├── 📄 README_TR.md  # Benchmark outputs guide (TR)
+│   │   └── 📄 smoke_train_metrics.json # Smoke benchmark metrics snapshot
 │   ├── 📄 codex_deep_audit_EN.md # Deep engineering audit (EN)
 │   ├── 📄 codex_deep_audit_EN_TR.md # Deep engineering audit (EN->TR)
 │   ├── 📄 codex_deep_audit_DE.md # Deep engineering audit (DE)
@@ -1331,6 +1341,8 @@ NİHAİ/                     # Project root
 │   ├── 📄 SOURCES_TR.md    # Sources (TR)
 │   ├── 📄 LICENSES.md      # Licenses (EN)
 │   ├── 📄 LICENSES_TR.md   # Licenses (TR)
+│   ├── 📄 INTERNAL_POLICY.md # Internal dataset policy (EN)
+│   ├── 📄 INTERNAL_POLICY_TR.md # Internal dataset policy (TR)
 │   ├── 📄 inventory.md     # Dataset inventory (auto, EN)
 │   ├── 📄 inventory_TR.md  # Dataset inventory (auto, TR)
 │   ├── 📄 inventory.json   # Dataset inventory (auto, machine-readable)
@@ -1373,6 +1385,7 @@ NİHAİ/                     # Project root
 ├── 📄 README_TR.md         # Turkish Documentation
 ├── 📄 CITATION.cff          # Citation metadata
 ├── 📄 CONTRIBUTING.md       # Contribution guidelines
+├── 📄 CONTRIBUTING_TR.md    # Contribution guidelines (TR)
 ├── 📄 README_CHECKLIST.md  # README audit checklist (EN)
 ├── 📄 README_CHECKLIST_TR.md # README audit checklist (TR)
 ├── 📄 LICENSE              # Proprietary License (English)

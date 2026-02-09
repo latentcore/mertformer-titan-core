@@ -149,6 +149,7 @@ Ana giriş dokümanları ve checklistler.
 - [README_TR.md](README_TR.md) — Türkçe genel bakış.
 - [CITATION.cff](CITATION.cff) — Atıf metadata dosyası.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — Katkı yönergeleri (dahili kullanım).
+- [CONTRIBUTING_TR.md](CONTRIBUTING_TR.md) — Katkı yönergeleri (TR).
 - [README_CHECKLIST.md](README_CHECKLIST.md) — README denetim checklist'i (EN).
 - [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README denetim checklist'i (TR).
 - [scripts/README.md](scripts/README.md) — Script kataloğu (EN).
@@ -210,6 +211,7 @@ Rapor doğruluk denetimi ve stratejik değer özeti.
 - [reports/cleanroom_verification_TR.md](reports/cleanroom_verification_TR.md) — Temiz clone tekrar üretim kanıtı (TR).
 - [reports/benchmarks/README.md](reports/benchmarks/README.md) — Benchmark çıktıları rehberi (EN).
 - [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark çıktıları rehberi (TR).
+- [reports/benchmarks/smoke_train_metrics.json](reports/benchmarks/smoke_train_metrics.json) — Smoke benchmark metrik snapshot'ı (makine-okur).
 - [reports/strategic_value.md](reports/strategic_value.md) — Stratejik değer özeti (EN).
 - [reports/strategic_value_TR.md](reports/strategic_value_TR.md) — Stratejik değer özeti (TR).
 - [reports/efficiency_convergence_analysis.md](reports/efficiency_convergence_analysis.md) — Yakınsama analizi (BitNet/Liquid/MoE, öngörü, EN).
@@ -1089,7 +1091,9 @@ NİHAİ/
 │   │   ├── 📄 __init__.py
 │   │   └── 📄 triton_ternary.py
 │   └── 📂 utils/
-│       └── 📄 bitpack.py
+│       ├── 📄 __init__.py
+│       ├── 📄 bitpack.py
+│       └── 📄 onnx_meta.py
 ├── 📂 train/               # Eğitim hatti
 │   ├── 📄 train.py         # Ana eğitim dongusu (1200+ satir)
 │   └── 📄 __init__.py      # Paket işaretçisi
@@ -1172,10 +1176,12 @@ NİHAİ/
 │   ├── 📄 test_architecture_integrity.py # Mimari testler
 │   ├── 📄 test_comprehensive.py # Uçtan uca testler
 │   ├── 📄 test_export_metadata.py # Export metadata testleri
+│   ├── 📄 test_drone_sitl_demo.py # Drone SITL demo testleri
 │   ├── 📄 test_kernel_equivalence.py # Kernel eşdeğerlik testleri
 │   ├── 📄 test_model.py    # Model unit testleri
 │   ├── 📄 test_onnx_metadata_hook.py # ONNX metadata hook testleri
 │   ├── 📄 test_sdk_api.py  # SDK API testleri
+│   ├── 📄 test_sdk_pilot_cli.py # SDK pilot CLI testleri
 │   └── 📄 test_train_loop_sanity.py # Training loop sanity testleri
 ├── 📂 orchestrator/        # Agentic runtime (opsiyonel / hedef mimari)
 │   ├── 📄 __init__.py      # Paket işaretçisi
@@ -1253,6 +1259,10 @@ NİHAİ/
 ├── 📂 reports/             # Executive Health & Validation Reports
 │   ├── 📄 one_pager.md      # One-pager (EN)
 │   ├── 📄 one_pager_TR.md   # One-pager (TR)
+│   ├── 📂 benchmarks/       # Benchmark çıktıları
+│   │   ├── 📄 README.md     # Benchmark çıktıları rehberi (EN)
+│   │   ├── 📄 README_TR.md  # Benchmark çıktıları rehberi (TR)
+│   │   └── 📄 smoke_train_metrics.json # Smoke benchmark metrik snapshot'ı
 │   ├── 📄 codex_deep_audit_EN.md # Derin mühendislik denetimi (EN)
 │   ├── 📄 codex_deep_audit_EN_TR.md # Derin mühendislik denetimi (EN->TR)
 │   ├── 📄 codex_deep_audit_DE.md # Derin mühendislik denetimi (DE)
@@ -1329,6 +1339,8 @@ NİHAİ/
 │   ├── 📄 SOURCES_TR.md    # Sources (TR)
 │   ├── 📄 LICENSES.md      # Licenses (EN)
 │   ├── 📄 LICENSES_TR.md   # Licenses (TR)
+│   ├── 📄 INTERNAL_POLICY.md # Dahili dataset politikasi (EN)
+│   ├── 📄 INTERNAL_POLICY_TR.md # Dahili dataset politikasi (TR)
 │   ├── 📄 inventory.md     # Dataset envanteri (otomatik, EN)
 │   ├── 📄 inventory_TR.md  # Dataset envanteri (otomatik, TR)
 │   ├── 📄 inventory.json   # Dataset envanteri (otomatik, makine-okur)
@@ -1371,6 +1383,7 @@ NİHAİ/
 ├── 📄 README_TR.md         # Turkish Documentation
 ├── 📄 CITATION.cff          # Atıf metadata dosyası
 ├── 📄 CONTRIBUTING.md       # Katkı yönergeleri
+├── 📄 CONTRIBUTING_TR.md    # Katkı yönergeleri (TR)
 ├── 📄 README_CHECKLIST.md  # README audit checklist (EN)
 ├── 📄 README_CHECKLIST_TR.md # README audit checklist (TR)
 ├── 📄 LICENSE              # Proprietary License (English)
