@@ -24,6 +24,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 ## Evaluation & Benchmarks
 - `golden_eval.py` — Golden sample evaluator (50 prompts).
 - `benchmarks_internal.py` — HumanEval / MBPP output generator (SKIP if checkpoint/datasets are unavailable).
+- `bitnet_kernel_benchmark_standalone.py` — Single-file standalone BitNet ternary kernel benchmark (kernel + quantization + benchmark harness in one file).
 - `eval.py` — GSM8K eval wrapper (legacy; see `eval/gsm8k.py`).
 
 ## Export & ONNX

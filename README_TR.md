@@ -676,6 +676,14 @@ bash scripts/bootstrap_venv.sh --demo
 bash scripts/verify_all.sh
 ```
 
+### BitNet Kernel Benchmark (Standalone, Tek Dosya)
+
+```bash
+python3 scripts/bitnet_kernel_benchmark_standalone.py --shapes 2048x2048x2048,4096x2048x2048
+```
+
+Bu script bilerek tek dosyalıdır: kernel kodu, quantization yolu, referans yol ve benchmark akışı aynı `.py` içinde bulunur.
+
 SDK düzeyi doğrulama ve pilot raporlama:
 
 ```bash
@@ -1166,6 +1174,7 @@ NİHAİ/
 │   ├── 📄 train_smoke.py   # Küçük offline training smoke test (CPU/MPS)
 │   ├── 📄 golden_eval.py   # Golden sample evaluator
 │   ├── 📄 benchmarks_internal.py # HumanEval/MBPP
+│   ├── 📄 bitnet_kernel_benchmark_standalone.py # Tek dosyalı BitNet ternary kernel benchmark'ı
 │   ├── 📄 nan_kill_test.py # NaN kill-switch drill
 │   ├── 📄 checkpoint_restore_drill.py # Checkpoint restore drill
 │   ├── 📄 failure_budget_drill.py # Failure budget drill

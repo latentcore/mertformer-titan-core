@@ -24,6 +24,7 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 ## Değerlendirme & Benchmark
 - `golden_eval.py` — Golden sample evaluator (50 prompt).
 - `benchmarks_internal.py` — HumanEval / MBPP çıktı üretimi (checkpoint/dataset yoksa SKIP).
+- `bitnet_kernel_benchmark_standalone.py` — Tek dosyalı standalone BitNet ternary kernel benchmark'ı (kernel + quantization + benchmark akışı tek dosyada).
 - `eval.py` — GSM8K eval wrapper (legacy; bkz: `eval/gsm8k.py`).
 
 ## Export & ONNX
