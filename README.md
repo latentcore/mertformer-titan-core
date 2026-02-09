@@ -45,6 +45,33 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
+## 🚀 Training Readiness (Operational)
+**Status:** `READY TO START TRAINING PIPELINE (GATED)`
+
+This repository is no longer in idea/prototype-only state. Core validation gates are green and the training pipeline can be launched as soon as the final data/hardware prerequisites are satisfied.
+
+### Evidence Snapshot
+1. **Core quality gates passed**
+   - `pytest` passed (`30 passed, 4 skipped`)
+   - `ruff check` passed (`All checks passed`)
+   - `verify_all.sh` passed (`[verify] OK`)
+2. **Architecture and safety checks passed**
+   - Offline preflight completed with all-green status.
+   - Operator gate passed (overfit, failure-budget, golden-samples).
+3. **Traceable artifacts generated**
+   - `logs/preflight/titan_preflight.log`
+   - `logs/operator_mode/*.manifest.json`
+
+### Final prerequisites before long-run training
+- Dataset license/hash workflow must remain compliant.
+- Target hardware allocation (GPU/edge) must be reserved.
+- Full training run and benchmark outputs will be recorded only after those prerequisites.
+
+### Start command (when prerequisites are satisfied)
+```bash
+TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh
+```
+
 | Engineering Status | `ALPHA / PRE-TRAINING` |
 | :--- | :--- |
 | **Codebase** | ✅ Implemented (tests + offline preflight passing) |

@@ -45,6 +45,33 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
+## 🚀 Eğitim Hazırlık Durumu (Operasyonel)
+**Durum:** `EĞİTİM PIPELINE'I BAŞLATMAYA HAZIR (KAPILI/GATED)`
+
+Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama kapıları yeşildir ve veri/donanım önkoşulları tamamlandığında eğitim akışı doğrudan başlatılabilir.
+
+### Kanıt Özeti
+1. **Çekirdek kalite kapıları geçti**
+   - `pytest` geçti (`30 passed, 4 skipped`)
+   - `ruff check` geçti (`All checks passed`)
+   - `verify_all.sh` geçti (`[verify] OK`)
+2. **Mimari ve güvenlik kontrolleri geçti**
+   - Offline preflight tüm adımlarda yeşil tamamlandı.
+   - Operator gate geçti (overfit, failure-budget, golden-samples).
+3. **İzlenebilir artefaktlar üretildi**
+   - `logs/preflight/titan_preflight.log`
+   - `logs/operator_mode/*.manifest.json`
+
+### Uzun eğitim koşusundan önce son önkoşullar
+- Dataset lisans/hash iş akışı uyumlu kalmalıdır.
+- Hedef donanım (GPU/edge) kaynağı ayrılmış olmalıdır.
+- Tam eğitim koşusu ve benchmark çıktıları bu önkoşullardan sonra kayda alınır.
+
+### Başlatma komutu (önkoşullar tamamlandığında)
+```bash
+TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh
+```
+
 | Mühendislik Durumu | `ALFA / EĞİTİM ÖNCESİ` |
 | :--- | :--- |
 | **Kod Tabanı** | ✅ Uygulandı (testler + offline preflight geçiyor) |
