@@ -1512,6 +1512,7 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 - **Meta AI**: Llama-3.3-70B teacher modeli & tokenleştirici
 - **Microsoft Research**: BitNet kuantizasyon araştırması
 - **Liquid AI**: Liquid Neural Networks (CfC) ilhamı
+- **Araştırma Konumlandırması**: MertFormer, MoE yönlendirmesine liquid dinamiklerini entegre ederek zamansal zekaya ortogonal bir yaklaşım geliştirir.
 - **DeepSeek**: Çok Başlı Latent Dikkat (MLA) mimarisi
 - **HazyResearch / Stanford (Tri Dao ve ekip)**: Flash Attention 2
 - **PyTorch**: Temel eğitim ve çıkarım çerçevesi

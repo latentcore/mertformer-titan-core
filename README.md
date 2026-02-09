@@ -1514,6 +1514,7 @@ This project is **confidential and proprietary**. All rights are reserved by the
 - **Meta AI**: Llama-3.3-70B teacher model & tokenizer
 - **Microsoft Research**: BitNet quantization research
 - **Liquid AI**: Liquid Neural Networks (CfC) inspiration
+- **Research Positioning**: MertFormer explores an orthogonal path to temporal intelligence by integrating liquid dynamics into MoE routing.
 - **DeepSeek**: Multi-Head Latent Attention (MLA) architecture
 - **HazyResearch / Stanford (Tri Dao et al.)**: Flash Attention 2
 - **PyTorch**: Core training and inference framework
