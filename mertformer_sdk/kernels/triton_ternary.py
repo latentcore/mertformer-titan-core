@@ -1,4 +1,7 @@
-"""Experimental Triton kernel for ternary weight + INT8 activation GEMM."""
+"""Experimental Triton kernel for ternary weight + INT8 activation GEMM.
+
+Note: This kernel is under active development.
+"""
 from __future__ import annotations
 
 from typing import Optional
@@ -54,7 +57,8 @@ if _TRITON_AVAILABLE:
             a = tl.load(a_ptrs, mask=(offs_m[:, None] < M) & (offs_k[None, :] + k < K), other=0).to(tl.int32)
             b = tl.load(b_ptrs, mask=(offs_k[:, None] + k < K) & (offs_n[None, :] < N), other=0).to(tl.int32)
             # int32 accumulate (simple, not tensor-core optimized)
-            acc += tl.sum(a[:, None, :] * b[None, :, :], axis=2)
+            # a: [BM, BK], b: [BK, BN] -> [BM, BK, BN] -> sum over BK
+            acc += tl.sum(a[:, :, None] * b[None, :, :], axis=1)
             k += BLOCK_K
             a_ptrs += BLOCK_K * stride_ak
             b_ptrs += BLOCK_K * stride_bk

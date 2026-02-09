@@ -24,6 +24,7 @@
 
 # 🦅 MertFormer Titan: Autonomous Swarm Architecture
 > **Target: near-frontier coding capability at mobile compute cost (pending training/benchmarks).**
+> **Development Stage:** Active development (`Build 27`, `ALPHA / PRE-TRAINING`).
 
 ## 🇹🇷 Executive Summary (Non-Technical)
 > **For decision makers who are not reading source code**

@@ -24,6 +24,7 @@
 
 # 🦅 MertFormer Titan: Otonom Sürü Mimarisi
 > **Hedef: Mobil maliyetle, sınır-üstü kodlama yeteneği (eğitim/benchmark sonrası).**
+> **Geliştirme Aşaması:** Aktif geliştirme (`Build 27`, `ALFA / EĞİTİM ÖNCESİ`).
 
 ## 🇹🇷 Sivil/Komutan Özeti (Teknik Olmayan Okuyucu İçin)
 > **Kaynak kod okumayan karar vericiler için**
