@@ -83,7 +83,8 @@ if _TRITON_AVAILABLE:
                 other=0,
             ).to(tl.int32)
             # int32 accumulate (simple, not tensor-core optimized)
-            acc += tl.sum(a[:, None, :] * b[None, :, :], axis=2)
+            # a: [BM, BK], b: [BK, BN] -> [BM, BK, BN] -> sum over BK
+            acc += tl.sum(a[:, :, None] * b[None, :, :], axis=1)
             k += BLOCK_K
             a_ptrs += BLOCK_K * stride_ak
             b_ptrs += BLOCK_K * stride_bk
@@ -161,14 +162,24 @@ def reference_ternary_linear(
     w: torch.Tensor,
     bias: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
-    """Reference ternary linear path using plain torch ops."""
+    """Reference ternary linear path using plain torch ops.
+
+    Note:
+    - CUDA does not implement int32 addmm/matmul in this form.
+    - For CUDA, we use fp32 matmul on quantized int8 values as a safe fallback.
+    """
     orig_shape = x.shape
     x_2d = x.view(-1, x.shape[-1]) if x.dim() > 2 else x
     x_q, x_scale = _quantize_activation(x_2d)
     w_q, w_scale = _quantize_weight(w)
 
-    out_i32 = torch.matmul(x_q.to(torch.int32), w_q.t().to(torch.int32))
-    out_f = out_i32.float() * (w_scale.view(1, -1) / x_scale)
+    if x_q.is_cuda:
+        # CUDA fallback: use fp32 GEMM on quantized values.
+        out_acc = torch.matmul(x_q.to(torch.float32), w_q.t().to(torch.float32))
+    else:
+        out_acc = torch.matmul(x_q.to(torch.int32), w_q.t().to(torch.int32)).to(torch.float32)
+
+    out_f = out_acc * (w_scale.view(1, -1) / x_scale)
     if bias is not None:
         out_f = out_f + bias
 
@@ -351,22 +362,41 @@ def run_benchmark(
         if triton_ok:
             def _triton_ternary():
                 return triton_ternary_linear(x, w, b, use_tensorcore=use_tensorcore)
-
-            triton_ms = _bench(_triton_ternary, warmup=warmup, iters=iters, device=device)
-            triton_out = _triton_ternary()
-            err = (triton_out - ref_out).abs().max().item()
-            triton_tps = m / (triton_ms / 1000.0)
-            triton_tflops = (2.0 * m * n * k) / (triton_ms / 1000.0) / 1e12
-            rows.append(
-                BenchRow(
-                    shape=f"{m}x{k}x{n}",
-                    mode="triton_ternary_kernel_tc" if use_tensorcore else "triton_ternary_kernel",
-                    ms=triton_ms,
-                    tokens_per_s=triton_tps,
-                    tflops=triton_tflops,
-                    max_abs_err=err,
+            try:
+                triton_ms = _bench(_triton_ternary, warmup=warmup, iters=iters, device=device)
+                triton_out = _triton_ternary()
+                err = (triton_out - ref_out).abs().max().item()
+                triton_tps = m / (triton_ms / 1000.0)
+                triton_tflops = (2.0 * m * n * k) / (triton_ms / 1000.0) / 1e12
+                rows.append(
+                    BenchRow(
+                        shape=f"{m}x{k}x{n}",
+                        mode="triton_ternary_kernel_tc" if use_tensorcore else "triton_ternary_kernel",
+                        ms=triton_ms,
+                        tokens_per_s=triton_tps,
+                        tflops=triton_tflops,
+                        max_abs_err=err,
+                    )
                 )
-            )
+            except Exception as exc:
+                # Keep benchmark running in notebook/Colab even if Triton JIT fails.
+                mode = "triton_ternary_kernel_tc_skipped" if use_tensorcore else "triton_ternary_kernel_skipped"
+                rows.append(
+                    BenchRow(
+                        shape=f"{m}x{k}x{n}",
+                        mode=mode,
+                        ms=0.0,
+                        tokens_per_s=0.0,
+                        tflops=0.0,
+                        max_abs_err=None,
+                    )
+                )
+                print(
+                    f"warning: Triton kernel skipped for {m}x{k}x{n}: "
+                    f"{type(exc).__name__}: {exc}"
+                )
+                # Disable Triton path for remaining shapes in this run.
+                triton_ok = False
 
     return rows
 
