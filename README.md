@@ -726,7 +726,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 2026-02-10 00:37:39,468 - [INFO] - ✈️ ============================================================
 2026-02-10 00:37:39,468 - [INFO] - ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
 2026-02-10 00:37:39,468 - [INFO] - ✈️ ============================================================
-2026-02-10 00:37:39,469 - [INFO] - ✈️ Loading secrets from /Users/mertyunlu/Desktop/NİHAİ/.env...
+2026-02-10 00:37:39,469 - [INFO] - ✈️ Loading secrets from ./.env...
 2026-02-10 00:37:39,469 - [INFO] - ✈️ STEP 1: SECRET SCAN...
 2026-02-10 00:37:39,469 - [INFO] - 🛡️ HF_TOKEN detected (redacted)
 2026-02-10 00:37:39,469 - [INFO] - 🛡️ WANDB_API_KEY detected (redacted)
@@ -739,7 +739,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 2026-02-10 00:37:41,391 - [INFO] - ✈️ Offline mode: skipping Hugging Face connectivity checks.
 2026-02-10 00:37:41,392 - [INFO] - 🛡️ Teacher Model mocked (Prevented 140GB download).
 2026-02-10 00:37:41,392 - [INFO] - ⚙️  Pre-computing logits for preflight...
-2026-02-10 00:37:41,488 - [INFO] - ✅ Saved Final Chunk 0: /Users/mertyunlu/Desktop/NİHAİ/temp_preflight_logits/preflight_test_part_0.pt
+2026-02-10 00:37:41,488 - [INFO] - ✅ Saved Final Chunk 0: ./temp_preflight_logits/preflight_test_part_0.pt
 2026-02-10 00:37:41,488 - [INFO] - ✅ Distillation pipeline: PROVEN (Logits generated/saved).
 2026-02-10 00:37:41,488 - [INFO] - ✈️ STEP 4: MOE GURU LEARNING TEST...
 2026-02-10 00:37:41,488 - [INFO] - ✈️ 🏗️  CONFIG: Using 'Mini-Titan' (2 Layers, 256 Hidden, forced MoE/Liquid) for RAM safety.
@@ -750,13 +750,13 @@ TITAN_OFFLINE=1 bash run.sh --test
 2026-02-10 00:37:41,675 - [INFO] - ✅ MertFormer forward/backward pass verified.
 2026-02-10 00:37:41,676 - [INFO] - ✅ OVERALL SYSTEM STATUS: 100% PROTECTED & READY.
 2026-02-10 00:37:41,676 - [INFO] - ✈️ CLEANUP: Removing temporary files...
-2026-02-10 00:37:41,676 - [INFO] - ✈️ Removed /Users/mertyunlu/Desktop/NİHAİ/temp_preflight_data
-2026-02-10 00:37:41,677 - [INFO] - ✈️ Removed /Users/mertyunlu/Desktop/NİHAİ/temp_preflight_logits
+2026-02-10 00:37:41,676 - [INFO] - ✈️ Removed ./temp_preflight_data
+2026-02-10 00:37:41,677 - [INFO] - ✈️ Removed ./temp_preflight_logits
 2026-02-10 00:37:41,677 - [INFO] - ✅ CLEANUP: Done.
 2026-02-10 00:37:41,677 - [INFO] - ✈️ Preflight Duration: 2.21s
 2026-02-10 00:37:41,677 - [INFO] - ✈️ ============================================================
 2026-02-10 00:37:41,677 - [INFO] - ✈️ RESULT: 🏆 ALL GREEN
-2026-02-10 00:37:41,677 - [INFO] - ✈️ Full Report: /Users/mertyunlu/Desktop/NİHAİ/logs/preflight/titan_preflight.log
+2026-02-10 00:37:41,677 - [INFO] - ✈️ Full Report: ./logs/preflight/titan_preflight.log
 2026-02-10 00:37:41,677 - [INFO] - ✈️ ============================================================
 ```
 
@@ -1089,6 +1089,13 @@ Planned Turkish data sources:
 
 <a id="project-structure"></a>
 ## 📂 Project Structure
+
+### Repository Control Map
+
+- `Core System`: `config/`, `layers/`, `model/`, `train/`, `utils/`
+- `Critical Path (Train/Pilot Readiness)`: `run.sh`, `scripts/verify_all.sh`, `scripts/operator_mode_gate.py`, `scripts/data_pipeline.py`, `train/train.py`, `config/config.py`, `datasets/`
+- `Delivery & Evidence`: `reports/`, `logs/preflight/`, `logs/operator_mode/`, `interfaces/pilot_report_v1.schema.json`
+- `Optional / Future`: `orchestrator/`, `scripts/drone_sitl_demo.py`, `ablations/`, `experiments/`
 
 ```bash
 NİHAİ/                     # Project root
