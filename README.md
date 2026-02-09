@@ -693,6 +693,8 @@ from scripts.bitnet_kernel_benchmark_standalone import run_default
 run_default()
 ```
 
+Performance note: this benchmark runs on a single selected device and does not aggregate multiple GPUs (for example, T4 x2 instances).
+
 SDK-level verification and pilot reporting:
 
 ```bash

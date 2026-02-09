@@ -13,6 +13,10 @@ Usage examples:
   python3 scripts/bitnet_kernel_benchmark_standalone.py --use-tensorcore
   # Notebook/Colab (no CLI args):
   # from scripts.bitnet_kernel_benchmark_standalone import run_default; run_default()
+
+Performance note:
+  - This benchmark runs on a single selected device.
+  - Multi-GPU instances (e.g., T4 x2) are not aggregated by this script.
 """
 
 from __future__ import annotations
@@ -454,6 +458,7 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
 
     print("== BitNet Kernel Standalone Benchmark ==")
     print(f"device={dev} dtype={dtype} triton_available={is_triton_available()} use_tensorcore={args.use_tensorcore}")
+    print("note: benchmark is single-device; multi-GPU instances are not aggregated.")
     if dev.type != "cuda":
         print("note: CUDA is not available; Triton kernel rows will be skipped.")
     elif not is_triton_available():

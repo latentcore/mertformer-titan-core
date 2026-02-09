@@ -691,6 +691,8 @@ from scripts.bitnet_kernel_benchmark_standalone import run_default
 run_default()
 ```
 
+Performans notu: bu benchmark tek bir seçili cihazda çalışır ve çoklu GPU'ları (örneğin T4 x2) birleştirerek ölçmez.
+
 SDK düzeyi doğrulama ve pilot raporlama:
 
 ```bash
