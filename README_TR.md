@@ -683,6 +683,13 @@ python3 scripts/bitnet_kernel_benchmark_standalone.py --shapes 2048x2048x2048,40
 ```
 
 Bu script bilerek tek dosyalıdır: kernel kodu, quantization yolu, referans yol ve benchmark akışı aynı `.py` içinde bulunur.
+Ayrıca Jupyter/Colab uyumludur: çalışma zamanının eklediği argümanlar (`-f kernel.json` gibi) otomatik yoksayılır.
+CLI argümanı olmadan varsayılan çalıştırmak için:
+
+```python
+from scripts.bitnet_kernel_benchmark_standalone import run_default
+run_default()
+```
 
 SDK düzeyi doğrulama ve pilot raporlama:
 

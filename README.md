@@ -685,6 +685,13 @@ python3 scripts/bitnet_kernel_benchmark_standalone.py --shapes 2048x2048x2048,40
 ```
 
 This script is intentionally self-contained: kernel code, quantization path, reference path, and benchmark harness are all in one `.py` file.
+It is also Jupyter/Colab-safe: extra runtime args (like `-f kernel.json`) are ignored automatically.
+For default execution without CLI args, use:
+
+```python
+from scripts.bitnet_kernel_benchmark_standalone import run_default
+run_default()
+```
 
 SDK-level verification and pilot reporting:
 

@@ -11,6 +11,8 @@ Usage examples:
   python3 scripts/bitnet_kernel_benchmark_standalone.py
   python3 scripts/bitnet_kernel_benchmark_standalone.py --shapes 2048x2048x2048,4096x2048x2048 --iters 50
   python3 scripts/bitnet_kernel_benchmark_standalone.py --use-tensorcore
+  # Notebook/Colab (no CLI args):
+  # from scripts.bitnet_kernel_benchmark_standalone import run_default; run_default()
 """
 
 from __future__ import annotations
@@ -18,7 +20,7 @@ from __future__ import annotations
 import argparse
 import time
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Sequence
 
 import torch
 
@@ -380,8 +382,10 @@ def _print_rows(rows: list[BenchRow]) -> None:
     print("")
 
 
-def main() -> None:
+def main(argv: Optional[Sequence[str]] = None) -> None:
     parser = argparse.ArgumentParser(description="Standalone BitNet ternary kernel benchmark")
+    # Jupyter/Colab injects "-f <kernel.json>" to scripts; accept it silently.
+    parser.add_argument("-f", "--ipykernel-file", default=None, help=argparse.SUPPRESS)
     parser.add_argument(
         "--shapes",
         default="2048x2048x2048,4096x2048x2048",
@@ -401,7 +405,8 @@ def main() -> None:
         action="store_true",
         help="Use experimental tensor-core Triton kernel path",
     )
-    args = parser.parse_args()
+    # parse_known_args keeps the script resilient to notebook/runtime extra flags.
+    args, _ = parser.parse_known_args(argv)
 
     torch.manual_seed(args.seed)
 
@@ -433,6 +438,11 @@ def main() -> None:
         use_tensorcore=args.use_tensorcore,
     )
     _print_rows(rows)
+
+
+def run_default() -> None:
+    """Run benchmark with built-in defaults (no CLI args required)."""
+    main([])
 
 
 if __name__ == "__main__":
