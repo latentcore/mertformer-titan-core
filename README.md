@@ -25,6 +25,26 @@
 # 🦅 MertFormer Titan: Autonomous Swarm Architecture
 > **Target: near-frontier coding capability at mobile compute cost (pending training/benchmarks).**
 
+## 🇹🇷 Executive Summary (Non-Technical)
+> **For decision makers who are not reading source code**
+
+**What is this project?**  
+MertFormer is designed as an offline-first AI system that can run on controlled local hardware and continue operating without always-on cloud dependency.
+
+**Why is it strategically relevant?**
+1. **Data Control:** Primary design goal is local/offline operation to reduce external data exposure.
+2. **Operational Continuity:** The architecture is designed to keep functioning under constrained connectivity.
+3. **Language/Domain Adaptation:** Turkish-first documentation and workflow alignment are treated as core requirements.
+
+**In short:** The system is positioned as a disciplined, mission-focused AI infrastructure rather than a generic internet chatbot.
+
+### ✅ Validation Evidence (Latest Local Run)
+| Gate | Result |
+| :--- | :--- |
+| `python3 -m pytest -q` | `30 passed, 4 skipped` |
+| `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
+| `bash scripts/verify_all.sh` | `[verify] OK` |
+
 | Engineering Status | `ALPHA / PRE-TRAINING` |
 | :--- | :--- |
 | **Codebase** | ✅ Implemented (tests + offline preflight passing) |

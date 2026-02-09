@@ -25,6 +25,26 @@
 # 🦅 MertFormer Titan: Otonom Sürü Mimarisi
 > **Hedef: Mobil maliyetle, sınır-üstü kodlama yeteneği (eğitim/benchmark sonrası).**
 
+## 🇹🇷 Sivil/Komutan Özeti (Teknik Olmayan Okuyucu İçin)
+> **Kaynak kod okumayan karar vericiler için**
+
+**Bu proje nedir?**  
+MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımda çalışmak üzere tasarlanmış offline-first bir yapay zeka altyapısıdır.
+
+**Neden stratejiktir?**
+1. **Veri Kontrolü:** Ana tasarım hedefi yerel/offline çalışmadır; dış veri maruziyetini azaltır.
+2. **Operasyonel Süreklilik:** Mimari, kısıtlı bağlantı koşullarında çalışmayı sürdürecek şekilde kurgulanmıştır.
+3. **Dil/Alan Uyumu:** Türkçe odaklı dokümantasyon ve iş akışı uyumu çekirdek gereksinim olarak ele alınır.
+
+**Kısaca:** Bu sistem, genel amaçlı internet sohbet botu değil; görev odaklı ve disiplinli bir yapay zeka altyapısı olarak konumlandırılmıştır.
+
+### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
+| Kapı | Sonuç |
+| :--- | :--- |
+| `python3 -m pytest -q` | `30 passed, 4 skipped` |
+| `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
+| `bash scripts/verify_all.sh` | `[verify] OK` |
+
 | Mühendislik Durumu | `ALFA / EĞİTİM ÖNCESİ` |
 | :--- | :--- |
 | **Kod Tabanı** | ✅ Uygulandı (testler + offline preflight geçiyor) |
