@@ -1389,7 +1389,7 @@ NİHAİ/                     # Project root
 ├── 📄 README_CHECKLIST.md  # README audit checklist (EN)
 ├── 📄 README_CHECKLIST_TR.md # README audit checklist (TR)
 ├── 📄 LICENSE              # Proprietary License (English)
-└── 📄 LICENSE_TR           # Ozel Lisans (Turkce)
+└── 📄 LICENSE_TR           # Proprietary License (Turkish)
 ```
 
 ---
