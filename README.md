@@ -88,7 +88,7 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 ---
 
 ### 💼 Executive Brief
-**MertFormer Titan is a structural efficiency standard that decentralizes enterprise intelligence by minimizing AI inference costs at the device level.**
+**This section translates the structural-efficiency positioning into operational outcomes for technical and executive decision-makers.**
 
 *   **💰 Targeted ~90% Operational Savings (Estimate)**: Cloud server expenses can be minimized in target deployments. MertFormer aims to reduce processing costs by optimizing energy at the NPU level.
 *   **🛡️ Data Sovereignty**: Data is designed to be processed on-device. This is a structural advantage for markets with high security standards, such as defense, law, and finance.
@@ -947,7 +947,7 @@ print(response)
 <a id="turkish-vision"></a>
 ## 🇹🇷 Turkish Vision & Digital Sovereignty
 
-### Why MertFormer Titan?
+### Why It Matters for Turkish Digital Sovereignty
 
 MertFormer Titan is a critical step toward Türkiye's digital sovereignty. Today, AI runs on cloud servers owned by a few big companies (OpenAI, Google, Meta), which means your data is handled by them.
 

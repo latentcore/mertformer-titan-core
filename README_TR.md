@@ -88,7 +88,7 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 ---
 
 ### 💼 Yönetici Özeti (Executive Brief)
-**MertFormer Titan, yapay zeka çıkarım (inference) maliyetlerini cihaz düzeyinde minimize ederek kurumsal zekayı merkezsizleştiren yapısal bir verimlilik standardıdır.**
+**Bu bölüm, yapısal verimlilik konumlandırmasını teknik ve yönetici karar vericiler için operasyonel çıktılara dönüştürür.**
 
 *   **💰 Hedeflenen ~%90 Operasyonel Tasarruf (Tahmini/Hedef)**: Bulut sunucu masrafları minimize edilir. MertFormer, enerjiyi NPU düzeyinde optimize ederek işlem maliyetlerini azaltmayı hedefler.
 *   **🛡️ Veri Egemenliği**: Veriler cihazda işlenir. Bu, savunma sanayi, hukuk ve finans gibi "yüksek güvenlik" standartlarına sahip pazarlar için yapısal bir avantajdır.
@@ -946,7 +946,7 @@ print(response)
 <a id="türkiye-vizyonu"></a>
 ## 🇹🇷 Türkiye Vizyonu & Milli Egemenlik
 
-### Neden MertFormer Titan?
+### Türkiye'nin Dijital Egemenliği İçin Neden Önemli?
 
 MertFormer Titan, **Türkiye'nin dijital egemenliği** için kritik bir adımdır. Bugün dünyada AI, birkaç dev şirketin (OpenAI, Google, Meta) bulut sunucularında çalışıyor ve **tüm verileriniz onların elinde**.
 
