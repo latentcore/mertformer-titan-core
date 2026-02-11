@@ -447,6 +447,12 @@ Name expansion:
 - **Offline Knowledge Distillation**: Pre-computed Llama-3-70B logits for zero-overhead teacher training (requires precomputed shards; falls back to online teacher if missing).
 - **Smart Parallel Orchestration (Hyper-Threading)**: Zero-latency pipeline where data download, distillation, and training happen concurrently.
 
+### QINN Status (Current Build)
+- **Default state:** `use_qinn=False` (disabled in Build 27).
+- **Why disabled now:** prioritizes training stability, throughput, and edge/NPU compatibility in the primary path.
+- **If enabled later:** can be evaluated as an experimental regularization layer, but may add compute overhead and convergence risk.
+- **Reference path:** `layers/qinn.py` (kept in codebase for controlled ablation use).
+
 ---
 
 <a id="architecture"></a>

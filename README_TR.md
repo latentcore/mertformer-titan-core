@@ -445,6 +445,12 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 - **Çevrimdışı Bilgi Damıtma (Offline KD)**: Sıfır yüklü öğretmen eğitimi için önceden hesaplanmış Llama-3-70B logitleri (precomputed shard gerektirir; yoksa online öğretmene düşer).
 - **Akıllı Paralel Orkestrasyon (Hyper-Threading)**: Veri indirme, damıtma ve eğitimin eş zamanlı gerçekleştiği sıfır gecikmeli boru hattı.
 
+### QINN Durumu (Mevcut Build)
+- **Varsayılan durum:** `use_qinn=False` (Build 27'de kapalı).
+- **Şu an neden kapalı:** ana eğitim hattında stabilite, throughput ve edge/NPU uyumluluğu önceliklendirildi.
+- **İleride açılırsa:** deneysel bir düzenleme katmanı olarak ablation ile test edilebilir; ek hesaplama yükü ve yakınsama riski oluşturabilir.
+- **Referans dosya:** `layers/qinn.py` (kontrollü deneyler için kod tabanında tutulur).
+
 ---
 
 <a id="mimari"></a>
