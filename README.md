@@ -1045,63 +1045,63 @@ Planned Turkish data sources:
 <a id="faq"></a>
 ## ❓ FAQ
 
-### Q: Neden 2.64B parametre? Daha büyük olabilir miydi?
+### Q: Why 2.64B parameters? Could it be larger?
 
-**A**: 2.64B, **mobil cihazlar için optimal nokta**dır:
-- Samsung S25 (12GB RAM) rahatça çalıştırır
-- BitNet ile ~0.65GB weights (estimate)
-- Hız/kalite dengesi mükemmel
-- Daha büyük modeller (7B+) mobilde yavaş
+**A**: 2.64B is the **optimal point for mobile-class deployment**:
+- Fits Samsung S25-class memory budgets (12GB RAM)
+- ~0.65GB weights with BitNet (estimate)
+- Strong speed/quality balance
+- Larger models (7B+) are typically slower on mobile
 
-### Q: BitNet 1.58-bit quantization kaliteyi düşürür mü?
+### Q: Does BitNet 1.58-bit quantization hurt quality?
 
-**A**: **Minimal kayıp** (1-2% accuracy):
-- Knowledge Distillation ile telafi edilir
-- Llama-3.3-70B teacher'dan öğrenir
-- Production'da kanıtlanmış (Microsoft Research)
+**A**: **Minimal loss** (typically ~1-2% accuracy range):
+- Mitigated with Knowledge Distillation
+- Learns from a Llama-3.3-70B teacher
+- Backed by production-focused low-bit research direction (Microsoft Research)
 
-### Q: Flash Attention 2 neden sadece training'de?
+### Q: Why is Flash Attention 2 used only in training?
 
-**A**: **KV cache uyumsuzluğu**:
-- Flash Attention 2, KV cache'i desteklemiyor (henüz)
-- Inference'da standard attention kullanılır
-- Hız farkı minimal (inference zaten hızlı)
+**A**: **KV cache compatibility constraints**:
+- Flash Attention 2 currently does not match this inference KV-cache path
+- Inference uses standard attention path
+- Inference impact remains limited because the serving path is already optimized
 
-### Q: NCCL tuning ne işe yarar?
+### Q: What does NCCL tuning provide?
 
-**A**: **Multi-GPU iletişim optimizasyonu**:
-- GPU'lar arası veri transferi hızlanır
-- NVLink varsa P2P aktif olur
-- 8x GPU'da %5-10 hızlanma
+**A**: **Multi-GPU communication optimization**:
+- Faster inter-GPU data transfer
+- P2P paths activate when NVLink is available
+- ~5-10% speedup potential on 8x GPU configurations
 
-### Q: Eğitim ne kadar sürer?
+### Q: How long does training take?
 
-**A**: **8x A100 80GB'de**:
-- Baseline: ~25 saat (45K steps × 2 sec/step)
-- v1.0 (Build 27) Optimized: **~15 saat** (45K steps × 1.2 sec/step)
-- **10 saat tasarruf!**
+**A**: On **8x A100 80GB** (projection):
+- Baseline: ~25 hours (45K steps x 2 sec/step)
+- v1.0 (Build 27) optimized: **~15 hours** (45K steps x 1.2 sec/step)
+- ~10 hours estimated savings
 
-### Q: Samsung S25'te gerçekten çalışır mı?
+### Q: Does it really run on Samsung S25?
 
-**A**: **Evet, teorik olarak**:
-- ONNX export hazır
-- NPU optimization planlandı
-- Real-device validation: Post-Build-27 roadmap
+**A**: **Theoretically yes** under the current roadmap:
+- ONNX export path is ready
+- NPU optimization is planned
+- Real-device validation is a Post-Build-27 roadmap item
 
-### Q: Low-bit kernel production-ready mi?
+### Q: Is the low-bit kernel production-ready?
 
-**A**: **Experimental reference kernel** (correctness-first):
-- BitNet training path ayrı bir katman (mevcut)
-- Low-bit inference path **opt-in**
-- Tensor Core path **deneysel** (`MERTFORMER_TENSORCORE=1`)
-- Gerçek profil/ölçüm olmadan hız/enerji iddiası yapılmaz
+**A**: It is an **experimental reference kernel** (correctness-first):
+- BitNet training path remains a separate, existing layer
+- Low-bit inference path is **opt-in**
+- Tensor Core path is **experimental** (`MERTFORMER_TENSORCORE=1`)
+- No speed/energy claim is made without real profiling/measurement
 
-### Q: Türkçe tokenizer var mı?
+### Q: Is there a Turkish tokenizer?
 
-**A**: **Opt-in** (varsayılan kapalı):
+**A**: **Opt-in** (disabled by default):
 - `use_tr_tokenizer=false` (default)
-- `scripts/download_tr_tokenizer.py` ile indirilebilir
-- Distillation uyumu için risk kontrollü POC önerilir
+- Downloadable via `scripts/download_tr_tokenizer.py`
+- A risk-controlled PoC is recommended for distillation compatibility
 
 ---
 
