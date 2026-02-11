@@ -33,6 +33,9 @@ build/
 tokenizer/tr/*
 !tokenizer/tr/README.md
 !tokenizer/tr/README_TR.md
+data/tokenizer/tr/*
+!data/tokenizer/tr/README.md
+!data/tokenizer/tr/README_TR.md
 
 # Heavy Files (Models & Data)
 *.onnx
@@ -40,33 +43,36 @@ tokenizer/tr/*
 *.pt
 *.pth
 *.ckpt
-/datasets/*
-!/datasets/README.md
-!/datasets/README_TR.md
-!/datasets/SOURCES.md
-!/datasets/SOURCES_TR.md
-!/datasets/LICENSES.md
-!/datasets/LICENSES_TR.md
-!/datasets/INTERNAL_POLICY.md
-!/datasets/INTERNAL_POLICY_TR.md
-!/datasets/filters.yaml
-!/datasets/hashes.json
-!/datasets/inventory.json
-!/datasets/inventory.md
-!/datasets/inventory_TR.md
-!/datasets/validation.jsonl
-/data/
+/data/datasets/*
+!/data/datasets/README.md
+!/data/datasets/README_TR.md
+!/data/datasets/SOURCES.md
+!/data/datasets/SOURCES_TR.md
+!/data/datasets/LICENSES.md
+!/data/datasets/LICENSES_TR.md
+!/data/datasets/INTERNAL_POLICY.md
+!/data/datasets/INTERNAL_POLICY_TR.md
+!/data/datasets/filters.yaml
+!/data/datasets/hashes.json
+!/data/datasets/inventory.json
+!/data/datasets/inventory.md
+!/data/datasets/inventory_TR.md
+!/data/datasets/validation.jsonl
+!/data/datasets/golden_samples.jsonl
 /dataset/
 /weights/
+/artifacts/checkpoints/
 /checkpoints/
-!/datasets/golden_samples.jsonl
 
 # Logs (Keep only documentation in git; generated logs are artifacts)
-logs/*
-!logs/README.md
-!logs/README_TR.md
+/artifacts/logs/*
+!/artifacts/logs/README.md
+!/artifacts/logs/README_TR.md
 
 # Pilot runtime artifacts (keep only folder standards in git)
+docs/reports/pilots/**
+!docs/reports/pilots/README.md
+!docs/reports/pilots/README_TR.md
 reports/pilots/**
 !reports/pilots/README.md
 !reports/pilots/README_TR.md
