@@ -1108,71 +1108,35 @@ Planlanan Türkçe veri kaynakları:
 
 ### Repo Kontrol Haritası
 
-- `Çalışma Kaynağı`: `src/` (`layers/`, `model/`, `train/`, `utils/`, `orchestrator/`, `mertformer_sdk/`, `eval/`)
-- `Yapılandırma`: `config/` (base + model/train/export katmanları)
-- `Operasyon Scriptleri`: `scripts/ops/`, `scripts/data/`, `scripts/eval/`, `scripts/export/`, `scripts/demos/`
-- `Veri Varlıkları`: `data/datasets/`, `data/tokenizer/`
-- `Dokümantasyon`: `docs/primary/`, `docs/plans/`, `docs/governance/`, `docs/technical/`, `docs/reports/`
-- `Üretilen Artifacts`: `artifacts/logs/`, `artifacts/checkpoints/`, `artifacts/runs/`
-- `Araştırma ve Kontrol`: `ablations/`, `experiments/`, `tools/`, `training_dynamics/`, `repro/`, `registry/`
+- `Çekirdek Sistem`: `config/`, `layers/`, `model/`, `train/`, `utils/`
+- `SDK ve Çalışma Katmanı`: `mertformer_sdk/`, `scripts/`, `run.sh`
+- `Veri ve Kanıt`: `datasets/`, `reports/`, `logs/`, `interfaces/`
+- `Araştırma ve Uzantılar`: `ablations/`, `experiments/`, `orchestrator/`, `economics/`, `limits/`
 
 ### Kanonik Yerleşim (Build 27)
 
 ```text
 NİHAİ/
 ├── .github/workflows/ci.yml
-├── src/                      # birleştirilmiş çalışma kaynak ağacı
-│   ├── layers/
-│   ├── model/
-│   ├── train/
-│   ├── utils/
-│   ├── orchestrator/
-│   ├── eval/
-│   └── mertformer_sdk/
 ├── config/                   # config.py + YAML katmanları
-├── scripts/
-│   ├── ops/                  # verify, preflight, drill, secret scan
-│   ├── data/                 # veri hattı + dataset/hash çıkarıcılar
-│   ├── eval/                 # benchmark/smoke/eval scriptleri
-│   ├── export/               # export ve onnx doğrulama scriptleri
-│   └── demos/                # chat/drone/simülasyon/demo araçları
-├── data/
-│   ├── datasets/             # stage1..stage5 + lisans + hash + envanter
-│   └── tokenizer/            # tokenizer varlıkları + drift/istatistik raporları
-├── docs/
-│   ├── primary/              # README/checklist/usage/contributing/citation
-│   ├── plans/                # task/implementation/training/changelog (EN/TR)
-│   ├── governance/           # model card/use policy/security/decisions
-│   ├── technical/            # technical report/whitepaper/internal gap
-│   ├── reports/              # denetim/strateji/pilot/uyum artifact'leri
-│   ├── economics/
-│   ├── limits/
-│   ├── postmortems/
-│   ├── prompts/
-│   └── interfaces/
-├── artifacts/
-│   ├── logs/
-│   ├── checkpoints/
-│   └── runs/
-├── assets/
-├── tests/
-├── ablations/
-├── experiments/
-├── tools/
-├── repro/
-├── registry/
+├── layers/                   # BitLinear / MoE / Liquid / MLA blokları
+├── model/                    # Transformer montajı
+├── train/                    # eğitim giriş noktası
+├── utils/                    # logger + safety + registry yardımcıları
+├── scripts/                  # verify/preflight/gate/export/benchmark araçları
+├── mertformer_sdk/           # API + CLI + kernel + utils
+├── datasets/                 # stage1..stage5 + lisans + hash + envanter
+├── reports/                  # denetim/strateji/pilot/uyum dokümanları
+├── logs/                     # preflight/operator mode kanıt logları
+├── tests/                    # birim + entegrasyon testleri
+├── interfaces/               # inference sözleşmeleri + pilot şeması
+├── assets/                   # demo görselleri/medya
+├── repro/                    # tekrar üretilebilirlik kilit dosyaları
+├── orchestrator/             # opsiyonel hedef çalışma katmanı
 ├── run.sh
 ├── requirements.txt
-├── pyproject.toml
-├── README.md / README_TR.md
-├── LICENSE / LICENSE_TR
-└── Dockerfile
+└── README.md / README_TR.md
 ```
-
-### Uyumluluk Notu
-
-- Eski kök yollar (`layers/`, `model/`, `train/`, `utils/`, `mertformer_sdk/`, `datasets/`, `reports/` vb.) uyumluluk symlink'leri olarak korunur.
-- Böylece mevcut import yolları ve README linkleri çalışmaya devam eder; kanonik sahiplik `src/`, `data/`, `docs/`, `artifacts/` altında tutulur.
 
 ### Bakım Kuralı
 

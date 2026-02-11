@@ -1110,71 +1110,35 @@ Planned Turkish data sources:
 
 ### Repository Control Map
 
-- `Runtime Source`: `src/` (`layers/`, `model/`, `train/`, `utils/`, `orchestrator/`, `mertformer_sdk/`, `eval/`)
-- `Configuration`: `config/` (base + model/train/export overlays)
-- `Operational Scripts`: `scripts/ops/`, `scripts/data/`, `scripts/eval/`, `scripts/export/`, `scripts/demos/`
-- `Data Assets`: `data/datasets/`, `data/tokenizer/`
-- `Documentation`: `docs/primary/`, `docs/plans/`, `docs/governance/`, `docs/technical/`, `docs/reports/`
-- `Generated Artifacts`: `artifacts/logs/`, `artifacts/checkpoints/`, `artifacts/runs/`
-- `Research & Controls`: `ablations/`, `experiments/`, `tools/`, `training_dynamics/`, `repro/`, `registry/`
+- `Core System`: `config/`, `layers/`, `model/`, `train/`, `utils/`
+- `SDK & Runtime`: `mertformer_sdk/`, `scripts/`, `run.sh`
+- `Data & Evidence`: `datasets/`, `reports/`, `logs/`, `interfaces/`
+- `Research & Extensions`: `ablations/`, `experiments/`, `orchestrator/`, `economics/`, `limits/`
 
 ### Canonical Layout (Build 27)
 
 ```text
 NİHAİ/
 ├── .github/workflows/ci.yml
-├── src/                      # consolidated runtime source tree
-│   ├── layers/
-│   ├── model/
-│   ├── train/
-│   ├── utils/
-│   ├── orchestrator/
-│   ├── eval/
-│   └── mertformer_sdk/
 ├── config/                   # config.py + YAML overlays
-├── scripts/
-│   ├── ops/                  # verify, preflight, drills, secret scan
-│   ├── data/                 # data pipeline + dataset/hash extractors
-│   ├── eval/                 # benchmark/smoke/eval scripts
-│   ├── export/               # export and onnx verification scripts
-│   └── demos/                # chat/drone/simulation/demo tooling
-├── data/
-│   ├── datasets/             # stage1..stage5 + licenses + hashes + inventory
-│   └── tokenizer/            # tokenizer assets + drift/stats reports
-├── docs/
-│   ├── primary/              # README/checklists/usage/contributing/citation
-│   ├── plans/                # task/implementation/training/changelog (EN/TR)
-│   ├── governance/           # model card/use policy/security/decisions
-│   ├── technical/            # technical report/whitepaper/internal gap
-│   ├── reports/              # audit/strategy/pilot/compliance artifacts
-│   ├── economics/
-│   ├── limits/
-│   ├── postmortems/
-│   ├── prompts/
-│   └── interfaces/
-├── artifacts/
-│   ├── logs/
-│   ├── checkpoints/
-│   └── runs/
-├── assets/
-├── tests/
-├── ablations/
-├── experiments/
-├── tools/
-├── repro/
-├── registry/
+├── layers/                   # BitLinear / MoE / Liquid / MLA blocks
+├── model/                    # Transformer assembly
+├── train/                    # training entrypoint
+├── utils/                    # logger + safety + registry helpers
+├── scripts/                  # verify/preflight/gates/exports/bench tools
+├── mertformer_sdk/           # API + CLI + kernels + utils
+├── datasets/                 # stage1..stage5 + licenses + hashes + inventory
+├── reports/                  # audit/strategy/pilot/compliance/docs artifacts
+├── logs/                     # preflight/operator mode evidence logs
+├── tests/                    # unit + integration test suite
+├── interfaces/               # inference contracts + pilot schema
+├── assets/                   # demo visuals/media
+├── repro/                    # reproducibility lock files
+├── orchestrator/             # optional target runtime
 ├── run.sh
 ├── requirements.txt
-├── pyproject.toml
-├── README.md / README_TR.md
-├── LICENSE / LICENSE_TR
-└── Dockerfile
+└── README.md / README_TR.md
 ```
-
-### Compatibility Note
-
-- Legacy root paths (`layers/`, `model/`, `train/`, `utils/`, `mertformer_sdk/`, `datasets/`, `reports/`, etc.) are preserved as compatibility symlinks.
-- Existing import paths and README links continue to resolve while canonical ownership lives under `src/`, `data/`, `docs/`, and `artifacts/`.
 
 ### Maintenance Rule
 
