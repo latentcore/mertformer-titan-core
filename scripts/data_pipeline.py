@@ -18,11 +18,17 @@ import argparse
 import json
 import os
 import random
+import sys
 from pathlib import Path
 from typing import Dict, List
 
 from datasets import load_dataset
 from tqdm import tqdm
+
+# Ensure project-local imports work when launched as: python scripts/data_pipeline.py
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from utils.dataset_registry import get_hf_revision
 

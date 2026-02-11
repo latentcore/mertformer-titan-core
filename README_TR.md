@@ -132,6 +132,7 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 - [Hızlı Başlangıç](#hızlı-başlangıç)
 - [Eğitim](#eğitim)
 - [Dağıtım (Deployment)](#dağıtım-deployment)
+- [Entegrasyon Hedefleri](#entegrasyon-hedefleri)
 - [Kıyaslamalar (Benchmarks)](#kıyaslamalar-benchmarks)
 - [Türkiye Vizyonu](#türkiye-vizyonu)
 - [SSS](#sss)
@@ -973,6 +974,31 @@ print(response)
 ```
 
 **Bağlam limitleri**: varsayılan giriş limiti **4096 token** (`cfg.max_seq_len`). Çıktı uzunluğu çağıran tarafından belirlenir; `scripts/chat.py` varsayılanı `--max_tokens=128`, `scripts/benchmarks_internal.py` varsayılanı `--max-new-tokens=256`.
+
+---
+
+<a id="entegrasyon-hedefleri"></a>
+## 🔌 Entegrasyon Hedefleri
+
+Bu bölüm, gerçekçi entegrasyon yollarını güncel durumlarıyla birlikte listeler.
+
+### Mevcut (Repo İçinde Hazır Olan)
+
+| Hedef | Entegrasyon Yöntemi | Durum | Ana Yollar |
+| :--- | :--- | :---: | :--- |
+| Yerel Offline Operasyon | CLI + gate çalıştırma (`verify`, `pilot-report`, `verify_all.sh`) | ✅ Mevcut | `mertformer_sdk/cli.py`, `scripts/verify_all.sh`, `scripts/operator_mode_gate.py` |
+| Python Uygulamasına Gömme | SDK import + doğrudan API kullanımı | ✅ Mevcut | `mertformer_sdk/api.py`, `SDK_GUIDE_TR.md` |
+| Edge Export Hattı | Edge/mobile dağıtım için ONNX export akışı | ✅ Mevcut | `scripts/mobile_export.py`, `mertformer_sdk/export.py`, `config/export/onnx_mobile.yaml` |
+| Pilot Kanıt Teslimi | Rapor + log + şema tabanlı pilot paketi | ✅ Mevcut | `reports/pilots/`, `interfaces/pilot_report_v1.schema.json` |
+| SITL Demo Akışı | Deterministik drone SITL kanıt protokolü | ✅ Mevcut (Demo) | `scripts/drone_sitl_demo.py`, `reports/drone_sitl_demo.md` |
+
+### Planlanan / Opsiyonel (Tamamlandı İddiası Yok)
+
+| Hedef | Kapsam | Durum | Not |
+| :--- | :--- | :---: | :--- |
+| Fine-tuning | Temel model sonrası alan uzmanlaştırma | 🟡 Planlı / Opsiyonel | Claim-ready kalite için gerçek alan verisi + compute + doğrulama koşuları gerekir. |
+| Koordineli Çok-Etmenli Çalışma | Swarm/rol tabanlı orkestrasyon akışları | 🟡 Planlı / Hedef Mimari | `orchestrator/` altında kısmi/deneysel modüller var; üretim orkestrasyonu için ek doğrulama gerekir. |
+| Genişletilmiş On-Prem Bağlayıcılar | Ortama özel kurumsal entegrasyon adaptörleri | 🟡 Opsiyonel | Yalnız müşteri entegrasyon sözleşmesi ve güvenlik politikasına göre uygulanmalıdır. |
 
 ---
 

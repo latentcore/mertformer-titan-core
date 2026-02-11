@@ -132,6 +132,7 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 - [Quick Start](#quick-start)
 - [Training](#training)
 - [Deployment](#deployment)
+- [Integration Targets](#integration-targets)
 - [Benchmarks](#benchmarks)
 - [Turkish Vision](#turkish-vision)
 - [FAQ](#faq)
@@ -974,6 +975,31 @@ print(response)
 ```
 
 **Context limits**: default input limit is **4096 tokens** (`cfg.max_seq_len`). Output length is caller-defined; `scripts/chat.py` defaults to `--max_tokens=128`, and `scripts/benchmarks_internal.py` defaults to `--max-new-tokens=256`.
+
+---
+
+<a id="integration-targets"></a>
+## 🔌 Integration Targets
+
+This section lists realistic integration paths with explicit current status.
+
+### Available (Current Repository Capability)
+
+| Target | Integration Method | Status | Primary Paths |
+| :--- | :--- | :---: | :--- |
+| Local Offline Ops | CLI + gate execution (`verify`, `pilot-report`, `verify_all.sh`) | ✅ Available | `mertformer_sdk/cli.py`, `scripts/verify_all.sh`, `scripts/operator_mode_gate.py` |
+| Python App Embedding | SDK import + direct API usage | ✅ Available | `mertformer_sdk/api.py`, `SDK_GUIDE.md` |
+| Edge Export Pipeline | ONNX export path for edge/mobile deployment flow | ✅ Available | `scripts/mobile_export.py`, `mertformer_sdk/export.py`, `config/export/onnx_mobile.yaml` |
+| Pilot Evidence Delivery | Report + logs + schema-based pilot bundle | ✅ Available | `reports/pilots/`, `interfaces/pilot_report_v1.schema.json` |
+| SITL Demonstration Flow | Deterministic drone SITL proof protocol | ✅ Available (Demo) | `scripts/drone_sitl_demo.py`, `reports/drone_sitl_demo.md` |
+
+### Planned / Optional (Not Claimed as Complete)
+
+| Target | Scope | Status | Note |
+| :--- | :--- | :---: | :--- |
+| Fine-tuning | Domain specialization after base readiness | 🟡 Planned / Optional | Claim-ready quality requires real domain data + compute + validation runs. |
+| Coordinated Multi-Agent Runtime | Swarm/role-based orchestrated workflows | 🟡 Planned / Target Architecture | Implemented modules are partial/experimental under `orchestrator/`; production orchestration requires additional validation. |
+| Expanded On-Prem Connectors | Environment-specific enterprise adapters | 🟡 Optional | Implement only per customer integration contract and security policy. |
 
 ---
 
