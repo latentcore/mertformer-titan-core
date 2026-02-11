@@ -129,6 +129,12 @@ def jit_liquid_loop(
     # TR: Çıktı için ön-tahsisat (Pre-allocation) - VRAM optimizasyonu
     # EN: Output pre-allocation - VRAM optimization
     out_seq = torch.zeros(B, T, H, device=input_seq.device, dtype=input_seq.dtype)
+    # TR: Mikro-optimizasyon - döngü içinde tekrar quantize etme.
+    # EN: Micro-optimization - avoid re-quantizing inside the loop.
+    input_w_q_t = jit_quant(input_w_weight).t()
+    hidden_w_q_t = jit_quant(hidden_w_weight).t()
+    tau_input_w_q_t = jit_quant(tau_input_w_weight).t()
+    tau_hidden_w_q_t = jit_quant(tau_hidden_w_weight).t()
     
     # TR: Derleyici için açılabilir döngü / EN: Unrollable loop for compiler
     for t in range(T):
@@ -138,12 +144,12 @@ def jit_liquid_loop(
         # EN: --- Manually unrolled LiquidCell.forward for JIT ---
         # TR: V24.0: Ağırlıkları quantize ederek çarp (BitNet Simülasyonu)
         # EN: V24.0: Multiply with quantized weights (BitNet Simulation)
-        val_in = torch.matmul(x_t, jit_quant(input_w_weight).t())
-        val_rec = torch.matmul(h, jit_quant(hidden_w_weight).t())
+        val_in = torch.matmul(x_t, input_w_q_t)
+        val_rec = torch.matmul(h, hidden_w_q_t)
         A = torch.tanh(val_in + val_rec)
         
-        tau_in = torch.matmul(x_t, jit_quant(tau_input_w_weight).t())
-        tau_rec = torch.matmul(h, jit_quant(tau_hidden_w_weight).t())
+        tau_in = torch.matmul(x_t, tau_input_w_q_t)
+        tau_rec = torch.matmul(h, tau_hidden_w_q_t)
         
         # TR: V25.1 GÜVENLİK: Tau Sınırı (Patlama/Kaybolmayı Önle)
         # EN: V25.1 SAFEGUARD: Tau Cap (Prevent Exploding/Vanishing)
