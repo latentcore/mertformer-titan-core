@@ -1,0 +1,52 @@
+{
+  "run_id": "operator_2026-02-07_13-33-28",
+  "opened_at_utc": "2026-02-07T10:33:28Z",
+  "closed_at_utc": "2026-02-07T10:33:44Z",
+  "status": "completed",
+  "jsonl_path": "/Users/mertyunlu/Desktop/NİHAİ/logs/operator_mode/operator_2026-02-07_13-33-28.jsonl",
+  "jsonl_bytes": 6233,
+  "lines": 2,
+  "chain_genesis": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "final_chain_hash": "b06fa21da8ad8f5d42a73c16f57ddb1dd4d7a2db19a3b600e4d397c34e3cc04c",
+  "csv_path": null,
+  "extra": {
+    "status": "completed",
+    "elapsed_sec": 15.218760251998901,
+    "results": [
+      {
+        "step": "nan_kill_switch",
+        "status": "pass"
+      },
+      {
+        "step": "checkpoint_restore_drill",
+        "status": "pass"
+      },
+      {
+        "step": "failure_budget_drill",
+        "status": "pass"
+      },
+      {
+        "step": "overfit_gate",
+        "status": "pass_fast"
+      },
+      {
+        "step": "golden_samples",
+        "status": "pass"
+      },
+      {
+        "step": "telemetry_snapshot",
+        "status": "pass",
+        "snapshot": {
+          "timestamp_utc": "2026-02-07T10:33:41Z",
+          "cpu_percent": 16.9,
+          "ram_used_gb": 7.1327362060546875,
+          "ram_total_gb": 16.0
+        }
+      },
+      {
+        "step": "benchmarks",
+        "status": "ready"
+      }
+    ]
+  }
+}

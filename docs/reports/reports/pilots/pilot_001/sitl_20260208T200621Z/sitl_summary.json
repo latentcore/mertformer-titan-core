@@ -1,0 +1,52 @@
+{
+  "generated_at_utc": "2026-02-08T20:06:21.608791+00:00",
+  "pilot_id": "pilot_001",
+  "runs": [
+    {
+      "run_id": 1,
+      "steps": 120,
+      "fault_window": [
+        45,
+        52
+      ],
+      "fail_safe_count": 16,
+      "fallback_triggered": true,
+      "recovered": true,
+      "pass": true
+    },
+    {
+      "run_id": 2,
+      "steps": 120,
+      "fault_window": [
+        47,
+        54
+      ],
+      "fail_safe_count": 18,
+      "fallback_triggered": true,
+      "recovered": true,
+      "pass": true
+    },
+    {
+      "run_id": 3,
+      "steps": 120,
+      "fault_window": [
+        49,
+        56
+      ],
+      "fail_safe_count": 21,
+      "fallback_triggered": true,
+      "recovered": true,
+      "pass": true
+    }
+  ],
+  "all_green": true,
+  "config": {
+    "runs": 3,
+    "steps": 120,
+    "seed": 27,
+    "confidence_threshold": 0.55,
+    "fault_start": 45,
+    "fault_duration": 8,
+    "offline_mode": true
+  }
+}

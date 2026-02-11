@@ -1,8 +1,0 @@
-{
-  "name": "MertFormer Titan Runtime Tokenizer",
-  "source": "meta-llama/Llama-3.3-70B-Instruct",
-  "format": "huggingface",
-  "vocab_size": 128256,
-  "max_seq_len": 4096,
-  "note": "Tokenizer is loaded at runtime; this file stores metadata only."
-}
