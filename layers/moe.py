@@ -98,7 +98,7 @@ class LiquidRouter(nn.Module):
             out_channels=hidden_size,
             kernel_size=self.history_window,
             groups=hidden_size, # TR: Depthwise / EN: Depthwise
-            padding=self.history_window - 1, # TR: Causal padding / EN: Causal padding 
+            padding=0, # TR: Sol pad'i manuel uygularız / EN: Left padding is applied manually
             bias=False
         )
         # TR: [V26.0 FIX] Router Quantization / EN: [V26.0 FIX] Router Quantization
@@ -157,9 +157,10 @@ class LiquidRouter(nn.Module):
             # Training / Prefill mode (Parallel)
             x_t = x.transpose(1, 2) # [B, H, S]
             
-            # Causal Convolution
-            fluid_mem = self.fluid_mixer(x_t)
-            fluid_mem = fluid_mem[..., :S] # Causal Crop
+            # TR: True-causal conv: only left padding (no right-side leakage)
+            # EN: True-causal conv: only left padding (no right-side leakage)
+            x_t_padded = F.pad(x_t, (self.history_window - 1, 0))
+            fluid_mem = self.fluid_mixer(x_t_padded)
             
             fluid_mem = fluid_mem.transpose(1, 2) # [B, S, H]
             logits_fluid = self.fluid_gate(F.silu(fluid_mem))
@@ -203,11 +204,10 @@ class LiquidRouter(nn.Module):
             # Context: [B, H, Window]
             context = torch.cat([self.inference_state, current_token], dim=2)
             
-            # Conv pass
-            fluid_mem = self.fluid_mixer(context) # [B, H, Window]
-            
-            # [FIX 1] Causal Align: Crop to input context size (training consistency)
-            fluid_mem = fluid_mem[..., :context.size(2)] 
+            # TR: True-causal conv with explicit left padding (inference parity)
+            # EN: True-causal conv with explicit left padding (inference parity)
+            context_padded = F.pad(context, (self.history_window - 1, 0))
+            fluid_mem = self.fluid_mixer(context_padded) # [B, H, Window]
             
             # Sadece son adımı al (current token output)
             fluid_mem = fluid_mem[..., -1:] # [B, H, 1]
