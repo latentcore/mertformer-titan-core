@@ -109,7 +109,30 @@ class LiquidRouter(nn.Module):
         # EN: [FIX 2] Stateful Inference Buffer
         # TR: Inference sırasında son (history_window - 1) token'ın state'ini tutar
         # EN: Holds the state of last (history_window - 1) tokens during inference
-        self.register_buffer("inference_state", torch.zeros(1, hidden_size, self.history_window - 1))
+        # TR: Inference cache, checkpoint'e yazılmaz (runtime state)
+        # EN: Inference cache, excluded from checkpoints (runtime state)
+        self.register_buffer(
+            "inference_state",
+            torch.zeros(1, hidden_size, self.history_window - 1),
+            persistent=False,
+        )
+
+    def _update_inference_state(self, state: torch.Tensor) -> None:
+        """
+        TR: Router state'ini güvenli şekilde günceller (dtype/device + shape uyumu).
+        EN: Safely updates router state (dtype/device + shape alignment).
+        """
+        with torch.no_grad():
+            target = state.detach()
+            if (
+                self.inference_state.device != target.device
+                or self.inference_state.dtype != target.dtype
+            ):
+                self.inference_state = self.inference_state.to(
+                    device=target.device, dtype=target.dtype
+                )
+            self.inference_state.resize_(*target.shape)
+            self.inference_state.copy_(target)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # TR: x: [Batch, Seq, Hidden] veya [Batch*Seq, Hidden] (İlk gelene göre 3D yapılmalı)
@@ -148,7 +171,7 @@ class LiquidRouter(nn.Module):
                 if last_tokens.size(2) < (self.history_window - 1):
                     pad = torch.zeros(B, H, (self.history_window - 1) - last_tokens.size(2), device=x.device, dtype=x.dtype)
                     last_tokens = torch.cat([pad, last_tokens], dim=2)
-                self.inference_state = last_tokens.detach()
+                self._update_inference_state(last_tokens)
                 
             out = logits_main + logits_fluid
 
@@ -159,10 +182,18 @@ class LiquidRouter(nn.Module):
             if self.inference_state.size(0) != B:
                 if self.inference_state.size(0) == 1:
                      # Expand single state to match batch (Broadcasting)
-                     self.inference_state = self.inference_state.expand(B, -1, -1).clone()
+                     expanded = self.inference_state.expand(B, -1, -1).contiguous()
+                     self._update_inference_state(expanded)
                 else:
                      # Reset state if mismatch is unresolvable (Safety Fallback)
-                     self.inference_state = torch.zeros(B, H, self.history_window - 1, device=x.device, dtype=x.dtype)
+                     reset_state = torch.zeros(
+                         B,
+                         H,
+                         self.history_window - 1,
+                         device=x.device,
+                         dtype=x.dtype,
+                     )
+                     self._update_inference_state(reset_state)
             
             # Use buffer for history
             current_token = x.transpose(1, 2) # [B, H, 1]
@@ -185,7 +216,7 @@ class LiquidRouter(nn.Module):
             logits_fluid = self.fluid_gate(F.silu(fluid_mem)) # [B, 1, E]
             
             # Update state (Shift left)
-            self.inference_state = context[..., 1:].detach()
+            self._update_inference_state(context[..., 1:])
             
             out = logits_main + logits_fluid
 
@@ -218,7 +249,7 @@ class LiquidRouter(nn.Module):
         if state.size(2) != expected_window:
              raise ValueError(f"State window size mismatch. Expected {expected_window}, got {state.size(2)}")
         
-        self.inference_state = state.to(self.inference_state.device).to(self.inference_state.dtype)
+        self._update_inference_state(state)
 
 
 class MoE(nn.Module):
@@ -396,12 +427,9 @@ class MoE(nn.Module):
         # -----------------------------
         out_flat = x_flat.new_zeros((N, H))
 
-        # Kritik optimizasyon: Sadece seçilen uzmanları çalıştır
-        used_experts = torch.unique(topk_idx).tolist()
-
-        for expert_id in used_experts:
-            expert_id_int = int(expert_id)
-            expert = self.experts[expert_id_int]
+        # TR: GPU->CPU sync yapan unique(...).tolist() yerine sabit uzman döngüsü
+        # EN: Avoid unique(...).tolist() CPU sync; use fixed expert loop
+        for expert_id_int, expert in enumerate(self.experts):
 
             # Maskeleme: Hangi token'lar bu uzmanı seçti?
             expert_mask = topk_idx == expert_id_int
