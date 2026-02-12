@@ -219,7 +219,7 @@ class LiquidMixer(nn.Module):
         """
         BUFFER-SAFE CACHE WRITE
         - preserves buffer tracking/state_dict semantics
-        - avoids plain setattr tensor rebind pitfalls
+        - preserves tensor identity for existing buffers
         """
         value = value.detach().contiguous()
         buf = self._buffers.get(name, None)
@@ -229,8 +229,9 @@ class LiquidMixer(nn.Module):
             return
 
         if buf.device != value.device or buf.dtype != value.dtype:
-            self._buffers[name] = value.clone()
-            return
+            # Keep the registered buffer object and only swap backing storage.
+            # This avoids plain attribute/buffer rebind patterns.
+            buf.data = buf.data.to(device=value.device, dtype=value.dtype)  # nosec B614
 
         buf.resize_(value.shape)
         buf.copy_(value)
@@ -265,8 +266,10 @@ class LiquidMixer(nn.Module):
 
     def train(self, mode: bool = True):
         super().train(mode)
-        if mode:
-            self.reset_stream_state()
+        # Always invalidate runtime cache on mode transitions.
+        self.reset_stream_state()
+        if not mode:
+            self._weight_version.fill_(self._compute_weight_version())
         return self
 
     def _ensure_qcache(self, device: torch.device, dtype: torch.dtype) -> None:
