@@ -17,6 +17,7 @@ __author__ = "Mert"
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import math
 from typing import Tuple
 
 from config.config import cfg
@@ -307,14 +308,20 @@ class MoE(nn.Module):
         )
         self.router_jitter: float = float(getattr(cfg, "router_jitter", 0.01))
         self.router_z_loss_coef: float = float(getattr(cfg, "z_loss_coef", 0.0))
+        self.router_alarm_threshold: float = float(getattr(cfg, "router_alarm_threshold", 0.40))
         
         # V26.5: Switch Loss and Collapse Recovery
         self.use_switch_loss: bool = bool(getattr(cfg, "use_switch_loss", False))
         self.router_jitter_boost: float = float(getattr(cfg, "router_jitter_boost", 0.1))
         self.collapse_threshold: float = 0.85  # Max load threshold for collapse detection
+        self.moe_capacity_enforce: bool = bool(getattr(cfg, "moe_capacity_enforce", True))
+        self.moe_capacity_factor: float = float(getattr(cfg, "moe_capacity_factor", 1.25))
         
         # Telemetry & Collapse State
         self.register_buffer("last_expert_load", torch.zeros(self.num_experts))
+        self.register_buffer("last_router_entropy", torch.tensor(0.0))
+        self.register_buffer("last_router_max_load", torch.tensor(0.0))
+        self.register_buffer("last_capacity_overflow_ratio", torch.tensor(0.0))
         self.register_buffer("collapse_detected", torch.tensor(False))
         
     def get_router_state(self) -> torch.Tensor:
@@ -328,6 +335,14 @@ class MoE(nn.Module):
     def get_expert_load(self) -> torch.Tensor:
         """External API: Get last expert load distribution."""
         return self.last_expert_load
+    
+    def get_router_entropy(self) -> torch.Tensor:
+        """External API: Normalized router load entropy [0,1]."""
+        return self.last_router_entropy
+
+    def get_router_max_load(self) -> torch.Tensor:
+        """External API: Maximum expert load."""
+        return self.last_router_max_load
 
     def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """
@@ -378,15 +393,48 @@ class MoE(nn.Module):
         topk_logits, topk_idx = torch.topk(logits_f, k=k, dim=-1) # (N, k)
         
         topk_vals = F.softmax(topk_logits, dim=-1) # (N, k) - Sadece K elemana softmax
+        capacity_mask = torch.ones_like(topk_idx, dtype=torch.bool)
+        overflow_ratio = torch.tensor(0.0, device=x.device, dtype=torch.float32)
+
+        # Switch-style capacity control: cap per-expert assignments and renormalize gates.
+        if self.moe_capacity_enforce and self.moe_capacity_factor > 0.0:
+            capacity = max(1, int(math.ceil(self.moe_capacity_factor * (N * k) / max(1, E))))
+            dropped = 0
+            for expert_id_int in range(E):
+                hits = (topk_idx == expert_id_int).nonzero(as_tuple=False)
+                if hits.size(0) > capacity:
+                    overflow = hits[capacity:]
+                    capacity_mask[overflow[:, 0], overflow[:, 1]] = False
+                    dropped += int(overflow.size(0))
+
+            topk_vals = topk_vals * capacity_mask.float()
+            empty_rows = topk_vals.sum(dim=-1) <= 0
+            if empty_rows.any():
+                topk_vals[empty_rows, 0] = 1.0
+                capacity_mask[empty_rows, 0] = True
+
+            topk_vals = topk_vals / topk_vals.sum(dim=-1, keepdim=True).clamp(min=1e-6)
+            overflow_ratio = torch.tensor(
+                float(dropped) / float(max(1, N * k)),
+                device=x.device,
+                dtype=torch.float32,
+            )
 
         # [TELEMETRY] Load Calculation (Always compute for monitoring)
         # [FIX 2] MPS Safe Bincount: Use scatter_add_ instead of bincount for compatibility
-        flat_idx = topk_idx.reshape(-1)
+        flat_idx = topk_idx[capacity_mask].reshape(-1)
         counts = torch.zeros(E, device=flat_idx.device, dtype=torch.float32)
-        counts.scatter_add_(0, flat_idx, torch.ones_like(flat_idx, dtype=torch.float32))
+        if flat_idx.numel() > 0:
+            counts.scatter_add_(0, flat_idx, torch.ones_like(flat_idx, dtype=torch.float32))
         
-        load = counts / float(N * k)
-        self.last_expert_load = load.detach() # Store for logging
+        denom = float(max(1, int(flat_idx.numel())))
+        load = counts / denom
+        self.last_expert_load.copy_(load.detach()) # Store for logging
+        self.last_router_max_load.copy_(load.max().detach())
+        norm = math.log(float(E)) if E > 1 else 1.0
+        entropy = -(load.clamp(min=1e-8) * load.clamp(min=1e-8).log()).sum() / norm
+        self.last_router_entropy.copy_(entropy.detach())
+        self.last_capacity_overflow_ratio.copy_(overflow_ratio.detach())
 
         # -----------------------------
         # 2) Aux Loss (Load Balancing) - V26.5: Switch/L2 Option

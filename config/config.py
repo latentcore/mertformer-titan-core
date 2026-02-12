@@ -254,6 +254,7 @@ class MertFormerConfig:
     use_switch_loss: bool = True  # [AUDIT FIX] Enable Aggressive Load Balancing
     router_jitter: float = 0.02  # [AUDIT FIX] Increase exploration noise
     router_jitter_boost: float = 0.1  # Emergency jitter when collapse detected
+    router_alarm_threshold: float = 0.40  # Early warning level for top-k load imbalance
 
     # -------------------------------------------------------------------------
     # 5. LIQUID LAYERS
@@ -266,6 +267,9 @@ class MertFormerConfig:
 
     # Router Z-Loss for stability
     z_loss_coef: float = 1e-4
+    # MoE capacity control (Switch-style overflow guard)
+    moe_capacity_enforce: bool = True
+    moe_capacity_factor: float = 1.25
 
     # V25.1 SAFEGUARD: Liquid Warmup Steps (Freeze for first N steps)
     liquid_warmup_steps: int = 10000

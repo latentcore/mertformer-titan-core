@@ -1413,6 +1413,8 @@ def train():
 
                         # [V26.6 TELEMETRY] MoE Router Health (log-interval only)
                         moe_loads = []
+                        moe_entropies = []
+                        moe_overflows = []
                         # Handle DDP/Compile wrappers
                         model_ref = student.module if hasattr(student, "module") else student
                         model_ref = model_ref._orig_mod if hasattr(model_ref, "_orig_mod") else model_ref
@@ -1420,6 +1422,10 @@ def train():
                         for m in model_ref.modules():
                             if hasattr(m, "get_expert_load"):
                                 moe_loads.append(m.get_expert_load())
+                            if hasattr(m, "get_router_entropy"):
+                                moe_entropies.append(m.get_router_entropy())
+                            if hasattr(m, "last_capacity_overflow_ratio"):
+                                moe_overflows.append(m.last_capacity_overflow_ratio)
 
                         if moe_loads:
                             # Stack: [Layers, Experts]
@@ -1427,11 +1433,36 @@ def train():
                             # Metrics
                             max_load = loads.max().item()  # Worst case imbalance
                             avg_std = loads.std(dim=1).mean().item()  # Overall balance score (lower is better)
+                            avg_entropy = (
+                                torch.stack(moe_entropies).mean().item()
+                                if moe_entropies
+                                else float("nan")
+                            )
+                            avg_overflow = (
+                                torch.stack(moe_overflows).mean().item()
+                                if moe_overflows
+                                else 0.0
+                            )
+                            collapse_alarm = float(getattr(cfg, "router_alarm_threshold", 0.40))
 
                             log_data["moe_max_load"] = max_load
                             log_data["moe_avg_std"] = avg_std
+                            if not math.isnan(avg_entropy):
+                                log_data["moe_load_entropy"] = avg_entropy
+                            log_data["moe_capacity_overflow"] = avg_overflow
 
-                            print(f"   🧠 MoE Health: MaxLoad={max_load:.2f} | Balance(std)={avg_std:.3f}")
+                            entropy_txt = f"{avg_entropy:.3f}" if not math.isnan(avg_entropy) else "n/a"
+                            print(
+                                f"   🧠 MoE Health: MaxLoad={max_load:.2f} | "
+                                f"Balance(std)={avg_std:.3f} | Entropy={entropy_txt} | "
+                                f"Overflow={avg_overflow:.3f}"
+                            )
+
+                            if max_load > collapse_alarm:
+                                print(
+                                    f"   ⚠️  EARLY IMBALANCE ALERT: Max Load {max_load:.2f} "
+                                    f"(alarm>{collapse_alarm:.2f})"
+                                )
 
                             # Router Collapse Warning + ACTION
                             if max_load > 0.85 and getattr(cfg, "active_experts", 1) < getattr(cfg, "num_experts", 4):
