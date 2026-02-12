@@ -42,7 +42,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `30 passed, 4 skipped` |
+| `python3 -m pytest -q` | `38 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -53,7 +53,7 @@ This repository is no longer in idea/prototype-only state. Core validation gates
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`30 passed, 4 skipped`)
+   - `pytest` passed (`38 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -1532,6 +1532,7 @@ NİHAİ/                     # Project root
 │   ├── test_drone_sitl_demo.py    # Python module or script
 │   ├── test_export_metadata.py    # Python module or script
 │   ├── test_kernel_equivalence.py # Python module or script
+│   ├── test_mla_regressions.py    # Python module or script
 │   ├── test_model.py              # Python module or script
 │   ├── test_onnx_metadata_hook.py # Python module or script
 │   ├── test_sdk_api.py            # Python module or script
