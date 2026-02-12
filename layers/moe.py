@@ -124,14 +124,14 @@ class LiquidRouter(nn.Module):
         """
         with torch.no_grad():
             target = state.detach()
-            if (
-                self.inference_state.device != target.device
-                or self.inference_state.dtype != target.dtype
-            ):
-                self.inference_state = self.inference_state.to(
-                    device=target.device, dtype=target.dtype
+            if self.inference_state.device != target.device or self.inference_state.dtype != target.dtype:
+                raise RuntimeError(
+                    "inference_state device/dtype mismatch: "
+                    f"state={self.inference_state.device}/{self.inference_state.dtype}, "
+                    f"target={target.device}/{target.dtype}. "
+                    "Move the whole model via model.to(...)."
                 )
-            self.inference_state.resize_(*target.shape)
+            self.inference_state.resize_(target.shape[0], target.shape[1], target.shape[2])
             self.inference_state.copy_(target)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -436,6 +436,8 @@ class MoE(nn.Module):
 
             # Bu token'ın herhangi bir slotunda bu uzman var mı?
             token_mask = expert_mask.any(dim=-1)
+            if not token_mask.any():
+                continue
 
             # Sadece seçen token'ları al
             selected_x = x_flat[token_mask]  # (M, H)
