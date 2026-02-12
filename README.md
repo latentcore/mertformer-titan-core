@@ -1030,7 +1030,7 @@ However, the following items are high-impact quality multipliers for the first t
 
 **Execution order (operational):**
 1. Run baseline training unchanged:
-   `cd /Users/mertyunlu/Desktop/NİHAİ && TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh`
+   `cd \"$(git rev-parse --show-toplevel)\" && TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh`
 2. Produce first checkpoint + first benchmark evidence (reference baseline).
 3. Apply the v28 tuning bundle in one controlled pass.
 4. Compare baseline vs v28 with A/B evaluation and keep the measured winner.

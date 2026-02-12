@@ -1029,7 +1029,7 @@ Ancak ilk tuning turunda aşağıdaki maddeler kalite çarpanı olarak ele alın
 
 **Operasyon sırası:**
 1. Baseline eğitimi değiştirmeden başlat:
-   `cd /Users/mertyunlu/Desktop/NİHAİ && TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh`
+   `cd \"$(git rev-parse --show-toplevel)\" && TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh`
 2. İlk checkpoint + ilk benchmark kanıtını üret (referans baseline).
 3. v28 tuning paketini tek kontrollü turda uygula.
 4. Baseline vs v28 A/B karşılaştırması ile ölçülen kazananı ana hat yap.
