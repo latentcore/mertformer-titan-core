@@ -139,6 +139,7 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 - [SDK API Quick Start](#sdk-api-quickstart)
 - [Troubleshooting](#troubleshooting)
 - [Training](#training)
+- [Training Strategy (Baseline -> v28)](#training-strategy-baseline-v28)
 - [Deployment](#deployment)
 - [Integration Targets](#integration-targets)
 - [Benchmarks](#benchmarks)
@@ -1014,6 +1015,28 @@ liquid_spike_threshold = 5.0
 
 This curriculum order and token budget are designed to be **sufficient for a strong general foundation**.  
 For **niche or proprietary domains**, we recommend **targeted fine-tuning** on domain data to maximize specialization.
+
+<a id="training-strategy-baseline-v28"></a>
+### Training Strategy (Baseline -> v28, Claim-Safe)
+
+No emergency architecture change is required before baseline training.  
+However, the following items are high-impact quality multipliers for the first tuning cycle.
+
+**Recommended v28 tuning items (post-baseline evidence):**
+1. Increase Stage 4 (`Soul/Identity`) influence when identity drift is observed (ratio increase or controlled oversampling).
+2. Add a model-specific self-identity dataset to reinforce role, boundaries, and mission tone.
+3. Keep SFT as baseline and move DPO/RLHF into a post-SFT alignment track.
+4. Increase effective token budget (samples and/or epochs) if convergence indicates under-training.
+5. Inject small custom tool/orchestrator examples into Stage 5 for better tool-use grounding.
+
+**Execution order (operational):**
+1. Run baseline training unchanged:
+   `cd /Users/mertyunlu/Desktop/NİHAİ && TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh`
+2. Produce first checkpoint + first benchmark evidence (reference baseline).
+3. Apply the v28 tuning bundle in one controlled pass.
+4. Compare baseline vs v28 with A/B evaluation and keep the measured winner.
+
+All points above are claim-safe and conditional until empirically validated.
 
 ### Monitoring
 

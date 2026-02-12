@@ -139,6 +139,7 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 - [SDK API Hızlı Başlangıç](#sdk-api-tr-quickstart)
 - [Sorun Giderme](#sorun-giderme)
 - [Eğitim](#eğitim)
+- [Eğitim Stratejisi (Baseline -> v28)](#egitim-stratejisi-baseline-v28)
 - [Dağıtım (Deployment)](#dağıtım-deployment)
 - [Entegrasyon Hedefleri](#entegrasyon-hedefleri)
 - [Kıyaslamalar (Benchmarks)](#kıyaslamalar-benchmarks)
@@ -1013,6 +1014,28 @@ liquid_spike_threshold = 5.0
 
 Bu eğitim sırası ve token bütçesi, **güçlü bir temel için yeterli** olacak şekilde tasarlanmıştır.  
 **Niş veya özel alanlar** için, en yüksek uzmanlık seviyesine çıkmak amaçıyla **hedefli fine‑tune** önerilir.
+
+<a id="egitim-stratejisi-baseline-v28"></a>
+### Eğitim Stratejisi (Baseline -> v28, Claim-Safe)
+
+Baseline eğitim öncesinde acil bir mimari değişiklik zorunlu değildir.  
+Ancak ilk tuning turunda aşağıdaki maddeler kalite çarpanı olarak ele alınmalıdır.
+
+**Önerilen v28 tuning maddeleri (baseline kanıtından sonra):**
+1. Kimlik kayması gözlenirse Stage 4 (`Ruh/Kimlik`) etkisini artırma (oran yükseltme veya kontrollü oversample).
+2. Modelin rol/sınır/misyon tonunu güçlendirmek için modele özel self-identity veri seti ekleme.
+3. Baseline SFT korunurken DPO/RLHF hattını post-SFT alignment fazına alma.
+4. Yakınsama under-training sinyali verirse efektif token bütçesini artırma (samples ve/veya epoch).
+5. Stage 5 içine küçük ölçekli custom tool/orchestrator örnekleri enjekte etme.
+
+**Operasyon sırası:**
+1. Baseline eğitimi değiştirmeden başlat:
+   `cd /Users/mertyunlu/Desktop/NİHAİ && TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh`
+2. İlk checkpoint + ilk benchmark kanıtını üret (referans baseline).
+3. v28 tuning paketini tek kontrollü turda uygula.
+4. Baseline vs v28 A/B karşılaştırması ile ölçülen kazananı ana hat yap.
+
+Yukarıdaki maddeler claim-safe'tir; ölçüm/kanıt üretilmeden kesin performans iddiası sayılmaz.
 
 ### İzleme
 
