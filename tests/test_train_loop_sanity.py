@@ -61,3 +61,30 @@ def test_validation_block_scoped():
     guard = validation_guards[0]
     assert _has_student_eval(guard), "Validation should call student.eval() inside guard"
     assert _has_try_block(guard), "Validation try-block should be inside guard"
+
+
+def _is_accelerator_reduce_call(node: ast.Call) -> bool:
+    return (
+        isinstance(node.func, ast.Attribute)
+        and node.func.attr == "reduce"
+        and isinstance(node.func.value, ast.Name)
+        and node.func.value.id == "accelerator"
+    )
+
+
+def _is_torch_dist_broadcast_call(node: ast.Call) -> bool:
+    if not isinstance(node.func, ast.Attribute) or node.func.attr != "broadcast":
+        return False
+    mid = node.func.value
+    if not isinstance(mid, ast.Attribute) or mid.attr != "distributed":
+        return False
+    root = mid.value
+    return isinstance(root, ast.Name) and root.id == "torch"
+
+
+def test_validation_ddp_sync_primitives_present():
+    tree = _tree()
+    reduce_calls = [n for n in ast.walk(tree) if isinstance(n, ast.Call) and _is_accelerator_reduce_call(n)]
+    broadcast_calls = [n for n in ast.walk(tree) if isinstance(n, ast.Call) and _is_torch_dist_broadcast_call(n)]
+    assert reduce_calls, "Expected accelerator.reduce for global validation aggregation"
+    assert broadcast_calls, "Expected torch.distributed.broadcast for global early-stop decision"

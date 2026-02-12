@@ -1114,6 +1114,7 @@ def train():
     current_curriculum_stage = 1
 
     global_step = 0
+    early_stopped = False
     accum_loss = 0.0
     accum_count = 0  # [FIX] Counter for proper avg_loss calculation
     micro_step = 0
@@ -1481,8 +1482,8 @@ def train():
                     # Validation & Early Stopping
                     if global_step % val_check_interval == 0 and global_step > 0:
                         student.eval()
-                        val_loss = 0.0
-                        val_samples = 0
+                        val_loss_local = 0.0
+                        val_samples_local = 0
                         val_steps = 10
                         try:
                             # [PRO] Use dedicated validation dataloader if available
@@ -1506,21 +1507,33 @@ def train():
                                         val_shift_labels.view(-1),
                                         ignore_index=teacher_tokenizer.pad_token_id if teacher_tokenizer and teacher_tokenizer.pad_token_id is not None else 0
                                     )
-                                    val_loss += val_batch_loss.item()
-                                    val_samples += 1
+                                    val_loss_local += val_batch_loss.item()
+                                    val_samples_local += 1
                         except Exception as e:
                             print(f"⚠️  Validation error: {e}, skipping early stopping check")
-                            val_loss = float('inf')
+                            val_loss_local = 0.0
+                            val_samples_local = 0
 
-                        if val_samples > 0:
-                            val_loss = val_loss / val_samples
-                            print(f"📊 Validation Loss: {val_loss:.4f} (Best: {best_val_loss:.4f})")
+                        # DDP-safe global validation aggregation (all ranks agree on one loss value).
+                        val_stats = torch.tensor(
+                            [float(val_loss_local), float(val_samples_local)],
+                            device=student_device,
+                            dtype=torch.float32,
+                        )
+                        val_stats = accelerator.reduce(val_stats, reduction="sum")
+                        val_loss_sum_global = float(val_stats[0].item())
+                        val_samples_global = int(val_stats[1].item())
 
-                            # EVAL-DRIVEN EARLY STOPPING
-                            if val_loss < best_val_loss:
-                                best_val_loss = val_loss
-                                patience_counter = 0
-                                if accelerator.is_main_process:
+                        should_stop = False
+                        if accelerator.is_main_process:
+                            if val_samples_global > 0:
+                                val_loss = val_loss_sum_global / max(1, val_samples_global)
+                                print(f"📊 Validation Loss: {val_loss:.4f} (Best: {best_val_loss:.4f})")
+
+                                # EVAL-DRIVEN EARLY STOPPING
+                                if val_loss < best_val_loss:
+                                    best_val_loss = val_loss
+                                    patience_counter = 0
                                     print("✅ New best validation loss! Saving checkpoint...")
                                     unwrapped_model = accelerator.unwrap_model(student)
                                     best_val_loss = save_checkpoint_smart(
@@ -1533,16 +1546,28 @@ def train():
                                         val_loss=val_loss,
                                         best_val_loss=best_val_loss,
                                     )
+                                else:
+                                    patience_counter += 1
+                                    print(f"⏳ No improvement ({patience_counter}/{early_stop_patience})")
+                                    if patience_counter >= early_stop_patience:
+                                        print(f"🛑 Early stopping triggered! Best val loss: {best_val_loss:.4f}")
+                                        should_stop = True
                             else:
-                                patience_counter += 1
-                                print(f"⏳ No improvement ({patience_counter}/{early_stop_patience})")
+                                print("⚠️  Validation produced zero usable batches; skipping early stopping check.")
 
-                                if patience_counter >= early_stop_patience:
-                                    print(f"🛑 Early stopping triggered! Best val loss: {best_val_loss:.4f}")
-                                    # [PRO] Respect Early Stopping - Finalize ONLY if we return
-                                    if logger:
-                                        logger.finalize("early_stopped", extra={"best_val_loss": best_val_loss})
-                                    return
+                        stop_tensor = torch.tensor(
+                            1 if should_stop else 0,
+                            device=student_device,
+                            dtype=torch.int64,
+                        )
+                        if torch.distributed.is_available() and torch.distributed.is_initialized():
+                            torch.distributed.broadcast(stop_tensor, src=0)
+                        should_stop = bool(stop_tensor.item())
+
+                        if should_stop:
+                            early_stopped = True
+                            student.train()
+                            break
 
                         student.train()
 
@@ -1553,9 +1578,14 @@ def train():
                 micro_step += 1
 
         if accelerator.is_main_process:
-            logger.finalize("completed")
-            unwrapped_model = accelerator.unwrap_model(student)
-            export_to_onnx(unwrapped_model, save_dir, cfg.model_name, student_device)
+            if early_stopped:
+                if logger:
+                    logger.finalize("early_stopped", extra={"best_val_loss": best_val_loss})
+            else:
+                if logger:
+                    logger.finalize("completed")
+                unwrapped_model = accelerator.unwrap_model(student)
+                export_to_onnx(unwrapped_model, save_dir, cfg.model_name, student_device)
 
     except KeyboardInterrupt:
         print("\n🛑 Durduruldu. Kaydediliyor...")

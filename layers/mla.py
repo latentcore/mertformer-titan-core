@@ -68,6 +68,8 @@ class RotaryEmbedding(nn.Module):
     """
     def __init__(self, dim: int, max_seq_len: int = 4096, base: float = 500000.0, device=None):
         super().__init__()
+        if dim % 2 != 0:
+            raise ValueError(f"RoPE dim must be even, got {dim}")
         self.dim = dim
         self.max_seq_len = max_seq_len
         self.base = base
@@ -75,20 +77,38 @@ class RotaryEmbedding(nn.Module):
         # Precompute inv_freq
         inv_freq = 1.0 / (base ** (torch.arange(0, dim, 2, device=device).float() / dim))
         self.register_buffer("inv_freq", inv_freq, persistent=False)
-        self.register_buffer("cos_cached", None, persistent=False)
-        self.register_buffer("sin_cached", None, persistent=False)
+        # Register once; update in-place / via _buffers writes (no re-register)
+        self.register_buffer("cos_cached", torch.empty(0), persistent=False)
+        self.register_buffer("sin_cached", torch.empty(0), persistent=False)
         
         # Initial Cache Population
-        self._update_cache(max_seq_len, device)
+        init_device = device if device is not None else inv_freq.device
+        self._update_cache(max_seq_len, init_device)
 
+    @torch.no_grad()
     def _update_cache(self, seq_len: int, device):
+        seq_len = int(seq_len)
+        if device is None:
+            device = self.inv_freq.device
         self.max_seq_len = max(seq_len, self.max_seq_len)
         t = torch.arange(self.max_seq_len, device=device, dtype=self.inv_freq.dtype)
         freqs = torch.outer(t, self.inv_freq)
         emb = torch.cat((freqs, freqs), dim=-1)
-        
-        self.register_buffer("cos_cached", emb.cos()[None, None, :, :], persistent=False)
-        self.register_buffer("sin_cached", emb.sin()[None, None, :, :], persistent=False)
+
+        cos = emb.cos()[None, None, :, :]
+        sin = emb.sin()[None, None, :, :]
+
+        if (
+            self.cos_cached.numel() == 0
+            or self.cos_cached.shape != cos.shape
+            or self.cos_cached.device != cos.device
+            or self.cos_cached.dtype != cos.dtype
+        ):
+            self._buffers["cos_cached"] = cos
+            self._buffers["sin_cached"] = sin
+        else:
+            self.cos_cached.copy_(cos)
+            self.sin_cached.copy_(sin)
 
     def forward(self, x: torch.Tensor, seq_len: int = None, offset: int = 0) -> Tuple[torch.Tensor, torch.Tensor]:
         if seq_len is None:
@@ -96,7 +116,11 @@ class RotaryEmbedding(nn.Module):
             
         total_len = seq_len + offset
         
-        if total_len > self.cos_cached.shape[2]:
+        if (
+            self.cos_cached.numel() == 0
+            or total_len > self.cos_cached.shape[2]
+            or self.cos_cached.device != x.device
+        ):
             self._update_cache(total_len, x.device)
             
         return (
@@ -169,9 +193,18 @@ class MLA(nn.Module):
         self.rope_dim = getattr(cfg, "rope_dim", None) # Default to full head_dim
         self.rope_base = getattr(cfg, "rope_base", 500000.0)
 
+        rope_dim_eff = self.head_dim if self.rope_dim is None else int(self.rope_dim)
+        if rope_dim_eff <= 0 or rope_dim_eff > self.head_dim:
+            raise ValueError(
+                f"rope_dim must be in (0, head_dim], got rope_dim={rope_dim_eff}, head_dim={self.head_dim}"
+            )
+        if rope_dim_eff % 2 != 0:
+            raise ValueError(f"rope_dim must be even, got {rope_dim_eff}")
+        self._rope_dim_eff = rope_dim_eff
+
         # [V27.0] Cached Rotary Embeddings (Optimized)
         self.rotary_emb = RotaryEmbedding(
-            dim=self.head_dim if self.rope_dim is None else (self.head_dim // 2), 
+            dim=self._rope_dim_eff,
             max_seq_len=getattr(cfg, "max_seq_len", 8192),
             base=self.rope_base
         )
@@ -190,10 +223,8 @@ class MLA(nn.Module):
         # Dropout
         self.attn_dropout = nn.Dropout(getattr(cfg, "attention_dropout", 0.0))
 
-        # Causal mask buffer (hız optimizasyonu için)
+        # Max sequence guard
         self.max_seq = int(getattr(cfg, "max_seq_len", 8192))
-        mask = torch.tril(torch.ones(self.max_seq, self.max_seq), diagonal=0).bool()
-        self.register_buffer("causal_mask", mask, persistent=False)
 
     def forward(
         self,
@@ -233,25 +264,33 @@ class MLA(nn.Module):
 
         # [V27.0] Optimized Cached RoPE Application
         # 1. Get cached cos/sin for current positions
-        cos, sin = self.rotary_emb(v, seq_len=T, offset=kv_seq_len - T)
+        cos, sin = self.rotary_emb(q, seq_len=T, offset=kv_seq_len - T)
         
         # 2. Apply RoPE (Decoupled vs Interleaved logic handled in helper or simplified here)
         # For simplicity in this 'Grandmaster' fix, we use standard interleaved application logic suited for LLaMA
         # If decoupled is requested, we strictly split dimensions.
         
+        rope_dim = self._rope_dim_eff
         if decoupled_rope:
-             # Decoupled mode specific handling (split last dim)
-             rope_dim = self.rope_dim
-             q_cont, q_rope = q[..., :-rope_dim], q[..., -rope_dim:]
-             k_cont, k_rope = k[..., :-rope_dim], k[..., -rope_dim:]
-             
-             q_rope, k_rope = apply_rope_optimized(q_rope, k_rope, cos, sin)
-             
-             q = torch.cat([q_cont, q_rope], dim=-1)
-             k = torch.cat([k_cont, k_rope], dim=-1)
+            # Decoupled mode: apply RoPE on trailing rope_dim subspace.
+            q_rope = q[..., -rope_dim:]
+            k_rope = k[..., -rope_dim:]
+            q_rope, k_rope = apply_rope_optimized(q_rope, k_rope, cos, sin)
+            if rope_dim < self.head_dim:
+                q = torch.cat([q[..., :-rope_dim], q_rope], dim=-1)
+                k = torch.cat([k[..., :-rope_dim], k_rope], dim=-1)
+            else:
+                q, k = q_rope, k_rope
         else:
-             # Standard RoPE (Full Dim)
-             q, k = apply_rope_optimized(q, k, cos, sin)
+            # Standard mode: apply RoPE on leading rope_dim subspace.
+            if rope_dim < self.head_dim:
+                q_rope = q[..., :rope_dim]
+                k_rope = k[..., :rope_dim]
+                q_rope, k_rope = apply_rope_optimized(q_rope, k_rope, cos, sin)
+                q = torch.cat([q_rope, q[..., rope_dim:]], dim=-1)
+                k = torch.cat([k_rope, k[..., rope_dim:]], dim=-1)
+            else:
+                q, k = apply_rope_optimized(q, k, cos, sin)
 
         # KV Cache concatenation
         if past_key_value is not None:
@@ -273,18 +312,18 @@ class MLA(nn.Module):
         # Attention Mask: [1, 1, T, S] -> Broadcast to [B, H, T, S]
         # Query length: T, Key length: kv_seq_len (past + current)
         
-        # Select relevant mask part
-        # Rows: kv_seq_len - T to kv_seq_len (current query positions)
-        # Cols: 0 to kv_seq_len (all keys)
-        causal_mask = self.causal_mask[kv_seq_len - T:kv_seq_len, :kv_seq_len]
+        # Dynamic causal mask (T x S) to avoid per-layer max_seq^2 static buffer.
+        q_pos = torch.arange(kv_seq_len - T, kv_seq_len, device=x.device)
+        k_pos = torch.arange(kv_seq_len, device=x.device)
+        causal_mask = q_pos[:, None] >= k_pos[None, :]
         
         # -------------------------------------------------------------------------
         # FLASH ATTENTION 2
         # -------------------------------------------------------------------------
-        if FLASH_ATTN_AVAILABLE and self.training and past_key_value is None:
-            q_flash = q.transpose(1, 2)  # [B, T, H, D]
-            k_flash = k.transpose(1, 2)
-            v_flash = v.transpose(1, 2)
+        if FLASH_ATTN_AVAILABLE and self.training and past_key_value is None and q.is_cuda:
+            q_flash = q.transpose(1, 2).contiguous()  # [B, T, H, D]
+            k_flash = k.transpose(1, 2).contiguous()
+            v_flash = v.transpose(1, 2).contiguous()
             
             out = flash_attn_func(
                 q_flash, k_flash, v_flash,
