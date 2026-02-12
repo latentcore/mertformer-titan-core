@@ -87,7 +87,7 @@ class LiquidCell(nn.Module):
         
         # TR: --- CfC Güncellemesi --- / EN: --- CfC Update ---
         # TR: h(t) = A + (h_prev - A) * exp(-time_decay * dt) / EN: h(t) = A + (h_prev - A) * exp(-time_decay * dt)
-        decay = torch.exp(-time_decay * dt)
+        decay = torch.exp(torch.clamp(-time_decay * dt, min=-20.0, max=20.0))
         h_new = A + (h_prev - A) * decay
         
         return h_new
@@ -154,7 +154,7 @@ def jit_liquid_loop_cached(
         raw_tau = torch.nn.functional.softplus(tau_in + tau_rec + tau_bias)
         time_decay = torch.clamp(raw_tau, min=1e-4, max=5.0)
         
-        decay = torch.exp(-time_decay * dt)
+        decay = torch.exp(torch.clamp(-time_decay * dt, min=-20.0, max=20.0))
         h = A + (h - A) * decay
         
         out_seq[:, t, :] = h
@@ -189,7 +189,7 @@ def jit_liquid_loop(
         hidden_w_q_t,
         tau_input_w_q_t,
         tau_hidden_w_q_t,
-        tau_bias.to(dtype=input_seq.dtype),
+        tau_bias.to(device=input_seq.device, dtype=input_seq.dtype),
     )
 
 
@@ -211,18 +211,40 @@ class LiquidMixer(nn.Module):
         self.register_buffer("_q_tau_input_w_t", torch.empty(0), persistent=False)
         self.register_buffer("_q_tau_hidden_w_t", torch.empty(0), persistent=False)
         self.register_buffer("_q_tau_bias", torch.empty(0), persistent=False)
+        self.register_buffer("_weight_version", torch.zeros((), dtype=torch.int64), persistent=False)
+        self.register_buffer("_cached_weight_version", torch.full((), -1, dtype=torch.int64), persistent=False)
         self._cache_ready = False
 
     def _set_cache(self, name: str, value: torch.Tensor) -> None:
-        buf = getattr(self, name)
-        if buf.device != value.device or buf.dtype != value.dtype:
-            setattr(self, name, value.detach().clone())
+        """
+        BUFFER-SAFE CACHE WRITE
+        - preserves buffer tracking/state_dict semantics
+        - avoids plain setattr tensor rebind pitfalls
+        """
+        value = value.detach().contiguous()
+        buf = self._buffers.get(name, None)
+
+        if buf is None:
+            self.register_buffer(name, value.clone(), persistent=False)
             return
-        buf.resize_(value.shape[0], value.shape[1] if value.dim() > 1 else 1)
-        if value.dim() == 1:
-            buf.copy_(value.unsqueeze(0)).resize_(value.shape[0])
-        else:
-            buf.copy_(value)
+
+        if buf.device != value.device or buf.dtype != value.dtype:
+            self._buffers[name] = value.clone()
+            return
+
+        buf.resize_(value.shape)
+        buf.copy_(value)
+
+    def _compute_weight_version(self) -> int:
+        # TR: Parametre in-place güncellemelerini izlemek için sürüm imzası.
+        # EN: Version signature to detect in-place parameter updates.
+        return int(
+            self.cell.input_w.weight._version
+            + self.cell.hidden_w.weight._version
+            + self.cell.tau_input_w.weight._version
+            + self.cell.tau_hidden_w.weight._version
+            + self.cell.tau_bias._version
+        )
 
     def reset_stream_state(self) -> None:
         self._q_input_w_t.resize_(0)
@@ -230,6 +252,15 @@ class LiquidMixer(nn.Module):
         self._q_tau_input_w_t.resize_(0)
         self._q_tau_hidden_w_t.resize_(0)
         self._q_tau_bias.resize_(0)
+        self._cached_weight_version.fill_(-1)
+        self._cache_ready = False
+
+    def mark_weights_updated(self):
+        """
+        TR: Ağırlık güncellemesi sonrası cache invalidation işareti.
+        EN: Marks cache invalidation after weight updates.
+        """
+        self._weight_version += 1
         self._cache_ready = False
 
     def train(self, mode: bool = True):
@@ -241,11 +272,17 @@ class LiquidMixer(nn.Module):
     def _ensure_qcache(self, device: torch.device, dtype: torch.dtype) -> None:
         if self.training:
             return
+        current_weight_version = self._compute_weight_version()
+        if int(self._weight_version.item()) != current_weight_version:
+            self._weight_version.fill_(current_weight_version)
+            self._cache_ready = False
+
         if (
             self._cache_ready
             and self._q_input_w_t.numel() > 0
             and self._q_input_w_t.device == device
             and self._q_input_w_t.dtype == dtype
+            and int(self._cached_weight_version.item()) == int(self._weight_version.item())
         ):
             return
 
@@ -260,12 +297,9 @@ class LiquidMixer(nn.Module):
             self._set_cache("_q_hidden_w_t", hw)
             self._set_cache("_q_tau_input_w_t", tiw)
             self._set_cache("_q_tau_hidden_w_t", thw)
-            # tau_bias is [1, H]
-            if self._q_tau_bias.device != tb.device or self._q_tau_bias.dtype != tb.dtype:
-                self._q_tau_bias = tb.detach().clone()
-            else:
-                self._q_tau_bias.resize_(tb.shape[0], tb.shape[1]).copy_(tb)
+            self._set_cache("_q_tau_bias", tb)
 
+            self._cached_weight_version.copy_(self._weight_version)
             self._cache_ready = True
 
     def forward(
@@ -294,7 +328,7 @@ class LiquidMixer(nn.Module):
         # TR: Çıkarım: JIT döngüsü kullan -> NPU optimizasyonu.
         # EN: Inference: JIT loop use -> NPU optimization.
         if self.training:
-            out_seq = torch.empty(B, T, H, device=x.device, dtype=x.dtype)
+            out_seq = torch.empty(B, T, H, device=x.device, dtype=x.dtype).contiguous()
             for t in range(T):
                 h = self.cell(x[:, t, :], h, dt)
                 out_seq[:, t, :] = h
@@ -319,3 +353,9 @@ class LiquidMixer(nn.Module):
         if return_state:
             return y, h
         return y
+
+    def load_state_dict(self, *args, **kwargs):
+        out = super().load_state_dict(*args, **kwargs)
+        self.reset_stream_state()
+        self._weight_version.fill_(self._compute_weight_version())
+        return out
