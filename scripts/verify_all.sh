@@ -18,7 +18,7 @@ if [[ -n "${TITAN_PYTHON:-}" ]]; then
   PY="${TITAN_PYTHON}"
 else
   if [[ ! -x ".titan-venv/bin/python" ]]; then
-    echo "[verify] .titan-venv missing; bootstrapping with Python 3.11 ..."
+    echo "[verify] .titan-venv missing; bootstrapping local Python venv ..."
     bash scripts/bootstrap_venv.sh
   fi
   PY=".titan-venv/bin/python"

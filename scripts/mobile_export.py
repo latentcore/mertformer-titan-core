@@ -95,8 +95,10 @@ def export_production_model(ckpt_override=None, output_dir=None, bitpack: bool =
     # Load State Dict
     try:
         checkpoint = torch.load(ckpt_path, map_location=device)
-        if "model_state_dict" in checkpoint:
+        if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
             state_dict = checkpoint["model_state_dict"]
+        elif isinstance(checkpoint, dict) and "model" in checkpoint:
+            state_dict = checkpoint["model"]
         else:
             state_dict = checkpoint
             

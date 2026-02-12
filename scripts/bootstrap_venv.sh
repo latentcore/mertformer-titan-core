@@ -27,6 +27,16 @@ for arg in "$@"; do
 done
 
 if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
+  for candidate in python3 python; do
+    if command -v "$candidate" >/dev/null 2>&1; then
+      echo "[bootstrap] Python not found: $PYTHON_BIN. Falling back to $candidate"
+      PYTHON_BIN="$candidate"
+      break
+    fi
+  done
+fi
+
+if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
   echo "Python not found: $PYTHON_BIN" >&2
   exit 1
 fi

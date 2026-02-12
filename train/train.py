@@ -908,33 +908,50 @@ def train():
     stage_paths = [p for _, p in stage_info]
 
     # Fallback/Auto-Download logic
+    offline_mode = os.getenv("TITAN_OFFLINE", "1") == "1"
     if not all(p.exists() for p in stage_paths):
-        print("⚠️  Datasets not found. Launching Data Alchemy Engine...")
-        import subprocess
-        try:
-            # Otomatik İndirme Tetikleyicisi
-            alchemy_script = project_root / "scripts" / "data_pipeline.py"
-            subprocess.check_call([sys.executable, str(alchemy_script)])
-            print("✅ Data Alchemy Complete. Re-checking datasets...")
-            
-            # Tekrar kontrol et
-            if not all(p.exists() for p in stage_paths):
-                 # Belki sadece fallback oluştu, onu kontrol et
-                 fallback_path = project_root / "datasets" / "training_data.jsonl"
-                 if fallback_path.exists():
-                     stage_paths = [fallback_path]
-                     stage_info = [("fallback", fallback_path)]
-                     print("ℹ️ Using fallback dataset after Alchemy.")
-                 else:
-                     raise FileNotFoundError("Data Alchemy ran but datasets are still missing!")
-        except Exception as e:
-            print(f"❌ Data Pipeline Failed: {e}")
-            sys.exit(1)
+        fallback_path = project_root / "datasets" / "training_data.jsonl"
+        if offline_mode:
+            if fallback_path.exists():
+                stage_paths = [fallback_path]
+                stage_info = [("fallback", fallback_path)]
+                print("ℹ️ Offline mode: using local fallback dataset (datasets/training_data.jsonl).")
+            else:
+                raise FileNotFoundError(
+                    "Offline mode is enabled (TITAN_OFFLINE=1) but required stage datasets are missing. "
+                    "Provide local stage*.jsonl files or run data pipeline in online mode."
+                )
+        else:
+            print("⚠️  Datasets not found. Launching Data Alchemy Engine...")
+            import subprocess
+            try:
+                # Otomatik İndirme Tetikleyicisi
+                alchemy_script = project_root / "scripts" / "data_pipeline.py"
+                subprocess.check_call([sys.executable, str(alchemy_script)])
+                print("✅ Data Alchemy Complete. Re-checking datasets...")
+
+                # Tekrar kontrol et
+                if not all(p.exists() for p in stage_paths):
+                    # Belki sadece fallback oluştu, onu kontrol et
+                    if fallback_path.exists():
+                        stage_paths = [fallback_path]
+                        stage_info = [("fallback", fallback_path)]
+                        print("ℹ️ Using fallback dataset after Alchemy.")
+                    else:
+                        raise FileNotFoundError("Data Alchemy ran but datasets are still missing!")
+            except Exception as e:
+                print(f"❌ Data Pipeline Failed: {e}")
+                sys.exit(1)
 
     # Curriculum dataset
     if use_offline_logits:
         stage_names = [name for name, _ in stage_info]
         if not distill_manager.has_precomputed_logits(stage_names):
+            if offline_mode:
+                raise RuntimeError(
+                    "Precomputed logits are missing while TITAN_OFFLINE=1. "
+                    "Offline mode cannot fall back to online teacher."
+                )
             print("⚠️ Precomputed logits not found for all stages. Falling back to ONLINE teacher.")
             teacher = TeacherBundle()
             teacher_tokenizer = teacher.tokenizer
@@ -1472,8 +1489,19 @@ def train():
                             if val_loss < best_val_loss:
                                 best_val_loss = val_loss
                                 patience_counter = 0
-                                print(f"✅ New best validation loss! Saving checkpoint...")
-                                best_val_loss = save_checkpoint_smart(student, opt, scheduler, global_step, cfg, keep_last_n=3, val_loss=val_loss, best_val_loss=best_val_loss)
+                                if accelerator.is_main_process:
+                                    print("✅ New best validation loss! Saving checkpoint...")
+                                    unwrapped_model = accelerator.unwrap_model(student)
+                                    best_val_loss = save_checkpoint_smart(
+                                        unwrapped_model,
+                                        opt,
+                                        scheduler,
+                                        global_step,
+                                        cfg,
+                                        keep_last_n=3,
+                                        val_loss=val_loss,
+                                        best_val_loss=best_val_loss,
+                                    )
                             else:
                                 patience_counter += 1
                                 print(f"⏳ No improvement ({patience_counter}/{early_stop_patience})")

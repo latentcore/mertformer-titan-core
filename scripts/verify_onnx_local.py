@@ -14,12 +14,28 @@ Status : PRE-TRAINING (UNVERIFIED)
 __version__ = "1.0-BUILD27"
 __author__ = "Mert"
 
+import argparse
 import onnxruntime as ort
 import numpy as np
 import os
 
-def check_model():
-    model_path = "titan_mobile.onnx"
+def _resolve_model_path(model_path: str | None = None) -> str:
+    if model_path:
+        return model_path
+    candidates = (
+        "titan_mobile.onnx",
+        "checkpoints/mertformer_titan_prod/titan_s25_fp32.onnx",
+        "checkpoints/mertformer_titan_prod/titan_s25_int8_quantized.onnx",
+    )
+    for candidate in candidates:
+        if os.path.exists(candidate):
+            return candidate
+    # Keep the historical default for error message compatibility.
+    return "titan_mobile.onnx"
+
+
+def check_model(model_path: str | None = None):
+    model_path = _resolve_model_path(model_path)
     print(f"🔍 Checking Model: {model_path}")
     
     if not os.path.exists(model_path):
@@ -65,4 +81,7 @@ def check_model():
         print(f"❌ Verification Failed: {e}")
 
 if __name__ == "__main__":
-    check_model()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", default=None, help="Path to ONNX model file")
+    args = parser.parse_args()
+    check_model(args.model)

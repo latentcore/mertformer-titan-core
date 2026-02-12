@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mertformer-sdk"
-version = "1.0.0a0"
+version = "0.1.0"
 description = "MertFormer Titan SDK"
 readme = "README.md"
 # Review-ready baseline: Python 3.11 (ecosystem + pygame wheels + fewer surprises).
@@ -14,15 +14,29 @@ authors = [{name = "MertFormer AI Team"}]
 dependencies = [
   "torch>=2.0",
   "transformers>=4.30",
+  "datasets>=2.12",
+  "accelerate>=0.20",
+  "sentencepiece>=0.1.99",
+  "protobuf>=3.20",
   "numpy>=1.24",
   "pyyaml>=6.0",
+  "tqdm>=4.65",
+  "psutil>=5.9",
   "networkx>=3.1",
+  "huggingface_hub>=0.20",
+  "scipy>=1.10",
 ]
 
 [project.optional-dependencies]
-cuda = ["triton>=2.1"]
-onnx = ["onnx>=1.14", "onnxruntime>=1.16"]
+cuda = ["triton>=2.1", "bitsandbytes>=0.41.0", "flash-attn>=2.5.0"]
+onnx = [
+  "onnx>=1.14",
+  "onnxruntime>=1.16",
+  "onnxscript>=0.1.0",
+  "onnx-simplifier>=0.4.33; python_version < \"3.13\"",
+]
 cli = ["tqdm>=4.65"]
+train = ["peft>=0.4.0", "wandb>=0.15.0", "galore-torch>=0.0.1", "zstandard>=0.21"]
 dev = [
   "pytest>=7.3",
   "pytest-cov>=4.1",
@@ -34,7 +48,17 @@ demo = ["pygame==2.6.1"]
 mertformer = "mertformer_sdk.cli:main"
 
 [tool.setuptools]
-packages = ["mertformer_sdk", "mertformer_sdk.kernels", "mertformer_sdk.utils"]
+packages = [
+  "mertformer_sdk",
+  "mertformer_sdk.kernels",
+  "mertformer_sdk.utils",
+  "config",
+  "layers",
+  "model",
+  "utils",
+  "train",
+  "orchestrator",
+]
 
 [tool.ruff]
 target-version = "py311"

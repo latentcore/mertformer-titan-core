@@ -63,7 +63,15 @@ def load_model(
 
     if ckpt_path.exists():
         checkpoint = torch.load(ckpt_path, map_location=device)
-        state = checkpoint.get("model", checkpoint)
+        if isinstance(checkpoint, dict):
+            if "model" in checkpoint:
+                state = checkpoint["model"]
+            elif "model_state_dict" in checkpoint:
+                state = checkpoint["model_state_dict"]
+            else:
+                state = checkpoint
+        else:
+            state = checkpoint
         model.load_state_dict(state)
 
     use_tr = bool(getattr(cfg, "use_tr_tokenizer", False))
