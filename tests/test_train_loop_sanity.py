@@ -88,3 +88,23 @@ def test_validation_ddp_sync_primitives_present():
     broadcast_calls = [n for n in ast.walk(tree) if isinstance(n, ast.Call) and _is_torch_dist_broadcast_call(n)]
     assert reduce_calls, "Expected accelerator.reduce for global validation aggregation"
     assert broadcast_calls, "Expected torch.distributed.broadcast for global early-stop decision"
+
+
+def test_seed_includes_process_index():
+    source = Path("train/train.py").read_text(encoding="utf-8")
+    assert "set_seed(cfg.seed + accelerator.process_index)" in source
+
+
+def test_kd_loss_called_with_padding_mask():
+    tree = _tree()
+    kd_calls = [
+        n
+        for n in ast.walk(tree)
+        if isinstance(n, ast.Call)
+        and isinstance(n.func, ast.Name)
+        and n.func.id == "kd_loss_safe"
+    ]
+    assert kd_calls, "Expected kd_loss_safe call in training loop"
+    assert any(any(k.arg == "mask" for k in call.keywords) for call in kd_calls), (
+        "Expected kd_loss_safe to receive a mask keyword (pad exclusion)"
+    )

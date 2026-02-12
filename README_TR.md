@@ -42,7 +42,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `38 passed, 3 skipped` |
+| `python3 -m pytest -q` | `40 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -53,7 +53,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`38 passed, 3 skipped`)
+   - `pytest` geçti (`40 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**

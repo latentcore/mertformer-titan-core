@@ -561,17 +561,24 @@ def collate_fn(batch):
 # -----------------------------------------------------------------------------
 # TR: 3. BİLGİ DAMITMA KAYBI / EN: 3. KD LOSS (Knowledge Distillation)
 # -----------------------------------------------------------------------------
-def kd_loss_safe(student_logits, teacher_logits, temp):
+def kd_loss_safe(student_logits, teacher_logits, temp, mask=None):
     min_vocab = min(student_logits.size(-1), teacher_logits.size(-1))
     s = student_logits[..., :min_vocab].float()
     t = teacher_logits[..., :min_vocab].float().to(s.device)
     T = float(temp)
-    loss = F.kl_div(
+    token_kl = F.kl_div(
         F.log_softmax(s / T, dim=-1),
         F.softmax(t / T, dim=-1),
-        reduction="batchmean"
-    ) * (T * T)
-    return loss
+        reduction="none",
+    ).sum(dim=-1) * (T * T)
+    if mask is not None:
+        mask = mask.to(device=token_kl.device, dtype=torch.bool)
+        if mask.shape != token_kl.shape:
+            raise ValueError(f"KD mask shape mismatch: expected {token_kl.shape}, got {mask.shape}")
+        if not bool(mask.any().item()):
+            return token_kl.new_zeros(())
+        token_kl = token_kl.masked_select(mask)
+    return token_kl.mean()
 
 # TR: V21.0 DÜZELTME: WSD Zamanlama (Isınma-Sabit-Azalma) Grokking için
 # EN: V21.0 FIX: WSD Scheduler (Warmup-Stable-Decay) for Grokking
@@ -621,7 +628,14 @@ class TeacherBundle:
                 self.model = AutoModelForCausalLM.from_pretrained(
                     cfg.teacher_model_id,
                     torch_dtype=torch.float16,
-                    device_map={"": self.device}, # [FIX] Force teacher to correct accelerator device
+                    # [FIX] Use explicit string map for HF compatibility across versions/backends.
+                    device_map={
+                        "": (
+                            f"cuda:{self.device.index if self.device.index is not None else torch.cuda.current_device()}"
+                            if self.device.type == "cuda"
+                            else "cpu"
+                        )
+                    },
                     quantization_config=BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.float16, bnb_4bit_quant_type='nf4')
                 )
                 self.model.eval()
@@ -853,7 +867,7 @@ def train():
     )
 
     # TR: Her şeyi seed'le / EN: Seed everything
-    set_seed(cfg.seed)
+    set_seed(cfg.seed + accelerator.process_index)
     
     # TR: Sadece ana süreç doğrulaması / EN: Only main process validation
     if accelerator.is_main_process:
@@ -1292,7 +1306,8 @@ def train():
                     if t_logits is not None:
                         t_logits = t_logits.to(shift_logits.device)
                         shift_t_logits = t_logits[..., :-1, :].contiguous()
-                        loss_distill = kd_loss_safe(shift_logits, shift_t_logits, cfg.teacher_temp)
+                        kd_mask = shift_labels != pad_id
+                        loss_distill = kd_loss_safe(shift_logits, shift_t_logits, cfg.teacher_temp, mask=kd_mask)
 
                     # Dynamic Distillation Alpha
                     progress_pct = global_step / cfg.max_steps
