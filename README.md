@@ -1180,7 +1180,7 @@ Planned Turkish data sources:
 
 ### Q: Why 2.64B parameters? Could it be larger?
 
-**A**: 2.64B is the **optimal point for mobile-class deployment**:
+**A**: 2.64B is the **current design target (Build 27) for mobile-class deployment**:
 - Fits Samsung S25-class memory budgets (12GB RAM)
 - ~0.65GB weights with BitNet (estimate)
 - Strong speed/quality balance
@@ -1188,7 +1188,7 @@ Planned Turkish data sources:
 
 ### Q: Does BitNet 1.58-bit quantization hurt quality?
 
-**A**: **Minimal loss** (typically ~1-2% accuracy range):
+**A**: Quality impact is **task-dependent** and should be validated with full benchmarks:
 - Mitigated with Knowledge Distillation
 - Learns from a Llama-3.3-70B teacher
 - Backed by production-focused low-bit research direction (Microsoft Research)
@@ -1209,7 +1209,7 @@ Planned Turkish data sources:
 
 ### Q: How long does training take?
 
-**A**: On **8x A100 80GB** (projection):
+**A**: On **8x A100 80GB** (projection, **not a benchmark claim**):
 - Baseline: ~25 hours (45K steps x 2 sec/step)
 - v1.0 (Build 27) optimized: **~15 hours** (45K steps x 1.2 sec/step)
 - ~10 hours estimated savings
@@ -1220,6 +1220,7 @@ Planned Turkish data sources:
 - ONNX export path is ready
 - NPU optimization is planned
 - Real-device validation is a Post-Build-27 roadmap item
+- Real-device performance measurements are still pending
 
 ### Q: Is the low-bit kernel production-ready?
 
@@ -1235,6 +1236,19 @@ Planned Turkish data sources:
 - `use_tr_tokenizer=false` (default)
 - Downloadable via `scripts/download_tr_tokenizer.py`
 - A risk-controlled PoC is recommended for distillation compatibility
+
+### Q: What is the difference between Pilot-ready and Claim-ready?
+
+**A**:
+- **Pilot-ready** means gates, safety flow, and operational docs are in place for controlled demonstrations.
+- **Claim-ready** requires a trained checkpoint plus reproducible benchmark evidence and measurement logs.
+
+### Q: Which environment variables are mandatory in offline vs online mode?
+
+**A**:
+- **Offline mode (`TITAN_OFFLINE=1`)**: no external credential is mandatory for baseline verification flow.
+- **Online mode (`TITAN_OFFLINE=0`)**: `HF_TOKEN` is required for authenticated online dataset/model operations.
+- `WANDB_API_KEY` is required only if `TITAN_WANDB=1`.
 
 ---
 

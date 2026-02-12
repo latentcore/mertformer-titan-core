@@ -1178,7 +1178,7 @@ Planlanan Türkçe veri kaynakları:
 
 ### S: Neden 2.64B parametre? Daha büyük olabilir miydi?
 
-**C**: 2.64B, **mobil cihazlar için optimal nokta**dır:
+**C**: 2.64B, **Build 27 için mevcut tasarım hedefidir**:
 - Samsung S25 (12GB RAM) rahatça çalıştırır
 - BitNet ile ~0.65GB weights (tahmini)
 - Hız/kalite dengesi mükemmel
@@ -1186,7 +1186,7 @@ Planlanan Türkçe veri kaynakları:
 
 ### S: BitNet 1.58-bit kuantizasyon kaliteyi düşürür mü?
 
-**C**: **Minimal kayıp** (%1-2 doğruluk):
+**C**: Kalite etkisi **göreve bağlıdır** ve tam benchmark ile doğrulanmalıdır:
 - Bilgi Damıtma (Knowledge Distillation) ile telafi edilir
 - Llama-3.3-70B teacher'dan öğrenir
 - Üretimde kanıtlanmış (Microsoft Research)
@@ -1207,7 +1207,7 @@ Planlanan Türkçe veri kaynakları:
 
 ### S: Eğitim ne kadar sürer?
 
-**C**: **8x A100 80GB'de**:
+**C**: **8x A100 80GB için projeksiyon**dur (**benchmark iddiası değildir**):
 - Temel: ~25 saat (45K adım × 2 sn/adım)
 - v1.0 (Build 27) Optimize: **~15 saat** (45K adım × 1.2 sn/adım)
 - **10 saat tasarruf!**
@@ -1218,6 +1218,7 @@ Planlanan Türkçe veri kaynakları:
 - ONNX export hazır
 - NPU optimizasyonu planlandı
 - Gerçek cihaz testi: Build 27 sonrası yol haritası
+- Gerçek cihaz performans ölçümleri henüz tamamlanmadı
 
 ### S: Low-bit kernel production-ready mi?
 
@@ -1233,6 +1234,19 @@ Planlanan Türkçe veri kaynakları:
 - `use_tr_tokenizer=false` (default)
 - `scripts/download_tr_tokenizer.py` ile indirilebilir
 - Distillation uyumu için risk kontrollü POC önerilir
+
+### S: Pilot-ready ile Claim-ready arasındaki fark nedir?
+
+**C**:
+- **Pilot-ready**: kontrollü demo/pilot için kapılar, güvenlik akışı ve operasyonel dokümantasyon hazırdır.
+- **Claim-ready**: eğitilmiş checkpoint + tekrarlanabilir benchmark kanıtı + ölçüm logları gerektirir.
+
+### S: Offline ve online modda hangi environment değişkenleri zorunludur?
+
+**C**:
+- **Offline mod (`TITAN_OFFLINE=1`)**: temel doğrulama akışı için harici kimlik bilgisi zorunlu değildir.
+- **Online mod (`TITAN_OFFLINE=0`)**: doğrulamalı online veri/model işlemleri için `HF_TOKEN` zorunludur.
+- `WANDB_API_KEY` yalnızca `TITAN_WANDB=1` ise zorunludur.
 
 ---
 
