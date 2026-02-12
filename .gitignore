@@ -25,6 +25,9 @@ htmlcov/
 .lint-venv/
 *.zip
 *.age
+# Package dropzone in project root
+/packages/*.zip
+/packages/*.age
 dist/
 build/
 *.egg-info/
