@@ -24,7 +24,7 @@
 
 # 🦅 MertFormer Titan: Otonom Sürü Mimarisi
 > **Hedef: Mobil maliyetle, sınır-üstü kodlama yeteneği (eğitim/benchmark sonrası).**
-> **Geliştirme Aşaması:** Aktif geliştirme (`Build 27`, `ALFA / EĞİTİM ÖNCESİ`).
+> **Geliştirme Aşaması:** Pilota hazır eğitim öncesi baseline (`Build 27`, eğitim/benchmark iddiaları beklemede).
 
 ## 🇹🇷 Sivil/Komutan Özeti (Teknik Olmayan Okuyucu İçin)
 > **Kaynak kod okumayan karar vericiler için**
@@ -73,7 +73,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama
 TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh
 ```
 
-| Mühendislik Durumu | `ALFA / EĞİTİM ÖNCESİ` |
+| Mühendislik Durumu | `Pilota hazır eğitim öncesi baseline` |
 | :--- | :--- |
 | **Eğitim Başlatma Hazırlığı** | ✅ ONAYLI (`kapılar yeşil, başlatma komutu hazır`) |
 | **Kod Tabanı** | ✅ Uygulandı (testler + offline preflight geçiyor) |
@@ -114,8 +114,8 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 ---
 
 [![Lisans: Özel (Proprietary)](https://img.shields.io/badge/Lisans-%C3%96zel-red.svg?style=flat-square)](./LICENSE)
-[![Depo: Gizli](https://img.shields.io/badge/Depo-Gizli-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v1.0 (Build 27))
-[![Durum: Eğitim Öncesi](https://img.shields.io/badge/Durum-E%C4%9Fitim%20%C3%96ncesi-yellow.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v1.0 (Build 27))
+[![Depo: Gizli](https://img.shields.io/badge/Depo-Gizli-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
+[![Durum: Eğitim Öncesi](https://img.shields.io/badge/Durum-E%C4%9Fitim%20%C3%96ncesi-yellow.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
 [![Mimari: BitNet 1.58b](https://img.shields.io/badge/Mimari-BitNet%201.58b-orange.svg?style=flat-square)](https://www.microsoft.com/en-us/research/publication/the-era-of-1-bit-llms-all-large-language-models-are-in-1-58-bits/)
 [![Referans: BitNet 1-bit](https://img.shields.io/badge/Referans-BitNet%201--bit-lightgrey.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
 
@@ -145,7 +145,6 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 - [Kıyaslamalar (Benchmarks)](#kıyaslamalar-benchmarks)
 - [Türkiye Vizyonu](#türkiye-vizyonu)
 - [SSS](#sss)
-- [Ek: Sürü Mimarisi (Hedef Mimari)](#appendix-swarm)
 - [Lisans](#lisans)
 - [Stratejik İş Birliği](#stratejik-is-birligi)
 - [Ölçeklenebilirlik Vizyonu](#olceklenebilirlik-vizyonu)
@@ -1722,7 +1721,7 @@ Gelecekteki **8B / 70B / 1T** araştırmaları koşullu bir hat olarak ele alın
   year = {2026},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{https://github.com/latentcore/mertformer-titan-v1.0 (Build 27)}}
+  howpublished = {\url{https://github.com/latentcore/mertformer-titan-v27}}
 }
 ```
 

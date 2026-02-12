@@ -24,7 +24,7 @@
 
 # 🦅 MertFormer Titan: Autonomous Swarm Architecture
 > **Target: near-frontier coding capability at mobile compute cost (pending training/benchmarks).**
-> **Development Stage:** Active development (`Build 27`, `ALPHA / PRE-TRAINING`).
+> **Development Stage:** Pilot-ready pre-training baseline (`Build 27`, training/benchmark claims pending).
 
 ## 🇹🇷 Executive Summary (Non-Technical)
 > **For decision makers who are not reading source code**
@@ -73,7 +73,7 @@ This repository is no longer in idea/prototype-only state. Core validation gates
 TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh
 ```
 
-| Engineering Status | `ALPHA / PRE-TRAINING` |
+| Engineering Status | `Pilot-ready pre-training baseline` |
 | :--- | :--- |
 | **Training Start Readiness** | ✅ APPROVED (`gates green, start command ready`) |
 | **Codebase** | ✅ Implemented (tests + offline preflight passing) |
@@ -114,8 +114,8 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 ---
 
 [![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg?style=flat-square)](./LICENSE)
-[![Repository: Private](https://img.shields.io/badge/Repository-Private-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v1.0 (Build 27))
-[![Status: Pre-Training](https://img.shields.io/badge/Status-Pre--Training-yellow.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v1.0 (Build 27))
+[![Repository: Private](https://img.shields.io/badge/Repository-Private-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
+[![Status: Pre-Training](https://img.shields.io/badge/Status-Pre--Training-yellow.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
 [![Architecture: BitNet 1.58b](https://img.shields.io/badge/Architecture-BitNet%201.58b-orange.svg?style=flat-square)](https://www.microsoft.com/en-us/research/publication/the-era-of-1-bit-llms-all-large-language-models-are-in-1-58-bits/)
 [![Reference: BitNet 1-bit](https://img.shields.io/badge/Reference-BitNet%201--bit-lightgrey.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
 
@@ -145,7 +145,6 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 - [Benchmarks](#benchmarks)
 - [Turkish Vision](#turkish-vision)
 - [FAQ](#faq)
-- [Appendix: Swarm Architecture (Target)](#appendix-swarm)
 - [License](#license)
 - [Strategic Collaboration](#strategic-collaboration)
 - [Scalability Vision](#scalability-vision)
@@ -1724,7 +1723,7 @@ Future **8B / 70B / 1T** exploration is treated as a conditional research track 
   year = {2026},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{https://github.com/latentcore/mertformer-titan-v1.0 (Build 27)}}
+  howpublished = {\url{https://github.com/latentcore/mertformer-titan-v27}}
 }
 ```
 
