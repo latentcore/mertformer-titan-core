@@ -1663,9 +1663,9 @@ All commercial/partner engagement follows written agreement terms and confidenti
 ## 📧 Contact
 
 **Project**: MertFormer Titan (Onyx Storm)  
-**Version**: v1.0 (Build 27) (Pre-Training)  
-**Status**: 🟡 PRE-TRAINING (Unverified)  
-**Made with** ❤️ **in Turkey** 🇹🇷
+**Version**: v1.0 (Build 27, Pre-Training Baseline)  
+**Status**: 🟡 Pilot-Ready (training & benchmark claims pending)  
+**Developed in Türkiye**
 
 ---
 

@@ -1661,9 +1661,9 @@ Tüm ticari/kurumsal etkileşimler, `LICENSE` ile uyumlu yazılı sözleşme ve 
 ## 📧 İletişim
 
 **Proje**: MertFormer Titan (Onyx Storm)
-**Sürüm**: v1.0 (Build 27) FİNAL (Eğitim Öncesi)  
-**Durum**: 🟡 EĞİTİM ÖNCESİ (Doğrulanmadı)
-**Türkiye'de** ❤️ **ile yapıldı** 🇹🇷
+**Sürüm**: v1.0 (Build 27, Eğitim Öncesi Baseline)  
+**Durum**: 🟡 Pilota Hazır (eğitim ve benchmark iddiaları beklemede)  
+**Türkiye'de geliştirildi**
 
 ---
 
