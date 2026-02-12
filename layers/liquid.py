@@ -19,7 +19,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import sys
 import warnings
-from typing import Tuple, List
+from typing import Optional, Tuple
 
 from layers.bitlinear import BitLinear
 
@@ -100,23 +100,25 @@ class LiquidCell(nn.Module):
 @_jit_script_if_supported
 def jit_quant(w: torch.Tensor) -> torch.Tensor:
     """JIT-compatible weight quantization (1.58-bit BitNet)"""
-    # [V26.0 FIX] RMS Scale for consistency with BitLinear
-    scale = torch.sqrt((w ** 2).mean(dim=1, keepdim=True)).clamp(min=1e-5)
-    w_q = torch.round(w / scale).clamp(-1.0, 1.0)
-    return w_q * scale
+    # TR: Quant hesaplarını fp32'de yap, sonra orijinal dtype'a dön.
+    # EN: Do quant math in fp32, then cast back to original dtype.
+    w_f = w.float()
+    scale = torch.sqrt((w_f * w_f).mean(dim=1, keepdim=True)).clamp(min=1e-5)
+    w_q = torch.round(w_f / scale).clamp(-1.0, 1.0)
+    return (w_q * scale).to(dtype=w.dtype)
 
 
 @_jit_script_if_supported
-def jit_liquid_loop(
+def jit_liquid_loop_cached(
     input_seq: torch.Tensor,
     h_init: torch.Tensor,
     dt: float,
-    input_w_weight: torch.Tensor,
-    hidden_w_weight: torch.Tensor,
-    tau_input_w_weight: torch.Tensor,
-    tau_hidden_w_weight: torch.Tensor,
+    input_w_q_t: torch.Tensor,
+    hidden_w_q_t: torch.Tensor,
+    tau_input_w_q_t: torch.Tensor,
+    tau_hidden_w_q_t: torch.Tensor,
     tau_bias: torch.Tensor
-) -> torch.Tensor:
+) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     TR: JIT-Compiled Recurrent Loop for NPU.
     EN: JIT-Compiled Recurrent Loop for NPU.
@@ -126,15 +128,9 @@ def jit_liquid_loop(
     """
     B, T, H = input_seq.shape
     h = h_init
-    # TR: Çıktı için ön-tahsisat (Pre-allocation) - VRAM optimizasyonu
-    # EN: Output pre-allocation - VRAM optimization
+    # TR: Çıktı için ön-tahsisat (Pre-allocation)
+    # EN: Output pre-allocation
     out_seq = torch.zeros(B, T, H, device=input_seq.device, dtype=input_seq.dtype)
-    # TR: Mikro-optimizasyon - döngü içinde tekrar quantize etme.
-    # EN: Micro-optimization - avoid re-quantizing inside the loop.
-    input_w_q_t = jit_quant(input_w_weight).t()
-    hidden_w_q_t = jit_quant(hidden_w_weight).t()
-    tau_input_w_q_t = jit_quant(tau_input_w_weight).t()
-    tau_hidden_w_q_t = jit_quant(tau_hidden_w_weight).t()
     
     # TR: Derleyici için açılabilir döngü / EN: Unrollable loop for compiler
     for t in range(T):
@@ -163,7 +159,38 @@ def jit_liquid_loop(
         
         out_seq[:, t, :] = h
     
-    return out_seq
+    return out_seq, h
+
+
+@_jit_script_if_supported
+def jit_liquid_loop(
+    input_seq: torch.Tensor,
+    h_init: torch.Tensor,
+    dt: float,
+    input_w_weight: torch.Tensor,
+    hidden_w_weight: torch.Tensor,
+    tau_input_w_weight: torch.Tensor,
+    tau_hidden_w_weight: torch.Tensor,
+    tau_bias: torch.Tensor
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    """
+    Backward-compatible wrapper:
+    quantizes once per call, then runs cached loop kernel.
+    """
+    input_w_q_t = jit_quant(input_w_weight).t().contiguous()
+    hidden_w_q_t = jit_quant(hidden_w_weight).t().contiguous()
+    tau_input_w_q_t = jit_quant(tau_input_w_weight).t().contiguous()
+    tau_hidden_w_q_t = jit_quant(tau_hidden_w_weight).t().contiguous()
+    return jit_liquid_loop_cached(
+        input_seq,
+        h_init,
+        dt,
+        input_w_q_t,
+        hidden_w_q_t,
+        tau_input_w_q_t,
+        tau_hidden_w_q_t,
+        tau_bias.to(dtype=input_seq.dtype),
+    )
 
 
 class LiquidMixer(nn.Module):
@@ -177,9 +204,89 @@ class LiquidMixer(nn.Module):
         self.cell = LiquidCell(h)
         self.norm = nn.LayerNorm(h)
 
-    def forward(self, x: torch.Tensor, dt: float = 1.0) -> torch.Tensor:
+        # TR: Eval/inference quant cache (checkpoint'e yazılmaz)
+        # EN: Eval/inference quant cache (excluded from checkpoints)
+        self.register_buffer("_q_input_w_t", torch.empty(0), persistent=False)
+        self.register_buffer("_q_hidden_w_t", torch.empty(0), persistent=False)
+        self.register_buffer("_q_tau_input_w_t", torch.empty(0), persistent=False)
+        self.register_buffer("_q_tau_hidden_w_t", torch.empty(0), persistent=False)
+        self.register_buffer("_q_tau_bias", torch.empty(0), persistent=False)
+        self._cache_ready = False
+
+    def _set_cache(self, name: str, value: torch.Tensor) -> None:
+        buf = getattr(self, name)
+        if buf.device != value.device or buf.dtype != value.dtype:
+            setattr(self, name, value.detach().clone())
+            return
+        buf.resize_(value.shape[0], value.shape[1] if value.dim() > 1 else 1)
+        if value.dim() == 1:
+            buf.copy_(value.unsqueeze(0)).resize_(value.shape[0])
+        else:
+            buf.copy_(value)
+
+    def reset_stream_state(self) -> None:
+        self._q_input_w_t.resize_(0)
+        self._q_hidden_w_t.resize_(0)
+        self._q_tau_input_w_t.resize_(0)
+        self._q_tau_hidden_w_t.resize_(0)
+        self._q_tau_bias.resize_(0)
+        self._cache_ready = False
+
+    def train(self, mode: bool = True):
+        super().train(mode)
+        if mode:
+            self.reset_stream_state()
+        return self
+
+    def _ensure_qcache(self, device: torch.device, dtype: torch.dtype) -> None:
+        if self.training:
+            return
+        if (
+            self._cache_ready
+            and self._q_input_w_t.numel() > 0
+            and self._q_input_w_t.device == device
+            and self._q_input_w_t.dtype == dtype
+        ):
+            return
+
+        with torch.no_grad():
+            iw = jit_quant(self.cell.input_w.weight).to(device=device, dtype=dtype).t().contiguous()
+            hw = jit_quant(self.cell.hidden_w.weight).to(device=device, dtype=dtype).t().contiguous()
+            tiw = jit_quant(self.cell.tau_input_w.weight).to(device=device, dtype=dtype).t().contiguous()
+            thw = jit_quant(self.cell.tau_hidden_w.weight).to(device=device, dtype=dtype).t().contiguous()
+            tb = self.cell.tau_bias.to(device=device, dtype=dtype).contiguous()
+
+            self._set_cache("_q_input_w_t", iw)
+            self._set_cache("_q_hidden_w_t", hw)
+            self._set_cache("_q_tau_input_w_t", tiw)
+            self._set_cache("_q_tau_hidden_w_t", thw)
+            # tau_bias is [1, H]
+            if self._q_tau_bias.device != tb.device or self._q_tau_bias.dtype != tb.dtype:
+                self._q_tau_bias = tb.detach().clone()
+            else:
+                self._q_tau_bias.resize_(tb.shape[0], tb.shape[1]).copy_(tb)
+
+            self._cache_ready = True
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        dt: float = 1.0,
+        h_init: Optional[torch.Tensor] = None,
+        return_state: bool = False,
+    ):
         B, T, H = x.shape
-        h_init = torch.zeros(B, H, device=x.device, dtype=x.dtype)
+        if h_init is None:
+            h = torch.zeros(B, H, device=x.device, dtype=x.dtype)
+        else:
+            if h_init.dim() != 2 or h_init.shape != (B, H):
+                raise ValueError(f"h_init must be [B,H] = [{B},{H}], got {tuple(h_init.shape)}")
+            if h_init.device != x.device or h_init.dtype != x.dtype:
+                raise RuntimeError(
+                    "h_init device/dtype mismatch with x. "
+                    f"h_init={h_init.device}/{h_init.dtype}, x={x.device}/{x.dtype}."
+                )
+            h = h_init
         
         # TR: [V26.0 FIX] Eğitim vs Çıkarım Yolu / EN: [V26.0 FIX] Training vs Inference Path
         # TR: Eğitim: Python döngüsü (LiquidCell) kullan -> STE gradyanları çalışır.
@@ -187,25 +294,28 @@ class LiquidMixer(nn.Module):
         # TR: Çıkarım: JIT döngüsü kullan -> NPU optimizasyonu.
         # EN: Inference: JIT loop use -> NPU optimization.
         if self.training:
-            h = h_init
-            outs = []
+            out_seq = torch.empty(B, T, H, device=x.device, dtype=x.dtype)
             for t in range(T):
                 h = self.cell(x[:, t, :], h, dt)
-                outs.append(h)
-            out_seq = torch.stack(outs, dim=1)
+                out_seq[:, t, :] = h
         else:
-            # TR: V25.0 NPU: JIT derlenmiş döngü / EN: V25.0 NPU: JIT compiled loop
-            out_seq = jit_liquid_loop(
-                x, 
-                h_init, 
+            # TR: Eval'de quant cache ile JIT döngüsü (forward başına tekrar quant yok)
+            # EN: Eval uses quant cache + JIT loop (no repeated quant per forward)
+            self._ensure_qcache(device=x.device, dtype=x.dtype)
+            out_seq, h = jit_liquid_loop_cached(
+                x,
+                h,
                 dt,
-                self.cell.input_w.weight,
-                self.cell.hidden_w.weight,
-                self.cell.tau_input_w.weight,
-                self.cell.tau_hidden_w.weight,
-                self.cell.tau_bias
+                self._q_input_w_t,
+                self._q_hidden_w_t,
+                self._q_tau_input_w_t,
+                self._q_tau_hidden_w_t,
+                self._q_tau_bias,
             )
         
         # TR: [V26.4 FIX] Residual'ı Geri Yükle (Block Liquid için residual eklemez)
         # EN: [V26.4 FIX] Restore Residual (Block does NOT add residual for Liquid)
-        return self.norm(out_seq + x)
+        y = self.norm(out_seq + x)
+        if return_state:
+            return y, h
+        return y
