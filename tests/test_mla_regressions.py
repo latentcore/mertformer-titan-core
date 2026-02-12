@@ -71,3 +71,34 @@ def test_mla_has_no_static_causal_mask_buffer():
         mla = MLA()
         buffer_names = dict(mla.named_buffers()).keys()
         assert "causal_mask" not in buffer_names
+
+
+def test_mla_kv_cache_offset_path_shape_and_finite():
+    with _cfg_patch(**_mla_tiny_overrides(rope_dim=None)):
+        mla = MLA()
+        x_prefill = torch.randn(1, 6, 128)
+        y_prefill, past = mla(x_prefill, decoupled_rope=False, past_key_value=None, use_cache=True)
+        assert y_prefill.shape == (1, 6, 128)
+        assert torch.isfinite(y_prefill).all()
+        assert past is not None
+
+        x_next = torch.randn(1, 2, 128)
+        y_next, present = mla(x_next, decoupled_rope=False, past_key_value=past, use_cache=True)
+        assert y_next.shape == (1, 2, 128)
+        assert torch.isfinite(y_next).all()
+        assert present is not None
+        k, v = present
+        assert k.shape[2] == 8 and v.shape[2] == 8
+
+
+def test_flash_attn_disabled_fallback_still_runs(monkeypatch):
+    import layers.mla as mla_mod
+
+    monkeypatch.setattr(mla_mod, "FLASH_ATTN_AVAILABLE", False)
+    with _cfg_patch(**_mla_tiny_overrides(rope_dim=None)):
+        mla = mla_mod.MLA()
+        mla.train()
+        x = torch.randn(1, 4, 128)
+        y, _ = mla(x, decoupled_rope=False, past_key_value=None, use_cache=False)
+        assert y.shape == (1, 4, 128)
+        assert torch.isfinite(y).all()

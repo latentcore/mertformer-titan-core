@@ -36,6 +36,20 @@ except ImportError:
         print("⚠️  TR: Flash Attention 2 mevcut değil. / EN: Flash Attention 2 not available.")
 
 
+def _is_onnx_export() -> bool:
+    """Return True when running under torch.onnx export trace."""
+    onnx_mod = getattr(torch, "onnx", None)
+    if onnx_mod is None:
+        return False
+    check_fn = getattr(onnx_mod, "is_in_onnx_export", None)
+    if check_fn is None:
+        return False
+    try:
+        return bool(check_fn())
+    except Exception:
+        return False
+
+
 
 class _QKRMSNorm(nn.Module):
     """
@@ -98,17 +112,25 @@ class RotaryEmbedding(nn.Module):
         cos = emb.cos()[None, None, :, :]
         sin = emb.sin()[None, None, :, :]
 
-        if (
-            self.cos_cached.numel() == 0
-            or self.cos_cached.shape != cos.shape
-            or self.cos_cached.device != cos.device
-            or self.cos_cached.dtype != cos.dtype
-        ):
-            self._buffers["cos_cached"] = cos
-            self._buffers["sin_cached"] = sin
-        else:
-            self.cos_cached.copy_(cos)
-            self.sin_cached.copy_(sin)
+        # Buffer-safe cache writes: no re-register, no buffer replacement.
+        # Expect model/device placement to be handled externally via model.to(...).
+        if self.cos_cached.device != cos.device or self.cos_cached.dtype != cos.dtype:
+            raise RuntimeError(
+                "RoPE cache device/dtype mismatch. Move the full model with model.to(...). "
+                f"cache={self.cos_cached.device}/{self.cos_cached.dtype}, "
+                f"target={cos.device}/{cos.dtype}"
+            )
+        if self.sin_cached.device != sin.device or self.sin_cached.dtype != sin.dtype:
+            raise RuntimeError(
+                "RoPE cache device/dtype mismatch. Move the full model with model.to(...). "
+                f"cache={self.sin_cached.device}/{self.sin_cached.dtype}, "
+                f"target={sin.device}/{sin.dtype}"
+            )
+
+        self.cos_cached.resize_(cos.shape)
+        self.cos_cached.copy_(cos)
+        self.sin_cached.resize_(sin.shape)
+        self.sin_cached.copy_(sin)
 
     def forward(self, x: torch.Tensor, seq_len: int = None, offset: int = 0) -> Tuple[torch.Tensor, torch.Tensor]:
         if seq_len is None:
@@ -308,15 +330,6 @@ class MLA(nn.Module):
              k = k.repeat_interleave(n_rep, dim=1)
              v = v.repeat_interleave(n_rep, dim=1)
 
-        # Causal mask calculation
-        # Attention Mask: [1, 1, T, S] -> Broadcast to [B, H, T, S]
-        # Query length: T, Key length: kv_seq_len (past + current)
-        
-        # Dynamic causal mask (T x S) to avoid per-layer max_seq^2 static buffer.
-        q_pos = torch.arange(kv_seq_len - T, kv_seq_len, device=x.device)
-        k_pos = torch.arange(kv_seq_len, device=x.device)
-        causal_mask = q_pos[:, None] >= k_pos[None, :]
-        
         # -------------------------------------------------------------------------
         # FLASH ATTENTION 2
         # -------------------------------------------------------------------------
@@ -333,18 +346,59 @@ class MLA(nn.Module):
             )
             out = out.transpose(1, 2)
         else:
-            # Standard Scaled Dot Product Attention
-            # [V27.0] Score calculation
-            scores = torch.matmul(q, k.transpose(-1, -2)) / math.sqrt(self.head_dim)
-            scores = scores.float() # Upcast to FP32 for softmax stability
-            
-            # Masking
-            scores.masked_fill_(~causal_mask, float("-inf"))
-            
-            attn_weights = F.softmax(scores, dim=-1).to(x.dtype) # Downcast back after softmax
-            attn_weights = self.attn_dropout(attn_weights)
-            
-            out = torch.matmul(attn_weights, v)
+            # Prefer SDPA path to avoid explicit full masks in common cases.
+            # Keep ONNX export on matmul path (opset12 cannot export SDPA op).
+            if hasattr(F, "scaled_dot_product_attention") and not _is_onnx_export():
+                dropout_p = self.attn_dropout.p if self.training else 0.0
+                if past_key_value is None:
+                    # Mask-free causal path.
+                    out = F.scaled_dot_product_attention(
+                        q,
+                        k,
+                        v,
+                        attn_mask=None,
+                        dropout_p=dropout_p,
+                        is_causal=True,
+                    )
+                elif T == 1:
+                    # Decode step with past: single query can attend to all keys.
+                    out = F.scaled_dot_product_attention(
+                        q,
+                        k,
+                        v,
+                        attn_mask=None,
+                        dropout_p=dropout_p,
+                        is_causal=False,
+                    )
+                else:
+                    # Offset-aware causal mask for prefill+cache multi-token chunks.
+                    q_pos = torch.arange(kv_seq_len - T, kv_seq_len, device=x.device)
+                    k_pos = torch.arange(kv_seq_len, device=x.device)
+                    causal_mask = q_pos[:, None] >= k_pos[None, :]
+                    out = F.scaled_dot_product_attention(
+                        q,
+                        k,
+                        v,
+                        attn_mask=causal_mask,
+                        dropout_p=dropout_p,
+                        is_causal=False,
+                    )
+            else:
+                # Legacy fallback: keep explicit masking only for bounded seq.
+                if kv_seq_len > 2048:
+                    raise RuntimeError(
+                        "High-sequence attention fallback requires PyTorch SDPA or FlashAttention."
+                    )
+                q_pos = torch.arange(kv_seq_len - T, kv_seq_len, device=x.device)
+                k_pos = torch.arange(kv_seq_len, device=x.device)
+                causal_mask = q_pos[:, None] >= k_pos[None, :]
+
+                scores = torch.matmul(q, k.transpose(-1, -2)) / math.sqrt(self.head_dim)
+                scores = scores.float()  # Upcast to FP32 for softmax stability
+                scores.masked_fill_(~causal_mask, float("-inf"))
+                attn_weights = F.softmax(scores, dim=-1).to(x.dtype)
+                attn_weights = self.attn_dropout(attn_weights)
+                out = torch.matmul(attn_weights, v)
 
         # Output projeksiyonu
         out = out.transpose(1, 2).contiguous().view(B, T, C)
