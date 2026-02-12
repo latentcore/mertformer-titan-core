@@ -70,6 +70,7 @@ logs/*
 reports/pilots/**
 !reports/pilots/README.md
 !reports/pilots/README_TR.md
+scripts/reports/pilots/**
 
 # Temporary
 *.tmp
