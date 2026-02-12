@@ -105,6 +105,12 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 2.  **Liquid Momentum**: The proprietary `LiquidRouter` treats data as a temporal flow (momentum), not just a static input. This mathematical approach positions the system with an advantage that competitors cannot close with hardware power alone.
 3.  **Forensic Trust**: Chained training logs and cryptographic outputs are designed to support transparency and compliance verification once real runs are produced.
 
+### 🔒 License Boundary (Quick Note)
+- This repository is **proprietary and confidential**.
+- Source code, assets, and methods may only be used under explicit written agreement or employment contract with the owner.
+- Any third-party disclosure of confidential technical details requires signed NDA terms.
+- Full legal terms remain in [`LICENSE`](LICENSE) and [`LICENSE_TR`](LICENSE_TR).
+
 ---
 
 [![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg?style=flat-square)](./LICENSE)
@@ -130,6 +136,8 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 - [Architecture](#architecture)
 - [Performance](#performance)
 - [Quick Start](#quick-start)
+- [SDK API Quick Start](#sdk-api-quickstart)
+- [Troubleshooting](#troubleshooting)
 - [Training](#training)
 - [Deployment](#deployment)
 - [Integration Targets](#integration-targets)
@@ -138,6 +146,8 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 - [FAQ](#faq)
 - [Appendix: Swarm Architecture (Target)](#appendix-swarm)
 - [License](#license)
+- [Strategic Collaboration](#strategic-collaboration)
+- [Scalability Vision](#scalability-vision)
 - [Contact](#contact)
 
 ---
@@ -235,6 +245,8 @@ Investor-facing materials and launch assets.
 - [reports/demo_video_script_TR.md](reports/demo_video_script_TR.md) — Demo video script (TR).
 - [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4) — 30-second snake demo proof clip.
 - [assets/snake_demo_preview.gif](assets/snake_demo_preview.gif) — Embedded snake demo preview (GIF).
+- [assets/sources/README.md](assets/sources/README.md) — Editable visual source archive standard (EN).
+- [assets/sources/README_TR.md](assets/sources/README_TR.md) — Editable visual source archive standard (TR).
 
 ![Snake Demo Preview](assets/snake_demo_preview.gif)
 
@@ -710,6 +722,45 @@ mertformer verify
 mertformer pilot-report --out reports/pilot_report.json
 ```
 
+<a id="sdk-api-quickstart"></a>
+### 🧪 SDK API Quick Start (Developer)
+
+```python
+from mertformer_sdk.api import load_model, generate, benchmark
+
+# Use a trained checkpoint in production/pilot flows.
+model, tokenizer, device = load_model(
+    ckpt="checkpoints/my_trained.pt",
+    strict_checkpoint=True,
+)
+
+text = generate(
+    model,
+    tokenizer,
+    prompt="Summarize the verification gates in one paragraph.",
+    max_new_tokens=96,
+)
+print(text)
+
+results = benchmark(
+    ckpt="checkpoints/my_trained.pt",
+    out_dir="reports/benchmarks",
+    samples=5,
+    strict_checkpoint=True,
+)
+print(results)
+```
+
+```python
+from mertformer_sdk.pilot import run_verify_all, build_pilot_report, write_pilot_report
+
+verify_summary = run_verify_all(offline=True)
+report = build_pilot_report(verify_summary=verify_summary)
+write_pilot_report("reports/pilot_report_v1.json", report)
+```
+
+`strict_checkpoint=False` is available only for controlled random-weight diagnostics.
+
 ### LIVE DEMO (Snake Autoplayer)
 
 ```bash
@@ -882,6 +933,20 @@ The following block demonstrates how a MertFormer Agent analyzes and resolves a 
 
 ---
 
+<a id="troubleshooting"></a>
+## 🛠️ Troubleshooting
+
+| Symptom | Likely Cause | Action |
+| :--- | :--- | :--- |
+| `run.sh` refuses to start training | `TITAN_OFFLINE=1` (offline-first default) | Run with `TITAN_OFFLINE=0` and required credentials. |
+| `HF_TOKEN is missing` | Online mode active without token | Set `HF_TOKEN` in environment or `.env`, or switch to offline mode. |
+| `WANDB_API_KEY missing` warning | `TITAN_WANDB=1` without key | Set `WANDB_API_KEY` or disable WandB with `TITAN_WANDB=0`. |
+| `Checkpoint not found` | `strict_checkpoint=True` with missing file | Use a valid checkpoint path; only use `strict_checkpoint=False` for controlled diagnostics. |
+| `verify_all.sh` fails | One or more quality gates failed | Re-run `python3 -m pytest -q`, `ruff check`, and `bash scripts/verify_all.sh`; inspect `logs/preflight/titan_preflight.log`. |
+| Unexpected low-bit/Tensor Core behavior | Experimental kernel path enabled | Treat `MERTFORMER_LOWBIT_KERNEL=1` and `MERTFORMER_TENSORCORE=1` as opt-in experiments and keep baseline path for production gating. |
+
+---
+
 <a id="training"></a>
 ## 🎓 Training
 
@@ -919,6 +984,20 @@ early_stop_patience = 5
 liquid_warmup_steps = 10000
 liquid_spike_threshold = 5.0
 ```
+
+### Environment Variables (Operational Controls)
+
+| Variable | Default | Scope | Purpose |
+| :--- | :--- | :--- | :--- |
+| `TITAN_OFFLINE` | `1` | `run.sh` / runtime | Offline-first mode; blocks online-dependent steps unless set to `0`. |
+| `TITAN_WANDB` | Auto (`0` offline, `1` online) | `run.sh` / tracking | Enables or disables WandB flow depending on mode. |
+| `TITAN_INSTALL` | `0` | `run.sh` | Installs dependencies when explicitly set to `1`. |
+| `TITAN_PYTHON` | unset | launcher | Forces a specific Python interpreter path. |
+| `TITAN_BOOTSTRAP` | `1` | launcher | Auto-bootstraps `.titan-venv` if local venv is missing. |
+| `MERTFORMER_TENSORCORE` | unset/`0` | kernel path | Experimental Tensor Core low-bit path (opt-in). |
+| `MERTFORMER_LOWBIT_KERNEL` | unset/`0` | kernel path | Enables experimental low-bit inference kernel path (opt-in). |
+| `HF_TOKEN` | unset | online ops | Required for authenticated online dataset/model operations. |
+| `WANDB_API_KEY` | unset | tracking | Required only when WandB is enabled in online mode. |
 
 ### Curriculum Learning (4 Stages)
 
@@ -1171,6 +1250,9 @@ NİHAİ/                     # Project root
 │   └── results_TR.md              # Turkish document counterpart
 ├── assets/                    # Visual/media assets for demos
 │   ├── header.png                 # Media asset
+│   ├── sources/                   # Editable asset source archive metadata
+│   │   ├── README.md                  # Source archive guideline (EN)
+│   │   └── README_TR.md               # Source archive guideline (TR)
 │   ├── snake_demo_preview.gif     # Media asset
 │   ├── snake_demo_proof.mp4       # Media asset
 │   └── synaptic_map.png           # Media asset
@@ -1536,6 +1618,25 @@ This project is **confidential and proprietary**. All rights are reserved by the
 
 ---
 
+<a id="strategic-collaboration"></a>
+## 🤝 Strategic Collaboration
+
+MertFormer accepts collaboration in a controlled, evidence-first format.
+
+**Can be shared (controlled scope):**
+- Architecture and validation documents under `reports/`
+- Pilot evidence bundles (`verify_all`, operator gates, `pilot_report_v1`)
+- Integration requirements and deployment constraints
+
+**Not shared without explicit legal controls:**
+- Raw source redistribution rights
+- Checkpoints/weights and secret-bearing artifacts
+- Internal security procedures beyond approved scope
+
+All commercial/partner engagement follows written agreement terms and confidentiality controls consistent with `LICENSE`.
+
+---
+
 ## 📧 Contact
 
 **Project**: MertFormer Titan (Onyx Storm)  
@@ -1573,6 +1674,16 @@ This project intentionally concludes at the proof-of-system level. The goal is t
 - [ ] **Phase 1**: Training Convergence & Distillation Health Check
 - [ ] **Phase 2**: Multi-Domain Benchmarking (GSM8K, HumanEval, MMLU)
 - [ ] **Phase 3**: Physical Device Performance Profiling (S25/M4)
+- [ ] **Phase 4**: Low-Level Kernel Optimization (C++ / ENN / QNN, optional post-training track)
+
+<a id="scalability-vision"></a>
+### 📈 Scalability Vision (Claim-Safe)
+Build 27 is intentionally centered on **2.64B** validation and reproducible evidence gates.  
+Future **8B / 70B / 1T** exploration is treated as a conditional research track and is evaluated only after:
+- trained-checkpoint evidence on 2.64B,
+- reproducible benchmark outputs,
+- hardware/cost feasibility review,
+- security and compliance boundary checks.
 
 ### 🚫 What MertFormer Titan Is NOT
 *   **Not a General Chatbot**: Optimized specifically for code orchestration and structural reasoning.

@@ -105,6 +105,12 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 2.  **Liquid Momentum**: Tescilli `LiquidRouter`, veriyi sadece statik bir girdi olarak değil, bir zamansal akış (momentum) olarak işler. Bu matematiksel yaklaşım, sistemi rakiplerin sadece işlem gücüyle kapatamayacağı bir avantajla konumlandırır.
 3.  **Adli Güven**: Zincirlenmiş eğitim logları ve kriptografik çıktılar, projenin şeffaflığını ve kurumsal/askeri güven standartlarına uyumunu doğrular.
 
+### 🔒 Lisans Sınırı (Hızlı Not)
+- Bu depo **özel ve gizlidir**.
+- Kaynak kod, varlıklar ve yöntemler yalnızca açık yazılı sözleşme veya iş ilişkisi kapsamında kullanılabilir.
+- Gizli teknik detayların üçüncü taraflarla paylaşımı, imzalı NDA şartlarına tabidir.
+- Tam hukuki çerçeve için [`LICENSE`](LICENSE) ve [`LICENSE_TR`](LICENSE_TR) dosyaları geçerlidir.
+
 ---
 
 [![Lisans: Özel (Proprietary)](https://img.shields.io/badge/Lisans-%C3%96zel-red.svg?style=flat-square)](./LICENSE)
@@ -130,6 +136,8 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 - [Mimari](#mimari)
 - [Performans](#performans)
 - [Hızlı Başlangıç](#hızlı-başlangıç)
+- [SDK API Hızlı Başlangıç](#sdk-api-tr-quickstart)
+- [Sorun Giderme](#sorun-giderme)
 - [Eğitim](#eğitim)
 - [Dağıtım (Deployment)](#dağıtım-deployment)
 - [Entegrasyon Hedefleri](#entegrasyon-hedefleri)
@@ -138,6 +146,8 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 - [SSS](#sss)
 - [Ek: Sürü Mimarisi (Hedef Mimari)](#appendix-swarm)
 - [Lisans](#lisans)
+- [Stratejik İş Birliği](#stratejik-is-birligi)
+- [Ölçeklenebilirlik Vizyonu](#olceklenebilirlik-vizyonu)
 - [İletişim](#iletişim)
 
 ---
@@ -235,6 +245,8 @@ Yatırımcı materyalleri ve lansman varlıkları.
 - [reports/demo_video_script_TR.md](reports/demo_video_script_TR.md) — Demo video script (TR).
 - [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4) — 30 saniyelik snake demo kanıt videosu.
 - [assets/snake_demo_preview.gif](assets/snake_demo_preview.gif) — Gömülü snake demo önizlemesi (GIF).
+- [assets/sources/README.md](assets/sources/README.md) — Düzenlenebilir görsel kaynak arşiv standardı (EN).
+- [assets/sources/README_TR.md](assets/sources/README_TR.md) — Düzenlenebilir görsel kaynak arşiv standardı (TR).
 
 ![Snake Demo Önizleme](assets/snake_demo_preview.gif)
 
@@ -708,6 +720,45 @@ mertformer verify
 mertformer pilot-report --out reports/pilot_report.json
 ```
 
+<a id="sdk-api-tr-quickstart"></a>
+### 🧪 SDK API Hızlı Başlangıç (Geliştirici)
+
+```python
+from mertformer_sdk.api import load_model, generate, benchmark
+
+# Üretim/pilot akışında eğitimli checkpoint kullanın.
+model, tokenizer, device = load_model(
+    ckpt="checkpoints/my_trained.pt",
+    strict_checkpoint=True,
+)
+
+text = generate(
+    model,
+    tokenizer,
+    prompt="Doğrulama kapılarını tek paragrafta özetle.",
+    max_new_tokens=96,
+)
+print(text)
+
+results = benchmark(
+    ckpt="checkpoints/my_trained.pt",
+    out_dir="reports/benchmarks",
+    samples=5,
+    strict_checkpoint=True,
+)
+print(results)
+```
+
+```python
+from mertformer_sdk.pilot import run_verify_all, build_pilot_report, write_pilot_report
+
+verify_summary = run_verify_all(offline=True)
+report = build_pilot_report(verify_summary=verify_summary)
+write_pilot_report("reports/pilot_report_v1.json", report)
+```
+
+`strict_checkpoint=False` yalnızca kontrollü random-weight teşhis akışlarında kullanılmalıdır.
+
 ### LIVE DEMO (Snake Autoplayer)
 
 ```bash
@@ -880,6 +931,20 @@ Aşağıdaki blok, bir MertFormer Ajanının karmaşık bir hatayı nasıl anali
 
 ---
 
+<a id="sorun-giderme"></a>
+## 🛠️ Sorun Giderme
+
+| Belirti | Muhtemel Neden | Aksiyon |
+| :--- | :--- | :--- |
+| `run.sh` eğitimi başlatmıyor | `TITAN_OFFLINE=1` (offline-first varsayılanı) | `TITAN_OFFLINE=0` ile ve gerekli kimlik bilgileriyle çalıştırın. |
+| `HF_TOKEN is missing` | Online mod token olmadan açık | Ortam veya `.env` içine `HF_TOKEN` ekleyin ya da offline moda dönün. |
+| `WANDB_API_KEY missing` uyarısı | `TITAN_WANDB=1` ama anahtar yok | `WANDB_API_KEY` tanımlayın veya `TITAN_WANDB=0` yapın. |
+| `Checkpoint not found` | `strict_checkpoint=True` ve dosya yok | Geçerli checkpoint yolu verin; `strict_checkpoint=False` sadece kontrollü teşhis içindir. |
+| `verify_all.sh` başarısız | Bir veya daha fazla kalite kapısı kırık | `python3 -m pytest -q`, `ruff check`, `bash scripts/verify_all.sh` sırasıyla tekrar çalıştırın; `logs/preflight/titan_preflight.log` inceleyin. |
+| Low-bit/Tensor Core davranışı beklenenden farklı | Deneysel kernel yolu açık | `MERTFORMER_LOWBIT_KERNEL=1` ve `MERTFORMER_TENSORCORE=1` yollarını opt-in deneysel olarak kullanın; üretim kapılarında baseline yolu koruyun. |
+
+---
+
 <a id="eğitim"></a>
 ## 🎓 Eğitim
 
@@ -918,6 +983,20 @@ early_stop_patience = 5
 liquid_warmup_steps = 10000
 liquid_spike_threshold = 5.0
 ```
+
+### Ortam Değişkenleri (Operasyonel Kontroller)
+
+| Değişken | Varsayılan | Kapsam | Amaç |
+| :--- | :--- | :--- | :--- |
+| `TITAN_OFFLINE` | `1` | `run.sh` / çalışma zamanı | Offline-first modu açar; `0` yapılmadıkça online bağımlı adımları bloklar. |
+| `TITAN_WANDB` | Otomatik (`0` offline, `1` online) | `run.sh` / izleme | Moda göre WandB akışını açar/kapatır. |
+| `TITAN_INSTALL` | `0` | `run.sh` | Yalnızca `1` verildiğinde bağımlılık kurulumu yapar. |
+| `TITAN_PYTHON` | unset | launcher | Özel Python yorumlayıcısı yolunu zorlar. |
+| `TITAN_BOOTSTRAP` | `1` | launcher | Yerel venv yoksa `.titan-venv` otomatik bootstrap eder. |
+| `MERTFORMER_TENSORCORE` | unset/`0` | kernel yolu | Deneysel Tensor Core low-bit yolunu açar (opt-in). |
+| `MERTFORMER_LOWBIT_KERNEL` | unset/`0` | kernel yolu | Deneysel low-bit inference kernel yolunu açar (opt-in). |
+| `HF_TOKEN` | unset | online operasyon | Kimlik doğrulamalı online dataset/model adımları için gerekir. |
+| `WANDB_API_KEY` | unset | izleme | Sadece online modda WandB açıkken gerekir. |
 
 ### Müfredatla Öğrenme (4 Aşama)
 
@@ -1169,6 +1248,9 @@ NİHAİ/                     # Proje kökü
 │   └── results_TR.md              # Türkçe doküman karşılığı
 ├── assets/                    # Demo için görsel/medya varlıkları
 │   ├── header.png                 # Medya varlığı
+│   ├── sources/                   # Düzenlenebilir varlık kaynak arşivi metaverisi
+│   │   ├── README.md                  # Kaynak arşiv kılavuzu (EN)
+│   │   └── README_TR.md               # Kaynak arşiv kılavuzu (TR)
 │   ├── snake_demo_preview.gif     # Medya varlığı
 │   ├── snake_demo_proof.mp4       # Medya varlığı
 │   └── synaptic_map.png           # Medya varlığı
@@ -1534,6 +1616,25 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 
 ---
 
+<a id="stratejik-is-birligi"></a>
+## 🤝 Stratejik İş Birliği
+
+MertFormer, kontrollü ve kanıt-öncelikli bir iş birliği formatını benimser.
+
+**Paylaşılabilir (kontrollü kapsam):**
+- `reports/` altındaki mimari ve doğrulama dokümanları
+- Pilot kanıt paketleri (`verify_all`, operator gate, `pilot_report_v1`)
+- Entegrasyon gereksinimleri ve dağıtım kısıtları
+
+**Açık hukuki kontrol olmadan paylaşılmayacaklar:**
+- Ham kaynak kod dağıtım hakları
+- Checkpoint/ağırlık dosyaları ve sır içeren artefaktlar
+- Onay kapsamı dışındaki iç güvenlik prosedürleri
+
+Tüm ticari/kurumsal etkileşimler, `LICENSE` ile uyumlu yazılı sözleşme ve gizlilik kontrolleri altında yürütülür.
+
+---
+
 ## 📧 İletişim
 
 **Proje**: MertFormer Titan (Onyx Storm)
@@ -1571,6 +1672,16 @@ Bu proje, tasarım gereği proof-of-system seviyesinde tamamlanır. Amaç, gerç
 - [ ] **Faz 1**: Eğitim Yakınsaması ve Distilasyon Sağlık Kontrolü
 - [ ] **Faz 2**: Çok Alanlı Benchmark Testleri (GSM8K, HumanEval, MMLU)
 - [ ] **Faz 3**: Fiziksel Cihaz Performans Ölçümü (S25/M4)
+- [ ] **Faz 4**: Düşük Seviye Kernel Optimizasyonu (C++ / ENN / QNN, eğitim sonrası opsiyonel hat)
+
+<a id="olceklenebilirlik-vizyonu"></a>
+### 📈 Ölçeklenebilirlik Vizyonu (Claim-Safe)
+Build 27, bilinçli olarak **2.64B** doğrulama ve tekrar üretilebilir kanıt kapılarına odaklanır.  
+Gelecekteki **8B / 70B / 1T** araştırmaları koşullu bir hat olarak ele alınır ve yalnızca şu şartlardan sonra değerlendirilir:
+- 2.64B için eğitimli checkpoint kanıtı,
+- tekrar üretilebilir benchmark çıktıları,
+- donanım/maliyet fizibilite incelemesi,
+- güvenlik ve uyumluluk sınır kontrolleri.
 
 ### 🚫 MertFormer Titan Ne Değildir?
 *   **Genel Bir Chatbot Değildir**: Özellikle kod orkestrasyonu ve yapısal mantık yürütme için optimize edilmiştir.
