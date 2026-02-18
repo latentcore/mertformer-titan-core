@@ -19,6 +19,10 @@ import torch.nn as nn
 from typing import List, Optional, Tuple
 
 from config.config import cfg
+from layers.cognitive_extensions import (
+    ContinuousLatentODEStateChannel,
+    NeuromodulatoryGainLayer,
+)
 from layers.mertformer_block import MertFormerBlock, RMSNorm
 
 
@@ -71,6 +75,19 @@ class MertFormer(nn.Module):
         # TR: V22.0: Gradient Checkpointing (VRAM %40 tasarrufu)
         # EN: V22.0: Gradient Checkpointing (40% VRAM savings)
         self.use_gradient_checkpointing = getattr(cfg, "use_gradient_checkpointing", False)
+        self.use_global_workspace_broadcast = bool(getattr(cfg, "use_global_workspace_broadcast", False))
+        self.workspace_blend = float(getattr(cfg, "workspace_blend", 0.7))
+        self.latent_ode_channel = (
+            ContinuousLatentODEStateChannel(hidden_size)
+            if bool(getattr(cfg, "use_latent_ode_state_channel", False))
+            else None
+        )
+        self.neuromod_gain_layer = (
+            NeuromodulatoryGainLayer(hidden_size)
+            if bool(getattr(cfg, "use_neuromodulatory_gain", False))
+            else None
+        )
+        self.latent_ode_dt = float(getattr(cfg, "latent_ode_dt", 1.0))
 
     def forward(
         self,
@@ -107,6 +124,13 @@ class MertFormer(nn.Module):
         x = x * (self.cfg.hidden_size ** 0.5)
         
         x = self.drop(x)
+        workspace_state = x.mean(dim=1) if self.use_global_workspace_broadcast else None
+        if self.latent_ode_channel is not None and use_cache and past_key_values is None and not self.training:
+            self.latent_ode_channel.reset_state(
+                batch_size=input_ids.size(0),
+                device=x.device,
+                dtype=x.dtype,
+            )
 
         # TR: Aux loss toplamı (tüm MoE katmanlarından)
         # EN: Aux loss sum (from all MoE layers)
@@ -119,6 +143,8 @@ class MertFormer(nn.Module):
         for i, block in enumerate(self.layers):
             # TR: Güvenli KV alımı / EN: Safe KV retrieval
             past_kv = past_key_values[i] if (past_key_values is not None and i < len(past_key_values)) else None
+            if self.latent_ode_channel is not None:
+                x = self.latent_ode_channel(x, dt=self.latent_ode_dt)
             
             # TR: V22.0: Gradient Checkpointing (eğitimde VRAM tasarrufu)
             # EN: V22.0: Gradient Checkpointing (VRAM savings during training)
@@ -129,7 +155,12 @@ class MertFormer(nn.Module):
                 # TR: [V26.4 FIX] Checkpoint Hardening (Sadece Tensor closure)
                 # EN: [V26.4 FIX] Checkpoint Hardening (Tensor-only closure)
                 def run_checkpointed(x_tensor):
-                    x_out, aux_out, _ = block(x_tensor, past_key_value=past_kv, use_cache=False)
+                    x_out, aux_out, _ = block(
+                        x_tensor,
+                        past_key_value=past_kv,
+                        use_cache=False,
+                        workspace=workspace_state,
+                    )
                     return x_out, aux_out
                 
                 x, aux = checkpoint(
@@ -137,9 +168,20 @@ class MertFormer(nn.Module):
                 )
                 present_kv = None
             else:
-                x, aux, present_kv = block(x, past_key_value=past_kv, use_cache=use_cache)
+                x, aux, present_kv = block(
+                    x,
+                    past_key_value=past_kv,
+                    use_cache=use_cache,
+                    workspace=workspace_state,
+                )
             
             aux_total = aux_total + aux
+            if workspace_state is not None:
+                token_summary = x.mean(dim=1)
+                blend = min(max(self.workspace_blend, 0.0), 1.0)
+                workspace_state = workspace_state * blend + token_summary * (1.0 - blend)
+            if self.neuromod_gain_layer is not None:
+                x = self.neuromod_gain_layer(x, workspace_state)
             
             if use_cache:
                 present_key_values.append(present_kv)
@@ -155,6 +197,12 @@ class MertFormer(nn.Module):
         TR: LiquidRouter state'ini sıfırlar (deterministik cache için).
         EN: Resets LiquidRouter state (for deterministic KV cache).
         """
+        if self.latent_ode_channel is not None:
+            self.latent_ode_channel.reset_state(
+                batch_size=batch_size,
+                device=self.tok_embeddings.weight.device,
+                dtype=self.tok_embeddings.weight.dtype,
+            )
         for block in self.layers:
             if getattr(block, "is_moe_layer", False):
                 router = getattr(getattr(block, "ff", None), "router", None)

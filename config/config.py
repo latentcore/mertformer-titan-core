@@ -280,6 +280,40 @@ class MertFormerConfig:
     use_qinn: bool = False # [AUDIT FIX] Disabled for NPU compatibility & Speed
 
     # -------------------------------------------------------------------------
+    # 6.1 ADVANCED COGNITIVE EXTENSIONS (feature-flag, non-breaking defaults)
+    # -------------------------------------------------------------------------
+    # Hierarchical KV Cache (short/long split view for decode)
+    use_hierarchical_kv_cache: bool = False
+    hkv_short_window: int = 512
+    hkv_long_stride: int = 8
+    hkv_max_long_blocks: int = 128
+
+    # Global workspace & neuromodulation
+    use_global_workspace_broadcast: bool = False
+    workspace_blend: float = 0.7
+    use_neuromodulatory_gain: bool = False
+
+    # Continuous-time latent state channel
+    use_latent_ode_state_channel: bool = False
+    latent_ode_dt: float = 1.0
+
+    # MoE cross-expert sync and structural plasticity
+    use_cross_expert_sync_bus: bool = False
+    cross_expert_sync_gain: float = 0.05
+    use_structural_plasticity: bool = False
+    structural_ema_decay: float = 0.98
+    structural_prune_threshold: float = 0.02
+    structural_grow_threshold: float = 0.60
+    structural_update_interval: int = 100
+
+    # Hebbian and neuro-symbolic extensions
+    use_hebbian_plasticity: bool = False
+    hebbian_eta: float = 0.01
+    hebbian_decay: float = 0.99
+    use_neuro_symbolic_layer: bool = False
+    neuro_symbolic_rules: int = 8
+
+    # -------------------------------------------------------------------------
     # [USER OVERRIDE] Teacher Model configuration
     # User confirmed usage of Llama 3.3 70B (assumes A100/H100 or multi-gpu setup)
     teacher_model_id: str = "meta-llama/Llama-3.3-70B-Instruct"

@@ -247,6 +247,60 @@ class MLA(nn.Module):
 
         # Max sequence guard
         self.max_seq = int(getattr(cfg, "max_seq_len", 8192))
+        self.use_hierarchical_kv_cache = bool(getattr(cfg, "use_hierarchical_kv_cache", False))
+        self.hkv_short_window = int(getattr(cfg, "hkv_short_window", 512))
+        self.hkv_long_stride = int(getattr(cfg, "hkv_long_stride", 8))
+        self.hkv_max_long_blocks = int(getattr(cfg, "hkv_max_long_blocks", 128))
+
+    def _pool_long_kv(self, tensor: torch.Tensor, stride: int, max_blocks: int) -> torch.Tensor:
+        """
+        Downsample long-context KV using chunk mean pooling.
+        tensor: [B, Hk, S, D]
+        """
+        bsz, hk, slen, d = tensor.shape
+        if slen == 0:
+            return tensor.new_zeros((bsz, hk, 0, d))
+
+        stride = max(1, int(stride))
+        blocks = slen // stride
+        pooled = tensor.new_zeros((bsz, hk, 0, d))
+
+        if blocks > 0:
+            trimmed = tensor[:, :, : blocks * stride, :]
+            pooled = trimmed.reshape(bsz, hk, blocks, stride, d).mean(dim=3)
+
+        rem = slen - blocks * stride
+        if rem > 0:
+            rem_chunk = tensor[:, :, blocks * stride :, :].mean(dim=2, keepdim=True)
+            pooled = torch.cat([pooled, rem_chunk], dim=2)
+
+        if max_blocks > 0 and pooled.size(2) > max_blocks:
+            pooled = pooled[:, :, -max_blocks:, :]
+        return pooled
+
+    def _build_hierarchical_kv(self, k_full: torch.Tensor, v_full: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        Build short/long context split for decode-time KV attention.
+        Returns compressed-long + short tail.
+        """
+        total_len = k_full.size(2)
+        short_window = max(1, min(self.hkv_short_window, total_len))
+        long_len = total_len - short_window
+
+        if long_len <= 0:
+            return k_full, v_full
+
+        k_long = k_full[:, :, :long_len, :]
+        v_long = v_full[:, :, :long_len, :]
+        k_short = k_full[:, :, long_len:, :]
+        v_short = v_full[:, :, long_len:, :]
+
+        k_long_pooled = self._pool_long_kv(k_long, self.hkv_long_stride, self.hkv_max_long_blocks)
+        v_long_pooled = self._pool_long_kv(v_long, self.hkv_long_stride, self.hkv_max_long_blocks)
+
+        k_ctx = torch.cat([k_long_pooled, k_short], dim=2)
+        v_ctx = torch.cat([v_long_pooled, v_short], dim=2)
+        return k_ctx, v_ctx
 
     def forward(
         self,
@@ -315,12 +369,20 @@ class MLA(nn.Module):
                 q, k = apply_rope_optimized(q, k, cos, sin)
 
         # KV Cache concatenation
+        k_full, v_full = k, v
         if past_key_value is not None:
-            k = torch.cat([past_k, k], dim=2)
-            v = torch.cat([past_v, v], dim=2)
+            k_full = torch.cat([past_k, k], dim=2)
+            v_full = torch.cat([past_v, v], dim=2)
 
         # Cache'i güncelle
-        present_key_value = (k, v) if use_cache else None
+        present_key_value = (k_full, v_full) if use_cache else None
+
+        # Optional hierarchical short/long split for decode-time attention.
+        # We keep full KV for cache persistence; only attention view is compressed.
+        if self.use_hierarchical_kv_cache and past_key_value is not None and T == 1:
+            k, v = self._build_hierarchical_kv(k_full, v_full)
+        else:
+            k, v = k_full, v_full
 
         # [V27.1 FIX] GQA Broadcasting (Repeat KV heads to match Q heads)
         if self.num_kv_heads != self.num_heads:

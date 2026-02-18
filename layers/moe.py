@@ -309,6 +309,13 @@ class MoE(nn.Module):
         self.router_jitter: float = float(getattr(cfg, "router_jitter", 0.01))
         self.router_z_loss_coef: float = float(getattr(cfg, "z_loss_coef", 0.0))
         self.router_alarm_threshold: float = float(getattr(cfg, "router_alarm_threshold", 0.40))
+        self.use_cross_expert_sync_bus: bool = bool(getattr(cfg, "use_cross_expert_sync_bus", False))
+        self.cross_expert_sync_gain: float = float(getattr(cfg, "cross_expert_sync_gain", 0.05))
+        self.use_structural_plasticity: bool = bool(getattr(cfg, "use_structural_plasticity", False))
+        self.structural_ema_decay: float = float(getattr(cfg, "structural_ema_decay", 0.98))
+        self.structural_prune_threshold: float = float(getattr(cfg, "structural_prune_threshold", 0.02))
+        self.structural_grow_threshold: float = float(getattr(cfg, "structural_grow_threshold", 0.60))
+        self.structural_update_interval: int = int(getattr(cfg, "structural_update_interval", 100))
         
         # V26.5: Switch Loss and Collapse Recovery
         self.use_switch_loss: bool = bool(getattr(cfg, "use_switch_loss", False))
@@ -323,6 +330,12 @@ class MoE(nn.Module):
         self.register_buffer("last_router_max_load", torch.tensor(0.0))
         self.register_buffer("last_capacity_overflow_ratio", torch.tensor(0.0))
         self.register_buffer("collapse_detected", torch.tensor(False))
+        self.register_buffer("expert_activity_mask", torch.ones(self.num_experts, dtype=torch.bool))
+        self.register_buffer("expert_usage_ema", torch.zeros(self.num_experts))
+        self.register_buffer("plasticity_step", torch.zeros((), dtype=torch.int64))
+        self.sync_proj = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
+        self.sync_load_proj = nn.Linear(self.num_experts, self.hidden_size, bias=False)
+        self.sync_gate = nn.Parameter(torch.tensor(0.0, dtype=torch.float32))
         
     def get_router_state(self) -> torch.Tensor:
         """External API: Get Liquid Router state."""
@@ -343,6 +356,44 @@ class MoE(nn.Module):
     def get_router_max_load(self) -> torch.Tensor:
         """External API: Maximum expert load."""
         return self.last_router_max_load
+
+    def _apply_structural_plasticity(self, load: torch.Tensor) -> None:
+        """
+        Structural plasticity v0:
+        - Prune low-usage experts by deactivating mask
+        - Grow by re-activating one inactive expert on heavy collapse pressure
+        """
+        if not self.use_structural_plasticity:
+            return
+        if not self.training:
+            return
+
+        with torch.no_grad():
+            self.expert_usage_ema.mul_(self.structural_ema_decay).add_(
+                load.detach() * (1.0 - self.structural_ema_decay)
+            )
+            self.plasticity_step.add_(1)
+            if int(self.plasticity_step.item()) % max(1, self.structural_update_interval) != 0:
+                return
+
+            active_count = int(self.expert_activity_mask.sum().item())
+            min_active = max(1, self.active_experts)
+
+            # Prune one weakest active expert if safely above minimum.
+            if active_count > min_active:
+                active_idx = torch.where(self.expert_activity_mask)[0]
+                active_ema = self.expert_usage_ema[active_idx]
+                prune_pos = torch.argmin(active_ema)
+                prune_idx = active_idx[prune_pos]
+                if active_ema[prune_pos].item() < self.structural_prune_threshold:
+                    self.expert_activity_mask[prune_idx] = False
+                    active_count -= 1
+
+            # Grow by re-enabling one inactive expert under heavy pressure.
+            inactive_idx = torch.where(~self.expert_activity_mask)[0]
+            if inactive_idx.numel() > 0 and self.last_router_max_load.item() > self.structural_grow_threshold:
+                grow_idx = inactive_idx[0]
+                self.expert_activity_mask[grow_idx] = True
 
     def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """
@@ -370,6 +421,9 @@ class MoE(nn.Module):
 
         # Hesaplamalar FP32'de daha kararlı
         logits_f = logits.float()
+        active_mask = self.expert_activity_mask.to(device=logits_f.device)
+        if active_mask.any():
+            logits_f = logits_f.masked_fill(~active_mask.unsqueeze(0), float("-inf"))
 
         # Temperature scaling
         if self.router_temperature != 1.0:
@@ -435,6 +489,7 @@ class MoE(nn.Module):
         entropy = -(load.clamp(min=1e-8) * load.clamp(min=1e-8).log()).sum() / norm
         self.last_router_entropy.copy_(entropy.detach())
         self.last_capacity_overflow_ratio.copy_(overflow_ratio.detach())
+        self._apply_structural_plasticity(load)
 
         # -----------------------------
         # 2) Aux Loss (Load Balancing) - V26.5: Switch/L2 Option
@@ -515,6 +570,13 @@ class MoE(nn.Module):
         )
 
         out_flat = out_flat + shared_out * gate_scale
+
+        # Cross-expert synchronization bus (attention-independent global coordination).
+        if self.use_cross_expert_sync_bus:
+            token_sync = self.sync_proj(out_flat.mean(dim=0, keepdim=True))
+            load_sync = self.sync_load_proj(load.unsqueeze(0).to(dtype=out_flat.dtype))
+            sync = torch.tanh(token_sync + load_sync).expand_as(out_flat)
+            out_flat = out_flat + sync * (torch.sigmoid(self.sync_gate) * self.cross_expert_sync_gain)
 
         # Şekli geri yükle
         out = out_flat.reshape(B, T, H)

@@ -22,6 +22,11 @@ from config.config import cfg
 
 # TR: Katman bileşenlerini import et / EN: Import layer components
 from layers.ffn import MertFormerFFN
+from layers.cognitive_extensions import (
+    GlobalWorkspaceBroadcast,
+    HebbianPlasticityLayer,
+    NeuroSymbolicLayer,
+)
 from layers.liquid import LiquidMixer
 from layers.mla import MLA
 from layers.moe import MoE
@@ -141,11 +146,40 @@ class MertFormerBlock(nn.Module):
                 if liq_every > 0 and ((self.layer_id + 1) % liq_every == 0):
                     self.liquid = LiquidMixer(H)
 
+        # TR: Global Workspace broadcast (opsiyonel)
+        # EN: Optional global workspace broadcast
+        self.workspace_layer = (
+            GlobalWorkspaceBroadcast(H)
+            if bool(getattr(cfg, "use_global_workspace_broadcast", False))
+            else None
+        )
+
+        # TR: Hebbian plasticity (opsiyonel)
+        # EN: Optional Hebbian plasticity
+        self.hebbian_layer = (
+            HebbianPlasticityLayer(
+                H,
+                eta=float(getattr(cfg, "hebbian_eta", 0.01)),
+                decay=float(getattr(cfg, "hebbian_decay", 0.99)),
+            )
+            if bool(getattr(cfg, "use_hebbian_plasticity", False))
+            else None
+        )
+
+        # TR: Neuro-symbolic bridge (opsiyonel)
+        # EN: Optional neuro-symbolic bridge
+        self.neuro_symbolic_layer = (
+            NeuroSymbolicLayer(H, num_rules=int(getattr(cfg, "neuro_symbolic_rules", 8)))
+            if bool(getattr(cfg, "use_neuro_symbolic_layer", False))
+            else None
+        )
+
     def forward(
         self,
         x: torch.Tensor,
         past_key_value: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
         use_cache: bool = False,
+        workspace: Optional[torch.Tensor] = None,
     ) -> Tuple[torch.Tensor, torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]:
         """
         TR: İleri yayılım - Liquid state ve MoE routing yönetimi.
@@ -175,6 +209,8 @@ class MertFormerBlock(nn.Module):
             # TR: LiquidMixer kendi içinde Residual + Norm içerir
             # EN: LiquidMixer contains Residual + Norm internally
             x = self.liquid(x)
+        if self.workspace_layer is not None:
+            x = self.workspace_layer(x, workspace)
 
         # TR: 3. FeedForward / MoE / EN: 3. FeedForward / MoE
         h = self.norm2(x)
@@ -187,6 +223,10 @@ class MertFormerBlock(nn.Module):
 
         # TR: V23.0: Residual Scaling / EN: V23.0: Residual Scaling
         x = x + ff_out * self.residual_scale
+        if self.hebbian_layer is not None:
+            x = self.hebbian_layer(x)
+        if self.neuro_symbolic_layer is not None:
+            x = self.neuro_symbolic_layer(x)
 
         # TR: 4. QINN opsiyonel / EN: 4. QINN optional
         if self.qinn is not None:
