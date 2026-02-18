@@ -14,14 +14,6 @@ REPLACEMENTS = [
     ("_B30.", "_B30."),
     ("_B30-", "_B30-"),
     (
-        "MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.zip",
-        "MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.passphrase.age",
-    ),
-    (
-        "MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.passphrase.age",
-        "MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.passphrase.age",
-    ),
-    (
         "MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age",
         "MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age",
     ),

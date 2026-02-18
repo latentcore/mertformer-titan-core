@@ -14,7 +14,7 @@ Bu paket, pilot go/no-go ve kurumsal teknik inceleme için 12 KPI sözleşmesini
 4. preflight geçişi
 5. operator gate geçişi
 6. pilot şeması mevcut
-7. release artefakt varlığı (zip + 2 age)
+7. release artefakt varlığı (zip + locked age)
 8. swarm omega hazır (45-agent)
 9. onnx smoke geçişi
 10. smoke benchmark mevcut

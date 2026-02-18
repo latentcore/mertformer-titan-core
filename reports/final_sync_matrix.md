@@ -42,14 +42,12 @@ Rule: every tracked `X.md` has `X_TR.md` pair where applicable.
 | Gate | Status |
 | --- | --- |
 | Clean zip excludes venv/cache/log/.env | PASS |
-| Hamdi package includes extra `AUDIT_MEMO.md` only in package | PASS |
 | `.age` package is valid age format (`age-encryption.org/v1`) | PASS |
-| SHA-256 created for all 3 packages | PASS |
+| SHA-256 created for all 2 packages | PASS |
 
 ## 6) Release Identifiers
 
 - Final git SHA (main): `git rev-parse --short HEAD`
 - Release zip: `MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`
-- Hamdi package zip: `MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.passphrase.age`
 - Locked secure package: `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
 - SHA-256 registry: see `reports/release_snapshot.md` (Release Artifacts section).

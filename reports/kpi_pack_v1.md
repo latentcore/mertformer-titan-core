@@ -14,7 +14,7 @@ This package defines the 12 KPI contract used for pilot go/no-go and enterprise 
 4. preflight pass
 5. operator gate pass
 6. pilot schema present
-7. release artifacts presence (zip + 2 age)
+7. release artifacts presence (zip + locked age)
 8. swarm omega readiness (45-agent)
 9. onnx smoke pass
 10. smoke benchmark availability

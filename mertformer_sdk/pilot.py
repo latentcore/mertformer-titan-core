@@ -136,7 +136,9 @@ def parse_verify_output(output: str, exit_code: int) -> dict[str, Any]:
 def run_verify_all(*, project_root: Path | None = None, offline: bool = True) -> dict[str, Any]:
     """Run `scripts/verify_all.sh` and return structured gate summary."""
     root = (project_root or PROJECT_ROOT).resolve()
-    cmd = ["bash", str(root / "scripts" / "verify_all.sh")]
+    # Use a cwd-relative command to avoid leaking absolute workstation paths
+    # into tracked reports / shared artifacts.
+    cmd = ["bash", "scripts/verify_all.sh"]
 
     env = os.environ.copy()
     if offline:
@@ -156,7 +158,16 @@ def run_verify_all(*, project_root: Path | None = None, offline: bool = True) ->
     summary = parse_verify_output(output, result.returncode)
     summary["command"] = " ".join(cmd)
     summary["offline_mode"] = bool(offline)
-    summary["output_tail"] = output[-2000:]
+    tail = output[-2000:]
+    # Sanitize absolute project root paths for portability/privacy.
+    try:
+        tail = tail.replace(str(root), "<PROJECT_ROOT>")
+        # Extra scrub: remove any leaked macOS Desktop paths (including those
+        # appearing inside test error messages).
+        tail = re.sub(r"/Users/[^/]+/Desktop/", "<DESKTOP>/", tail)
+    except Exception:
+        pass
+    summary["output_tail"] = tail
     return summary
 
 
@@ -220,7 +231,8 @@ def build_pilot_report(
         "generated_at_utc": _utc_iso(),
         "run_id": run_id,
         "git_sha": _git_sha(root),
-        "project_root": str(root),
+        # Keep report portable (no absolute workstation paths).
+        "project_root": "<PROJECT_ROOT>",
         "gate_results": {
             "verify_all": {
                 "status": verify.get("status"),

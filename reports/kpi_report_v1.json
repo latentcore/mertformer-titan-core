@@ -1,10 +1,16 @@
 {
   "schema": "kpi_report_v1",
-  "generated_at_utc": "2026-02-18T02:35:05Z",
+  "generated_at_utc": "2026-02-18T15:05:16Z",
   "kpi_version": "1.0",
   "pass_count": 11,
   "total_count": 12,
   "readiness_score": 0.9166666666666666,
+  "pilot_quality": {
+    "score": 0.9166666666666666,
+    "status": "ready",
+    "gates_passed": 11,
+    "gates_total": 12
+  },
   "checks": [
     {
       "key": "kpi01_verify_all",
@@ -60,7 +66,7 @@
       "value": 1.0,
       "target": 1.0,
       "status": "pass",
-      "note": "zip+age trio"
+      "note": "zip+locked age"
     },
     {
       "key": "kpi08_swarm_omega",
@@ -76,7 +82,7 @@
       "value": 1.0,
       "target": 1.0,
       "status": "pass",
-      "note": "onnx smoke skipped"
+      "note": "onnx smoke executed"
     },
     {
       "key": "kpi10_smoke_metrics",
@@ -92,7 +98,7 @@
       "value": 1.0,
       "target": 1.0,
       "status": "pass",
-      "note": "loss_delta(vanilla-mertformer)=-183.2216"
+      "note": "loss_delta(vanilla-mertformer)=2.2321"
     },
     {
       "key": "kpi12_claim_eligibility",
@@ -109,7 +115,7 @@
     "secret_scan_pass": true,
     "pytest_pass": true,
     "pytest_summary": {
-      "passed": 48,
+      "passed": 58,
       "failed": 0,
       "errors": 0,
       "skipped": 3,
@@ -127,16 +133,16 @@
       "benchmarks": "ready"
     },
     "verify_script_pass": true,
-    "command": "bash ${PROJECT_ROOT}/scripts/verify_all.sh",
+    "command": "bash scripts/verify_all.sh",
     "offline_mode": true,
-    "output_tail": "\n        \"ram_total_gb\": 16.0\n      }\n    },\n    {\n      \"step\": \"benchmarks\",\n      \"status\": \"ready\"\n    }\n  ]\n}\n[verify] OK\n\n✈️ ============================================================\n✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀\n✈️ ============================================================\n✈️ Loading secrets from ${PROJECT_ROOT}/.env...\n✈️ STEP 1: SECRET SCAN...\n🛡️ HF_TOKEN detected (redacted)\n🛡️ WANDB_API_KEY detected (redacted)\n✅ Secrets check completed.\n✈️ STEP 2: ARCHITECTURAL AUDIT...\n✅ Layer configuration validated: No Liquid/MoE conflicts.\n✅ MLA Dimensions: Consistent (2048 features).\n✅ BitNet b1.58 logic: ACTIVE (Locked).\n✈️ STEP 3: DATA & DISTILLATION TEST...\n✈️ Offline mode: skipping Hugging Face connectivity checks.\n🛡️ Teacher Model mocked (Prevented 140GB download).\n⚙️  Pre-computing logits for preflight...\n\nDistilling preflight (Chunk 0): 0it [00:00, ?it/s]✅ Saved Final Chunk 0: ${PROJECT_ROOT}/temp_preflight_logits/preflight_test_part_0.pt\n\nDistilling preflight (Chunk 0): 0it [00:00, ?it/s]\n✅ Distillation pipeline: PROVEN (Logits generated/saved).\n✈️ STEP 4: MOE GURU LEARNING TEST...\n✈️ 🏗️  CONFIG: Using 'Mini-Titan' (2 Layers, 256 Hidden, forced MoE/Liquid) for RAM safety.\n✈️ Checking Architectural Gradient Health...\n✅ MoE Learning: PROVEN (48 expert params receiving gradients).\n✅ Liquid Dynamics: PROVEN (7 liquid params receiving gradients).\n✈️ Shared Expert Grad: OK\n✅ MertFormer forward/backward pass verified.\n✅ OVERALL SYSTEM STATUS: 100% PROTECTED & READY.\n✈️ CLEANUP: Removing temporary files...\n✈️ Removed ${PROJECT_ROOT}/temp_preflight_data\n✈️ Removed ${PROJECT_ROOT}/temp_preflight_logits\n✅ CLEANUP: Done.\n✈️ Preflight Duration: 0.44s\n✈️ ============================================================\n✈️ RESULT: 🏆 ALL GREEN\n✈️ Full Report: ${PROJECT_ROOT}/logs/preflight/titan_preflight.log\n✈️ ============================================================"
+    "output_tail": "_items\": 57, \"green_items\": 57, \"all_green\": true, \"evidence_pending_ids\": [8, 9, 11, 12, 51, 52, 54, 55, 56, 57]}\n[verify] OK\n\n✈️ ============================================================\n✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀\n✈️ ============================================================\n✈️ Loading secrets from <PROJECT_ROOT>/.env...\n✈️ STEP 1: SECRET SCAN...\n🛡️ HF_TOKEN detected (redacted)\n🛡️ WANDB_API_KEY detected (redacted)\n✅ Secrets check completed.\n✈️ STEP 2: ARCHITECTURAL AUDIT...\n✅ Layer configuration validated: No Liquid/MoE conflicts.\n✅ MLA Dimensions: Consistent (2048 features).\n✅ BitNet b1.58 logic: ACTIVE (Locked).\n✈️ STEP 3: DATA & DISTILLATION TEST...\n✈️ Offline mode: skipping Hugging Face connectivity checks.\n🛡️ Teacher Model mocked (Prevented 140GB download).\n⚙️  Pre-computing logits for preflight...\n\nDistilling preflight (Chunk 0): 0it [00:00, ?it/s]✅ Saved Final Chunk 0: <PROJECT_ROOT>/temp_preflight_logits/preflight_test_part_0.pt\n\nDistilling preflight (Chunk 0): 0it [00:00, ?it/s]\n✅ Distillation pipeline: PROVEN (Logits generated/saved).\n✈️ STEP 4: MOE GURU LEARNING TEST...\n✈️ 🏗️  CONFIG: Using 'Mini-Titan' (2 Layers, 256 Hidden, forced MoE/Liquid) for RAM safety.\n✈️ Checking Architectural Gradient Health...\n✅ MoE Learning: PROVEN (48 expert params receiving gradients).\n✅ Liquid Dynamics: PROVEN (7 liquid params receiving gradients).\n✈️ Shared Expert Grad: OK\n✅ MertFormer forward/backward pass verified.\n✅ OVERALL SYSTEM STATUS: 100% PROTECTED & READY.\n✈️ CLEANUP: Removing temporary files...\n✈️ Removed <PROJECT_ROOT>/temp_preflight_data\n✈️ Removed <PROJECT_ROOT>/temp_preflight_logits\n✅ CLEANUP: Done.\n✈️ Preflight Duration: 0.98s\n✈️ ============================================================\n✈️ RESULT: 🏆 ALL GREEN\n✈️ Full Report: <PROJECT_ROOT>/logs/preflight/titan_preflight.log\n✈️ ============================================================"
   },
   "pilot_report": {
     "schema": "pilot_report_v1",
-    "generated_at_utc": "2026-02-18T02:35:05Z",
-    "run_id": "pilot_2026-02-18_05-35-05",
-    "git_sha": "a36aa09f8d55d9313e433752b5672adbf15ff0f7",
-    "project_root": "${PROJECT_ROOT}",
+    "generated_at_utc": "2026-02-18T15:05:07Z",
+    "run_id": "pilot_2026-02-18_18-05-07",
+    "git_sha": "4345a2e717c39a852ba8a87fd1e5d9c0582336a8",
+    "project_root": "<PROJECT_ROOT>",
     "gate_results": {
       "verify_all": {
         "status": "pass",
@@ -144,7 +150,7 @@
         "secret_scan_pass": true,
         "pytest_pass": true,
         "pytest_summary": {
-          "passed": 48,
+          "passed": 58,
           "failed": 0,
           "errors": 0,
           "skipped": 3,

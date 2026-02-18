@@ -42,14 +42,12 @@ Kural: uygun olan her tracked `X.md` dosyasının `X_TR.md` karşılığı olmal
 | Kapı | Durum |
 | --- | --- |
 | Temiz zip içinde venv/cache/log/.env yok | PASS |
-| Hamdi paketi ekstra `AUDIT_MEMO.md` sadece paket içinde | PASS |
 | `.age` paketi gerçek age formatında (`age-encryption.org/v1`) | PASS |
-| 3 paket için SHA-256 özeti üretildi | PASS |
+| 2 paket için SHA-256 özeti üretildi | PASS |
 
 ## 6) Release Kimlikleri
 
 - Final git SHA (main): `git rev-parse --short HEAD`
 - Release zip: `MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`
-- Hamdi paket zip: `MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.passphrase.age`
 - Kilitli güvenli paket: `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
 - SHA-256 kayıtları: `reports/release_snapshot_TR.md` (Release Artefaktları bölümü).

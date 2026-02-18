@@ -69,9 +69,9 @@ def collect_kpis(
 
     release_files = [
         project_root / "packages" / "MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip",
-        project_root / "packages" / "MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.passphrase.age",
         project_root / "packages" / "MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age",
     ]
+    release_total = float(len(release_files))
 
     swarm = SwarmRuntime()
     swarm_report = swarm.run("build30 omega readiness verification", mode="omega")
@@ -97,7 +97,7 @@ def collect_kpis(
         KPIItem("kpi04_preflight", "preflight pass", 1.0 if verify_summary.get("preflight_pass") else 0.0, 1.0, _status(1.0 if verify_summary.get("preflight_pass") else 0.0, 1.0), "system drill"),
         KPIItem("kpi05_operator_gate", "operator gate pass", 1.0 if verify_summary.get("operator_gate_pass") else 0.0, 1.0, _status(1.0 if verify_summary.get("operator_gate_pass") else 0.0, 1.0), "nan/restore/failure-budget"),
         KPIItem("kpi06_pilot_schema", "pilot schema output", 1.0 if pilot.get("schema") == "pilot_report_v1" else 0.0, 1.0, _status(1.0 if pilot.get("schema") == "pilot_report_v1" else 0.0, 1.0), "contract"),
-        KPIItem("kpi07_release_artifacts", "release artifacts present", float(sum(1 for p in release_files if p.exists())) / 3.0, 1.0, _status(float(sum(1 for p in release_files if p.exists())) / 3.0, 1.0), "zip+age trio"),
+        KPIItem("kpi07_release_artifacts", "release artifacts present", float(sum(1 for p in release_files if p.exists())) / release_total, 1.0, _status(float(sum(1 for p in release_files if p.exists())) / release_total, 1.0), "zip+locked age"),
         KPIItem("kpi08_swarm_omega", "omega profile ready", omega_ready, 1.0, _status(omega_ready, 1.0), "45 agents"),
         KPIItem("kpi09_onnx_smoke", "onnx smoke", onnx_ok, 1.0, _status(onnx_ok, 1.0), onnx_note),
         KPIItem("kpi10_smoke_metrics", "smoke benchmark availability", 1.0 if smoke_metrics else 0.0, 1.0, _status(1.0 if smoke_metrics else 0.0, 1.0), f"elapsed={smoke_elapsed:.2f}s" if smoke_metrics else "missing"),
