@@ -1,4 +1,4 @@
-# Final Sync Matrix (Build 27)
+# Final Sync Matrix (Build 30)
 
 This file is the final consistency ledger for documentation, version labels, and verification runs.
 
@@ -16,7 +16,7 @@ Rule: every tracked `X.md` has `X_TR.md` pair where applicable.
 
 | Scope | Result |
 | --- | --- |
-| User-visible version references | Build 27 aligned |
+| User-visible version references | Build 30 aligned |
 | Legacy references in active user-facing scripts | normalized |
 | Lineage references | retained only where clearly marked roadmap/history |
 
@@ -49,7 +49,7 @@ Rule: every tracked `X.md` has `X_TR.md` pair where applicable.
 ## 6) Release Identifiers
 
 - Final git SHA (main): `git rev-parse --short HEAD`
-- Release zip: `MertFormer_Titan_OnyxStorm_v1.0_B27_Release.zip`
-- Hamdi package zip: `MertFormer_Titan_OnyxStorm_v1.0_B27_Hamdi_Package_Release.zip`
-- Locked secure package: `MertFormer_Titan_OnyxStorm_v1.0_B27_Locked.secure.age`
+- Release zip: `MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`
+- Hamdi package zip: `MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.passphrase.age`
+- Locked secure package: `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
 - SHA-256 registry: see `reports/release_snapshot.md` (Release Artifacts section).

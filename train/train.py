@@ -6,12 +6,12 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 27) — Pre-Training
+Version: v1.0 (Build 30) — Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD27"
+__version__ = "1.0-BUILD30"
 __author__ = "Mert"
 
 import glob
@@ -291,7 +291,7 @@ def export_to_onnx(model, save_dir, model_name, device):
     dummy_input = torch.randint(0, cfg.vocab_size, (1, dummy_len)).to(device)
 
     try:
-        torch.onnx.export(
+        exported = torch.onnx.export(
             inference_model,
             dummy_input,
             str(onnx_path),
@@ -305,6 +305,12 @@ def export_to_onnx(model, save_dir, model_name, device):
                 'logits': {0: 'batch_size', 1: 'sequence_length'}
             }
         )
+        if hasattr(exported, "save"):
+            exported.save(str(onnx_path))
+        if not onnx_path.exists():
+            raise FileNotFoundError(
+                f"ONNX export returned success but file was not materialized: {onnx_path}"
+            )
         print(f"✅ ONNX BAŞARIYLA KAYDEDİLDİ: {onnx_path}")
     except Exception as e:
         print(f"❌ ONNX DÖNÜŞÜM HATASI: {e}")
@@ -1245,7 +1251,7 @@ def train():
                      if "tau" in n or "liquid" in n:
                          p.requires_grad = True
                  
-                 # Build 27 polish: Rebuild Optimizer to sync groups
+                 # Build 30 polish: Rebuild Optimizer to sync groups
                  # Note: With Accelerate, optimizer rebuilding is tricky. 
                  # We simply update params requires_grad, Accelerate/AdamW should handle it mostly.
                  # Full rebuild requires re-wrap with Accelerate. Skipping for safety in DDP.
@@ -1270,7 +1276,7 @@ def train():
                          if "tau" in n or "liquid" in n:
                              p.requires_grad = True
                       
-                     # Build 27 polish: Rebuild Optimizer to sync groups
+                     # Build 30 polish: Rebuild Optimizer to sync groups
                      rebuild_optimizer(student, opt, cfg)
                       
                      liquid_frozen_until = 0

@@ -41,7 +41,7 @@ Boring stability and learning speed. Success is operational discipline measured 
 - Golden sample set contains exactly 50 prompts.
 - Asset stack present and internally consistent.
 
-## Emergency Finalization Protocol (v1.0 (Build 27) Closeout)
+## Emergency Finalization Protocol (v1.0 (Build 30) Closeout)
 - Do not change training/teacher path unless explicitly required.
 - Keep all kernel paths opt-in and experimental by default.
 - Ensure README/README_TR are aligned (Docs Index + Project Structure).

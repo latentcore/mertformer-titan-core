@@ -192,7 +192,7 @@ def run_mac_simulation():
         # Log Architecture Meta
         logger.log_event("benchmark_start", {
             "device": "mps",
-            "model": "MertFormer Titan v1.0 (Build 27)",
+            "model": "MertFormer Titan v1.0 (Build 30)",
             "seq_len": cfg.max_seq_len,
             "params": "2.64B"
         })

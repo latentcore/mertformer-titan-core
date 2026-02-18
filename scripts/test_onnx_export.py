@@ -6,12 +6,12 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 27) — Pre-Training
+Version: v1.0 (Build 30) — Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD27"
+__version__ = "1.0-BUILD30"
 __author__ = "Mert"
 
 import torch
@@ -57,7 +57,7 @@ def _onnx_export_compat(wrapper, dummy_input, save_path):
             warnings.filterwarnings("ignore", category=DeprecationWarning)
             warnings.filterwarnings("ignore", category=torch.jit.TracerWarning)
             warnings.filterwarnings("ignore", category=UserWarning, message=".*dynamic_axes.*dynamo=True.*")
-            torch.onnx.export(
+            return torch.onnx.export(
                 wrapper,
                 dummy_input,
                 save_path,
@@ -69,7 +69,9 @@ def _onnx_export_compat(wrapper, dummy_input, save_path):
         modern_kwargs = dict(export_kwargs)
         modern_kwargs["dynamo"] = True
         try:
-            _run_export(**modern_kwargs)
+            exported = _run_export(**modern_kwargs)
+            if hasattr(exported, "save"):
+                exported.save(save_path)
             return
         except Exception as exc:
             # Fall back to legacy exporter for compatibility in constrained envs.
@@ -77,10 +79,14 @@ def _onnx_export_compat(wrapper, dummy_input, save_path):
 
         legacy_kwargs = dict(export_kwargs)
         legacy_kwargs["dynamo"] = False
-        _run_export(**legacy_kwargs)
+        exported = _run_export(**legacy_kwargs)
+        if hasattr(exported, "save"):
+            exported.save(save_path)
         return
 
-    _run_export(**export_kwargs)
+    exported = _run_export(**export_kwargs)
+    if hasattr(exported, "save"):
+        exported.save(save_path)
 
 def test_export():
     print("📦 TESTING ONNX EXPORT (Tiny Mode)...")
@@ -126,6 +132,10 @@ def test_export():
     print("   Exporting...")
     try:
         _onnx_export_compat(wrapper, dummy_input, save_path)
+        if not os.path.exists(save_path):
+            raise FileNotFoundError(
+                f"ONNX export completed but output file is missing: {save_path}"
+            )
         print(f"✅ ONNX Export Successful: {save_path}")
         
         # Verify File Exists and Size

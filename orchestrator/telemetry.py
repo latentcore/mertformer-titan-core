@@ -78,6 +78,29 @@ def system_snapshot() -> Dict[str, Optional[float]]:
     return snapshot
 
 
+def runtime_health_report(
+    *,
+    snapshot: Dict[str, Optional[float]],
+    verification_confidence: float,
+    failure_budget_signal: Dict[str, float] | None = None,
+) -> Dict[str, float]:
+    """Build a compact SLA-style runtime health report."""
+    cpu = float(snapshot.get("cpu_percent") or 0.0)
+    ram_total = float(snapshot.get("ram_total_gb") or 0.0)
+    ram_used = float(snapshot.get("ram_used_gb") or 0.0)
+    ram_ratio = (ram_used / ram_total) if ram_total > 0 else 0.0
+    fb = failure_budget_signal or {}
+    hours_since_progress = float(fb.get("hours_since_progress", 0.0))
+    should_pivot = float(fb.get("should_pivot", 0.0))
+    return {
+        "verification_confidence": float(verification_confidence),
+        "cpu_percent": cpu,
+        "ram_usage_ratio": ram_ratio,
+        "hours_since_progress": hours_since_progress,
+        "pivot_signal": should_pivot,
+    }
+
+
 @dataclass
 class LossSlopeTracker:
     window: int = 20

@@ -1,4 +1,4 @@
-# Codex Derin Denetim — MertFormer Titan (v1.0 Build 27)
+# Codex Derin Denetim — MertFormer Titan (v1.0 Build 30)
 **Repo:** `.`  
 **Denetim Tarihi (yerel):** 2026-02-06  
 **Denetim Tipi:** Kod + Dokumantasyon + Çalıştirmali Doğrulama (offline-first)

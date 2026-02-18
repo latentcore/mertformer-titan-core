@@ -24,7 +24,7 @@
 
 # 🦅 MertFormer Titan: Autonomous Swarm Architecture
 > **Target: near-frontier coding capability at mobile compute cost (pending training/benchmarks).**
-> **Development Stage:** Pilot-ready pre-training baseline (`Build 27`, training/benchmark claims pending).
+> **Development Stage:** Pilot-ready pre-training baseline (`Build 30`, training/benchmark claims pending).
 
 ## 🇹🇷 Executive Summary (Non-Technical)
 > **For decision makers who are not reading source code**
@@ -394,7 +394,7 @@ Name expansion:
 - INT8 activations: `[-127, 127]`
 - **theoretical ~20x smaller than FP32** (32-bit → 1.58-bit; requires low-bit inference path)
 - Straight-Through Estimator (STE) for gradient flow
-- RMS scaling for stability (legacy path integrated into Build 27)
+- RMS scaling for stability (legacy path integrated into Build 30)
 
 ### 2. **LiquidRouter (World's First)** 🌍
 - **Novelty**: First-ever use of Liquid Neural Networks for **MoE Routing** (Traffic control, not just memory).
@@ -435,7 +435,7 @@ Name expansion:
 - **Early Stopping**: Patience-based with best checkpoint saving
 - **Dynamic Alpha**: Progressive distillation weight adjustment
 
-### 7. **Performance Optimizations (v1.0 (Build 27))** ⚡
+### 7. **Performance Optimizations (v1.0 (Build 30))** ⚡
 - ✅ **Flash Attention 2**: Projected +30% speedup (A100/H100)
 - ✅ **Fused RMSNorm**: Projected +10% speedup (torch.compile)
 - ✅ **torch.compile (max-autotune)**: Projected +15% speedup
@@ -460,7 +460,7 @@ Name expansion:
 - **Smart Parallel Orchestration (Hyper-Threading)**: Zero-latency pipeline where data download, distillation, and training happen concurrently.
 
 ### QINN Status (Current Build)
-- **Default state:** `use_qinn=False` (disabled in Build 27).
+- **Default state:** `use_qinn=False` (disabled in Build 30).
 - **Why disabled now:** prioritizes training stability, throughput, and edge/NPU compatibility in the primary path.
 - **If enabled later:** can be evaluated as an experimental regularization layer, but may add compute overhead and convergence risk.
 - **Reference path:** `layers/qinn.py` (kept in codebase for controlled ablation use).
@@ -473,7 +473,7 @@ Name expansion:
 ```text
       ╔═══════════════════════════════════════════════════════════════════════════╗
       ║  M E R T F O R M E R   T I T A N   (O N Y X   S T O R M)                  ║
-      ║  » ARCHITECTURE BLUEPRINT v1.0 (Build 27) // TARGET: SAMSUNG S25 NPU «    ║
+      ║  » ARCHITECTURE BLUEPRINT v1.0 (Build 30) // TARGET: SAMSUNG S25 NPU «    ║
       ╚═══════════════════════════════════════════════════════════════════════════╝
                                             │
       ┌─────────────────────────────────────▼─────────────────────────────────────┐
@@ -630,7 +630,7 @@ MertFormer Titan (2.64B Parameters)
 | Configuration | Time/Step | Throughput | GPU Utilization | VRAM Usage |
 | :--- | :---: | :---: | :---: | :---: |
 | **Baseline** | 2.0 sec | 64 tok/s | 47% | 38 GB |
-| **v1.0 (Build 27) (Optimized)** | **~1.2 sec** (Est.) | **~107 tok/s** (Est.) | **~95%** (Target) | **~76 GB** (Target) |
+| **v1.0 (Build 30) (Optimized)** | **~1.2 sec** (Est.) | **~107 tok/s** (Est.) | **~95%** (Target) | **~76 GB** (Target) |
 | **Speedup (Proj.)** | **+67%** | **+67%** | **+102%** | **+100%** |
 **Aggregate Throughput Target (Projected): up to 11,000 tok/s.**  
 This value is a roadmap target for aggregate system capacity under a defined deployment profile; it is **not** a single-device measured benchmark result.  
@@ -1180,7 +1180,7 @@ Planned Turkish data sources:
 
 ### Q: Why 2.64B parameters? Could it be larger?
 
-**A**: 2.64B is the **current design target (Build 27) for mobile-class deployment**:
+**A**: 2.64B is the **current design target (Build 30) for mobile-class deployment**:
 - Fits Samsung S25-class memory budgets (12GB RAM)
 - ~0.65GB weights with BitNet (estimate)
 - Strong speed/quality balance
@@ -1211,7 +1211,7 @@ Planned Turkish data sources:
 
 **A**: On **8x A100 80GB** (projection, **not a benchmark claim**):
 - Baseline: ~25 hours (45K steps x 2 sec/step)
-- v1.0 (Build 27) optimized: **~15 hours** (45K steps x 1.2 sec/step)
+- v1.0 (Build 30) optimized: **~15 hours** (45K steps x 1.2 sec/step)
 - ~10 hours estimated savings
 
 ### Q: Does it really run on Samsung S25?
@@ -1262,7 +1262,7 @@ Planned Turkish data sources:
 - `Data & Evidence`: `datasets/`, `reports/`, `logs/`, `interfaces/`
 - `Research & Extensions`: `ablations/`, `experiments/`, `orchestrator/`, `economics/`, `limits/`
 
-### Canonical Layout (Build 27)
+### Canonical Layout (Build 30)
 
 ```text
 NİHAİ/                     # Project root
@@ -1677,7 +1677,7 @@ All commercial/partner engagement follows written agreement terms and confidenti
 ## 📧 Contact
 
 **Project**: MertFormer Titan (Onyx Storm)  
-**Version**: v1.0 (Build 27, Pre-Training Baseline)  
+**Version**: v1.0 (Build 30, Pre-Training Baseline)  
 **Status**: 🟡 Pilot-Ready (training & benchmark claims pending)  
 **Developed in Türkiye**
 
@@ -1715,7 +1715,7 @@ This project intentionally concludes at the proof-of-system level. The goal is t
 
 <a id="scalability-vision"></a>
 ### 📈 Scalability Vision (Claim-Safe)
-Build 27 is intentionally centered on **2.64B** validation and reproducible evidence gates.  
+Build 30 is intentionally centered on **2.64B** validation and reproducible evidence gates.  
 Future **8B / 70B / 1T** exploration is treated as a conditional research track and is evaluated only after:
 - trained-checkpoint evidence on 2.64B,
 - reproducible benchmark outputs,

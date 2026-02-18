@@ -1,4 +1,4 @@
-# Kullanım Kılavuzu (Build 27)
+# Kullanım Kılavuzu (Build 30)
 
 Bu kılavuz, inceleme ve operasyon için hızlı uygulama adımlarını verir.
 

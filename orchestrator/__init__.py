@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 27) — Pre-Training
+Version: v1.0 (Build 30) — Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -18,6 +18,11 @@ from .audio_sense import AudioSense
 from .sense_engine import SenseEngine
 from .memory import GodMemory, DocChunk, DocIndexer, RAGEngine
 from .core import MertFormerOrchestrator, main
+from .agent_registry import AgentSpec, ALL_AGENT_SPECS, get_profile_specs
+from .swarm_runtime import SwarmRuntime
+from .governance import GovernanceGate, GovernancePolicy
+from .planner import SwarmPlanner
+from .verifier import SwarmVerifier
 
 __all__ = [
     "AGIPaths",
@@ -29,7 +34,15 @@ __all__ = [
     "DocChunk",
     "DocIndexer",
     "RAGEngine",
+    "AgentSpec",
+    "ALL_AGENT_SPECS",
+    "get_profile_specs",
+    "SwarmRuntime",
+    "GovernanceGate",
+    "GovernancePolicy",
+    "SwarmPlanner",
+    "SwarmVerifier",
     "MertFormerOrchestrator",
 ]
 
-__version__ = "1.0-BUILD27"
+__version__ = "1.0-BUILD30"

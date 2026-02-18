@@ -24,7 +24,7 @@
 
 # 🦅 MertFormer Titan: Otonom Sürü Mimarisi
 > **Hedef: Mobil maliyetle, sınır-üstü kodlama yeteneği (eğitim/benchmark sonrası).**
-> **Geliştirme Aşaması:** Pilota hazır eğitim öncesi baseline (`Build 27`, eğitim/benchmark iddiaları beklemede).
+> **Geliştirme Aşaması:** Pilota hazır eğitim öncesi baseline (`Build 30`, eğitim/benchmark iddiaları beklemede).
 
 ## 🇹🇷 Sivil/Komutan Özeti (Teknik Olmayan Okuyucu İçin)
 > **Kaynak kod okumayan karar vericiler için**
@@ -392,7 +392,7 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 - INT8 aktivasyonlar: `[-127, 127]`
 - **FP32’ye göre teorik ~20x daha küçük** (32-bit → 1.58-bit; low-bit inference yolu gerektirir)
 - Gradyan akışı için Straight-Through Estimator (STE)
-- Stabilite için RMS ölçekleme (legacy yol Build 27 içine entegre edildi)
+- Stabilite için RMS ölçekleme (legacy yol Build 30 içine entegre edildi)
 
 ### 2. **LiquidRouter (Dünyada İlk)** 🌍
 - **Yenilik**: Liquid Sinir Ağlarının **MoE Yönlendirmesi** için kullanıldığı ilk mimari.
@@ -433,7 +433,7 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 - **Erken Durdurma**: Sabır tabanlı en iyi kontrol noktası kaydı
 - **Dinamik Alpha**: Aşamalı damıtma ağırlığı ayarlaması
 
-### 7. **Performans Optimizasyonları (v1.0 (Build 27))** ⚡
+### 7. **Performans Optimizasyonları (v1.0 (Build 30))** ⚡
 - ✅ **Flash Attention 2**: Tahmini +%30 hızlanma (A100/H100)
 - ✅ **Fused RMSNorm**: Tahmini +%10 hızlanma (torch.compile)
 - ✅ **torch.compile (max-autotune)**: Tahmini +%15 hızlanma
@@ -458,7 +458,7 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 - **Akıllı Paralel Orkestrasyon (Hyper-Threading)**: Veri indirme, damıtma ve eğitimin eş zamanlı gerçekleştiği sıfır gecikmeli boru hattı.
 
 ### QINN Durumu (Mevcut Build)
-- **Varsayılan durum:** `use_qinn=False` (Build 27'de kapalı).
+- **Varsayılan durum:** `use_qinn=False` (Build 30'de kapalı).
 - **Şu an neden kapalı:** ana eğitim hattında stabilite, throughput ve edge/NPU uyumluluğu önceliklendirildi.
 - **İleride açılırsa:** deneysel bir düzenleme katmanı olarak ablation ile test edilebilir; ek hesaplama yükü ve yakınsama riski oluşturabilir.
 - **Referans dosya:** `layers/qinn.py` (kontrollü deneyler için kod tabanında tutulur).
@@ -471,7 +471,7 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 ```text
       ╔═══════════════════════════════════════════════════════════════════════════╗
       ║  M E R T F O R M E R   T I T A N   (O N Y X   S T O R M)                  ║
-      ║  » TEKNİK PLAN v1.0 (Build 27) // HEDEF: SAMSUNG S25 NPU «                ║
+      ║  » TEKNİK PLAN v1.0 (Build 30) // HEDEF: SAMSUNG S25 NPU «                ║
       ╚═══════════════════════════════════════════════════════════════════════════╝
                                             │
       ┌─────────────────────────────────────▼─────────────────────────────────────┐
@@ -628,7 +628,7 @@ MertFormer Titan (2.64B Parametre)
 | Yapılandırma | Süre/Adım | Verim (Throughput) | GPU Kullanımı | VRAM Kullanımı |
 | :--- | :---: | :---: | :---: | :---: |
 | **Temel (Baseline)** | 2.0 sn | 64 tok/sn | %47 | 38 GB |
-| **v1.0 (Build 27) (Optimize)** | **~1.2 sn** (Tahmini) | **~107 tok/sn** (Tahmini) | **~%95** (Hedef) | **~76 GB** (Hedef) |
+| **v1.0 (Build 30) (Optimize)** | **~1.2 sn** (Tahmini) | **~107 tok/sn** (Tahmini) | **~%95** (Hedef) | **~76 GB** (Hedef) |
 | **Hızlanma (Öngörü)** | **+%67** | **+%67** | **+%102** | **+%100** |
 **Toplam Throughput Hedefi (Projeksiyon): 11.000 tok/sn seviyesine kadar.**  
 Bu değer, tanımlı dağıtım profilindeki toplam sistem kapasitesi için yol haritası hedefidir; **tek cihazda ölçülmüş benchmark sonucu değildir**.  
@@ -1160,7 +1160,7 @@ MertFormer Titan, sadece bir AI modeli değil, **dijital bağımsızlık manifes
 3. **Kültürel Koruma**: Türk dili ve kültürü AI'da temsil edilir
 4. **Ekonomik Tasarruf**: Bulut maliyeti yok, cihazda çalışır
 
-### Türkçe Corpus (Build 27 Sonrası Yol Haritası)
+### Türkçe Corpus (Build 30 Sonrası Yol Haritası)
 
 Planlanan Türkçe veri kaynakları:
 - **Vikipedi TR**: ~500K makale
@@ -1178,7 +1178,7 @@ Planlanan Türkçe veri kaynakları:
 
 ### S: Neden 2.64B parametre? Daha büyük olabilir miydi?
 
-**C**: 2.64B, **Build 27 için mevcut tasarım hedefidir**:
+**C**: 2.64B, **Build 30 için mevcut tasarım hedefidir**:
 - Samsung S25 (12GB RAM) rahatça çalıştırır
 - BitNet ile ~0.65GB weights (tahmini)
 - Hız/kalite dengesi mükemmel
@@ -1209,7 +1209,7 @@ Planlanan Türkçe veri kaynakları:
 
 **C**: **8x A100 80GB için projeksiyon**dur (**benchmark iddiası değildir**):
 - Temel: ~25 saat (45K adım × 2 sn/adım)
-- v1.0 (Build 27) Optimize: **~15 saat** (45K adım × 1.2 sn/adım)
+- v1.0 (Build 30) Optimize: **~15 saat** (45K adım × 1.2 sn/adım)
 - **10 saat tasarruf!**
 
 ### S: Samsung S25'te gerçekten çalışır mı?
@@ -1217,7 +1217,7 @@ Planlanan Türkçe veri kaynakları:
 **C**: **Evet, teorik olarak**:
 - ONNX export hazır
 - NPU optimizasyonu planlandı
-- Gerçek cihaz testi: Build 27 sonrası yol haritası
+- Gerçek cihaz testi: Build 30 sonrası yol haritası
 - Gerçek cihaz performans ölçümleri henüz tamamlanmadı
 
 ### S: Low-bit kernel production-ready mi?
@@ -1260,7 +1260,7 @@ Planlanan Türkçe veri kaynakları:
 - `Veri ve Kanıt`: `datasets/`, `reports/`, `logs/`, `interfaces/`
 - `Araştırma ve Uzantılar`: `ablations/`, `experiments/`, `orchestrator/`, `economics/`, `limits/`
 
-### Kanonik Yerleşim (Build 27)
+### Kanonik Yerleşim (Build 30)
 
 ```text
 NİHAİ/                     # Proje kökü
@@ -1675,7 +1675,7 @@ Tüm ticari/kurumsal etkileşimler, `LICENSE` ile uyumlu yazılı sözleşme ve 
 ## 📧 İletişim
 
 **Proje**: MertFormer Titan (Onyx Storm)
-**Sürüm**: v1.0 (Build 27, Eğitim Öncesi Baseline)  
+**Sürüm**: v1.0 (Build 30, Eğitim Öncesi Baseline)  
 **Durum**: 🟡 Pilota Hazır (eğitim ve benchmark iddiaları beklemede)  
 **Türkiye'de geliştirildi**
 
@@ -1713,7 +1713,7 @@ Bu proje, tasarım gereği proof-of-system seviyesinde tamamlanır. Amaç, gerç
 
 <a id="olceklenebilirlik-vizyonu"></a>
 ### 📈 Ölçeklenebilirlik Vizyonu (Claim-Safe)
-Build 27, bilinçli olarak **2.64B** doğrulama ve tekrar üretilebilir kanıt kapılarına odaklanır.  
+Build 30, bilinçli olarak **2.64B** doğrulama ve tekrar üretilebilir kanıt kapılarına odaklanır.  
 Gelecekteki **8B / 70B / 1T** araştırmaları koşullu bir hat olarak ele alınır ve yalnızca şu şartlardan sonra değerlendirilir:
 - 2.64B için eğitimli checkpoint kanıtı,
 - tekrar üretilebilir benchmark çıktıları,

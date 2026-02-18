@@ -36,10 +36,16 @@ mertformer export --ckpt latest --bitpack
 mertformer benchmark --ckpt latest --samples 0
 mertformer verify
 mertformer pilot-report --out reports/pilot_report.json
+mertformer kpi-report --out reports/kpi_report_v1.json
 ```
 
 CLI commands now enforce checkpoint presence by default (`run` and `benchmark`).
 Use `--allow-random` only for non-claim demos.
+
+## KPI Report (Build 30)
+- Generate: `mertformer kpi-report --out reports/kpi_report_v1.json`
+- Optional ONNX KPI: `mertformer kpi-report --out reports/kpi_report_v1.json --onnx-check`
+- Schema: `interfaces/kpi_report_v1.schema.json`
 
 ## Low-bit Kernel Toggle (Opt-in)
 - Python: `enable_lowbit_kernels(True)`

@@ -9,6 +9,7 @@ from pathlib import Path
 from .api import load_model, generate, benchmark, enable_lowbit_kernels
 from .export import export_onnx
 from .pilot import run_verify_all, build_pilot_report, write_pilot_report
+from .kpi import collect_kpis, write_kpi_report
 
 
 def _cmd_info(args: argparse.Namespace) -> None:
@@ -91,6 +92,17 @@ def _cmd_pilot_report(args: argparse.Namespace) -> None:
         raise SystemExit(int(verify_summary.get("exit_code") or 1))
 
 
+def _cmd_kpi_report(args: argparse.Namespace) -> None:
+    payload = collect_kpis(
+        project_root=Path("."),
+        run_verify=not args.skip_verify,
+        run_onnx_check=args.onnx_check,
+    )
+    out_path = write_kpi_report(args.out, payload)
+    print(json.dumps(payload, indent=2))
+    print(f"kpi_report_written={out_path}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="mertformer")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -130,6 +142,12 @@ def main() -> None:
     report_p.add_argument("--out", required=True, help="Output JSON path")
     report_p.add_argument("--skip-verify", action="store_true", help="Skip running verify_all.sh and build report from filesystem signals only.")
     report_p.set_defaults(func=_cmd_pilot_report)
+
+    kpi_p = sub.add_parser("kpi-report", help="Generate kpi_report_v1 JSON")
+    kpi_p.add_argument("--out", required=True, help="Output JSON path")
+    kpi_p.add_argument("--skip-verify", action="store_true", help="Skip running verify_all.sh")
+    kpi_p.add_argument("--onnx-check", action="store_true", help="Run ONNX export smoke KPI")
+    kpi_p.set_defaults(func=_cmd_kpi_report)
 
     args = parser.parse_args()
     try:

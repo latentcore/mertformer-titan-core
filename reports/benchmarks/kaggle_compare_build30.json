@@ -1,0 +1,60 @@
+{
+  "schema": "kaggle_compare_build30_v1",
+  "generated_at_utc": "2026-02-18T02:34:27Z",
+  "device": "mps",
+  "quick_mode": true,
+  "target_param_band": {
+    "low": 25000000,
+    "high": 35000000
+  },
+  "variant_config": {
+    "mertformer": {
+      "hidden": 256,
+      "layers": 8,
+      "heads": 8,
+      "use_moe": true,
+      "use_liquid": true
+    },
+    "vanilla": {
+      "hidden": 416,
+      "layers": 8,
+      "heads": 8
+    }
+  },
+  "mertformer": {
+    "name": "mertformer",
+    "params": 29907976,
+    "steps": 40,
+    "final_loss": 234.21897888183594,
+    "min_loss": 230.9587860107422,
+    "avg_loss": 236.53484115600585,
+    "avg_grad_norm": 29.73815822155023,
+    "max_grad_norm": 30.320318454972973,
+    "nan_steps": 0,
+    "elapsed_sec": 17.795286178588867,
+    "tokens_per_sec": 287.71664297033556,
+    "avg_step_time_sec": 0.4448821544647217,
+    "peak_mem_gb": 0.0
+  },
+  "vanilla": {
+    "name": "vanilla",
+    "params": 30315584,
+    "steps": 40,
+    "final_loss": 50.99734115600586,
+    "min_loss": 49.98456573486328,
+    "avg_loss": 60.2059627532959,
+    "avg_grad_norm": 102.6341980903745,
+    "max_grad_norm": 329.271165270725,
+    "nan_steps": 0,
+    "elapsed_sec": 3.2842800617218018,
+    "tokens_per_sec": 1558.9413520708742,
+    "avg_step_time_sec": 0.08210700154304504,
+    "peak_mem_gb": 0.0
+  },
+  "loss_delta": -183.22163772583008,
+  "band_check": {
+    "mertformer_in_band": true,
+    "vanilla_in_band": true,
+    "both_in_band": true
+  }
+}

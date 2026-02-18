@@ -6,12 +6,12 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 27) — Pre-Training
+Version: v1.0 (Build 30) — Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD27"
+__version__ = "1.0-BUILD30"
 __author__ = "Mert"
 
 import os
@@ -291,7 +291,7 @@ def write_tree(path: Path, file_handle, prefix: str = ""):
 
 def main():
     print("\n" + "=" * 60)
-    print("🧠 MERTFORMER SMART AUDITOR (Build 27)")
+    print("🧠 MERTFORMER SMART AUDITOR (Build 30)")
     print("-" * 60)
     print(f"Hedef: {ROOT_DIR}")
     print("MOD: Tüm dosya yapısını gösterir, sadece METİN içeriklerini okur.")

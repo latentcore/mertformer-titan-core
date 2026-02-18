@@ -1,4 +1,4 @@
-# Final Senkron Matris (Build 27)
+# Final Senkron Matris (Build 30)
 
 Bu dosya, doküman eşleşmesi, sürüm tutarlılığı ve doğrulama koşularının son durum kaydıdır.
 
@@ -16,7 +16,7 @@ Kural: uygun olan her tracked `X.md` dosyasının `X_TR.md` karşılığı olmal
 
 | Kapsam | Sonuç |
 | --- | --- |
-| Kullanıcıya görünen sürüm referansları | Build 27 uyumlu |
+| Kullanıcıya görünen sürüm referansları | Build 30 uyumlu |
 | Aktif kullanıcı scriptlerinde legacy referanslar | normalize edildi |
 | Soy/köken (lineage) notları | sadece açıkça roadmap/tarihçe olarak bırakıldı |
 
@@ -49,7 +49,7 @@ Kural: uygun olan her tracked `X.md` dosyasının `X_TR.md` karşılığı olmal
 ## 6) Release Kimlikleri
 
 - Final git SHA (main): `git rev-parse --short HEAD`
-- Release zip: `MertFormer_Titan_OnyxStorm_v1.0_B27_Release.zip`
-- Hamdi paket zip: `MertFormer_Titan_OnyxStorm_v1.0_B27_Hamdi_Package_Release.zip`
-- Kilitli güvenli paket: `MertFormer_Titan_OnyxStorm_v1.0_B27_Locked.secure.age`
+- Release zip: `MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`
+- Hamdi paket zip: `MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.passphrase.age`
+- Kilitli güvenli paket: `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
 - SHA-256 kayıtları: `reports/release_snapshot_TR.md` (Release Artefaktları bölümü).

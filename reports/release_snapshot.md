@@ -4,7 +4,7 @@ This file is a human-readable snapshot of the repository at a review point-in-ti
 
 ## Snapshot
 
-- Date (local): 2026-02-09
+- Date (local): 2026-02-18
 - Base Git SHA (short): `git rev-parse --short HEAD`
 - Baseline Python: 3.11 (see `repro/python.md`)
 - Default mode: offline-first (`TITAN_OFFLINE=1`)
@@ -20,7 +20,7 @@ bash scripts/verify_all.sh
 
 Expected outputs:
 - Secret scan: PASS
-- Pytest: PASS (`30 passed, 4 skipped`)
+- Pytest: PASS (`48 passed, 3 skipped`)
 - Preflight (offline): PASS
 - Operator gate (safe, offline): PASS
 
@@ -46,13 +46,13 @@ TITAN_OFFLINE=1 bash run.sh --test
 
 ## Release Artifacts (Desktop)
 
-- `MertFormer_Titan_OnyxStorm_v1.0_B27_Release.zip`
-- `MertFormer_Titan_OnyxStorm_v1.0_B27_Hamdi_Package_Release.zip`
-- `MertFormer_Titan_OnyxStorm_v1.0_B27_Locked.secure.age`
+- `MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`
+- `MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.passphrase.age`
+- `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
 - SHA-256:
-  - `f1c1e6fbfcda133e772a276c218dfcfa43d3c5bd39411ab77ae53db9a91e2d79` (`MertFormer_Titan_OnyxStorm_v1.0_B27_Release.zip`)
-  - `f1c1e6fbfcda133e772a276c218dfcfa43d3c5bd39411ab77ae53db9a91e2d79` (`MertFormer_Titan_OnyxStorm_v1.0_B27_Hamdi_Package_Release.zip`)
-  - `5b7c43bb212672f212526a4405d40ba3a71b110a841d258a3ec7438625946339` (`MertFormer_Titan_OnyxStorm_v1.0_B27_Locked.secure.age`)
+  - `597e20809e4e6fccee81c4266c6dbb9090954406cb54c481a45eabbbb47ecf18` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
+  - `01a752e4d64b0675bcb88a537ed8737b34bbb7ea0a663a63c3bc0b0eaa811384` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.passphrase.age`)
+  - `40ec1e3fab3cf7c29698b75c4ea15633058027bdf603ec5d224b7fb8e9142adc` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)
 
 ## Known Gates / Blockers
 

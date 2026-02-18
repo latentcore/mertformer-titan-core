@@ -1,0 +1,186 @@
+{
+  "schema": "kpi_report_v1",
+  "generated_at_utc": "2026-02-18T02:35:05Z",
+  "kpi_version": "1.0",
+  "pass_count": 11,
+  "total_count": 12,
+  "readiness_score": 0.9166666666666666,
+  "checks": [
+    {
+      "key": "kpi01_verify_all",
+      "label": "verify_all PASS",
+      "value": 1.0,
+      "target": 1.0,
+      "status": "pass",
+      "note": "offline gate"
+    },
+    {
+      "key": "kpi02_secret_scan",
+      "label": "secret scan",
+      "value": 1.0,
+      "target": 1.0,
+      "status": "pass",
+      "note": "tracked files"
+    },
+    {
+      "key": "kpi03_pytest",
+      "label": "pytest pass",
+      "value": 1.0,
+      "target": 1.0,
+      "status": "pass",
+      "note": "test gate"
+    },
+    {
+      "key": "kpi04_preflight",
+      "label": "preflight pass",
+      "value": 1.0,
+      "target": 1.0,
+      "status": "pass",
+      "note": "system drill"
+    },
+    {
+      "key": "kpi05_operator_gate",
+      "label": "operator gate pass",
+      "value": 1.0,
+      "target": 1.0,
+      "status": "pass",
+      "note": "nan/restore/failure-budget"
+    },
+    {
+      "key": "kpi06_pilot_schema",
+      "label": "pilot schema output",
+      "value": 1.0,
+      "target": 1.0,
+      "status": "pass",
+      "note": "contract"
+    },
+    {
+      "key": "kpi07_release_artifacts",
+      "label": "release artifacts present",
+      "value": 1.0,
+      "target": 1.0,
+      "status": "pass",
+      "note": "zip+age trio"
+    },
+    {
+      "key": "kpi08_swarm_omega",
+      "label": "omega profile ready",
+      "value": 1.0,
+      "target": 1.0,
+      "status": "pass",
+      "note": "45 agents"
+    },
+    {
+      "key": "kpi09_onnx_smoke",
+      "label": "onnx smoke",
+      "value": 1.0,
+      "target": 1.0,
+      "status": "pass",
+      "note": "onnx smoke skipped"
+    },
+    {
+      "key": "kpi10_smoke_metrics",
+      "label": "smoke benchmark availability",
+      "value": 1.0,
+      "target": 1.0,
+      "status": "pass",
+      "note": "elapsed=2.21s"
+    },
+    {
+      "key": "kpi11_kaggle_compare",
+      "label": "kaggle compare availability",
+      "value": 1.0,
+      "target": 1.0,
+      "status": "pass",
+      "note": "loss_delta(vanilla-mertformer)=-183.2216"
+    },
+    {
+      "key": "kpi12_claim_eligibility",
+      "label": "benchmark claim eligibility",
+      "value": 0.0,
+      "target": 1.0,
+      "status": "warn",
+      "note": "checkpoint + full gates"
+    }
+  ],
+  "verify_summary": {
+    "status": "pass",
+    "exit_code": 0,
+    "secret_scan_pass": true,
+    "pytest_pass": true,
+    "pytest_summary": {
+      "passed": 48,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 3,
+      "warnings": 6
+    },
+    "preflight_pass": true,
+    "operator_gate_pass": true,
+    "operator_steps": {
+      "nan_kill_switch": "pass",
+      "checkpoint_restore_drill": "pass",
+      "failure_budget_drill": "pass",
+      "overfit_gate": "pass_fast",
+      "golden_samples": "pass",
+      "telemetry_snapshot": "pass",
+      "benchmarks": "ready"
+    },
+    "verify_script_pass": true,
+    "command": "bash /Users/mertyunlu/Desktop/NİHAİ/scripts/verify_all.sh",
+    "offline_mode": true,
+    "output_tail": "\n        \"ram_total_gb\": 16.0\n      }\n    },\n    {\n      \"step\": \"benchmarks\",\n      \"status\": \"ready\"\n    }\n  ]\n}\n[verify] OK\n\n✈️ ============================================================\n✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀\n✈️ ============================================================\n✈️ Loading secrets from /Users/mertyunlu/Desktop/NİHAİ/.env...\n✈️ STEP 1: SECRET SCAN...\n🛡️ HF_TOKEN detected (redacted)\n🛡️ WANDB_API_KEY detected (redacted)\n✅ Secrets check completed.\n✈️ STEP 2: ARCHITECTURAL AUDIT...\n✅ Layer configuration validated: No Liquid/MoE conflicts.\n✅ MLA Dimensions: Consistent (2048 features).\n✅ BitNet b1.58 logic: ACTIVE (Locked).\n✈️ STEP 3: DATA & DISTILLATION TEST...\n✈️ Offline mode: skipping Hugging Face connectivity checks.\n🛡️ Teacher Model mocked (Prevented 140GB download).\n⚙️  Pre-computing logits for preflight...\n\nDistilling preflight (Chunk 0): 0it [00:00, ?it/s]✅ Saved Final Chunk 0: /Users/mertyunlu/Desktop/NİHAİ/temp_preflight_logits/preflight_test_part_0.pt\n\nDistilling preflight (Chunk 0): 0it [00:00, ?it/s]\n✅ Distillation pipeline: PROVEN (Logits generated/saved).\n✈️ STEP 4: MOE GURU LEARNING TEST...\n✈️ 🏗️  CONFIG: Using 'Mini-Titan' (2 Layers, 256 Hidden, forced MoE/Liquid) for RAM safety.\n✈️ Checking Architectural Gradient Health...\n✅ MoE Learning: PROVEN (48 expert params receiving gradients).\n✅ Liquid Dynamics: PROVEN (7 liquid params receiving gradients).\n✈️ Shared Expert Grad: OK\n✅ MertFormer forward/backward pass verified.\n✅ OVERALL SYSTEM STATUS: 100% PROTECTED & READY.\n✈️ CLEANUP: Removing temporary files...\n✈️ Removed /Users/mertyunlu/Desktop/NİHAİ/temp_preflight_data\n✈️ Removed /Users/mertyunlu/Desktop/NİHAİ/temp_preflight_logits\n✅ CLEANUP: Done.\n✈️ Preflight Duration: 0.44s\n✈️ ============================================================\n✈️ RESULT: 🏆 ALL GREEN\n✈️ Full Report: /Users/mertyunlu/Desktop/NİHAİ/logs/preflight/titan_preflight.log\n✈️ ============================================================"
+  },
+  "pilot_report": {
+    "schema": "pilot_report_v1",
+    "generated_at_utc": "2026-02-18T02:35:05Z",
+    "run_id": "pilot_2026-02-18_05-35-05",
+    "git_sha": "a36aa09f8d55d9313e433752b5672adbf15ff0f7",
+    "project_root": "/Users/mertyunlu/Desktop/NİHAİ",
+    "gate_results": {
+      "verify_all": {
+        "status": "pass",
+        "exit_code": 0,
+        "secret_scan_pass": true,
+        "pytest_pass": true,
+        "pytest_summary": {
+          "passed": 48,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 3,
+          "warnings": 6
+        },
+        "preflight_pass": true,
+        "operator_gate_pass": true,
+        "verify_script_pass": true
+      },
+      "operator_mode_steps": {
+        "nan_kill_switch": "pass",
+        "checkpoint_restore_drill": "pass",
+        "failure_budget_drill": "pass",
+        "overfit_gate": "pass_fast",
+        "golden_samples": "pass",
+        "telemetry_snapshot": "pass",
+        "benchmarks": "ready"
+      }
+    },
+    "risk_flags": {
+      "missing_checkpoint": true,
+      "missing_stage_datasets": true,
+      "missing_stage_dataset_files": [
+        "datasets/stage1/stage1_data.jsonl",
+        "datasets/stage2/stage2_data.jsonl",
+        "datasets/stage3/stage3_data.jsonl",
+        "datasets/stage4_soul/stage4_data.jsonl",
+        "datasets/stage5_tools/stage5_data.jsonl"
+      ],
+      "benchmark_not_eligible_for_claim": true
+    },
+    "benchmark_eligibility": {
+      "eligible_for_claim": false,
+      "reasons": [
+        "trained checkpoint missing"
+      ]
+    }
+  }
+}

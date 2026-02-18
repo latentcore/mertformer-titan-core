@@ -1,4 +1,4 @@
-# Model Card — MertFormer Titan (v1.0 (Build 27))
+# Model Card — MertFormer Titan (v1.0 (Build 30))
 
 ## Overview
 MertFormer Titan is a 2.64B-parameter, mobile-first language model built around

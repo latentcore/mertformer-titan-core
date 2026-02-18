@@ -36,10 +36,16 @@ mertformer export --ckpt latest --bitpack
 mertformer benchmark --ckpt latest --samples 0
 mertformer verify
 mertformer pilot-report --out reports/pilot_report.json
+mertformer kpi-report --out reports/kpi_report_v1.json
 ```
 
 CLI tarafinda `run` ve `benchmark` komutlari varsayilan olarak checkpoint ister.
 Sadece claim disi demo için `--allow-random` kullanin.
+
+## KPI Raporu (Build 30)
+- Uretim: `mertformer kpi-report --out reports/kpi_report_v1.json`
+- Opsiyonel ONNX KPI: `mertformer kpi-report --out reports/kpi_report_v1.json --onnx-check`
+- Sema: `interfaces/kpi_report_v1.schema.json`
 
 ## Low-bit Kernel (Opt-in)
 - Python: `enable_lowbit_kernels(True)`

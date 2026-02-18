@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mertformer.ai/schemas/kpi_report_v1.schema.json",
+  "title": "kpi_report_v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "generated_at_utc",
+    "kpi_version",
+    "pass_count",
+    "total_count",
+    "readiness_score",
+    "checks"
+  ],
+  "properties": {
+    "schema": {"const": "kpi_report_v1"},
+    "generated_at_utc": {"type": "string"},
+    "kpi_version": {"type": "string"},
+    "pass_count": {"type": "integer", "minimum": 0},
+    "total_count": {"type": "integer", "minimum": 1},
+    "readiness_score": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["key", "label", "value", "target", "status", "note"],
+        "properties": {
+          "key": {"type": "string"},
+          "label": {"type": "string"},
+          "value": {"type": "number"},
+          "target": {"type": "number"},
+          "status": {"type": "string", "enum": ["pass", "warn", "fail"]},
+          "note": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "verify_summary": {"type": "object"},
+    "pilot_report": {"type": "object"}
+  },
+  "additionalProperties": true
+}

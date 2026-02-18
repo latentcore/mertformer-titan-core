@@ -6,19 +6,17 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 27) — Pre-Training
+Version: v1.0 (Build 30) — Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD27"
+__version__ = "1.0-BUILD30"
 __author__ = "Mert"
 
-import os
 import sys
 import logging
-from typing import Optional, Dict, Any, Callable
-from pathlib import Path
+from typing import Optional
 
 import torch
 
@@ -29,6 +27,7 @@ from .web_sense import WebSense
 from .audio_sense import AudioSense
 from .sense_engine import SenseEngine
 from .memory import GodMemory, DocIndexer, RAGEngine
+from .swarm_runtime import SwarmRuntime
 
 # TR: MertFormer import - fallback mekanizmalı
 # EN: MertFormer import - with fallback mechanism
@@ -103,11 +102,17 @@ class MertFormerOrchestrator:
         # TR: Model / EN: Model
         self.model = None
         self.tokenizer = None
+        self.swarm = SwarmRuntime(generate_fn=self._swarm_generate_callback)
         
         if load_model and MERTFORMER_AVAILABLE:
             self._load_model()
         
         print(f"✅ Orchestrator hazır!")
+
+    def _swarm_generate_callback(self, prompt: str) -> str:
+        if self.model is None or self.tokenizer is None:
+            return "[swarm-fallback] model unavailable"
+        return self.generate(prompt, max_tokens=96, temperature=0.4, top_k=40, top_p=0.9)
     
     def _load_model(self) -> None:
         """TR: MertFormer modelini yükle. / EN: Load MertFormer model."""
@@ -235,6 +240,22 @@ Titan:"""
             self.audio.speak(response)
         
         return response
+
+    def run_swarm_task(self, task: str, mode: str = "nano") -> dict:
+        """
+        TR: Deterministik swarm yürütümü (nano|mid|omega).
+        EN: Deterministic swarm execution (nano|mid|omega).
+        """
+        report = self.swarm.run(task=task, mode=mode)
+        return {
+            "mode": report.mode,
+            "task": report.task,
+            "governance": report.governance,
+            "selected_agents": report.selected_agents,
+            "verification": report.verification,
+            "telemetry": report.telemetry,
+            "outputs": report.outputs,
+        }
     
     def status(self) -> str:
         """TR: Sistem durumunu döndür. / EN: Return system status."""
@@ -243,6 +264,7 @@ Titan:"""
             "=" * 40,
             self.hardware.scan(),
             f"🧠 Model: {'Yüklü' if self.model else 'Yüklenmedi'}",
+            "🤖 Swarm Modes: nano(3), mid(15), omega(45)",
             f"💾 Hafıza: {len(self.memory.cache)} kayıt",
             f"📚 Doküman Chunks: {len(self.doc_indexer.chunks)}",
             f"🌐 Web: {'Aktif' if self.web.enabled else 'Devre Dışı'}",
@@ -280,6 +302,17 @@ Titan:"""
                     query = user_input[5:].strip()
                     print(f"🌐 Web araması: {query}")
                     print(self.web.search(query))
+                    continue
+                elif user_input.lower().startswith("!swarm "):
+                    payload = user_input[7:].strip()
+                    mode = "nano"
+                    if payload.startswith("omega:"):
+                        mode = "omega"
+                        payload = payload[6:].strip()
+                    elif payload.startswith("mid:"):
+                        mode = "mid"
+                        payload = payload[4:].strip()
+                    print(self.run_swarm_task(payload, mode=mode))
                     continue
                 
                 # TR: Normal sohbet / EN: Normal chat

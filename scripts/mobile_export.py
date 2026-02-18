@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 27) — Pre-Training
+Version: v1.0 (Build 30) — Pre-Training
 Status : PRE-TRAINING (CLOUD MODE)
 ==============================================================================
 
@@ -23,7 +23,7 @@ FEATURES:
 NOTE: Requires ~32GB RAM for 3B parameter models during optimization.
 """
 
-__version__ = "1.0-BUILD27"
+__version__ = "1.0-BUILD30"
 __author__ = "Mert"
 
 import os
@@ -63,7 +63,7 @@ def export_production_model(ckpt_override=None, output_dir=None, bitpack: bool =
     # -------------------------------------------------------------------------
     # 1. SETUP & MODEL LOADING
     # -------------------------------------------------------------------------
-    # Target the Build 27 pre-training checkpoint
+    # Target the Build 30 pre-training checkpoint
     ckpt_dir = output_dir or os.path.join(project_root, "checkpoints", "mertformer_titan_prod")
     ckpt_path = os.path.join(ckpt_dir, "MertFormer_Titan_Nano_Final.pt")
     
@@ -205,7 +205,7 @@ def export_production_model(ckpt_override=None, output_dir=None, bitpack: bool =
     
     try:
         start_t = time.time()
-        torch.onnx.export(
+        exported = torch.onnx.export(
             wrapper,
             trace_inputs,
             output_fp32,
@@ -218,6 +218,12 @@ def export_production_model(ckpt_override=None, output_dir=None, bitpack: bool =
             keep_initializers_as_inputs=False, # PRODUCTION MODE: Bake into graph
             verbose=False
         )
+        if hasattr(exported, "save"):
+            exported.save(output_fp32)
+        if not os.path.exists(output_fp32):
+            raise FileNotFoundError(
+                f"ONNX export completed but output file is missing: {output_fp32}"
+            )
         size_gb = os.path.getsize(output_fp32) / (1024**3)
         print(f"✅ Export Success in {time.time()-start_t:.2f}s")
         print(f"📦 Master Graph Size: {size_gb:.2f} GB")

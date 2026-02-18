@@ -1,4 +1,4 @@
-# Clean-Room Doğrulaması (Build 27)
+# Clean-Room Doğrulaması (Build 30)
 
 ## Amaç
 Yeni bir clone üzerinde, temel kalite kapılarının izole bir path'te tekrar üretilebilir olduğunu doğrulamak.

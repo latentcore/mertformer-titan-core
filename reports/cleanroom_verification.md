@@ -1,4 +1,4 @@
-# Clean-Room Verification (Build 27)
+# Clean-Room Verification (Build 30)
 
 ## Purpose
 Validate that a fresh clone can reproduce the core quality gates on an isolated path.
