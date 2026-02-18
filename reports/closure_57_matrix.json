@@ -1,6 +1,6 @@
 {
   "schema": "closure_57_matrix_v1",
-  "generated_at_utc": "2026-02-18T06:28:25Z",
+  "generated_at_utc": "2026-02-18T07:11:05Z",
   "total_items": 57,
   "green_items": 57,
   "all_green": true,
@@ -720,7 +720,8 @@
       "green": true,
       "evidence_pending": true,
       "evidence": [
-        "train/continual_adapter.py"
+        "train/continual_adapter.py",
+        "train/train.py"
       ]
     },
     {

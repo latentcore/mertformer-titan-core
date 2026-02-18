@@ -120,7 +120,7 @@ def build_checks() -> list[ItemCheck]:
         ItemCheck(51, "product", "kpi validated pilots", _exists("mertformer_sdk/kpi.py"), _exists("reports/kpi_report_v1.json"), _exists("tests/test_kpi_report_cli.py"), 51 in pending, ["mertformer_sdk/kpi.py"]),
         ItemCheck(52, "agi", "generalization proof", _exists("eval/generalization_suite.py"), _exists("eval/report_builder.py"), _exists("tests/test_57_matrix_gate.py"), 52 in pending, ["eval/generalization_suite.py"]),
         ItemCheck(53, "agi", "robust tool-use + planning autonomy", _exists("orchestrator/tool_registry.py"), _grep("orchestrator/planner.py", "_select_tool"), _exists("tests/test_orchestrator_swarm_runtime.py"), 53 in pending, ["orchestrator/tool_registry.py"]),
-        ItemCheck(54, "agi", "continual learning without forgetting", _exists("train/continual_adapter.py"), _grep("config/config.py", "use_continual_adapter"), _exists("tests/test_continual_adapter.py"), 54 in pending, ["train/continual_adapter.py"]),
+        ItemCheck(54, "agi", "continual learning without forgetting", _exists("train/continual_adapter.py"), _grep("train/train.py", "ContinualLearningAdapter"), _exists("tests/test_continual_adapter.py"), 54 in pending, ["train/continual_adapter.py", "train/train.py"]),
         ItemCheck(55, "asi", "recursive self-improvement governance", _exists("orchestrator/self_improvement_guard.py"), _grep("orchestrator/core.py", "propose_self_improvements"), _exists("tests/test_57_matrix_gate.py"), 55 in pending, ["orchestrator/self_improvement_guard.py"]),
         ItemCheck(56, "asi", "formal alignment scaffold", _exists("orchestrator/alignment_contracts.py"), _grep("orchestrator/core.py", "check_alignment"), _exists("tests/test_57_matrix_gate.py"), 56 in pending, ["orchestrator/alignment_contracts.py"]),
         ItemCheck(57, "asi", "compute/energy orchestration scaffold", _exists("orchestrator/compute_orchestrator.py"), _grep("orchestrator/core.py", "compute_schedule"), _exists("tests/test_57_matrix_gate.py"), 57 in pending, ["orchestrator/compute_orchestrator.py"]),
@@ -209,4 +209,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

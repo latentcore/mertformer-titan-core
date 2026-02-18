@@ -44,6 +44,10 @@ except ImportError:
 # Import DistillationManager
 sys.path.append(str(Path(__file__).parent.parent))
 from orchestrator.distillation_manager import DistillationManager
+try:
+    from train.continual_adapter import ContinualLearningAdapter
+except Exception:
+    ContinualLearningAdapter = None
 
 # -----------------------------------------------------------------------------
 # TR: 0. PROJE KÖK DİZİN TESPİTİ / EN: 0. PROJECT ROOT DETECTION
@@ -1120,6 +1124,24 @@ def train():
     grad_norm_history = []
     loss_history = [] # V26.1 FIX: Track Loss History for Signal-Based Curriculum
     grad_norm_collapse_threshold = 0.01  # If grad norm < 0.01, model stopped learning
+    continual_adapter = None
+    continual_state = None
+    if bool(getattr(cfg, "use_continual_adapter", False)):
+        if ContinualLearningAdapter is None:
+            if accelerator.is_main_process:
+                print("⚠️ Continual adapter requested but module import failed; disabling continual adapter.")
+        else:
+            continual_adapter = ContinualLearningAdapter(
+                replay_capacity=int(getattr(cfg, "continual_replay_capacity", 2048)),
+                loss_ema_decay=float(getattr(cfg, "continual_loss_ema_decay", 0.98)),
+                drift_threshold=float(getattr(cfg, "continual_drift_threshold", 0.2)),
+            )
+            if accelerator.is_main_process:
+                print(
+                    "♻️ Continual adapter active "
+                    f"(capacity={getattr(cfg, 'continual_replay_capacity', 2048)}, "
+                    f"drift_threshold={getattr(cfg, 'continual_drift_threshold', 0.2):.3f})"
+                )
     
     # V26.1 SAFEGUARD: Liquid Auto-Freeze State
     liquid_frozen_until = 0 # Step count until Liquid is unfrozen
@@ -1355,6 +1377,14 @@ def train():
                     opt.zero_grad()
 
                     global_step += 1
+                    if continual_adapter is not None:
+                        replay_sample = None
+                        if isinstance(input_ids, torch.Tensor) and input_ids.ndim >= 2 and input_ids.size(0) > 0:
+                            replay_sample = input_ids[0]
+                        continual_state = continual_adapter.update(
+                            loss=float(total_loss.detach().item()),
+                            sample=replay_sample,
+                        )
 
                     # Update Stats
                     grad_norm_val = grad_norm.item() if isinstance(grad_norm, torch.Tensor) else grad_norm
@@ -1391,6 +1421,10 @@ def train():
                             "alpha": alpha,
                             "stage": current_curriculum_stage
                         }
+                        if continual_state is not None:
+                            metrics["continual_ema_loss"] = float(continual_state.running_loss_ema)
+                            metrics["continual_replay_size"] = int(continual_state.replay_size)
+                            metrics["continual_drift_alert"] = int(bool(continual_state.drift_alert))
                         metrics["global_step"] = global_step
                         logger.log_step(metrics)
 
@@ -1432,6 +1466,15 @@ def train():
                             "grad_norm": avg_grad_norm,
                             "max_grad_norm": max_grad_norm_seen
                         }
+                        if continual_state is not None:
+                            log_data["continual_ema_loss"] = float(continual_state.running_loss_ema)
+                            log_data["continual_replay_size"] = int(continual_state.replay_size)
+                            log_data["continual_drift_alert"] = int(bool(continual_state.drift_alert))
+                            if continual_state.drift_alert:
+                                print(
+                                    f"   ⚠️ Continual Drift Alert: ema_loss={continual_state.running_loss_ema:.4f} "
+                                    f"| replay={continual_state.replay_size}"
+                                )
 
                         # [V26.6 TELEMETRY] MoE Router Health (log-interval only)
                         moe_loads = []

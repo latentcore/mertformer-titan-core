@@ -1,5 +1,9 @@
 """Kaggle-ready training stability comparison: MertFormer tiny vs vanilla transformer.
 
+Build 30 default:
+- MertFormer variant runs with MoE + Liquid + all new extension flags enabled.
+- You can disable extension bundle with --mert-enable-all-extensions 0.
+
 Outputs:
 - reports/benchmarks/kaggle_compare_build30.json
 - reports/benchmarks/kaggle_compare_build30.csv
@@ -175,6 +179,7 @@ def _run_mertformer_variant(
     lr: float,
     use_moe: bool,
     use_liquid: bool,
+    enable_all_extensions: bool,
 ) -> dict:
     keys = [
         "device",
@@ -200,6 +205,30 @@ def _run_mertformer_variant(
         "use_gradient_checkpointing",
         "attention_dropout",
         "dropout",
+        "use_hierarchical_kv_cache",
+        "hkv_short_window",
+        "hkv_long_stride",
+        "hkv_max_long_blocks",
+        "use_global_workspace_broadcast",
+        "workspace_blend",
+        "use_neuromodulatory_gain",
+        "use_latent_ode_state_channel",
+        "latent_ode_dt",
+        "use_cross_expert_sync_bus",
+        "cross_expert_sync_gain",
+        "use_structural_plasticity",
+        "structural_update_interval",
+        "use_hebbian_plasticity",
+        "hebbian_eta",
+        "hebbian_decay",
+        "use_neuro_symbolic_layer",
+        "neuro_symbolic_rules",
+        "use_world_model_head",
+        "world_model_horizon",
+        "use_lifelong_safety_layer",
+        "lifelong_ema_decay",
+        "lifelong_max_adaptation_gain",
+        "lifelong_drift_threshold",
     ]
     backup = {k: getattr(cfg, k) for k in keys if hasattr(cfg, k)}
 
@@ -227,6 +256,30 @@ def _run_mertformer_variant(
         cfg.use_gradient_checkpointing = False
         cfg.attention_dropout = 0.0
         cfg.dropout = 0.0
+        cfg.use_hierarchical_kv_cache = bool(enable_all_extensions)
+        cfg.hkv_short_window = 256
+        cfg.hkv_long_stride = 8
+        cfg.hkv_max_long_blocks = 64
+        cfg.use_global_workspace_broadcast = bool(enable_all_extensions)
+        cfg.workspace_blend = 0.7
+        cfg.use_neuromodulatory_gain = bool(enable_all_extensions)
+        cfg.use_latent_ode_state_channel = bool(enable_all_extensions)
+        cfg.latent_ode_dt = 1.0
+        cfg.use_cross_expert_sync_bus = bool(enable_all_extensions)
+        cfg.cross_expert_sync_gain = 0.05
+        cfg.use_structural_plasticity = bool(enable_all_extensions)
+        cfg.structural_update_interval = 50
+        cfg.use_hebbian_plasticity = bool(enable_all_extensions)
+        cfg.hebbian_eta = 0.01
+        cfg.hebbian_decay = 0.99
+        cfg.use_neuro_symbolic_layer = bool(enable_all_extensions)
+        cfg.neuro_symbolic_rules = 8
+        cfg.use_world_model_head = bool(enable_all_extensions)
+        cfg.world_model_horizon = 1
+        cfg.use_lifelong_safety_layer = bool(enable_all_extensions)
+        cfg.lifelong_ema_decay = 0.99
+        cfg.lifelong_max_adaptation_gain = 0.05
+        cfg.lifelong_drift_threshold = 0.35
 
         torch.manual_seed(42)
         model = MertFormer()
@@ -335,6 +388,13 @@ def main() -> int:
     parser.add_argument("--vanilla-heads", type=int, default=8, help="Vanilla attention heads")
     parser.add_argument("--mert-use-moe", type=int, choices=[0, 1], default=1, help="Enable MoE in MertFormer variant")
     parser.add_argument("--mert-use-liquid", type=int, choices=[0, 1], default=1, help="Enable Liquid in MertFormer variant")
+    parser.add_argument(
+        "--mert-enable-all-extensions",
+        type=int,
+        choices=[0, 1],
+        default=1,
+        help="Enable all new extension flags in MertFormer variant",
+    )
     parser.add_argument("--lr", type=float, default=2e-4)
     args = parser.parse_args()
 
@@ -370,6 +430,7 @@ def main() -> int:
         lr=args.lr,
         use_moe=bool(args.mert_use_moe),
         use_liquid=bool(args.mert_use_liquid),
+        enable_all_extensions=bool(args.mert_enable_all_extensions),
     )
 
     vanilla_result = _run_vanilla_variant(
@@ -402,6 +463,7 @@ def main() -> int:
                 "heads": mert_heads,
                 "use_moe": bool(args.mert_use_moe),
                 "use_liquid": bool(args.mert_use_liquid),
+                "enable_all_extensions": bool(args.mert_enable_all_extensions),
             },
             "vanilla": {
                 "hidden": vanilla_hidden,

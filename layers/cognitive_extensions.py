@@ -57,7 +57,8 @@ class ContinuousLatentODEStateChannel(nn.Module):
         bsz = x.size(0)
         self._ensure_state(bsz, x.device, x.dtype)
         summary = x.mean(dim=1)
-        z = self.latent_state
+        # Clone to avoid in-place version bump issues before backward.
+        z = self.latent_state.detach().clone()
         dz = torch.tanh(self.state_proj(z) + self.input_proj(summary))
         z_next = z + float(dt) * dz
         with torch.no_grad():
