@@ -152,6 +152,19 @@ def check_disk_space(min_gb: float = 10.0, path: Optional[Path] = None) -> bool:
         return True  # Fail-open to avoid breaking training
 
 
+def count_jsonl_records(path: Path) -> int:
+    """
+    TR: JSONL dosyasındaki boş olmayan satır sayısını döndürür.
+    EN: Returns number of non-empty lines in a JSONL file.
+    """
+    count = 0
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                count += 1
+    return count
+
+
 def get_gpu_memory_usage(device: Optional[int] = None) -> tuple[float, float]:
     """
     TR: GPU bellek kullanımını (allocated/reserved) GB olarak döndürür.
@@ -1004,7 +1017,23 @@ def train():
 
     # [PRO] Validation Setup
     val_path = project_root / "datasets" / "validation.jsonl"
+    claim_mode = os.getenv("TITAN_CLAIM_MODE", "0") == "1"
+    min_val_warn = int(getattr(cfg, "validation_min_samples_warn", 128))
+    min_val_claim = int(getattr(cfg, "validation_min_samples_claim", 1000))
     if val_path.exists():
+        val_count = count_jsonl_records(val_path)
+        if accelerator.is_main_process:
+            print(f"🧪 Validation records: {val_count}")
+        if claim_mode and val_count < min_val_claim:
+            raise RuntimeError(
+                f"Claim mode requires validation >= {min_val_claim} samples, got {val_count}. "
+                "Regenerate validation set before claim-grade training."
+            )
+        if val_count < min_val_warn and accelerator.is_main_process:
+            print(
+                f"⚠️ Validation set is small ({val_count}). "
+                f"Claim-grade runs should use >= {min_val_claim} samples."
+            )
         print(f"🔍 Validation Dataset Found: {val_path}")
         # [PRO] Use Deterministic Dataset
         val_ds = ValidationJsonlDataset(val_path, cfg.max_seq_len, teacher_tokenizer)

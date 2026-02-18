@@ -323,6 +323,11 @@ class MertFormerConfig:
     use_continual_adapter: bool = False
     continual_replay_capacity: int = 2048
     continual_drift_threshold: float = 0.2
+    continual_loss_ema_decay: float = 0.98
+
+    # Validation gate policy
+    validation_min_samples_warn: int = 128
+    validation_min_samples_claim: int = 1000
 
     # -------------------------------------------------------------------------
     # [USER OVERRIDE] Teacher Model configuration

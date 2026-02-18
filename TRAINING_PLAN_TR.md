@@ -41,6 +41,17 @@ Eğitimden önce:
 
 Eğer lisans tablosunda `TBD` varsa veya snapshot hash'leri eksikse, eğitim **review-ready değildir**.
 
+Validation veri politikası:
+- Smoke test için küçük validation dosyası kabul edilebilir.
+- İddia seviyesi koşular için temsil gücü olan validation setini yeniden üretin:
+
+```bash
+python3 scripts/build_validation_set.py --target-size 1500
+python3 scripts/record_dataset_hashes.py
+```
+
+- `TITAN_CLAIM_MODE=1` aktifken minimum validation boyutu (`cfg.validation_min_samples_claim`) zorlanır.
+
 ## Aşama 1: Damıtma / Foundation (Online, Eğitim Donanımı)
 
 Gerekli:
@@ -84,6 +95,7 @@ Davranış:
 - [ ] `bash scripts/verify_all.sh` PASS (offline).
 - [ ] `datasets/LICENSES*.md` eğitim datasetleri için **TBD içermiyor**.
 - [ ] `datasets/hashes.json` eğitimde kullanılacak snapshot hash’leriyle dolduruldu.
+- [ ] İddia seviyesi modda `datasets/validation.jsonl` temsil gücüne sahip ve minimum örnek kapısını geçiyor.
 - [ ] Training config review edildi (seed, dtype, model boyutu, batch ayarları).
 - [ ] Donanım + driver doğrulandı ve notlandı (yerel ek olarak).
 - [ ] Online tokenlar env’de mevcut ve doğrulandı (değerleri loglanmadan).

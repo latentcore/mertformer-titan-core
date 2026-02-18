@@ -20,7 +20,7 @@ bash scripts/verify_all.sh
 
 Beklenen:
 - Secret scan: PASS
-- Pytest: PASS (`48 passed, 3 skipped`)
+- Pytest: PASS (`58 passed, 3 skipped`)
 - Preflight (offline): PASS
 - Operator gate (safe, offline): PASS
 
@@ -50,9 +50,9 @@ TITAN_OFFLINE=1 bash run.sh --test
 - `MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.passphrase.age`
 - `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
 - SHA-256:
-  - `740aef9cdd74290e8105bf953fd10cba1aed7b3277d61d3aeefe48dca3d3e76c` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
-  - `b919357e54c92383452afacd249f3980fcafbd0485f0fddfd65132b06b6a0dcf` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.passphrase.age`)
-  - `f523afc751c60842b305f382049377023308beaa082df31b161f5d4cb21bcade` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)
+  - `3efc60d316d7caccdd65786c74a667cf74ef3687cd8d8be7e19e4088e6c3880e` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
+  - `2fc620ae2a122626992e302a313111d8ab1781b1acaa7b7613e9fbf5a88183bd` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Hamdi_Package_Release.passphrase.age`)
+  - `9ec43d6bf41c251346e7337068f097b2d8be4481bebfe652813108c091db01a2` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)
 
 ## Bilinen Gate / Blokerler
 

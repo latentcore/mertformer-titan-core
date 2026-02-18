@@ -41,6 +41,17 @@ Before training:
 
 If any license entries are `TBD` or snapshot hashes are missing, training is **not review-ready**.
 
+Validation data policy:
+- For smoke tests, a tiny validation file is acceptable.
+- For claim-grade runs, regenerate a representative validation set:
+
+```bash
+python3 scripts/build_validation_set.py --target-size 1500
+python3 scripts/record_dataset_hashes.py
+```
+
+- `TITAN_CLAIM_MODE=1` enforces minimum validation size (`cfg.validation_min_samples_claim`).
+
 ## Phase 1: Distillation / Foundation Run (Online, Training Hardware)
 
 Required:
@@ -84,6 +95,7 @@ Behavior:
 - [ ] `bash scripts/verify_all.sh` passes (offline).
 - [ ] `datasets/LICENSES*.md` has **no TBD** entries for training datasets.
 - [ ] `datasets/hashes.json` snapshot hashes are filled for the exact training data.
+- [ ] Claim-grade mode: `datasets/validation.jsonl` is representative and meets minimum sample gate.
 - [ ] Training config is pinned and reviewed (seed, dtype, model size, batch settings).
 - [ ] Hardware + drivers validated and recorded (attach local notes).
 - [ ] Online tokens available in env and verified (without logging values).

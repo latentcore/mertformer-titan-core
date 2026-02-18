@@ -1,6 +1,6 @@
 {
   "schema": "kaggle_compare_build30_v1",
-  "generated_at_utc": "2026-02-18T06:21:13Z",
+  "generated_at_utc": "2026-02-18T07:44:17Z",
   "device": "mps",
   "quick_mode": true,
   "target_param_band": {
@@ -13,7 +13,8 @@
       "layers": 8,
       "heads": 8,
       "use_moe": true,
-      "use_liquid": true
+      "use_liquid": true,
+      "enable_all_extensions": true
     },
     "vanilla": {
       "hidden": 416,
@@ -23,17 +24,17 @@
   },
   "mertformer": {
     "name": "mertformer",
-    "params": 29907976,
+    "params": 31450906,
     "steps": 40,
-    "final_loss": 234.21897888183594,
-    "min_loss": 230.9587860107422,
-    "avg_loss": 236.53484115600585,
-    "avg_grad_norm": 29.73815822155023,
-    "max_grad_norm": 30.320318454972973,
+    "final_loss": 48.76519775390625,
+    "min_loss": 48.507530212402344,
+    "avg_loss": 56.56719970703125,
+    "avg_grad_norm": 109.2492868212383,
+    "max_grad_norm": 322.9226277839596,
     "nan_steps": 0,
-    "elapsed_sec": 31.596420288085938,
-    "tokens_per_sec": 162.04367309073297,
-    "avg_step_time_sec": 0.7899105072021484,
+    "elapsed_sec": 51.38485383987427,
+    "tokens_per_sec": 99.64025617266459,
+    "avg_step_time_sec": 1.2846213459968567,
     "peak_mem_gb": 0.0
   },
   "vanilla": {
@@ -46,12 +47,12 @@
     "avg_grad_norm": 102.6341980903745,
     "max_grad_norm": 329.271165270725,
     "nan_steps": 0,
-    "elapsed_sec": 8.234000205993652,
-    "tokens_per_sec": 621.8119834722709,
-    "avg_step_time_sec": 0.2058500051498413,
+    "elapsed_sec": 5.122067928314209,
+    "tokens_per_sec": 999.5962708142198,
+    "avg_step_time_sec": 0.12805169820785522,
     "peak_mem_gb": 0.0
   },
-  "loss_delta": -183.22163772583008,
+  "loss_delta": 2.2321434020996094,
   "band_check": {
     "mertformer_in_band": true,
     "vanilla_in_band": true,
