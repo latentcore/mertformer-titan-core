@@ -23,6 +23,7 @@ from layers.cognitive_extensions import (
     ContinuousLatentODEStateChannel,
     NeuromodulatoryGainLayer,
 )
+from layers.world_model_head import CausalWorldModelHead
 from layers.mertformer_block import MertFormerBlock, RMSNorm
 
 
@@ -87,6 +88,15 @@ class MertFormer(nn.Module):
             if bool(getattr(cfg, "use_neuromodulatory_gain", False))
             else None
         )
+        self.world_model_head = (
+            CausalWorldModelHead(
+                hidden_size,
+                horizon=int(getattr(cfg, "world_model_horizon", 1)),
+            )
+            if bool(getattr(cfg, "use_world_model_head", False))
+            else None
+        )
+        self._last_world_model_outputs: Optional[dict] = None
         self.latent_ode_dt = float(getattr(cfg, "latent_ode_dt", 1.0))
 
     def forward(
@@ -189,8 +199,16 @@ class MertFormer(nn.Module):
         # TR: Son norm + LM head / EN: Final norm + LM head
         x = self.final_norm(x)
         logits = self.lm_head(x)
+        if self.world_model_head is not None:
+            self._last_world_model_outputs = self.world_model_head(x).to_dict()
+        else:
+            self._last_world_model_outputs = None
 
         return logits, aux_total, present_key_values
+
+    def get_last_world_model_outputs(self) -> Optional[dict]:
+        """Return optional world-model side outputs from the latest forward pass."""
+        return self._last_world_model_outputs
 
     def reset_router_state(self, batch_size: int = 1) -> None:
         """

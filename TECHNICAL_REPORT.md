@@ -169,3 +169,23 @@ To further bridge the gap between artificial and biological neural efficiency, t
 *   **Synaptic Plasticity (Research Path)**: Exploring "Hebbian-inspired" on-inference updates within isolated Liquid layers for real-time behavioral adaptation.
 *   **Homeostatic Regulation**: Developing dynamic neuro-modulatory gating to ensure signal stability and autonomous sensitivity adjustment across deep layers.
 *   **Emotional Weighting (Neuromodulation)**: Integrating "Affective Gating" mechanisms that simulate neurotransmitter-driven priority shifts (urgency, confidence) to enhance decision-making under uncertainty.
+
+---
+
+## 11. Lawful Safety Constraints
+
+- Deployment is policy-bound and auditable.
+- Human authorization is required for operational actions.
+- Covert surveillance/tracking and unauthorized intervention are explicitly excluded.
+- Build closure uses `Code+Test Green` criteria; heavy training evidence is reported as `Evidence Pending`.
+
+## 12. Closure-57 Gate
+
+```bash
+python3 scripts/check_57_matrix.py
+```
+
+Generated artifacts:
+- `reports/closure_57_matrix.json`
+- `reports/closure_57_matrix.md`
+- `reports/closure_57_matrix_TR.md`

@@ -3,6 +3,31 @@
 <div align="center">
   <a href="README.md">🇬🇧 English</a> | <a href="README_TR.md">🇹🇷 Türkçe</a>
 </div>
+
+---
+
+## Yasal Güvenlik Politikası (Build 30)
+
+Bu repo yalnızca yasal, denetlenebilir ve insan onaylı kullanım için tasarlanmıştır.
+
+- Operasyonel kararlarda human-in-the-loop zorunludur.
+- Orchestrator/runtime tarafında audit izi ve policy sınırları zorunludur.
+- İzinsiz gözetim, gizli takip ve onaysız müdahale kapsam dışıdır.
+- Pilot iddiaları öncesi güvenlik ve governance kapıları geçilmelidir.
+
+## Closure 57 Raporu
+
+Build 30 ile birlikte makine tarafından doğrulanabilen kapanış kapısı vardır:
+
+```bash
+python3 scripts/check_57_matrix.py
+mertformer 57-report --out reports/closure_57_matrix.json
+```
+
+Çıktılar:
+- `reports/closure_57_matrix.json`
+- `reports/closure_57_matrix.md`
+- `reports/closure_57_matrix_TR.md`
 <br />
 
 ```

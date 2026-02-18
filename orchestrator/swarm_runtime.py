@@ -71,7 +71,10 @@ class SwarmRuntime:
         outputs: List[str] = []
         for action in plan:
             spec = profile_by_id[action.agent_id]
-            outputs.append(self._emit_agent_output(action.objective, spec))
+            objective = action.objective
+            if action.tool_id:
+                objective = f"{objective} [tool={action.tool_id}]"
+            outputs.append(self._emit_agent_output(objective, spec))
 
         verification = self.verifier.verify(task, outputs)
         fb = self.failure_budget.update(

@@ -39,4 +39,7 @@ echo "[verify] Preflight (offline) ..."
 echo "[verify] Operator mode gate (safe, offline) ..."
 "$PY" scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl
 
+echo "[verify] Closure 57 matrix gate ..."
+"$PY" scripts/check_57_matrix.py
+
 echo "[verify] OK"

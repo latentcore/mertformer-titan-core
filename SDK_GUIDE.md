@@ -37,6 +37,7 @@ mertformer benchmark --ckpt latest --samples 0
 mertformer verify
 mertformer pilot-report --out reports/pilot_report.json
 mertformer kpi-report --out reports/kpi_report_v1.json
+mertformer 57-report --out reports/closure_57_matrix.json
 ```
 
 CLI commands now enforce checkpoint presence by default (`run` and `benchmark`).
@@ -46,6 +47,19 @@ Use `--allow-random` only for non-claim demos.
 - Generate: `mertformer kpi-report --out reports/kpi_report_v1.json`
 - Optional ONNX KPI: `mertformer kpi-report --out reports/kpi_report_v1.json --onnx-check`
 - Schema: `interfaces/kpi_report_v1.schema.json`
+
+## Closure 57 Gate (Build 30)
+- Generate machine-checked closure report:
+  - `mertformer 57-report --out reports/closure_57_matrix.json`
+- Optional markdown outputs:
+  - `mertformer 57-report --out reports/closure_57_matrix.json --md-out reports/closure_57_matrix.md --md-tr-out reports/closure_57_matrix_TR.md`
+- Equivalent script call:
+  - `python3 scripts/check_57_matrix.py`
+
+## Lawful Safety Scope
+- SDK workflows are intended for lawful, auditable, human-approved operations.
+- Covert surveillance/tracking and unauthorized intervention are out of scope.
+- Heavy-training evidence remains explicitly tagged as `Evidence Pending` in closure outputs.
 
 ## Low-bit Kernel Toggle (Opt-in)
 - Python: `enable_lowbit_kernels(True)`

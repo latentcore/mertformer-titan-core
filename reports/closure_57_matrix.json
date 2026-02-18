@@ -1,0 +1,766 @@
+{
+  "schema": "closure_57_matrix_v1",
+  "generated_at_utc": "2026-02-18T06:28:25Z",
+  "total_items": 57,
+  "green_items": 57,
+  "all_green": true,
+  "evidence_pending_ids": [
+    8,
+    9,
+    11,
+    12,
+    51,
+    52,
+    54,
+    55,
+    56,
+    57
+  ],
+  "items": [
+    {
+      "id": 1,
+      "area": "foundation",
+      "name": "crash/deadlock/silent corruption zero",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "scripts/operator_mode_gate.py",
+        "tests/test_train_loop_sanity.py"
+      ]
+    },
+    {
+      "id": 2,
+      "area": "foundation",
+      "name": "deterministic train/resume",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "train/train.py"
+      ]
+    },
+    {
+      "id": 3,
+      "area": "foundation",
+      "name": "full gate matrix",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "scripts/verify_all.sh"
+      ]
+    },
+    {
+      "id": 4,
+      "area": "foundation",
+      "name": "reproducible metadata",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "train/train.py",
+        "scripts/check_57_matrix.py"
+      ]
+    },
+    {
+      "id": 5,
+      "area": "data",
+      "name": "licensed data inventory",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "datasets/hashes.json"
+      ]
+    },
+    {
+      "id": 6,
+      "area": "data",
+      "name": "dedup + quality filtering",
+      "code": true,
+      "integration": false,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "scripts/data_pipeline.py"
+      ]
+    },
+    {
+      "id": 7,
+      "area": "data",
+      "name": "curriculum automation",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "train/train.py"
+      ]
+    },
+    {
+      "id": 8,
+      "area": "train",
+      "name": "multi-stage scale-up protocol",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": true,
+      "evidence": [
+        "TRAINING_PLAN.md"
+      ]
+    },
+    {
+      "id": 9,
+      "area": "train",
+      "name": "ddp/fsdp safety",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": true,
+      "evidence": [
+        "train/train.py"
+      ]
+    },
+    {
+      "id": 10,
+      "area": "train",
+      "name": "checkpoint safety + recovery",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "scripts/checkpoint_restore_drill.py"
+      ]
+    },
+    {
+      "id": 11,
+      "area": "eval",
+      "name": "core capability benchmark pack",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": true,
+      "evidence": [
+        "eval/gsm8k.py",
+        "eval/humaneval.py"
+      ]
+    },
+    {
+      "id": 12,
+      "area": "eval",
+      "name": "security/red-team benchmarks",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": true,
+      "evidence": [
+        "scripts/golden_eval.py"
+      ]
+    },
+    {
+      "id": 13,
+      "area": "eval",
+      "name": "kpi pack + schema + cli",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "mertformer_sdk/kpi.py"
+      ]
+    },
+    {
+      "id": 14,
+      "area": "deploy",
+      "name": "onnx export contract",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "scripts/test_onnx_export.py"
+      ]
+    },
+    {
+      "id": 15,
+      "area": "deploy",
+      "name": "edge/runtime smoke",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "scripts/train_smoke.py"
+      ]
+    },
+    {
+      "id": 16,
+      "area": "model",
+      "name": "bitnet",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/bitlinear.py"
+      ]
+    },
+    {
+      "id": 17,
+      "area": "model",
+      "name": "transformer stack",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "model/transformers.py"
+      ]
+    },
+    {
+      "id": 18,
+      "area": "model",
+      "name": "mla",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/mla.py"
+      ]
+    },
+    {
+      "id": 19,
+      "area": "model",
+      "name": "decoupled rope",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/mla.py"
+      ]
+    },
+    {
+      "id": 20,
+      "area": "model",
+      "name": "gqa",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/mla.py"
+      ]
+    },
+    {
+      "id": 21,
+      "area": "model",
+      "name": "hierarchical kv cache",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/mla.py"
+      ]
+    },
+    {
+      "id": 22,
+      "area": "model",
+      "name": "moe + liquidrouter",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/moe.py"
+      ]
+    },
+    {
+      "id": 23,
+      "area": "model",
+      "name": "liquid/cfc mixer",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/liquid.py"
+      ]
+    },
+    {
+      "id": 24,
+      "area": "model",
+      "name": "swiglu ffn",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/ffn.py"
+      ]
+    },
+    {
+      "id": 25,
+      "area": "model",
+      "name": "qinn",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/qinn.py"
+      ]
+    },
+    {
+      "id": 26,
+      "area": "model",
+      "name": "norm hybrid",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/mla.py",
+        "layers/mertformer_block.py"
+      ]
+    },
+    {
+      "id": 27,
+      "area": "model",
+      "name": "residual scaling/deepnorm",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/mertformer_block.py"
+      ]
+    },
+    {
+      "id": 28,
+      "area": "model",
+      "name": "attention fallback matrix",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/mla.py"
+      ]
+    },
+    {
+      "id": 29,
+      "area": "train",
+      "name": "distillation path",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "orchestrator/distillation_manager.py"
+      ]
+    },
+    {
+      "id": 30,
+      "area": "agent",
+      "name": "swarm runtime 3/15/45",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "orchestrator/swarm_runtime.py"
+      ]
+    },
+    {
+      "id": 31,
+      "area": "agent",
+      "name": "global workspace broadcast",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/cognitive_extensions.py"
+      ]
+    },
+    {
+      "id": 32,
+      "area": "agent",
+      "name": "cross-expert sync bus",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/moe.py"
+      ]
+    },
+    {
+      "id": 33,
+      "area": "agent",
+      "name": "cross-layer latent ode",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/cognitive_extensions.py"
+      ]
+    },
+    {
+      "id": 34,
+      "area": "agent",
+      "name": "neuromodulatory gain",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/cognitive_extensions.py"
+      ]
+    },
+    {
+      "id": 35,
+      "area": "memory",
+      "name": "hierarchical memory",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "orchestrator/memory.py"
+      ]
+    },
+    {
+      "id": 36,
+      "area": "cognition",
+      "name": "causal world model head",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/world_model_head.py"
+      ]
+    },
+    {
+      "id": 37,
+      "area": "cognition",
+      "name": "planner-controller",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "orchestrator/planner.py"
+      ]
+    },
+    {
+      "id": 38,
+      "area": "cognition",
+      "name": "verifier/critic loop",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "orchestrator/verifier.py"
+      ]
+    },
+    {
+      "id": 39,
+      "area": "learning",
+      "name": "structural plasticity",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/moe.py"
+      ]
+    },
+    {
+      "id": 40,
+      "area": "learning",
+      "name": "lifelong safety adaptation",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/lifelong_safety.py"
+      ]
+    },
+    {
+      "id": 41,
+      "area": "governance",
+      "name": "offline governance",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "orchestrator/governance.py"
+      ]
+    },
+    {
+      "id": 42,
+      "area": "learning",
+      "name": "hebbian layer",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/cognitive_extensions.py"
+      ]
+    },
+    {
+      "id": 43,
+      "area": "reasoning",
+      "name": "neuro-symbolic layer",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "layers/cognitive_extensions.py"
+      ]
+    },
+    {
+      "id": 44,
+      "area": "kernel",
+      "name": "bitnet cpu c++ kernel",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "mertformer_sdk/kernels/cpp/bitnet_cpu.cpp"
+      ]
+    },
+    {
+      "id": 45,
+      "area": "kernel",
+      "name": "cuda/triton fused kernel",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "mertformer_sdk/kernels/triton_ternary.py"
+      ]
+    },
+    {
+      "id": 46,
+      "area": "kernel",
+      "name": "metal/mps kernel path",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "mertformer_sdk/kernels/dispatcher.py"
+      ]
+    },
+    {
+      "id": 47,
+      "area": "kernel",
+      "name": "onnx custom op contract",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "mertformer_sdk/kernels/onnx_custom_op.py"
+      ]
+    },
+    {
+      "id": 48,
+      "area": "runtime",
+      "name": "kernel dispatcher fallback matrix",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "mertformer_sdk/kernels/dispatcher.py"
+      ]
+    },
+    {
+      "id": 49,
+      "area": "product",
+      "name": "sdk api stability",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "mertformer_sdk/api.py"
+      ]
+    },
+    {
+      "id": 50,
+      "area": "product",
+      "name": "pilot ops + sla telemetry",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "orchestrator/telemetry.py"
+      ]
+    },
+    {
+      "id": 51,
+      "area": "product",
+      "name": "kpi validated pilots",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": true,
+      "evidence": [
+        "mertformer_sdk/kpi.py"
+      ]
+    },
+    {
+      "id": 52,
+      "area": "agi",
+      "name": "generalization proof",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": true,
+      "evidence": [
+        "eval/generalization_suite.py"
+      ]
+    },
+    {
+      "id": 53,
+      "area": "agi",
+      "name": "robust tool-use + planning autonomy",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": false,
+      "evidence": [
+        "orchestrator/tool_registry.py"
+      ]
+    },
+    {
+      "id": 54,
+      "area": "agi",
+      "name": "continual learning without forgetting",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": true,
+      "evidence": [
+        "train/continual_adapter.py"
+      ]
+    },
+    {
+      "id": 55,
+      "area": "asi",
+      "name": "recursive self-improvement governance",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": true,
+      "evidence": [
+        "orchestrator/self_improvement_guard.py"
+      ]
+    },
+    {
+      "id": 56,
+      "area": "asi",
+      "name": "formal alignment scaffold",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": true,
+      "evidence": [
+        "orchestrator/alignment_contracts.py"
+      ]
+    },
+    {
+      "id": 57,
+      "area": "asi",
+      "name": "compute/energy orchestration scaffold",
+      "code": true,
+      "integration": true,
+      "test": true,
+      "green": true,
+      "evidence_pending": true,
+      "evidence": [
+        "orchestrator/compute_orchestrator.py"
+      ]
+    }
+  ]
+}

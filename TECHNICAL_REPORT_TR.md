@@ -170,3 +170,23 @@ Yapay ve biyolojik sinirsel verimlilik arasındaki farkı daha da kapatmak için
 *   **Sinaptik Plastisite (Araştırma Yolu)**: Gerçek zamanlı davranışsal adaptasyon için izole edilmiş Liquid katmanları içinde "Hebbian" ilhamlı çıkarım-içi güncellemelerin keşfedilmesi.
 *   **Homeostatik Regülasyon**: Derin katmanlarda sinyal kararlılığını ve otonom hassasiyet ayarını sağlamak için dinamik nöro-modülatör kapılama mekanizmaları.
 *   **Duygusal Ağırlıklandırma (Nöromodülasyon)**: Belirsizlik durumlarında karar verme sürecini geliştirmek için nörotransmitter güdümlü öncelik değişimlerini (aciliyet, güven) simüle eden "Duygusal Kapılama" düzeneklerinin entegrasyonu.
+
+---
+
+## 11. Yasal Güvenlik Sınırları
+
+- Dağıtım, policy-bound ve denetlenebilir olmalıdır.
+- Operasyonel aksiyonlarda insan onayı zorunludur.
+- İzinsiz gözetim/takip ve yetkisiz müdahale açıkça kapsam dışıdır.
+- Build kapanışı `Code+Test Green` kriteri ile yapılır; ağır eğitim kanıtları `Evidence Pending` olarak ayrı raporlanır.
+
+## 12. Closure-57 Kapısı
+
+```bash
+python3 scripts/check_57_matrix.py
+```
+
+Üretilen çıktılar:
+- `reports/closure_57_matrix.json`
+- `reports/closure_57_matrix.md`
+- `reports/closure_57_matrix_TR.md`

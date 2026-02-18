@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mertformer.ai/schemas/closure_57_matrix_v1.schema.json",
+  "title": "closure_57_matrix_v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "generated_at_utc",
+    "total_items",
+    "green_items",
+    "all_green",
+    "evidence_pending_ids",
+    "items"
+  ],
+  "properties": {
+    "schema": { "const": "closure_57_matrix_v1" },
+    "generated_at_utc": { "type": "string" },
+    "total_items": { "type": "integer", "minimum": 57, "maximum": 57 },
+    "green_items": { "type": "integer", "minimum": 0, "maximum": 57 },
+    "all_green": { "type": "boolean" },
+    "evidence_pending_ids": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 1, "maximum": 57 }
+    },
+    "items": {
+      "type": "array",
+      "minItems": 57,
+      "maxItems": 57,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "area",
+          "code",
+          "integration",
+          "test",
+          "green",
+          "evidence_pending"
+        ],
+        "properties": {
+          "id": { "type": "integer", "minimum": 1, "maximum": 57 },
+          "name": { "type": "string" },
+          "area": { "type": "string" },
+          "code": { "type": "boolean" },
+          "integration": { "type": "boolean" },
+          "test": { "type": "boolean" },
+          "green": { "type": "boolean" },
+          "evidence_pending": { "type": "boolean" },
+          "evidence": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}
+

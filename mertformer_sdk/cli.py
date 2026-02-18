@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -103,6 +104,26 @@ def _cmd_kpi_report(args: argparse.Namespace) -> None:
     print(f"kpi_report_written={out_path}")
 
 
+def _cmd_57_report(args: argparse.Namespace) -> None:
+    cmd = [
+        sys.executable,
+        "scripts/check_57_matrix.py",
+        "--out",
+        args.out,
+    ]
+    if args.md_out:
+        cmd.extend(["--md-out", args.md_out])
+    if args.md_tr_out:
+        cmd.extend(["--md-tr-out", args.md_tr_out])
+    result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+    if result.stdout:
+        print(result.stdout.strip())
+    if result.returncode != 0:
+        if result.stderr:
+            print(result.stderr.strip(), file=sys.stderr)
+        raise SystemExit(result.returncode)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="mertformer")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -148,6 +169,12 @@ def main() -> None:
     kpi_p.add_argument("--skip-verify", action="store_true", help="Skip running verify_all.sh")
     kpi_p.add_argument("--onnx-check", action="store_true", help="Run ONNX export smoke KPI")
     kpi_p.set_defaults(func=_cmd_kpi_report)
+
+    c57_p = sub.add_parser("57-report", help="Generate closure_57_matrix_v1 report")
+    c57_p.add_argument("--out", default="reports/closure_57_matrix.json", help="Output JSON path")
+    c57_p.add_argument("--md-out", default="reports/closure_57_matrix.md", help="Output markdown path")
+    c57_p.add_argument("--md-tr-out", default="reports/closure_57_matrix_TR.md", help="Output Turkish markdown path")
+    c57_p.set_defaults(func=_cmd_57_report)
 
     args = parser.parse_args()
     try:

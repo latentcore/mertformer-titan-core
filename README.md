@@ -3,6 +3,31 @@
 <div align="center">
   <a href="README.md">🇬🇧 English</a> | <a href="README_TR.md">🇹🇷 Türkçe</a>
 </div>
+
+---
+
+## Lawful Safety Deployment Policy (Build 30)
+
+This repository is designed for lawful, auditable, human-approved deployment.
+
+- Human-in-the-loop is mandatory for operational decisions.
+- Audit trail and policy boundaries are mandatory in orchestrator/runtime.
+- Unauthorized surveillance, covert tracking, and unapproved intervention are out of scope.
+- Security and governance checks must pass before any pilot claim.
+
+## Closure 57 Report
+
+Build 30 includes a machine-checkable closure gate:
+
+```bash
+python3 scripts/check_57_matrix.py
+mertformer 57-report --out reports/closure_57_matrix.json
+```
+
+Outputs:
+- `reports/closure_57_matrix.json`
+- `reports/closure_57_matrix.md`
+- `reports/closure_57_matrix_TR.md`
 <br />
 
 ```

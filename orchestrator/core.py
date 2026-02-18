@@ -28,6 +28,9 @@ from .audio_sense import AudioSense
 from .sense_engine import SenseEngine
 from .memory import GodMemory, DocIndexer, RAGEngine
 from .swarm_runtime import SwarmRuntime
+from .self_improvement_guard import SelfImprovementGuard
+from .alignment_contracts import AlignmentContracts
+from .compute_orchestrator import ComputeOrchestrator
 
 # TR: MertFormer import - fallback mekanizmalı
 # EN: MertFormer import - with fallback mechanism
@@ -98,6 +101,9 @@ class MertFormerOrchestrator:
         self.memory = GodMemory(AGIPaths.MEMORY_FILE, self.senses)
         self.doc_indexer = DocIndexer(AGIPaths.DOC_DIR, AGIPaths.VECTOR_FILE, self.senses)
         self.rag = RAGEngine(self.memory, self.doc_indexer, self.senses)
+        self.self_improvement_guard = SelfImprovementGuard()
+        self.alignment_contracts = AlignmentContracts()
+        self.compute_orchestrator = ComputeOrchestrator()
         
         # TR: Model / EN: Model
         self.model = None
@@ -256,6 +262,44 @@ Titan:"""
             "telemetry": report.telemetry,
             "outputs": report.outputs,
         }
+
+    def check_alignment(self, prompt: str) -> dict:
+        violations = self.alignment_contracts.check_prompt(prompt)
+        return {
+            "pass_check": len(violations) == 0,
+            "violations": [
+                {"rule_id": v.rule_id, "message": v.message, "severity": v.severity}
+                for v in violations
+            ],
+        }
+
+    def propose_self_improvements(self) -> dict:
+        snapshot = self.swarm.run("runtime telemetry snapshot", mode="nano").telemetry
+        health = float(snapshot.get("health_report", {}).get("health_score", 1.0))
+        failure_signal = float(snapshot.get("failure_budget", {}).get("failure_budget_signal", 0.0))
+        telemetry = {"health_score": health, "failure_budget_signal": failure_signal}
+        proposals = self.self_improvement_guard.propose(telemetry)
+        return {
+            "auto_apply": False,
+            "requires_human_approval": True,
+            "proposals": [
+                {
+                    "title": p.title,
+                    "rationale": p.rationale,
+                    "risk": p.risk,
+                    "requires_human_approval": p.requires_human_approval,
+                }
+                for p in proposals
+            ],
+        }
+
+    def compute_schedule(self, performance_priority: float = 0.6, energy_priority: float = 0.4) -> dict:
+        return self.compute_orchestrator.schedule(
+            {
+                "performance_priority": float(performance_priority),
+                "energy_priority": float(energy_priority),
+            }
+        )
     
     def status(self) -> str:
         """TR: Sistem durumunu döndür. / EN: Return system status."""
@@ -267,6 +311,7 @@ Titan:"""
             "🤖 Swarm Modes: nano(3), mid(15), omega(45)",
             f"💾 Hafıza: {len(self.memory.cache)} kayıt",
             f"📚 Doküman Chunks: {len(self.doc_indexer.chunks)}",
+            f"🧮 Compute Backend Suggestion: {self.compute_schedule().get('backend', 'unknown')}",
             f"🌐 Web: {'Aktif' if self.web.enabled else 'Devre Dışı'}",
             f"🔊 TTS: {'Aktif' if self.audio.is_tts_available() else 'Devre Dışı'}",
             "=" * 40,

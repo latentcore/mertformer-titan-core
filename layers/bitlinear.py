@@ -36,13 +36,27 @@ def set_lowbit_kernel_enabled(enabled: bool) -> None:
 def _try_lowbit_kernel(x: torch.Tensor, w: torch.Tensor, bias: torch.Tensor | None) -> torch.Tensor | None:
     if not _LOWBIT_KERNEL_ENABLED:
         return None
-    if not x.is_cuda or not w.is_cuda:
-        return None
+
     try:
-        from mertformer_sdk.kernels.triton_ternary import triton_ternary_linear, is_triton_available
-        if not is_triton_available():
-            return None
-        return triton_ternary_linear(x, w, bias, use_tensorcore=_TENSORCORE_ENABLED)
+        from mertformer_sdk.kernels.dispatcher import select_backend
+
+        backend = select_backend(x, w)
+        if backend == "triton_cuda":
+            from mertformer_sdk.kernels.triton_ternary import triton_ternary_linear, is_triton_available
+
+            if not is_triton_available():
+                return None
+            return triton_ternary_linear(x, w, bias, use_tensorcore=_TENSORCORE_ENABLED)
+        if backend == "cpp_cpu":
+            from mertformer_sdk.kernels.cpp.loader import bitnet_cpu_linear
+
+            return bitnet_cpu_linear(x, w, bias)
+        if backend == "mps_optimized":
+            # MPS-optimized path (no custom shader): keep deterministic quantized math.
+            x_q = activation_quant(x)
+            w_q = weight_quant(w)
+            return F.linear(x_q, w_q, bias)
+        return None
     except Exception:
         return None
 

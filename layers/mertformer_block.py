@@ -27,6 +27,7 @@ from layers.cognitive_extensions import (
     HebbianPlasticityLayer,
     NeuroSymbolicLayer,
 )
+from layers.lifelong_safety import LifelongSafetyLayer
 from layers.liquid import LiquidMixer
 from layers.mla import MLA
 from layers.moe import MoE
@@ -173,6 +174,16 @@ class MertFormerBlock(nn.Module):
             if bool(getattr(cfg, "use_neuro_symbolic_layer", False))
             else None
         )
+        self.lifelong_safety_layer = (
+            LifelongSafetyLayer(
+                H,
+                ema_decay=float(getattr(cfg, "lifelong_ema_decay", 0.99)),
+                max_adaptation_gain=float(getattr(cfg, "lifelong_max_adaptation_gain", 0.05)),
+                drift_threshold=float(getattr(cfg, "lifelong_drift_threshold", 0.35)),
+            )
+            if bool(getattr(cfg, "use_lifelong_safety_layer", False))
+            else None
+        )
 
     def forward(
         self,
@@ -227,6 +238,8 @@ class MertFormerBlock(nn.Module):
             x = self.hebbian_layer(x)
         if self.neuro_symbolic_layer is not None:
             x = self.neuro_symbolic_layer(x)
+        if self.lifelong_safety_layer is not None:
+            x = self.lifelong_safety_layer(x)
 
         # TR: 4. QINN opsiyonel / EN: 4. QINN optional
         if self.qinn is not None:

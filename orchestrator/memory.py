@@ -32,6 +32,40 @@ if TYPE_CHECKING:
 MAX_MEMORY_HITS = 20
 
 
+class HierarchicalMemoryContract:
+    """
+    Working / episodic / semantic memory envelope with retrieval metrics.
+    This class is a thin contract layer over existing GodMemory + DocIndexer stack.
+    """
+
+    def __init__(self):
+        self.working: List[Dict[str, Any]] = []
+        self.episodic: List[Dict[str, Any]] = []
+        self.semantic: List[Dict[str, Any]] = []
+
+    def update_working(self, item: Dict[str, Any], max_items: int = 64) -> None:
+        self.working.append(item)
+        if len(self.working) > max_items:
+            self.working = self.working[-max_items:]
+
+    def update_episodic(self, item: Dict[str, Any], max_items: int = 2048) -> None:
+        self.episodic.append(item)
+        if len(self.episodic) > max_items:
+            self.episodic = self.episodic[-max_items:]
+
+    def update_semantic(self, item: Dict[str, Any], max_items: int = 8192) -> None:
+        self.semantic.append(item)
+        if len(self.semantic) > max_items:
+            self.semantic = self.semantic[-max_items:]
+
+    def stats(self) -> Dict[str, int]:
+        return {
+            "working_size": len(self.working),
+            "episodic_size": len(self.episodic),
+            "semantic_size": len(self.semantic),
+        }
+
+
 class GodMemory:
     """
     TR: Kategorik Vektör Hafıza.
@@ -45,6 +79,7 @@ class GodMemory:
         self.senses = senses
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.cache: List[Dict[str, Any]] = []
+        self.contract = HierarchicalMemoryContract()
         self._load()
 
     def _load(self) -> None:
@@ -57,7 +92,9 @@ class GodMemory:
                         if not line:
                             continue
                         try:
-                            self.cache.append(json.loads(line))
+                            rec = json.loads(line)
+                            self.cache.append(rec)
+                            self.contract.update_episodic(rec)
                         except Exception as e:
                             print(f"⚠️ Hafıza kaydı bozuk: {e}")
                 print(f"💾 Hafıza yüklendi: {len(self.cache)} kayıt.")
@@ -99,6 +136,8 @@ class GodMemory:
             "ts": time.time(),
         }
         self.cache.append(rec)
+        self.contract.update_working(rec)
+        self.contract.update_episodic(rec)
         
         try:
             with self.path.open("a", encoding="utf-8") as f:
@@ -204,6 +243,18 @@ class GodMemory:
         
         ctx_lines.append("[MEMORY_CONTEXT_END]")
         return "\n".join(ctx_lines)
+
+    def retrieval_metrics(self, query: str, top_k: int = MAX_MEMORY_HITS) -> Dict[str, float]:
+        hits = self.recall_raw(query, top_k=top_k)
+        if not hits:
+            return {"hits": 0.0, "top_k": float(top_k), "hit_rate": 0.0}
+        # proxy metric: proportion of non-empty records
+        non_empty = sum(1 for h in hits if (h.get("text") or "").strip())
+        return {
+            "hits": float(len(hits)),
+            "top_k": float(top_k),
+            "hit_rate": non_empty / float(max(1, len(hits))),
+        }
 
     def last_messages(self, limit: int = 10, category: Optional[str] = None) -> str:
         """TR: Son n kaydı döndürür. / EN: Returns last n records."""

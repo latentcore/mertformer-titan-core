@@ -312,6 +312,17 @@ class MertFormerConfig:
     hebbian_decay: float = 0.99
     use_neuro_symbolic_layer: bool = False
     neuro_symbolic_rules: int = 8
+    use_world_model_head: bool = False
+    world_model_horizon: int = 1
+    use_lifelong_safety_layer: bool = False
+    lifelong_ema_decay: float = 0.99
+    lifelong_max_adaptation_gain: float = 0.05
+    lifelong_drift_threshold: float = 0.35
+
+    # Continual learning adapter (offline-safe scaffold)
+    use_continual_adapter: bool = False
+    continual_replay_capacity: int = 2048
+    continual_drift_threshold: float = 0.2
 
     # -------------------------------------------------------------------------
     # [USER OVERRIDE] Teacher Model configuration
@@ -377,6 +388,8 @@ class MertFormerConfig:
     epoch_mode: bool = False
 
     min_lr_ratio: float = 0.1  # Minimum LR ratio for cosine decay
+    # Reproducibility metadata strictness
+    write_run_manifest: bool = True
 
     # Gradyan Kırpma
     # [RAPOR DÜZELTME] 1.0 -> 2.0 (STE sert gradyanlar üretir, biraz esneklik lazım)

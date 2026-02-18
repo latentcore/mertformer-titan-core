@@ -107,6 +107,12 @@ def collect_kpis(
 
     pass_count = sum(1 for item in checks if item.status == "pass")
     readiness = pass_count / float(len(checks))
+    pilot_quality = {
+        "score": readiness,
+        "status": "ready" if readiness >= 0.8 else "needs_work",
+        "gates_passed": pass_count,
+        "gates_total": len(checks),
+    }
 
     return {
         "schema": "kpi_report_v1",
@@ -115,6 +121,7 @@ def collect_kpis(
         "pass_count": pass_count,
         "total_count": len(checks),
         "readiness_score": readiness,
+        "pilot_quality": pilot_quality,
         "checks": [asdict(item) for item in checks],
         "verify_summary": verify_summary,
         "pilot_report": pilot,
