@@ -78,7 +78,7 @@ This repository is no longer in idea/prototype-only state. Core validation gates
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`40 passed, 3 skipped`)
+   - `pytest` passed (`58 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -478,7 +478,7 @@ Name expansion:
 - ✅ **Liquid Spike Safeguards**: 3-strike freeze mechanism
 - ✅ **Best Checkpoint Saving**: Preserves optimal model state
 
-### 9. **Technological Edge (V27.0 Upgrade)** 🛠️
+### 9. **Technological Edge (Build 30 Upgrade)** 🛠️
 - **GaLore Integration**: Gradient Low-Rank Projection optimization for memory efficiency on Consumer GPUs (Locked).
 - **8-bit AdamW**: Memory-optimized optimizer reduces optimizer state footprint by 75% (Locked).
 - **Offline Knowledge Distillation**: Pre-computed Llama-3-70B logits for zero-overhead teacher training (requires precomputed shards; falls back to online teacher if missing).

@@ -78,7 +78,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`40 passed, 3 skipped`)
+   - `pytest` geçti (`58 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -476,7 +476,7 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 - ✅ **Liquid Ani Artış Korumaları**: 3 aşamalı dondurma mekanizması
 - ✅ **En İyi Kontrol Noktası Kaydı**: Optimal model durumunu korur
 
-### 9. **Teknolojik Üstünlük (V27.0 Yükseltmesi)** 🛠️
+### 9. **Teknolojik Üstünlük (Build 30 Yükseltmesi)** 🛠️
 - **GaLore Entegrasyonu**: Tüketici GPU'larında bellek verimliliği için Gradient Low-Rank Projection optimizasyonu (Kilitli).
 - **8-bit AdamW**: Bellek optimize edilmiş optimizer, optimizer durum belleğini %75 azaltır (Kilitli).
 - **Çevrimdışı Bilgi Damıtma (Offline KD)**: Sıfır yüklü öğretmen eğitimi için önceden hesaplanmış Llama-3-70B logitleri (precomputed shard gerektirir; yoksa online öğretmene düşer).
