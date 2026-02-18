@@ -67,7 +67,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `40 passed, 3 skipped` |
+| `python3 -m pytest -q` | `58 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -492,6 +492,25 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 
 <a id="mimari"></a>
 ## 🏗️ Mimari
+
+### Build 30 Bilişsel Genişletmeler (Feature-Flag, varsayılan KAPALI)
+Bu modüller kodda uygulanmıştır ve eğitim/çıkarım öncesi config ile açılabilir:
+
+- `use_hierarchical_kv_cache` -> Kısa/uzun ayrımlı hiyerarşik KV cache (`layers/mla.py`)
+- `use_global_workspace_broadcast` -> Global workspace broadcast katmanı (`layers/cognitive_extensions.py`)
+- `use_cross_expert_sync_bus` -> Uzmanlar arası senkronizasyon yolu (`layers/moe.py`)
+- `use_latent_ode_state_channel` -> Sürekli-zaman latent ODE durum kanalı (`layers/cognitive_extensions.py`)
+- `use_neuromodulatory_gain` -> Nöromodülatör gain katmanı (`layers/cognitive_extensions.py`)
+- `use_hebbian_plasticity` -> Hebbian plastisite iz katmanı (`layers/cognitive_extensions.py`)
+- `use_neuro_symbolic_layer` -> Nöro-sembolik artık köprü katmanı (`layers/cognitive_extensions.py`)
+- `use_world_model_head` -> Nedensel dünya modeli yan-çıktıları (`layers/world_model_head.py`)
+- `use_lifelong_safety_layer` -> Yaşam boyu güvenlik/adaptasyon koruması (`layers/lifelong_safety.py`)
+- `use_structural_plasticity` -> Uzman büyütme-budama politika kancaları (`layers/moe.py`)
+- `use_continual_adapter` -> Eğitimde continual learning adaptör yolu (`train/continual_adapter.py`)
+
+Çalışma notu:
+- Varsayılanlar KAPALI tutulur; stabil baseline korunur.
+- Bu bileşenler non-breaking uzantılar olarak entegredir ve deney bazında açılır.
 
 ```text
       ╔═══════════════════════════════════════════════════════════════════════════╗

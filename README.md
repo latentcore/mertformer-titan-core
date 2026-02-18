@@ -67,7 +67,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `40 passed, 3 skipped` |
+| `python3 -m pytest -q` | `58 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -494,6 +494,25 @@ Name expansion:
 
 <a id="architecture"></a>
 ## 🏗️ Architecture
+
+### Build 30 Cognitive Extensions (Feature-Flag, default OFF)
+These modules are implemented in code and can be enabled from config before training/inference runs:
+
+- `use_hierarchical_kv_cache` -> Hierarchical KV cache short/long split (`layers/mla.py`)
+- `use_global_workspace_broadcast` -> Global workspace broadcast (`layers/cognitive_extensions.py`)
+- `use_cross_expert_sync_bus` -> Cross-expert synchronization bus (`layers/moe.py`)
+- `use_latent_ode_state_channel` -> Continuous latent ODE state channel (`layers/cognitive_extensions.py`)
+- `use_neuromodulatory_gain` -> Neuromodulatory gain modulation (`layers/cognitive_extensions.py`)
+- `use_hebbian_plasticity` -> Hebbian plasticity trace layer (`layers/cognitive_extensions.py`)
+- `use_neuro_symbolic_layer` -> Neuro-symbolic residual bridge (`layers/cognitive_extensions.py`)
+- `use_world_model_head` -> Causal world model head side outputs (`layers/world_model_head.py`)
+- `use_lifelong_safety_layer` -> Lifelong safety/adaptation guard (`layers/lifelong_safety.py`)
+- `use_structural_plasticity` -> Structural plasticity hooks for expert grow/prune policy (`layers/moe.py`)
+- `use_continual_adapter` -> Continual learning adapter path in training (`train/continual_adapter.py`)
+
+Runtime note:
+- Defaults are OFF to preserve a stable baseline.
+- These are integrated as non-breaking extensions and can be enabled per experiment.
 
 ```text
       ╔═══════════════════════════════════════════════════════════════════════════╗
