@@ -13,7 +13,7 @@ ROOT_JSONL=()
 while IFS= read -r f; do
   ROOT_JSONL+=("$f")
 done < <(find "$ROOT_DIR" -maxdepth 1 -type f -name 'kaggle_onefile_build30_*.jsonl' | sort)
-EXTERNAL_ONEFILE="/Users/mertyunlu/Desktop/kaggle_onefile_demo_build30.py"
+EXTERNAL_ONEFILE="${HOME}/Desktop/kaggle_onefile_demo_build30.py"
 
 tracked_count=0
 for f in "${ROOT_JSONL[@]}"; do
