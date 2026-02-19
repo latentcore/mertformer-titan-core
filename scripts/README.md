@@ -8,6 +8,10 @@ Conventions:
 
 If you are unsure, run the single-command verification first: `bash scripts/verify_all.sh`.
 
+## Canonical One-File Path
+- Official/canonical one-file script: `scripts/kaggle_onefile_demo_build30.py`
+- Repo-external copies are unsupported and treated as drift sources.
+
 ## Core Pipelines
 - `smart_runner.py` — Master orchestrator: data → distill → train.
 - `data_pipeline.py` — Dataset preparation (5-stage curriculum).
@@ -20,6 +24,10 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - `bootstrap_venv.sh` — Creates `.titan-venv` (Python 3.11 baseline). Use `--demo` to install `pygame`.
 - `verify_all.sh` — Offline-first verify-all: secret scan → pytest → preflight → operator gate (safe).
 - `secret_scan.py` — Scans tracked files for common secret patterns (CI gate).
+- `check_tokenizer_sync.py` — Enforces canonical tokenizer spec sync (`interfaces/tokenizer_spec.json` -> `tokenizer/tokenizer.json`).
+- `check_translation_pointer_policy.py` — Enforces pointer policy for translated deep-audit counterparts.
+- `check_doc_claim_consistency.py` — Checks claim/evidence consistency in key docs.
+- `clean_runtime_artifacts.sh` — Cleans runtime artifacts (including root `kaggle_onefile_build30_*.jsonl`).
 
 ## Evaluation & Benchmarks
 - `golden_eval.py` — Golden sample evaluator (50 prompts).

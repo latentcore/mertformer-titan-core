@@ -3,10 +3,13 @@
 - toplam_madde: 57
 - yesil_madde: 57
 - hepsi_yesil: True
+- kapsam_ici_pending_yok: True
+- kapsam_ici_pending_idler: []
+- kapsam_disi_pending_idler: [8, 9, 11, 12, 51, 52, 54, 55, 56, 57]
 - kanit_bekleyen_idler: [8, 9, 11, 12, 51, 52, 54, 55, 56, 57]
 
-| # | Alan | Bileşen | Kod | Entegrasyon | Test | Yeşil | Evidence Pending |
-|---:|---|---|:---:|:---:|:---:|:---:|:---:|
+| # | Alan | Bileşen | Kod | Entegrasyon | Test | Yeşil | Pending Kapsamı |
+|---:|---|---|:---:|:---:|:---:|:---:|:---|
 | 1 | foundation | crash/deadlock/silent corruption zero | ✅ | ✅ | ✅ | ✅ | — |
 | 2 | foundation | deterministic train/resume | ✅ | ✅ | ✅ | ✅ | — |
 | 3 | foundation | full gate matrix | ✅ | ✅ | ✅ | ✅ | — |
@@ -14,11 +17,11 @@
 | 5 | data | licensed data inventory | ✅ | ✅ | ✅ | ✅ | — |
 | 6 | data | dedup + quality filtering | ✅ | ❌ | ✅ | ✅ | — |
 | 7 | data | curriculum automation | ✅ | ✅ | ✅ | ✅ | — |
-| 8 | train | multi-stage scale-up protocol | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| 9 | train | ddp/fsdp safety | ✅ | ✅ | ✅ | ✅ | ⚠️ |
+| 8 | train | multi-stage scale-up protocol | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
+| 9 | train | ddp/fsdp safety | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
 | 10 | train | checkpoint safety + recovery | ✅ | ✅ | ✅ | ✅ | — |
-| 11 | eval | core capability benchmark pack | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| 12 | eval | security/red-team benchmarks | ✅ | ✅ | ✅ | ✅ | ⚠️ |
+| 11 | eval | core capability benchmark pack | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
+| 12 | eval | security/red-team benchmarks | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
 | 13 | eval | kpi pack + schema + cli | ✅ | ✅ | ✅ | ✅ | — |
 | 14 | deploy | onnx export contract | ✅ | ✅ | ✅ | ✅ | — |
 | 15 | deploy | edge/runtime smoke | ✅ | ✅ | ✅ | ✅ | — |
@@ -57,10 +60,10 @@
 | 48 | runtime | kernel dispatcher fallback matrix | ✅ | ✅ | ✅ | ✅ | — |
 | 49 | product | sdk api stability | ✅ | ✅ | ✅ | ✅ | — |
 | 50 | product | pilot ops + sla telemetry | ✅ | ✅ | ✅ | ✅ | — |
-| 51 | product | kpi validated pilots | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| 52 | agi | generalization proof | ✅ | ✅ | ✅ | ✅ | ⚠️ |
+| 51 | product | kpi validated pilots | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
+| 52 | agi | generalization proof | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
 | 53 | agi | robust tool-use + planning autonomy | ✅ | ✅ | ✅ | ✅ | — |
-| 54 | agi | continual learning without forgetting | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| 55 | asi | recursive self-improvement governance | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| 56 | asi | formal alignment scaffold | ✅ | ✅ | ✅ | ✅ | ⚠️ |
-| 57 | asi | compute/energy orchestration scaffold | ✅ | ✅ | ✅ | ✅ | ⚠️ |
+| 54 | agi | continual learning without forgetting | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
+| 55 | asi | recursive self-improvement governance | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
+| 56 | asi | formal alignment scaffold | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
+| 57 | asi | compute/energy orchestration scaffold | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |

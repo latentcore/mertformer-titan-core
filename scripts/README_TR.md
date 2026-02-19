@@ -8,6 +8,10 @@ Konvansiyonlar:
 
 Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verify_all.sh`.
 
+## Kanonik One-File Path
+- Resmi/kanonik one-file script: `scripts/kaggle_onefile_demo_build30.py`
+- Repo disi one-file kopyalari desteklenmez ve drift kaynagi sayilir.
+
 ## Çekirdek Akışlar
 - `smart_runner.py` — Ana orkestratör: veri → distill → eğitim.
 - `data_pipeline.py` — Veri hazırlama (5 aşamalı müfredat).
@@ -20,6 +24,10 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - `bootstrap_venv.sh` — `.titan-venv` üretir (Python 3.11 baseline). Demo için `--demo` ile `pygame` kurar.
 - `verify_all.sh` — Offline-first verify-all: secret scan → pytest → preflight → operator gate (safe).
 - `secret_scan.py` — Track'li dosyalarda olası secret pattern taraması (CI gate).
+- `check_tokenizer_sync.py` — Kanonik tokenizer spec senkronunu zorunlu kilar (`interfaces/tokenizer_spec.json` -> `tokenizer/tokenizer.json`).
+- `check_translation_pointer_policy.py` — Derin denetim TR counterpart dosyalarinda pointer politikasini zorunlu kilar.
+- `check_doc_claim_consistency.py` — Ana dokumanlarda claim/evidence tutarliligini kontrol eder.
+- `clean_runtime_artifacts.sh` — Runtime artefaktlarini temizler (kök `kaggle_onefile_build30_*.jsonl` dahil).
 
 ## Değerlendirme & Benchmark
 - `golden_eval.py` — Golden sample evaluator (50 prompt).

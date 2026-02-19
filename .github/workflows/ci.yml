@@ -49,3 +49,19 @@ jobs:
           TITAN_WANDB: "0"
         run: |
           python scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl
+
+      - name: Closure 57 Matrix (strict in-scope pending)
+        run: |
+          python scripts/check_57_matrix.py --require-no-pending
+
+      - name: Tokenizer Sync Gate
+        run: |
+          python scripts/check_tokenizer_sync.py
+
+      - name: Translation Pointer Policy Gate
+        run: |
+          python scripts/check_translation_pointer_policy.py
+
+      - name: Documentation Claim Consistency Gate
+        run: |
+          python scripts/check_doc_claim_consistency.py

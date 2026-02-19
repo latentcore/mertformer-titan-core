@@ -39,7 +39,16 @@ echo "[verify] Preflight (offline) ..."
 echo "[verify] Operator mode gate (safe, offline) ..."
 "$PY" scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl
 
-echo "[verify] Closure 57 matrix gate ..."
-"$PY" scripts/check_57_matrix.py
+echo "[verify] Closure 57 matrix gate (strict in-scope pending) ..."
+"$PY" scripts/check_57_matrix.py --require-no-pending
+
+echo "[verify] Tokenizer sync gate ..."
+"$PY" scripts/check_tokenizer_sync.py
+
+echo "[verify] Translation pointer policy gate ..."
+"$PY" scripts/check_translation_pointer_policy.py
+
+echo "[verify] Documentation claim consistency gate ..."
+"$PY" scripts/check_doc_claim_consistency.py
 
 echo "[verify] OK"

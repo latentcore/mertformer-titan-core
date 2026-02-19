@@ -231,8 +231,8 @@ Rapor doğruluk denetimi ve stratejik değer özeti.
 - [reports/codex_deep_audit_EN.md](reports/codex_deep_audit_EN.md) — Derin mühendislik denetimi (EN).
 - [reports/codex_deep_audit_DE.md](reports/codex_deep_audit_DE.md) — Derin mühendislik denetimi (DE).
 - [reports/codex_deep_audit_TR.md](reports/codex_deep_audit_TR.md) — Derin mühendislik denetimi (TR).
-- [reports/codex_deep_audit_EN_TR.md](reports/codex_deep_audit_EN_TR.md) — EN denetim raporunun TR karşılığı.
-- [reports/codex_deep_audit_DE_TR.md](reports/codex_deep_audit_DE_TR.md) — DE denetim raporunun TR karşılığı.
+- [reports/codex_deep_audit_EN_TR.md](reports/codex_deep_audit_EN_TR.md) — EN denetim raporu icin TR pointer dosyasi (kanonik icerik `codex_deep_audit_TR.md`).
+- [reports/codex_deep_audit_DE_TR.md](reports/codex_deep_audit_DE_TR.md) — DE denetim raporu icin TR pointer dosyasi (kanonik icerik `codex_deep_audit_TR.md`).
 - DE dilindeki denetim dosyaları, Almanca konuşan paydaşlar için dış inceleme artifact’i olarak korunur.
 - [reports/verified_matrix.md](reports/verified_matrix.md) — Verified vs Target matrisi (EN).
 - [reports/verified_matrix_TR.md](reports/verified_matrix_TR.md) — Verified vs Target matrisi (TR).
@@ -1458,9 +1458,9 @@ NİHAİ/                     # Proje kökü
 │   ├── cli_smoke_log.md           # Dokümantasyon/rapor dosyası
 │   ├── cli_smoke_log_TR.md        # Türkçe doküman karşılığı
 │   ├── codex_deep_audit_DE.md     # Dokümantasyon/rapor dosyası
-│   ├── codex_deep_audit_DE_TR.md  # Türkçe doküman karşılığı
+│   ├── codex_deep_audit_DE_TR.md  # Turkce pointer dosyasi (kanonik: codex_deep_audit_TR.md)
 │   ├── codex_deep_audit_EN.md     # Dokümantasyon/rapor dosyası
-│   ├── codex_deep_audit_EN_TR.md  # Türkçe doküman karşılığı
+│   ├── codex_deep_audit_EN_TR.md  # Turkce pointer dosyasi (kanonik: codex_deep_audit_TR.md)
 │   ├── codex_deep_audit_TR.md     # Türkçe doküman karşılığı
 │   ├── dataset_health.md          # Dokümantasyon/rapor dosyası
 │   ├── dataset_health_TR.md       # Türkçe doküman karşılığı

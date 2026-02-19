@@ -9,6 +9,9 @@
     "total_items",
     "green_items",
     "all_green",
+    "no_pending_in_scope",
+    "in_scope_pending_ids",
+    "out_of_scope_pending_ids",
     "evidence_pending_ids",
     "items"
   ],
@@ -18,6 +21,15 @@
     "total_items": { "type": "integer", "minimum": 57, "maximum": 57 },
     "green_items": { "type": "integer", "minimum": 0, "maximum": 57 },
     "all_green": { "type": "boolean" },
+    "no_pending_in_scope": { "type": "boolean" },
+    "in_scope_pending_ids": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 1, "maximum": 57 }
+    },
+    "out_of_scope_pending_ids": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 1, "maximum": 57 }
+    },
     "evidence_pending_ids": {
       "type": "array",
       "items": { "type": "integer", "minimum": 1, "maximum": 57 }
@@ -56,4 +68,3 @@
     }
   }
 }
-

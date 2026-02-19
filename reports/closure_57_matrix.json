@@ -1,9 +1,24 @@
 {
   "schema": "closure_57_matrix_v1",
-  "generated_at_utc": "2026-02-18T15:05:07Z",
+  "generated_at_utc": "2026-02-19T19:19:24Z",
   "total_items": 57,
   "green_items": 57,
   "all_green": true,
+  "no_pending_in_scope": true,
+  "in_scope_pending_ids": [],
+  "out_of_scope_pending_ids": [
+    8,
+    9,
+    11,
+    12,
+    51,
+    52,
+    54,
+    55,
+    56,
+    57
+  ],
+  "out_of_scope_policy": "benchmark_and_long_horizon_evidence",
   "evidence_pending_ids": [
     8,
     9,

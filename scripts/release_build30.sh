@@ -5,11 +5,18 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PKG_DIR="$ROOT_DIR/packages"
 REPORT_EN="$ROOT_DIR/reports/release_snapshot.md"
 REPORT_TR="$ROOT_DIR/reports/release_snapshot_TR.md"
+PY="$ROOT_DIR/.titan-venv/bin/python"
 
 REL_ZIP="$PKG_DIR/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip"
 LOCKED_AGE="$PKG_DIR/MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age"
 
 mkdir -p "$PKG_DIR"
+
+if [[ ! -x "$PY" ]]; then
+  PY="python3"
+fi
+
+"$PY" "$ROOT_DIR/scripts/check_tokenizer_sync.py"
 
 rm -f "$REL_ZIP" "$LOCKED_AGE"
 
@@ -47,8 +54,10 @@ fi
 
 rel_sha="$(shasum -a 256 "$REL_ZIP" | awk '{print $1}')"
 locked_sha=""
+lock_status="skipped (expected: AGE_RECIPIENT_FILE missing)"
 if [[ -s "$LOCKED_AGE" ]]; then
   locked_sha="$(shasum -a 256 "$LOCKED_AGE" | awk '{print $1}')"
+  lock_status="generated"
 fi
 
 cat <<EOF
@@ -58,17 +67,57 @@ locked_age=$LOCKED_AGE
 locked_sha256=$locked_sha
 EOF
 
-# Best-effort update of release snapshot references.
-if [[ -f "$REPORT_EN" ]]; then
-  sed -i '' \
-    -e "s|MertFormer_Titan_OnyxStorm_v1.0_B[0-9][0-9]_Release\.zip|MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip|g" \
-    -e "s|MertFormer_Titan_OnyxStorm_v1.0_B[0-9][0-9]_Locked\.secure\.age|MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age|g" \
-    "$REPORT_EN"
-fi
+# Snapshot updates (cross-platform, deterministic)
+"$PY" - "$REPORT_EN" "$REPORT_TR" "$rel_sha" "$locked_sha" "$lock_status" <<'PY'
+import re
+import sys
+from pathlib import Path
 
-if [[ -f "$REPORT_TR" ]]; then
-  sed -i '' \
-    -e "s|MertFormer_Titan_OnyxStorm_v1.0_B[0-9][0-9]_Release\.zip|MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip|g" \
-    -e "s|MertFormer_Titan_OnyxStorm_v1.0_B[0-9][0-9]_Locked\.secure\.age|MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age|g" \
-    "$REPORT_TR"
-fi
+report_en, report_tr, rel_sha, locked_sha, lock_status = sys.argv[1:]
+
+
+def update_release_section(path: Path, is_tr: bool) -> None:
+    if not path.exists():
+        return
+    text = path.read_text(encoding="utf-8", errors="ignore")
+    if is_tr:
+        h1 = "## Release Artefaktları (Desktop)"
+        h2 = "## Bilinen Gate / Blokerler"
+        sha_label = "SHA-256"
+        status_line = f"- Locked artefakt durumu: `{lock_status}`"
+        locked_sha_line = (
+            f"  - `{locked_sha}` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)"
+            if locked_sha
+            else "  - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)"
+        )
+    else:
+        h1 = "## Release Artifacts (Desktop)"
+        h2 = "## Known Gates / Blockers"
+        sha_label = "SHA-256"
+        status_line = f"- Locked artifact status: `{lock_status}`"
+        locked_sha_line = (
+            f"  - `{locked_sha}` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)"
+            if locked_sha
+            else "  - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)"
+        )
+
+    block = (
+        f"{h1}\n\n"
+        "- `MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`\n"
+        "- `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`\n"
+        f"{status_line}\n"
+        f"- {sha_label}:\n"
+        f"  - `{rel_sha}` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)\n"
+        f"{locked_sha_line}\n"
+    )
+
+    pattern = re.compile(re.escape(h1) + r".*?" + re.escape(h2), re.S)
+    replacement = block + "\n" + h2
+    if pattern.search(text):
+        text = pattern.sub(replacement, text, count=1)
+    path.write_text(text, encoding="utf-8")
+
+
+update_release_section(Path(report_en), is_tr=False)
+update_release_section(Path(report_tr), is_tr=True)
+PY

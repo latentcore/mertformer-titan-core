@@ -231,8 +231,8 @@ Report accuracy audit and strategic value summary.
 - [reports/codex_deep_audit_EN.md](reports/codex_deep_audit_EN.md) — Deep engineering audit (EN).
 - [reports/codex_deep_audit_DE.md](reports/codex_deep_audit_DE.md) — Deep engineering audit (DE).
 - [reports/codex_deep_audit_TR.md](reports/codex_deep_audit_TR.md) — Deep engineering audit (TR).
-- [reports/codex_deep_audit_EN_TR.md](reports/codex_deep_audit_EN_TR.md) — EN audit Turkish counterpart (TR).
-- [reports/codex_deep_audit_DE_TR.md](reports/codex_deep_audit_DE_TR.md) — DE audit Turkish counterpart (TR).
+- [reports/codex_deep_audit_EN_TR.md](reports/codex_deep_audit_EN_TR.md) — EN audit Turkish pointer file (TR, canonical content in `codex_deep_audit_TR.md`).
+- [reports/codex_deep_audit_DE_TR.md](reports/codex_deep_audit_DE_TR.md) — DE audit Turkish pointer file (TR, canonical content in `codex_deep_audit_TR.md`).
 - DE-language audit files are retained as external review artifacts for German-speaking stakeholders.
 - [reports/verified_matrix.md](reports/verified_matrix.md) — Verified vs Target matrix (EN).
 - [reports/verified_matrix_TR.md](reports/verified_matrix_TR.md) — Verified vs Target matrix (TR).
@@ -1460,9 +1460,9 @@ NİHAİ/                     # Project root
 │   ├── cli_smoke_log.md           # Documentation/report file
 │   ├── cli_smoke_log_TR.md        # Turkish document counterpart
 │   ├── codex_deep_audit_DE.md     # Documentation/report file
-│   ├── codex_deep_audit_DE_TR.md  # Turkish document counterpart
+│   ├── codex_deep_audit_DE_TR.md  # Turkish pointer file (canonical: codex_deep_audit_TR.md)
 │   ├── codex_deep_audit_EN.md     # Documentation/report file
-│   ├── codex_deep_audit_EN_TR.md  # Turkish document counterpart
+│   ├── codex_deep_audit_EN_TR.md  # Turkish pointer file (canonical: codex_deep_audit_TR.md)
 │   ├── codex_deep_audit_TR.md     # Turkish document counterpart
 │   ├── dataset_health.md          # Documentation/report file
 │   ├── dataset_health_TR.md       # Turkish document counterpart

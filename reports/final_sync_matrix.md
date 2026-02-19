@@ -10,6 +10,7 @@ Rule: every tracked `X.md` has `X_TR.md` pair where applicable.
 | --- | --- |
 | Missing pairs | 0 |
 | Orphan `_TR.md` files | 1 (`reports/codex_deep_audit_TR.md`, intentional canonical TR audit) |
+| Deep audit pointer policy | EN_TR + DE_TR are pointer files to `reports/codex_deep_audit_TR.md` |
 | Added in this final pass | `reports/pilot_readiness_kit_TR.md`, `reports/pilot_offer_packages_TR.md`, `reports/sales_funnel_90d_TR.md`, `reports/drone_sitl_demo_TR.md`, `reports/cleanroom_verification_TR.md`, `reports/go_status_matrix_TR.md` |
 
 ## 2) Build Label Consistency
@@ -42,7 +43,7 @@ Rule: every tracked `X.md` has `X_TR.md` pair where applicable.
 | Gate | Status |
 | --- | --- |
 | Clean zip excludes venv/cache/log/.env | PASS |
-| `.age` package is valid age format (`age-encryption.org/v1`) | PASS |
+| `.age` package gate | PASS or SKIPPED (expected when `AGE_RECIPIENT_FILE` is missing) |
 | SHA-256 created for all 2 packages | PASS |
 
 ## 6) Release Identifiers

@@ -13,6 +13,7 @@ from typing import Iterable
 
 
 ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_OUT_OF_SCOPE_PENDING_IDS = {8, 9, 11, 12, 51, 52, 54, 55, 56, 57}
 
 
 @dataclass
@@ -128,16 +129,22 @@ def build_checks() -> list[ItemCheck]:
     return checks
 
 
-def build_payload(checks: list[ItemCheck]) -> dict:
+def build_payload(checks: list[ItemCheck], out_of_scope_pending_ids: set[int]) -> dict:
     total = len(checks)
     green = sum(1 for c in checks if c.green)
     pending_ids = [c.id for c in checks if c.evidence_pending]
+    out_scope = sorted([pid for pid in pending_ids if pid in out_of_scope_pending_ids])
+    in_scope = sorted([pid for pid in pending_ids if pid not in out_of_scope_pending_ids])
     return {
         "schema": "closure_57_matrix_v1",
         "generated_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "total_items": total,
         "green_items": green,
         "all_green": green == total == 57,
+        "no_pending_in_scope": len(in_scope) == 0,
+        "in_scope_pending_ids": in_scope,
+        "out_of_scope_pending_ids": out_scope,
+        "out_of_scope_policy": "benchmark_and_long_horizon_evidence",
         "evidence_pending_ids": pending_ids,
         "items": [c.to_dict() for c in checks],
     }
@@ -153,16 +160,22 @@ def write_reports(payload: dict, json_path: Path, md_path: Path, md_tr_path: Pat
         f"- total_items: {payload['total_items']}",
         f"- green_items: {payload['green_items']}",
         f"- all_green: {payload['all_green']}",
+        f"- no_pending_in_scope: {payload['no_pending_in_scope']}",
+        f"- in_scope_pending_ids: {payload['in_scope_pending_ids']}",
+        f"- out_of_scope_pending_ids: {payload['out_of_scope_pending_ids']}",
         f"- evidence_pending_ids: {payload['evidence_pending_ids']}",
         "",
-        "| # | Area | Name | Code | Integration | Test | Green | Evidence Pending |",
-        "|---:|---|---|:---:|:---:|:---:|:---:|:---:|",
+        "| # | Area | Name | Code | Integration | Test | Green | Pending Scope |",
+        "|---:|---|---|:---:|:---:|:---:|:---:|:---|",
     ]
     for item in payload["items"]:
+        pending_scope = "—"
+        if item["evidence_pending"]:
+            pending_scope = "out-of-scope" if item["id"] in set(payload["out_of_scope_pending_ids"]) else "in-scope"
         lines.append(
             f"| {item['id']} | {item['area']} | {item['name']} | {'✅' if item['code'] else '❌'} | "
             f"{'✅' if item['integration'] else '❌'} | {'✅' if item['test'] else '❌'} | "
-            f"{'✅' if item['green'] else '❌'} | {'⚠️' if item['evidence_pending'] else '—'} |"
+            f"{'✅' if item['green'] else '❌'} | {pending_scope} |"
         )
     md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -172,16 +185,22 @@ def write_reports(payload: dict, json_path: Path, md_path: Path, md_tr_path: Pat
         f"- toplam_madde: {payload['total_items']}",
         f"- yesil_madde: {payload['green_items']}",
         f"- hepsi_yesil: {payload['all_green']}",
+        f"- kapsam_ici_pending_yok: {payload['no_pending_in_scope']}",
+        f"- kapsam_ici_pending_idler: {payload['in_scope_pending_ids']}",
+        f"- kapsam_disi_pending_idler: {payload['out_of_scope_pending_ids']}",
         f"- kanit_bekleyen_idler: {payload['evidence_pending_ids']}",
         "",
-        "| # | Alan | Bileşen | Kod | Entegrasyon | Test | Yeşil | Evidence Pending |",
-        "|---:|---|---|:---:|:---:|:---:|:---:|:---:|",
+        "| # | Alan | Bileşen | Kod | Entegrasyon | Test | Yeşil | Pending Kapsamı |",
+        "|---:|---|---|:---:|:---:|:---:|:---:|:---|",
     ]
     for item in payload["items"]:
+        pending_scope = "—"
+        if item["evidence_pending"]:
+            pending_scope = "kapsam-dışı" if item["id"] in set(payload["out_of_scope_pending_ids"]) else "kapsam-içi"
         tr_lines.append(
             f"| {item['id']} | {item['area']} | {item['name']} | {'✅' if item['code'] else '❌'} | "
             f"{'✅' if item['integration'] else '❌'} | {'✅' if item['test'] else '❌'} | "
-            f"{'✅' if item['green'] else '❌'} | {'⚠️' if item['evidence_pending'] else '—'} |"
+            f"{'✅' if item['green'] else '❌'} | {pending_scope} |"
         )
     md_tr_path.write_text("\n".join(tr_lines) + "\n", encoding="utf-8")
 
@@ -191,20 +210,45 @@ def main() -> int:
     parser.add_argument("--out", default="reports/closure_57_matrix.json")
     parser.add_argument("--md-out", default="reports/closure_57_matrix.md")
     parser.add_argument("--md-tr-out", default="reports/closure_57_matrix_TR.md")
+    parser.add_argument(
+        "--require-no-pending",
+        action="store_true",
+        help="Fail if there are in-scope pending evidence items.",
+    )
+    parser.add_argument(
+        "--out-of-scope-pending",
+        default=",".join(str(x) for x in sorted(DEFAULT_OUT_OF_SCOPE_PENDING_IDS)),
+        help="Comma-separated item ids treated as out-of-scope pending (do not fail with --require-no-pending).",
+    )
     args = parser.parse_args()
 
+    out_scope_ids: set[int] = set()
+    raw = str(args.out_of_scope_pending).strip()
+    if raw:
+        try:
+            out_scope_ids = {int(x.strip()) for x in raw.split(",") if x.strip()}
+        except ValueError as e:
+            raise SystemExit(f"invalid --out-of-scope-pending value: {e}") from e
+
     checks = build_checks()
-    payload = build_payload(checks)
+    payload = build_payload(checks, out_scope_ids)
     write_reports(payload, ROOT / args.out, ROOT / args.md_out, ROOT / args.md_tr_out)
 
     print(json.dumps({
         "total_items": payload["total_items"],
         "green_items": payload["green_items"],
         "all_green": payload["all_green"],
+        "no_pending_in_scope": payload["no_pending_in_scope"],
+        "in_scope_pending_ids": payload["in_scope_pending_ids"],
+        "out_of_scope_pending_ids": payload["out_of_scope_pending_ids"],
         "evidence_pending_ids": payload["evidence_pending_ids"],
     }, ensure_ascii=False))
 
-    return 0 if payload["all_green"] else 1
+    if not payload["all_green"]:
+        return 1
+    if args.require_no_pending and not payload["no_pending_in_scope"]:
+        return 2
+    return 0
 
 
 if __name__ == "__main__":

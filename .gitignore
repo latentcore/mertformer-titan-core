@@ -25,6 +25,8 @@ htmlcov/
 .lint-venv/
 *.zip
 *.age
+kaggle_onefile_build30_*.jsonl
+artifacts/
 # Package dropzone in project root
 /packages/*.zip
 /packages/*.age

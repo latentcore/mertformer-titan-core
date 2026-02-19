@@ -34,7 +34,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 ## Key Docs
 
 - Engineering audit: `reports/codex_deep_audit_EN.md`, `reports/codex_deep_audit_DE.md`, `reports/codex_deep_audit_TR.md`
-- Turkish counterparts for audits: `reports/codex_deep_audit_EN_TR.md`, `reports/codex_deep_audit_DE_TR.md`
+- Turkish counterparts for audits are pointer files: `reports/codex_deep_audit_EN_TR.md`, `reports/codex_deep_audit_DE_TR.md` (canonical TR content: `reports/codex_deep_audit_TR.md`)
 - Verified vs Target matrix: `reports/verified_matrix.md`, `reports/verified_matrix_TR.md`
 - External review checklist: `reports/review_checklist.md`, `reports/review_checklist_TR.md`
 - Final sync matrix: `reports/final_sync_matrix.md`, `reports/final_sync_matrix_TR.md`
@@ -48,9 +48,10 @@ TITAN_OFFLINE=1 bash run.sh --test
 
 - `MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`
 - `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
+- Locked artifact status: `skipped (expected: AGE_RECIPIENT_FILE missing)`
 - SHA-256:
-  - `77ac42b0b333343470defeeecc3ee1c8ce59ef17fe2a6a15e39c65b3265b37db` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
-  - `2ae7c88d3d8c2571d16af428c8d3355b599d2d37f409ee4880c0a1ac2ecdd9a1` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)
+  - `8c430500aeee0e872c287338b8254aad0d5925e660dcd32ad68f194bc77ebada` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
+  - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)
 
 ## Known Gates / Blockers
 
