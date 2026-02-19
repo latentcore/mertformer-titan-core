@@ -18,7 +18,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import math
-from typing import Tuple
+from typing import Any, Dict, List, Set, Tuple
 
 from config.config import cfg
 from layers.bitlinear import BitLinear
@@ -316,6 +316,24 @@ class MoE(nn.Module):
         self.structural_prune_threshold: float = float(getattr(cfg, "structural_prune_threshold", 0.02))
         self.structural_grow_threshold: float = float(getattr(cfg, "structural_grow_threshold", 0.60))
         self.structural_update_interval: int = int(getattr(cfg, "structural_update_interval", 100))
+        # Inference-first expert paging (on-demand expert residency).
+        self.use_expert_paging: bool = bool(getattr(cfg, "use_expert_paging", False))
+        self.expert_paging_inference_only: bool = bool(
+            getattr(cfg, "expert_paging_inference_only", True)
+        )
+        self.expert_paging_lazy_init: bool = bool(
+            getattr(cfg, "expert_paging_lazy_init", True)
+        )
+        self.expert_paging_cache_size: int = max(
+            1, int(getattr(cfg, "expert_paging_cache_size", self.active_experts))
+        )
+        self.expert_paging_offload_device: str = str(
+            getattr(cfg, "expert_paging_offload_device", "cpu")
+        )
+        self.expert_paging_verbose: bool = bool(getattr(cfg, "expert_paging_verbose", False))
+        self._expert_lru: List[int] = []
+        self._expert_resident: Set[int] = set()
+        self._paging_bootstrapped: bool = False
         
         # V26.5: Switch Loss and Collapse Recovery
         self.use_switch_loss: bool = bool(getattr(cfg, "use_switch_loss", False))
@@ -333,10 +351,96 @@ class MoE(nn.Module):
         self.register_buffer("expert_activity_mask", torch.ones(self.num_experts, dtype=torch.bool))
         self.register_buffer("expert_usage_ema", torch.zeros(self.num_experts))
         self.register_buffer("plasticity_step", torch.zeros((), dtype=torch.int64))
+        self.register_buffer(
+            "expert_paging_swaps_in",
+            torch.zeros((), dtype=torch.int64),
+            persistent=False,
+        )
+        self.register_buffer(
+            "expert_paging_swaps_out",
+            torch.zeros((), dtype=torch.int64),
+            persistent=False,
+        )
         self.sync_proj = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
         self.sync_load_proj = nn.Linear(self.num_experts, self.hidden_size, bias=False)
         self.sync_gate = nn.Parameter(torch.tensor(0.0, dtype=torch.float32))
-        
+
+    def _should_skip_expert_apply(self) -> bool:
+        """
+        Skip expert migration during parent model.to(...) only when paging is enabled.
+        This is the key to avoiding first-load expert VRAM residency.
+        """
+        if not self.use_expert_paging:
+            return False
+        if not self.expert_paging_lazy_init:
+            return False
+        return True
+
+    def _offload_all_experts(self, target_device: torch.device, target_dtype: torch.dtype | None = None) -> None:
+        with torch.no_grad():
+            for expert in self.experts:
+                if target_dtype is None:
+                    expert.to(device=target_device)
+                else:
+                    expert.to(device=target_device, dtype=target_dtype)
+        self._expert_resident.clear()
+        self._expert_lru.clear()
+        self._paging_bootstrapped = True
+
+    def _apply(self, fn):
+        """
+        Preserve expert offload residency across parent model.to(...).
+        We let MoE non-expert tensors follow fn, then keep experts on offload device.
+        """
+        if not self._should_skip_expert_apply():
+            return super()._apply(fn)
+
+        experts = self._modules.pop("experts")
+        try:
+            out = super()._apply(fn)
+        finally:
+            self._modules["experts"] = experts
+
+        offload_device = self._offload_device()
+        ref_param = next(self.shared_expert.parameters(), None)
+        target_dtype = ref_param.dtype if ref_param is not None and torch.is_floating_point(ref_param) else None
+        self._offload_all_experts(offload_device, target_dtype=target_dtype)
+        return out
+
+    def train(self, mode: bool = True):
+        """
+        Keep behavior safe across train/eval toggles when expert paging is enabled.
+        - train(): all experts on compute device (no paging path).
+        - eval(): optionally offload all experts for lazy residency.
+        """
+        out = super().train(mode)
+        if not self.use_expert_paging:
+            return out
+
+        ref_param = next(self.shared_expert.parameters(), None)
+        if ref_param is None:
+            return out
+        ref_device = ref_param.device
+        ref_dtype = ref_param.dtype if torch.is_floating_point(ref_param) else None
+
+        if mode:
+            with torch.no_grad():
+                for expert in self.experts:
+                    if ref_dtype is None:
+                        expert.to(device=ref_device)
+                    else:
+                        expert.to(device=ref_device, dtype=ref_dtype)
+            self._expert_resident = set(range(self.num_experts))
+            self._expert_lru = list(range(self.num_experts))
+            self._paging_bootstrapped = False
+            return out
+
+        if self.expert_paging_lazy_init:
+            offload_device = self._offload_device()
+            if offload_device != ref_device:
+                self._offload_all_experts(offload_device, target_dtype=ref_dtype)
+        return out
+
     def get_router_state(self) -> torch.Tensor:
         """External API: Get Liquid Router state."""
         return self.router.get_state()
@@ -356,6 +460,114 @@ class MoE(nn.Module):
     def get_router_max_load(self) -> torch.Tensor:
         """External API: Maximum expert load."""
         return self.last_router_max_load
+
+    def get_expert_paging_stats(self) -> Dict[str, Any]:
+        """External API: Returns runtime paging counters and mode."""
+        return {
+            "enabled": bool(self.use_expert_paging),
+            "inference_only": bool(self.expert_paging_inference_only),
+            "lazy_init": bool(self.expert_paging_lazy_init),
+            "cache_size": int(self.expert_paging_cache_size),
+            "offload_device": str(self.expert_paging_offload_device),
+            "bootstrapped": bool(self._paging_bootstrapped),
+            "swaps_in": int(self.expert_paging_swaps_in.item()),
+            "swaps_out": int(self.expert_paging_swaps_out.item()),
+            "resident_count": int(len(self._expert_resident)),
+        }
+
+    def _paging_active_for_step(self) -> bool:
+        """
+        Inference-first paging gate.
+        Training path intentionally remains unchanged for gradient safety.
+        """
+        if not self.use_expert_paging:
+            return False
+        if self.training and self.expert_paging_inference_only:
+            return False
+        if self.training:
+            return False
+        return True
+
+    def _expert_device(self, expert_id: int) -> torch.device:
+        p = next(self.experts[expert_id].parameters(), None)
+        return p.device if p is not None else torch.device("cpu")
+
+    def _offload_device(self) -> torch.device:
+        try:
+            return torch.device(self.expert_paging_offload_device)
+        except Exception:
+            return torch.device("cpu")
+
+    def _touch_lru(self, expert_id: int) -> None:
+        if expert_id in self._expert_lru:
+            self._expert_lru.remove(expert_id)
+        self._expert_lru.append(expert_id)
+
+    def _refresh_resident(self, compute_device: torch.device) -> None:
+        self._expert_resident = {
+            idx
+            for idx in range(self.num_experts)
+            if self._expert_device(idx) == compute_device
+        }
+        self._expert_lru = [idx for idx in self._expert_lru if idx in self._expert_resident]
+
+    def _bootstrap_expert_paging(self, compute_device: torch.device) -> None:
+        if self._paging_bootstrapped:
+            return
+        if compute_device.type == "cpu":
+            self._paging_bootstrapped = True
+            return
+        offload_device = self._offload_device()
+        if offload_device == compute_device:
+            self._paging_bootstrapped = True
+            return
+        ref_param = next(self.shared_expert.parameters(), None)
+        target_dtype = ref_param.dtype if ref_param is not None and torch.is_floating_point(ref_param) else None
+        self._offload_all_experts(offload_device, target_dtype=target_dtype)
+        if self.expert_paging_verbose:
+            print(
+                f"[moe:paging] bootstrapped offload={offload_device} "
+                f"cache_size={self.expert_paging_cache_size}"
+            )
+
+    def _page_in_active_experts(
+        self,
+        active_expert_ids: List[int],
+        compute_device: torch.device,
+        compute_dtype: torch.dtype,
+    ) -> None:
+        if not active_expert_ids:
+            return
+        self._bootstrap_expert_paging(compute_device)
+        if compute_device.type == "cpu":
+            return
+        offload_device = self._offload_device()
+        if offload_device == compute_device:
+            return
+
+        self._refresh_resident(compute_device)
+        with torch.no_grad():
+            for expert_id in active_expert_ids:
+                if expert_id not in self._expert_resident:
+                    self.experts[expert_id].to(device=compute_device, dtype=compute_dtype)
+                    self._expert_resident.add(expert_id)
+                    self.expert_paging_swaps_in.add_(1)
+                self._touch_lru(expert_id)
+
+            keep = set(active_expert_ids)
+            max_resident = max(self.expert_paging_cache_size, len(keep))
+            while len(self._expert_resident) > max_resident:
+                evict_id = None
+                for candidate in self._expert_lru:
+                    if candidate not in keep:
+                        evict_id = candidate
+                        break
+                if evict_id is None:
+                    break
+                self.experts[evict_id].to(device=offload_device, dtype=compute_dtype)
+                self._expert_resident.discard(evict_id)
+                self.expert_paging_swaps_out.add_(1)
+                self._expert_lru = [idx for idx in self._expert_lru if idx != evict_id]
 
     def _apply_structural_plasticity(self, load: torch.Tensor) -> None:
         """
@@ -490,6 +702,15 @@ class MoE(nn.Module):
         self.last_router_entropy.copy_(entropy.detach())
         self.last_capacity_overflow_ratio.copy_(overflow_ratio.detach())
         self._apply_structural_plasticity(load)
+        if self._paging_active_for_step():
+            active_expert_ids = (
+                torch.nonzero(counts > 0.0, as_tuple=False).flatten().tolist()
+            )
+            self._page_in_active_experts(
+                [int(idx) for idx in active_expert_ids],
+                x.device,
+                x.dtype,
+            )
 
         # -----------------------------
         # 2) Aux Loss (Load Balancing) - V26.5: Switch/L2 Option
@@ -544,9 +765,14 @@ class MoE(nn.Module):
 
             # Sadece seçen token'ları al
             selected_x = x_flat[token_mask]  # (M, H)
+            expert_param = next(expert.parameters(), None)
+            if expert_param is not None and selected_x.dtype != expert_param.dtype:
+                selected_x = selected_x.to(dtype=expert_param.dtype)
 
             # Uzmanı çalıştır
             expert_out = expert(selected_x)  # (M, H)
+            if expert_out.dtype != out_flat.dtype:
+                expert_out = expert_out.to(dtype=out_flat.dtype)
 
             # Ağırlıklandırma: Bu token için bu uzmana ait weight'lerin toplamı
             weights = (

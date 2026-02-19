@@ -150,6 +150,59 @@ def test_moe_routing_distribution(device, patched_cfg):
     
     print(f"\n✅ MoE Aux Loss: {aux_loss.item():.4f} (Load Balancing Active)")
 
+
+def test_moe_expert_paging_contract_cpu(patched_cfg):
+    """
+    Expert paging must be non-breaking and deterministic on CPU runs.
+    On CPU there is no device swap, so swap counters should remain zero.
+    """
+    orig_use = getattr(cfg, "use_expert_paging", False)
+    orig_inf_only = getattr(cfg, "expert_paging_inference_only", True)
+    orig_lazy_init = getattr(cfg, "expert_paging_lazy_init", True)
+    orig_cache = getattr(cfg, "expert_paging_cache_size", 2)
+    orig_offload = getattr(cfg, "expert_paging_offload_device", "cpu")
+
+    cfg.use_expert_paging = True
+    cfg.expert_paging_inference_only = True
+    cfg.expert_paging_lazy_init = True
+    cfg.expert_paging_cache_size = 1
+    cfg.expert_paging_offload_device = "cpu"
+
+    try:
+        moe = MoE().cpu()
+        moe.eval()
+        x = torch.randn(4, 8, patched_cfg.hidden_size)
+        out, aux_loss = moe(x)
+        stats = moe.get_expert_paging_stats()
+
+        assert out.shape == x.shape
+        assert torch.isfinite(out).all()
+        assert torch.isfinite(aux_loss)
+        assert stats["enabled"] is True
+        assert stats["lazy_init"] is True
+        assert stats["bootstrapped"] is True
+        assert stats["swaps_in"] == 0
+        assert stats["swaps_out"] == 0
+
+        # Train/eval transition should remain safe with paging enabled.
+        moe.train()
+        x_train = torch.randn(2, 4, patched_cfg.hidden_size, requires_grad=True)
+        out_train, aux_train = moe(x_train)
+        loss = out_train.mean() + aux_train
+        loss.backward()
+        has_expert_grad = any(
+            p.grad is not None
+            for ex in moe.experts
+            for p in ex.parameters()
+        )
+        assert has_expert_grad, "Expert grads disconnected after paging mode transition."
+    finally:
+        cfg.use_expert_paging = orig_use
+        cfg.expert_paging_inference_only = orig_inf_only
+        cfg.expert_paging_lazy_init = orig_lazy_init
+        cfg.expert_paging_cache_size = orig_cache
+        cfg.expert_paging_offload_device = orig_offload
+
 # -----------------------------------------------------------------------------
 # 4. MPS (APPLE SILICON) COMPATIBILITY & STRESS TEST
 # -----------------------------------------------------------------------------

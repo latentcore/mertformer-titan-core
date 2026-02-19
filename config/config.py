@@ -248,6 +248,13 @@ class MertFormerConfig:
     router_aux_loss_coef: float = 0.02
     aux_loss_coef: float = 0.02  # Alias for router_aux_loss_coef (backward compatibility)
     moe_every_n_layers: int = 3  # MoE on layers: 3, 6, 9, 12, 15, 18, 21 (0-indexed: 2, 5, 8, 11, 14, 17, 20)
+    # Inference-only expert paging (keeps model math intact; optimizes residency)
+    use_expert_paging: bool = False
+    expert_paging_inference_only: bool = True
+    expert_paging_lazy_init: bool = True
+    expert_paging_cache_size: int = 2
+    expert_paging_offload_device: str = "cpu"
+    expert_paging_verbose: bool = False
 
     # V26.5: Switch Loss Option & Router Jitter for collapse prevention
     # V26.5: Switch Loss Option & Router Jitter for collapse prevention
