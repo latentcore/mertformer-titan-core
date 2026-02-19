@@ -1532,8 +1532,14 @@ NİHAİ/                     # Proje kökü
 │   ├── bitnet_kernel_benchmark_standalone.py # Python modülü veya scripti
 │   ├── bootstrap_venv.sh          # Shell otomasyon scripti
 │   ├── build_investor_deck.py     # Python modülü veya scripti
+│   ├── build_validation_set.py    # Python modülü veya scripti
 │   ├── chat.py                    # Python modülü veya scripti
+│   ├── check_57_matrix.py         # Python modülü veya scripti
+│   ├── check_doc_claim_consistency.py # Python modülü veya scripti
+│   ├── check_tokenizer_sync.py    # Python modülü veya scripti
+│   ├── check_translation_pointer_policy.py # Python modülü veya scripti
 │   ├── checkpoint_restore_drill.py # Python modülü veya scripti
+│   ├── clean_runtime_artifacts.sh # Shell otomasyon scripti
 │   ├── cleanroom_verify.sh        # Shell otomasyon scripti
 │   ├── data_pipeline.py           # Python modülü veya scripti
 │   ├── download_tr_tokenizer.py   # Python modülü veya scripti
@@ -1542,8 +1548,12 @@ NİHAİ/                     # Proje kökü
 │   ├── extract_dataset_refs.py    # Python modülü veya scripti
 │   ├── failure_budget_drill.py    # Python modülü veya scripti
 │   ├── golden_eval.py             # Python modülü veya scripti
+│   ├── kaggle_onefile_demo_build30.py # Python modülü veya scripti
+│   ├── kaggle_train_compare_build30.py # Python modülü veya scripti
 │   ├── logbook_build.py           # Python modülü veya scripti
 │   ├── mac_simulation.py          # Python modülü veya scripti
+│   ├── md_build30_sweep.py        # Python modülü veya scripti
+│   ├── md_integrity_check.py      # Python modülü veya scripti
 │   ├── mini_titan_poc.py          # Python modülü veya scripti
 │   ├── mobile_export.py           # Python modülü veya scripti
 │   ├── nan_kill_test.py           # Python modülü veya scripti
@@ -1552,6 +1562,7 @@ NİHAİ/                     # Proje kökü
 │   ├── README.md                  # Ana dokümantasyon (EN)
 │   ├── README_TR.md               # Ana dokümantasyon (TR)
 │   ├── record_dataset_hashes.py   # Python modülü veya scripti
+│   ├── release_build30.sh         # Shell otomasyon scripti
 │   ├── scaling_audit_math.py      # Python modülü veya scripti
 │   ├── secret_scan.py             # Python modülü veya scripti
 │   ├── smart_runner.py            # Python modülü veya scripti

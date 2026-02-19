@@ -1534,8 +1534,14 @@ NİHAİ/                     # Project root
 │   ├── bitnet_kernel_benchmark_standalone.py # Python module or script
 │   ├── bootstrap_venv.sh          # Shell automation script
 │   ├── build_investor_deck.py     # Python module or script
+│   ├── build_validation_set.py    # Python module or script
 │   ├── chat.py                    # Python module or script
+│   ├── check_57_matrix.py         # Python module or script
+│   ├── check_doc_claim_consistency.py # Python module or script
+│   ├── check_tokenizer_sync.py    # Python module or script
+│   ├── check_translation_pointer_policy.py # Python module or script
 │   ├── checkpoint_restore_drill.py # Python module or script
+│   ├── clean_runtime_artifacts.sh # Shell automation script
 │   ├── cleanroom_verify.sh        # Shell automation script
 │   ├── data_pipeline.py           # Python module or script
 │   ├── download_tr_tokenizer.py   # Python module or script
@@ -1544,8 +1550,12 @@ NİHAİ/                     # Project root
 │   ├── extract_dataset_refs.py    # Python module or script
 │   ├── failure_budget_drill.py    # Python module or script
 │   ├── golden_eval.py             # Python module or script
+│   ├── kaggle_onefile_demo_build30.py # Python module or script
+│   ├── kaggle_train_compare_build30.py # Python module or script
 │   ├── logbook_build.py           # Python module or script
 │   ├── mac_simulation.py          # Python module or script
+│   ├── md_build30_sweep.py        # Python module or script
+│   ├── md_integrity_check.py      # Python module or script
 │   ├── mini_titan_poc.py          # Python module or script
 │   ├── mobile_export.py           # Python module or script
 │   ├── nan_kill_test.py           # Python module or script
@@ -1554,6 +1564,7 @@ NİHAİ/                     # Project root
 │   ├── README.md                  # Primary documentation (EN)
 │   ├── README_TR.md               # Primary documentation (TR)
 │   ├── record_dataset_hashes.py   # Python module or script
+│   ├── release_build30.sh         # Shell automation script
 │   ├── scaling_audit_math.py      # Python module or script
 │   ├── secret_scan.py             # Python module or script
 │   ├── smart_runner.py            # Python module or script
