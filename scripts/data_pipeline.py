@@ -31,6 +31,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from utils.dataset_registry import get_hf_revision
+from config.config import cfg
 
 
 # =============================================================================
@@ -194,6 +195,50 @@ STAGE5_SOURCES = [
         "max_length": 15000
     }
 ]
+
+
+def _get_stage_ratios() -> List[float]:
+    ratios = [float(x) for x in list(getattr(cfg, "curriculum_stage_ratios", []))]
+    if len(ratios) != 5:
+        raise ValueError(f"Expected 5 curriculum stage ratios, got {len(ratios)}")
+    if abs(sum(ratios) - 1.0) > 1e-6:
+        raise ValueError(f"Curriculum stage ratios must sum to 1.0, got {sum(ratios):.8f}")
+    return ratios
+
+
+def write_token_estimate_report(
+    target_samples: int,
+    stage_sample_counts: Dict[str, int],
+) -> None:
+    reports_dir = PROJECT_ROOT / "reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    out_path = reports_dir / "data_pipeline_token_estimate.json"
+
+    est_per_sample = int(getattr(cfg, "estimated_tokens_per_sample", 512))
+    stage_tokens = {
+        stage_name: int(count * est_per_sample)
+        for stage_name, count in stage_sample_counts.items()
+    }
+    payload = {
+        "status": "ok",
+        "target_samples": int(target_samples),
+        "estimated_tokens_per_sample": est_per_sample,
+        "target_tokens_min": int(getattr(cfg, "target_tokens_min", 0)),
+        "token_budget_mode": str(getattr(cfg, "token_budget_mode", "fixed_steps")),
+        "curriculum_stage_names": list(getattr(cfg, "curriculum_stage_names", [])),
+        "curriculum_stage_ratios": [float(x) for x in list(getattr(cfg, "curriculum_stage_ratios", []))],
+        "stages": [
+            {
+                "stage": stage_name,
+                "samples": int(stage_sample_counts.get(stage_name, 0)),
+                "estimated_tokens": int(stage_tokens.get(stage_name, 0)),
+            }
+            for stage_name in list(getattr(cfg, "curriculum_stage_names", []))
+        ],
+        "total_estimated_tokens": int(sum(stage_tokens.values())),
+    }
+    out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    print(f"🧮 Token estimate report written: {out_path}")
 
 
 # =============================================================================
@@ -418,26 +463,29 @@ def main(target_samples: int = 12_000_000, login_hf: bool = False) -> None:
     # Approx tokens ~= samples * avg_tokens_per_sample (e.g., 12M * ~500 ~= ~6B tokens).
     # If your training plan targets higher total tokens, increase TARGET_SAMPLES accordingly.
     TARGET_SAMPLES = int(target_samples)
+    stage_ratios = _get_stage_ratios()
+    stage_names = list(getattr(cfg, "curriculum_stage_names", []))
+    stage_counts: Dict[str, int] = {}
     
-    # Stage 1: Pure Logic (45% = 450,000 samples)
-    stage1_target = int(TARGET_SAMPLES * 0.45)
-    download_stage(1, STAGE1_SOURCES, stage1_target)
+    # Stage 1
+    stage1_target = int(TARGET_SAMPLES * stage_ratios[0])
+    stage_counts[stage_names[0]] = download_stage(1, STAGE1_SOURCES, stage1_target)
     
-    # Stage 2: World Knowledge (35% = 350,000 samples)
-    stage2_target = int(TARGET_SAMPLES * 0.35)
-    download_stage(2, STAGE2_SOURCES, stage2_target)
+    # Stage 2
+    stage2_target = int(TARGET_SAMPLES * stage_ratios[1])
+    stage_counts[stage_names[1]] = download_stage(2, STAGE2_SOURCES, stage2_target)
     
-    # Stage 3: Identity & Language (7% = 70,000 samples)
-    stage3_target = int(TARGET_SAMPLES * 0.07)
-    download_stage(3, STAGE3_SOURCES, stage3_target)
+    # Stage 3
+    stage3_target = int(TARGET_SAMPLES * stage_ratios[2])
+    stage_counts[stage_names[2]] = download_stage(3, STAGE3_SOURCES, stage3_target)
     
-    # Stage 4: Soul (3% = 30,000 samples)
-    stage4_target = int(TARGET_SAMPLES * 0.03)
-    download_stage(4, STAGE4_SOURCES, stage4_target)
+    # Stage 4
+    stage4_target = int(TARGET_SAMPLES * stage_ratios[3])
+    stage_counts[stage_names[3]] = download_stage(4, STAGE4_SOURCES, stage4_target)
 
-    # Stage 5: Tool Use (10% = 100,000 samples)
-    stage5_target = int(TARGET_SAMPLES * 0.10)
-    download_stage(5, STAGE5_SOURCES, stage5_target)
+    # Stage 5
+    stage5_target = int(TARGET_SAMPLES * stage_ratios[4])
+    stage_counts[stage_names[4]] = download_stage(5, STAGE5_SOURCES, stage5_target)
     
     print(f"\n{'='*60}")
     print("✅ TITAN DATA PIPELINE COMPLETE")
@@ -446,6 +494,8 @@ def main(target_samples: int = 12_000_000, login_hf: bool = False) -> None:
     print(f"Stage 2 (Knowledge): {STAGE_DIRS[2]}")
     print(f"Stage 3 (Language):  {STAGE_DIRS[3]}")
     print(f"Stage 4 (Soul):      {STAGE_DIRS[4]}")
+    print(f"Stage 5 (Tools):     {STAGE_DIRS[5]}")
+    write_token_estimate_report(TARGET_SAMPLES, stage_counts)
     print(f"{'='*60}")
 
 

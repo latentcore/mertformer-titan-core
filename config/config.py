@@ -337,6 +337,31 @@ class MertFormerConfig:
     validation_min_samples_claim: int = 1000
 
     # -------------------------------------------------------------------------
+    # 6.2 TRAINING READINESS POLICY (PORTABLE TRAINING CONTRACT)
+    # -------------------------------------------------------------------------
+    # Single source of truth for curriculum stages and stage ratios
+    curriculum_stage_names: list[str] = field(
+        default_factory=lambda: [
+            "stage1",
+            "stage2",
+            "stage3",
+            "stage4",
+            "stage5",
+        ]
+    )
+    curriculum_stage_ratios: list[float] = field(
+        default_factory=lambda: [0.45, 0.35, 0.07, 0.03, 0.10]
+    )
+
+    # Token-first budget (open ended by default, no hard max stop contract)
+    target_tokens_min: int = 70_000_000_000
+    token_budget_mode: str = "open_ended"  # {"open_ended", "fixed_steps"}
+    estimated_tokens_per_sample: int = 512
+
+    # Distillation policy: teacher access must be valid on gated model.
+    require_gated_teacher: bool = True
+
+    # -------------------------------------------------------------------------
     # [USER OVERRIDE] Teacher Model configuration
     # User confirmed usage of Llama 3.3 70B (assumes A100/H100 or multi-gpu setup)
     teacher_model_id: str = "meta-llama/Llama-3.3-70B-Instruct"
@@ -410,6 +435,13 @@ class MertFormerConfig:
     # UPGRADE: Early Stopping & Validation
     early_stop_patience: int = 5  # Stop if no improvement for N validation checks
     val_check_interval: int = 1000  # Run validation every N steps
+    saturation_eval_interval_steps: int = 2000
+    saturation_patience_windows: int = 3
+    val_improve_min_rel: float = 0.002
+    golden_improve_min_abs: float = 0.01
+    gsm8k_improve_min_abs: float = 0.002
+    max_consecutive_nan: int = 3
+    max_consecutive_oom_backoff_fail: int = 5
 
     # -------------------------------------------------------------------------
     # 9. ÇIKTI FORMATI
@@ -530,6 +562,49 @@ def _finalize_config(cfg: MertFormerConfig) -> None:
         cfg.dataloader_num_workers = min(cfg.dataloader_num_workers, cpu_count)
     except Exception:
         pass
+    _validate_training_contract(cfg)
+
+
+def _validate_training_contract(cfg: MertFormerConfig) -> None:
+    """
+    Validate portable training contract fields after env/config overlays.
+    """
+    names = list(getattr(cfg, "curriculum_stage_names", []))
+    ratios = [float(x) for x in list(getattr(cfg, "curriculum_stage_ratios", []))]
+    if not names or not ratios:
+        raise ValueError("❌ curriculum_stage_names/curriculum_stage_ratios must be non-empty.")
+    if len(names) != len(ratios):
+        raise ValueError(
+            "❌ curriculum_stage_names and curriculum_stage_ratios length mismatch "
+            f"({len(names)} vs {len(ratios)})."
+        )
+    if len(names) != 5:
+        raise ValueError(
+            f"❌ Expected 5 curriculum stages for Build30 portability contract, got {len(names)}."
+        )
+    if any(r <= 0.0 for r in ratios):
+        raise ValueError("❌ curriculum_stage_ratios must all be > 0.")
+    ratio_sum = sum(ratios)
+    if abs(ratio_sum - 1.0) > 1e-6:
+        raise ValueError(
+            f"❌ curriculum_stage_ratios must sum to 1.0, got {ratio_sum:.8f}."
+        )
+
+    mode = str(getattr(cfg, "token_budget_mode", "open_ended")).strip().lower()
+    if mode not in {"open_ended", "fixed_steps"}:
+        raise ValueError(
+            f"❌ token_budget_mode must be 'open_ended' or 'fixed_steps', got '{mode}'."
+        )
+    cfg.token_budget_mode = mode
+    if int(getattr(cfg, "target_tokens_min", 0)) < 0:
+        raise ValueError("❌ target_tokens_min must be >= 0.")
+    if int(getattr(cfg, "estimated_tokens_per_sample", 0)) <= 0:
+        raise ValueError("❌ estimated_tokens_per_sample must be > 0.")
+
+    if bool(getattr(cfg, "require_gated_teacher", False)) and not str(
+        getattr(cfg, "teacher_model_id", "")
+    ).strip():
+        raise ValueError("❌ require_gated_teacher=true but teacher_model_id is empty.")
 
 
 # Config instance

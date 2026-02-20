@@ -21,6 +21,7 @@ import logging
 import time
 import subprocess
 import json
+import argparse
 from pathlib import Path
 import torch
 import torch.nn as nn
@@ -92,6 +93,166 @@ def cleanup():
         shutil.rmtree(TEMP_LOGITS_DIR)
         log(f"Removed {TEMP_LOGITS_DIR}")
     log("CLEANUP: Done.", "success")
+
+
+def write_train_ready_report(payload: Dict[str, Any]) -> None:
+    report_path = LOG_DIR / "train_ready_status.json"
+    report_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
+def _check_writable_dir(path: Path) -> tuple[bool, str]:
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+        probe = path / ".write_probe.tmp"
+        probe.write_text("ok", encoding="utf-8")
+        probe.unlink(missing_ok=True)
+        return True, "ok"
+    except Exception as exc:
+        return False, str(exc)
+
+
+def strict_training_readiness_profile() -> int:
+    """
+    Strict online/gated readiness profile for portable training handoff.
+    Returns shell exit code.
+    """
+    started_at = time.time()
+    checks: Dict[str, Any] = {}
+    profile = "strict_online_training_readiness"
+    status = "FAIL"
+    reason_code = "UNKNOWN_ERROR"
+
+    try:
+        load_env()
+
+        hf_token = os.environ.get("HF_TOKEN", "").strip()
+        if not hf_token:
+            checks["hf_token"] = {"status": "FAIL", "detail": "HF_TOKEN missing"}
+            reason_code = "MISSING_HF_TOKEN"
+            raise RuntimeError("HF_TOKEN missing")
+        checks["hf_token"] = {"status": "PASS"}
+
+        from huggingface_hub import HfApi
+        api = HfApi()
+        try:
+            who = api.whoami(token=hf_token)
+            checks["hf_auth"] = {
+                "status": "PASS",
+                "account": who.get("name") if isinstance(who, dict) else "ok",
+            }
+        except Exception as exc:
+            checks["hf_auth"] = {"status": "FAIL", "detail": str(exc)}
+            reason_code = "HF_AUTH_FAILED"
+            raise
+
+        # Gated teacher tokenizer access must pass in strict mode.
+        from transformers import AutoTokenizer
+        try:
+            tok = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token, use_fast=True)
+            vocab = getattr(tok, "vocab_size", None)
+            checks["teacher_tokenizer_access"] = {
+                "status": "PASS",
+                "teacher_model_id": cfg.teacher_model_id,
+                "vocab_size": int(vocab) if isinstance(vocab, int) else None,
+            }
+        except Exception as exc:
+            checks["teacher_tokenizer_access"] = {"status": "FAIL", "detail": str(exc)}
+            reason_code = "TEACHER_GATED_ACCESS_FAILED"
+            raise
+
+        # Minimal dataset API reachability checks (one representative from each stage family).
+        required_datasets = [
+            "bigcode/the-stack-v2",
+            "HuggingFaceFW/fineweb-edu",
+            "wikimedia/wikipedia",
+            "OpenAssistant/oasst_top1_2023-08-25",
+            "glaiveai/glaive-function-calling-v2",
+            "openai/gsm8k",
+            "uonlp/CulturaX",
+            "TIGER-Lab/MathInstruct",
+        ]
+        dataset_results = {}
+        for ds in required_datasets:
+            try:
+                api.dataset_info(ds, token=hf_token)
+                dataset_results[ds] = "PASS"
+            except Exception as exc:
+                dataset_results[ds] = f"FAIL: {exc}"
+        failing_ds = [k for k, v in dataset_results.items() if str(v).startswith("FAIL")]
+        checks["dataset_api_access"] = {
+            "status": "PASS" if not failing_ds else "FAIL",
+            "results": dataset_results,
+        }
+        if failing_ds:
+            reason_code = "DATASET_API_UNREACHABLE"
+            raise RuntimeError(f"dataset API checks failed: {failing_ds}")
+
+        # Filesystem and write permission checks for train outputs/distillation.
+        required_paths = [
+            PROJECT_ROOT / "datasets",
+            PROJECT_ROOT / cfg.save_dir,
+            Path(cfg.precomputed_logits_path),
+        ]
+        write_results: Dict[str, Any] = {}
+        for p in required_paths:
+            ok, detail = _check_writable_dir(p)
+            write_results[str(p)] = {"status": "PASS" if ok else "FAIL", "detail": detail}
+        failing_paths = [k for k, v in write_results.items() if v["status"] == "FAIL"]
+        checks["write_permissions"] = {
+            "status": "PASS" if not failing_paths else "FAIL",
+            "paths": write_results,
+        }
+        if failing_paths:
+            reason_code = "WRITE_PERMISSION_DENIED"
+            raise RuntimeError(f"write permission checks failed: {failing_paths}")
+
+        # Distillation shard path sanity (existence optional, writeability mandatory).
+        logits_root = Path(cfg.precomputed_logits_path)
+        shard_count = len(list(logits_root.glob("stage*_train_part_*.pt")))
+        checks["distillation_paths"] = {
+            "status": "PASS",
+            "logits_dir": str(logits_root),
+            "existing_shards": shard_count,
+            "policy": "missing shards are allowed; online teacher generation remains mandatory",
+        }
+
+        # Disk free check for multi-stage online training.
+        min_disk_gb = float(os.environ.get("TITAN_PREFLIGHT_MIN_DISK_GB", "100"))
+        _, _, free = shutil.disk_usage(str(PROJECT_ROOT))
+        free_gb = free / (1024 ** 3)
+        disk_ok = free_gb >= min_disk_gb
+        checks["disk_free"] = {
+            "status": "PASS" if disk_ok else "FAIL",
+            "free_gb": round(free_gb, 2),
+            "required_gb": min_disk_gb,
+        }
+        if not disk_ok:
+            reason_code = "INSUFFICIENT_DISK"
+            raise RuntimeError(f"disk free too low: {free_gb:.2f}GB < {min_disk_gb:.2f}GB")
+
+        status = "PASS"
+        reason_code = "READY"
+        log("STRICT TRAIN-READINESS: PASS", "success")
+        print("TRAIN_READY:PASS reason_code=READY")
+        return_code = 0
+    except Exception as exc:
+        if reason_code == "UNKNOWN_ERROR":
+            reason_code = "STRICT_PREFLIGHT_EXCEPTION"
+        log(f"STRICT TRAIN-READINESS FAIL [{reason_code}]: {exc}", "error")
+        print(f"TRAIN_READY:FAIL reason_code={reason_code}")
+        return_code = 1
+    finally:
+        payload = {
+            "profile": profile,
+            "status": status,
+            "reason_code": reason_code,
+            "checks": checks,
+            "elapsed_s": round(time.time() - started_at, 3),
+        }
+        write_train_ready_report(payload)
+        log(f"Train-ready report: {LOG_DIR / 'train_ready_status.json'}", "info")
+
+    return return_code
 
 def check_secrets():
     log("STEP 1: SECRET SCAN...", "info")
@@ -340,7 +501,7 @@ def moe_guru_learning_test():
     log("MertFormer forward/backward pass verified.", "success")
     return True
 
-def main():
+def run_default_profile() -> int:
     log("============================================================")
     log("🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀")
     log("============================================================")
@@ -350,21 +511,22 @@ def main():
     
     try:
         load_env()
-        if not check_secrets(): sys.exit(1)
-        if not architectural_audit(): sys.exit(1)
-        if not data_distill_test(): sys.exit(1)
-        if not moe_guru_learning_test(): sys.exit(1)
+        if not check_secrets():
+            return 1
+        if not architectural_audit():
+            return 1
+        if not data_distill_test():
+            return 1
+        if not moe_guru_learning_test():
+            return 1
         
         success = True
         log("OVERALL SYSTEM STATUS: 100% PROTECTED & READY.", "success")
-    except SystemExit:
-        # Re-raise to actually exit
-        raise
     except Exception as e:
         log(f"CRITICAL PREFLIGHT FAILURE: {e}", "error")
         import traceback
         logging.error(traceback.format_exc())
-        sys.exit(1)
+        return 1
     finally:
         cleanup()
         elapsed = time.time() - start_time
@@ -375,7 +537,27 @@ def main():
         log("============================================================")
         
     if not success:
-        sys.exit(1)
+        return 1
+    return 0
+
+
+def main():
+    parser = argparse.ArgumentParser(description="TITAN preflight runner")
+    parser.add_argument(
+        "--profile",
+        type=str,
+        default="default",
+        choices=["default", "strict_online_training_readiness"],
+        help="Preflight profile to run.",
+    )
+    args = parser.parse_args()
+
+    if args.profile == "strict_online_training_readiness":
+        code = strict_training_readiness_profile()
+    else:
+        code = run_default_profile()
+    if code != 0:
+        sys.exit(code)
 
 if __name__ == "__main__":
     main()

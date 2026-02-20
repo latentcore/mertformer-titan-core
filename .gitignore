@@ -60,6 +60,7 @@ tokenizer/tr/*
 !/datasets/inventory.md
 !/datasets/inventory_TR.md
 !/datasets/validation.jsonl
+!/datasets/golden_assertions.jsonl
 /data/
 /dataset/
 /weights/

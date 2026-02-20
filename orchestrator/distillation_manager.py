@@ -43,6 +43,7 @@ class DistillationManager:
         self.logits_dir.mkdir(parents=True, exist_ok=True)
         self.teacher_model = None
         self.device = cfg.device
+        self.require_gated_teacher = bool(getattr(cfg, "require_gated_teacher", False))
 
     def load_teacher(self):
         """
@@ -50,6 +51,13 @@ class DistillationManager:
         """
         if self.teacher_model is not None:
             return
+
+        hf_token = os.environ.get("HF_TOKEN")
+        if self.require_gated_teacher and not hf_token:
+            raise RuntimeError(
+                "require_gated_teacher=true but HF_TOKEN is missing. "
+                "Distillation cannot proceed."
+            )
 
         logger.info(f"🎓 Loading Teacher Model: {self.cfg.teacher_model_id}")
         try:
@@ -71,6 +79,7 @@ class DistillationManager:
             
             self.teacher_model = AutoModelForCausalLM.from_pretrained(
                 self.cfg.teacher_model_id,
+                token=hf_token,
                 **load_kwargs
             )
             self.teacher_model.eval()
@@ -282,7 +291,12 @@ if __name__ == "__main__":
     print(f"🔧 Distillation Manager: Launching for Stage {args.stage}")
     
     # Load Tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
+    hf_token = os.environ.get("HF_TOKEN")
+    if bool(getattr(cfg, "require_gated_teacher", False)) and not hf_token:
+        print("❌ HF_TOKEN missing under require_gated_teacher=true.")
+        sys.exit(1)
+
+    tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
         

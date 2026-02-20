@@ -4,7 +4,8 @@ All scripts are designed to run from the repo root.
 
 Conventions:
 - Prefer `.titan-venv/bin/python scripts/<name>.py` (see `scripts/bootstrap_venv.sh`).
-- Offline-first defaults: `TITAN_OFFLINE=1` (no HF/WandB logins or dataset downloads unless explicitly enabled).
+- Script-level verification remains offline-first (`TITAN_OFFLINE=1`).
+- `run.sh` training contract is online-by-default and supports readiness-only mode (`bash run.sh --train-ready`).
 
 If you are unsure, run the single-command verification first: `bash scripts/verify_all.sh`.
 
@@ -31,6 +32,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 
 ## Evaluation & Benchmarks
 - `golden_eval.py` — Golden sample evaluator (50 prompts).
+- `golden_score.py` — Assertion-based golden scorer (`reports/benchmarks/golden_summary.json`).
 - `benchmarks_internal.py` — HumanEval / MBPP output generator (SKIP if checkpoint/datasets are unavailable).
 - `bitnet_kernel_benchmark_standalone.py` — Single-file standalone BitNet ternary kernel benchmark (kernel + quantization + benchmark harness in one file).
 - `eval.py` — GSM8K eval wrapper (legacy; see `eval/gsm8k.py`).
@@ -75,4 +77,4 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 
 ---
 
-Tip: `run.sh` covers the primary automated path (env + preflight + training). For review, prefer `scripts/verify_all.sh`.
+Tip: `run.sh` covers the primary automated path (install + strict preflight + training). For review, prefer `scripts/verify_all.sh`.

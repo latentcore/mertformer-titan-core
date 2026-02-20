@@ -15,6 +15,7 @@
 RUN_TEST=false
 RUN_SITL=false
 RUN_CLEANROOM=false
+RUN_TRAIN_READY=false
 
 case "${1:-}" in
     --test|--verify)
@@ -29,14 +30,29 @@ case "${1:-}" in
         RUN_CLEANROOM=true
         echo "🧪 CLEAN-ROOM VERIFY MODE ACTIVE"
         ;;
+    --train-ready)
+        RUN_TRAIN_READY=true
+        echo "✅ TRAIN-READY MODE ACTIVE (Readiness only, no training start)"
+        ;;
 esac
 
 # ------------------------------------------------------------------------------
 # 🔧 1.1 OFFLINE-FIRST MODE + PYTHON SELECTION
 # ------------------------------------------------------------------------------
-# Default: offline-first (no external logins/downloads unless explicitly enabled).
+# Default behavior:
+# - test/verify/cleanroom/sitl => offline safe
+# - normal run / train-ready   => online training readiness
 if [[ -z "${TITAN_OFFLINE+x}" ]]; then
-    export TITAN_OFFLINE=1
+    if [[ "$RUN_TEST" == true || "$RUN_CLEANROOM" == true || "$RUN_SITL" == true ]]; then
+        export TITAN_OFFLINE=1
+    else
+        export TITAN_OFFLINE=0
+    fi
+fi
+
+if [[ "$RUN_TRAIN_READY" == true ]]; then
+    # Train readiness must validate online/gated dependencies.
+    export TITAN_OFFLINE=0
 fi
 
 # Default: WandB is off in offline mode, on in online mode (unless overridden).
@@ -46,6 +62,11 @@ if [[ -z "${TITAN_WANDB+x}" ]]; then
     else
         export TITAN_WANDB=0
     fi
+fi
+
+# Auto-install is enabled by default for portable one-command readiness.
+if [[ -z "${TITAN_INSTALL+x}" ]]; then
+    export TITAN_INSTALL=1
 fi
 
 # Prefer repo venv python if present (avoids broken shebang CLIs).
@@ -107,7 +128,9 @@ fi
 # Secrets validation: required only in online mode (or if preflight explicitly requires).
 if [[ "${TITAN_OFFLINE}" == "0" ]]; then
     if [[ -z "${HF_TOKEN:-}" ]]; then
-        echo "❌ ERROR: HF_TOKEN is missing (online mode). Set it in .env or environment."
+        echo "❌ ERROR [MISSING_HF_TOKEN]: online mode requires HF_TOKEN."
+        echo "   Action: export HF_TOKEN='<your_hf_token>'  # and ensure gated teacher access is approved"
+        echo "   Or run an offline verify-only flow: TITAN_OFFLINE=1 bash run.sh --verify"
         exit 1
     fi
 fi
@@ -127,13 +150,17 @@ echo "🖥️  Detected OS: $OS_TYPE"
 echo "ℹ️  Defaults: use_tr_tokenizer=false | low-bit kernel opt-in (MERTFORMER_LOWBIT_KERNEL=1) | tensorcore opt-in (MERTFORMER_TENSORCORE=1) | BENCHMARK_SAMPLES=0"
 
 # Version consistency check (best-effort but fail on mismatch)
-"$PYTHON_BIN" scripts/version_checker.py || { echo "❌ Version check failed."; exit 1; }
+if [ "$RUN_TEST" = true ] || [ "$RUN_TRAIN_READY" = true ]; then
+    echo "ℹ️  Skipping version checker in --test/--verify and --train-ready modes."
+else
+    "$PYTHON_BIN" scripts/version_checker.py || { echo "❌ Version check failed."; exit 1; }
+fi
 
 # Update local hardware report (best-effort).
 # NOTE: This writes tracked docs under `reports/`. Avoid dirtying the repo during
 # preflight-only runs (review/CI friendly).
-if [ "$RUN_TEST" = true ]; then
-    echo "ℹ️  Skipping system_hardware report update in --test/--verify mode."
+if [ "$RUN_TEST" = true ] || [ "$RUN_TRAIN_READY" = true ]; then
+    echo "ℹ️  Skipping system_hardware report update in --test/--verify and --train-ready modes."
 else
     "$PYTHON_BIN" scripts/update_system_hardware.py || echo "⚠️  system_hardware report update failed (continuing)"
 fi
@@ -300,17 +327,31 @@ fi
 # ------------------------------------------------------------------------------
 echo "🔍 Performing Ultimate Pre-Flight Check..."
 
+PREFLIGHT_PROFILE="${TITAN_PREFLIGHT_PROFILE:-default}"
+if [[ "$RUN_TRAIN_READY" == true ]]; then
+    PREFLIGHT_PROFILE="strict_online_training_readiness"
+elif [[ "$RUN_TEST" != true && "${TITAN_OFFLINE}" == "0" ]]; then
+    PREFLIGHT_PROFILE="strict_online_training_readiness"
+fi
+
 # Her durumda (test modu olsa da olmasa da) preflight çalışır. 
 # Sadece --test modunda ise test bitince durur, normal modda ise başarılıysa eğitime geçer.
-"$PYTHON_BIN" scripts/titan_preflight.py
+"$PYTHON_BIN" scripts/titan_preflight.py --profile "$PREFLIGHT_PROFILE"
 if [ $? -ne 0 ]; then
     echo "❌ ULTIMATE PREFLIGHT FAILED! Check logs at logs/preflight/titan_preflight.log"
+    echo "   If this was --train-ready, check logs/preflight/train_ready_status.json reason_code."
     exit 1
 fi
 echo "✅ ULTIMATE PREFLIGHT PASSED. SYSTEM IS VERIFIED."
+READINESS_OK=1
 
 if [ "$RUN_TEST" = true ]; then
     exit 0 # Sadece test istenmişse burada dur.
+fi
+
+if [ "$RUN_TRAIN_READY" = true ]; then
+    echo "✅ TRAIN-READY CHECK PASSED. Exiting without training launch by design."
+    exit 0
 fi
 
 # Offline-first safety: do not start network-heavy training pipeline by accident.
@@ -318,6 +359,11 @@ if [[ "${TITAN_OFFLINE}" != "0" ]]; then
     echo "❌ Offline-first mode active (TITAN_OFFLINE=1). Training pipeline is disabled by default."
     echo "   To start training, run with: TITAN_OFFLINE=0 (and optionally TITAN_WANDB=1)."
     exit 2
+fi
+
+if [[ "${READINESS_OK}" != "1" ]]; then
+    echo "❌ Readiness gate did not pass. Training launch aborted."
+    exit 1
 fi
 
 # ------------------------------------------------------------------------------
@@ -457,8 +503,13 @@ PY
         echo "⚠️ Golden eval skipped (checkpoint not found)."
     else
         for ckpt in "${GOLDEN_CKPTS[@]}"; do
-            echo "🧪 Golden eval on: $ckpt"
-            "$PYTHON_BIN" scripts/golden_eval.py --run-model --ckpt "$ckpt" 2>&1 | tee -a logs/golden_eval.log
+            echo "🧪 Golden assertion score on: $ckpt"
+            "$PYTHON_BIN" scripts/golden_score.py \
+                --run-model \
+                --ckpt "$ckpt" \
+                --predictions reports/benchmarks/golden_outputs.jsonl \
+                --summary reports/benchmarks/golden_summary.json \
+                2>&1 | tee -a logs/golden_eval.log
         done
     fi
 else

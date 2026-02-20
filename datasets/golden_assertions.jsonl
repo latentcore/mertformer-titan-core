@@ -1,0 +1,50 @@
+{"id": 1, "category": "algorithms", "prompt": "Write a Python function binary_search_leftmost(nums, target) that returns the leftmost index of target or -1.","assertions":[{"type":"min_length","value":20}]}
+{"id": 2, "category": "algorithms", "prompt": "Merge overlapping intervals given a list of [start, end] pairs.","assertions":[{"type":"min_length","value":20}]}
+{"id": 3, "category": "algorithms", "prompt": "Return the top K frequent words from a list of strings. Break ties alphabetically.","assertions":[{"type":"min_length","value":20}]}
+{"id": 4, "category": "algorithms", "prompt": "Implement an LRU cache with get and put in O(1).","assertions":[{"type":"min_length","value":20}]}
+{"id": 5, "category": "algorithms", "prompt": "Implement Dijkstra's shortest path for a weighted graph represented as adjacency lists.","assertions":[{"type":"min_length","value":20}]}
+{"id": 6, "category": "data_structures", "prompt": "Implement a Trie with insert, search, and starts_with.","assertions":[{"type":"min_length","value":20}]}
+{"id": 7, "category": "data_structures", "prompt": "Implement Union-Find (Disjoint Set Union) with path compression.","assertions":[{"type":"min_length","value":20}]}
+{"id": 8, "category": "data_structures", "prompt": "Implement a stack that supports get_min in O(1).","assertions":[{"type":"min_length","value":20}]}
+{"id": 9, "category": "data_structures", "prompt": "Implement a queue using two stacks.","assertions":[{"type":"min_length","value":20}]}
+{"id": 10, "category": "debugging", "prompt": "Fix the off-by-one bug in a sliding window sum function.","assertions":[{"type":"min_length","value":20}]}
+{"id": 11, "category": "debugging", "prompt": "Identify and fix the KeyError in a function that reads a nested dict.","assertions":[{"type":"min_length","value":20}]}
+{"id": 12, "category": "refactor", "prompt": "Refactor deeply nested if/else logic into guard clauses.","assertions":[{"type":"min_length","value":20}]}
+{"id": 13, "category": "refactor", "prompt": "Extract a helper function and add type hints for clarity.","assertions":[{"type":"min_length","value":20}]}
+{"id": 14, "category": "tests", "prompt": "Write pytest unit tests for an email validator function.","assertions":[{"type":"min_length","value":20}]}
+{"id": 15, "category": "tests", "prompt": "Write unit tests for a parse_config(path) function using temporary files.","assertions":[{"type":"min_length","value":20}]}
+{"id": 16, "category": "cli", "prompt": "Build a CLI with argparse to convert CSV input to JSON output.","assertions":[{"type":"min_length","value":20}]}
+{"id": 17, "category": "parsing", "prompt": "Parse log lines into a dict with fields timestamp, level, and message.","assertions":[{"type":"min_length","value":20}]}
+{"id": 18, "category": "regex", "prompt": "Write a regex that matches semantic versions like 1.2.3 or 2.0.0-beta.","assertions":[{"type":"min_length","value":20}]}
+{"id": 19, "category": "concurrency", "prompt": "Implement a thread-safe counter with increment and value methods.","assertions":[{"type":"min_length","value":20}]}
+{"id": 20, "category": "concurrency", "prompt": "Write an async function that fetches URLs with retries and backoff.","assertions":[{"type":"min_length","value":20}]}
+{"id": 21, "category": "performance", "prompt": "Optimize a function that concatenates many strings in a loop.","assertions":[{"type":"min_length","value":20}]}
+{"id": 22, "category": "performance", "prompt": "Cache an expensive function using functools.lru_cache.","assertions":[{"type":"min_length","value":20}]}
+{"id": 23, "category": "security", "prompt": "Hash a password with a random salt using hashlib and return salt+hash.","assertions":[{"type":"min_length","value":20}]}
+{"id": 24, "category": "security", "prompt": "Sanitize a user-supplied file path to prevent directory traversal.","assertions":[{"type":"min_length","value":20}]}
+{"id": 25, "category": "networking", "prompt": "Implement a simple TCP echo server and client.","assertions":[{"type":"min_length","value":20}]}
+{"id": 26, "category": "networking", "prompt": "Parse a URL into scheme, host, port, path, and query parameters.","assertions":[{"type":"min_length","value":20}]}
+{"id": 27, "category": "database", "prompt": "Write an SQL query that returns the top 5 customers by total spend.","assertions":[{"type":"min_length","value":20}]}
+{"id": 28, "category": "data", "prompt": "Compute a rolling average over a list of numbers with window size k.","assertions":[{"type":"min_length","value":20}]}
+{"id": 29, "category": "data", "prompt": "Normalize a list of floats to the range [0, 1].","assertions":[{"type":"min_length","value":20}]}
+{"id": 30, "category": "math", "prompt": "Compute cosine similarity between two vectors.","assertions":[{"type":"min_length","value":20}]}
+{"id": 31, "category": "logging", "prompt": "Configure logging with a rotating file handler and console output.","assertions":[{"type":"min_length","value":20}]}
+{"id": 32, "category": "files", "prompt": "Safely write data to a file by using a temp file and atomic rename.","assertions":[{"type":"min_length","value":20}]}
+{"id": 33, "category": "errors", "prompt": "Define a custom exception and raise it when input validation fails.","assertions":[{"type":"min_length","value":20}]}
+{"id": 34, "category": "serialization", "prompt": "Serialize a dataclass instance to JSON and back.","assertions":[{"type":"min_length","value":20}]}
+{"id": 35, "category": "time", "prompt": "Convert a UTC timestamp to a local time string.","assertions":[{"type":"min_length","value":20}]}
+{"id": 36, "category": "data", "prompt": "Group a list of dicts by a key into a dict of lists.","assertions":[{"type":"min_length","value":20}]}
+{"id": 37, "category": "algorithms", "prompt": "Detect a cycle in a linked list using O(1) extra space.","assertions":[{"type":"min_length","value":20}]}
+{"id": 38, "category": "algorithms", "prompt": "Find the longest common prefix among a list of strings.","assertions":[{"type":"min_length","value":20}]}
+{"id": 39, "category": "algorithms", "prompt": "Check if a string has balanced parentheses.","assertions":[{"type":"min_length","value":20}]}
+{"id": 40, "category": "algorithms", "prompt": "Compute edit distance between two strings.","assertions":[{"type":"min_length","value":20}]}
+{"id": 41, "category": "algorithms", "prompt": "Implement KMP substring search.","assertions":[{"type":"min_length","value":20}]}
+{"id": 42, "category": "algorithms", "prompt": "Generate all permutations of a list of numbers.","assertions":[{"type":"min_length","value":20}]}
+{"id": 43, "category": "algorithms", "prompt": "Topologically sort a DAG given adjacency lists.","assertions":[{"type":"min_length","value":20}]}
+{"id": 44, "category": "algorithms", "prompt": "Serialize and deserialize a binary tree.","assertions":[{"type":"min_length","value":20}]}
+{"id": 45, "category": "system", "prompt": "Read environment variables with defaults and validate required keys.","assertions":[{"type":"min_length","value":20}]}
+{"id": 46, "category": "config", "prompt": "Merge two configuration dicts with precedence and deep merge behavior.","assertions":[{"type":"min_length","value":20}]}
+{"id": 47, "category": "metrics", "prompt": "Compute precision, recall, and F1 score from y_true and y_pred.","assertions":[{"type":"min_length","value":20}]}
+{"id": 48, "category": "ml", "prompt": "Implement an early stopping callback based on validation loss.","assertions":[{"type":"min_length","value":20}]}
+{"id": 49, "category": "streaming", "prompt": "Read a large file in chunks and count total lines.","assertions":[{"type":"min_length","value":20}]}
+{"id": 50, "category": "text", "prompt": "Tokenize a paragraph into sentences without external libraries.","assertions":[{"type":"min_length","value":20}]}

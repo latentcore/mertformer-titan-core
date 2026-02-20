@@ -52,3 +52,13 @@ Rule: every tracked `X.md` has `X_TR.md` pair where applicable.
 - Release zip: `MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`
 - Locked secure package: `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
 - SHA-256 registry: see `reports/release_snapshot.md` (Release Artifacts section).
+
+## 7) Portable Training Readiness (Build30)
+
+| Check | Result |
+| --- | --- |
+| `run.sh --train-ready` strict mode | Added (`strict_online_training_readiness`) |
+| Teacher hard-fail policy | Enabled (`require_gated_teacher=true`) |
+| Curriculum single source ratios | Enabled (`config.curriculum_stage_ratios`) |
+| Golden assertion scorer | Added (`scripts/golden_score.py`) |
+| Readiness manifest/report outputs | Added (`reports/training_readiness_manifest.json`, `logs/preflight/train_ready_status.json`) |

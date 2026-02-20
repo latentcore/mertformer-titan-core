@@ -20,11 +20,13 @@ import subprocess
 import threading
 import sys
 from pathlib import Path
+from transformers import AutoTokenizer
 
 # Setup Paths
 current_file = Path(__file__).resolve()
 project_root = current_file.parent.parent
 sys.path.insert(0, str(project_root))
+from config.config import cfg
 
 def run_command(cmd, desc):
     print(f"🚀 [{desc}] Starting: {' '.join(cmd)}")
@@ -73,11 +75,35 @@ def distillation_monitor():
         
     print("🎉 ALL STAGES DISTILLED! Ready for Training.")
 
+
+def enforce_teacher_access_contract() -> None:
+    """
+    Hard-fail contract for gated teacher availability.
+    """
+    if not bool(getattr(cfg, "require_gated_teacher", False)):
+        return
+
+    hf_token = os.environ.get("HF_TOKEN")
+    if not hf_token:
+        print("❌ require_gated_teacher=true but HF_TOKEN is missing.")
+        print("   Action: export HF_TOKEN and ensure teacher model access is approved.")
+        sys.exit(1)
+    try:
+        tok = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token)
+        if tok.pad_token is None:
+            tok.pad_token = tok.eos_token
+    except Exception as exc:
+        print(f"❌ Teacher tokenizer access failed for {cfg.teacher_model_id}: {exc}")
+        print("   Hard fail policy active (no fallback).")
+        sys.exit(1)
+
 def main():
     if os.environ.get("TITAN_OFFLINE", "1") != "0":
         print("❌ TITAN_OFFLINE=1 (offline-first). smart_runner performs dataset downloads and training.")
         print("   Set TITAN_OFFLINE=0 to proceed.")
         sys.exit(2)
+
+    enforce_teacher_access_contract()
 
     print("================================================================")
     print("🔥 MERTFORMER TITAN - SMART PARALLEL ORCHESTRATOR")

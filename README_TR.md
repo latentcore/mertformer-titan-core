@@ -74,6 +74,8 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ## 🚀 Eğitim Hazırlık Durumu (Operasyonel)
 **Durum:** `EĞİTİM PIPELINE'I BAŞLATMAYA HAZIR (KAPILI/GATED)`
 
+**Öne çıkan özellik:** Build30 ile `run.sh --train-ready` strict kapısı eklendi; taşınabilir multi-GPU handoff için makine-okur reason-code üretir.
+
 Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama kapıları yeşildir ve veri/donanım önkoşulları tamamlandığında eğitim akışı doğrudan başlatılabilir.
 
 ### Kanıt Özeti
@@ -97,6 +99,21 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama
 ```bash
 TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh
 ```
+
+### Taşınabilir Eğitim Hazırlık Checklist'i (Zip/Taşı/Çalıştır)
+1. Eğitimi başlatmadan strict readiness doğrulaması:
+```bash
+bash run.sh --train-ready
+```
+2. Gerekli ortam değişkenleri:
+- `HF_TOKEN` (zorunlu, gated teacher + online dataset erişimi)
+- `WANDB_API_KEY` (opsiyonel)
+3. Transfer/unzip sonrası tek-komut eğitim başlatma:
+```bash
+bash run.sh
+```
+4. Strict readiness raporu:
+- `logs/preflight/train_ready_status.json` (`status`, `reason_code`, kontrol detayları)
 
 | Mühendislik Durumu | `Pilota hazır eğitim öncesi baseline` |
 | :--- | :--- |

@@ -74,6 +74,8 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ## 🚀 Training Readiness (Operational)
 **Status:** `READY TO START TRAINING PIPELINE (GATED)`
 
+**Feature highlight:** Build30 now includes a strict `run.sh --train-ready` gate with machine-readable reason codes for portable multi-GPU handoff.
+
 This repository is no longer in idea/prototype-only state. Core validation gates are green and the training pipeline can be launched as soon as the final data/hardware prerequisites are satisfied.
 
 ### Evidence Snapshot
@@ -97,6 +99,21 @@ This repository is no longer in idea/prototype-only state. Core validation gates
 ```bash
 TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh
 ```
+
+### Portable Train-Ready Checklist (Zip/Transfer Workflow)
+1. Validate strict readiness without starting training:
+```bash
+bash run.sh --train-ready
+```
+2. Required environment variables:
+- `HF_TOKEN` (required, gated teacher + online datasets)
+- `WANDB_API_KEY` (optional)
+3. One-command training start after transfer/unzip:
+```bash
+bash run.sh
+```
+4. Strict readiness report:
+- `logs/preflight/train_ready_status.json` (`status`, `reason_code`, check details)
 
 | Engineering Status | `Pilot-ready pre-training baseline` |
 | :--- | :--- |

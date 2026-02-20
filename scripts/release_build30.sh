@@ -26,7 +26,8 @@ rm -f "$REL_ZIP" "$LOCKED_AGE"
     -x '.git/*' \
        '.titan-venv/*' '.titan-venv.bak_*/*' '.lint-venv/*' '.venv/*' \
        '__pycache__/*' '*.pyc' '.pytest_cache/*' '.ruff_cache/*' '.mypy_cache/*' \
-       'logs/*' '.DS_Store' 'packages/*' '.env' 'checkpoints/*' 'datasets/*' 'data/*'
+       'logs/*' '.DS_Store' 'packages/*' '.env' 'checkpoints/*' \
+       'datasets/stage*/*' 'datasets/logits/*' 'data/*'
 )
 
 recipient=""

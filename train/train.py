@@ -180,6 +180,52 @@ def get_gpu_memory_usage(device: Optional[int] = None) -> tuple[float, float]:
     return allocated, reserved
 
 
+def get_curriculum_contract() -> tuple[List[str], List[float]]:
+    """
+    Portable training contract:
+    - stage names and ratios come from config single source of truth.
+    """
+    names = list(getattr(cfg, "curriculum_stage_names", []))
+    ratios = [float(x) for x in list(getattr(cfg, "curriculum_stage_ratios", []))]
+    if len(names) != len(ratios):
+        raise ValueError(
+            f"Curriculum mismatch: stage names ({len(names)}) != stage ratios ({len(ratios)})."
+        )
+    if len(names) != 5:
+        raise ValueError(f"Expected 5 curriculum stages, got {len(names)}.")
+    if abs(sum(ratios) - 1.0) > 1e-6:
+        raise ValueError(f"Curriculum ratios must sum to 1.0, got {sum(ratios):.8f}.")
+    return names, ratios
+
+
+def build_stage_boundaries(max_steps: int, stage_ratios: List[float]) -> List[int]:
+    boundaries: List[int] = []
+    cumulative = 0.0
+    for ratio in stage_ratios[:-1]:
+        cumulative += ratio
+        boundaries.append(int(max_steps * cumulative))
+    return boundaries
+
+
+def read_metric_from_json(path: Path, key: str) -> Optional[float]:
+    try:
+        if not path.exists():
+            return None
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        value = payload.get(key)
+        if value is None:
+            return None
+        return float(value)
+    except Exception:
+        return None
+
+
+def write_training_readiness_manifest(payload: dict) -> None:
+    out = project_root / "reports" / "training_readiness_manifest.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
 def get_student_device(accelerator=None):
     if accelerator:
         return accelerator.device
@@ -634,10 +680,12 @@ class TeacherBundle:
         self.model = None
         self.tokenizer = None
         self.device = get_teacher_device()
+        self.require_gated_teacher = bool(getattr(cfg, "require_gated_teacher", False))
+        hf_token = os.environ.get("HF_TOKEN")
 
         print(f"👨‍🏫 Teacher Hazırlanıyor: {cfg.teacher_model_id}")
         try:
-            self.tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
+            self.tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token)
             if self.tokenizer.pad_token is None:
                 self.tokenizer.pad_token = self.tokenizer.eos_token
 
@@ -650,6 +698,7 @@ class TeacherBundle:
                 
                 self.model = AutoModelForCausalLM.from_pretrained(
                     cfg.teacher_model_id,
+                    token=hf_token,
                     torch_dtype=torch.float16,
                     # [FIX] Use explicit string map for HF compatibility across versions/backends.
                     device_map={
@@ -673,50 +722,14 @@ class TeacherBundle:
         except OSError as e:
             if "gated repo" in str(e) or "token" in str(e) or "401" in str(e):
                 print(f"⛔ TEACHER AUTH ERROR: {cfg.teacher_model_id} is gated/missing.")
-                print("⚠️  Activating FALLBACK STRATEGY: Switching to Open Teacher (Mistral-7B)...")
-                
-                try:
-                    # Fallback to Mistral (Open Weights)
-                    fallback_id = "mistralai/Mistral-7B-v0.1"
-                    self.tokenizer = AutoTokenizer.from_pretrained(fallback_id)
-                    if self.tokenizer.pad_token is None:
-                        self.tokenizer.pad_token = self.tokenizer.eos_token
-                        
-                    if cfg.distill_alpha > 0.0:
-                        self.model = AutoModelForCausalLM.from_pretrained(
-                            fallback_id, 
-                            torch_dtype=torch.float16
-                        ).to(self.device)
-                        self.model.eval()
-                        
-                    print(f"✅ Fallback Teacher ({fallback_id}) Loaded Successfully.")
-                    return # Initialize complete
-                    
-                except Exception as ex:
-                    print(f"❌ Fallback Failed: {ex}")
-                    # Final Fallback: Pure Student (No Teacher)
-                    print("⚠️  SAFE MODE: Continuing without Teacher (Pure Student Training).")
-                    self.model = None
-                    cfg.distill_alpha = 0.0
-                    
-                    # [V27.1 FIX] TOKENIZER GUARANTEE
-                    # Dataset needs a tokenizer even if teacher is missing.
-                    # We try to use the student's tokenizer (gpt2 usually)
-                    try:
-                        self.tokenizer = AutoTokenizer.from_pretrained("gpt2")
-                        if self.tokenizer.pad_token is None:
-                            self.tokenizer.pad_token = self.tokenizer.eos_token
-                        print("✅ Loaded 'gpt2' tokenizer as failsafe for dataset.")
-                    except Exception as tok_ex:
-                        print(f"💀 Critical: No tokenizer available ({tok_ex}). Exiting.")
-                        sys.exit(1)
-                    try:
-                        self.tokenizer = AutoTokenizer.from_pretrained("gpt2")
-                        self.tokenizer.pad_token = self.tokenizer.eos_token
-                        print("✅ Loaded 'gpt2' tokenizer as last resort.")
-                    except:
-                        print("💀 Critical: No tokenizer available. Exiting.")
-                        sys.exit(1)
+                if self.require_gated_teacher:
+                    raise RuntimeError(
+                        "require_gated_teacher=true and teacher access failed. "
+                        "Set HF_TOKEN and ensure gated model access is approved."
+                    ) from e
+                print("⚠️  Gated teacher unavailable; continuing without teacher distillation.")
+                self.model = None
+                cfg.distill_alpha = 0.0
             else:
                 print(f"⚠️ Teacher Init Error: {e}")
                 sys.exit(1)
@@ -739,12 +752,18 @@ def load_teacher_tokenizer():
     TR: Öğretmen tokenizer'ını güvenli şekilde yükle.
     EN: Safely load the teacher tokenizer (without loading the teacher model).
     """
+    hf_token = os.environ.get("HF_TOKEN")
     try:
-        tok = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
+        tok = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token)
         if tok.pad_token is None:
             tok.pad_token = tok.eos_token
         return tok
     except Exception as e:
+        if bool(getattr(cfg, "require_gated_teacher", False)):
+            raise RuntimeError(
+                "Teacher tokenizer access failed under require_gated_teacher=true. "
+                "Provide valid HF_TOKEN and gated access."
+            ) from e
         print(f"⚠️ Teacher tokenizer load failed: {e}. Falling back to gpt2.")
         tok = AutoTokenizer.from_pretrained("gpt2")
         if tok.pad_token is None:
@@ -895,6 +914,8 @@ def train():
     # TR: Sadece ana süreç doğrulaması / EN: Only main process validation
     if accelerator.is_main_process:
         validate_config(cfg, stage="pre")
+
+    curriculum_stage_names, curriculum_stage_ratios = get_curriculum_contract()
     
     student_device = accelerator.device
 
@@ -936,11 +957,11 @@ def train():
 
     # CURRICULUM: Find stage datasets
     stage_info = [
-        ("stage1", project_root / "datasets" / "stage1" / "stage1_data.jsonl"),
-        ("stage2", project_root / "datasets" / "stage2" / "stage2_data.jsonl"),
-        ("stage3", project_root / "datasets" / "stage3" / "stage3_data.jsonl"),
-        ("stage4_soul", project_root / "datasets" / "stage4_soul" / "stage4_data.jsonl"),
-        ("stage5_tools", project_root / "datasets" / "stage5_tools" / "stage5_data.jsonl"),
+        (curriculum_stage_names[0], project_root / "datasets" / "stage1" / "stage1_data.jsonl"),
+        (curriculum_stage_names[1], project_root / "datasets" / "stage2" / "stage2_data.jsonl"),
+        (curriculum_stage_names[2], project_root / "datasets" / "stage3" / "stage3_data.jsonl"),
+        (curriculum_stage_names[3], project_root / "datasets" / "stage4_soul" / "stage4_data.jsonl"),
+        (curriculum_stage_names[4], project_root / "datasets" / "stage5_tools" / "stage5_data.jsonl"),
     ]
     stage_paths = [p for _, p in stage_info]
 
@@ -989,7 +1010,13 @@ def train():
                     "Precomputed logits are missing while TITAN_OFFLINE=1. "
                     "Offline mode cannot fall back to online teacher."
                 )
-            print("⚠️ Precomputed logits not found for all stages. Falling back to ONLINE teacher.")
+            if bool(getattr(cfg, "require_gated_teacher", False)):
+                print(
+                    "⚠️ Precomputed logits missing. Hard teacher policy active: "
+                    "switching to ONLINE gated teacher generation."
+                )
+            else:
+                print("⚠️ Precomputed logits not found for all stages. Falling back to ONLINE teacher.")
             teacher = TeacherBundle()
             teacher_tokenizer = teacher.tokenizer
             use_offline_logits = False
@@ -1176,12 +1203,9 @@ def train():
     liquid_frozen_until = 0 # Step count until Liquid is unfrozen
     liquid_spike_counter = 0 # V26.11 SAFEGUARD: 3-Strike Rule
 
-    # Curriculum Stage Tracking
-    stage1_end = int(cfg.max_steps * 0.25)  # 0-25% (Logic)
-    stage2_end = int(cfg.max_steps * 0.55)  # 25-55% (Knowledge)
-    stage3_end = int(cfg.max_steps * 0.75)  # 55-75% (Language)
-    stage4_end = int(cfg.max_steps * 0.85)  # 75-85% (Soul)
-    # Stage 5 is 85-100% (Tools)
+    # Curriculum Stage Tracking (single source from config ratios)
+    stage_boundaries = build_stage_boundaries(cfg.max_steps, curriculum_stage_ratios)
+    stage1_end, stage2_end, stage3_end, stage4_end = stage_boundaries
     current_curriculum_stage = 1
 
     global_step = 0
@@ -1191,21 +1215,62 @@ def train():
     micro_step = 0
     start_time = time.time()
     tokens_processed = 0
+    tokens_seen_total = 0
+
+    token_budget_mode = str(getattr(cfg, "token_budget_mode", "fixed_steps")).lower()
+    open_ended_mode = token_budget_mode == "open_ended"
+    target_tokens_min = int(getattr(cfg, "target_tokens_min", 0))
+    saturation_eval_interval_steps = int(getattr(cfg, "saturation_eval_interval_steps", 2000))
+    saturation_patience_windows = int(getattr(cfg, "saturation_patience_windows", 3))
+    val_improve_min_rel = float(getattr(cfg, "val_improve_min_rel", 0.002))
+    golden_improve_min_abs = float(getattr(cfg, "golden_improve_min_abs", 0.01))
+    gsm8k_improve_min_abs = float(getattr(cfg, "gsm8k_improve_min_abs", 0.002))
+    max_consecutive_nan = int(getattr(cfg, "max_consecutive_nan", 3))
+    max_consecutive_oom_backoff_fail = int(getattr(cfg, "max_consecutive_oom_backoff_fail", 5))
+
+    consecutive_nan = 0
+    consecutive_oom_backoff_fail = 0
+    safety_brake_triggered = False
+    safety_brake_reason = ""
+
+    latest_val_loss = None
+    best_val_saturation = None
+    best_golden_score = None
+    best_gsm8k_score = None
+    saturation_plateau_windows = 0
+
+    # Runtime manifest for portable handoff observability.
+    if accelerator.is_main_process:
+        write_training_readiness_manifest(
+            {
+                "status": "started",
+                "token_budget_mode": token_budget_mode,
+                "target_tokens_min": target_tokens_min,
+                "curriculum_stage_names": curriculum_stage_names,
+                "curriculum_stage_ratios": curriculum_stage_ratios,
+                "max_steps_nominal": int(cfg.max_steps),
+                "micro_batch_size": int(cfg.micro_batch_size),
+                "grad_accum_steps": int(cfg.grad_accum_steps),
+            }
+        )
 
     if accelerator.is_main_process:
         print(f"🚀 TITAN ONYX STORM TRAINING STARTING...")
-        print(f"📊 Max Steps: {cfg.max_steps}")
+        print(f"📊 Max Steps (nominal): {cfg.max_steps}")
+        print(f"🧮 Token Budget: mode={token_budget_mode} | min_tokens={target_tokens_min}")
         print(f"📚 Curriculum Stages:")
-        print(f"   - Stage 1 (Logic):     Steps 0-{stage1_end} (25%)")
-        print(f"   - Stage 2 (Knowledge): Steps {stage1_end}-{stage2_end} (30%)")
-        print(f"   - Stage 3 (Language):  Steps {stage2_end}-{stage3_end} (20%)")
-        print(f"   - Stage 4 (Soul):      Steps {stage3_end}-{stage4_end} (10%)")
-        print(f"   - Stage 5 (Tools):     Steps {stage4_end}-{cfg.max_steps} (15%)")
+        print(f"   - Stage 1 ({curriculum_stage_names[0]}): Steps 0-{stage1_end} ({curriculum_stage_ratios[0]*100:.1f}%)")
+        print(f"   - Stage 2 ({curriculum_stage_names[1]}): Steps {stage1_end}-{stage2_end} ({curriculum_stage_ratios[1]*100:.1f}%)")
+        print(f"   - Stage 3 ({curriculum_stage_names[2]}): Steps {stage2_end}-{stage3_end} ({curriculum_stage_ratios[2]*100:.1f}%)")
+        print(f"   - Stage 4 ({curriculum_stage_names[3]}): Steps {stage3_end}-{stage4_end} ({curriculum_stage_ratios[3]*100:.1f}%)")
+        print(f"   - Stage 5 ({curriculum_stage_names[4]}): Steps {stage4_end}-{cfg.max_steps} ({curriculum_stage_ratios[4]*100:.1f}%)")
         print(f"📊 Early Stopping: Patience={early_stop_patience} | Val Check: Every {val_check_interval} steps")
 
     try:
         dataloader_iter = iter(dl)
-        while global_step < cfg.max_steps:
+        while True:
+            if not open_ended_mode and global_step >= cfg.max_steps:
+                break
             # ---------------------------------------------------------------------
             # V26.1 FIX: Avg Loss Calculation for Safety
             # ---------------------------------------------------------------------
@@ -1337,83 +1402,93 @@ def train():
             # ---------------------------------------------------------------------
             # [CRITICAL FIX] Correct DDP Accumulation using Context Manager
             # ---------------------------------------------------------------------
-            with accelerator.accumulate(student):
-                # Mixed Precision context handled by accelerate.accumulate or autocast
-                # We use autocast for extra safety
-                with accelerator.autocast():
-                    s_logits, aux_loss, _ = student(input_ids)
+            try:
+                with accelerator.accumulate(student):
+                    # Mixed Precision context handled by accelerate.accumulate or autocast
+                    # We use autocast for extra safety
+                    with accelerator.autocast():
+                        s_logits, aux_loss, _ = student(input_ids)
 
-                    # Teacher logits: offline (precomputed) or online (teacher model)
-                    if t_logits is None and teacher is not None and teacher.model is not None:
-                        # Teacher is already on correct device via device_map fix
-                        t_logits = teacher.get_logits(input_ids)
+                        # Teacher logits: offline (precomputed) or online (teacher model)
+                        if t_logits is None and teacher is not None and teacher.model is not None:
+                            # Teacher is already on correct device via device_map fix
+                            t_logits = teacher.get_logits(input_ids)
 
-                    shift_logits = s_logits[..., :-1, :].contiguous()
-                    shift_labels = labels[..., 1:].contiguous()
+                        shift_logits = s_logits[..., :-1, :].contiguous()
+                        shift_labels = labels[..., 1:].contiguous()
 
-                    pad_id = teacher_tokenizer.pad_token_id if teacher_tokenizer and teacher_tokenizer.pad_token_id is not None else 0
-                    loss_ce = F.cross_entropy(
-                        shift_logits.view(-1, cfg.vocab_size),
-                        shift_labels.view(-1),
-                        ignore_index=pad_id,
-                        label_smoothing=getattr(cfg, "label_smoothing", 0.0)
-                    )
-
-                    loss_distill = 0.0
-                    if t_logits is not None:
-                        t_logits = t_logits.to(shift_logits.device)
-                        shift_t_logits = t_logits[..., :-1, :].contiguous()
-                        kd_mask = shift_labels != pad_id
-                        loss_distill = kd_loss_safe(shift_logits, shift_t_logits, cfg.teacher_temp, mask=kd_mask)
-
-                    # Dynamic Distillation Alpha
-                    progress_pct = global_step / cfg.max_steps
-                    start_alpha = getattr(cfg, "distill_alpha", 0.6)
-                    
-                    if progress_pct < 0.3:
-                        dyn_alpha = start_alpha
-                    elif progress_pct > 0.8:
-                        dyn_alpha = 0.15
-                    else:
-                        slope = (0.15 - start_alpha) / (0.8 - 0.3)
-                        dyn_alpha = start_alpha + slope * (progress_pct - 0.3)
-                    
-                    alpha = dyn_alpha if t_logits is not None else 0.0
-                    aux_coef = getattr(cfg, "router_aux_loss_coef", 0.01)
-                    total_loss = (1.0 - alpha) * loss_ce + alpha * loss_distill + aux_coef * aux_loss
-
-                # NaN Check
-                if not torch.isfinite(total_loss):
-                    print(f"⚠️ NaN detected, skipping")
-                    opt.zero_grad()
-                    continue
-
-                # Track micro-batch stats (for accurate averages)
-                accum_loss += total_loss.item()
-                accum_count += 1
-                tokens_processed += input_ids.numel()
-
-                # Backward (Accelerate handles scaling and division by accum steps AUTOMATICALLY)
-                accelerator.backward(total_loss)
-
-                # Optimizer Step (Only runs when accumulation is complete)
-                if accelerator.sync_gradients:
-                    # Clipping
-                    grad_norm = accelerator.clip_grad_norm_(student.parameters(), cfg.grad_clip)
-
-                    opt.step()
-                    scheduler.step()
-                    opt.zero_grad()
-
-                    global_step += 1
-                    if continual_adapter is not None:
-                        replay_sample = None
-                        if isinstance(input_ids, torch.Tensor) and input_ids.ndim >= 2 and input_ids.size(0) > 0:
-                            replay_sample = input_ids[0]
-                        continual_state = continual_adapter.update(
-                            loss=float(total_loss.detach().item()),
-                            sample=replay_sample,
+                        pad_id = teacher_tokenizer.pad_token_id if teacher_tokenizer and teacher_tokenizer.pad_token_id is not None else 0
+                        loss_ce = F.cross_entropy(
+                            shift_logits.view(-1, cfg.vocab_size),
+                            shift_labels.view(-1),
+                            ignore_index=pad_id,
+                            label_smoothing=getattr(cfg, "label_smoothing", 0.0)
                         )
+
+                        loss_distill = 0.0
+                        if t_logits is not None:
+                            t_logits = t_logits.to(shift_logits.device)
+                            shift_t_logits = t_logits[..., :-1, :].contiguous()
+                            kd_mask = shift_labels != pad_id
+                            loss_distill = kd_loss_safe(shift_logits, shift_t_logits, cfg.teacher_temp, mask=kd_mask)
+
+                        # Dynamic Distillation Alpha
+                        progress_pct = min(global_step / max(1, cfg.max_steps), 1.0)
+                        start_alpha = getattr(cfg, "distill_alpha", 0.6)
+                        
+                        if progress_pct < 0.3:
+                            dyn_alpha = start_alpha
+                        elif progress_pct > 0.8:
+                            dyn_alpha = 0.15
+                        else:
+                            slope = (0.15 - start_alpha) / (0.8 - 0.3)
+                            dyn_alpha = start_alpha + slope * (progress_pct - 0.3)
+                        
+                        alpha = dyn_alpha if t_logits is not None else 0.0
+                        aux_coef = getattr(cfg, "router_aux_loss_coef", 0.01)
+                        total_loss = (1.0 - alpha) * loss_ce + alpha * loss_distill + aux_coef * aux_loss
+
+                    # NaN Check
+                    if not torch.isfinite(total_loss):
+                        consecutive_nan += 1
+                        print(f"⚠️ NaN detected ({consecutive_nan}/{max_consecutive_nan}), skipping step")
+                        opt.zero_grad()
+                        if consecutive_nan >= max_consecutive_nan:
+                            safety_brake_triggered = True
+                            safety_brake_reason = "nan_divergence"
+                            print("🛑 SAFETY BRAKE: consecutive NaN threshold reached.")
+                            break
+                        continue
+                    consecutive_nan = 0
+
+                    # Track micro-batch stats (for accurate averages)
+                    accum_loss += total_loss.item()
+                    accum_count += 1
+                    tokens_processed += input_ids.numel()
+                    tokens_seen_total += int(input_ids.numel()) * max(1, accelerator.num_processes)
+
+                    # Backward (Accelerate handles scaling and division by accum steps AUTOMATICALLY)
+                    accelerator.backward(total_loss)
+
+                    # Optimizer Step (Only runs when accumulation is complete)
+                    if accelerator.sync_gradients:
+                        consecutive_oom_backoff_fail = 0
+                        # Clipping
+                        grad_norm = accelerator.clip_grad_norm_(student.parameters(), cfg.grad_clip)
+
+                        opt.step()
+                        scheduler.step()
+                        opt.zero_grad()
+
+                        global_step += 1
+                        if continual_adapter is not None:
+                            replay_sample = None
+                            if isinstance(input_ids, torch.Tensor) and input_ids.ndim >= 2 and input_ids.size(0) > 0:
+                                replay_sample = input_ids[0]
+                            continual_state = continual_adapter.update(
+                                loss=float(total_loss.detach().item()),
+                                sample=replay_sample,
+                            )
 
                     # Update Stats
                     grad_norm_val = grad_norm.item() if isinstance(grad_norm, torch.Tensor) else grad_norm
@@ -1471,6 +1546,19 @@ def train():
 
                         print(f"Step {global_step} | Stage {current_curriculum_stage} | Loss: {avg_loss:.4f} | "
                               f"Tok/s: {tok_s:.0f} | LR: {lr_now:.2e} | GradNorm: {avg_grad_norm:.3f}")
+
+                        write_training_readiness_manifest(
+                            {
+                                "status": "running",
+                                "global_step": int(global_step),
+                                "token_budget_mode": token_budget_mode,
+                                "target_tokens_min": int(target_tokens_min),
+                                "tokens_seen": int(tokens_seen_total),
+                                "throughput_tok_s": float(tok_s),
+                                "current_stage": int(current_curriculum_stage),
+                                "latest_loss": float(avg_loss),
+                            }
+                        )
 
                         # V27.0: Periodic Safety Checks
                         if global_step % 1000 == 0:
@@ -1621,6 +1709,7 @@ def train():
                         if accelerator.is_main_process:
                             if val_samples_global > 0:
                                 val_loss = val_loss_sum_global / max(1, val_samples_global)
+                                latest_val_loss = float(val_loss)
                                 print(f"📊 Validation Loss: {val_loss:.4f} (Best: {best_val_loss:.4f})")
 
                                 # EVAL-DRIVEN EARLY STOPPING
@@ -1642,7 +1731,7 @@ def train():
                                 else:
                                     patience_counter += 1
                                     print(f"⏳ No improvement ({patience_counter}/{early_stop_patience})")
-                                    if patience_counter >= early_stop_patience:
+                                    if (not open_ended_mode) and patience_counter >= early_stop_patience:
                                         print(f"🛑 Early stopping triggered! Best val loss: {best_val_loss:.4f}")
                                         should_stop = True
                             else:
@@ -1668,15 +1757,159 @@ def train():
                         unwrapped_model = accelerator.unwrap_model(student)
                         best_val_loss = save_checkpoint_smart(unwrapped_model, opt, scheduler, global_step, cfg, keep_last_n=3, val_loss=None, best_val_loss=best_val_loss)
 
-                micro_step += 1
+                    # Open-ended saturation stop gate (active only after target token floor).
+                    if open_ended_mode and global_step % saturation_eval_interval_steps == 0 and global_step > 0:
+                        saturation_should_stop = False
+                        if accelerator.is_main_process:
+                            if tokens_seen_total < target_tokens_min:
+                                print(
+                                    f"🧮 Saturation gate inactive: tokens_seen={tokens_seen_total} "
+                                    f"< target_tokens_min={target_tokens_min}"
+                                )
+                            else:
+                                golden_summary_path = project_root / "reports" / "benchmarks" / "golden_summary.json"
+                                gsm8k_summary_path = project_root / "reports" / "benchmarks" / "gsm8k_summary.json"
+                                golden_score = read_metric_from_json(golden_summary_path, "assertion_score")
+                                gsm8k_score = read_metric_from_json(gsm8k_summary_path, "accuracy")
+
+                                signals_ready = (
+                                    latest_val_loss is not None
+                                    and golden_score is not None
+                                    and gsm8k_score is not None
+                                )
+
+                                if not signals_ready:
+                                    saturation_plateau_windows += 1
+                                    print(
+                                        "🟡 Saturation gate waiting: requires val + golden_summary + gsm8k_summary. "
+                                        f"window={saturation_plateau_windows}/{saturation_patience_windows}"
+                                    )
+                                    if saturation_plateau_windows >= saturation_patience_windows:
+                                        saturation_should_stop = True
+                                else:
+                                    val_improved = False
+                                    if best_val_saturation is None:
+                                        best_val_saturation = latest_val_loss
+                                        val_improved = True
+                                    else:
+                                        rel_drop = (best_val_saturation - latest_val_loss) / max(
+                                            abs(best_val_saturation), 1e-8
+                                        )
+                                        if rel_drop >= val_improve_min_rel:
+                                            best_val_saturation = latest_val_loss
+                                            val_improved = True
+
+                                    golden_improved = False
+                                    if best_golden_score is None:
+                                        best_golden_score = golden_score
+                                        golden_improved = True
+                                    elif (golden_score - best_golden_score) >= golden_improve_min_abs:
+                                        best_golden_score = golden_score
+                                        golden_improved = True
+
+                                    gsm8k_improved = False
+                                    if best_gsm8k_score is None:
+                                        best_gsm8k_score = gsm8k_score
+                                        gsm8k_improved = True
+                                    elif (gsm8k_score - best_gsm8k_score) >= gsm8k_improve_min_abs:
+                                        best_gsm8k_score = gsm8k_score
+                                        gsm8k_improved = True
+
+                                    if val_improved or golden_improved or gsm8k_improved:
+                                        saturation_plateau_windows = 0
+                                    else:
+                                        saturation_plateau_windows += 1
+
+                                    print(
+                                        "📉 Saturation window | "
+                                        f"plateau={saturation_plateau_windows}/{saturation_patience_windows} | "
+                                        f"val={latest_val_loss:.5f} | golden={golden_score:.4f} | gsm8k={gsm8k_score:.4f}"
+                                    )
+
+                                    if saturation_plateau_windows >= saturation_patience_windows:
+                                        saturation_should_stop = True
+
+                                write_training_readiness_manifest(
+                                    {
+                                        "status": "running",
+                                        "global_step": int(global_step),
+                                        "tokens_seen": int(tokens_seen_total),
+                                        "token_budget_mode": token_budget_mode,
+                                        "target_tokens_min": int(target_tokens_min),
+                                        "latest_val_loss": latest_val_loss,
+                                        "best_val_loss": float(best_val_loss) if best_val_loss != float("inf") else None,
+                                        "golden_summary_path": str(golden_summary_path),
+                                        "gsm8k_summary_path": str(gsm8k_summary_path),
+                                        "plateau_windows": int(saturation_plateau_windows),
+                                        "saturation_patience_windows": int(saturation_patience_windows),
+                                    }
+                                )
+
+                        saturation_tensor = torch.tensor(
+                            1 if saturation_should_stop else 0,
+                            device=student_device,
+                            dtype=torch.int64,
+                        )
+                        if torch.distributed.is_available() and torch.distributed.is_initialized():
+                            torch.distributed.broadcast(saturation_tensor, src=0)
+                        if bool(saturation_tensor.item()):
+                            early_stopped = True
+                            safety_brake_reason = "quality_saturation_plateau"
+                            print("🛑 Saturation gate triggered stop (val+golden+gsm8k plateau).")
+                            break
+
+                    micro_step += 1
+            except RuntimeError as runtime_exc:
+                err_text = str(runtime_exc).lower()
+                if "out of memory" in err_text:
+                    consecutive_oom_backoff_fail += 1
+                    print(
+                        f"⚠️ OOM detected ({consecutive_oom_backoff_fail}/{max_consecutive_oom_backoff_fail}). "
+                        "Clearing cache and retrying..."
+                    )
+                    opt.zero_grad(set_to_none=True)
+                    if torch.cuda.is_available():
+                        torch.cuda.empty_cache()
+                    if consecutive_oom_backoff_fail >= max_consecutive_oom_backoff_fail:
+                        safety_brake_triggered = True
+                        safety_brake_reason = "oom_backoff_exhausted"
+                        print("🛑 SAFETY BRAKE: OOM backoff retry budget exhausted.")
+                        break
+                    continue
+                raise
 
         if accelerator.is_main_process:
-            if early_stopped:
+            if safety_brake_triggered:
+                print(f"🛑 Safety brake stop finalized. reason={safety_brake_reason}")
+                unwrapped_model = accelerator.unwrap_model(student)
+                best_val_loss = save_checkpoint_smart(
+                    unwrapped_model,
+                    opt,
+                    scheduler,
+                    global_step,
+                    cfg,
+                    keep_last_n=3,
+                    val_loss=None,
+                    best_val_loss=best_val_loss,
+                )
                 if logger:
-                    logger.finalize("early_stopped", extra={"best_val_loss": best_val_loss})
+                    logger.finalize(
+                        "safety_brake_stop",
+                        extra={
+                            "reason": safety_brake_reason,
+                            "best_val_loss": best_val_loss,
+                            "tokens_seen": int(tokens_seen_total),
+                        },
+                    )
+            elif early_stopped:
+                if logger:
+                    logger.finalize(
+                        "early_stopped",
+                        extra={"best_val_loss": best_val_loss, "tokens_seen": int(tokens_seen_total)},
+                    )
             else:
                 if logger:
-                    logger.finalize("completed")
+                    logger.finalize("completed", extra={"tokens_seen": int(tokens_seen_total)})
                 unwrapped_model = accelerator.unwrap_model(student)
                 export_to_onnx(unwrapped_model, save_dir, cfg.model_name, student_device)
 

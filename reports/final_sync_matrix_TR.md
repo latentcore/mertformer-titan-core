@@ -52,3 +52,13 @@ Kural: uygun olan her tracked `X.md` dosyasının `X_TR.md` karşılığı olmal
 - Release zip: `MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`
 - Kilitli güvenli paket: `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
 - SHA-256 kayıtları: `reports/release_snapshot_TR.md` (Release Artefaktları bölümü).
+
+## 7) Taşınabilir Eğitim Hazırlığı (Build30)
+
+| Kontrol | Sonuç |
+| --- | --- |
+| `run.sh --train-ready` strict modu | Eklendi (`strict_online_training_readiness`) |
+| Teacher hard-fail politikası | Aktif (`require_gated_teacher=true`) |
+| Müfredat tek kaynak oranları | Aktif (`config.curriculum_stage_ratios`) |
+| Golden assertion skorlayıcı | Eklendi (`scripts/golden_score.py`) |
+| Readiness manifest/rapor çıktıları | Eklendi (`reports/training_readiness_manifest.json`, `logs/preflight/train_ready_status.json`) |

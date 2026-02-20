@@ -4,7 +4,8 @@ Tüm scriptler repo kökünden çalıştırılmak üzere tasarlanmıştır.
 
 Konvansiyonlar:
 - Tercihen `.titan-venv/bin/python scripts/<ad>.py` kullanın (bkz: `scripts/bootstrap_venv.sh`).
-- Varsayılan çalışma şekli offline-first: `TITAN_OFFLINE=1` (HF/WandB login veya dataset download ancak açıkça etkinleştirilirse).
+- Script doğrulama akışları offline-first kalır (`TITAN_OFFLINE=1`).
+- `run.sh` eğitim sözleşmesi varsayılan online çalışır ve readiness-only modu içerir (`bash run.sh --train-ready`).
 
 Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verify_all.sh`.
 
@@ -31,6 +32,7 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 
 ## Değerlendirme & Benchmark
 - `golden_eval.py` — Golden sample evaluator (50 prompt).
+- `golden_score.py` — Assertion tabanlı golden skorlayıcı (`reports/benchmarks/golden_summary.json`).
 - `benchmarks_internal.py` — HumanEval / MBPP çıktı üretimi (checkpoint/dataset yoksa SKIP).
 - `bitnet_kernel_benchmark_standalone.py` — Tek dosyalı standalone BitNet ternary kernel benchmark'ı (kernel + quantization + benchmark akışı tek dosyada).
 - `eval.py` — GSM8K eval wrapper (legacy; bkz: `eval/gsm8k.py`).
@@ -75,4 +77,4 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 
 ---
 
-Not: `run.sh` ana otomasyon yolunu kapsar (env + preflight + eğitim). Review için `scripts/verify_all.sh` önerilir.
+Not: `run.sh` ana otomasyon yolunu kapsar (install + strict preflight + eğitim). Review için `scripts/verify_all.sh` önerilir.

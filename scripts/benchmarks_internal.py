@@ -49,6 +49,11 @@ def run_generation(dataset, tokenizer, model, device, out_path: Path, max_new_to
     return limit
 
 
+def write_summary(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run", action="store_true")
@@ -57,6 +62,7 @@ def main() -> None:
     parser.add_argument("--ckpt", type=str, default="checkpoints/latest.pt")
     parser.add_argument("--allow-random", action="store_true", help="Run even if checkpoint is missing (random weights).")
     args = parser.parse_args()
+    summary_path = Path("reports/benchmarks/internal_smoke_summary.json")
 
     try:
         import torch
@@ -67,6 +73,13 @@ def main() -> None:
         raise RuntimeError(f"Missing dependencies for benchmark run: {exc}")
 
     if not args.run:
+        write_summary(
+            summary_path,
+            {
+                "status": "idle",
+                "reason": "run flag not set",
+            },
+        )
         print("Benchmark runner configured. Use --run to execute.")
         return
 
@@ -84,6 +97,14 @@ def main() -> None:
         model.load_state_dict(checkpoint.get("model", checkpoint))
     else:
         if not args.allow_random:
+            write_summary(
+                summary_path,
+                {
+                    "status": "not_eligible",
+                    "reason": "checkpoint_missing",
+                    "checkpoint": str(ckpt_path),
+                },
+            )
             print(f"NOT ELIGIBLE FOR CLAIM: checkpoint not found: {ckpt_path}")
             print(
                 "Reason: benchmark outputs without a trained checkpoint are not valid "
@@ -105,6 +126,13 @@ def main() -> None:
         humaneval = load_dataset_safe("openai_humaneval", "openai_humaneval")
         mbpp = load_dataset_safe("mbpp", "sanitized")
     except Exception as exc:
+        write_summary(
+            summary_path,
+            {
+                "status": "skip",
+                "reason": f"dataset_unavailable: {exc}",
+            },
+        )
         print(f"SKIP: benchmark datasets unavailable ({exc})")
         return
 
@@ -127,6 +155,15 @@ def main() -> None:
         args.samples,
     )
 
+    write_summary(
+        summary_path,
+        {
+            "status": "pass",
+            "humaneval_outputs": int(humaneval_count),
+            "mbpp_outputs": int(mbpp_count),
+            "health_pass": bool(humaneval_count > 0 and mbpp_count > 0),
+        },
+    )
     print(f"Benchmarks generated. HumanEval={humaneval_count}, MBPP={mbpp_count}")
 
 
