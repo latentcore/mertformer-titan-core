@@ -1,0 +1,23 @@
+# Model override: Build30 max architecture profile (opt-in)
+# Usage:
+#   TITAN_PROFILE=max_arch bash run.sh
+#
+# Intent:
+# - Keep stable defaults untouched.
+# - Enable advanced architecture flags in a single overlay.
+
+use_hierarchical_kv_cache: true
+use_global_workspace_broadcast: true
+use_neuromodulatory_gain: true
+use_latent_ode_state_channel: true
+use_cross_expert_sync_bus: true
+use_structural_plasticity: true
+use_hebbian_plasticity: true
+use_neuro_symbolic_layer: true
+use_world_model_head: true
+use_lifelong_safety_layer: true
+use_continual_adapter: true
+use_expert_paging: true
+expert_paging_inference_only: true
+expert_paging_lazy_init: true
+use_qinn: false

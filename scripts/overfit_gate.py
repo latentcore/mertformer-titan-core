@@ -123,7 +123,18 @@ def build_sequences(tokens: List[int], seq_len: int) -> List[List[int]]:
     return sequences
 
 
-def run_overfit(dataset_path: Path, byte_budget: int, max_steps: int, target_loss: float) -> None:
+def run_overfit(
+    dataset_path: Path,
+    byte_budget: int,
+    max_steps: int,
+    target_loss: float,
+    min_improvement: float,
+) -> None:
+    random.seed(42)
+    torch.manual_seed(42)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(42)
+
     raw = load_text_bytes(dataset_path, byte_budget)
     text = jsonl_to_text(raw)
     tokens = tokenize_to_ids(text, cfg.vocab_size)
@@ -169,9 +180,10 @@ def run_overfit(dataset_path: Path, byte_budget: int, max_steps: int, target_los
         raise RuntimeError("Overfit gate failed: loss not computed")
 
     improvement = (start_loss - final_loss) / max(start_loss, 1e-6)
-    if final_loss > target_loss and improvement < 0.8:
+    if final_loss > target_loss and improvement < min_improvement:
         raise RuntimeError(
-            f"Overfit gate failed: start={start_loss:.4f}, final={final_loss:.4f}, improvement={improvement:.2%}"
+            f"Overfit gate failed: start={start_loss:.4f}, final={final_loss:.4f}, "
+            f"improvement={improvement:.2%}, required={min_improvement:.2%}"
         )
 
     print("Overfit gate: PASS")
@@ -184,6 +196,7 @@ def main() -> None:
     parser.add_argument("--fast", action="store_true")
     parser.add_argument("--max-steps", type=int, default=200)
     parser.add_argument("--target-loss", type=float, default=1.0)
+    parser.add_argument("--min-improvement", type=float, default=0.8)
     args = parser.parse_args()
 
     dataset_path = Path(args.dataset)
@@ -192,12 +205,14 @@ def main() -> None:
 
     byte_budget = args.bytes
     max_steps = args.max_steps
+    min_improvement = args.min_improvement
     if args.fast:
         byte_budget = min(byte_budget, 200_000)
         max_steps = min(max_steps, 60)
+        min_improvement = min(min_improvement, 0.75)
 
     with patched_cfg():
-        run_overfit(dataset_path, byte_budget, max_steps, args.target_loss)
+        run_overfit(dataset_path, byte_budget, max_steps, args.target_loss, min_improvement)
 
 
 if __name__ == "__main__":

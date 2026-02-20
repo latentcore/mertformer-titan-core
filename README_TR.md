@@ -67,7 +67,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `58 passed, 3 skipped` |
+| `python3 -m pytest -q` | `59 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -80,7 +80,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`58 passed, 3 skipped`)
+   - `pytest` geçti (`59 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -97,23 +97,33 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama
 
 ### Başlatma komutu (önkoşullar tamamlandığında)
 ```bash
-TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh
+TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash run.sh
 ```
 
 ### Taşınabilir Eğitim Hazırlık Checklist'i (Zip/Taşı/Çalıştır)
-1. Eğitimi başlatmadan strict readiness doğrulaması:
+1. Profil sözleşmesini seç:
+```bash
+# Stabil baseline (varsayılan)
+bash run.sh --train-ready
+
+# Max mimari overlay (ileri bayraklar tek anahtar)
+TITAN_PROFILE=max_arch bash run.sh --train-ready
+```
+2. Eğitimi başlatmadan strict readiness doğrulaması:
 ```bash
 bash run.sh --train-ready
 ```
-2. Gerekli ortam değişkenleri:
+3. Gerekli ortam değişkenleri:
 - `HF_TOKEN` (zorunlu, gated teacher + online dataset erişimi)
 - `WANDB_API_KEY` (opsiyonel)
-3. Transfer/unzip sonrası tek-komut eğitim başlatma:
+4. Transfer/unzip sonrası tek-komut eğitim başlatma:
 ```bash
 bash run.sh
 ```
-4. Strict readiness raporu:
+5. Strict readiness raporu:
 - `logs/preflight/train_ready_status.json` (`status`, `reason_code`, kontrol detayları)
+6. Dataset manifest politikası:
+- Build30 Final Convergence turunda mevcut dataset manifesti sabit tutulur (major genişleme yok).
 
 | Mühendislik Durumu | `Pilota hazır eğitim öncesi baseline` |
 | :--- | :--- |
@@ -524,10 +534,42 @@ Bu modüller kodda uygulanmıştır ve eğitim/çıkarım öncesi config ile aç
 - `use_lifelong_safety_layer` -> Yaşam boyu güvenlik/adaptasyon koruması (`layers/lifelong_safety.py`)
 - `use_structural_plasticity` -> Uzman büyütme-budama politika kancaları (`layers/moe.py`)
 - `use_continual_adapter` -> Eğitimde continual learning adaptör yolu (`train/continual_adapter.py`)
+- `use_expert_paging` -> Çıkarım-öncelikli uzman sayfalama (on-demand residency) (`layers/moe.py`)
 
 Çalışma notu:
 - Varsayılanlar KAPALI tutulur; stabil baseline korunur.
 - Bu bileşenler non-breaking uzantılar olarak entegredir ve deney bazında açılır.
+
+### İleri Özellik Matrisi (Stable vs Max-Arch)
+`run.sh`, `TITAN_PROFILE` ile profil sözleşmesi destekler.
+
+| Bayrak | Stable (varsayılan) | Max-Arch | Amaç | Dosya |
+| --- | --- | --- | --- | --- |
+| `use_hierarchical_kv_cache` | `false` | `true` | Decode sırasında kısa/uzun KV ayrımı | `layers/mla.py` |
+| `use_global_workspace_broadcast` | `false` | `true` | Tokenlar arası ortak çalışma alanı sinyali | `layers/cognitive_extensions.py` |
+| `use_neuromodulatory_gain` | `false` | `true` | Workspace tabanlı gain/bias modülasyonu | `layers/cognitive_extensions.py` |
+| `use_latent_ode_state_channel` | `false` | `true` | Sürekli-zaman latent durum dinamiği | `layers/cognitive_extensions.py` |
+| `use_cross_expert_sync_bus` | `false` | `true` | MoE uzmanlar arası senkronizasyon | `layers/moe.py` |
+| `use_structural_plasticity` | `false` | `true` | Uzman büyütme/budama kancaları | `layers/moe.py` |
+| `use_hebbian_plasticity` | `false` | `true` | Lokal plastisite iz katmanı | `layers/cognitive_extensions.py` |
+| `use_neuro_symbolic_layer` | `false` | `true` | Kural-koşullu artık köprü | `layers/cognitive_extensions.py` |
+| `use_world_model_head` | `false` | `true` | Yan-kanal nedensel tahmin çıktısı | `layers/world_model_head.py` |
+| `use_lifelong_safety_layer` | `false` | `true` | Drift farkındalıklı adaptif güvenlik | `layers/lifelong_safety.py` |
+| `use_continual_adapter` | `false` | `true` | Eğitimde continual replay/drift adaptörü | `train/continual_adapter.py` |
+| `use_expert_paging` | `false` | `true` | İhtiyaç anında uzman yerleşimi (inference-first) | `layers/moe.py` |
+| `use_qinn` | `false` | `false` | Build30'de stabilite/throughput için kapalı tutulur | `layers/qinn.py` |
+
+Profil örnekleri:
+```bash
+# Stabil baseline (varsayılan)
+bash run.sh
+
+# Max mimari profil
+TITAN_PROFILE=max_arch bash run.sh
+
+# Sadece readiness kapısı
+bash run.sh --train-ready
+```
 
 ```text
       ╔═══════════════════════════════════════════════════════════════════════════╗

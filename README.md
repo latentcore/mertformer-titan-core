@@ -67,7 +67,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `58 passed, 3 skipped` |
+| `python3 -m pytest -q` | `59 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -80,7 +80,7 @@ This repository is no longer in idea/prototype-only state. Core validation gates
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`58 passed, 3 skipped`)
+   - `pytest` passed (`59 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -97,23 +97,33 @@ This repository is no longer in idea/prototype-only state. Core validation gates
 
 ### Start command (when prerequisites are satisfied)
 ```bash
-TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh
+TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash run.sh
 ```
 
 ### Portable Train-Ready Checklist (Zip/Transfer Workflow)
-1. Validate strict readiness without starting training:
+1. Select profile contract:
+```bash
+# Stable baseline (default)
+bash run.sh --train-ready
+
+# Max architecture overlay (all advanced flags in one switch)
+TITAN_PROFILE=max_arch bash run.sh --train-ready
+```
+2. Validate strict readiness without starting training:
 ```bash
 bash run.sh --train-ready
 ```
-2. Required environment variables:
+3. Required environment variables:
 - `HF_TOKEN` (required, gated teacher + online datasets)
 - `WANDB_API_KEY` (optional)
-3. One-command training start after transfer/unzip:
+4. One-command training start after transfer/unzip:
 ```bash
 bash run.sh
 ```
-4. Strict readiness report:
+5. Strict readiness report:
 - `logs/preflight/train_ready_status.json` (`status`, `reason_code`, check details)
+6. Dataset manifest policy:
+- Build30 Final Convergence keeps the current dataset manifest pinned (no major dataset expansion in this lock pass).
 
 | Engineering Status | `Pilot-ready pre-training baseline` |
 | :--- | :--- |
@@ -526,10 +536,42 @@ These modules are implemented in code and can be enabled from config before trai
 - `use_lifelong_safety_layer` -> Lifelong safety/adaptation guard (`layers/lifelong_safety.py`)
 - `use_structural_plasticity` -> Structural plasticity hooks for expert grow/prune policy (`layers/moe.py`)
 - `use_continual_adapter` -> Continual learning adapter path in training (`train/continual_adapter.py`)
+- `use_expert_paging` -> Inference-first on-demand expert residency (`layers/moe.py`)
 
 Runtime note:
 - Defaults are OFF to preserve a stable baseline.
 - These are integrated as non-breaking extensions and can be enabled per experiment.
+
+### Advanced Feature Matrix (Stable vs Max-Arch)
+`run.sh` now supports a profile contract through `TITAN_PROFILE`.
+
+| Flag | Stable (default) | Max-Arch | Purpose | File |
+| --- | --- | --- | --- | --- |
+| `use_hierarchical_kv_cache` | `false` | `true` | Short/long KV split for decode efficiency | `layers/mla.py` |
+| `use_global_workspace_broadcast` | `false` | `true` | Shared workspace signal across tokens | `layers/cognitive_extensions.py` |
+| `use_neuromodulatory_gain` | `false` | `true` | Workspace-driven gain/bias modulation | `layers/cognitive_extensions.py` |
+| `use_latent_ode_state_channel` | `false` | `true` | Continuous latent state dynamics | `layers/cognitive_extensions.py` |
+| `use_cross_expert_sync_bus` | `false` | `true` | MoE expert synchronization path | `layers/moe.py` |
+| `use_structural_plasticity` | `false` | `true` | Expert grow/prune hooks | `layers/moe.py` |
+| `use_hebbian_plasticity` | `false` | `true` | Local plasticity trace layer | `layers/cognitive_extensions.py` |
+| `use_neuro_symbolic_layer` | `false` | `true` | Rule-conditioned residual bridge | `layers/cognitive_extensions.py` |
+| `use_world_model_head` | `false` | `true` | Side-channel causal prediction outputs | `layers/world_model_head.py` |
+| `use_lifelong_safety_layer` | `false` | `true` | Drift-aware adaptive safety clamp | `layers/lifelong_safety.py` |
+| `use_continual_adapter` | `false` | `true` | Continual replay/drift adapter in training | `train/continual_adapter.py` |
+| `use_expert_paging` | `false` | `true` | On-demand expert residency (inference-first) | `layers/moe.py` |
+| `use_qinn` | `false` | `false` | Kept off for stability/throughput in Build30 | `layers/qinn.py` |
+
+Profile examples:
+```bash
+# Stable baseline (default)
+bash run.sh
+
+# Max architecture profile
+TITAN_PROFILE=max_arch bash run.sh
+
+# Readiness-only gate
+bash run.sh --train-ready
+```
 
 ```text
       ╔═══════════════════════════════════════════════════════════════════════════╗

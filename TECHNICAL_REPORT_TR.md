@@ -91,6 +91,26 @@ MertFormer Titan'ın 18 katmanlı yapısı, veriyi kademeli bir "bilgeliğe" dö
 4.  **Ruh (Soul):** Karakter ve talimat takibi.
 5.  **Araç Kullanımı:** API ve fonksiyon çağırma.
 
+### 3.3 Build30 Profil Sözleşmesi (Stable vs Max-Arch)
+Build30 kapanışında açık bir çalışma profili sözleşmesi uygulanır:
+
+| Profil | Sözleşme | Aktivasyon |
+| :--- | :--- | :--- |
+| `stable` (varsayılan) | Tekrarlanabilir eğitim başlangıcı için regresyon-güvenli baseline | `bash run.sh` |
+| `max_arch` | İleri mimari bayraklarını overlay ile açar (`mertformer_max_arch.yaml`) | `TITAN_PROFILE=max_arch bash run.sh` |
+
+Her iki profilde readiness-only doğrulaması aynıdır:
+```bash
+bash run.sh --train-ready
+```
+
+QINN, ana eğitim hattında throughput ve yakınsama stabilitesini korumak için varsayılan olarak kapalıdır (`use_qinn=false`).
+
+### 3.4 Kanıt-Öncelikli İddia Politikası
+- Doğrulanmış maddeler, gate çıktılarından (pytest/verify/preflight/policy kontrolleri) raporlanır.
+- Performans projeksiyonları, eğitimli checkpoint benchmark'ı üretilene kadar açık şekilde simülasyon hedefi olarak etiketlenir.
+- Bu kapanış turunda dataset kapsamı sabittir (manifest korunur; major genişleme yapılmaz).
+
 ---
 
 ## 4. Donanım Hedefi: Samsung S25 & Snapdragon 8 Elite

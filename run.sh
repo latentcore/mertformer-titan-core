@@ -37,6 +37,29 @@ case "${1:-}" in
 esac
 
 # ------------------------------------------------------------------------------
+# 🧭 1.0 PROFILE CONTRACT (STABLE vs MAX-ARCH)
+# ------------------------------------------------------------------------------
+# stable   : default, regression-safe baseline.
+# max_arch : enables full advanced architecture overlay in a single switch.
+export TITAN_PROFILE="${TITAN_PROFILE:-stable}"
+case "${TITAN_PROFILE}" in
+    stable)
+        ;;
+    max_arch)
+        export MERTFORMER_MODEL_CONFIG="mertformer_max_arch.yaml"
+        ;;
+    *)
+        echo "❌ ERROR [INVALID_TITAN_PROFILE]: '${TITAN_PROFILE}'"
+        echo "   Allowed values: stable | max_arch"
+        exit 1
+        ;;
+esac
+echo "🧭 TITAN_PROFILE=${TITAN_PROFILE}"
+if [[ -n "${MERTFORMER_MODEL_CONFIG:-}" ]]; then
+    echo "🧩 Model config overlay: ${MERTFORMER_MODEL_CONFIG}"
+fi
+
+# ------------------------------------------------------------------------------
 # 🔧 1.1 OFFLINE-FIRST MODE + PYTHON SELECTION
 # ------------------------------------------------------------------------------
 # Default behavior:
@@ -128,10 +151,14 @@ fi
 # Secrets validation: required only in online mode (or if preflight explicitly requires).
 if [[ "${TITAN_OFFLINE}" == "0" ]]; then
     if [[ -z "${HF_TOKEN:-}" ]]; then
-        echo "❌ ERROR [MISSING_HF_TOKEN]: online mode requires HF_TOKEN."
-        echo "   Action: export HF_TOKEN='<your_hf_token>'  # and ensure gated teacher access is approved"
-        echo "   Or run an offline verify-only flow: TITAN_OFFLINE=1 bash run.sh --verify"
-        exit 1
+        if [[ "$RUN_TRAIN_READY" == true ]]; then
+            echo "⚠️  HF_TOKEN missing; strict train-ready preflight will emit reason_code."
+        else
+            echo "❌ ERROR [MISSING_HF_TOKEN]: online mode requires HF_TOKEN."
+            echo "   Action: export HF_TOKEN='<your_hf_token>'  # and ensure gated teacher access is approved"
+            echo "   Or run an offline verify-only flow: TITAN_OFFLINE=1 bash run.sh --verify"
+            exit 1
+        fi
     fi
 fi
 if [[ "${TITAN_WANDB}" == "1" ]] && [[ -z "${WANDB_API_KEY:-}" ]]; then
@@ -147,7 +174,7 @@ export WANDB_PROJECT="mertformer-titan"
 # ------------------------------------------------------------------------------
 OS_TYPE=$(uname -s)
 echo "🖥️  Detected OS: $OS_TYPE"
-echo "ℹ️  Defaults: use_tr_tokenizer=false | low-bit kernel opt-in (MERTFORMER_LOWBIT_KERNEL=1) | tensorcore opt-in (MERTFORMER_TENSORCORE=1) | BENCHMARK_SAMPLES=0"
+echo "ℹ️  Defaults: profile=${TITAN_PROFILE} | use_tr_tokenizer=false | low-bit kernel opt-in (MERTFORMER_LOWBIT_KERNEL=1) | tensorcore opt-in (MERTFORMER_TENSORCORE=1) | BENCHMARK_SAMPLES=0"
 
 # Version consistency check (best-effort but fail on mismatch)
 if [ "$RUN_TEST" = true ] || [ "$RUN_TRAIN_READY" = true ]; then

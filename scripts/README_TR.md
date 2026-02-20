@@ -6,6 +6,7 @@ Konvansiyonlar:
 - Tercihen `.titan-venv/bin/python scripts/<ad>.py` kullanın (bkz: `scripts/bootstrap_venv.sh`).
 - Script doğrulama akışları offline-first kalır (`TITAN_OFFLINE=1`).
 - `run.sh` eğitim sözleşmesi varsayılan online çalışır ve readiness-only modu içerir (`bash run.sh --train-ready`).
+- Profil sözleşmesi: `TITAN_PROFILE=stable` (varsayılan) veya tüm ileri overlay için `TITAN_PROFILE=max_arch`.
 
 Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verify_all.sh`.
 

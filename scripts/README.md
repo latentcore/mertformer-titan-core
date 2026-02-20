@@ -6,6 +6,7 @@ Conventions:
 - Prefer `.titan-venv/bin/python scripts/<name>.py` (see `scripts/bootstrap_venv.sh`).
 - Script-level verification remains offline-first (`TITAN_OFFLINE=1`).
 - `run.sh` training contract is online-by-default and supports readiness-only mode (`bash run.sh --train-ready`).
+- Profile contract: `TITAN_PROFILE=stable` (default) or `TITAN_PROFILE=max_arch` for full advanced overlay.
 
 If you are unsure, run the single-command verification first: `bash scripts/verify_all.sh`.
 

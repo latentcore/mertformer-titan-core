@@ -52,7 +52,12 @@ jobs:
 
       - name: Closure 57 Matrix (strict in-scope pending)
         run: |
-          python scripts/check_57_matrix.py --require-no-pending
+          mkdir -p logs/verify
+          python scripts/check_57_matrix.py \
+            --require-no-pending \
+            --out logs/verify/closure_57_matrix.ci.json \
+            --md-out logs/verify/closure_57_matrix.ci.md \
+            --md-tr-out logs/verify/closure_57_matrix.ci_TR.md
 
       - name: Tokenizer Sync Gate
         run: |

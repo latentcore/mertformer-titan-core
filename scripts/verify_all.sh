@@ -40,7 +40,12 @@ echo "[verify] Operator mode gate (safe, offline) ..."
 "$PY" scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl
 
 echo "[verify] Closure 57 matrix gate (strict in-scope pending) ..."
-"$PY" scripts/check_57_matrix.py --require-no-pending
+mkdir -p logs/verify
+"$PY" scripts/check_57_matrix.py \
+  --require-no-pending \
+  --out logs/verify/closure_57_matrix.verify.json \
+  --md-out logs/verify/closure_57_matrix.verify.md \
+  --md-tr-out logs/verify/closure_57_matrix.verify_TR.md
 
 echo "[verify] Tokenizer sync gate ..."
 "$PY" scripts/check_tokenizer_sync.py

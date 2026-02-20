@@ -25,7 +25,7 @@ Kural: uygun olan her tracked `X.md` dosyasının `X_TR.md` karşılığı olmal
 
 | Komut | Durum |
 | --- | --- |
-| `.titan-venv/bin/python -m pytest -q` | PASS |
+| `.titan-venv/bin/python -m pytest -q` | PASS (`59 passed, 3 skipped`) |
 | `bash scripts/verify_all.sh` | PASS |
 | `TITAN_OFFLINE=1 bash run.sh --test` | PASS |
 | `.titan-venv/bin/python scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl` | PASS |
@@ -58,6 +58,7 @@ Kural: uygun olan her tracked `X.md` dosyasının `X_TR.md` karşılığı olmal
 | Kontrol | Sonuç |
 | --- | --- |
 | `run.sh --train-ready` strict modu | Eklendi (`strict_online_training_readiness`) |
+| `run.sh` profil sözleşmesi | Eklendi (`TITAN_PROFILE=stable|max_arch`) |
 | Teacher hard-fail politikası | Aktif (`require_gated_teacher=true`) |
 | Müfredat tek kaynak oranları | Aktif (`config.curriculum_stage_ratios`) |
 | Golden assertion skorlayıcı | Eklendi (`scripts/golden_score.py`) |

@@ -92,6 +92,26 @@ With `distillation_manager.py`, the outputs (logits) of the Llama-3.3-70B model 
 4.  **Soul:** Character and instruction following.
 5.  **Tool Use:** API and function calling.
 
+### 3.3 Build30 Profile Contract (Stable vs Max-Arch)
+Build30 closes with an explicit runtime profile contract:
+
+| Profile | Contract | Activation |
+| :--- | :--- | :--- |
+| `stable` (default) | Regression-safe baseline for repeatable training starts | `bash run.sh` |
+| `max_arch` | Enables advanced architecture flags through overlay (`mertformer_max_arch.yaml`) | `TITAN_PROFILE=max_arch bash run.sh` |
+
+Readiness-only validation remains identical under both profiles:
+```bash
+bash run.sh --train-ready
+```
+
+QINN remains intentionally disabled by default (`use_qinn=false`) to preserve throughput and convergence stability in the primary training path.
+
+### 3.4 Evidence-First Claim Policy
+- Verified items are reported from gate outputs (pytest/verify/preflight/policy checks).
+- Performance projections remain explicitly labeled as simulation targets until trained-checkpoint benchmarks exist.
+- Dataset scope is locked in this convergence pass (manifest preserved; no major expansion).
+
 ---
 
 ## 4. Hardware Target: Samsung S25 & Snapdragon 8 Elite
