@@ -45,6 +45,49 @@ class DistillationManager:
         self.device = cfg.device
         self.require_gated_teacher = bool(getattr(cfg, "require_gated_teacher", False))
 
+    def _state_file(self, stage_name: str, subset: str) -> Path:
+        return self.logits_dir / f"{stage_name}_{subset}_state.json"
+
+    def _load_processed_samples(self, stage_name: str, subset: str) -> int:
+        """
+        Returns number of already-processed samples for robust resume.
+        Prefers state file; falls back to counting existing shard payload sizes.
+        """
+        state_file = self._state_file(stage_name, subset)
+        if state_file.exists():
+            try:
+                import json
+                with state_file.open("r", encoding="utf-8") as f:
+                    data = json.load(f)
+                return int(max(0, data.get("processed_samples", 0)))
+            except Exception:
+                pass
+
+        processed = 0
+        for file in _list_logits_files(self.logits_dir, stage_name, subset=subset):
+            try:
+                chunk = torch.load(file, map_location="cpu")
+                if isinstance(chunk, dict) and "logits" in chunk:
+                    chunk = chunk["logits"]
+                if isinstance(chunk, (list, tuple)):
+                    processed += len(chunk)
+            except Exception:
+                logger.warning(f"⚠️ Could not count shard entries: {file}")
+                continue
+        if processed > 0:
+            self._save_processed_samples(stage_name, subset, processed)
+        return processed
+
+    def _save_processed_samples(self, stage_name: str, subset: str, processed_samples: int) -> None:
+        state_file = self._state_file(stage_name, subset)
+        payload = {"processed_samples": int(max(0, processed_samples))}
+        try:
+            import json
+            with state_file.open("w", encoding="utf-8") as f:
+                json.dump(payload, f, ensure_ascii=False)
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to write distillation resume state: {e}")
+
     def load_teacher(self):
         """
         Loads the Teacher Model (Llama-3-70B) in 8-bit/4-bit if possible.
@@ -107,40 +150,43 @@ class DistillationManager:
         # [RESTART LOGIC] Find next chunk index
         while (self.logits_dir / f"{stage_name}_{subset}_part_{chunk_idx}.pt").exists():
             chunk_idx += 1
-            
+
+        processed_total = self._load_processed_samples(stage_name, subset)
+
         print(f"🔄 Resuming from Chunk {chunk_idx}")
-        
-        # Skip samples if resuming? 
-        # Tailing iterator doesn't support seeking easily without re-reading.
-        # But since we tail, we might read passed data. 
-        # Ideally, we should ignore first N samples if we are resuming from file.
-        # For simplicity in this Tailing implementation, we assume a fresh start or we accept duplicates (which are harmless for training, just redundant).
-        # Improving this: We could track 'processed_lines' in a state file.
-            
+        if processed_total > 0:
+            print(f"🔁 Resume offset: skipping first {processed_total} already-processed samples")
+
         dataset_iter = iter(dataset)
         buffer_inputs = []
-        
+
         processed_in_current_chunk = 0
-        
+        seen_samples = 0
+
         with torch.no_grad():
             pbar = tqdm(desc=f"Distilling {stage_name} (Chunk {chunk_idx})")
-            
+
             while True:
                 try:
                     item = next(dataset_iter)
+                    seen_samples += 1
+                    if seen_samples <= processed_total:
+                        continue
+
                     # Handle different dataset formats
                     text = item.get('text') or item.get('content') or item.get('instruction') or ""
-                    
-                    if not text: continue
-                    
+
+                    if not text:
+                        continue
+
                     inputs = self.tokenizer(
-                        text, 
-                        return_tensors="pt", 
-                        max_length=self.cfg.max_seq_len, 
+                        text,
+                        return_tensors="pt",
+                        max_length=self.cfg.max_seq_len,
                         truncation=True
                     )
                     buffer_inputs.append(inputs.input_ids[0])
-                    
+
                     # Process Batch
                     if len(buffer_inputs) >= batch_size:
                         max_len = max([t.size(0) for t in buffer_inputs])
@@ -151,32 +197,34 @@ class DistillationManager:
                         
                         outputs = self.teacher_model(padded_batch)
                         logits = outputs.logits
-                        
+
                         for i in range(logits.size(0)):
                             all_logits.append(logits[i].cpu().clone()) # Move to CPU
-                            
+                            processed_total += 1
+
                         buffer_inputs = []
                         pbar.update(batch_size)
                         processed_in_current_chunk += batch_size
-                        
+
                         # Chunk Save
                         if processed_in_current_chunk >= chunk_size:
                             save_path = self.logits_dir / f"{stage_name}_{subset}_part_{chunk_idx}.pt"
                             torch.save(all_logits, save_path)
                             print(f"📦 Saved Chunk {chunk_idx}: {save_path}")
+                            self._save_processed_samples(stage_name, subset, processed_total)
                             
                             # [V27.5 FIX] Memory Cleanup Strategy
                             del all_logits
-                            all_logits = [] 
+                            all_logits = []
                             processed_in_current_chunk = 0
                             chunk_idx += 1
-                            
+
                             # Force VRAM cleanup to prevent fragmentation over long runs
                             import gc
                             gc.collect()
                             if torch.cuda.is_available():
                                 torch.cuda.empty_cache()
-                                
+
                             pbar.set_description(f"Distilling {stage_name} (Chunk {chunk_idx})")
 
                 except StopIteration:
@@ -195,16 +243,18 @@ class DistillationManager:
             
             outputs = self.teacher_model(padded_batch)
             logits = outputs.logits
-            
+
             for i in range(logits.size(0)):
                 all_logits.append(logits[i].cpu().clone())
-                    
+                processed_total += 1
+
         # Save final partial chunk
         if len(all_logits) > 0:
             save_path = self.logits_dir / f"{stage_name}_{subset}_part_{chunk_idx}.pt"
             torch.save(all_logits, save_path)
             logger.info(f"✅ Saved Final Chunk {chunk_idx}: {save_path}")
-            
+            self._save_processed_samples(stage_name, subset, processed_total)
+
         return self.logits_dir
 
     def get_precomputed_loader(self, stage_name):

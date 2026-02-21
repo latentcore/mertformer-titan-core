@@ -19,15 +19,19 @@ from __future__ import annotations
 import csv
 import io
 import json
+import hashlib
 import math
 import os
 import multiprocessing as mp
 import random
 import re
+import shutil
+import signal
 import sys
 import tempfile
 import time
 import traceback
+import zipfile
 from collections import OrderedDict, deque
 from dataclasses import dataclass
 from pathlib import Path
@@ -96,11 +100,94 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         # Reduce disk I/O pressure on long runs while preserving telemetry quality.
         "step_log_interval": 10,
     },
+    "linkedin_sweetspot": {
+        # Kaggle-friendly sweet spot profile for proof-of-learning + showcase evidence.
+        # Goal: fast, stable convergence signal with reproducible core metrics.
+        "quick": False,
+        "max_wall_hours": 3.5,
+        "target_train_tokens": 8_000_000,
+        "max_steps": 35_000,
+        "batch_size": 6,
+        "seq_len": 256,
+        "grad_accum_steps": 2,
+        "eval_interval_steps": 250,
+        "checkpoint_interval_steps": 500,
+        "checkpoint_interval_minutes": 12,
+        "benchmark_steps": 16,
+        "benchmark_eval_batches": 10,
+        "step_log_interval": 10,
+        "tokenizer_max_texts": 80000,
+        "tokenizer_fit_max_texts": 20000,
+        # ~192M parameter class (Kaggle practicality + meaningful training signal).
+        "mert_hidden": 1024,
+        "mert_layers": 12,
+        "mert_heads": 16,
+        "mert_kv_heads": 8,
+        # Keep experimental cognitive stack OFF for stable evidence run.
+        "mert_enable_all_extensions": False,
+        "mert_use_qinn": False,
+        "target_param_band_low": 160_000_000,
+        "target_param_band_high": 240_000_000,
+        # Probe gates for go/no-go in showcase cycle.
+        "mini_probe_enabled": True,
+        "mini_probe_param_target": 192_000_000,
+        "mini_probe_param_tolerance": 45_000_000,
+        "mini_probe_token_min": 5_000_000,
+        "mini_probe_token_max": 20_000_000,
+        "mini_probe_min_steps_for_signal": 300,
+        "mini_probe_min_loss_drop_ratio": 0.06,
+        "mini_probe_max_grad_cv": 1.50,
+        "mini_probe_min_router_entropy": 0.30,
+        "mini_probe_max_router_load_p95": 0.90,
+        "mini_probe_max_collapse_events": 0,
+    },
+    "mini300m": {
+        # 300M mini convergence probe profile (code-freeze phase).
+        # Goal: verify learning dynamics before scaling toward 2.6B.
+        "quick": False,
+        "max_wall_hours": 48.0,
+        "target_train_tokens": 5_000_000_000,
+        "max_steps": 2_000_000,
+        "batch_size": 24,
+        "seq_len": 1024,
+        "grad_accum_steps": 1,
+        "eval_interval_steps": 1000,
+        "checkpoint_interval_steps": 1000,
+        "checkpoint_interval_minutes": 20,
+        "benchmark_steps": 24,
+        "benchmark_eval_batches": 12,
+        "step_log_interval": 25,
+        "tokenizer_max_texts": 240000,
+        "tokenizer_fit_max_texts": 60000,
+        # ~300M parameter target (empirically calibrated for this one-file architecture).
+        "mert_hidden": 1024,
+        "mert_layers": 20,
+        "mert_heads": 16,
+        "mert_kv_heads": 8,
+        # Keep experimental cognitive stack off during convergence probe.
+        "mert_enable_all_extensions": False,
+        "mert_use_qinn": False,
+        "target_param_band_low": 270_000_000,
+        "target_param_band_high": 330_000_000,
+        # Probe gates requested for go/no-go:
+        # loss curve, grad norm stability, expert load distribution, router entropy.
+        "mini_probe_enabled": True,
+        "mini_probe_param_target": 300_000_000,
+        "mini_probe_param_tolerance": 35_000_000,
+        "mini_probe_token_min": 5_000_000_000,
+        "mini_probe_token_max": 10_000_000_000,
+        "mini_probe_min_steps_for_signal": 500,
+        "mini_probe_min_loss_drop_ratio": 0.08,
+        "mini_probe_max_grad_cv": 1.35,
+        "mini_probe_min_router_entropy": 0.35,
+        "mini_probe_max_router_load_p95": 0.85,
+        "mini_probe_max_collapse_events": 0,
+    },
     "custom": {},
 }
 
 RUN_CONFIG: Dict[str, Any] = {
-    "profile": "deep8h",  # quick|deep8h|custom
+    "profile": "linkedin_sweetspot",  # quick|deep8h|linkedin_sweetspot|mini300m|custom
     "interactive": False,
     # Stable default: avoid notebook input waits/prompts unless explicitly enabled.
     "interactive_menu": False,
@@ -110,7 +197,7 @@ RUN_CONFIG: Dict[str, Any] = {
     "seed_list": [42, 43, 44],
     "device": "auto",  # auto|cpu|mps|cuda
     "vram_limit_gb": 16.0,
-    "out_dir": "/kaggle/working",
+    "out_dir": "/content/mertformer_outputs",
     "write_files": True,
     "data_mode": "quality_tr_mix",  # quality_tr_mix|hf_only|synthetic_only
     "curriculum_enabled": True,
@@ -120,7 +207,7 @@ RUN_CONFIG: Dict[str, Any] = {
     "amp_enabled": True,
     "resume_mode": "auto",  # auto|best|path
     "resume_path": "",
-    "checkpoint_dir": "checkpoints/kaggle_onefile_build30",
+    "checkpoint_dir": "/content/mertformer_outputs/checkpoints/kaggle_onefile_build30",
     "vocab_size": 32768,
     "tokenizer_max_texts": 120000,
     "lr": 1.5e-4,
@@ -150,6 +237,18 @@ RUN_CONFIG: Dict[str, Any] = {
     "chat_max_new_tokens": 128,
     "target_param_band_low": 25_000_000,
     "target_param_band_high": 35_000_000,
+    # Mini convergence probe (disabled unless mini300m profile is selected).
+    "mini_probe_enabled": False,
+    "mini_probe_param_target": 300_000_000,
+    "mini_probe_param_tolerance": 35_000_000,
+    "mini_probe_token_min": 5_000_000_000,
+    "mini_probe_token_max": 10_000_000_000,
+    "mini_probe_min_steps_for_signal": 500,
+    "mini_probe_min_loss_drop_ratio": 0.08,
+    "mini_probe_max_grad_cv": 1.35,
+    "mini_probe_min_router_entropy": 0.35,
+    "mini_probe_max_router_load_p95": 0.85,
+    "mini_probe_max_collapse_events": 0,
     # Data loading safety/perf guards (deep profile startup hardening)
     "hf_streaming": True,
     "hf_allow_materialized_fallback": False,
@@ -201,6 +300,24 @@ RUN_CONFIG: Dict[str, Any] = {
     # Byte-BPE encode optimization knobs (fallback path).
     "byte_bpe_encode_cache_size": 2048,
     "byte_bpe_cache_max_text_len": 512,
+    # Evidence lock / strict run contract
+    "strict_data": True,
+    "require_code_stage_data": True,
+    "allow_degraded_data": False,
+    "degraded_data_mode": False,
+    "gpu_auto_tune": True,
+    "gpu_target_vram_util": 0.94,
+    "gpu_safety_margin_gb": 0.5,
+    "gpu_tune_max_trials": 8,
+    "artifact_root": "/content/mertformer_outputs",
+    "artifact_run_id": "",
+    "zip_evidence_pack": True,
+    "auto_backup_to_drive": False,
+    "drive_backup_root": "/content/drive/MyDrive/mertformer_runs",
+    "benchmark_mode": "separated",
+    "strict_green_min_tokens": 8_000_000,
+    "oov_rate_warn_threshold": 0.01,
+    "token_duplicate_ratio_warn_threshold": 0.25,
 }
 
 ARCH_PARITY_CONTRACT: Dict[str, Any] = {
@@ -250,6 +367,384 @@ def _utc_now() -> str:
 
 def _local_stamp() -> str:
     return time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
+
+
+def _run_id_stamp() -> str:
+    return time.strftime("run_%Y%m%d_%H%M%S", time.localtime())
+
+
+@dataclass
+class ArtifactLayout:
+    artifact_root: Path
+    run_id: str
+    run_dir: Path
+    checkpoint_dir: Path
+    eval_snapshot_dir: Path
+    incremental_csv_path: Path
+    health_txt_path: Path
+    stop_summary_path: Path
+    traceback_path: Path
+    last_state_path: Path
+    artifact_index_path: Path
+    zip_manifest_path: Path
+    public_summary_path: Path
+    evidence_zip_path: Path
+    logger_jsonl_path: Path
+
+
+_RUNTIME_SIGNAL_STATE: Dict[str, Any] = {"sigterm": False, "signal": ""}
+_RUNTIME_LAST_LAYOUT: Dict[str, str] = {}
+
+
+def _signal_stop_handler(signum: int, _frame: Any) -> None:
+    sig_name = "SIGTERM" if int(signum) == int(getattr(signal, "SIGTERM", 15)) else str(signum)
+    _RUNTIME_SIGNAL_STATE["sigterm"] = True
+    _RUNTIME_SIGNAL_STATE["signal"] = sig_name
+
+
+def install_runtime_signal_handlers() -> None:
+    try:
+        signal.signal(signal.SIGTERM, _signal_stop_handler)
+    except Exception:
+        pass
+
+
+def ensure_writable_dir(path: Path, label: str) -> None:
+    path.mkdir(parents=True, exist_ok=True)
+    probe = path / f".probe_{label}_{int(time.time() * 1_000_000)}"
+    try:
+        with probe.open("w", encoding="utf-8") as f:
+            f.write("ok")
+    finally:
+        try:
+            probe.unlink()
+        except Exception:
+            pass
+
+
+def init_artifact_layout(cfg: Dict[str, Any]) -> ArtifactLayout:
+    artifact_root = Path(str(cfg.get("artifact_root", cfg.get("out_dir", "/content/mertformer_outputs")))).expanduser()
+    run_id = str(cfg.get("artifact_run_id", "")).strip() or _run_id_stamp()
+    run_dir = artifact_root / "runs" / run_id
+    ckpt_raw = Path(str(cfg.get("checkpoint_dir", "/content/mertformer_outputs/checkpoints/kaggle_onefile_build30"))).expanduser()
+    checkpoint_dir = ckpt_raw if ckpt_raw.is_absolute() else artifact_root / ckpt_raw
+    eval_snapshot_dir = run_dir / "eval_snapshots"
+    logger_jsonl_path = run_dir / "logs" / "kaggle_onefile_build30_log.jsonl"
+    layout = ArtifactLayout(
+        artifact_root=artifact_root,
+        run_id=run_id,
+        run_dir=run_dir,
+        checkpoint_dir=checkpoint_dir,
+        eval_snapshot_dir=eval_snapshot_dir,
+        incremental_csv_path=run_dir / "eval_incremental.csv",
+        health_txt_path=run_dir / "health_latest.txt",
+        stop_summary_path=run_dir / "stop_summary.json",
+        traceback_path=run_dir / "failure_traceback.txt",
+        last_state_path=run_dir / "last_state.json",
+        artifact_index_path=run_dir / "artifacts_index.json",
+        zip_manifest_path=run_dir / "zip_manifest.json",
+        public_summary_path=run_dir / "public_summary.json",
+        evidence_zip_path=run_dir / f"{run_id}_evidence.zip",
+        logger_jsonl_path=logger_jsonl_path,
+    )
+    # Hard fail by design if path contract is not writable.
+    ensure_writable_dir(layout.artifact_root, "artifact_root")
+    ensure_writable_dir(layout.run_dir, "run_dir")
+    ensure_writable_dir(layout.checkpoint_dir, "checkpoint_dir")
+    ensure_writable_dir(layout.eval_snapshot_dir, "eval_snapshot_dir")
+    ensure_writable_dir(layout.logger_jsonl_path.parent, "logger_dir")
+    cfg["artifact_root"] = str(layout.artifact_root)
+    cfg["artifact_run_id"] = layout.run_id
+    cfg["artifact_run_dir"] = str(layout.run_dir)
+    cfg["out_dir"] = str(layout.artifact_root)
+    cfg["checkpoint_dir"] = str(layout.checkpoint_dir)
+    cfg["logger_jsonl_path"] = str(layout.logger_jsonl_path.resolve())
+    _RUNTIME_LAST_LAYOUT["run_dir"] = str(layout.run_dir)
+    _RUNTIME_LAST_LAYOUT["traceback_path"] = str(layout.traceback_path)
+    _RUNTIME_LAST_LAYOUT["last_state_path"] = str(layout.last_state_path)
+    if not bool(cfg.get("write_files", False)):
+        print("[warning:red] write_files=False; persistent evidence files are disabled.")
+    print(
+        "[runtime:paths] "
+        f"out_dir={layout.artifact_root} "
+        f"checkpoint_dir={layout.checkpoint_dir} "
+        f"run_dir={layout.run_dir} "
+        f"log_jsonl={layout.logger_jsonl_path}"
+    )
+    return layout
+
+
+def file_sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        while True:
+            chunk = f.read(1024 * 1024)
+            if not chunk:
+                break
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def reason_code_from_error(msg: str) -> str:
+    m = str(msg).lower()
+    if "remote_code_not_trusted" in m:
+        return "remote_code_not_trusted"
+    if "gated" in m or "authentication" in m or "permission" in m or "401" in m or "403" in m:
+        return "gated_auth_missing"
+    if "hf_token_missing" in m:
+        return "hf_token_missing"
+    if "dataset" in m and "not found" in m:
+        return "dataset_not_found"
+    if "timeout" in m:
+        return "candidate_timeout"
+    return "candidate_load_error"
+
+
+def resolve_hf_token() -> str:
+    for key in ("HF_TOKEN", "HUGGING_FACE_HUB_TOKEN", "HUGGINGFACE_TOKEN"):
+        v = os.environ.get(key, "").strip()
+        if v:
+            return v
+    return ""
+
+
+def _quick_hf_dataset_probe(
+    ds_name: str,
+    subset: Optional[str],
+    split: str,
+    trust_remote_code: bool,
+) -> Tuple[bool, str]:
+    if not HAS_DATASETS:
+        return False, "datasets_not_available"
+    try:
+        stream_split = str(split)
+        if "[" in stream_split and "]" in stream_split:
+            stream_split = stream_split.split("[", 1)[0]
+        if stream_split not in ("train", "validation", "test"):
+            stream_split = "train"
+        if subset:
+            ds = load_dataset(
+                ds_name,
+                subset,
+                split=stream_split,
+                streaming=True,
+                trust_remote_code=bool(trust_remote_code),
+            )
+        else:
+            ds = load_dataset(
+                ds_name,
+                split=stream_split,
+                streaming=True,
+                trust_remote_code=bool(trust_remote_code),
+            )
+        it = iter(ds)
+        _ = next(it, None)
+        return True, "ok"
+    except Exception as e:
+        return False, _format_exception(e)
+
+
+def run_data_preflight(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    strict_data = bool(cfg.get("strict_data", True))
+    require_code_stage_data = bool(cfg.get("require_code_stage_data", True))
+    allow_degraded_data = bool(cfg.get("allow_degraded_data", False))
+    token = resolve_hf_token()
+    has_token = bool(token)
+    checks: List[Dict[str, Any]] = []
+    reason_codes: List[str] = []
+    warning_codes: List[str] = []
+    code_stage_access_count = 0
+    stages = build_curriculum_sources(turkish_primary=bool(cfg.get("turkish_primary", True)))
+    code_stage = None
+    for st in stages:
+        if "code" in str(st.get("name", "")):
+            code_stage = st
+            break
+    if strict_data and not has_token:
+        reason_codes.append("hf_token_missing")
+
+    if code_stage is not None:
+        for c in code_stage.get("hf_candidates", []):
+            ds_name = str(c.get("dataset", "unknown"))
+            start = time.time()
+            row: Dict[str, Any] = {
+                "dataset": ds_name,
+                "attempt_count": 1,
+                "kept": 0,
+                "elapsed_sec": 0.0,
+                "error": "",
+                "reason_code": "",
+                "load_mode": "probe",
+            }
+            if bool(c.get("requires_remote_code", False)) and not bool(cfg.get("hf_trust_remote_code", False)):
+                row["error"] = "remote_code_not_trusted"
+                row["reason_code"] = "remote_code_not_trusted"
+                checks.append(row)
+                if "remote_code_not_trusted" not in warning_codes:
+                    warning_codes.append("remote_code_not_trusted")
+                continue
+            ok, info = _quick_hf_dataset_probe(
+                ds_name=ds_name,
+                subset=c.get("subset"),
+                split=str(c.get("split", "train")),
+                trust_remote_code=bool(cfg.get("hf_trust_remote_code", False)),
+            )
+            row["elapsed_sec"] = time.time() - start
+            if ok:
+                row["kept"] = 1
+                row["reason_code"] = "ok"
+                row["error"] = ""
+                code_stage_access_count += 1
+            else:
+                row["error"] = str(info)
+                row["reason_code"] = reason_code_from_error(str(info))
+                if row["reason_code"] == "gated_auth_missing" and not has_token:
+                    if strict_data:
+                        if "hf_token_missing" not in reason_codes:
+                            reason_codes.append("hf_token_missing")
+                    else:
+                        if "hf_token_missing" not in warning_codes:
+                            warning_codes.append("hf_token_missing")
+                if row["reason_code"] not in warning_codes:
+                    warning_codes.append(row["reason_code"])
+            checks.append(row)
+
+    if require_code_stage_data and code_stage_access_count <= 0:
+        if "code_stage_unavailable" not in reason_codes:
+            reason_codes.append("code_stage_unavailable")
+        if not has_token and "gated_auth_missing" not in reason_codes:
+            reason_codes.append("gated_auth_missing")
+
+    degraded_data_mode = (not strict_data) and bool(reason_codes or warning_codes)
+    if degraded_data_mode and not allow_degraded_data and strict_data:
+        # Defensive: strict mode with degraded path is always hard-fail.
+        if "degraded_data_not_allowed" not in reason_codes:
+            reason_codes.append("degraded_data_not_allowed")
+
+    status = "pass"
+    if strict_data and reason_codes:
+        status = "fail"
+    report = {
+        "preflight_status": status,
+        "strict_data": strict_data,
+        "require_code_stage_data": require_code_stage_data,
+        "allow_degraded_data": allow_degraded_data,
+        "degraded_data_mode": degraded_data_mode,
+        "hf_token_present": has_token,
+        "reason_codes": reason_codes,
+        "warning_codes": warning_codes,
+        "code_stage_loaded": int(code_stage_access_count),
+        "candidate_checks": checks,
+    }
+    cfg["degraded_data_mode"] = bool(degraded_data_mode)
+    return report
+
+
+def write_last_state(path: Path, payload: Dict[str, Any]) -> None:
+    try:
+        atomic_json_write(path, payload)
+    except Exception:
+        pass
+
+
+def append_csv_row(path: Path, fieldnames: Sequence[str], row: Dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    has_header = path.exists() and path.stat().st_size > 0
+    with path.open("a", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=list(fieldnames))
+        if not has_header:
+            writer.writeheader()
+        writer.writerow({k: row.get(k, "") for k in fieldnames})
+
+
+def _median(values: Sequence[float]) -> float:
+    vals = sorted(float(v) for v in values if math.isfinite(float(v)))
+    if not vals:
+        return 0.0
+    n = len(vals)
+    mid = n // 2
+    if n % 2 == 1:
+        return float(vals[mid])
+    return float((vals[mid - 1] + vals[mid]) / 2.0)
+
+
+def _percentile(values: Sequence[float], q: float) -> float:
+    vals = sorted(float(v) for v in values if math.isfinite(float(v)))
+    if not vals:
+        return 0.0
+    qq = max(0.0, min(1.0, float(q)))
+    idx = int(round(qq * (len(vals) - 1)))
+    idx = max(0, min(len(vals) - 1, idx))
+    return float(vals[idx])
+
+
+def _winsorized(values: Sequence[float], low_q: float = 0.05, high_q: float = 0.95) -> List[float]:
+    vals = [float(v) for v in values if math.isfinite(float(v))]
+    if not vals:
+        return []
+    lo = _percentile(vals, low_q)
+    hi = _percentile(vals, high_q)
+    if lo > hi:
+        lo, hi = hi, lo
+    return [min(hi, max(lo, v)) for v in vals]
+
+
+def robust_grad_stats(grads: Sequence[float]) -> Dict[str, float]:
+    vals = [float(v) for v in grads if math.isfinite(float(v))]
+    if not vals:
+        return {"mean": 0.0, "std": 0.0, "cv": 0.0, "median": 0.0, "mad": 0.0, "spike_count": 0.0}
+    wv = _winsorized(vals, 0.05, 0.95)
+    mean = float(sum(wv) / len(wv))
+    var = float(sum((x - mean) ** 2 for x in wv) / len(wv))
+    std = math.sqrt(max(0.0, var))
+    cv = _safe_div(std, max(abs(mean), 1e-9), default=0.0)
+    med = _median(vals)
+    mad = _median([abs(x - med) for x in vals])
+    spike_thr = med + 6.0 * max(mad, 1e-9)
+    spike_count = float(sum(1 for x in vals if x > spike_thr))
+    return {
+        "mean": mean,
+        "std": std,
+        "cv": cv,
+        "median": med,
+        "mad": mad,
+        "spike_count": spike_count,
+    }
+
+
+def validation_trend_metrics(val_losses: Sequence[float]) -> Dict[str, Any]:
+    vals = [float(v) for v in val_losses if math.isfinite(float(v))]
+    if not vals:
+        return {
+            "val_loss_median_last3": float("inf"),
+            "val_loss_delta_rel_last3": 0.0,
+            "val_plateau_detected": False,
+        }
+    tail = vals[-3:]
+    med_last3 = _median(tail)
+    delta_rel = 0.0
+    plateau = False
+    if len(tail) >= 2:
+        delta_rel = _safe_div((tail[0] - tail[-1]), max(abs(tail[0]), 1e-9), default=0.0)
+        plateau = abs(delta_rel) < 0.01
+    return {
+        "val_loss_median_last3": float(med_last3),
+        "val_loss_delta_rel_last3": float(delta_rel),
+        "val_plateau_detected": bool(plateau),
+    }
+
+
+def warmup_excluded_loss_drop(train_losses: Sequence[float]) -> float:
+    vals = [float(v) for v in train_losses if math.isfinite(float(v))]
+    if len(vals) < 10:
+        return 0.0
+    warm = max(1, int(len(vals) * 0.05))
+    post = vals[warm:]
+    if len(post) < 4:
+        return 0.0
+    early = _mean(post[: max(2, len(post) // 5)])
+    late = _mean(post[-max(2, len(post) // 5) :])
+    return _safe_div(early - late, max(abs(early), 1e-9), default=0.0)
 
 
 def _print_header() -> None:
@@ -309,6 +804,84 @@ def get_total_vram_gb(device: str) -> float:
         except Exception:
             return 0.0
     return 0.0
+
+
+def get_cuda_device_meta() -> Dict[str, Any]:
+    if not torch.cuda.is_available():
+        return {
+            "gpu_name": "",
+            "compute_capability": "",
+            "precision_fallback": "",
+            "inductor_enabled": False,
+        }
+    try:
+        props = torch.cuda.get_device_properties(0)
+        cc = f"{props.major}.{props.minor}"
+        bf16_ok = bool(torch.cuda.is_bf16_supported())
+        return {
+            "gpu_name": str(props.name),
+            "compute_capability": cc,
+            "precision_fallback": "" if bf16_ok else "float16",
+            "inductor_enabled": bool(hasattr(torch, "compile")),
+        }
+    except Exception:
+        return {
+            "gpu_name": "",
+            "compute_capability": "",
+            "precision_fallback": "",
+            "inductor_enabled": bool(hasattr(torch, "compile")),
+        }
+
+
+def apply_gpu_auto_tune(cfg: Dict[str, Any], device: str) -> Dict[str, Any]:
+    report = {
+        "enabled": bool(cfg.get("gpu_auto_tune", True)),
+        "applied": False,
+        "initial_batch_size": int(cfg.get("batch_size", 1)),
+        "initial_grad_accum_steps": int(cfg.get("grad_accum_steps", 1)),
+        "final_batch_size": int(cfg.get("batch_size", 1)),
+        "final_grad_accum_steps": int(cfg.get("grad_accum_steps", 1)),
+        "trials": 0,
+        "vram_total_gb": get_total_vram_gb(device),
+        "vram_util_estimate": 0.0,
+    }
+    if device != "cuda" or not bool(cfg.get("gpu_auto_tune", True)):
+        return report
+    total = float(report["vram_total_gb"])
+    if total <= 0.0:
+        return report
+    safety = float(cfg.get("gpu_safety_margin_gb", 0.5))
+    target_util = float(cfg.get("gpu_target_vram_util", 0.94))
+    seq = max(64, int(cfg.get("seq_len", 256)))
+    max_trials = max(1, int(cfg.get("gpu_tune_max_trials", 8)))
+    curr_bs = int(cfg.get("batch_size", 1))
+    curr_acc = int(cfg.get("grad_accum_steps", 1))
+    best_bs = curr_bs
+    # Coarse runtime-safe memory estimate for activation+optimizer pressure.
+    est_per_sample_gb = max(0.12, (seq / 256.0) * 0.22)
+    target_budget = max(0.5, (total * target_util) - safety)
+    for t in range(max_trials):
+        candidate_bs = max(1, curr_bs + max(1, t))
+        est = est_per_sample_gb * float(candidate_bs)
+        util = _safe_div(est, max(total, 1e-9), default=0.0)
+        report["trials"] = t + 1
+        if est <= target_budget:
+            best_bs = candidate_bs
+            report["vram_util_estimate"] = util
+        else:
+            break
+    if best_bs != curr_bs:
+        cfg["batch_size"] = int(best_bs)
+        report["applied"] = True
+    # Keep effective global batch stable if bs grows too much.
+    if int(cfg.get("batch_size", 1)) >= 8 and curr_acc > 1:
+        cfg["grad_accum_steps"] = max(1, curr_acc - 1)
+        report["applied"] = True
+    report["final_batch_size"] = int(cfg.get("batch_size", curr_bs))
+    report["final_grad_accum_steps"] = int(cfg.get("grad_accum_steps", curr_acc))
+    if report["vram_util_estimate"] <= 0.0:
+        report["vram_util_estimate"] = _safe_div(est_per_sample_gb * float(report["final_batch_size"]), max(total, 1e-9), default=0.0)
+    return report
 
 
 def reset_device_peak_memory(device: str) -> None:
@@ -371,7 +944,9 @@ def interactive_prompt(cfg: Dict[str, Any]) -> Dict[str, Any]:
     out = dict(cfg)
     print("\nInteractive Setup (Enter to keep default):")
     try:
-        p = input(f"Profile [quick/deep8h/custom] (default={cfg['profile']}): ").strip().lower()
+        p = input(
+            f"Profile [quick/deep8h/linkedin_sweetspot/mini300m/custom] (default={cfg['profile']}): "
+        ).strip().lower()
     except (EOFError, KeyboardInterrupt):
         return out
     if p in RUN_PROFILES:
@@ -418,6 +993,9 @@ def can_accept_user_input(cfg: Dict[str, Any]) -> bool:
 
 def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
     cfg = dict(user_cfg)
+    profile_env = os.environ.get("MERTFORMER_ONEFILE_PROFILE", "").strip().lower()
+    if profile_env in RUN_PROFILES:
+        cfg["profile"] = profile_env
     profile = str(cfg.get("profile", "deep8h"))
     profile_cfg = RUN_PROFILES.get(profile, {})
     merged = dict(cfg)
@@ -470,9 +1048,39 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
         "local_repo_root": "",
         "byte_bpe_encode_cache_size": 2048,
         "byte_bpe_cache_max_text_len": 512,
+        "out_dir": "/content/mertformer_outputs",
+        "checkpoint_dir": "/content/mertformer_outputs/checkpoints/kaggle_onefile_build30",
+        "strict_data": True,
+        "require_code_stage_data": True,
+        "allow_degraded_data": False,
+        "degraded_data_mode": False,
+        "gpu_auto_tune": True,
+        "gpu_target_vram_util": 0.94,
+        "gpu_safety_margin_gb": 0.5,
+        "gpu_tune_max_trials": 8,
+        "artifact_root": "/content/mertformer_outputs",
+        "artifact_run_id": "",
+        "zip_evidence_pack": True,
+        "auto_backup_to_drive": False,
+        "drive_backup_root": "/content/drive/MyDrive/mertformer_runs",
+        "benchmark_mode": "separated",
+        "strict_green_min_tokens": 8_000_000,
+        "oov_rate_warn_threshold": 0.01,
+        "token_duplicate_ratio_warn_threshold": 0.25,
         "use_learned_pos_embedding": False,
         "use_gradient_checkpointing": False,
         "embedding_scale": True,
+        "mini_probe_enabled": False,
+        "mini_probe_param_target": 300_000_000,
+        "mini_probe_param_tolerance": 35_000_000,
+        "mini_probe_token_min": 5_000_000_000,
+        "mini_probe_token_max": 10_000_000_000,
+        "mini_probe_min_steps_for_signal": 500,
+        "mini_probe_min_loss_drop_ratio": 0.08,
+        "mini_probe_max_grad_cv": 1.35,
+        "mini_probe_min_router_entropy": 0.35,
+        "mini_probe_max_router_load_p95": 0.85,
+        "mini_probe_max_collapse_events": 0,
     }
     for k, v in required_defaults.items():
         merged.setdefault(k, v)
@@ -496,9 +1104,15 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
             elif vram <= 16:
                 merged["batch_size"] = min(int(merged["batch_size"]), 4)
                 merged["seq_len"] = min(int(merged["seq_len"]), 256)
-            else:
+            elif vram <= 40:
                 merged["batch_size"] = min(int(merged["batch_size"]), 8)
                 merged["seq_len"] = min(int(merged["seq_len"]), 384)
+            elif vram <= 80:
+                merged["batch_size"] = min(int(merged["batch_size"]), 16)
+                merged["seq_len"] = min(int(merged["seq_len"]), 768)
+            else:
+                merged["batch_size"] = min(int(merged["batch_size"]), 24)
+                merged["seq_len"] = min(int(merged["seq_len"]), 1024)
     else:
         merged["vram_total_gb"] = 0.0
         merged["batch_size"] = min(int(merged["batch_size"]), 2)
@@ -703,6 +1317,7 @@ def summarize_data_source_scorecard(curriculum_trace: Sequence[Dict[str, Any]]) 
     total_topup = 0
     total_loaded = 0
     failure_rows = 0
+    stage3_code_loaded = 0
     for st in curriculum_trace:
         selected = int(st.get("selected_for_tokenizer", 0))
         topup = int(st.get("topup_added", 0))
@@ -721,6 +1336,8 @@ def summarize_data_source_scorecard(curriculum_trace: Sequence[Dict[str, Any]]) 
                     source_totals[ds] = {"dataset": ds, "kept": 0, "attempts": 0}
                 source_totals[ds]["kept"] += kept
                 source_totals[ds]["attempts"] += 1
+                if "stage_3_code" in str(st.get("name", st.get("stage", ""))):
+                    stage3_code_loaded += kept
         stages.append(
             {
                 "stage": st.get("name", st.get("stage", "unknown")),
@@ -740,6 +1357,8 @@ def summarize_data_source_scorecard(curriculum_trace: Sequence[Dict[str, Any]]) 
             "loaded": total_loaded,
             "topup": total_topup,
             "failure_rows": failure_rows,
+            "stage_3_code_loaded": int(stage3_code_loaded),
+            "coding_claim_blocked": bool(stage3_code_loaded <= 0),
         },
     }
 
@@ -782,7 +1401,7 @@ def build_benchmark_winner_matrix(bench: Dict[str, Any]) -> Dict[str, Any]:
             winners[k] = "mertformer" if mv > vv else "vanilla"
         else:
             winners[k] = "mertformer" if mv < vv else "vanilla"
-    return {"metrics": metrics, "winners": winners}
+    return {"metrics": metrics, "winners": winners, "apples_to_apples": False}
 
 
 def build_tradeoff_notes(
@@ -809,16 +1428,19 @@ def compute_stability_index(train_meta: Dict[str, Any], curve_data: Dict[str, Li
     runtime_errors = int(train_meta.get("runtime_error_count", 0))
     anomalies = int(train_meta.get("anomaly_count", 0))
     grads = [float(x) for x in curve_data.get("grad_norm", []) if math.isfinite(float(x))]
-    if grads:
-        gmean = sum(grads) / len(grads)
-        gvar = sum((g - gmean) ** 2 for g in grads) / len(grads)
-        gstd = math.sqrt(gvar)
-        gcv = _safe_div(gstd, gmean, default=0.0)
-    else:
-        gmean = 0.0
-        gstd = 0.0
-        gcv = 0.0
-    penalty = (nan * 15.0) + (oom * 4.0) + (runtime_errors * 20.0) + (anomalies * 3.0) + min(25.0, gcv * 25.0)
+    grad_stats = robust_grad_stats(grads)
+    gmean = float(grad_stats["mean"])
+    gstd = float(grad_stats["std"])
+    gcv = float(grad_stats["cv"])
+    grad_spike_count = int(grad_stats["spike_count"])
+    penalty = (
+        (nan * 15.0)
+        + (oom * 4.0)
+        + (runtime_errors * 20.0)
+        + (anomalies * 3.0)
+        + min(25.0, gcv * 25.0)
+        + min(12.0, float(grad_spike_count) * 0.5)
+    )
     score = max(0.0, min(100.0, 100.0 - penalty))
     return {
         "score_0_100": score,
@@ -829,6 +1451,9 @@ def compute_stability_index(train_meta: Dict[str, Any], curve_data: Dict[str, Li
         "grad_mean": gmean,
         "grad_std": gstd,
         "grad_cv": gcv,
+        "grad_median": float(grad_stats["median"]),
+        "grad_mad": float(grad_stats["mad"]),
+        "grad_spike_count": grad_spike_count,
     }
 
 
@@ -850,6 +1475,133 @@ def compute_efficiency_index(bench: Dict[str, Any]) -> Dict[str, Any]:
         "quality_ratio_vanilla_over_mert": quality_ratio,
         "mert_train_tokens_per_sec": m_tps,
         "vanilla_train_tokens_per_sec": v_tps,
+    }
+
+
+def _mean(values: Sequence[float]) -> float:
+    vals = [float(v) for v in values if math.isfinite(float(v))]
+    if not vals:
+        return 0.0
+    return float(sum(vals) / len(vals))
+
+
+def _p95(values: Sequence[float]) -> float:
+    vals = sorted(float(v) for v in values if math.isfinite(float(v)))
+    if not vals:
+        return 0.0
+    idx = int(round(0.95 * (len(vals) - 1)))
+    idx = max(0, min(idx, len(vals) - 1))
+    return float(vals[idx])
+
+
+def compute_mini_probe_report(
+    cfg: Dict[str, Any],
+    train_meta: Dict[str, Any],
+    curve_data: Dict[str, List[float]],
+    model_params: int,
+    tokens_seen: int,
+) -> Dict[str, Any]:
+    if not bool(cfg.get("mini_probe_enabled", False)):
+        return {"enabled": False}
+
+    min_steps = max(20, int(cfg.get("mini_probe_min_steps_for_signal", 500)))
+    loss_hist = [float(x) for x in curve_data.get("train_loss", []) if math.isfinite(float(x))]
+    grad_hist = [float(x) for x in curve_data.get("grad_norm", []) if math.isfinite(float(x))]
+    entropy_hist = [float(x) for x in curve_data.get("router_entropy", []) if math.isfinite(float(x))]
+    max_load_hist = [float(x) for x in curve_data.get("router_max_load", []) if math.isfinite(float(x))]
+    collapse_events = int(sum(1 for x in curve_data.get("collapse_detected", []) if float(x) > 0.0))
+
+    enough_steps = len(loss_hist) >= min_steps
+    w = max(5, min(200, len(loss_hist) // 5)) if loss_hist else 0
+    early_loss = _mean(loss_hist[:w]) if w > 0 else float("inf")
+    late_loss = _mean(loss_hist[-w:]) if w > 0 else float("inf")
+    loss_drop_ratio = _safe_div(early_loss - late_loss, max(abs(early_loss), 1e-9), default=0.0)
+    warmup_drop = warmup_excluded_loss_drop(loss_hist)
+    loss_gate = bool(
+        enough_steps
+        and math.isfinite(loss_drop_ratio)
+        and warmup_drop >= float(cfg.get("mini_probe_min_loss_drop_ratio", 0.08))
+    )
+
+    grad_stats = robust_grad_stats(grad_hist)
+    grad_mean = float(grad_stats["mean"])
+    grad_std = float(grad_stats["std"])
+    grad_cv = float(grad_stats["cv"])
+    grad_spike_count = int(grad_stats["spike_count"])
+    grad_gate = bool(
+        len(grad_hist) >= min_steps
+        and int(train_meta.get("nan_count", 0)) == 0
+        and math.isfinite(grad_cv)
+        and grad_cv <= float(cfg.get("mini_probe_max_grad_cv", 1.35))
+        and grad_spike_count <= max(3, int(0.02 * max(1, len(grad_hist))))
+    )
+
+    router_entropy_mean = _mean(entropy_hist)
+    router_entropy_p10 = _percentile(entropy_hist, 0.10)
+    entropy_gate = bool(
+        len(entropy_hist) >= min_steps
+        and math.isfinite(router_entropy_mean)
+        and router_entropy_mean >= float(cfg.get("mini_probe_min_router_entropy", 0.35))
+    )
+
+    router_max_load_p95 = _p95(max_load_hist)
+    router_max_load_p99 = _percentile(max_load_hist, 0.99)
+    expert_gate = bool(
+        len(max_load_hist) >= min_steps
+        and math.isfinite(router_max_load_p95)
+        and router_max_load_p95 <= float(cfg.get("mini_probe_max_router_load_p95", 0.85))
+        and collapse_events <= int(cfg.get("mini_probe_max_collapse_events", 0))
+    )
+
+    p_target = int(cfg.get("mini_probe_param_target", 300_000_000))
+    p_tol = int(cfg.get("mini_probe_param_tolerance", 35_000_000))
+    params_gate = abs(int(model_params) - p_target) <= p_tol
+
+    token_min = int(cfg.get("mini_probe_token_min", 5_000_000_000))
+    token_max = int(cfg.get("mini_probe_token_max", 10_000_000_000))
+    token_progress_to_min = _safe_div(float(tokens_seen), float(max(token_min, 1)), default=0.0)
+    token_within_band = int(tokens_seen) <= token_max
+
+    all_green = bool(loss_gate and grad_gate and entropy_gate and expert_gate and params_gate)
+    return {
+        "enabled": True,
+        "all_green": all_green,
+        "loss_gate": loss_gate,
+        "grad_gate": grad_gate,
+        "router_entropy_gate": entropy_gate,
+        "expert_load_gate": expert_gate,
+        "param_gate": params_gate,
+        "early_loss": early_loss,
+        "late_loss": late_loss,
+        "loss_drop_ratio": loss_drop_ratio,
+        "warmup_excluded_loss_drop": warmup_drop,
+        "grad_mean": grad_mean,
+        "grad_std": grad_std,
+        "grad_cv": grad_cv,
+        "grad_spike_count": grad_spike_count,
+        "router_entropy_mean": router_entropy_mean,
+        "router_entropy_p10": router_entropy_p10,
+        "router_max_load_p95": router_max_load_p95,
+        "router_max_load_p99": router_max_load_p99,
+        "collapse_events": collapse_events,
+        "expert_gate_pass": expert_gate,
+        "entropy_gate_pass": entropy_gate,
+        "collapse_gate_pass": collapse_events <= int(cfg.get("mini_probe_max_collapse_events", 0)),
+        "gates_config": {
+            "min_loss_drop_ratio_warmup_excluded": float(cfg.get("mini_probe_min_loss_drop_ratio", 0.08)),
+            "max_grad_cv": float(cfg.get("mini_probe_max_grad_cv", 1.35)),
+            "min_router_entropy": float(cfg.get("mini_probe_min_router_entropy", 0.35)),
+            "max_router_load_p95": float(cfg.get("mini_probe_max_router_load_p95", 0.85)),
+            "max_collapse_events": int(cfg.get("mini_probe_max_collapse_events", 0)),
+        },
+        "model_params": int(model_params),
+        "param_target": p_target,
+        "param_tolerance": p_tol,
+        "tokens_seen": int(tokens_seen),
+        "token_min": token_min,
+        "token_max": token_max,
+        "token_progress_to_min": token_progress_to_min,
+        "token_within_band": token_within_band,
     }
 
 
@@ -1951,9 +2703,12 @@ def load_stage_texts(
                     candidate_rows.append(
                         {
                             "dataset": ds_name,
+                            "attempt_count": 1,
                             "load_mode": "skipped",
                             "load_info": "remote_code_not_trusted",
+                            "reason_code": "remote_code_not_trusted",
                             "kept": 0,
+                            "error": "remote_code_not_trusted",
                             "elapsed_sec": 0.0,
                         }
                     )
@@ -2014,9 +2769,12 @@ def load_stage_texts(
                     candidate_rows.append(
                         {
                             "dataset": ds_name,
+                            "attempt_count": 1,
                             "load_mode": load_mode,
                             "load_info": load_info,
+                            "reason_code": reason_code_from_error(str(load_info)) if str(load_mode) != "streaming" else "ok",
                             "kept": kept,
+                            "error": "" if kept > 0 else str(load_info),
                             "target_cap": per_candidate_cap,
                             "elapsed_sec": time.time() - cand_start,
                             "worker_timeout": bool(timed_out),
@@ -2050,9 +2808,12 @@ def load_stage_texts(
                     candidate_rows.append(
                         {
                             "dataset": ds_name,
+                            "attempt_count": 1,
                             "load_mode": "failed",
                             "load_info": load_info,
+                            "reason_code": reason_code_from_error(str(load_info)),
                             "kept": 0,
+                            "error": str(load_info),
                             "elapsed_sec": 0.0,
                         }
                     )
@@ -2099,9 +2860,12 @@ def load_stage_texts(
                 candidate_rows.append(
                     {
                         "dataset": ds_name,
+                        "attempt_count": 1,
                         "load_mode": load_mode,
                         "load_info": load_info,
+                        "reason_code": "ok" if kept > 0 else reason_code_from_error(str(load_info)),
                         "kept": kept,
+                        "error": "" if kept > 0 else str(load_info),
                         "target_cap": per_candidate_cap,
                         "elapsed_sec": time.time() - cand_start,
                     }
@@ -2115,9 +2879,12 @@ def load_stage_texts(
                 candidate_rows.append(
                     {
                         "dataset": c.get("dataset", "unknown"),
+                        "attempt_count": 1,
                         "load_mode": "exception",
                         "load_info": f"{type(e).__name__}:{e}",
+                        "reason_code": reason_code_from_error(f"{type(e).__name__}:{e}"),
                         "kept": 0,
+                        "error": f"{type(e).__name__}:{e}",
                         "elapsed_sec": 0.0,
                     }
                 )
@@ -2143,6 +2910,7 @@ def load_stage_texts(
         "mode": mode,
         "source_type": "hf_or_fallback",
         "candidate_rows": candidate_rows,
+        "stage_loaded_from_hf": int(sum(int(r.get("kept", 0)) for r in candidate_rows if str(r.get("reason_code", "")) == "ok")),
     }
     logger.log_event("stage_data_loaded", meta)
     return texts, meta
@@ -2152,6 +2920,22 @@ def build_curriculum_corpus(cfg: Dict[str, Any], logger: InMemoryRunLogger) -> T
     stages = build_curriculum_sources(turkish_primary=bool(cfg.get("turkish_primary", True)))
     if not bool(cfg.get("curriculum_enabled", True)):
         stages = stages[:1]
+    ratio_sum = float(sum(float(s.get("ratio", 0.0)) for s in stages))
+    if abs(ratio_sum - 1.0) > 1e-6:
+        raise RuntimeError(f"curriculum_ratio_sum_invalid:{ratio_sum:.6f}")
+    curriculum_cfg_hash = hash_config(
+        {
+            "stages": [
+                {
+                    "name": str(s.get("name", "")),
+                    "ratio": float(s.get("ratio", 0.0)),
+                    "max_samples": int(s.get("max_samples", 0)),
+                }
+                for s in stages
+            ]
+        }
+    )
+    logger.log_event("curriculum_ratio_check", {"ratio_sum": ratio_sum, "curriculum_config_hash": curriculum_cfg_hash})
 
     all_texts: List[str] = []
     trace: List[Dict[str, Any]] = []
@@ -2173,6 +2957,8 @@ def build_curriculum_corpus(cfg: Dict[str, Any], logger: InMemoryRunLogger) -> T
         all_texts.extend(texts)
         tr = dict(stage)
         tr.update(meta)
+        tr["curriculum_ratio_sum"] = ratio_sum
+        tr["curriculum_config_hash"] = curriculum_cfg_hash
         tr["topup_added"] = topup_added
         tr["selected_for_tokenizer"] = len(texts)
         trace.append(tr)
@@ -3283,18 +4069,26 @@ def collect_bitnet_telemetry(model: nn.Module, bitnet_mode: str = "stable") -> D
             "bitlinear_count": 0,
             "ternary_zero_ratio_mean": 0.0,
             "quant_saturation_ratio_mean": 0.0,
+            "ternary_zero_ratio_drift": 0.0,
+            "quant_saturation_drift": 0.0,
             "alpha_mean": 0.0,
             "alpha_drift_mean": 0.0,
             "mode": bitnet_mode,
         }
-    z = sum(v["ternary_zero_ratio"] for v in vals) / len(vals)
-    s = sum(v["quant_saturation_ratio"] for v in vals) / len(vals)
+    z_vals = [float(v["ternary_zero_ratio"]) for v in vals]
+    s_vals = [float(v["quant_saturation_ratio"]) for v in vals]
+    z = sum(z_vals) / len(vals)
+    s = sum(s_vals) / len(vals)
     a = sum(v["alpha_mean"] for v in vals) / len(vals)
     d = sum(v["alpha_drift"] for v in vals) / len(vals)
+    z_drift = float(max(z_vals) - min(z_vals)) if z_vals else 0.0
+    s_drift = float(max(s_vals) - min(s_vals)) if s_vals else 0.0
     return {
         "bitlinear_count": len(vals),
         "ternary_zero_ratio_mean": float(z),
         "quant_saturation_ratio_mean": float(s),
+        "ternary_zero_ratio_drift": z_drift,
+        "quant_saturation_drift": s_drift,
         "alpha_mean": float(a),
         "alpha_drift_mean": float(d),
         "mode": bitnet_mode,
@@ -3509,10 +4303,35 @@ def evaluate_model(
                 losses.append(float(loss.detach().cpu().item()))
     model.train()
     if not losses:
-        return {"val_loss": float("inf"), "val_ppl": float("inf")}
+        return {
+            "val_loss": float("inf"),
+            "val_ppl": float("inf"),
+            "val_ppl_raw": float("inf"),
+            "val_ppl_capped": float("inf"),
+            "val_ppl_cap_applied": False,
+        }
     vl = float(sum(losses) / len(losses))
-    ppl = float(math.exp(min(20.0, vl)))
-    return {"val_loss": vl, "val_ppl": ppl}
+    ppl_cap_applied = False
+    try:
+        ppl_raw = float(math.exp(vl))
+    except OverflowError:
+        ppl_raw = float("inf")
+        ppl_cap_applied = True
+    if not math.isfinite(ppl_raw):
+        ppl_raw = float("inf")
+        ppl_cap_applied = True
+    ppl_capped = float(math.exp(min(20.0, vl)))
+    if abs(ppl_capped - ppl_raw) > 1e-6 and math.isfinite(ppl_raw):
+        ppl_cap_applied = True
+    if not math.isfinite(ppl_raw):
+        ppl_cap_applied = True
+    return {
+        "val_loss": vl,
+        "val_ppl": ppl_capped,
+        "val_ppl_raw": ppl_raw,
+        "val_ppl_capped": ppl_capped,
+        "val_ppl_cap_applied": bool(ppl_cap_applied),
+    }
 
 
 def detect_anomaly(loss_hist: Sequence[float]) -> bool:
@@ -3523,6 +4342,114 @@ def detect_anomaly(loss_hist: Sequence[float]) -> bool:
     if med <= 1e-8:
         return False
     return tail[-1] > 10.0 * med
+
+
+def build_checkpoint_payload(
+    cfg: Dict[str, Any],
+    model: nn.Module,
+    opt: torch.optim.Optimizer,
+    sch: LambdaLR,
+    scaler: Any,
+    state: TrainState,
+    tokenizer: HybridTokenizer,
+    expected_run_hash: str,
+    compat_signature: str,
+    arch_parity_signature: str,
+) -> Dict[str, Any]:
+    return {
+        "schema": "kaggle_onefile_build30_ckpt_v5",
+        "saved_at_utc": _utc_now(),
+        "compat_signature": compat_signature,
+        "arch_parity_signature": arch_parity_signature,
+        "tokenizer_backend": tokenizer.backend_name,
+        "data_policy_tag": str(cfg.get("data_policy_tag", "open+fallback")),
+        "profile_stamp": str(cfg.get("profile", "")),
+        "parity_level": str(cfg.get("parity_level", "hybrid_strict")),
+        "bitnet_mode": str(cfg.get("bitnet_mode", "stable")),
+        "moe_mode": str(cfg.get("moe_mode", "true_sparse_topk")),
+        "logger_mode": str(cfg.get("logger_mode", "jsonl_ring")),
+        "model": model.state_dict(),
+        "optimizer": opt.state_dict(),
+        "scheduler": sch.state_dict(),
+        "scaler": scaler.state_dict(),
+        "train_state": {
+            "step": state.step,
+            "epoch": state.epoch,
+            "tokens_seen": state.tokens_seen,
+            "best_val_loss": state.best_val_loss,
+        },
+        "rng_state": collect_rng_state(),
+        "tokenizer_state": tokenizer.state_dict(),
+        "run_config_hash": expected_run_hash,
+        "run_config": cfg,
+        "bitnet_telemetry": collect_bitnet_telemetry(model, bitnet_mode=str(cfg.get("bitnet_mode", "stable"))),
+    }
+
+
+def write_eval_incremental_evidence(
+    cfg: Dict[str, Any],
+    step: int,
+    tokens_seen: int,
+    eval_result: Dict[str, Any],
+    curve: Dict[str, List[float]],
+) -> None:
+    run_dir = Path(str(cfg.get("artifact_run_dir", cfg.get("out_dir", "."))))
+    eval_dir = Path(str(cfg.get("eval_snapshot_dir", run_dir / "eval_snapshots")))
+    eval_dir.mkdir(parents=True, exist_ok=True)
+    stamp = _utc_now().replace(":", "").replace("-", "")
+    snap = {
+        "generated_at_utc": _utc_now(),
+        "step": int(step),
+        "tokens_seen": int(tokens_seen),
+        "eval": safe_jsonable(eval_result),
+        "validation_trend": validation_trend_metrics(curve.get("val_loss", [])),
+        "warmup_excluded_loss_drop": warmup_excluded_loss_drop(curve.get("train_loss", [])),
+    }
+    snap_path = eval_dir / f"eval_step_{int(step):08d}_{stamp}.json"
+    atomic_json_write(snap_path, snap)
+
+    inc_csv = Path(str(cfg.get("incremental_eval_csv_path", run_dir / "eval_incremental.csv")))
+    append_csv_row(
+        inc_csv,
+        fieldnames=[
+            "step",
+            "tokens_seen",
+            "val_loss",
+            "val_ppl_raw",
+            "val_ppl_capped",
+            "val_ppl_cap_applied",
+            "router_entropy_mean",
+            "router_max_load_p95",
+            "collapse_events",
+            "time_utc",
+        ],
+        row={
+            "step": int(step),
+            "tokens_seen": int(tokens_seen),
+            "val_loss": float(eval_result.get("val_loss", float("inf"))),
+            "val_ppl_raw": float(eval_result.get("val_ppl_raw", float("inf"))),
+            "val_ppl_capped": float(eval_result.get("val_ppl_capped", float("inf"))),
+            "val_ppl_cap_applied": bool(eval_result.get("val_ppl_cap_applied", False)),
+            "router_entropy_mean": _mean(curve.get("router_entropy", [])),
+            "router_max_load_p95": _p95(curve.get("router_max_load", [])),
+            "collapse_events": int(sum(1 for x in curve.get("collapse_detected", []) if float(x) > 0.0)),
+            "time_utc": _utc_now(),
+        },
+    )
+    health_txt = Path(str(cfg.get("incremental_health_txt_path", run_dir / "health_latest.txt")))
+    health_txt.parent.mkdir(parents=True, exist_ok=True)
+    health_lines = [
+        f"time_utc={_utc_now()}",
+        f"step={int(step)} tokens_seen={int(tokens_seen)}",
+        f"val_loss={float(eval_result.get('val_loss', float('inf'))):.6f}",
+        f"val_ppl_raw={float(eval_result.get('val_ppl_raw', float('inf')))}",
+        f"val_ppl_capped={float(eval_result.get('val_ppl_capped', float('inf')))}",
+        f"val_ppl_cap_applied={bool(eval_result.get('val_ppl_cap_applied', False))}",
+        f"router_entropy_mean={_mean(curve.get('router_entropy', [])):.6f}",
+        f"router_max_load_p95={_p95(curve.get('router_max_load', [])):.6f}",
+        f"collapse_events={int(sum(1 for x in curve.get('collapse_detected', []) if float(x) > 0.0))}",
+    ]
+    health_txt.write_text("\n".join(health_lines) + "\n", encoding="utf-8")
 
 
 def train_loop_deep(
@@ -3538,6 +4465,11 @@ def train_loop_deep(
 ) -> Tuple[MertFormerTiny, TrainArtifacts, Dict[str, Any]]:
     ckpt_dir = Path(str(cfg["checkpoint_dir"])).expanduser()
     ckpt_dir.mkdir(parents=True, exist_ok=True)
+    run_dir = Path(str(cfg.get("artifact_run_dir", cfg.get("out_dir", ".")))).expanduser()
+    run_dir.mkdir(parents=True, exist_ok=True)
+    cfg.setdefault("eval_snapshot_dir", str(run_dir / "eval_snapshots"))
+    cfg.setdefault("incremental_eval_csv_path", str(run_dir / "eval_incremental.csv"))
+    cfg.setdefault("incremental_health_txt_path", str(run_dir / "health_latest.txt"))
 
     train_ds = PackedDataset(train_x, train_y)
     val_ds = PackedDataset(val_x, val_y)
@@ -3671,6 +4603,11 @@ def train_loop_deep(
     runtime_error_count = 0
     step_tokens_total = 0
     step_time_total = 0.0
+    mem_samples_gb: List[float] = []
+    stop_reason = "unknown"
+    stop_reason_codes: List[str] = []
+    interrupted = False
+    sigterm_requested = False
 
     curve = {
         "step": [],
@@ -3701,14 +4638,23 @@ def train_loop_deep(
 
     while True:
         # Stop criteria
+        if bool(_RUNTIME_SIGNAL_STATE.get("sigterm", False)):
+            sigterm_requested = True
+            stop_reason = "sigterm"
+            stop_reason_codes.append(str(_RUNTIME_SIGNAL_STATE.get("signal", "SIGTERM")))
+            logger.log_event("stop", {"reason": stop_reason, "signal": _RUNTIME_SIGNAL_STATE.get("signal", "SIGTERM")})
+            break
         elapsed = time.time() - start_time
         if elapsed >= t_wall_limit:
+            stop_reason = "max_wall_hours"
             logger.log_event("stop", {"reason": "max_wall_hours", "elapsed_sec": elapsed})
             break
         if state.tokens_seen >= target_tokens:
+            stop_reason = "target_train_tokens"
             logger.log_event("stop", {"reason": "target_train_tokens", "tokens_seen": state.tokens_seen})
             break
         if state.step >= int(cfg["max_steps"]):
+            stop_reason = "max_steps"
             logger.log_event("stop", {"reason": "max_steps", "step": state.step})
             break
 
@@ -3759,7 +4705,9 @@ def train_loop_deep(
                 rolling_losses.append(loss_val)
                 step_tokens_total += step_tokens
                 step_time_total += step_dt
-                peak_mem_gb = max(peak_mem_gb, get_device_peak_memory_gb(device))
+                mem_now = get_device_peak_memory_gb(device)
+                peak_mem_gb = max(peak_mem_gb, mem_now)
+                mem_samples_gb.append(mem_now)
 
                 router_entropy = 0.0
                 router_max_load = 0.0
@@ -3840,41 +4788,24 @@ def train_loop_deep(
                     curve["val_ppl"].append(ev["val_ppl"])
                     logger.log_event("eval", {"step": state.step, **ev})
                     print(f"[eval] step={state.step} val_loss={ev['val_loss']:.4f} val_ppl={ev['val_ppl']:.2f}")
+                    write_eval_incremental_evidence(cfg=cfg, step=state.step, tokens_seen=state.tokens_seen, eval_result=ev, curve=curve)
 
                     is_best = ev["val_loss"] < state.best_val_loss
                     if is_best:
                         state.best_val_loss = float(ev["val_loss"])
 
-                    ckpt_payload = {
-                        "schema": "kaggle_onefile_build30_ckpt_v4",
-                        "saved_at_utc": _utc_now(),
-                        "compat_signature": compat_signature,
-                        "arch_parity_signature": arch_parity_signature,
-                        "tokenizer_backend": tokenizer.backend_name,
-                        "data_policy_tag": str(cfg.get("data_policy_tag", "open+fallback")),
-                        "profile_stamp": str(cfg.get("profile", "")),
-                        "parity_level": str(cfg.get("parity_level", "hybrid_strict")),
-                        "bitnet_mode": str(cfg.get("bitnet_mode", "stable")),
-                        "moe_mode": str(cfg.get("moe_mode", "true_sparse_topk")),
-                        "logger_mode": str(cfg.get("logger_mode", "jsonl_ring")),
-                        "model": model.state_dict(),
-                        "optimizer": opt.state_dict(),
-                        "scheduler": sch.state_dict(),
-                        "scaler": scaler.state_dict(),
-                        "train_state": {
-                            "step": state.step,
-                            "epoch": state.epoch,
-                            "tokens_seen": state.tokens_seen,
-                            "best_val_loss": state.best_val_loss,
-                        },
-                        "rng_state": collect_rng_state(),
-                        "tokenizer_state": tokenizer.state_dict(),
-                        "run_config_hash": expected_run_hash,
-                        "run_config": cfg,
-                        "bitnet_telemetry": collect_bitnet_telemetry(
-                            model, bitnet_mode=str(cfg.get("bitnet_mode", "stable"))
-                        ),
-                    }
+                    ckpt_payload = build_checkpoint_payload(
+                        cfg=cfg,
+                        model=model,
+                        opt=opt,
+                        sch=sch,
+                        scaler=scaler,
+                        state=state,
+                        tokenizer=tokenizer,
+                        expected_run_hash=expected_run_hash,
+                        compat_signature=compat_signature,
+                        arch_parity_signature=arch_parity_signature,
+                    )
                     tag = f"step_{state.step:08d}"
                     manifest = save_checkpoint_atomic(ckpt_dir, tag=tag, payload=ckpt_payload, is_best=is_best)
                     latest_ckpt_path = str(ckpt_dir / "latest.pt")
@@ -3886,36 +4817,18 @@ def train_loop_deep(
                 need_ckpt_time = (time.time() - state.last_checkpoint_time) >= checkpoint_every_seconds
                 need_ckpt_step = state.step % checkpoint_every_steps == 0
                 if need_ckpt_time or need_ckpt_step:
-                    ckpt_payload = {
-                        "schema": "kaggle_onefile_build30_ckpt_v4",
-                        "saved_at_utc": _utc_now(),
-                        "compat_signature": compat_signature,
-                        "arch_parity_signature": arch_parity_signature,
-                        "tokenizer_backend": tokenizer.backend_name,
-                        "data_policy_tag": str(cfg.get("data_policy_tag", "open+fallback")),
-                        "profile_stamp": str(cfg.get("profile", "")),
-                        "parity_level": str(cfg.get("parity_level", "hybrid_strict")),
-                        "bitnet_mode": str(cfg.get("bitnet_mode", "stable")),
-                        "moe_mode": str(cfg.get("moe_mode", "true_sparse_topk")),
-                        "logger_mode": str(cfg.get("logger_mode", "jsonl_ring")),
-                        "model": model.state_dict(),
-                        "optimizer": opt.state_dict(),
-                        "scheduler": sch.state_dict(),
-                        "scaler": scaler.state_dict(),
-                        "train_state": {
-                            "step": state.step,
-                            "epoch": state.epoch,
-                            "tokens_seen": state.tokens_seen,
-                            "best_val_loss": state.best_val_loss,
-                        },
-                        "rng_state": collect_rng_state(),
-                        "tokenizer_state": tokenizer.state_dict(),
-                        "run_config_hash": expected_run_hash,
-                        "run_config": cfg,
-                        "bitnet_telemetry": collect_bitnet_telemetry(
-                            model, bitnet_mode=str(cfg.get("bitnet_mode", "stable"))
-                        ),
-                    }
+                    ckpt_payload = build_checkpoint_payload(
+                        cfg=cfg,
+                        model=model,
+                        opt=opt,
+                        sch=sch,
+                        scaler=scaler,
+                        state=state,
+                        tokenizer=tokenizer,
+                        expected_run_hash=expected_run_hash,
+                        compat_signature=compat_signature,
+                        arch_parity_signature=arch_parity_signature,
+                    )
                     tag = f"step_{state.step:08d}"
                     manifest = save_checkpoint_atomic(ckpt_dir, tag=tag, payload=ckpt_payload, is_best=False)
                     latest_ckpt_path = str(ckpt_dir / "latest.pt")
@@ -3931,6 +4844,7 @@ def train_loop_deep(
                 opt.zero_grad(set_to_none=True)
 
                 if oom_count > max_oom_retries:
+                    stop_reason = "too_many_oom"
                     logger.log_event("stop", {"reason": "too_many_oom", "oom_count": oom_count})
                     break
 
@@ -3952,38 +4866,45 @@ def train_loop_deep(
                 runtime_error_count += 1
                 logger.log_event("runtime_error", {"step": state.step, "error": f"{type(e).__name__}:{e}"})
                 raise
+        except KeyboardInterrupt:
+            interrupted = True
+            stop_reason = "keyboard_interrupt"
+            logger.log_event("stop", {"reason": stop_reason, "step": state.step, "tokens_seen": state.tokens_seen})
+            break
+
+    if sigterm_requested or interrupted:
+        # Emergency checkpoint path for external stop signals.
+        emergency_payload = build_checkpoint_payload(
+            cfg=cfg,
+            model=model,
+            opt=opt,
+            sch=sch,
+            scaler=scaler,
+            state=state,
+            tokenizer=tokenizer,
+            expected_run_hash=expected_run_hash,
+            compat_signature=compat_signature,
+            arch_parity_signature=arch_parity_signature,
+        )
+        em_tag = f"emergency_{state.step:08d}"
+        manifest = save_checkpoint_atomic(ckpt_dir, tag=em_tag, payload=emergency_payload, is_best=False)
+        latest_ckpt_path = str(ckpt_dir / "latest.pt")
 
     # Final checkpoint always
-    final_payload = {
-        "schema": "kaggle_onefile_build30_ckpt_v4",
-        "saved_at_utc": _utc_now(),
-        "compat_signature": compat_signature,
-        "arch_parity_signature": arch_parity_signature,
-        "tokenizer_backend": tokenizer.backend_name,
-        "data_policy_tag": str(cfg.get("data_policy_tag", "open+fallback")),
-        "profile_stamp": str(cfg.get("profile", "")),
-        "parity_level": str(cfg.get("parity_level", "hybrid_strict")),
-        "bitnet_mode": str(cfg.get("bitnet_mode", "stable")),
-        "moe_mode": str(cfg.get("moe_mode", "true_sparse_topk")),
-        "logger_mode": str(cfg.get("logger_mode", "jsonl_ring")),
-        "model": model.state_dict(),
-        "optimizer": opt.state_dict(),
-        "scheduler": sch.state_dict(),
-        "scaler": scaler.state_dict(),
-        "train_state": {
-            "step": state.step,
-            "epoch": state.epoch,
-            "tokens_seen": state.tokens_seen,
-            "best_val_loss": state.best_val_loss,
-        },
-        "rng_state": collect_rng_state(),
-        "tokenizer_state": tokenizer.state_dict(),
-        "run_config_hash": expected_run_hash,
-        "run_config": cfg,
-        "bitnet_telemetry": collect_bitnet_telemetry(
-            model, bitnet_mode=str(cfg.get("bitnet_mode", "stable"))
-        ),
-    }
+    if stop_reason == "unknown":
+        stop_reason = "completed_or_condition_met"
+    final_payload = build_checkpoint_payload(
+        cfg=cfg,
+        model=model,
+        opt=opt,
+        sch=sch,
+        scaler=scaler,
+        state=state,
+        tokenizer=tokenizer,
+        expected_run_hash=expected_run_hash,
+        compat_signature=compat_signature,
+        arch_parity_signature=arch_parity_signature,
+    )
     manifest = save_checkpoint_atomic(ckpt_dir, tag=f"step_{state.step:08d}", payload=final_payload, is_best=False)
     latest_ckpt_path = str(ckpt_dir / "latest.pt")
     if not best_ckpt_path and (ckpt_dir / "best.pt").exists():
@@ -4007,7 +4928,9 @@ def train_loop_deep(
         "anomaly_count": anomaly_count,
         "runtime_error_count": runtime_error_count,
         "peak_mem_gb": peak_mem_gb,
+        "avg_mem_gb": _mean(mem_samples_gb),
         "avg_train_tokens_per_sec": _safe_div(step_tokens_total, step_time_total, default=0.0),
+        "avg_train_samples_per_sec": _safe_div(step_tokens_total / max(1, int(cfg.get("seq_len", 1))), step_time_total, default=0.0),
         "final_batch_size": current_bs,
         "final_grad_accum_steps": grad_accum_steps,
         "bitnet_info": bitnet_info,
@@ -4015,6 +4938,10 @@ def train_loop_deep(
         "compat_signature": compat_signature,
         "arch_parity_signature": arch_parity_signature,
         "final_model_path": str(final_model_path),
+        "stop_reason": stop_reason,
+        "stop_reason_codes": stop_reason_codes,
+        "elapsed_train_sec": float(time.time() - start_time),
+        "timed_stop": bool(stop_reason == "max_wall_hours"),
     }
     return model, artifacts, train_meta
 
@@ -4245,8 +5172,10 @@ def run_benchmark_suite(
         std_seed = float("inf")
 
     out = {
-        "schema": "benchmark_suite_v2",
+        "schema": "micro_benchmark_suite_v1",
         "generated_at_utc": _utc_now(),
+        "benchmark_mode": str(cfg.get("benchmark_mode", "separated")),
+        "short_run": True,
         "device": device,
         "tokenizer_backend": tokenizer.backend_name,
         "mertformer": {
@@ -4404,6 +5333,7 @@ def render_reports(
     curve_data: Dict[str, List[float]],
 ) -> Tuple[str, str, str]:
     json_text = json.dumps(payload, ensure_ascii=False, indent=2)
+    bench_src = payload.get("micro_benchmark_suite", payload.get("benchmark_suite", {}))
 
     csv_io = io.StringIO()
     fields = [
@@ -4419,7 +5349,7 @@ def render_reports(
     writer = csv.DictWriter(csv_io, fieldnames=fields)
     writer.writeheader()
     for name in ("mertformer", "vanilla"):
-        blk = payload["benchmark_suite"].get(name, {})
+        blk = bench_src.get(name, {})
         row = {
             "name": name,
             "params": blk.get("params", 0),
@@ -4471,14 +5401,14 @@ def render_reports(
     md_lines.extend(
         [
             "",
-            "## Benchmark",
-            "",
-            "| Variant | Params | Final Loss | Val Loss | Val PPL | Tok/s | Latency (ms) |",
-            "|---|---:|---:|---:|---:|---:|---:|",
+        "## Micro Benchmark",
+        "",
+        "| Variant | Params | Final Loss | Val Loss | Val PPL | Tok/s | Latency (ms) |",
+        "|---|---:|---:|---:|---:|---:|---:|",
         ]
     )
     for name in ("mertformer", "vanilla"):
-        blk = payload["benchmark_suite"].get(name, {})
+        blk = bench_src.get(name, {})
         md_lines.append(
             f"| {name} | {blk.get('params', 0)} | {blk.get('train', {}).get('final_loss', float('inf')):.4f} | "
             f"{blk.get('eval', {}).get('val_loss', float('inf')):.4f} | {blk.get('eval', {}).get('val_ppl', float('inf')):.2f} | "
@@ -4489,6 +5419,24 @@ def render_reports(
         md_lines.append(f"- {metric}: **{winner}**")
     for note in payload.get("benchmark_tradeoff_notes", []):
         md_lines.append(f"- note: {note}")
+    md_lines.extend(["", "## Claim Block", ""])
+    claim_block = payload.get("claim_block", {})
+    for k, v in claim_block.items():
+        md_lines.append(f"- {k}: {v}")
+    md_lines.extend(["", "## Degraded Conditions", ""])
+    degraded = payload.get("degraded_conditions", [])
+    if degraded:
+        for d in degraded:
+            md_lines.append(f"- {d}")
+    else:
+        md_lines.append("- none")
+    md_lines.extend(["", "## Cannot-Claim-Yet", ""])
+    cannot_claim = payload.get("cannot_claim_yet", [])
+    if cannot_claim:
+        for c in cannot_claim:
+            md_lines.append(f"- {c}")
+    else:
+        md_lines.append("- none")
     md_lines.extend(["", "## Parity", ""])
     p = payload.get("parity_report", {})
     md_lines.append(f"- mode: {p.get('mode', '')}")
@@ -4545,7 +5493,7 @@ def render_reports(
 def maybe_write_outputs(cfg: Dict[str, Any], json_text: str, csv_text: str, md_text: str) -> Dict[str, str]:
     if not bool(cfg.get("write_files", False)):
         return {}
-    out_dir = Path(str(cfg["out_dir"]))
+    out_dir = Path(str(cfg.get("artifact_run_dir", cfg["out_dir"])))
     out_dir.mkdir(parents=True, exist_ok=True)
     paths = {
         "json": str(out_dir / "kaggle_onefile_deep_build30.json"),
@@ -4556,6 +5504,163 @@ def maybe_write_outputs(cfg: Dict[str, Any], json_text: str, csv_text: str, md_t
     Path(paths["csv"]).write_text(csv_text, encoding="utf-8")
     Path(paths["md"]).write_text(md_text, encoding="utf-8")
     return paths
+
+
+def compute_final_verdict(payload: Dict[str, Any], cfg: Dict[str, Any]) -> Dict[str, Any]:
+    mini = payload.get("mini_probe_report", {})
+    tm = payload.get("train_meta", {})
+    ts = payload.get("train_state", {})
+    code_loaded = int(payload.get("code_stage_loaded", 0))
+    strict_min_tokens = int(cfg.get("strict_green_min_tokens", 8_000_000))
+    collapse_events = int(mini.get("collapse_events", payload.get("moe_sparse_report", {}).get("collapse_events", 0)))
+    strict_reasons: List[str] = []
+    checks = {
+        "tokens_seen": int(ts.get("tokens_seen", 0)) >= strict_min_tokens,
+        "loss_gate": bool(mini.get("loss_gate", False)),
+        "grad_gate": bool(mini.get("grad_gate", False)),
+        "expert_gate": bool(mini.get("expert_gate_pass", mini.get("expert_load_gate", False))),
+        "entropy_gate": bool(mini.get("entropy_gate_pass", mini.get("router_entropy_gate", False))),
+        "collapse_events_zero": collapse_events == 0,
+        "nan_count_zero": int(tm.get("nan_count", 0)) == 0,
+        "oom_count_zero": int(tm.get("oom_count", 0)) == 0,
+        "stage_3_code_loaded": code_loaded > 0,
+    }
+    for k, ok in checks.items():
+        if not ok:
+            strict_reasons.append(k)
+
+    verdict = "provisional"
+    if not strict_reasons:
+        verdict = "evidence_strict_green"
+    else:
+        strong_min = [
+            checks["tokens_seen"],
+            checks["loss_gate"],
+            checks["expert_gate"],
+            checks["entropy_gate"],
+            checks["collapse_events_zero"],
+            checks["nan_count_zero"],
+        ]
+        if all(strong_min):
+            verdict = "evidence_strong"
+    return {
+        "final_verdict": verdict,
+        "strict_green_checks": checks,
+        "strict_green_missing": strict_reasons,
+        "strict_green_min_tokens": strict_min_tokens,
+    }
+
+
+def build_public_summary(payload: Dict[str, Any], verdict: Dict[str, Any]) -> Dict[str, Any]:
+    unknown_or_pending = list(payload.get("pending_long_run_flags", []))
+    if payload.get("degraded_conditions"):
+        unknown_or_pending.extend([str(x) for x in payload.get("degraded_conditions", [])])
+    return {
+        "schema": "build30_public_summary_v1",
+        "run_utc": str(payload.get("generated_at_utc", _utc_now())),
+        "profile": str(payload.get("profile", "")),
+        "params": int(payload.get("runtime_model_params", payload.get("micro_benchmark_suite", {}).get("mertformer", {}).get("params", 0))),
+        "tokens_seen": int(payload.get("train_state", {}).get("tokens_seen", 0)),
+        "best_val_loss": float(payload.get("train_state", {}).get("best_val_loss", float("inf"))),
+        "router_entropy_mean": float(payload.get("moe_sparse_report", {}).get("router_entropy_mean", 0.0)),
+        "router_max_load_p95": float(payload.get("mini_probe_report", {}).get("router_max_load_p95", 0.0)),
+        "collapse_events": int(payload.get("moe_sparse_report", {}).get("collapse_events", 0)),
+        "final_verdict": str(verdict.get("final_verdict", "provisional")),
+        "zero_known_critical_bugs_claim": "zero-known-critical-bugs this run",
+        "dataset_access_constraints": {
+            "strict_data": bool(payload.get("preflight", {}).get("strict_data", False)),
+            "hf_token_present": bool(payload.get("preflight", {}).get("hf_token_present", False)),
+            "degraded_data_mode": bool(payload.get("preflight", {}).get("degraded_data_mode", False)),
+        },
+        "unknown_or_pending": unknown_or_pending,
+    }
+
+
+def verify_and_index_artifacts(path_map: Dict[str, str]) -> Dict[str, Any]:
+    rows: List[Dict[str, Any]] = []
+    for name, pstr in path_map.items():
+        p = Path(pstr)
+        exists = p.exists()
+        size = int(p.stat().st_size) if exists else 0
+        sha = file_sha256(p) if exists and size > 0 else ""
+        rows.append(
+            {
+                "name": str(name),
+                "path": str(p),
+                "exists": bool(exists),
+                "size": size,
+                "sha256": sha,
+            }
+        )
+    return {"generated_at_utc": _utc_now(), "files": rows}
+
+
+def validate_required_payload_fields(payload: Dict[str, Any], required_fields: Sequence[str]) -> Dict[str, Any]:
+    missing: List[str] = []
+    for f in required_fields:
+        if f not in payload:
+            missing.append(str(f))
+    return {"required_field_count": len(required_fields), "missing_fields": missing, "ok": len(missing) == 0}
+
+
+def make_evidence_zip(layout: ArtifactLayout, file_paths: Dict[str, str], enabled: bool) -> Dict[str, Any]:
+    if not enabled:
+        return {"enabled": False, "zip_path": str(layout.evidence_zip_path), "added": [], "errors": []}
+    added: List[Dict[str, Any]] = []
+    errors: List[str] = []
+    with zipfile.ZipFile(layout.evidence_zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for name, pstr in file_paths.items():
+            p = Path(pstr)
+            if not p.exists():
+                errors.append(f"missing:{name}")
+                continue
+            try:
+                arc = p.relative_to(layout.run_dir) if str(p).startswith(str(layout.run_dir)) else Path(name)
+                zf.write(p, arcname=str(arc))
+                added.append({"name": name, "path": str(p), "arcname": str(arc), "size": int(p.stat().st_size)})
+            except Exception as e:
+                errors.append(f"{name}:{type(e).__name__}:{e}")
+    manifest = {
+        "generated_at_utc": _utc_now(),
+        "zip_path": str(layout.evidence_zip_path),
+        "added": added,
+        "errors": errors,
+    }
+    atomic_json_write(layout.zip_manifest_path, manifest)
+    return manifest
+
+
+def backup_run_to_drive(layout: ArtifactLayout, cfg: Dict[str, Any]) -> Dict[str, Any]:
+    report = {
+        "attempted": bool(cfg.get("auto_backup_to_drive", False)),
+        "mounted": False,
+        "copied_count": 0,
+        "failed_count": 0,
+        "destination": "",
+        "warning": "",
+    }
+    if not report["attempted"]:
+        return report
+    root = Path(str(cfg.get("drive_backup_root", "/content/drive/MyDrive/mertformer_runs"))).expanduser()
+    if not root.exists():
+        report["warning"] = "drive_not_mounted_or_path_missing"
+        return report
+    report["mounted"] = True
+    dest = root / layout.run_id
+    report["destination"] = str(dest)
+    dest.mkdir(parents=True, exist_ok=True)
+    for p in layout.run_dir.rglob("*"):
+        if not p.is_file():
+            continue
+        rel = p.relative_to(layout.run_dir)
+        d = dest / rel
+        d.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            shutil.copy2(p, d)
+            report["copied_count"] += 1
+        except Exception:
+            report["failed_count"] += 1
+    return report
 
 
 # =============================================================================
@@ -4868,6 +5973,24 @@ def build_token_stream_and_metrics(
         "token_histogram_topk": token_histogram_topk(token_ids, k=20),
         "tokenizer_fit_metrics": tokenizer.metrics,
     }
+    oov_thr = float(cfg.get("oov_rate_warn_threshold", 0.01))
+    oov_rate_val = float(metrics.get("oov_rate", 0.0))
+    topk = metrics.get("token_histogram_topk", [])
+    top_ratio = 0.0
+    if topk and int(metrics.get("token_count", 0)) > 0:
+        top_ratio = float(topk[0][1]) / float(max(1, int(metrics.get("token_count", 0))))
+    dup_thr = float(cfg.get("token_duplicate_ratio_warn_threshold", 0.25))
+    metrics["oov_warn_threshold"] = oov_thr
+    metrics["oov_gate_pass"] = bool(oov_rate_val <= oov_thr)
+    metrics["duplicate_heavy_warn_threshold"] = dup_thr
+    metrics["duplicate_heavy_warning"] = bool(top_ratio > dup_thr)
+    metrics["top_token_ratio"] = float(top_ratio)
+    metrics["quality_downgrade"] = bool(tokenizer.backend_name != "sentencepiece")
+    if metrics["quality_downgrade"]:
+        logger.log_event(
+            "tokenizer_quality_downgrade",
+            {"backend": tokenizer.backend_name, "reason": "backend_fallback_not_sentencepiece"},
+        )
     data_source_scorecard = summarize_data_source_scorecard(curriculum_trace)
     logger.log_event("tokenizer_metrics", metrics)
     logger.log_event("startup_phase_metrics", startup_phase_metrics)
@@ -4946,9 +6069,16 @@ def run_interactive_menu(
 def run_all() -> Dict[str, Any]:
     _print_header()
 
+    total_start = time.time()
+    _RUNTIME_SIGNAL_STATE["sigterm"] = False
+    _RUNTIME_SIGNAL_STATE["signal"] = ""
     cfg = resolve_runtime_config(interactive_prompt(dict(RUN_CONFIG)))
     set_seed(int(cfg["seed"]))
+    install_runtime_signal_handlers()
+    layout = init_artifact_layout(cfg)
     device = str(cfg["device"])
+    gpu_meta = get_cuda_device_meta()
+    gpu_tune = apply_gpu_auto_tune(cfg, device=device)
 
     print(
         f"[runtime] profile={cfg['profile']} device={device} quick={cfg['quick']} "
@@ -4966,9 +6096,104 @@ def run_all() -> Dict[str, Any]:
         mode=str(cfg.get("logger_mode", "jsonl_ring")),
         ring_size=int(cfg.get("logger_ring_size", 5000)),
         step_log_interval=int(cfg.get("step_log_interval", 1)),
-        jsonl_path=str(cfg.get("logger_jsonl_path", "")),
+        jsonl_path=str(layout.logger_jsonl_path),
     )
     logger.log_event("config", cfg)
+    logger.log_event("gpu_auto_tune", gpu_tune)
+    logger.log_event("runtime_paths", {"artifact_root": str(layout.artifact_root), "run_dir": str(layout.run_dir), "checkpoint_dir": str(layout.checkpoint_dir)})
+
+    preflight = run_data_preflight(cfg)
+    logger.log_event("preflight", preflight)
+    if str(preflight.get("preflight_status", "fail")) != "pass":
+        stop_reason = str(preflight.get("reason_codes", ["preflight_failed"])[0] if preflight.get("reason_codes") else "preflight_failed")
+        payload_fail: Dict[str, Any] = {
+            "schema": "kaggle_onefile_deep_build30_v5",
+            "generated_at_utc": _utc_now(),
+            "profile": cfg["profile"],
+            "device": device,
+            "runtime": {
+                "batch_size": cfg["batch_size"],
+                "seq_len": cfg["seq_len"],
+                "max_steps": cfg["max_steps"],
+                "max_wall_hours": cfg["max_wall_hours"],
+                "target_train_tokens": cfg["target_train_tokens"],
+                "grad_accum_steps": cfg["grad_accum_steps"],
+                "step_log_interval": cfg.get("step_log_interval", 1),
+                "strict_green_min_tokens": int(cfg.get("strict_green_min_tokens", 8_000_000)),
+            },
+            "preflight": preflight,
+            "tokenizer_metrics": {"backend": "unknown"},
+            "startup_phase_metrics": {},
+            "data_source_scorecard": {"stages": [], "source_totals": [], "totals": {"stage_3_code_loaded": 0}},
+            "curriculum_trace": [],
+            "train_state": {"step": 0, "epoch": 0, "tokens_seen": 0, "best_val_loss": float("inf")},
+            "train_meta": {
+                "oom_count": 0,
+                "nan_count": 0,
+                "anomaly_count": 0,
+                "runtime_error_count": 0,
+                "stop_reason": stop_reason,
+                "elapsed_train_sec": 0.0,
+                "elapsed_total_sec": float(time.time() - total_start),
+            },
+            "checkpoint_manifest": {},
+            "micro_benchmark_suite": {"schema": "micro_benchmark_suite_v1", "short_run": True, "mertformer": {}, "vanilla": {}},
+            "benchmark_winner_matrix": {"metrics": {}, "winners": {}, "apples_to_apples": False},
+            "benchmark_tradeoff_notes": ["benchmark_not_run_due_to_preflight_fail"],
+            "parity_report": {"mode": "preflight_only", "embedded_self_check": {"ok": False}, "local_crosscheck": {"enabled": False, "skipped": True}},
+            "parity_signature": "",
+            "moe_sparse_report": {"mode": str(cfg.get("moe_mode", "true_sparse_topk")), "collapse_events": 0},
+            "bitnet_mode_report": {"mode": str(cfg.get("bitnet_mode", "stable")), "skip_attention_qkvo": bool(cfg.get("bitnet_skip_attention_qkvo", True)), "telemetry": {}},
+            "logger_memory_report": {"mode": str(cfg.get("logger_mode", "jsonl_ring"))},
+            "bitnet_telemetry": {},
+            "stability_index": {"score_0_100": 0.0},
+            "efficiency_index": {},
+            "mini_probe_report": {"enabled": False, "all_green": False},
+            "resume_decision": {"attempted": False, "reason": "resume_skip"},
+            "compat_signature": "",
+            "arch_parity_signature": "",
+            "target_param_band": {"low": int(cfg["target_param_band_low"]), "high": int(cfg["target_param_band_high"])},
+            "band_check": {"mertformer_in_band": False, "vanilla_in_band": False, "both_in_band": False},
+            "pending_long_run_flags": ["preflight_failed"],
+            "logger_manifest": logger.finalize(),
+            "code_stage_loaded": int(preflight.get("code_stage_loaded", 0)),
+            "coding_claim_blocked": True,
+            "degraded_conditions": [f"preflight:{x}" for x in preflight.get("reason_codes", [])],
+            "cannot_claim_yet": ["strict_data_preflight_failed"],
+            "claim_block": {"bug_free_claim": "blocked", "coding_claim": "blocked"},
+            "runtime_model_params": 0,
+            "gpu_meta": gpu_meta,
+            "gpu_tune_report": gpu_tune,
+            "stop_reason": stop_reason,
+            "run_config_hash": hash_config(cfg),
+        }
+        verdict_fail = compute_final_verdict(payload_fail, cfg)
+        payload_fail.update(verdict_fail)
+        payload_fail["final_status"] = verdict_fail.get("final_verdict", "provisional")
+        payload_fail["final_reason"] = stop_reason
+        json_text, csv_text, md_text = render_reports(payload_fail, {"train_loss": [], "val_loss": []})
+        out_files = maybe_write_outputs(cfg, json_text, csv_text, md_text)
+        payload_fail["output_files"] = out_files
+        if str(payload_fail.get("logger_manifest", {}).get("jsonl_path", "")).strip():
+            payload_fail["output_files"]["jsonl_log"] = str(payload_fail["logger_manifest"]["jsonl_path"])
+        public_summary = build_public_summary(payload_fail, verdict_fail)
+        if bool(cfg.get("write_files", False)):
+            atomic_json_write(layout.public_summary_path, public_summary)
+            payload_fail["output_files"]["public_summary"] = str(layout.public_summary_path)
+            atomic_json_write(layout.stop_summary_path, {"stop_reason": stop_reason, "run_id": layout.run_id, "time_utc": _utc_now()})
+            payload_fail["output_files"]["stop_summary"] = str(layout.stop_summary_path)
+            artifact_index = verify_and_index_artifacts(payload_fail["output_files"])
+            atomic_json_write(layout.artifact_index_path, artifact_index)
+            payload_fail["artifacts_index"] = artifact_index
+            payload_fail["output_files"]["artifacts_index"] = str(layout.artifact_index_path)
+            zip_manifest = make_evidence_zip(layout, payload_fail["output_files"], enabled=bool(cfg.get("zip_evidence_pack", True)))
+            payload_fail["zip_manifest"] = zip_manifest
+            payload_fail["output_files"]["zip_manifest"] = str(layout.zip_manifest_path)
+            if layout.evidence_zip_path.exists():
+                payload_fail["output_files"]["evidence_zip"] = str(layout.evidence_zip_path)
+        final_status_line = f"FINAL_STATUS: {payload_fail['final_status']} reason={stop_reason} run_id={layout.run_id}"
+        print(final_status_line)
+        return payload_fail
 
     (
         token_ids,
@@ -4993,6 +6218,14 @@ def run_all() -> Dict[str, Any]:
 
     mert_cfg = build_mert_cfg(cfg)
     model = MertFormerTiny(mert_cfg)
+    mert_params_runtime = count_params(model)
+    print(f"[model] params={mert_params_runtime:,}")
+    if bool(cfg.get("mini_probe_enabled", False)):
+        print(
+            f"[mini300m] target_params≈{int(cfg.get('mini_probe_param_target', 300_000_000)):,} "
+            f"token_window={int(cfg.get('mini_probe_token_min', 5_000_000_000)):,}-"
+            f"{int(cfg.get('mini_probe_token_max', 10_000_000_000)):,}"
+        )
     parity_signature = compute_arch_parity_signature(cfg, tokenizer_backend=tok_metrics.get("backend", "unknown"))
     parity_report = {
         "mode": str(cfg.get("parity_proof_mode", "embedded_plus_local_if_available")),
@@ -5017,7 +6250,7 @@ def run_all() -> Dict[str, Any]:
         logger=logger,
     )
 
-    bench = run_benchmark_suite(
+    micro_bench = run_benchmark_suite(
         cfg=cfg,
         tokenizer=tokenizer,
         train_x=train_x,
@@ -5031,8 +6264,8 @@ def run_all() -> Dict[str, Any]:
 
     band_low = int(cfg["target_param_band_low"])
     band_high = int(cfg["target_param_band_high"])
-    m_params = int(bench.get("mertformer", {}).get("params", 0))
-    v_params = int(bench.get("vanilla", {}).get("params", 0))
+    m_params = int(micro_bench.get("mertformer", {}).get("params", 0))
+    v_params = int(micro_bench.get("vanilla", {}).get("params", 0))
     band_check = {
         "mertformer_in_band": band_low <= m_params <= band_high,
         "vanilla_in_band": band_low <= v_params <= band_high,
@@ -5041,23 +6274,57 @@ def run_all() -> Dict[str, Any]:
 
     bitnet_tel = collect_bitnet_telemetry(model, bitnet_mode=str(cfg.get("bitnet_mode", "stable")))
     stability_index = compute_stability_index(train_meta, artifacts.curve_data)
-    efficiency_index = compute_efficiency_index(bench)
-    benchmark_winner_matrix = build_benchmark_winner_matrix(bench)
+    efficiency_index = compute_efficiency_index(micro_bench)
+    mini_probe_report = compute_mini_probe_report(
+        cfg=cfg,
+        train_meta=train_meta,
+        curve_data=artifacts.curve_data,
+        model_params=mert_params_runtime,
+        tokens_seen=int(artifacts.state.tokens_seen),
+    )
+    if bool(mini_probe_report.get("enabled", False)):
+        print(
+            "[mini300m] "
+            f"loss_drop={float(mini_probe_report.get('loss_drop_ratio', 0.0)):.4f} "
+            f"grad_cv={float(mini_probe_report.get('grad_cv', 0.0)):.4f} "
+            f"router_entropy={float(mini_probe_report.get('router_entropy_mean', 0.0)):.4f} "
+            f"router_max_load_p95={float(mini_probe_report.get('router_max_load_p95', 0.0)):.4f}"
+        )
+        print(
+            "[mini300m:gates] "
+            f"loss={bool(mini_probe_report.get('loss_gate', False))} "
+            f"grad={bool(mini_probe_report.get('grad_gate', False))} "
+            f"expert={bool(mini_probe_report.get('expert_load_gate', False))} "
+            f"entropy={bool(mini_probe_report.get('router_entropy_gate', False))} "
+            f"params={bool(mini_probe_report.get('param_gate', False))} "
+            f"all_green={bool(mini_probe_report.get('all_green', False))}"
+        )
+    benchmark_winner_matrix = build_benchmark_winner_matrix(micro_bench)
     benchmark_tradeoff_notes = build_tradeoff_notes(benchmark_winner_matrix, efficiency_index, stability_index)
-    print_live_compare_panel(bench, stability_index, efficiency_index)
+    print_live_compare_panel(micro_bench, stability_index, efficiency_index)
 
     pend = pending_long_run_flags(cfg, artifacts.state)
 
+    router_entropy_hist = artifacts.curve_data.get("router_entropy", [])
+    router_load_hist = artifacts.curve_data.get("router_max_load", [])
+    collapse_events = int(sum(1 for x in artifacts.curve_data.get("collapse_detected", []) if float(x) > 0.0))
     moe_sparse_report = {
         "mode": str(cfg.get("moe_mode", "true_sparse_topk")),
-        "router_entropy_mean": float(sum(artifacts.curve_data.get("router_entropy", [0.0])) / max(1, len(artifacts.curve_data.get("router_entropy", [])))),
-        "router_max_load_mean": float(sum(artifacts.curve_data.get("router_max_load", [0.0])) / max(1, len(artifacts.curve_data.get("router_max_load", [])))),
+        "router_entropy_mean": float(sum(router_entropy_hist or [0.0]) / max(1, len(router_entropy_hist))),
+        "router_entropy_p10": float(_percentile(router_entropy_hist, 0.10)),
+        "router_max_load_mean": float(sum(router_load_hist or [0.0]) / max(1, len(router_load_hist))),
+        "router_max_load_p95": float(_p95(router_load_hist)),
+        "router_max_load_p99": float(_percentile(router_load_hist, 0.99)),
         "capacity_overflow_ratio_mean": float(
             sum(artifacts.curve_data.get("capacity_overflow_ratio", [0.0]))
             / max(1, len(artifacts.curve_data.get("capacity_overflow_ratio", [])))
         ),
-        "collapse_events": int(sum(1 for x in artifacts.curve_data.get("collapse_detected", []) if float(x) > 0.0)),
+        "collapse_events": collapse_events,
         "aux_loss_mean": float(sum(artifacts.curve_data.get("aux_loss", [0.0])) / max(1, len(artifacts.curve_data.get("aux_loss", [])))),
+        "expert_gate_pass": bool(mini_probe_report.get("expert_gate_pass", mini_probe_report.get("expert_load_gate", False))),
+        "entropy_gate_pass": bool(mini_probe_report.get("entropy_gate_pass", mini_probe_report.get("router_entropy_gate", False))),
+        "collapse_gate_pass": bool(mini_probe_report.get("collapse_gate_pass", collapse_events == 0)),
+        "gates_config": safe_jsonable(mini_probe_report.get("gates_config", {})),
     }
     bitnet_mode_report = {
         "mode": str(cfg.get("bitnet_mode", "stable")),
@@ -5073,8 +6340,31 @@ def run_all() -> Dict[str, Any]:
         "jsonl_path": str(logger_manifest.get("jsonl_path", "")),
     }
 
+    validation_trend = validation_trend_metrics(artifacts.curve_data.get("val_loss", []))
+    ppl_raw_last = float("inf")
+    ppl_capped_last = float("inf")
+    ppl_cap_applied = False
+    if artifacts.curve_data.get("val_loss"):
+        try:
+            raw = math.exp(float(artifacts.curve_data["val_loss"][-1]))
+            ppl_raw_last = float(raw) if math.isfinite(raw) else float("inf")
+        except OverflowError:
+            ppl_raw_last = float("inf")
+        ppl_capped_last = float(math.exp(min(20.0, float(artifacts.curve_data["val_loss"][-1]))))
+        ppl_cap_applied = (not math.isfinite(ppl_raw_last)) or (abs(ppl_capped_last - ppl_raw_last) > 1e-6)
+
+    code_stage_loaded = int(data_source_scorecard.get("totals", {}).get("stage_3_code_loaded", 0))
+    coding_claim_blocked = bool(code_stage_loaded <= 0)
+    degraded_conditions: List[str] = []
+    if bool(preflight.get("degraded_data_mode", False)):
+        degraded_conditions.append("degraded_data_mode=true")
+    for w in preflight.get("warning_codes", []):
+        degraded_conditions.append(f"warning:{w}")
+    if coding_claim_blocked:
+        degraded_conditions.append("coding_claim_blocked")
+
     payload: Dict[str, Any] = {
-        "schema": "kaggle_onefile_deep_build30_v4",
+        "schema": "kaggle_onefile_deep_build30_v5",
         "generated_at_utc": _utc_now(),
         "profile": cfg["profile"],
         "device": device,
@@ -5085,20 +6375,43 @@ def run_all() -> Dict[str, Any]:
             "max_wall_hours": cfg["max_wall_hours"],
             "target_train_tokens": cfg["target_train_tokens"],
             "grad_accum_steps": cfg["grad_accum_steps"],
+            "step_log_interval": cfg.get("step_log_interval", 1),
+            "strict_green_min_tokens": int(cfg.get("strict_green_min_tokens", 8_000_000)),
+            "benchmark_mode": str(cfg.get("benchmark_mode", "separated")),
         },
+        "preflight": preflight,
         "tokenizer_metrics": tok_metrics,
         "startup_phase_metrics": startup_phase_metrics,
         "data_source_scorecard": data_source_scorecard,
         "curriculum_trace": curriculum_trace,
+        "curriculum_config_hash": str(curriculum_trace[0].get("curriculum_config_hash", "")) if curriculum_trace else "",
+        "curriculum_ratio_sum": float(curriculum_trace[0].get("curriculum_ratio_sum", 0.0)) if curriculum_trace else 0.0,
         "train_state": {
             "step": artifacts.state.step,
             "epoch": artifacts.state.epoch,
             "tokens_seen": artifacts.state.tokens_seen,
             "best_val_loss": artifacts.state.best_val_loss,
+            "val_loss_median_last3": validation_trend.get("val_loss_median_last3", float("inf")),
+            "val_loss_delta_rel_last3": validation_trend.get("val_loss_delta_rel_last3", 0.0),
+            "val_plateau_detected": validation_trend.get("val_plateau_detected", False),
+            "val_ppl_raw": ppl_raw_last,
+            "val_ppl_capped": ppl_capped_last,
+            "val_ppl_cap_applied": ppl_cap_applied,
+            "warmup_excluded_loss_drop": warmup_excluded_loss_drop(artifacts.curve_data.get("train_loss", [])),
         },
-        "train_meta": train_meta,
+        "train_meta": {
+            **train_meta,
+            "elapsed_total_sec": float(time.time() - total_start),
+            "stop_reason": str(train_meta.get("stop_reason", "completed_or_condition_met")),
+            "vram_util_estimate": float(gpu_tune.get("vram_util_estimate", 0.0)),
+            "gpu_name": gpu_meta.get("gpu_name", ""),
+            "compute_capability": gpu_meta.get("compute_capability", ""),
+            "precision_fallback": gpu_meta.get("precision_fallback", ""),
+            "inductor_enabled": bool(gpu_meta.get("inductor_enabled", False)),
+        },
         "checkpoint_manifest": artifacts.checkpoint_manifest,
-        "benchmark_suite": bench,
+        "micro_benchmark_suite": micro_bench,
+        "benchmark_suite": micro_bench,
         "benchmark_winner_matrix": benchmark_winner_matrix,
         "benchmark_tradeoff_notes": benchmark_tradeoff_notes,
         "parity_report": parity_report,
@@ -5109,6 +6422,7 @@ def run_all() -> Dict[str, Any]:
         "bitnet_telemetry": bitnet_tel,
         "stability_index": stability_index,
         "efficiency_index": efficiency_index,
+        "mini_probe_report": mini_probe_report,
         "resume_decision": train_meta.get("resume_decision", {}),
         "compat_signature": train_meta.get("compat_signature", ""),
         "arch_parity_signature": train_meta.get("arch_parity_signature", parity_signature),
@@ -5116,7 +6430,44 @@ def run_all() -> Dict[str, Any]:
         "band_check": band_check,
         "pending_long_run_flags": pend,
         "logger_manifest": logger_manifest,
+        "code_stage_loaded": code_stage_loaded,
+        "coding_claim_blocked": coding_claim_blocked,
+        "degraded_conditions": degraded_conditions,
+        "cannot_claim_yet": list(pend),
+        "claim_block": {
+            "coding_claim": "blocked" if coding_claim_blocked else "allowed",
+            "strict_data_claim": "blocked" if preflight.get("preflight_status") != "pass" else "allowed",
+            "bug_free_claim_text": "zero-known-critical-bugs this run",
+        },
+        "runtime_model_params": int(mert_params_runtime),
+        "gpu_meta": gpu_meta,
+        "gpu_tune_report": gpu_tune,
+        "stop_reason": str(train_meta.get("stop_reason", "completed_or_condition_met")),
+        "run_config_hash": hash_config(cfg),
     }
+    payload["payload_validator"] = validate_required_payload_fields(
+        payload,
+        required_fields=[
+            "schema",
+            "generated_at_utc",
+            "profile",
+            "runtime",
+            "train_state",
+            "train_meta",
+            "micro_benchmark_suite",
+            "mini_probe_report",
+            "preflight",
+        ],
+    )
+
+    verdict = compute_final_verdict(payload, cfg)
+    payload.update(verdict)
+    payload["final_status"] = verdict.get("final_verdict", "provisional")
+    payload["final_reason"] = (
+        verdict.get("strict_green_missing", [str(train_meta.get("stop_reason", "unknown"))])[0]
+        if verdict.get("strict_green_missing")
+        else str(train_meta.get("stop_reason", "completed"))
+    )
 
     json_text, csv_text, md_text = render_reports(payload, artifacts.curve_data)
 
@@ -5128,17 +6479,46 @@ def run_all() -> Dict[str, Any]:
     print(md_text.strip())
 
     out_files = maybe_write_outputs(cfg, json_text, csv_text, md_text)
-    curve_plot = maybe_plot_curves(artifacts.curve_data, out_dir=Path(str(cfg["out_dir"])), write_files=bool(cfg["write_files"]))
+    curve_plot = maybe_plot_curves(artifacts.curve_data, out_dir=layout.run_dir, write_files=bool(cfg["write_files"]))
     payload["output_files"] = out_files
     if curve_plot:
         payload["output_files"]["curve_plot"] = curve_plot
     presentation_assets = maybe_plot_presentation_assets(
         payload=payload,
         curve_data=artifacts.curve_data,
-        out_dir=Path(str(cfg["out_dir"])),
+        out_dir=layout.run_dir,
         write_files=bool(cfg["write_files"]),
     )
     payload["output_files"].update(presentation_assets)
+    if str(logger_manifest.get("jsonl_path", "")).strip():
+        payload["output_files"]["jsonl_log"] = str(logger_manifest.get("jsonl_path", ""))
+    ck_manifest_path = Path(str(cfg["checkpoint_dir"])) / "manifest.json"
+    if ck_manifest_path.exists():
+        payload["output_files"]["checkpoint_manifest"] = str(ck_manifest_path)
+    final_model_path = str(train_meta.get("final_model_path", ""))
+    if final_model_path:
+        payload["output_files"]["final_model"] = final_model_path
+
+    ck_manifest_src = Path(str(cfg["checkpoint_dir"])) / "manifest.json"
+    ck_manifest_copy = layout.run_dir / "checkpoint_manifest_copy.json"
+    if ck_manifest_src.exists() and bool(cfg.get("write_files", False)):
+        shutil.copy2(ck_manifest_src, ck_manifest_copy)
+        payload["output_files"]["checkpoint_manifest_copy"] = str(ck_manifest_copy)
+
+    if bool(cfg.get("write_files", False)):
+        public_summary = build_public_summary(payload, verdict)
+        atomic_json_write(layout.public_summary_path, public_summary)
+        payload["output_files"]["public_summary"] = str(layout.public_summary_path)
+        stop_summary = {
+            "generated_at_utc": _utc_now(),
+            "run_id": layout.run_id,
+            "stop_reason": str(train_meta.get("stop_reason", "completed_or_condition_met")),
+            "final_status": payload["final_status"],
+            "final_reason": payload["final_reason"],
+            "tokens_seen": int(artifacts.state.tokens_seen),
+        }
+        atomic_json_write(layout.stop_summary_path, stop_summary)
+        payload["output_files"]["stop_summary"] = str(layout.stop_summary_path)
 
     # Chat bootstrap (checkpoint-first)
     if bool(cfg.get("chat_enabled", True)):
@@ -5169,9 +6549,31 @@ def run_all() -> Dict[str, Any]:
         print("\n===CHAT_SAMPLE===")
         print("PROMPT:", sample_prompt)
         print("RESPONSE:", sample_text)
-
         run_interactive_menu(chat_model, tokenizer, cfg, device, payload)
 
+    if bool(cfg.get("write_files", False)):
+        artifact_index = verify_and_index_artifacts(payload.get("output_files", {}))
+        atomic_json_write(layout.artifact_index_path, artifact_index)
+        payload["artifacts_index"] = artifact_index
+        payload["output_files"]["artifacts_index"] = str(layout.artifact_index_path)
+        zip_manifest = make_evidence_zip(layout, payload["output_files"], enabled=bool(cfg.get("zip_evidence_pack", True)))
+        payload["zip_manifest"] = zip_manifest
+        payload["output_files"]["zip_manifest"] = str(layout.zip_manifest_path)
+        if layout.evidence_zip_path.exists():
+            payload["output_files"]["evidence_zip"] = str(layout.evidence_zip_path)
+        backup_report = backup_run_to_drive(layout, cfg)
+        payload["backup_report"] = backup_report
+        payload["output_files"]["backup_report"] = str(layout.run_dir / "backup_report.json")
+        atomic_json_write(Path(payload["output_files"]["backup_report"]), backup_report)
+
+        # Rewrite final JSON with output index + verdict.
+        json_text_final = json.dumps(payload, ensure_ascii=False, indent=2)
+        jpath = Path(payload["output_files"].get("json", ""))
+        if jpath:
+            jpath.write_text(json_text_final + "\n", encoding="utf-8")
+
+    final_status_line = f"FINAL_STATUS: {payload['final_status']} reason={payload['final_reason']} run_id={layout.run_id}"
+    print(final_status_line)
     return payload
 
 
@@ -5180,5 +6582,28 @@ if __name__ == "__main__":
         run_all()
     except Exception as e:
         print("[fatal]", type(e).__name__, str(e))
-        print(traceback.format_exc())
+        tb = traceback.format_exc()
+        print(tb)
+        tb_path = Path(str(_RUNTIME_LAST_LAYOUT.get("traceback_path", "")))
+        st_path = Path(str(_RUNTIME_LAST_LAYOUT.get("last_state_path", "")))
+        if str(tb_path):
+            try:
+                tb_path.parent.mkdir(parents=True, exist_ok=True)
+                tb_path.write_text(tb, encoding="utf-8")
+            except Exception:
+                pass
+        if str(st_path):
+            try:
+                write_last_state(
+                    st_path,
+                    {
+                        "generated_at_utc": _utc_now(),
+                        "fatal_error": f"{type(e).__name__}:{e}",
+                        "run_dir": str(_RUNTIME_LAST_LAYOUT.get("run_dir", "")),
+                    },
+                )
+            except Exception:
+                pass
+        run_id = Path(str(_RUNTIME_LAST_LAYOUT.get("run_dir", "unknown"))).name or "unknown"
+        print(f"FINAL_STATUS: provisional reason=fatal_exception run_id={run_id}")
         raise

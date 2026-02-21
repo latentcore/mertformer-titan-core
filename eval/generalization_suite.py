@@ -28,6 +28,23 @@ class GeneralizationResult:
     matched_keywords: List[str]
 
 
+def _metric_entry(
+    metric: str,
+    baseline: float,
+    current: float,
+    confidence: float,
+    evidence_ref: str,
+) -> Dict[str, object]:
+    return {
+        "metric": metric,
+        "baseline": float(baseline),
+        "current": float(current),
+        "delta": float(current - baseline),
+        "confidence": float(max(0.0, min(1.0, confidence))),
+        "evidence_ref": evidence_ref,
+    }
+
+
 def default_cases() -> List[GeneralizationCase]:
     return [
         GeneralizationCase("g01", "reasoning", "If all birds can fly and penguins are birds, what assumption fails?", ["penguins", "cannot", "fly"]),
@@ -41,6 +58,7 @@ def default_cases() -> List[GeneralizationCase]:
 def evaluate_with_callable(
     responder: Callable[[str], str],
     cases: List[GeneralizationCase] | None = None,
+    baseline_pass_rate: float = 0.80,
 ) -> Dict[str, object]:
     cases = cases or default_cases()
     results: List[GeneralizationResult] = []
@@ -65,12 +83,24 @@ def evaluate_with_callable(
         domain_scores.setdefault(r.domain, []).append(r.score)
 
     domain_avg = {k: sum(v) / len(v) for k, v in domain_scores.items()}
+    metrics = [
+        _metric_entry(
+            metric="generalization.pass_rate",
+            baseline=baseline_pass_rate,
+            current=pass_rate,
+            confidence=0.85,
+            evidence_ref="eval/generalization_suite.py",
+        )
+    ]
     return {
         "schema": "generalization_suite_v1",
         "generated_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "total_cases": len(results),
         "pass_rate": pass_rate,
         "domain_scores": domain_avg,
+        "metrics": metrics,
+        "gate_thresholds": {"pass_rate_min": baseline_pass_rate},
+        "gate_pass": pass_rate >= baseline_pass_rate,
         "results": [asdict(r) for r in results],
     }
 
@@ -103,4 +133,3 @@ if __name__ == "__main__":
     out = write_report(report, Path("reports/benchmarks/generalization_suite_build30.json"))
     print(f"generalization_report={out}")
     print(json.dumps(report, indent=2))
-

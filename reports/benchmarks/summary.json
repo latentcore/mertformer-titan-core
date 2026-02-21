@@ -1,0 +1,45 @@
+{
+  "schema": "benchmark_summary_v2",
+  "status": "ready",
+  "generated_at_utc": "2026-02-21T10:29:23Z",
+  "counts": {
+    "humaneval_outputs": 0,
+    "mbpp_outputs": 0,
+    "gsm8k_outputs": 0
+  },
+  "notes": "Outputs are pre-training unless generated after a full training run.",
+  "gsm8k_summary_path": null,
+  "generalization_report_path": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/reports/benchmarks/generalization_suite_build30.json",
+  "agentic_report_path": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/reports/benchmarks/agentic_suite_build30.json",
+  "metrics": [
+    {
+      "metric": "generalization.pass_rate",
+      "baseline": 0.8,
+      "current": 1.0,
+      "delta": 0.19999999999999996,
+      "confidence": 0.85,
+      "evidence_ref": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/reports/benchmarks/generalization_suite_build30.json"
+    },
+    {
+      "metric": "agentic.completion_rate",
+      "baseline": 0.5,
+      "current": 1.0,
+      "delta": 0.5,
+      "confidence": 0.8,
+      "evidence_ref": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/reports/benchmarks/agentic_suite_build30.json"
+    },
+    {
+      "metric": "agentic.safety_regression",
+      "baseline": 0.0,
+      "current": 0.0,
+      "delta": 0.0,
+      "confidence": 0.9,
+      "evidence_ref": "/Users/mertyunlu/Desktop/NI\u0307HAI\u0307/reports/benchmarks/agentic_suite_build30.json"
+    }
+  ],
+  "gate_thresholds": {
+    "generalization_pass_rate_min": 0.8,
+    "agentic_completion_gain_target": 0.2,
+    "safety_regression_max": 0.0
+  }
+}

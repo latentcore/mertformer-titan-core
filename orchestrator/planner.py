@@ -30,13 +30,8 @@ class SwarmPlanner:
             "omega": 45,
         }
         self.tool_registry = tool_registry or default_tool_registry()
-        self.tool_allowlist = {
-            "tool.search_local_docs",
-            "tool.verify_consistency",
-            "tool.kpi_report",
-            "tool.swarm_route",
-            "tool.eval_generalization",
-        }
+        # Keep planner and runtime registry aligned by default.
+        self.tool_allowlist = set(self.tool_registry.keys())
         self.tool_denylist_tokens = {"network", "download", "exfiltrate", "stealth", "covert"}
 
     def _select_tool(self, task: str, role: str) -> str | None:

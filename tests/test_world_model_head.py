@@ -36,8 +36,10 @@ def test_world_model_head_shapes():
     x = torch.randn(3, 5, 64)
     out = h(x)
     assert out.dynamics_logits.shape == (3, 2, 64)
+    assert out.counterfactual_logits.shape == (3, 2, 64)
     assert out.latent_state.shape == (3, 64)
     assert out.uncertainty.shape == (3,)
+    assert out.risk_score.shape == (3,)
     assert torch.isfinite(out.dynamics_logits).all()
 
 
@@ -69,4 +71,5 @@ def test_mertformer_world_model_side_output_non_breaking_signature():
         wm = model.get_last_world_model_outputs()
         assert wm is not None
         assert wm["world_dynamics_logits"].shape == (2, 2, cfg.hidden_size)
-
+        assert wm["world_counterfactual_logits"].shape == (2, 2, cfg.hidden_size)
+        assert wm["world_risk_score"].shape == (2,)

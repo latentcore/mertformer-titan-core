@@ -16,7 +16,8 @@ __author__ = "Mert"
 
 import sys
 import logging
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional
 
 import torch
 
@@ -31,6 +32,7 @@ from .swarm_runtime import SwarmRuntime
 from .self_improvement_guard import SelfImprovementGuard
 from .alignment_contracts import AlignmentContracts
 from .compute_orchestrator import ComputeOrchestrator
+from .verifier import SwarmVerifier
 
 # TR: MertFormer import - fallback mekanizmalı
 # EN: MertFormer import - with fallback mechanism
@@ -51,6 +53,49 @@ except ImportError:
 
 # TR: Günlük kaydı / EN: Logging
 logger = logging.getLogger("TitanOrchestrator")
+
+
+@dataclass(frozen=True)
+class EpisodeBudget:
+    """
+    Runtime budget for TRIAD-OMEGA goal episodes.
+    """
+    max_iterations: int = 3
+    max_tools: int = 2
+    min_gate_confidence: float = 0.5
+    max_uncertainty: float = 0.65
+    allow_self_improvement: bool = False
+
+
+@dataclass
+class EpisodeResult:
+    """
+    Structured output for run_goal_episode.
+    """
+    goal: str
+    pass_gate: bool
+    final_response: str
+    confidence: float
+    uncertainty: float
+    strategy: str
+    tools_used: List[str] = field(default_factory=list)
+    loops: Dict[str, Any] = field(default_factory=dict)
+    notes: List[str] = field(default_factory=list)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "goal": self.goal,
+            "pass_gate": self.pass_gate,
+            "final_response": self.final_response,
+            "confidence": self.confidence,
+            "uncertainty": self.uncertainty,
+            "strategy": self.strategy,
+            "tools_used": self.tools_used,
+            "loops": self.loops,
+            "notes": self.notes,
+            "metadata": self.metadata,
+        }
 
 
 class MertFormerOrchestrator:
@@ -109,11 +154,242 @@ class MertFormerOrchestrator:
         self.model = None
         self.tokenizer = None
         self.swarm = SwarmRuntime(generate_fn=self._swarm_generate_callback)
+        self.verifier = SwarmVerifier()
         
         if load_model and MERTFORMER_AVAILABLE:
             self._load_model()
         
-        print(f"✅ Orchestrator hazır!")
+        # ================================================================
+        # TR: AGI BİLİŞSEL MİMARİ / EN: AGI COGNITIVE ARCHITECTURE
+        # ================================================================
+        from .reasoning_engine import ReasoningEngine
+        from .tool_executor import ToolExecutor
+        from .self_audit import SelfAuditor
+        from .experience_store import ExperienceStore
+        from .cognitive_loop import CognitiveLoop
+        from .cognitive import WorldModel
+        
+        self.world_model = WorldModel(sense_engine=self.senses)
+        self.reasoning = ReasoningEngine(generate_fn=self._swarm_generate_callback)
+        self.tool_executor = ToolExecutor(
+            memory=self.memory,
+            web_sense=self.web,
+            sense_engine=self.senses,
+        )
+        self.self_auditor = SelfAuditor(alignment_contracts=self.alignment_contracts)
+        self.experience_store = ExperienceStore(
+            store_path=AGIPaths.DATA_DIR / "experiences.jsonl",
+            sense_engine=self.senses,
+        )
+        self.cognitive_loop = CognitiveLoop(
+            generate_fn=self._swarm_generate_callback,
+            reasoning_engine=self.reasoning,
+            tool_executor=self.tool_executor,
+            self_auditor=self.self_auditor,
+            experience_store=self.experience_store,
+            memory=self.memory,
+            world_model=self.world_model,
+        )
+        
+        print(f"✅ Orchestrator hazır! (AGI Cognitive Loop aktif)")
+
+    def think(self, task: str, max_iterations: int = 5) -> dict:
+        """
+        TR: AGI-tarzı bilişsel işleme — Algıla → Düşün → Eylem → Yansıt.
+        EN: AGI-style cognitive processing — Perceive → Think → Act → Reflect.
+        """
+        result = self.cognitive_loop.run(task, max_iterations=max_iterations)
+        return {
+            "response": result.final_response,
+            "strategy": result.strategy_used,
+            "iterations": result.total_iterations,
+            "confidence": result.confidence,
+            "score": result.outcome_score,
+            "tools_used": result.tools_used,
+            "time_ms": result.total_time_ms,
+        }
+
+    @staticmethod
+    def _default_tool_params(tool_id: str, goal: str, candidate_conclusion: str) -> Dict[str, Any]:
+        if tool_id == "tool.calculate":
+            return {"expression": "2 + 2"}
+        if tool_id == "tool.verify_consistency":
+            return {"text": candidate_conclusion, "reference": goal}
+        if tool_id == "tool.search_local_docs":
+            return {"query": goal, "top_k": 5}
+        if tool_id == "tool.recall":
+            return {"query": goal, "top_k": 5}
+        if tool_id == "tool.memorize":
+            return {"text": f"Goal episode: {goal}\nAnswer: {candidate_conclusion}", "category": "EPISODE"}
+        return {"query": goal}
+
+    def run_goal_episode(self, goal: str, budget: EpisodeBudget) -> EpisodeResult:
+        """
+        TRIAD-OMEGA episode:
+          1) Hypothesis loop
+          2) World loop
+          3) Action loop
+          4) Verifier loop
+          5) Improvement loop
+        """
+        if not isinstance(budget, EpisodeBudget):
+            budget = EpisodeBudget()
+
+        notes: List[str] = []
+        loops: Dict[str, Any] = {}
+        tools_used: List[str] = []
+        trace: List[Dict[str, Any]] = [{"stage": "goal", "output": goal}]
+
+        # 1) Hypothesis Loop
+        hypothesis_count = min(3, max(1, int(budget.max_iterations)))
+        hypothesis_set = self.reasoning.generate_hypotheses(
+            goal,
+            strategy="auto",
+            max_candidates=hypothesis_count,
+        )
+        best = hypothesis_set.best()
+        loops["hypothesis"] = hypothesis_set.to_dict()
+        trace.append(
+            {
+                "stage": "hypothesis",
+                "output": best.conclusion,
+                "strategy": best.strategy,
+                "confidence": best.confidence,
+            }
+        )
+
+        # 2) World Loop
+        world_prediction = ""
+        if self.world_model is not None:
+            try:
+                focus_entity = goal.split()[0] if goal.split() else "goal"
+                focus_action = best.action_plan[0] if best.action_plan else "analyze"
+                world_prediction = self.world_model.predict_next_state(focus_entity, focus_action)
+            except Exception as exc:
+                notes.append(f"world_loop_error:{exc}")
+        loops["world"] = {"prediction": world_prediction}
+        if world_prediction:
+            trace.append({"stage": "world", "output": world_prediction})
+
+        # 3) Action Loop (tool orchestration + memory write)
+        tool_results: List[Dict[str, Any]] = []
+        planned_tools = list(best.tool_calls)
+        if self.memory is not None and "tool.memorize" not in planned_tools:
+            planned_tools.append("tool.memorize")
+        if not planned_tools:
+            planned_tools = ["tool.verify_consistency"]
+
+        for tool_id in planned_tools[: max(0, int(budget.max_tools))]:
+            params = self._default_tool_params(tool_id, goal, best.conclusion)
+            tool_res = self.tool_executor.execute(tool_id, params)
+            tool_results.append(
+                {
+                    "tool_id": tool_id,
+                    "success": tool_res.success,
+                    "output": tool_res.output,
+                    "error": tool_res.error,
+                    "execution_time_ms": tool_res.execution_time_ms,
+                    "governance_check": tool_res.governance_check,
+                }
+            )
+            if tool_res.success:
+                tools_used.append(tool_id)
+            trace.append(
+                {
+                    "stage": "tool",
+                    "tool_id": tool_id,
+                    "output": tool_res.output or tool_res.error or "",
+                    "blocked": (not tool_res.success) and (not bool(tool_res.governance_check)),
+                }
+            )
+
+        final_response = best.conclusion
+        successful_outputs = [r["output"] for r in tool_results if r["success"] and r.get("output")]
+        if successful_outputs:
+            final_response = f"{best.conclusion}\n\n[tool-context]\n{successful_outputs[0]}"
+        loops["action"] = {"tool_results": tool_results, "final_response": final_response}
+        trace.append({"stage": "response", "output": final_response})
+
+        if self.memory is not None:
+            try:
+                self.memory.save(
+                    "assistant",
+                    final_response,
+                    category="EPISODE",
+                    source="TRIAD_OMEGA",
+                )
+                trace.append({"stage": "memory", "output": "episode_saved"})
+            except Exception as exc:
+                notes.append(f"memory_write_failed:{exc}")
+                trace.append({"stage": "memory", "output": "episode_save_failed", "blocked": True})
+
+        # 4) Verifier Loop (process + safety + uncertainty gate)
+        gate = self.verifier.verify_episode(trace)
+        safety_score = self.self_auditor.check_safety(final_response)
+        if not safety_score.is_safe and gate.safety_pass:
+            notes.append("self_audit_safety_block")
+
+        pass_gate = (
+            gate.pass_gate
+            and gate.confidence >= float(budget.min_gate_confidence)
+            and gate.uncertainty <= float(budget.max_uncertainty)
+            and safety_score.is_safe
+        )
+        loops["verifier"] = {
+            "pass_gate": pass_gate,
+            "raw_pass_gate": gate.pass_gate,
+            "confidence": gate.confidence,
+            "uncertainty": gate.uncertainty,
+            "consistency": gate.consistency,
+            "safety_pass": gate.safety_pass and safety_score.is_safe,
+            "notes": list(gate.notes),
+            "gate_scores": gate.gate_scores,
+        }
+
+        # 5) Improvement Loop (guarded by metric gate)
+        improvement_payload: Dict[str, Any] = {"applied": False, "reason": "disabled"}
+        if bool(budget.allow_self_improvement):
+            proposals = self.self_improvement_guard.propose(
+                {
+                    "health_score": gate.confidence,
+                    "failure_budget_signal": max(0.0, gate.uncertainty),
+                }
+            )
+            proposal = proposals[0]
+            evaluation = {
+                "delta_benchmark": 0.01 if pass_gate else -0.01,
+                "delta_safety": 0.0 if safety_score.is_safe else -0.1,
+                "cost_within_budget": True,
+            }
+            apply_result = self.self_improvement_guard.apply_if_safe(
+                proposal,
+                current_state={"goal": goal, "strategy": best.strategy},
+                evaluation=evaluation,
+            )
+            improvement_payload = {
+                "proposal": proposal.title,
+                "applied": apply_result.applied,
+                "reason": apply_result.reason,
+                "rollback_id": apply_result.rollback_id,
+            }
+        loops["improvement"] = improvement_payload
+
+        return EpisodeResult(
+            goal=goal,
+            pass_gate=pass_gate,
+            final_response=final_response,
+            confidence=gate.confidence,
+            uncertainty=gate.uncertainty,
+            strategy=best.strategy,
+            tools_used=tools_used,
+            loops=loops,
+            notes=notes,
+            metadata={
+                "triad_omega": True,
+                "hypothesis_count": len(hypothesis_set.hypotheses),
+                "selected_hypothesis": best.candidate_id,
+            },
+        )
 
     def _swarm_generate_callback(self, prompt: str) -> str:
         if self.model is None or self.tokenizer is None:

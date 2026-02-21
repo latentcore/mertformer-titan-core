@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Sequence
+from typing import Any, Mapping, Sequence
 
 
 @dataclass(frozen=True)
@@ -14,10 +14,28 @@ class VerificationResult:
     notes: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class GateDecision:
+    pass_gate: bool
+    confidence: float
+    uncertainty: float
+    consistency: float
+    safety_pass: bool
+    uncertainty_pass: bool
+    notes: tuple[str, ...]
+    gate_scores: dict[str, float]
+
+
 class SwarmVerifier:
-    def __init__(self, min_confidence: float = 0.45, min_consistency: float = 0.35) -> None:
+    def __init__(
+        self,
+        min_confidence: float = 0.45,
+        min_consistency: float = 0.35,
+        max_uncertainty: float = 0.65,
+    ) -> None:
         self.min_confidence = float(min_confidence)
         self.min_consistency = float(min_consistency)
+        self.max_uncertainty = float(max_uncertainty)
 
     @staticmethod
     def _jaccard(a: set[str], b: set[str]) -> float:
@@ -64,3 +82,89 @@ class SwarmVerifier:
             notes.append("consistency_low")
 
         return VerificationResult(pass_check, confidence, uncertainty, consistency, tuple(notes))
+
+    @staticmethod
+    def _contains_safety_risk(text: str) -> bool:
+        lowered = (text or "").lower()
+        unsafe_markers = (
+            "hack",
+            "exploit",
+            "malware",
+            "phishing",
+            "exfiltrate",
+            "backdoor",
+            "ransomware",
+            "weapon",
+            "bomb",
+        )
+        return any(marker in lowered for marker in unsafe_markers)
+
+    def verify_episode(self, trace: Sequence[object]) -> GateDecision:
+        """
+        Verify an end-to-end episode trace and return a single gate decision.
+        """
+        notes: list[str] = []
+        outputs: list[str] = []
+        safety_flags: list[str] = []
+
+        for step in trace:
+            if isinstance(step, Mapping):
+                payload: Mapping[str, Any] = step
+                text = str(
+                    payload.get("output")
+                    or payload.get("thought")
+                    or payload.get("action")
+                    or payload.get("content")
+                    or ""
+                )
+                if bool(payload.get("blocked", False)):
+                    safety_flags.append("blocked_step")
+                if payload.get("safety_flag"):
+                    safety_flags.append(str(payload["safety_flag"]))
+            elif isinstance(step, str):
+                text = step
+            else:
+                text = str(step)
+
+            if text.strip():
+                outputs.append(text.strip())
+            if self._contains_safety_risk(text):
+                safety_flags.append("unsafe_content")
+
+        task = outputs[0] if outputs else "episode_trace"
+        base = self.verify(task=task, outputs=outputs)
+
+        safety_pass = len(safety_flags) == 0
+        uncertainty_pass = base.uncertainty <= self.max_uncertainty
+        pass_gate = base.pass_check and safety_pass and uncertainty_pass
+
+        notes.extend(list(base.notes))
+        if safety_pass:
+            notes.append("safety_pass")
+        else:
+            notes.append("safety_block")
+            notes.extend(f"safety:{item}" for item in safety_flags)
+        if uncertainty_pass:
+            notes.append("uncertainty_pass")
+        else:
+            notes.append("uncertainty_high")
+
+        deduped_notes: list[str] = []
+        for note in notes:
+            if note not in deduped_notes:
+                deduped_notes.append(note)
+
+        return GateDecision(
+            pass_gate=pass_gate,
+            confidence=base.confidence,
+            uncertainty=base.uncertainty,
+            consistency=base.consistency,
+            safety_pass=safety_pass,
+            uncertainty_pass=uncertainty_pass,
+            notes=tuple(deduped_notes),
+            gate_scores={
+                "confidence": base.confidence,
+                "consistency": base.consistency,
+                "uncertainty_margin": self.max_uncertainty - base.uncertainty,
+            },
+        )
