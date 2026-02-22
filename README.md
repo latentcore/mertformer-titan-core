@@ -271,8 +271,14 @@ Report accuracy audit and strategic value summary.
 - [reports/final_sync_matrix_TR.md](reports/final_sync_matrix_TR.md) — Final sync matrix (TR).
 - [reports/go_status_matrix.md](reports/go_status_matrix.md) — GO/NO-GO status matrix (EN).
 - [reports/go_status_matrix_TR.md](reports/go_status_matrix_TR.md) — GO/NO-GO status matrix (TR).
+- [reports/go_nogo_signoff_onepager.md](reports/go_nogo_signoff_onepager.md) — Technical GO/NO-GO one-pager (EN).
+- [reports/go_nogo_signoff_onepager_TR.md](reports/go_nogo_signoff_onepager_TR.md) — Technical GO/NO-GO one-pager (TR).
 - [reports/cleanroom_verification.md](reports/cleanroom_verification.md) — Fresh-clone reproducibility evidence (EN).
 - [reports/cleanroom_verification_TR.md](reports/cleanroom_verification_TR.md) — Fresh-clone reproducibility evidence (TR).
+- [reports/legal_cleanroom_signoff_internal.md](reports/legal_cleanroom_signoff_internal.md) — Internal cleanroom legal sign-off record (EN).
+- [reports/teacher_output_license_assessment.md](reports/teacher_output_license_assessment.md) — Teacher/output license internal assessment (EN).
+- [reports/contamination_report_build30.md](reports/contamination_report_build30.md) — Build30 contamination report (EN).
+- [reports/kpi_contract_build30.md](reports/kpi_contract_build30.md) — Technical KPI contract for GO decision (EN).
 - [reports/benchmarks/README.md](reports/benchmarks/README.md) — Benchmark outputs guide (EN).
 - [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark outputs guide (TR).
 - [reports/benchmarks/smoke_train_metrics.json](reports/benchmarks/smoke_train_metrics.json) — Smoke benchmark metrics snapshot (machine-readable).

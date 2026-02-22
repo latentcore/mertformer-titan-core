@@ -21,11 +21,11 @@ Bu matris, repoda tamamen biten işleri ve dış/operasyonel olarak kalan işler
 | A12 | ✅ | Lint kapısı geçti: `ruff check` yeşil. |
 | A13 | ✅ | Full gate geçti: `bash scripts/verify_all.sh` -> `[verify] OK`. |
 | A14 | ✅ | SDK EN/TR senkron: `SDK_GUIDE.md`, `SDK_GUIDE_TR.md`. |
-| A15 | ✅ | Release commitleri `main` üstünde push edildi (son commit: `5dfb08b`). |
+| A15 | ✅ | Release commitleri `main` ustunde push edildi (bkz: `git log --oneline -n 1`). |
 | A16 | ✅ | Tag/release işareti push edildi (`v0.1.3-review-fix`) + changelog dosyaları mevcut. |
 | A17 | ✅ | Clean-room doğrulaması tamam: `reports/cleanroom_verification.md`. |
 | A18 | ✅ | Pilot teslim klasör standardı mevcut: `reports/pilots/`. |
-| A19 | ❌ | Hukuki imza dış danışman/onay sürecidir; kodla otomatik tamamlanamaz. |
+| A19 | ❌ | Dahili cleanroom hukuki kaydi mevcut (`reports/legal_cleanroom_signoff_internal.md`), ancak dis hukuk imzasi hala beklemede. |
 | A20 | ❌ | 2 ücretli pilot veya 2 imzalı LOI gerekir; repo dışı ticari icradır. |
 
 ## B) Ürün/Benchmark Claim Hazırlığı (B1-B10)
@@ -39,7 +39,7 @@ Bu matris, repoda tamamen biten işleri ve dış/operasyonel olarak kalan işler
 | B5 | ❌ | Gerçek cihazda latency/power ölçümü gerekir. |
 | B6 | ✅ | Claim dili dokümanda ayrıştırıldı (ölçülmüş vs hedef/tahmin). |
 | B7 | ❌ | Üçüncü taraf tekrar doğrulama dış doğrulayıcı ekip gerektirir. |
-| B8 | ❌ | Nihai lisans/compliance onayı hukuk imzası gerektirir. |
+| B8 | ❌ | Dahili teacher/output degerlendirmesi mevcut (`reports/teacher_output_license_assessment.md`), ancak nihai ticari hukuk onayi dis bagimlilik olarak beklemede. |
 | B9 | ❌ | Güvenlik/pentest raporu için harici güvenlik test kapsamı gerekir. |
 | B10 | ❌ | SLA/incident/rollback sözleşme paketi iş/hukuk icrası gerektirir. |
 

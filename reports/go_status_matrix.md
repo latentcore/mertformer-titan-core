@@ -21,11 +21,11 @@ This matrix tracks what is fully completed in-repo and what remains external/ope
 | A12 | ✅ | Lint gate pass: `ruff check` all green. |
 | A13 | ✅ | Full gate pass: `bash scripts/verify_all.sh` -> `[verify] OK`. |
 | A14 | ✅ | SDK EN/TR aligned: `SDK_GUIDE.md`, `SDK_GUIDE_TR.md`. |
-| A15 | ✅ | Release commits pushed on `main` (latest: `5dfb08b`). |
+| A15 | ✅ | Release commits are pushed on `main` (see `git log --oneline -n 1`). |
 | A16 | ✅ | Tag/release marker pushed (`v0.1.3-review-fix`) + changelog files present. |
 | A17 | ✅ | Clean-room verification completed (`reports/cleanroom_verification.md`). |
 | A18 | ✅ | Pilot delivery folder standard exists under `reports/pilots/`. |
-| A19 | ❌ | Legal sign-off is external counsel workflow; cannot be auto-completed by code. |
+| A19 | ❌ | Internal legal cleanroom record exists (`reports/legal_cleanroom_signoff_internal.md`), but external counsel sign-off is still pending. |
 | A20 | ❌ | Requires 2 paid pilots or 2 signed LOIs; this is commercial execution outside repo. |
 
 ## B) Product/Benchmark Claim Readiness (B1-B10)
@@ -39,7 +39,7 @@ This matrix tracks what is fully completed in-repo and what remains external/ope
 | B5 | ❌ | Requires real-device latency/power measurements. |
 | B6 | ✅ | Claim language is separated (measured vs target/estimate) in docs. |
 | B7 | ❌ | Third-party reproduction requires an external validator team. |
-| B8 | ❌ | Final commercial license/compliance approval requires legal sign-off. |
+| B8 | ❌ | Internal teacher/output assessment exists (`reports/teacher_output_license_assessment.md`), but final commercial legal approval remains external pending. |
 | B9 | ❌ | Security/pentest report requires dedicated external security assessment scope. |
 | B10 | ❌ | SLA/incident/rollback contract package requires business/legal execution. |
 
