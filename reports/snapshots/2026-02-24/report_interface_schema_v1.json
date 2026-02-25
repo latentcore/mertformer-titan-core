@@ -1,0 +1,41 @@
+{
+  "schema": "report_interface_v1",
+  "generated_at_local": "2026-02-24 04:05:57 +0300",
+  "objects": {
+    "claim_matrix": {
+      "fields": [
+        "claim_id",
+        "claim_text",
+        "status",
+        "local_evidence",
+        "web_evidence",
+        "risk",
+        "next_proof"
+      ],
+      "status_enum": [
+        "TRUE",
+        "TARGET/ESTIMATE",
+        "PENDING VALIDATION",
+        "CONTRADICTED",
+        "UNVERIFIED"
+      ]
+    },
+    "readiness_scorecard": {
+      "fields": [
+        "dimension",
+        "score_10",
+        "evidence_refs",
+        "blocking_gaps"
+      ]
+    },
+    "commercial_scenarios": {
+      "fields": [
+        "scenario",
+        "technical_state",
+        "deal_type",
+        "timeline",
+        "probability_band"
+      ]
+    }
+  }
+}

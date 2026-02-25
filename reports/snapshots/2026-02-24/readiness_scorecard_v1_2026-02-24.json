@@ -1,0 +1,81 @@
+{
+  "schema": "readiness_scorecard_v1",
+  "generated_at_local": "2026-02-24 04:05:57 +0300",
+  "scoring_scale": "0-10 (Risk boyutunda 10 = düşük risk)",
+  "dimensions": [
+    {
+      "dimension": "Teknik",
+      "score_10": 8.7,
+      "evidence_refs": [
+        "layers/bitlinear.py",
+        "layers/liquid.py",
+        "layers/moe.py",
+        "layers/mla.py",
+        "reports/closure_57_matrix.md"
+      ],
+      "blocking_gaps": [
+        "Dış benchmark kanıtı yok",
+        "Gerçek cihaz profillemesi yok"
+      ]
+    },
+    {
+      "dimension": "Üretim Hazırlığı",
+      "score_10": 5.4,
+      "evidence_refs": [
+        "reports/kpi_report_v1.json",
+        "reports/benchmarks/summary.json",
+        "model/transformers.py:10"
+      ],
+      "blocking_gaps": [
+        "Build pre-training durumda",
+        "Claim-eligible trained checkpoint yok"
+      ]
+    },
+    {
+      "dimension": "Pazar Uyum",
+      "score_10": 8.3,
+      "evidence_refs": [
+        "https://www.havelsan.com/en/sectors/simulation-autonomous-and-platform-management-technologies/main-the-enterprise-ai-platform",
+        "https://www.aselsan.com/tr/girisimcilik",
+        "https://www.tusas.com/hangarpro"
+      ],
+      "blocking_gaps": [
+        "Sektör-spesifik canlı PoC sonucu henüz yok"
+      ]
+    },
+    {
+      "dimension": "Ticari Hazırlık",
+      "score_10": 6.1,
+      "evidence_refs": [
+        "reports/pilot_offer_packages.md",
+        "reports/poc_protocol.md",
+        "reports/web_validation_sources_2026-02-24.md"
+      ],
+      "blocking_gaps": [
+        "İlk müşteri doğrulama PoC imzası yok",
+        "Lisans/hukuk temizliği external sign-off bekliyor"
+      ]
+    },
+    {
+      "dimension": "Risk",
+      "score_10": 5.7,
+      "evidence_refs": [
+        "reports/teacher_output_license_assessment.md",
+        "reports/dataset_health.md",
+        "reports/claim_matrix_v2_2026-02-24.json"
+      ],
+      "blocking_gaps": [
+        "Lisans ve teacher-output ticari uygunluk riski",
+        "2.64B target vs 3.70B measured iletişim riski"
+      ]
+    }
+  ],
+  "overall_weighted_score_10": 6.84,
+  "weights": {
+    "Teknik": 0.30,
+    "Üretim Hazırlığı": 0.25,
+    "Pazar Uyum": 0.20,
+    "Ticari Hazırlık": 0.15,
+    "Risk": 0.10
+  }
+}

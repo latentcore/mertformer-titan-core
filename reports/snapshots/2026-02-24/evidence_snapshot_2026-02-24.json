@@ -1,0 +1,64 @@
+{
+  "schema": "evidence_snapshot_v1",
+  "generated_at_local": "2026-02-24 04:05:57 +0300",
+  "timezone": "TR (+03)",
+  "repo_status": {
+    "branch": "main",
+    "scope": "local code+tests"
+  },
+  "frozen_truths": {
+    "build_status": {
+      "value": "PRE-TRAINING (UNVERIFIED)",
+      "local_evidence": "model/transformers.py:10"
+    },
+    "runtime_total_params": {
+      "value": 3698246156,
+      "local_evidence": "runtime instantiation command on 2026-02-24 04:06 TR"
+    },
+    "closure_57": {
+      "total_items": 57,
+      "green_items": 57,
+      "all_green": true,
+      "in_scope_pending_ids": [],
+      "out_of_scope_pending_ids": [8, 9, 11, 12, 51, 52, 54, 55, 56, 57],
+      "evidence_pending_ids": [8, 9, 11, 12, 51, 52, 54, 55, 56, 57],
+      "local_evidence": "reports/closure_57_matrix.md:3-9"
+    },
+    "benchmark_claim_eligibility": {
+      "eligible": false,
+      "reason": "trained checkpoint missing",
+      "local_evidence": "reports/kpi_report_v1.json:185-189"
+    }
+  },
+  "live_checks": {
+    "pytest": {
+      "command": "pytest -q",
+      "summary": "89 passed, 3 skipped in 17.28s",
+      "captured_at_local": "2026-02-24 04:06 TR"
+    },
+    "closure_script": {
+      "command": "python3 scripts/check_57_matrix.py",
+      "summary": {
+        "total_items": 57,
+        "green_items": 57,
+        "all_green": true
+      }
+    },
+    "runtime_params": {
+      "command": "python3 -c 'from model.transformers import MertFormer; ...'",
+      "summary": {
+        "runtime_total_params": 3698246156,
+        "runtime_trainable_params": 3698246156
+      }
+    }
+  },
+  "known_tensions": [
+    {
+      "topic": "design target vs runtime",
+      "design_target": "2.64B",
+      "runtime_measured": "~3.70B",
+      "target_evidence": "README.md:420, config/config.py:115",
+      "runtime_evidence": "evidence_snapshot live_checks.runtime_params"
+    }
+  ]
+}

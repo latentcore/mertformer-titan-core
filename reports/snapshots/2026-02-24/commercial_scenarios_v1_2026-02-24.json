@@ -1,0 +1,48 @@
+{
+  "schema": "commercial_scenarios_v1",
+  "generated_at_local": "2026-02-24 04:05:57 +0300",
+  "scenarios": [
+    {
+      "scenario": "basarisiz_egitim",
+      "technical_state": "Convergence yok veya kararsız; claim-eligible checkpoint üretilemedi.",
+      "deal_type": ["Acqui-hire", "Araştırma işbirliği", "Mimari danışmanlık"],
+      "timeline": "0-6 ay",
+      "probability_band": "%30-%45",
+      "commercial_impact": "Direkt model lisanslama zayıf; kurucu yetkinliği ve IP incelemesi öne çıkar.",
+      "target_companies": ["ASELSAN", "HAVELSAN", "TUSAŞ", "Savunma alt-yüklenicileri"],
+      "minimum_evidence_needed": [
+        "Stabil eğitim logları",
+        "Mimari farklılaştırma teknik notu",
+        "NDA altında teknik review"
+      ]
+    },
+    {
+      "scenario": "kismi_basari",
+      "technical_state": "Convergence var; en az 1 dış benchmarkta anlamlı skor; cihaz kanıtı kısmi.",
+      "deal_type": ["Ücretli PoC", "Pilot entegrasyon", "Non-exclusive lisans"],
+      "timeline": "3-9 ay",
+      "probability_band": "%40-%50",
+      "commercial_impact": "İlk kurumsal gelir ihtimali oluşur; pazarlık gücü teknik kanıtla artar.",
+      "target_companies": ["HAVELSAN", "ASELSAN", "TUSAŞ", "Regüle finans/kamu"],
+      "minimum_evidence_needed": [
+        "Reproducible checkpoint",
+        "Router collapse olmadığını gösteren telemetri",
+        "Pilot kapsam/başarı metrikleri"
+      ]
+    },
+    {
+      "scenario": "guclu_basari",
+      "technical_state": "Convergence + cihaz üstü profilleme + bağımsız tekrar üretim + müşteri PoC başarısı.",
+      "deal_type": ["Kurumsal lisans", "Exclusive alan lisansı", "Stratejik ortaklık", "Acqui-hire opsiyonu"],
+      "timeline": "6-18 ay",
+      "probability_band": "%10-%20",
+      "commercial_impact": "Yüksek değerli savunma/edge AI anlaşmaları mümkün; çoklu talep oluşabilir.",
+      "target_companies": ["BAYKAR", "ASELSAN", "HAVELSAN", "TUSAŞ", "Uluslararası edge OEM"],
+      "minimum_evidence_needed": [
+        "Gerçek cihazda TPS/memory/thermal raporu",
+        "Bağımsız üçüncü taraf tekrar üretim",
+        "Hukuki-lisans temizliği"
+      ]
+    }
+  ]
+}

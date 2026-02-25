@@ -1,0 +1,182 @@
+{
+  "schema": "claim_matrix_v2",
+  "generated_at_local": "2026-02-24 04:05:57 +0300",
+  "claims": [
+    {
+      "claim_id": "C001",
+      "claim_text": "Mevcut build durumu pre-training (unverified).",
+      "status": "TRUE",
+      "local_evidence": ["model/transformers.py:10", "train/train.py:10"],
+      "web_evidence": [],
+      "risk": "Düşük",
+      "next_proof": "Trained checkpoint + external benchmark raporu."
+    },
+    {
+      "claim_id": "C002",
+      "claim_text": "2.64B proje için tasarım hedefi olarak dokümante edilmiş.",
+      "status": "TRUE",
+      "local_evidence": ["README.md:420", "config/config.py:115"],
+      "web_evidence": [],
+      "risk": "Orta (yanlış anlaşılma riski)",
+      "next_proof": "Tüm dış dokümanlarda 'target' etiketi zorunlu tutulmalı."
+    },
+    {
+      "claim_id": "C003",
+      "claim_text": "Runtime toplam parametre mevcut build'de ~3.70B.",
+      "status": "TRUE",
+      "local_evidence": ["reports/evidence_snapshot_2026-02-24.json (live runtime check)"],
+      "web_evidence": [],
+      "risk": "Orta (pazarlama dili ile teknik gerçeklik ayrışması)",
+      "next_proof": "Runtime parametre sayısını CI çıktısı olarak sürüme sabitle."
+    },
+    {
+      "claim_id": "C004",
+      "claim_text": "Model şu an kesin 2.64B.",
+      "status": "CONTRADICTED",
+      "local_evidence": ["README.md:420", "reports/evidence_snapshot_2026-02-24.json"],
+      "web_evidence": [],
+      "risk": "Yüksek (güven kaybı)",
+      "next_proof": "Sunumlarda '2.64B design target / 3.70B measured current build' birlikte verilmeli."
+    },
+    {
+      "claim_id": "C005",
+      "claim_text": "Benchmark sonucu satılabilir iddia seviyesinde hazır.",
+      "status": "CONTRADICTED",
+      "local_evidence": ["reports/kpi_report_v1.json:185-189", "reports/benchmarks/summary.json:10"],
+      "web_evidence": [],
+      "risk": "Yüksek (overclaim)",
+      "next_proof": "Trained checkpoint + bağımsız benchmark çıktıları."
+    },
+    {
+      "claim_id": "C006",
+      "claim_text": "57/57 closure green ve in-scope pending yok.",
+      "status": "TRUE",
+      "local_evidence": ["reports/closure_57_matrix.md:3-9", "scripts/check_57_matrix.py output"],
+      "web_evidence": [],
+      "risk": "Düşük",
+      "next_proof": "Aynı kapıları eğitim sonrası tekrar çalıştır."
+    },
+    {
+      "claim_id": "C007",
+      "claim_text": "Bazı maddeler out-of-scope/evidence-pending durumda.",
+      "status": "TRUE",
+      "local_evidence": ["reports/closure_57_matrix.md:8-9"],
+      "web_evidence": [],
+      "risk": "Düşük",
+      "next_proof": "Out-of-scope maddeler için ayrı doğrulama sprinti."
+    },
+    {
+      "claim_id": "C008",
+      "claim_text": "Offline-first governance sınırları kodda aktif.",
+      "status": "TRUE",
+      "local_evidence": ["orchestrator/governance.py:10-13", "orchestrator/governance.py:46-55"],
+      "web_evidence": [],
+      "risk": "Orta",
+      "next_proof": "Gerçek müşteri PoC ortamında policy testleri."
+    },
+    {
+      "claim_id": "C009",
+      "claim_text": "Failure budget ile no-progress pivot mantığı mevcut.",
+      "status": "TRUE",
+      "local_evidence": ["orchestrator/failure_budget.py:16-20", "orchestrator/failure_budget.py:69-76"],
+      "web_evidence": [],
+      "risk": "Düşük",
+      "next_proof": "Uzun koşuda telemetri eşikleriyle sahada doğrula."
+    },
+    {
+      "claim_id": "C010",
+      "claim_text": "Distillation hattı teacher model ve HF token bağımlılığı içeriyor.",
+      "status": "TRUE",
+      "local_evidence": ["orchestrator/distillation_manager.py:98-103", "orchestrator/distillation_manager.py:123-127"],
+      "web_evidence": [],
+      "risk": "Orta-Yüksek (hukuki/lisans)",
+      "next_proof": "External legal counsel sign-off + cleanroom veri stratejisi."
+    },
+    {
+      "claim_id": "C011",
+      "claim_text": "45-107 t/s NPU hızları şu an kanıtlıdır.",
+      "status": "PENDING VALIDATION",
+      "local_evidence": ["reports/report_accuracy_audit.md:12-13", "reports/report_accuracy_audit.md:22-23"],
+      "web_evidence": [],
+      "risk": "Yüksek",
+      "next_proof": "Gerçek cihaz profillemesi (p50/p95 tps, sıcaklık, güç, bellek)."
+    },
+    {
+      "claim_id": "C012",
+      "claim_text": "LinkedIn '360 Brew' resmi algoritma adı.",
+      "status": "UNVERIFIED",
+      "local_evidence": [],
+      "web_evidence": [
+        "https://www.linkedin.com/help/linkedin/answer/a2001384",
+        "https://www.linkedin.com/help/linkedin/answer/a705554"
+      ],
+      "risk": "Orta (yanlış stratejik varsayım)",
+      "next_proof": "Sadece resmi LinkedIn yardım/engineering kaynaklarını referans al."
+    },
+    {
+      "claim_id": "C013",
+      "claim_text": "HAVELSAN MAIN resmi kurumsal AI platformudur.",
+      "status": "TRUE",
+      "local_evidence": [],
+      "web_evidence": ["https://www.havelsan.com/en/sectors/simulation-autonomous-and-platform-management-technologies/main-the-enterprise-ai-platform"],
+      "risk": "Düşük",
+      "next_proof": "İlgili ekipte teknik muhatap bulup joint PoC scope çıkarmak."
+    },
+    {
+      "claim_id": "C014",
+      "claim_text": "ASELSAN girişimcilik kanalı resmi olarak mevcut.",
+      "status": "TRUE",
+      "local_evidence": [],
+      "web_evidence": ["https://www.aselsan.com/tr/girisimcilik"],
+      "risk": "Düşük",
+      "next_proof": "Kurum odaklı PoC teklifini bu kanal + doğrudan teknik temas ile yürütmek."
+    },
+    {
+      "claim_id": "C015",
+      "claim_text": "TUSAŞ HangarPro benzeri açık inovasyon kanalı resmi olarak mevcut.",
+      "status": "TRUE",
+      "local_evidence": [],
+      "web_evidence": ["https://www.tusas.com/hangarpro"],
+      "risk": "Düşük",
+      "next_proof": "Problem-solution uyumlu kısa teknik dosya ile başvuru/temas."
+    },
+    {
+      "claim_id": "C016",
+      "claim_text": "BAYKAR AI odaklı ürün/duyurular resmi domainde mevcut.",
+      "status": "TRUE",
+      "local_evidence": [],
+      "web_evidence": [
+        "https://baykartech.com/tr/tb2t-ai/",
+        "https://baykartech.com/tr/basina-bizden-haberler/baykar-ve-leonardo-ortak-girisim-kuruyor-lba-systems/"
+      ],
+      "risk": "Orta (bot erişim kısıtı nedeniyle partial parse)",
+      "next_proof": "Manuel insan doğrulaması + doğrudan teknik temas."
+    },
+    {
+      "claim_id": "C017",
+      "claim_text": "CMMC regülasyon hattı resmi DoD kaynaklarında doğrulanıyor.",
+      "status": "TRUE",
+      "local_evidence": [],
+      "web_evidence": [
+        "https://dodcio.defense.gov/CMMC/About/",
+        "https://www.defense.gov/News/Releases/Release/Article/3962067/dod-releases-final-rule-for-cybersecurity-maturity-model-certification-cmmc-p/",
+        "https://www.acq.osd.mil/cmmc/assessment-guides.html"
+      ],
+      "risk": "Orta (uyumluluk gereksinimi yüksek)",
+      "next_proof": "PoC güvenlik/uyumluluk checklist'i ile teknik kapsamı eşleştir."
+    },
+    {
+      "claim_id": "C018",
+      "claim_text": "Compute kredi programları (Microsoft/AWS) resmi olarak mevcut.",
+      "status": "TRUE",
+      "local_evidence": [],
+      "web_evidence": [
+        "https://www.microsoft.com/en-us/startups/blog/founders-hub-benefits/",
+        "https://www.microsoft.com/en-us/startups/blog/trusted-partner-benefits/",
+        "https://aws.amazon.com/startups/credits"
+      ],
+      "risk": "Düşük-Orta",
+      "next_proof": "Başvuru dokümanlarını measured-only kanıt setiyle güncelle."
+    }
+  ]
+}
