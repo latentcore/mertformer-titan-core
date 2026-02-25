@@ -320,6 +320,118 @@ def save_checkpoint_smart(model, optimizer, scheduler, step, cfg, keep_last_n=3,
     return best_val_loss if val_loss is not None else best_val_loss
 
 
+def _normalize_state_dict_keys_for_model(model_state: dict, model: nn.Module) -> dict:
+    """
+    Normalize checkpoint key prefixes when torch.compile wrappers differ between save/load.
+    """
+    if not model_state:
+        return model_state
+    model_keys = list(model.state_dict().keys())
+    if not model_keys:
+        return model_state
+
+    ckpt_has_orig = any(k.startswith("_orig_mod.") for k in model_state.keys())
+    model_has_orig = any(k.startswith("_orig_mod.") for k in model_keys)
+
+    if ckpt_has_orig and not model_has_orig:
+        return {
+            (k.replace("_orig_mod.", "", 1) if k.startswith("_orig_mod.") else k): v
+            for k, v in model_state.items()
+        }
+    if (not ckpt_has_orig) and model_has_orig:
+        return {f"_orig_mod.{k}": v for k, v in model_state.items()}
+    return model_state
+
+
+def _discover_resume_checkpoint(cfg) -> Optional[Path]:
+    """
+    Find resume checkpoint.
+    Priority:
+      1) TITAN_RESUME_FROM
+      2) <save_dir>/<model_name>_latest.pt
+      3) newest *_latest.pt under save_dir
+    """
+    explicit = os.getenv("TITAN_RESUME_FROM", "").strip()
+    if explicit:
+        p = Path(explicit)
+        if not p.exists():
+            raise FileNotFoundError(f"TITAN_RESUME_FROM not found: {p}")
+        return p
+
+    save_dir = project_root / cfg.save_dir
+    if not save_dir.exists():
+        return None
+
+    candidates: list[Path] = []
+    model_name = str(getattr(cfg, "model_name", "")).strip()
+    if model_name:
+        candidates.append(save_dir / f"{model_name}_latest.pt")
+    candidates.extend(
+        sorted(save_dir.glob("*_latest.pt"), key=lambda p: p.stat().st_mtime, reverse=True)
+    )
+
+    seen: set[str] = set()
+    for path in candidates:
+        path_s = str(path.resolve())
+        if path.exists() and path_s not in seen:
+            seen.add(path_s)
+            return path
+    return None
+
+
+def _load_resume_payload(cfg, model: nn.Module, is_main_process: bool = True) -> Optional[dict]:
+    """
+    Load model state for resume before optimizer/scheduler wiring.
+    """
+    auto_resume = os.getenv("TITAN_AUTO_RESUME", "1").strip() == "1"
+    if not auto_resume:
+        if is_main_process:
+            print("ℹ️  Auto-resume disabled (TITAN_AUTO_RESUME=0).")
+        return None
+
+    ckpt_path = _discover_resume_checkpoint(cfg)
+    if ckpt_path is None:
+        if is_main_process:
+            print("ℹ️  Auto-resume enabled, no checkpoint found. Starting fresh.")
+        return None
+
+    state = torch.load(ckpt_path, map_location="cpu")
+    if not isinstance(state, dict) or "model" not in state:
+        raise RuntimeError(f"Invalid checkpoint format: {ckpt_path}")
+
+    model_state = _normalize_state_dict_keys_for_model(state["model"], model)
+    missing, unexpected = model.load_state_dict(model_state, strict=False)
+
+    step = int(state.get("step", 0))
+    val_loss = state.get("val_loss")
+
+    if is_main_process:
+        print(f"♻️  Auto-resume checkpoint loaded: {ckpt_path}")
+        print(f"   - resume_step: {step}")
+        if val_loss is not None:
+            print(f"   - resume_val_loss: {float(val_loss):.6f}")
+        print(f"   - model missing keys: {len(missing)} | unexpected keys: {len(unexpected)}")
+
+    return {
+        "checkpoint_path": str(ckpt_path),
+        "state": state,
+        "step": step,
+        "val_loss": float(val_loss) if val_loss is not None else None,
+    }
+
+
+def _infer_curriculum_stage_from_step(step: int, stage_boundaries: List[int]) -> int:
+    if step >= stage_boundaries[3]:
+        return 5
+    if step >= stage_boundaries[2]:
+        return 4
+    if step >= stage_boundaries[1]:
+        return 3
+    if step >= stage_boundaries[0]:
+        return 2
+    return 1
+
+
 
 # -----------------------------------------------------------------------------
 # TR: 1.5 INFERENCE SARLAYICI (ONNX TEMİZLEYİCİ)
@@ -1090,6 +1202,7 @@ def train():
     student = MertFormer()
     # Note: .to(device) is handled by accelerator.prepare, but explicit move is fine before prepare
     student.to(student_device)
+    resume_payload = _load_resume_payload(cfg, student, is_main_process=accelerator.is_main_process)
 
     # -------------------------------------------------------------------------
     # V27.0: MAXIMUM PERFORMANCE - torch.compile with max-autotune
@@ -1157,6 +1270,20 @@ def train():
         min_lr_ratio=0.01
     )
 
+    if resume_payload is not None:
+        resume_state = resume_payload.get("state", {})
+        try:
+            if "optimizer" in resume_state:
+                opt.load_state_dict(resume_state["optimizer"])
+            if "scheduler" in resume_state:
+                scheduler.load_state_dict(resume_state["scheduler"])
+            if accelerator.is_main_process:
+                print("✅ Resume optimizer/scheduler state restored.")
+        except Exception as resume_exc:
+            if accelerator.is_main_process:
+                print(f"⚠️ Resume state restore warning (optimizer/scheduler): {resume_exc}")
+                print("   Continuing with freshly initialized optimizer/scheduler.")
+
     # [ACCELERATE PREPARE]
     # DDP Magic happens here!
     student, opt, dl, val_dl, scheduler = accelerator.prepare(
@@ -1171,6 +1298,8 @@ def train():
 
     # Early Stopping & Monitoring
     best_val_loss = float('inf')
+    if resume_payload is not None and resume_payload.get("val_loss") is not None:
+        best_val_loss = float(resume_payload["val_loss"])
     patience_counter = 0
     early_stop_patience = getattr(cfg, "early_stop_patience", 5)
     val_check_interval = getattr(cfg, "val_check_interval", 1000)
@@ -1206,9 +1335,11 @@ def train():
     # Curriculum Stage Tracking (single source from config ratios)
     stage_boundaries = build_stage_boundaries(cfg.max_steps, curriculum_stage_ratios)
     stage1_end, stage2_end, stage3_end, stage4_end = stage_boundaries
-    current_curriculum_stage = 1
+    resume_step = int(resume_payload["step"]) if resume_payload is not None else 0
+    current_curriculum_stage = _infer_curriculum_stage_from_step(resume_step, stage_boundaries)
+    curriculum_ds.set_stage(current_curriculum_stage)
 
-    global_step = 0
+    global_step = max(0, resume_step)
     early_stopped = False
     accum_loss = 0.0
     accum_count = 0  # [FIX] Counter for proper avg_loss calculation
@@ -1251,6 +1382,9 @@ def train():
                 "max_steps_nominal": int(cfg.max_steps),
                 "micro_batch_size": int(cfg.micro_batch_size),
                 "grad_accum_steps": int(cfg.grad_accum_steps),
+                "resume_enabled": os.getenv("TITAN_AUTO_RESUME", "1") == "1",
+                "resume_checkpoint": resume_payload["checkpoint_path"] if resume_payload is not None else None,
+                "resume_step": int(global_step),
             }
         )
 
@@ -1258,6 +1392,8 @@ def train():
         print(f"🚀 TITAN ONYX STORM TRAINING STARTING...")
         print(f"📊 Max Steps (nominal): {cfg.max_steps}")
         print(f"🧮 Token Budget: mode={token_budget_mode} | min_tokens={target_tokens_min}")
+        if global_step > 0:
+            print(f"♻️  Resuming from step {global_step} | current_stage={current_curriculum_stage}")
         print(f"📚 Curriculum Stages:")
         print(f"   - Stage 1 ({curriculum_stage_names[0]}): Steps 0-{stage1_end} ({curriculum_stage_ratios[0]*100:.1f}%)")
         print(f"   - Stage 2 ({curriculum_stage_names[1]}): Steps {stage1_end}-{stage2_end} ({curriculum_stage_ratios[1]*100:.1f}%)")

@@ -45,18 +45,30 @@ export TITAN_PROFILE="${TITAN_PROFILE:-stable}"
 case "${TITAN_PROFILE}" in
     stable)
         ;;
+    fixed_steps)
+        # Deterministic production profile: step-bounded training + auto resume on restart.
+        export TITAN_TOKEN_BUDGET_MODE="${TITAN_TOKEN_BUDGET_MODE:-fixed_steps}"
+        export TITAN_AUTO_RESUME="${TITAN_AUTO_RESUME:-1}"
+        export TITAN_MAX_STEPS="${TITAN_MAX_STEPS:-45000}"
+        ;;
     max_arch)
         export MERTFORMER_MODEL_CONFIG="mertformer_max_arch.yaml"
         ;;
     *)
         echo "❌ ERROR [INVALID_TITAN_PROFILE]: '${TITAN_PROFILE}'"
-        echo "   Allowed values: stable | max_arch"
+        echo "   Allowed values: stable | fixed_steps | max_arch"
         exit 1
         ;;
 esac
 echo "🧭 TITAN_PROFILE=${TITAN_PROFILE}"
 if [[ -n "${MERTFORMER_MODEL_CONFIG:-}" ]]; then
     echo "🧩 Model config overlay: ${MERTFORMER_MODEL_CONFIG}"
+fi
+if [[ -n "${TITAN_TOKEN_BUDGET_MODE:-}" ]]; then
+    echo "🧮 TITAN_TOKEN_BUDGET_MODE=${TITAN_TOKEN_BUDGET_MODE}"
+fi
+if [[ -n "${TITAN_AUTO_RESUME:-}" ]]; then
+    echo "♻️  TITAN_AUTO_RESUME=${TITAN_AUTO_RESUME}"
 fi
 
 # ------------------------------------------------------------------------------

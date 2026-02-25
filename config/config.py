@@ -353,9 +353,9 @@ class MertFormerConfig:
         default_factory=lambda: [0.45, 0.35, 0.07, 0.03, 0.10]
     )
 
-    # Token-first budget (open ended by default, no hard max stop contract)
-    target_tokens_min: int = 70_000_000_000
-    token_budget_mode: str = "open_ended"  # {"open_ended", "fixed_steps"}
+    # Token-first budget (env-overridable to support fixed-steps production profile)
+    target_tokens_min: int = int(os.environ.get("TITAN_TARGET_TOKENS_MIN", 70_000_000_000))
+    token_budget_mode: str = os.environ.get("TITAN_TOKEN_BUDGET_MODE", "open_ended")  # {"open_ended", "fixed_steps"}
     estimated_tokens_per_sample: int = 512
 
     # Distillation policy: teacher access must be valid on gated model.
