@@ -12,6 +12,7 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 
 ## Kanonik One-File Path
 - Resmi/kanonik one-file script: `scripts/kaggle_onefile_demo_build30.py`
+- Colab fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
 - Repo disi one-file kopyalari desteklenmez ve drift kaynagi sayilir.
 
 ## Çekirdek Akışlar
@@ -30,6 +31,7 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - `check_translation_pointer_policy.py` — Derin denetim TR counterpart dosyalarinda pointer politikasini zorunlu kilar.
 - `check_doc_claim_consistency.py` — Ana dokumanlarda claim/evidence tutarliligini kontrol eder.
 - `clean_runtime_artifacts.sh` — Runtime artefaktlarini temizler (kök `kaggle_onefile_build30_*.jsonl` dahil).
+- `zip_denylist_audit.py` — Release zip'i denylist yol/secret pattern kontrolünden geçirir.
 
 ## Değerlendirme & Benchmark
 - `golden_eval.py` — Golden sample evaluator (50 prompt).

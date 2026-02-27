@@ -1703,6 +1703,7 @@ NİHAİ/  # proje kökü
 │   ├── golden_eval.py  # golden-set değerlendirme çalıştırıcısı
 │   ├── golden_score.py  # golden skor özetleyicisi
 │   ├── kaggle_onefile_demo_build30.py  # tek dosyalı Kaggle eğitim demosu
+│   ├── kaggle_onefile_demo_build30_colab_math_fastproof.py  # Colab matematik fastproof companion one-file demosu
 │   ├── kaggle_train_compare_build30.py  # Kaggle konfig karşılaştırma aracı
 │   ├── logbook_build.py  # birleşik logbook oluşturucu
 │   ├── mac_simulation.py  # macOS/mobile simülasyon çatısı
@@ -1738,6 +1739,7 @@ NİHAİ/  # proje kökü
 │   ├── verify_onnx_local.py  # yerel ONNX doğrulama çalıştırıcısı
 │   ├── version_checker.py  # bağımlılık/sürüm denetleyicisi
 │   ├── write_cuda_lock.py  # CUDA ortam kilidi yazıcısı
+│   ├── zip_denylist_audit.py  # release zip denylist + secret-pattern denetçisi
 │   └── xray.py  # çalışma zamanı xray diagnostik aracı
 ├── SDK_GUIDE.md  # dokümantasyon/rapor dosyası
 ├── SDK_GUIDE_TR.md  # Türkçe doküman karşılığı

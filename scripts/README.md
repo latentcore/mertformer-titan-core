@@ -12,6 +12,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 
 ## Canonical One-File Path
 - Official/canonical one-file script: `scripts/kaggle_onefile_demo_build30.py`
+- Colab fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
 - Repo-external copies are unsupported and treated as drift sources.
 
 ## Core Pipelines
@@ -30,6 +31,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - `check_translation_pointer_policy.py` — Enforces pointer policy for translated deep-audit counterparts.
 - `check_doc_claim_consistency.py` — Checks claim/evidence consistency in key docs.
 - `clean_runtime_artifacts.sh` — Cleans runtime artifacts (including root `kaggle_onefile_build30_*.jsonl`).
+- `zip_denylist_audit.py` — Audits release zip against denylisted paths and secret patterns.
 
 ## Evaluation & Benchmarks
 - `golden_eval.py` — Golden sample evaluator (50 prompts).

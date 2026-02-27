@@ -1705,6 +1705,7 @@ NİHAİ/  # project root
 │   ├── golden_eval.py  # golden-set evaluation runner
 │   ├── golden_score.py  # golden score summarizer
 │   ├── kaggle_onefile_demo_build30.py  # one-file Kaggle training demo
+│   ├── kaggle_onefile_demo_build30_colab_math_fastproof.py  # Colab math fastproof companion one-file demo
 │   ├── kaggle_train_compare_build30.py  # Kaggle config comparison runner
 │   ├── logbook_build.py  # unified logbook builder
 │   ├── mac_simulation.py  # macOS/mobile simulation harness
@@ -1740,6 +1741,7 @@ NİHAİ/  # project root
 │   ├── verify_onnx_local.py  # local ONNX verification runner
 │   ├── version_checker.py  # dependency/version checker
 │   ├── write_cuda_lock.py  # CUDA environment lock writer
+│   ├── zip_denylist_audit.py  # release zip denylist + secret-pattern auditor
 │   └── xray.py  # runtime xray diagnostics
 ├── SDK_GUIDE.md  # documentation/report file
 ├── SDK_GUIDE_TR.md  # Turkish document counterpart
