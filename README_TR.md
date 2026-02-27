@@ -67,7 +67,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `59 passed, 3 skipped` |
+| `python3 -m pytest -q` | `89 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -80,7 +80,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`59 passed, 3 skipped`)
+   - `pytest` geçti (`89 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -133,6 +133,11 @@ bash run.sh
 | **Dataset Uyumu** | ✅ Eğitim başlangıcı uyumlu (`lisans/hash iş akışı aktif; sürekli güncellenir`) |
 | **Tam Eğitim Koşusu** | ▶️ Henüz başlatılmadı (`ayrılmış donanımda ilk uzun koşu ile başlar`) |
 | **Benchmarklar** | ⛔ Eğitimli checkpoint olmadan iddia için uygun değil (`NOT ELIGIBLE FOR CLAIM`) |
+
+### Parametre Açıklaması (İddia Sınırı)
+- **Tasarım hedefi (Build 30):** `2.64B` parametre.
+- **Son ölçülen runtime toplamı:** `3,698,246,156` parametre (`~3.70B`).
+- **Yorum:** `2.64B` mimari/konumlandırma hedefidir; `~3.70B` mevcut ölçülen runtime toplamıdır ve olgusal iddialarda esas alınmalıdır.
 
 Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 

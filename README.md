@@ -67,7 +67,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `59 passed, 3 skipped` |
+| `python3 -m pytest -q` | `89 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -80,7 +80,7 @@ This repository is no longer in idea/prototype-only state. Core validation gates
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`59 passed, 3 skipped`)
+   - `pytest` passed (`89 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -133,6 +133,11 @@ bash run.sh
 | **Dataset Compliance** | ✅ Training-start compliant (`license/hash workflow active; continuous refresh`) |
 | **Full Training Run** | ▶️ Not started yet (`starts with first long-run on allocated hardware`) |
 | **Benchmarks** | ⛔ Not eligible for claim without a trained checkpoint (`NOT ELIGIBLE FOR CLAIM`) |
+
+### Parameter Disclosure (Claim Boundary)
+- **Design target (Build 30):** `2.64B` parameters.
+- **Latest measured runtime total:** `3,698,246,156` parameters (`~3.70B`).
+- **Interpretation:** `2.64B` is the architecture/positioning target; `~3.70B` is the current measured runtime total and is the authoritative figure for factual claims.
 
 Engineering truth (strict): see `reports/verified_matrix.md`.
 
