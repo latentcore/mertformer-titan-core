@@ -300,10 +300,11 @@ RUN_CONFIG: Dict[str, Any] = {
     # Byte-BPE encode optimization knobs (fallback path).
     "byte_bpe_encode_cache_size": 2048,
     "byte_bpe_cache_max_text_len": 512,
-    # Evidence lock / strict run contract
-    "strict_data": True,
-    "require_code_stage_data": True,
-    "allow_degraded_data": False,
+    # Evidence lock / strict run contract.
+    # Default is permissive for local/Kaggle portability; strict mode is opt-in.
+    "strict_data": False,
+    "require_code_stage_data": False,
+    "allow_degraded_data": True,
     "degraded_data_mode": False,
     "gpu_auto_tune": True,
     "gpu_target_vram_util": 0.94,
@@ -616,8 +617,8 @@ def run_data_preflight(cfg: Dict[str, Any]) -> Dict[str, Any]:
             reason_codes.append("gated_auth_missing")
 
     degraded_data_mode = (not strict_data) and bool(reason_codes or warning_codes)
-    if degraded_data_mode and not allow_degraded_data and strict_data:
-        # Defensive: strict mode with degraded path is always hard-fail.
+    if degraded_data_mode and not allow_degraded_data:
+        # Degraded path is active but explicitly disallowed by config.
         if "degraded_data_not_allowed" not in reason_codes:
             reason_codes.append("degraded_data_not_allowed")
 
@@ -936,6 +937,18 @@ def resolve_writable_dir(preferred: Path) -> Path:
     return Path.cwd()
 
 
+def _is_dir_writable(path: Path) -> bool:
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+        probe = path / ".write_probe"
+        with open(probe, "w", encoding="utf-8") as f:
+            f.write("ok")
+        probe.unlink(missing_ok=True)
+        return True
+    except Exception:
+        return False
+
+
 def interactive_prompt(cfg: Dict[str, Any]) -> Dict[str, Any]:
     if not cfg.get("interactive", False):
         return cfg
@@ -1050,9 +1063,9 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
         "byte_bpe_cache_max_text_len": 512,
         "out_dir": "/content/mertformer_outputs",
         "checkpoint_dir": "/content/mertformer_outputs/checkpoints/kaggle_onefile_build30",
-        "strict_data": True,
-        "require_code_stage_data": True,
-        "allow_degraded_data": False,
+        "strict_data": False,
+        "require_code_stage_data": False,
+        "allow_degraded_data": True,
         "degraded_data_mode": False,
         "gpu_auto_tune": True,
         "gpu_target_vram_util": 0.94,
@@ -1130,11 +1143,29 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
     if out_dir != out_dir_raw:
         print(f"[runtime] out_dir fallback: requested={out_dir_raw} resolved={out_dir}")
     merged["out_dir"] = str(out_dir)
-    ckpt_dir = Path(str(merged.get("checkpoint_dir", "checkpoints/kaggle_onefile_build30"))).expanduser()
+
+    # Keep artifact root on a writable path as well.
+    artifact_root_raw = Path(str(merged.get("artifact_root", merged["out_dir"]))).expanduser()
+    artifact_root = resolve_writable_dir(artifact_root_raw)
+    if artifact_root != artifact_root_raw:
+        print(f"[runtime] artifact_root fallback: requested={artifact_root_raw} resolved={artifact_root}")
+    merged["artifact_root"] = str(artifact_root)
+    merged["out_dir"] = str(artifact_root)
+
+    # Absolute checkpoint paths may target non-writable locations outside Kaggle.
+    ckpt_raw = Path(str(merged.get("checkpoint_dir", "checkpoints/kaggle_onefile_build30"))).expanduser()
+    if ckpt_raw.is_absolute():
+        if _is_dir_writable(ckpt_raw):
+            ckpt_dir = ckpt_raw
+        else:
+            ckpt_dir = Path(str(merged["artifact_root"])) / "checkpoints" / "kaggle_onefile_build30"
+            print(f"[runtime] checkpoint_dir fallback: requested={ckpt_raw} resolved={ckpt_dir}")
+    else:
+        ckpt_dir = Path(str(merged["artifact_root"])) / ckpt_raw
     merged["checkpoint_dir"] = str(ckpt_dir)
     if str(merged.get("logger_jsonl_path", "")).strip() == "":
         merged["logger_jsonl_path"] = str(
-            Path(str(merged["out_dir"])) / "kaggle_onefile_build30_log.jsonl"
+            Path(str(merged["artifact_root"])) / "kaggle_onefile_build30_log.jsonl"
         )
 
     bitnet_mode = str(merged.get("bitnet_mode", "stable")).strip().lower()
