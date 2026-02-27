@@ -1406,9 +1406,9 @@ NİHAİ/  # project root
 ├── CHANGELOG_TR.md  # Turkish document counterpart
 ├── CITATION.cff  # citation metadata
 ├── config/  # directory
-│   ├── __init__.py  # Python module/script
+│   ├── __init__.py  # config package initializer
 │   ├── base.yaml  # YAML configuration file
-│   ├── config.py  # Python module/script
+│   ├── config.py  # environment-aware runtime configuration loader
 │   ├── export/  # directory
 │   │   └── onnx_mobile.yaml  # YAML configuration file
 │   ├── model/  # directory
@@ -1445,14 +1445,14 @@ NİHAİ/  # project root
 │   ├── cost_model_TR.md  # Turkish document counterpart
 │   ├── efficiency_report.md  # documentation/report file
 │   ├── efficiency_report_TR.md  # Turkish document counterpart
-│   └── flops_estimator.py  # Python module/script
+│   └── flops_estimator.py  # FLOPs and throughput estimation utility
 ├── eval/  # directory
-│   ├── agentic_suite.py  # Python module/script
-│   ├── generalization_suite.py  # Python module/script
-│   ├── golden.py  # Python module/script
-│   ├── gsm8k.py  # Python module/script
-│   ├── humaneval.py  # Python module/script
-│   └── report_builder.py  # Python module/script
+│   ├── agentic_suite.py  # agentic benchmark runner
+│   ├── generalization_suite.py  # out-of-distribution/generalization benchmark runner
+│   ├── golden.py  # golden-set evaluation harness
+│   ├── gsm8k.py  # GSM8K math benchmark runner
+│   ├── humaneval.py  # HumanEval code benchmark runner
+│   └── report_builder.py  # benchmark report aggregator
 ├── experiments/  # directory
 │   └── exp_001_baseline/  # directory
 │       ├── config.yaml  # YAML configuration file
@@ -1471,18 +1471,18 @@ NİHAİ/  # project root
 ├── INTERNAL_AGI_GAP.md  # documentation/report file
 ├── INTERNAL_AGI_GAP_TR.md  # Turkish document counterpart
 ├── layers/  # directory
-│   ├── __init__.py  # Python module/script
-│   ├── bitlinear.py  # Python module/script
-│   ├── bitnet_patch.py  # Python module/script
-│   ├── cognitive_extensions.py  # Python module/script
-│   ├── ffn.py  # Python module/script
-│   ├── lifelong_safety.py  # Python module/script
-│   ├── liquid.py  # Python module/script
-│   ├── mertformer_block.py  # Python module/script
-│   ├── mla.py  # Python module/script
-│   ├── moe.py  # Python module/script
-│   ├── qinn.py  # Python module/script
-│   └── world_model_head.py  # Python module/script
+│   ├── __init__.py  # layer package exports
+│   ├── bitlinear.py  # BitNet 1.58b ternary linear layer
+│   ├── bitnet_patch.py  # low-bit patching and compatibility helpers
+│   ├── cognitive_extensions.py  # optional cognitive extension blocks
+│   ├── ffn.py  # feed-forward network variants
+│   ├── lifelong_safety.py  # lifelong safety hooks and guards
+│   ├── liquid.py  # CfC-style liquid dynamics layers
+│   ├── mertformer_block.py  # core MertFormer block composition
+│   ├── mla.py  # multi-head latent attention implementation
+│   ├── moe.py  # sparse MoE with LiquidRouter routing
+│   ├── qinn.py  # QINN experimental module
+│   └── world_model_head.py  # optional world-model prediction head
 ├── LICENSE  # license terms (EN)
 ├── LICENSE_TR  # license terms (TR)
 ├── limits/  # directory
@@ -1493,57 +1493,57 @@ NİHAİ/  # project root
 │   ├── README.md  # primary documentation (EN)
 │   └── README_TR.md  # Turkish document counterpart
 ├── mertformer_sdk/  # directory
-│   ├── __init__.py  # Python module/script
-│   ├── api.py  # Python module/script
-│   ├── cli.py  # Python module/script
-│   ├── export.py  # Python module/script
+│   ├── __init__.py  # SDK public package exports
+│   ├── api.py  # high-level Python SDK API
+│   ├── cli.py  # command-line interface entrypoints
+│   ├── export.py  # model export helpers (ONNX/mobile)
 │   ├── kernels/  # directory
-│   │   ├── __init__.py  # Python module/script
+│   │   ├── __init__.py  # kernel package exports
 │   │   ├── cpp/  # directory
-│   │   │   ├── __init__.py  # Python module/script
+│   │   │   ├── __init__.py  # C++ kernel binding package marker
 │   │   │   ├── bitnet_cpu.cpp  # C++ source file
-│   │   │   └── loader.py  # Python module/script
-│   │   ├── dispatcher.py  # Python module/script
-│   │   ├── onnx_custom_op.py  # Python module/script
-│   │   └── triton_ternary.py  # Python module/script
-│   ├── kpi.py  # Python module/script
-│   ├── pilot.py  # Python module/script
+│   │   │   └── loader.py  # dynamic loader for C++ kernels
+│   │   ├── dispatcher.py  # runtime kernel dispatch policy
+│   │   ├── onnx_custom_op.py  # ONNX custom-op registration glue
+│   │   └── triton_ternary.py  # Triton ternary kernel implementation
+│   ├── kpi.py  # KPI report generation helpers
+│   ├── pilot.py  # pilot report and artifact helpers
 │   └── utils/  # directory
-│       ├── __init__.py  # Python module/script
-│       ├── bitpack.py  # Python module/script
-│       └── onnx_meta.py  # Python module/script
+│       ├── __init__.py  # SDK utilities package marker
+│       ├── bitpack.py  # bit-packing and unpacking utilities
+│       └── onnx_meta.py  # ONNX metadata writer and reader
 ├── model/  # directory
-│   ├── __init__.py  # Python module/script
-│   └── transformers.py  # Python module/script
+│   ├── __init__.py  # model package exports
+│   └── transformers.py  # MertFormer backbone assembly
 ├── MODEL_CARD.md  # documentation/report file
 ├── MODEL_CARD_TR.md  # Turkish document counterpart
 ├── orchestrator/  # directory
-│   ├── __init__.py  # Python module/script
-│   ├── agent_registry.py  # Python module/script
-│   ├── alignment_contracts.py  # Python module/script
-│   ├── audio_sense.py  # Python module/script
-│   ├── cognitive.py  # Python module/script
-│   ├── cognitive_loop.py  # Python module/script
-│   ├── compute_orchestrator.py  # Python module/script
-│   ├── core.py  # Python module/script
-│   ├── distillation_manager.py  # Python module/script
-│   ├── experience_store.py  # Python module/script
-│   ├── failure_budget.py  # Python module/script
-│   ├── governance.py  # Python module/script
-│   ├── hardware.py  # Python module/script
-│   ├── memory.py  # Python module/script
-│   ├── paths.py  # Python module/script
-│   ├── planner.py  # Python module/script
-│   ├── reasoning_engine.py  # Python module/script
-│   ├── self_audit.py  # Python module/script
-│   ├── self_improvement_guard.py  # Python module/script
-│   ├── sense_engine.py  # Python module/script
-│   ├── swarm_runtime.py  # Python module/script
-│   ├── telemetry.py  # Python module/script
-│   ├── tool_executor.py  # Python module/script
-│   ├── tool_registry.py  # Python module/script
-│   ├── verifier.py  # Python module/script
-│   └── web_sense.py  # Python module/script
+│   ├── __init__.py  # orchestrator package exports
+│   ├── agent_registry.py  # agent registry and capability mapping
+│   ├── alignment_contracts.py  # policy/alignment contract enforcement
+│   ├── audio_sense.py  # audio sensing adapter
+│   ├── cognitive.py  # cognitive controller entrypoint
+│   ├── cognitive_loop.py  # iterative cognitive loop runtime
+│   ├── compute_orchestrator.py  # compute resource orchestration
+│   ├── core.py  # orchestrator core runtime
+│   ├── distillation_manager.py  # teacher-student distillation control
+│   ├── experience_store.py  # episodic experience storage
+│   ├── failure_budget.py  # failure-budget gates and halts
+│   ├── governance.py  # offline/safety governance gates
+│   ├── hardware.py  # hardware capability detection
+│   ├── memory.py  # short/long memory management
+│   ├── paths.py  # canonical path/constants resolver
+│   ├── planner.py  # task planning and decomposition
+│   ├── reasoning_engine.py  # reasoning step execution engine
+│   ├── self_audit.py  # self-audit checks and traces
+│   ├── self_improvement_guard.py  # self-improvement safety guardrails
+│   ├── sense_engine.py  # multi-sensor fusion entrypoint
+│   ├── swarm_runtime.py  # multi-agent swarm runtime
+│   ├── telemetry.py  # telemetry emission and counters
+│   ├── tool_executor.py  # tool execution sandbox wrapper
+│   ├── tool_registry.py  # allowed tool registry
+│   ├── verifier.py  # output verification and consistency checks
+│   └── web_sense.py  # web sensing adapter
 ├── PITCH.md  # documentation/report file
 ├── PITCH_TR.md  # Turkish document counterpart
 ├── postmortems/  # directory
@@ -1675,43 +1675,43 @@ NİHAİ/  # project root
 ├── requirements.txt  # text artifact
 ├── run.sh  # shell automation script
 ├── scripts/  # directory
-│   ├── __init__.py  # Python module/script
-│   ├── auto_demo_video.py  # Python module/script
-│   ├── benchmarks_internal.py  # Python module/script
-│   ├── bitnet_kernel_benchmark_standalone.py  # Python module/script
+│   ├── __init__.py  # scripts package marker
+│   ├── auto_demo_video.py  # auto-generate demo video artifacts
+│   ├── benchmarks_internal.py  # internal benchmark orchestrator
+│   ├── bitnet_kernel_benchmark_standalone.py  # standalone low-bit kernel benchmark
 │   ├── bootstrap_venv.sh  # shell automation script
-│   ├── build_investor_deck.py  # Python module/script
-│   ├── build_validation_set.py  # Python module/script
-│   ├── chat.py  # Python module/script
-│   ├── check_57_matrix.py  # Python module/script
-│   ├── check_doc_claim_consistency.py  # Python module/script
-│   ├── check_tokenizer_sync.py  # Python module/script
-│   ├── check_translation_pointer_policy.py  # Python module/script
-│   ├── checkpoint_restore_drill.py  # Python module/script
+│   ├── build_investor_deck.py  # investor deck assembly helper
+│   ├── build_validation_set.py  # validation set constructor
+│   ├── chat.py  # local chat CLI runner
+│   ├── check_57_matrix.py  # closure-57 gate validator
+│   ├── check_doc_claim_consistency.py  # docs claim consistency checker
+│   ├── check_tokenizer_sync.py  # tokenizer artifact sync checker
+│   ├── check_translation_pointer_policy.py  # EN/TR pointer policy checker
+│   ├── checkpoint_restore_drill.py  # checkpoint restore drill
 │   ├── clean_runtime_artifacts.sh  # shell automation script
 │   ├── cleanroom_verify.sh  # shell automation script
-│   ├── data_pipeline.py  # Python module/script
-│   ├── download_tr_tokenizer.py  # Python module/script
-│   ├── drone_sitl_demo.py  # Python module/script
-│   ├── eval.py  # Python module/script
-│   ├── extract_dataset_refs.py  # Python module/script
-│   ├── failure_budget_drill.py  # Python module/script
-│   ├── golden_eval.py  # Python module/script
-│   ├── golden_score.py  # Python module/script
-│   ├── kaggle_onefile_demo_build30.py  # Python module/script
-│   ├── kaggle_train_compare_build30.py  # Python module/script
-│   ├── logbook_build.py  # Python module/script
-│   ├── mac_simulation.py  # Python module/script
-│   ├── md_build30_sweep.py  # Python module/script
-│   ├── md_integrity_check.py  # Python module/script
-│   ├── mini_titan_poc.py  # Python module/script
-│   ├── mobile_export.py  # Python module/script
-│   ├── nan_kill_test.py  # Python module/script
-│   ├── operator_mode_gate.py  # Python module/script
-│   ├── overfit_gate.py  # Python module/script
+│   ├── data_pipeline.py  # dataset prep/dedup/filter pipeline
+│   ├── download_tr_tokenizer.py  # Turkish tokenizer downloader
+│   ├── drone_sitl_demo.py  # SITL drone demonstration runner
+│   ├── eval.py  # unified evaluation launcher
+│   ├── extract_dataset_refs.py  # dataset reference extractor
+│   ├── failure_budget_drill.py  # failure-budget dry-run tester
+│   ├── golden_eval.py  # golden-set evaluation runner
+│   ├── golden_score.py  # golden score summarizer
+│   ├── kaggle_onefile_demo_build30.py  # one-file Kaggle training demo
+│   ├── kaggle_train_compare_build30.py  # Kaggle config comparison runner
+│   ├── logbook_build.py  # unified logbook builder
+│   ├── mac_simulation.py  # macOS/mobile simulation harness
+│   ├── md_build30_sweep.py  # markdown sweep/check utility
+│   ├── md_integrity_check.py  # markdown integrity validator
+│   ├── mini_titan_poc.py  # minimal Titan PoC runner
+│   ├── mobile_export.py  # mobile export pipeline
+│   ├── nan_kill_test.py  # NaN detection and kill-switch test
+│   ├── operator_mode_gate.py  # operator-mode policy gate
+│   ├── overfit_gate.py  # overfit gate detector
 │   ├── README.md  # primary documentation (EN)
 │   ├── README_TR.md  # Turkish document counterpart
-│   ├── record_dataset_hashes.py  # Python module/script
+│   ├── record_dataset_hashes.py  # dataset hash recorder
 │   ├── release_build30.sh  # shell automation script
 │   ├── reports/  # directory
 │   │   ├── model_health.md  # documentation/report file
@@ -1719,58 +1719,58 @@ NİHAİ/  # project root
 │   ├── runs/  # directory
 │   │   └── preflight/  # directory
 │   │       └── config_snapshot.json  # JSON data artifact
-│   ├── scaling_audit_math.py  # Python module/script
-│   ├── secret_scan.py  # Python module/script
-│   ├── smart_runner.py  # Python module/script
-│   ├── smoke_train_benchmark.py  # Python module/script
-│   ├── test_onnx_export.py  # Python module/script
-│   ├── titan_onnx_stress_test.py  # Python module/script
-│   ├── titan_preflight.py  # Python module/script
-│   ├── train_smoke.py  # Python module/script
-│   ├── train_tpu_turbo.py  # Python module/script
-│   ├── update_system_hardware.py  # Python module/script
+│   ├── scaling_audit_math.py  # scaling math and projection audit
+│   ├── secret_scan.py  # secret leak scanner
+│   ├── smart_runner.py  # profile-aware run orchestrator
+│   ├── smoke_train_benchmark.py  # smoke-training benchmark runner
+│   ├── test_onnx_export.py  # ONNX export quick test
+│   ├── titan_onnx_stress_test.py  # ONNX runtime stress test
+│   ├── titan_preflight.py  # preflight readiness checks
+│   ├── train_smoke.py  # short smoke-training run
+│   ├── train_tpu_turbo.py  # TPU accelerated training entry
+│   ├── update_system_hardware.py  # system hardware snapshot updater
 │   ├── verify_all.sh  # shell automation script
-│   ├── verify_datasets.py  # Python module/script
-│   ├── verify_onnx_local.py  # Python module/script
-│   ├── version_checker.py  # Python module/script
-│   ├── write_cuda_lock.py  # Python module/script
-│   └── xray.py  # Python module/script
+│   ├── verify_datasets.py  # dataset integrity verifier
+│   ├── verify_onnx_local.py  # local ONNX verification runner
+│   ├── version_checker.py  # dependency/version checker
+│   ├── write_cuda_lock.py  # CUDA environment lock writer
+│   └── xray.py  # runtime xray diagnostics
 ├── SDK_GUIDE.md  # documentation/report file
 ├── SDK_GUIDE_TR.md  # Turkish document counterpart
 ├── SECURITY.md  # documentation/report file
 ├── SECURITY_TR.md  # Turkish document counterpart
-├── snake_demo.py  # Python module/script
+├── snake_demo.py  # Pygame snake demo with autoplayer
 ├── TASK.md  # documentation/report file
 ├── TASK_TR.md  # Turkish document counterpart
 ├── TECHNICAL_REPORT.md  # documentation/report file
 ├── TECHNICAL_REPORT_TR.md  # Turkish document counterpart
 ├── tests/  # directory
-│   ├── test_57_matrix_gate.py  # Python module/script
-│   ├── test_agi_cognitive.py  # Python module/script
-│   ├── test_architecture_integrity.py  # Python module/script
-│   ├── test_cognitive_extensions.py  # Python module/script
-│   ├── test_comprehensive.py  # Python module/script
-│   ├── test_continual_adapter.py  # Python module/script
-│   ├── test_cpp_kernel_loader.py  # Python module/script
-│   ├── test_drone_sitl_demo.py  # Python module/script
-│   ├── test_eval_suites.py  # Python module/script
-│   ├── test_export_metadata.py  # Python module/script
-│   ├── test_kaggle_compare_script.py  # Python module/script
-│   ├── test_kernel_dispatcher.py  # Python module/script
-│   ├── test_kernel_equivalence.py  # Python module/script
-│   ├── test_kpi_report_cli.py  # Python module/script
-│   ├── test_lifelong_safety.py  # Python module/script
-│   ├── test_mla_regressions.py  # Python module/script
-│   ├── test_model.py  # Python module/script
-│   ├── test_onnx_custom_op_contract.py  # Python module/script
-│   ├── test_onnx_export_path.py  # Python module/script
-│   ├── test_onnx_metadata_hook.py  # Python module/script
-│   ├── test_orchestrator_swarm_runtime.py  # Python module/script
-│   ├── test_sdk_api.py  # Python module/script
-│   ├── test_sdk_pilot_cli.py  # Python module/script
-│   ├── test_train_loop_sanity.py  # Python module/script
-│   ├── test_triad_omega_api.py  # Python module/script
-│   └── test_world_model_head.py  # Python module/script
+│   ├── test_57_matrix_gate.py  # validates Closure-57 gate behavior
+│   ├── test_agi_cognitive.py  # verifies cognitive runtime contracts
+│   ├── test_architecture_integrity.py  # checks model architecture invariants
+│   ├── test_cognitive_extensions.py  # tests cognitive extension modules
+│   ├── test_comprehensive.py  # broad integration regression suite
+│   ├── test_continual_adapter.py  # tests continual-adapter behaviors
+│   ├── test_cpp_kernel_loader.py  # verifies C++ kernel loader path
+│   ├── test_drone_sitl_demo.py  # validates SITL demo pipeline
+│   ├── test_eval_suites.py  # tests evaluation suite wrappers
+│   ├── test_export_metadata.py  # checks export metadata generation
+│   ├── test_kaggle_compare_script.py  # tests Kaggle compare script outputs
+│   ├── test_kernel_dispatcher.py  # validates kernel dispatch logic
+│   ├── test_kernel_equivalence.py  # checks low-bit kernel equivalence
+│   ├── test_kpi_report_cli.py  # tests KPI report CLI contract
+│   ├── test_lifelong_safety.py  # validates lifelong safety guards
+│   ├── test_mla_regressions.py  # MLA regression and shape tests
+│   ├── test_model.py  # core model forward/inference tests
+│   ├── test_onnx_custom_op_contract.py  # ONNX custom-op contract tests
+│   ├── test_onnx_export_path.py  # ONNX export path tests
+│   ├── test_onnx_metadata_hook.py  # ONNX metadata hook tests
+│   ├── test_orchestrator_swarm_runtime.py  # swarm runtime behavior tests
+│   ├── test_sdk_api.py  # SDK API functional tests
+│   ├── test_sdk_pilot_cli.py  # SDK pilot CLI behavior tests
+│   ├── test_train_loop_sanity.py  # training-loop sanity checks
+│   ├── test_triad_omega_api.py  # Triad/Omega API contract tests
+│   └── test_world_model_head.py  # world-model head unit tests
 ├── tokenizer/  # directory
 │   ├── drift_report.md  # documentation/report file
 │   ├── drift_report_TR.md  # Turkish document counterpart
@@ -1790,9 +1790,9 @@ NİHAİ/  # project root
 │       ├── README.md  # primary documentation (EN)
 │       └── README_TR.md  # Turkish document counterpart
 ├── train/  # directory
-│   ├── __init__.py  # Python module/script
-│   ├── continual_adapter.py  # Python module/script
-│   └── train.py  # Python module/script
+│   ├── __init__.py  # training package marker
+│   ├── continual_adapter.py  # continual-learning adapter utilities
+│   └── train.py  # main training loop and checkpointing
 ├── training_dynamics/  # directory
 │   ├── cold_vs_warm.md  # documentation/report file
 │   └── cold_vs_warm_TR.md  # Turkish document counterpart
@@ -1803,10 +1803,10 @@ NİHAİ/  # project root
 ├── USE_POLICY.md  # documentation/report file
 ├── USE_POLICY_TR.md  # Turkish document counterpart
 ├── utils/  # directory
-│   ├── __init__.py  # Python module/script
-│   ├── dataset_registry.py  # Python module/script
-│   ├── logger.py  # Python module/script
-│   └── safety.py  # Python module/script
+│   ├── __init__.py  # utilities package marker
+│   ├── dataset_registry.py  # dataset registry and manifest helpers
+│   ├── logger.py  # structured logging utilities
+│   └── safety.py  # safety constraints and helper checks
 ├── WHITE_PAPER_LIQUIDROUTER.md  # documentation/report file
 └── WHITE_PAPER_LIQUIDROUTER_TR.md  # Turkish document counterpart
 ```

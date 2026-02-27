@@ -1404,9 +1404,9 @@ NİHAİ/  # proje kökü
 ├── CHANGELOG_TR.md  # Türkçe doküman karşılığı
 ├── CITATION.cff  # atıf metaverisi
 ├── config/  # dizin
-│   ├── __init__.py  # Python modülü/scripti
+│   ├── __init__.py  # config paket başlatıcısı
 │   ├── base.yaml  # YAML yapılandırma dosyası
-│   ├── config.py  # Python modülü/scripti
+│   ├── config.py  # ortam-bağımlı çalışma konfigürasyonu yükleyicisi
 │   ├── export/  # dizin
 │   │   └── onnx_mobile.yaml  # YAML yapılandırma dosyası
 │   ├── model/  # dizin
@@ -1443,14 +1443,14 @@ NİHAİ/  # proje kökü
 │   ├── cost_model_TR.md  # Türkçe doküman karşılığı
 │   ├── efficiency_report.md  # dokümantasyon/rapor dosyası
 │   ├── efficiency_report_TR.md  # Türkçe doküman karşılığı
-│   └── flops_estimator.py  # Python modülü/scripti
+│   └── flops_estimator.py  # FLOPs ve throughput tahmin aracı
 ├── eval/  # dizin
-│   ├── agentic_suite.py  # Python modülü/scripti
-│   ├── generalization_suite.py  # Python modülü/scripti
-│   ├── golden.py  # Python modülü/scripti
-│   ├── gsm8k.py  # Python modülü/scripti
-│   ├── humaneval.py  # Python modülü/scripti
-│   └── report_builder.py  # Python modülü/scripti
+│   ├── agentic_suite.py  # agentic benchmark çalıştırıcısı
+│   ├── generalization_suite.py  # genelleme/OOD benchmark çalıştırıcısı
+│   ├── golden.py  # golden-set değerlendirme çatısı
+│   ├── gsm8k.py  # GSM8K matematik benchmark çalıştırıcısı
+│   ├── humaneval.py  # HumanEval kod benchmark çalıştırıcısı
+│   └── report_builder.py  # benchmark rapor birleştiricisi
 ├── experiments/  # dizin
 │   └── exp_001_baseline/  # dizin
 │       ├── config.yaml  # YAML yapılandırma dosyası
@@ -1469,18 +1469,18 @@ NİHAİ/  # proje kökü
 ├── INTERNAL_AGI_GAP.md  # dokümantasyon/rapor dosyası
 ├── INTERNAL_AGI_GAP_TR.md  # Türkçe doküman karşılığı
 ├── layers/  # dizin
-│   ├── __init__.py  # Python modülü/scripti
-│   ├── bitlinear.py  # Python modülü/scripti
-│   ├── bitnet_patch.py  # Python modülü/scripti
-│   ├── cognitive_extensions.py  # Python modülü/scripti
-│   ├── ffn.py  # Python modülü/scripti
-│   ├── lifelong_safety.py  # Python modülü/scripti
-│   ├── liquid.py  # Python modülü/scripti
-│   ├── mertformer_block.py  # Python modülü/scripti
-│   ├── mla.py  # Python modülü/scripti
-│   ├── moe.py  # Python modülü/scripti
-│   ├── qinn.py  # Python modülü/scripti
-│   └── world_model_head.py  # Python modülü/scripti
+│   ├── __init__.py  # katman paketi dışa aktarımları
+│   ├── bitlinear.py  # BitNet 1.58b ternary lineer katman
+│   ├── bitnet_patch.py  # düşük-bit uyumluluk ve patch yardımcıları
+│   ├── cognitive_extensions.py  # opsiyonel bilişsel genişletme blokları
+│   ├── ffn.py  # feed-forward ağ varyantları
+│   ├── lifelong_safety.py  # yaşam boyu güvenlik kancaları ve guardları
+│   ├── liquid.py  # CfC tabanlı liquid dinamik katmanları
+│   ├── mertformer_block.py  # çekirdek MertFormer blok birleşimi
+│   ├── mla.py  # multi-head latent attention uygulaması
+│   ├── moe.py  # LiquidRouter içeren sparse MoE yönlendirme
+│   ├── qinn.py  # deneysel QINN modülü
+│   └── world_model_head.py  # opsiyonel world-model tahmin başlığı
 ├── LICENSE  # lisans şartları (EN)
 ├── LICENSE_TR  # lisans şartları (TR)
 ├── limits/  # dizin
@@ -1491,57 +1491,57 @@ NİHAİ/  # proje kökü
 │   ├── README.md  # ana dokümantasyon (EN)
 │   └── README_TR.md  # Türkçe doküman karşılığı
 ├── mertformer_sdk/  # dizin
-│   ├── __init__.py  # Python modülü/scripti
-│   ├── api.py  # Python modülü/scripti
-│   ├── cli.py  # Python modülü/scripti
-│   ├── export.py  # Python modülü/scripti
+│   ├── __init__.py  # SDK genel paket dışa aktarımları
+│   ├── api.py  # üst seviye Python SDK API katmanı
+│   ├── cli.py  # komut satırı arayüz girişleri
+│   ├── export.py  # model export yardımcıları (ONNX/mobile)
 │   ├── kernels/  # dizin
-│   │   ├── __init__.py  # Python modülü/scripti
+│   │   ├── __init__.py  # kernel paketi dışa aktarımları
 │   │   ├── cpp/  # dizin
-│   │   │   ├── __init__.py  # Python modülü/scripti
+│   │   │   ├── __init__.py  # C++ kernel bağlayıcı paket işaretçisi
 │   │   │   ├── bitnet_cpu.cpp  # C++ kaynak dosyası
-│   │   │   └── loader.py  # Python modülü/scripti
-│   │   ├── dispatcher.py  # Python modülü/scripti
-│   │   ├── onnx_custom_op.py  # Python modülü/scripti
-│   │   └── triton_ternary.py  # Python modülü/scripti
-│   ├── kpi.py  # Python modülü/scripti
-│   ├── pilot.py  # Python modülü/scripti
+│   │   │   └── loader.py  # C++ kernel dinamik yükleyicisi
+│   │   ├── dispatcher.py  # çalışma zamanı kernel yönlendirme politikası
+│   │   ├── onnx_custom_op.py  # ONNX custom-op kayıt köprüsü
+│   │   └── triton_ternary.py  # Triton ternary kernel uygulaması
+│   ├── kpi.py  # KPI rapor üretim yardımcıları
+│   ├── pilot.py  # pilot raporu ve artefakt yardımcıları
 │   └── utils/  # dizin
-│       ├── __init__.py  # Python modülü/scripti
-│       ├── bitpack.py  # Python modülü/scripti
-│       └── onnx_meta.py  # Python modülü/scripti
+│       ├── __init__.py  # SDK yardımcıları paket işaretçisi
+│       ├── bitpack.py  # bit-packing ve unpacking yardımcıları
+│       └── onnx_meta.py  # ONNX metadata yazma/okuma yardımcıları
 ├── model/  # dizin
-│   ├── __init__.py  # Python modülü/scripti
-│   └── transformers.py  # Python modülü/scripti
+│   ├── __init__.py  # model paketi dışa aktarımları
+│   └── transformers.py  # MertFormer omurga (backbone) birleştirme
 ├── MODEL_CARD.md  # dokümantasyon/rapor dosyası
 ├── MODEL_CARD_TR.md  # Türkçe doküman karşılığı
 ├── orchestrator/  # dizin
-│   ├── __init__.py  # Python modülü/scripti
-│   ├── agent_registry.py  # Python modülü/scripti
-│   ├── alignment_contracts.py  # Python modülü/scripti
-│   ├── audio_sense.py  # Python modülü/scripti
-│   ├── cognitive.py  # Python modülü/scripti
-│   ├── cognitive_loop.py  # Python modülü/scripti
-│   ├── compute_orchestrator.py  # Python modülü/scripti
-│   ├── core.py  # Python modülü/scripti
-│   ├── distillation_manager.py  # Python modülü/scripti
-│   ├── experience_store.py  # Python modülü/scripti
-│   ├── failure_budget.py  # Python modülü/scripti
-│   ├── governance.py  # Python modülü/scripti
-│   ├── hardware.py  # Python modülü/scripti
-│   ├── memory.py  # Python modülü/scripti
-│   ├── paths.py  # Python modülü/scripti
-│   ├── planner.py  # Python modülü/scripti
-│   ├── reasoning_engine.py  # Python modülü/scripti
-│   ├── self_audit.py  # Python modülü/scripti
-│   ├── self_improvement_guard.py  # Python modülü/scripti
-│   ├── sense_engine.py  # Python modülü/scripti
-│   ├── swarm_runtime.py  # Python modülü/scripti
-│   ├── telemetry.py  # Python modülü/scripti
-│   ├── tool_executor.py  # Python modülü/scripti
-│   ├── tool_registry.py  # Python modülü/scripti
-│   ├── verifier.py  # Python modülü/scripti
-│   └── web_sense.py  # Python modülü/scripti
+│   ├── __init__.py  # orchestrator paketi dışa aktarımları
+│   ├── agent_registry.py  # ajan kayıt ve yetenek eşleme tablosu
+│   ├── alignment_contracts.py  # politika/hizalama sözleşme uygulaması
+│   ├── audio_sense.py  # ses algılama adaptörü
+│   ├── cognitive.py  # bilişsel denetleyici giriş noktası
+│   ├── cognitive_loop.py  # döngüsel bilişsel çalışma zamanı
+│   ├── compute_orchestrator.py  # hesaplama kaynak orkestrasyonu
+│   ├── core.py  # orchestrator çekirdek çalışma zamanı
+│   ├── distillation_manager.py  # teacher-student distillation kontrolü
+│   ├── experience_store.py  # epizodik deneyim depolama
+│   ├── failure_budget.py  # failure-budget kapıları ve durdurma kuralları
+│   ├── governance.py  # offline/güvenlik yönetişim kapıları
+│   ├── hardware.py  # donanım yetenek tespiti
+│   ├── memory.py  # kısa/uzun bellek yönetimi
+│   ├── paths.py  # kanonik yol/sabit çözümleyici
+│   ├── planner.py  # görev planlama ve ayrıştırma
+│   ├── reasoning_engine.py  # akıl yürütme adım motoru
+│   ├── self_audit.py  # self-audit kontrol ve izleri
+│   ├── self_improvement_guard.py  # self-improvement güvenlik korumaları
+│   ├── sense_engine.py  # çoklu sensör füzyon giriş noktası
+│   ├── swarm_runtime.py  # çok ajanlı swarm çalışma zamanı
+│   ├── telemetry.py  # telemetri sayaç ve yayın katmanı
+│   ├── tool_executor.py  # tool execution sandbox sarmalayıcısı
+│   ├── tool_registry.py  # izinli tool kayıt listesi
+│   ├── verifier.py  # çıktı doğrulama ve tutarlılık kontrolleri
+│   └── web_sense.py  # web algılama adaptörü
 ├── PITCH.md  # dokümantasyon/rapor dosyası
 ├── PITCH_TR.md  # Türkçe doküman karşılığı
 ├── postmortems/  # dizin
@@ -1673,43 +1673,43 @@ NİHAİ/  # proje kökü
 ├── requirements.txt  # metin artefaktı
 ├── run.sh  # shell otomasyon scripti
 ├── scripts/  # dizin
-│   ├── __init__.py  # Python modülü/scripti
-│   ├── auto_demo_video.py  # Python modülü/scripti
-│   ├── benchmarks_internal.py  # Python modülü/scripti
-│   ├── bitnet_kernel_benchmark_standalone.py  # Python modülü/scripti
+│   ├── __init__.py  # scripts paketi işaretçisi
+│   ├── auto_demo_video.py  # demo video artefaktlarını otomatik üretir
+│   ├── benchmarks_internal.py  # iç benchmark orkestratörü
+│   ├── bitnet_kernel_benchmark_standalone.py  # bağımsız düşük-bit kernel benchmarkı
 │   ├── bootstrap_venv.sh  # shell otomasyon scripti
-│   ├── build_investor_deck.py  # Python modülü/scripti
-│   ├── build_validation_set.py  # Python modülü/scripti
-│   ├── chat.py  # Python modülü/scripti
-│   ├── check_57_matrix.py  # Python modülü/scripti
-│   ├── check_doc_claim_consistency.py  # Python modülü/scripti
-│   ├── check_tokenizer_sync.py  # Python modülü/scripti
-│   ├── check_translation_pointer_policy.py  # Python modülü/scripti
-│   ├── checkpoint_restore_drill.py  # Python modülü/scripti
+│   ├── build_investor_deck.py  # yatırımcı deck derleme yardımcısı
+│   ├── build_validation_set.py  # doğrulama seti oluşturucu
+│   ├── chat.py  # yerel chat CLI çalıştırıcısı
+│   ├── check_57_matrix.py  # Closure-57 kapı doğrulayıcısı
+│   ├── check_doc_claim_consistency.py  # doküman iddia tutarlılık denetimi
+│   ├── check_tokenizer_sync.py  # tokenizer artefakt senkron denetimi
+│   ├── check_translation_pointer_policy.py  # EN/TR pointer policy denetimi
+│   ├── checkpoint_restore_drill.py  # checkpoint restore tatbikatı
 │   ├── clean_runtime_artifacts.sh  # shell otomasyon scripti
 │   ├── cleanroom_verify.sh  # shell otomasyon scripti
-│   ├── data_pipeline.py  # Python modülü/scripti
-│   ├── download_tr_tokenizer.py  # Python modülü/scripti
-│   ├── drone_sitl_demo.py  # Python modülü/scripti
-│   ├── eval.py  # Python modülü/scripti
-│   ├── extract_dataset_refs.py  # Python modülü/scripti
-│   ├── failure_budget_drill.py  # Python modülü/scripti
-│   ├── golden_eval.py  # Python modülü/scripti
-│   ├── golden_score.py  # Python modülü/scripti
-│   ├── kaggle_onefile_demo_build30.py  # Python modülü/scripti
-│   ├── kaggle_train_compare_build30.py  # Python modülü/scripti
-│   ├── logbook_build.py  # Python modülü/scripti
-│   ├── mac_simulation.py  # Python modülü/scripti
-│   ├── md_build30_sweep.py  # Python modülü/scripti
-│   ├── md_integrity_check.py  # Python modülü/scripti
-│   ├── mini_titan_poc.py  # Python modülü/scripti
-│   ├── mobile_export.py  # Python modülü/scripti
-│   ├── nan_kill_test.py  # Python modülü/scripti
-│   ├── operator_mode_gate.py  # Python modülü/scripti
-│   ├── overfit_gate.py  # Python modülü/scripti
+│   ├── data_pipeline.py  # veri hazırlama/tekilleştirme/filtreleme hattı
+│   ├── download_tr_tokenizer.py  # Türkçe tokenizer indirme aracı
+│   ├── drone_sitl_demo.py  # SITL drone demo çalıştırıcısı
+│   ├── eval.py  # birleşik değerlendirme başlatıcısı
+│   ├── extract_dataset_refs.py  # dataset referans çıkarıcı
+│   ├── failure_budget_drill.py  # failure-budget dry-run testi
+│   ├── golden_eval.py  # golden-set değerlendirme çalıştırıcısı
+│   ├── golden_score.py  # golden skor özetleyicisi
+│   ├── kaggle_onefile_demo_build30.py  # tek dosyalı Kaggle eğitim demosu
+│   ├── kaggle_train_compare_build30.py  # Kaggle konfig karşılaştırma aracı
+│   ├── logbook_build.py  # birleşik logbook oluşturucu
+│   ├── mac_simulation.py  # macOS/mobile simülasyon çatısı
+│   ├── md_build30_sweep.py  # markdown sweep/check yardımcı scripti
+│   ├── md_integrity_check.py  # markdown bütünlük doğrulayıcısı
+│   ├── mini_titan_poc.py  # minimal Titan PoC çalıştırıcısı
+│   ├── mobile_export.py  # mobile export hattı
+│   ├── nan_kill_test.py  # NaN tespit ve kill-switch testi
+│   ├── operator_mode_gate.py  # operator-mode politika kapısı
+│   ├── overfit_gate.py  # overfit kapı dedektörü
 │   ├── README.md  # ana dokümantasyon (EN)
 │   ├── README_TR.md  # Türkçe doküman karşılığı
-│   ├── record_dataset_hashes.py  # Python modülü/scripti
+│   ├── record_dataset_hashes.py  # dataset hash kayıt aracı
 │   ├── release_build30.sh  # shell otomasyon scripti
 │   ├── reports/  # dizin
 │   │   ├── model_health.md  # dokümantasyon/rapor dosyası
@@ -1717,58 +1717,58 @@ NİHAİ/  # proje kökü
 │   ├── runs/  # dizin
 │   │   └── preflight/  # dizin
 │   │       └── config_snapshot.json  # JSON veri artefaktı
-│   ├── scaling_audit_math.py  # Python modülü/scripti
-│   ├── secret_scan.py  # Python modülü/scripti
-│   ├── smart_runner.py  # Python modülü/scripti
-│   ├── smoke_train_benchmark.py  # Python modülü/scripti
-│   ├── test_onnx_export.py  # Python modülü/scripti
-│   ├── titan_onnx_stress_test.py  # Python modülü/scripti
-│   ├── titan_preflight.py  # Python modülü/scripti
-│   ├── train_smoke.py  # Python modülü/scripti
-│   ├── train_tpu_turbo.py  # Python modülü/scripti
-│   ├── update_system_hardware.py  # Python modülü/scripti
+│   ├── scaling_audit_math.py  # ölçekleme matematik/öngörü denetimi
+│   ├── secret_scan.py  # gizli anahtar sızıntı tarayıcısı
+│   ├── smart_runner.py  # profile-aware çalıştırma orkestratörü
+│   ├── smoke_train_benchmark.py  # smoke-training benchmark çalıştırıcısı
+│   ├── test_onnx_export.py  # ONNX export hızlı testi
+│   ├── titan_onnx_stress_test.py  # ONNX runtime stres testi
+│   ├── titan_preflight.py  # preflight readiness kontrolleri
+│   ├── train_smoke.py  # kısa smoke-training koşusu
+│   ├── train_tpu_turbo.py  # TPU hızlandırılmış eğitim girişi
+│   ├── update_system_hardware.py  # sistem donanım snapshot güncelleyicisi
 │   ├── verify_all.sh  # shell otomasyon scripti
-│   ├── verify_datasets.py  # Python modülü/scripti
-│   ├── verify_onnx_local.py  # Python modülü/scripti
-│   ├── version_checker.py  # Python modülü/scripti
-│   ├── write_cuda_lock.py  # Python modülü/scripti
-│   └── xray.py  # Python modülü/scripti
+│   ├── verify_datasets.py  # dataset bütünlük doğrulayıcısı
+│   ├── verify_onnx_local.py  # yerel ONNX doğrulama çalıştırıcısı
+│   ├── version_checker.py  # bağımlılık/sürüm denetleyicisi
+│   ├── write_cuda_lock.py  # CUDA ortam kilidi yazıcısı
+│   └── xray.py  # çalışma zamanı xray diagnostik aracı
 ├── SDK_GUIDE.md  # dokümantasyon/rapor dosyası
 ├── SDK_GUIDE_TR.md  # Türkçe doküman karşılığı
 ├── SECURITY.md  # dokümantasyon/rapor dosyası
 ├── SECURITY_TR.md  # Türkçe doküman karşılığı
-├── snake_demo.py  # Python modülü/scripti
+├── snake_demo.py  # otoplay destekli Pygame snake demosu
 ├── TASK.md  # dokümantasyon/rapor dosyası
 ├── TASK_TR.md  # Türkçe doküman karşılığı
 ├── TECHNICAL_REPORT.md  # dokümantasyon/rapor dosyası
 ├── TECHNICAL_REPORT_TR.md  # Türkçe doküman karşılığı
 ├── tests/  # dizin
-│   ├── test_57_matrix_gate.py  # Python modülü/scripti
-│   ├── test_agi_cognitive.py  # Python modülü/scripti
-│   ├── test_architecture_integrity.py  # Python modülü/scripti
-│   ├── test_cognitive_extensions.py  # Python modülü/scripti
-│   ├── test_comprehensive.py  # Python modülü/scripti
-│   ├── test_continual_adapter.py  # Python modülü/scripti
-│   ├── test_cpp_kernel_loader.py  # Python modülü/scripti
-│   ├── test_drone_sitl_demo.py  # Python modülü/scripti
-│   ├── test_eval_suites.py  # Python modülü/scripti
-│   ├── test_export_metadata.py  # Python modülü/scripti
-│   ├── test_kaggle_compare_script.py  # Python modülü/scripti
-│   ├── test_kernel_dispatcher.py  # Python modülü/scripti
-│   ├── test_kernel_equivalence.py  # Python modülü/scripti
-│   ├── test_kpi_report_cli.py  # Python modülü/scripti
-│   ├── test_lifelong_safety.py  # Python modülü/scripti
-│   ├── test_mla_regressions.py  # Python modülü/scripti
-│   ├── test_model.py  # Python modülü/scripti
-│   ├── test_onnx_custom_op_contract.py  # Python modülü/scripti
-│   ├── test_onnx_export_path.py  # Python modülü/scripti
-│   ├── test_onnx_metadata_hook.py  # Python modülü/scripti
-│   ├── test_orchestrator_swarm_runtime.py  # Python modülü/scripti
-│   ├── test_sdk_api.py  # Python modülü/scripti
-│   ├── test_sdk_pilot_cli.py  # Python modülü/scripti
-│   ├── test_train_loop_sanity.py  # Python modülü/scripti
-│   ├── test_triad_omega_api.py  # Python modülü/scripti
-│   └── test_world_model_head.py  # Python modülü/scripti
+│   ├── test_57_matrix_gate.py  # Closure-57 kapı davranış testleri
+│   ├── test_agi_cognitive.py  # bilişsel runtime sözleşme testleri
+│   ├── test_architecture_integrity.py  # mimari invariant testleri
+│   ├── test_cognitive_extensions.py  # cognitive extension modül testleri
+│   ├── test_comprehensive.py  # geniş kapsamlı entegrasyon regresyonu
+│   ├── test_continual_adapter.py  # continual-adapter davranış testleri
+│   ├── test_cpp_kernel_loader.py  # C++ kernel loader yol testi
+│   ├── test_drone_sitl_demo.py  # SITL demo akış testleri
+│   ├── test_eval_suites.py  # değerlendirme suite wrapper testleri
+│   ├── test_export_metadata.py  # export metadata üretim testleri
+│   ├── test_kaggle_compare_script.py  # Kaggle compare script çıktı testleri
+│   ├── test_kernel_dispatcher.py  # kernel dispatch mantık testleri
+│   ├── test_kernel_equivalence.py  # düşük-bit kernel eşdeğerlik testleri
+│   ├── test_kpi_report_cli.py  # KPI report CLI sözleşme testleri
+│   ├── test_lifelong_safety.py  # lifelong safety guard testleri
+│   ├── test_mla_regressions.py  # MLA regresyon ve shape testleri
+│   ├── test_model.py  # çekirdek model forward/inference testleri
+│   ├── test_onnx_custom_op_contract.py  # ONNX custom-op sözleşme testleri
+│   ├── test_onnx_export_path.py  # ONNX export path testleri
+│   ├── test_onnx_metadata_hook.py  # ONNX metadata hook testleri
+│   ├── test_orchestrator_swarm_runtime.py  # swarm runtime davranış testleri
+│   ├── test_sdk_api.py  # SDK API fonksiyonel testleri
+│   ├── test_sdk_pilot_cli.py  # SDK pilot CLI davranış testleri
+│   ├── test_train_loop_sanity.py  # eğitim döngüsü sanity testleri
+│   ├── test_triad_omega_api.py  # Triad/Omega API sözleşme testleri
+│   └── test_world_model_head.py  # world-model head birim testleri
 ├── tokenizer/  # dizin
 │   ├── drift_report.md  # dokümantasyon/rapor dosyası
 │   ├── drift_report_TR.md  # Türkçe doküman karşılığı
@@ -1788,9 +1788,9 @@ NİHAİ/  # proje kökü
 │       ├── README.md  # ana dokümantasyon (EN)
 │       └── README_TR.md  # Türkçe doküman karşılığı
 ├── train/  # dizin
-│   ├── __init__.py  # Python modülü/scripti
-│   ├── continual_adapter.py  # Python modülü/scripti
-│   └── train.py  # Python modülü/scripti
+│   ├── __init__.py  # training paketi işaretçisi
+│   ├── continual_adapter.py  # continual-learning adapter yardımcıları
+│   └── train.py  # ana eğitim döngüsü ve checkpoint yönetimi
 ├── training_dynamics/  # dizin
 │   ├── cold_vs_warm.md  # dokümantasyon/rapor dosyası
 │   └── cold_vs_warm_TR.md  # Türkçe doküman karşılığı
@@ -1801,10 +1801,10 @@ NİHAİ/  # proje kökü
 ├── USE_POLICY.md  # dokümantasyon/rapor dosyası
 ├── USE_POLICY_TR.md  # Türkçe doküman karşılığı
 ├── utils/  # dizin
-│   ├── __init__.py  # Python modülü/scripti
-│   ├── dataset_registry.py  # Python modülü/scripti
-│   ├── logger.py  # Python modülü/scripti
-│   └── safety.py  # Python modülü/scripti
+│   ├── __init__.py  # utils paketi işaretçisi
+│   ├── dataset_registry.py  # dataset registry ve manifest yardımcıları
+│   ├── logger.py  # yapılandırılmış loglama yardımcıları
+│   └── safety.py  # güvenlik kısıtı ve yardımcı kontroller
 ├── WHITE_PAPER_LIQUIDROUTER.md  # dokümantasyon/rapor dosyası
 └── WHITE_PAPER_LIQUIDROUTER_TR.md  # Türkçe doküman karşılığı
 ```
