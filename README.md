@@ -1374,362 +1374,441 @@ Planned Turkish data sources:
 ### Canonical Layout (Build 30)
 
 ```text
-NİHAİ/                     # Project root
-├── .github/                   # CI workflows and automation gates
-│   └── workflows/                 # GitHub Actions pipeline definitions
-│       └── ci.yml                     # CI workflow: scan/lint/test/gates
-├── ablations/                 # Ablation study scenarios and notes
-│   ├── bitlinear_off/             # Ablation: BitLinear disabled
-│   │   ├── README.md                  # Primary documentation (EN)
-│   │   └── README_TR.md               # Primary documentation (TR)
-│   ├── dense_only/                # Ablation: dense-only baseline
-│   │   ├── README.md                  # Primary documentation (EN)
-│   │   └── README_TR.md               # Primary documentation (TR)
-│   ├── no_liquid/                 # Ablation: no Liquid dynamics
-│   │   ├── README.md                  # Primary documentation (EN)
-│   │   └── README_TR.md               # Primary documentation (TR)
-│   ├── no_moe/                    # Ablation: no MoE routing
-│   │   ├── README.md                  # Primary documentation (EN)
-│   │   └── README_TR.md               # Primary documentation (TR)
-│   ├── results.md                 # Documentation/report file
-│   └── results_TR.md              # Turkish document counterpart
-├── assets/                    # Visual/media assets for demos
-│   ├── header.png                 # Media asset
-│   ├── sources/                   # Editable asset source archive metadata
-│   │   ├── README.md                  # Source archive guideline (EN)
-│   │   └── README_TR.md               # Source archive guideline (TR)
-│   ├── snake_demo_preview.gif     # Media asset
-│   ├── snake_demo_proof.mp4       # Media asset
-│   └── synaptic_map.png           # Media asset
-├── config/                    # Configuration entrypoints and overlays
-│   ├── export/                    # Export-specific config overlays
-│   │   └── onnx_mobile.yaml           # YAML configuration file
-│   ├── model/                     # Model topology overlays
-│   │   ├── mertformer_moe.yaml        # YAML configuration file
-│   │   └── mertformer_small.yaml      # YAML configuration file
-│   ├── train/                     # Train/finetune overlays
-│   │   ├── finetune.yaml              # YAML configuration file
-│   │   └── pretrain.yaml              # YAML configuration file
-│   ├── __init__.py                # Python module or script
-│   ├── base.yaml                  # YAML configuration file
-│   └── config.py                  # Python module or script
-├── datasets/                  # Dataset manifests, licenses, and snapshots
-│   ├── filters.yaml               # YAML configuration file
-│   ├── golden_samples.jsonl       # JSONL dataset/log artifact
-│   ├── hashes.json                # JSON data/schema artifact
-│   ├── INTERNAL_POLICY.md         # Documentation/report file
-│   ├── INTERNAL_POLICY_TR.md      # Turkish document counterpart
-│   ├── inventory.json             # JSON data/schema artifact
-│   ├── inventory.md               # Documentation/report file
-│   ├── inventory_TR.md            # Turkish document counterpart
-│   ├── LICENSES.md                # Documentation/report file
-│   ├── LICENSES_TR.md             # Turkish document counterpart
-│   ├── README.md                  # Primary documentation (EN)
-│   ├── README_TR.md               # Primary documentation (TR)
-│   ├── SOURCES.md                 # Documentation/report file
-│   ├── SOURCES_TR.md              # Turkish document counterpart
-│   └── validation.jsonl           # JSONL dataset/log artifact
-├── economics/                 # Cost and efficiency modeling docs
-│   ├── cost_model.md              # Documentation/report file
-│   ├── cost_model_TR.md           # Turkish document counterpart
-│   ├── efficiency_report.md       # Documentation/report file
-│   ├── efficiency_report_TR.md    # Turkish document counterpart
-│   └── flops_estimator.py         # Python module or script
-├── eval/                      # Evaluation entrypoints and report assembly
-│   ├── golden.py                  # Python module or script
-│   ├── gsm8k.py                   # Python module or script
-│   ├── humaneval.py               # Python module or script
-│   └── report_builder.py          # Python module or script
-├── experiments/               # Experiment-level configs and notes
-│   └── exp_001_baseline/          # Baseline experiment artifacts
-│       ├── config.yaml                # YAML configuration file
-│       ├── metrics.json               # JSON data/schema artifact
-│       ├── notes.md                   # Documentation/report file
-│       └── notes_TR.md                # Turkish document counterpart
-├── interfaces/                # External interface contracts and schemas
-│   ├── inference_contract.md      # Documentation/report file
-│   ├── inference_contract_TR.md   # Turkish document counterpart
-│   ├── pilot_report_v1.schema.json # JSON data/schema artifact
-│   └── tokenizer_spec.json        # JSON data/schema artifact
-├── layers/                    # Core model layers (BitNet/Liquid/MoE/MLA)
-│   ├── __init__.py                # Python module or script
-│   ├── bitlinear.py               # Python module or script
-│   ├── bitnet_patch.py            # Python module or script
-│   ├── ffn.py                     # Python module or script
-│   ├── liquid.py                  # Python module or script
-│   ├── mertformer_block.py        # Python module or script
-│   ├── mla.py                     # Python module or script
-│   ├── moe.py                     # Python module or script
-│   └── qinn.py                    # Python module or script
-├── limits/                    # Scaling limits and stress references
-│   ├── scaling_breakpoints.md     # Documentation/report file
-│   ├── scaling_breakpoints_TR.md  # Turkish document counterpart
-│   └── stress_curves.png          # Media asset
-├── logs/                      # Operational log policies and references
-│   ├── README.md                  # Primary documentation (EN)
-│   └── README_TR.md               # Primary documentation (TR)
-├── mertformer_sdk/            # SDK package (API/CLI/export/kernels)
-│   ├── kernels/                   # Kernel implementations
-│   │   ├── __init__.py                # Python module or script
-│   │   └── triton_ternary.py          # Python module or script
-│   ├── utils/                     # SDK utility helpers
-│   │   ├── __init__.py                # Python module or script
-│   │   ├── bitpack.py                 # Python module or script
-│   │   └── onnx_meta.py               # Python module or script
-│   ├── __init__.py                # Python module or script
-│   ├── api.py                     # Python module or script
-│   ├── cli.py                     # Python module or script
-│   ├── export.py                  # Python module or script
-│   └── pilot.py                   # Python module or script
-├── model/                     # Model assembly modules
-│   ├── __init__.py                # Python module or script
-│   └── transformers.py            # Python module or script
-├── orchestrator/              # Optional multi-agent runtime modules
-│   ├── __init__.py                # Python module or script
-│   ├── audio_sense.py             # Python module or script
-│   ├── cognitive.py               # Python module or script
-│   ├── core.py                    # Python module or script
-│   ├── distillation_manager.py    # Python module or script
-│   ├── failure_budget.py          # Python module or script
-│   ├── hardware.py                # Python module or script
-│   ├── memory.py                  # Python module or script
-│   ├── paths.py                   # Python module or script
-│   ├── sense_engine.py            # Python module or script
-│   ├── telemetry.py               # Python module or script
-│   └── web_sense.py               # Python module or script
-├── postmortems/               # Incident templates and examples
-│   ├── _template.md               # Documentation/report file
-│   ├── _template_TR.md            # Turkish document counterpart
-│   ├── example_001.md             # Documentation/report file
-│   ├── example_001_TR.md          # Turkish document counterpart
-│   ├── README.md                  # Primary documentation (EN)
-│   └── README_TR.md               # Primary documentation (TR)
-├── prompts/                   # Prompt governance and changelog files
-│   ├── changelog.md               # Documentation/report file
-│   ├── changelog_TR.md            # Turkish document counterpart
-│   └── system_v1.txt              # Text artifact
-├── registry/                  # Model registry entries
-│   └── mertformer_v0.1.json       # JSON data/schema artifact
-├── reports/                   # Executive, audit, pilot, and compliance reports
-│   ├── benchmarks/                # Benchmark output guidance/artifacts
-│   │   ├── README.md                  # Primary documentation (EN)
-│   │   ├── README_TR.md               # Primary documentation (TR)
-│   │   └── smoke_train_metrics.json   # JSON data/schema artifact
-│   ├── pilots/                    # Pilot evidence structure templates
-│   │   ├── README.md                  # Primary documentation (EN)
-│   │   └── README_TR.md               # Primary documentation (TR)
-│   ├── asset_stack.md             # Documentation/report file
-│   ├── asset_stack_TR.md          # Turkish document counterpart
-│   ├── cleanroom_verification.md  # Documentation/report file
-│   ├── cleanroom_verification_TR.md # Turkish document counterpart
-│   ├── cli_smoke_log.md           # Documentation/report file
-│   ├── cli_smoke_log_TR.md        # Turkish document counterpart
-│   ├── codex_deep_audit_DE.md     # Documentation/report file
-│   ├── codex_deep_audit_DE_TR.md  # Turkish pointer file (canonical: codex_deep_audit_TR.md)
-│   ├── codex_deep_audit_EN.md     # Documentation/report file
-│   ├── codex_deep_audit_EN_TR.md  # Turkish pointer file (canonical: codex_deep_audit_TR.md)
-│   ├── codex_deep_audit_TR.md     # Turkish document counterpart
-│   ├── dataset_health.md          # Documentation/report file
-│   ├── dataset_health_TR.md       # Turkish document counterpart
-│   ├── demo_video_script.md       # Documentation/report file
-│   ├── demo_video_script_TR.md    # Turkish document counterpart
-│   ├── drone_sitl_demo.md         # Documentation/report file
-│   ├── drone_sitl_demo_TR.md      # Turkish document counterpart
-│   ├── efficiency_convergence_analysis.md # Documentation/report file
-│   ├── efficiency_convergence_analysis_TR.md # Turkish document counterpart
-│   ├── final_sync_matrix.md       # Documentation/report file
-│   ├── final_sync_matrix_TR.md    # Turkish document counterpart
-│   ├── founders_hub_application.md # Documentation/report file
-│   ├── founders_hub_application_TR.md # Turkish document counterpart
-│   ├── go_status_matrix.md        # Documentation/report file
-│   ├── go_status_matrix_TR.md     # Turkish document counterpart
-│   ├── investor_deck.pptx         # Presentation deck asset
-│   ├── investor_deck_TR.pptx      # Presentation deck asset
-│   ├── ip_licensing_split.md      # Documentation/report file
-│   ├── ip_licensing_split_TR.md   # Turkish document counterpart
-│   ├── model_health.md            # Documentation/report file
-│   ├── model_health_TR.md         # Turkish document counterpart
-│   ├── one_pager.md               # Documentation/report file
-│   ├── one_pager_TR.md            # Turkish document counterpart
-│   ├── pilot_acceptance_signoff.md # Documentation/report file
-│   ├── pilot_acceptance_signoff_TR.md # Turkish document counterpart
-│   ├── pilot_offer_packages.md    # Documentation/report file
-│   ├── pilot_offer_packages_TR.md # Turkish document counterpart
-│   ├── pilot_readiness_kit.md     # Documentation/report file
-│   ├── pilot_readiness_kit_TR.md  # Turkish document counterpart
-│   ├── poc_protocol.md            # Documentation/report file
-│   ├── poc_protocol_TR.md         # Turkish document counterpart
-│   ├── release_snapshot.md        # Documentation/report file
-│   ├── release_snapshot_TR.md     # Turkish document counterpart
-│   ├── report_accuracy_audit.md   # Documentation/report file
-│   ├── report_accuracy_audit_TR.md # Turkish document counterpart
-│   ├── review_checklist.md        # Documentation/report file
-│   ├── review_checklist_TR.md     # Turkish document counterpart
-│   ├── sales_funnel_90d.md        # Documentation/report file
-│   ├── sales_funnel_90d_TR.md     # Turkish document counterpart
-│   ├── security_compliance.md     # Documentation/report file
-│   ├── security_compliance_TR.md  # Turkish document counterpart
-│   ├── strategic_value.md         # Documentation/report file
-│   ├── strategic_value_TR.md      # Turkish document counterpart
-│   ├── system_hardware.md         # Documentation/report file
-│   ├── system_hardware_TR.md      # Turkish document counterpart
-│   ├── technical_snapshot.md      # Documentation/report file
-│   ├── technical_snapshot_TR.md   # Turkish document counterpart
-│   ├── verified_matrix.md         # Documentation/report file
-│   └── verified_matrix_TR.md      # Turkish document counterpart
-├── repro/                     # Reproducibility lock and environment docs
-│   ├── accelerate_default.yaml    # YAML configuration file
-│   ├── cuda.lock                  # Environment lock artifact
-│   ├── env.lock                   # Environment lock artifact
-│   ├── pip_freeze.txt             # Text artifact
-│   ├── python.md                  # Documentation/report file
-│   ├── python_TR.md               # Turkish document counterpart
-│   ├── seed_policy.md             # Documentation/report file
-│   └── seed_policy_TR.md          # Turkish document counterpart
-├── scripts/                   # Operational scripts and automation tools
-│   ├── reports/                   # Script-local generated report snapshots
-│   │   ├── model_health.md            # Documentation/report file
-│   │   └── model_health_TR.md         # Turkish document counterpart
-│   ├── runs/                      # Script-local run artifacts
-│   │   └── preflight/                 # Directory container
-│   │       └── config_snapshot.json       # JSON data/schema artifact
-│   ├── __init__.py                # Python module or script
-│   ├── auto_demo_video.py         # Python module or script
-│   ├── benchmarks_internal.py     # Python module or script
-│   ├── bitnet_kernel_benchmark_standalone.py # Python module or script
-│   ├── bootstrap_venv.sh          # Shell automation script
-│   ├── build_investor_deck.py     # Python module or script
-│   ├── build_validation_set.py    # Python module or script
-│   ├── chat.py                    # Python module or script
-│   ├── check_57_matrix.py         # Python module or script
-│   ├── check_doc_claim_consistency.py # Python module or script
-│   ├── check_tokenizer_sync.py    # Python module or script
-│   ├── check_translation_pointer_policy.py # Python module or script
-│   ├── checkpoint_restore_drill.py # Python module or script
-│   ├── clean_runtime_artifacts.sh # Shell automation script
-│   ├── cleanroom_verify.sh        # Shell automation script
-│   ├── data_pipeline.py           # Python module or script
-│   ├── download_tr_tokenizer.py   # Python module or script
-│   ├── drone_sitl_demo.py         # Python module or script
-│   ├── eval.py                    # Python module or script
-│   ├── extract_dataset_refs.py    # Python module or script
-│   ├── failure_budget_drill.py    # Python module or script
-│   ├── golden_eval.py             # Python module or script
-│   ├── kaggle_onefile_demo_build30.py # Python module or script
-│   ├── kaggle_train_compare_build30.py # Python module or script
-│   ├── logbook_build.py           # Python module or script
-│   ├── mac_simulation.py          # Python module or script
-│   ├── md_build30_sweep.py        # Python module or script
-│   ├── md_integrity_check.py      # Python module or script
-│   ├── mini_titan_poc.py          # Python module or script
-│   ├── mobile_export.py           # Python module or script
-│   ├── nan_kill_test.py           # Python module or script
-│   ├── operator_mode_gate.py      # Python module or script
-│   ├── overfit_gate.py            # Python module or script
-│   ├── README.md                  # Primary documentation (EN)
-│   ├── README_TR.md               # Primary documentation (TR)
-│   ├── record_dataset_hashes.py   # Python module or script
-│   ├── release_build30.sh         # Shell automation script
-│   ├── scaling_audit_math.py      # Python module or script
-│   ├── secret_scan.py             # Python module or script
-│   ├── smart_runner.py            # Python module or script
-│   ├── smoke_train_benchmark.py   # Python module or script
-│   ├── test_onnx_export.py        # Python module or script
-│   ├── titan_onnx_stress_test.py  # Python module or script
-│   ├── titan_preflight.py         # Python module or script
-│   ├── train_smoke.py             # Python module or script
-│   ├── train_tpu_turbo.py         # Python module or script
-│   ├── update_system_hardware.py  # Python module or script
-│   ├── verify_all.sh              # Shell automation script
-│   ├── verify_datasets.py         # Python module or script
-│   ├── verify_onnx_local.py       # Python module or script
-│   ├── version_checker.py         # Python module or script
-│   ├── write_cuda_lock.py         # Python module or script
-│   └── xray.py                    # Python module or script
-├── tests/                     # Unit and integration test suite
-│   ├── test_architecture_integrity.py # Python module or script
-│   ├── test_comprehensive.py      # Python module or script
-│   ├── test_drone_sitl_demo.py    # Python module or script
-│   ├── test_export_metadata.py    # Python module or script
-│   ├── test_kernel_equivalence.py # Python module or script
-│   ├── test_mla_regressions.py    # Python module or script
-│   ├── test_model.py              # Python module or script
-│   ├── test_onnx_metadata_hook.py # Python module or script
-│   ├── test_sdk_api.py            # Python module or script
-│   ├── test_sdk_pilot_cli.py      # Python module or script
-│   └── test_train_loop_sanity.py  # Python module or script
-├── tokenizer/                 # Tokenizer metadata and drift stats
-│   ├── tr/                        # Turkish tokenizer notes
-│   │   ├── README.md                  # Primary documentation (EN)
-│   │   └── README_TR.md               # Primary documentation (TR)
-│   ├── drift_report.md            # Documentation/report file
-│   ├── drift_report_TR.md         # Turkish document counterpart
-│   ├── stats.md                   # Documentation/report file
-│   ├── stats_TR.md                # Turkish document counterpart
-│   └── tokenizer.json             # JSON data/schema artifact
-├── tools/                     # Tooling policy docs and contracts
-│   ├── contracts/                 # Tool contract docs
-│   │   ├── README.md                  # Primary documentation (EN)
-│   │   └── README_TR.md               # Primary documentation (TR)
-│   ├── sandbox/                   # Sandbox usage docs
-│   │   ├── README.md                  # Primary documentation (EN)
-│   │   └── README_TR.md               # Primary documentation (TR)
-│   ├── abuse_tests.md             # Documentation/report file
-│   └── abuse_tests_TR.md          # Turkish document counterpart
-├── train/                     # Training package entrypoints
-│   ├── __init__.py                # Python module or script
-│   └── train.py                   # Python module or script
-├── training_dynamics/         # Training dynamics analysis notes
-│   ├── cold_vs_warm.md            # Documentation/report file
-│   └── cold_vs_warm_TR.md         # Turkish document counterpart
-├── utils/                     # Runtime helpers (logging/safety/registry)
-│   ├── __init__.py                # Python module or script
-│   ├── dataset_registry.py        # Python module or script
-│   ├── logger.py                  # Python module or script
-│   └── safety.py                  # Python module or script
-├── .gitignore                 # Git ignore policy
-├── CHANGELOG.md               # Documentation/report file
-├── CHANGELOG_TR.md            # Turkish document counterpart
-├── CITATION.cff               # Citation metadata file
-├── CONTRIBUTING.md            # Documentation/report file
-├── CONTRIBUTING_TR.md         # Turkish document counterpart
-├── DECISIONS.md               # Documentation/report file
-├── DECISIONS_TR.md            # Turkish document counterpart
-├── Dockerfile                 # Container build baseline
-├── IMPLEMENTATION_PLAN.md     # Documentation/report file
-├── IMPLEMENTATION_PLAN_TR.md  # Turkish document counterpart
-├── INTERNAL_AGI_GAP.md        # Documentation/report file
-├── INTERNAL_AGI_GAP_TR.md     # Turkish document counterpart
-├── LICENSE                    # License terms (EN)
-├── LICENSE_TR                 # License terms (TR)
-├── MODEL_CARD.md              # Documentation/report file
-├── MODEL_CARD_TR.md           # Turkish document counterpart
-├── PITCH.md                   # Documentation/report file
-├── PITCH_TR.md                # Turkish document counterpart
-├── pyproject.toml             # Packaging and project metadata
-├── README.md                  # Primary documentation (EN)
-├── README_CHECKLIST.md        # Documentation/report file
-├── README_CHECKLIST_TR.md     # Turkish document counterpart
-├── README_TR.md               # Primary documentation (TR)
-├── requirements.txt           # Python dependency pins
-├── run.sh                     # One-command launcher script
-├── SDK_GUIDE.md               # Documentation/report file
-├── SDK_GUIDE_TR.md            # Turkish document counterpart
-├── SECURITY.md                # Documentation/report file
-├── SECURITY_TR.md             # Turkish document counterpart
-├── snake_demo.py              # Python module or script
-├── TASK.md                    # Documentation/report file
-├── TASK_TR.md                 # Turkish document counterpart
-├── TECHNICAL_REPORT.md        # Documentation/report file
-├── TECHNICAL_REPORT_TR.md     # Turkish document counterpart
-├── TRAINING_PLAN.md           # Documentation/report file
-├── TRAINING_PLAN_TR.md        # Turkish document counterpart
-├── USAGE_GUIDE.md             # Documentation/report file
-├── USAGE_GUIDE_TR.md          # Turkish document counterpart
-├── USE_POLICY.md              # Documentation/report file
-├── USE_POLICY_TR.md           # Turkish document counterpart
-├── WHITE_PAPER_LIQUIDROUTER.md # Documentation/report file
-└── WHITE_PAPER_LIQUIDROUTER_TR.md # Turkish document counterpart
+NİHAİ/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── .gitignore
+├── ablations/
+│   ├── bitlinear_off/
+│   │   ├── README.md
+│   │   └── README_TR.md
+│   ├── dense_only/
+│   │   ├── README.md
+│   │   └── README_TR.md
+│   ├── no_liquid/
+│   │   ├── README.md
+│   │   └── README_TR.md
+│   ├── no_moe/
+│   │   ├── README.md
+│   │   └── README_TR.md
+│   ├── results.md
+│   └── results_TR.md
+├── assets/
+│   ├── header.png
+│   ├── snake_demo_preview.gif
+│   ├── snake_demo_proof.mp4
+│   ├── sources/
+│   │   ├── README.md
+│   │   └── README_TR.md
+│   └── synaptic_map.png
+├── CHANGELOG.md
+├── CHANGELOG_TR.md
+├── CITATION.cff
+├── config/
+│   ├── __init__.py
+│   ├── base.yaml
+│   ├── config.py
+│   ├── export/
+│   │   └── onnx_mobile.yaml
+│   ├── model/
+│   │   ├── mertformer_max_arch.yaml
+│   │   ├── mertformer_moe.yaml
+│   │   └── mertformer_small.yaml
+│   └── train/
+│       ├── finetune.yaml
+│       └── pretrain.yaml
+├── CONTRIBUTING.md
+├── CONTRIBUTING_TR.md
+├── datasets/
+│   ├── filters.yaml
+│   ├── golden_assertions.jsonl
+│   ├── golden_samples.jsonl
+│   ├── hashes.json
+│   ├── INTERNAL_POLICY.md
+│   ├── INTERNAL_POLICY_TR.md
+│   ├── inventory.json
+│   ├── inventory.md
+│   ├── inventory_TR.md
+│   ├── LICENSES.md
+│   ├── LICENSES_TR.md
+│   ├── README.md
+│   ├── README_TR.md
+│   ├── SOURCES.md
+│   ├── SOURCES_TR.md
+│   └── validation.jsonl
+├── DECISIONS.md
+├── DECISIONS_TR.md
+├── Dockerfile
+├── economics/
+│   ├── cost_model.md
+│   ├── cost_model_TR.md
+│   ├── efficiency_report.md
+│   ├── efficiency_report_TR.md
+│   └── flops_estimator.py
+├── eval/
+│   ├── agentic_suite.py
+│   ├── generalization_suite.py
+│   ├── golden.py
+│   ├── gsm8k.py
+│   ├── humaneval.py
+│   └── report_builder.py
+├── experiments/
+│   └── exp_001_baseline/
+│       ├── config.yaml
+│       ├── metrics.json
+│       ├── notes.md
+│       └── notes_TR.md
+├── IMPLEMENTATION_PLAN.md
+├── IMPLEMENTATION_PLAN_TR.md
+├── interfaces/
+│   ├── closure_57_matrix_v1.schema.json
+│   ├── inference_contract.md
+│   ├── inference_contract_TR.md
+│   ├── kpi_report_v1.schema.json
+│   ├── pilot_report_v1.schema.json
+│   └── tokenizer_spec.json
+├── INTERNAL_AGI_GAP.md
+├── INTERNAL_AGI_GAP_TR.md
+├── layers/
+│   ├── __init__.py
+│   ├── bitlinear.py
+│   ├── bitnet_patch.py
+│   ├── cognitive_extensions.py
+│   ├── ffn.py
+│   ├── lifelong_safety.py
+│   ├── liquid.py
+│   ├── mertformer_block.py
+│   ├── mla.py
+│   ├── moe.py
+│   ├── qinn.py
+│   └── world_model_head.py
+├── LICENSE
+├── LICENSE_TR
+├── limits/
+│   ├── scaling_breakpoints.md
+│   ├── scaling_breakpoints_TR.md
+│   └── stress_curves.png
+├── logs/
+│   ├── README.md
+│   └── README_TR.md
+├── mertformer_sdk/
+│   ├── __init__.py
+│   ├── api.py
+│   ├── cli.py
+│   ├── export.py
+│   ├── kernels/
+│   │   ├── __init__.py
+│   │   ├── cpp/
+│   │   │   ├── __init__.py
+│   │   │   ├── bitnet_cpu.cpp
+│   │   │   └── loader.py
+│   │   ├── dispatcher.py
+│   │   ├── onnx_custom_op.py
+│   │   └── triton_ternary.py
+│   ├── kpi.py
+│   ├── pilot.py
+│   └── utils/
+│       ├── __init__.py
+│       ├── bitpack.py
+│       └── onnx_meta.py
+├── model/
+│   ├── __init__.py
+│   └── transformers.py
+├── MODEL_CARD.md
+├── MODEL_CARD_TR.md
+├── orchestrator/
+│   ├── __init__.py
+│   ├── agent_registry.py
+│   ├── alignment_contracts.py
+│   ├── audio_sense.py
+│   ├── cognitive.py
+│   ├── cognitive_loop.py
+│   ├── compute_orchestrator.py
+│   ├── core.py
+│   ├── distillation_manager.py
+│   ├── experience_store.py
+│   ├── failure_budget.py
+│   ├── governance.py
+│   ├── hardware.py
+│   ├── memory.py
+│   ├── paths.py
+│   ├── planner.py
+│   ├── reasoning_engine.py
+│   ├── self_audit.py
+│   ├── self_improvement_guard.py
+│   ├── sense_engine.py
+│   ├── swarm_runtime.py
+│   ├── telemetry.py
+│   ├── tool_executor.py
+│   ├── tool_registry.py
+│   ├── verifier.py
+│   └── web_sense.py
+├── PITCH.md
+├── PITCH_TR.md
+├── postmortems/
+│   ├── _template.md
+│   ├── _template_TR.md
+│   ├── example_001.md
+│   ├── example_001_TR.md
+│   ├── README.md
+│   └── README_TR.md
+├── prompts/
+│   ├── changelog.md
+│   ├── changelog_TR.md
+│   └── system_v1.txt
+├── pyproject.toml
+├── README.md
+├── README_CHECKLIST.md
+├── README_CHECKLIST_TR.md
+├── README_SUMMARY.md
+├── README_SUMMARY.pdf
+├── README_SUMMARY_TR.md
+├── README_SUMMARY_TR.pdf
+├── README_TR.md
+├── registry/
+│   └── mertformer_v0.1.json
+├── reports/
+│   ├── asset_stack.md
+│   ├── asset_stack_TR.md
+│   ├── benchmarks/
+│   │   ├── agentic_suite_build30.json
+│   │   ├── generalization_suite_build30.json
+│   │   ├── internal_smoke_summary.json
+│   │   ├── kaggle_compare_build30.csv
+│   │   ├── kaggle_compare_build30.json
+│   │   ├── kaggle_compare_build30.md
+│   │   ├── README.md
+│   │   ├── README_TR.md
+│   │   ├── smoke_train_metrics.json
+│   │   └── summary.json
+│   ├── cleanroom_verification.md
+│   ├── cleanroom_verification_TR.md
+│   ├── cli_smoke_log.md
+│   ├── cli_smoke_log_TR.md
+│   ├── closure_57_matrix.json
+│   ├── closure_57_matrix.md
+│   ├── closure_57_matrix_TR.md
+│   ├── codex_deep_audit_DE.md
+│   ├── codex_deep_audit_DE_TR.md
+│   ├── codex_deep_audit_EN.md
+│   ├── codex_deep_audit_EN_TR.md
+│   ├── codex_deep_audit_TR.md
+│   ├── contamination_report_build30.md
+│   ├── dataset_health.md
+│   ├── dataset_health_TR.md
+│   ├── demo_video_script.md
+│   ├── demo_video_script_TR.md
+│   ├── drone_sitl_demo.md
+│   ├── drone_sitl_demo_TR.md
+│   ├── efficiency_convergence_analysis.md
+│   ├── efficiency_convergence_analysis_TR.md
+│   ├── final_sync_matrix.md
+│   ├── final_sync_matrix_TR.md
+│   ├── founders_hub_application.md
+│   ├── founders_hub_application_TR.md
+│   ├── go_nogo_signoff_onepager.md
+│   ├── go_nogo_signoff_onepager_TR.md
+│   ├── go_status_matrix.md
+│   ├── go_status_matrix_TR.md
+│   ├── investor_deck.pptx
+│   ├── investor_deck_TR.pptx
+│   ├── ip_licensing_split.md
+│   ├── ip_licensing_split_TR.md
+│   ├── kpi_contract_build30.md
+│   ├── kpi_pack_v1.md
+│   ├── kpi_pack_v1_TR.md
+│   ├── kpi_report_v1.json
+│   ├── legal_cleanroom_signoff_internal.md
+│   ├── model_health.md
+│   ├── model_health_TR.md
+│   ├── one_pager.md
+│   ├── one_pager_TR.md
+│   ├── pilot_acceptance_signoff.md
+│   ├── pilot_acceptance_signoff_TR.md
+│   ├── pilot_offer_packages.md
+│   ├── pilot_offer_packages_TR.md
+│   ├── pilot_readiness_kit.md
+│   ├── pilot_readiness_kit_TR.md
+│   ├── pilots/
+│   │   ├── README.md
+│   │   └── README_TR.md
+│   ├── poc_protocol.md
+│   ├── poc_protocol_TR.md
+│   ├── release_snapshot.md
+│   ├── release_snapshot_TR.md
+│   ├── report_accuracy_audit.md
+│   ├── report_accuracy_audit_TR.md
+│   ├── review_checklist.md
+│   ├── review_checklist_TR.md
+│   ├── sales_funnel_90d.md
+│   ├── sales_funnel_90d_TR.md
+│   ├── security_compliance.md
+│   ├── security_compliance_TR.md
+│   ├── snapshots/
+│   │   └── 2026-02-24/
+│   │       ├── claim_matrix_v2_2026-02-24.json
+│   │       ├── commercial_scenarios_v1_2026-02-24.json
+│   │       ├── evidence_snapshot_2026-02-24.json
+│   │       ├── mertformer_master_decision_report_TR_2026-02-24.md
+│   │       ├── readiness_scorecard_v1_2026-02-24.json
+│   │       ├── report_interface_schema_v1.json
+│   │       └── web_validation_sources_2026-02-24.md
+│   ├── strategic_value.md
+│   ├── strategic_value_TR.md
+│   ├── system_hardware.md
+│   ├── system_hardware_TR.md
+│   ├── teacher_output_license_assessment.md
+│   ├── technical_snapshot.md
+│   ├── technical_snapshot_TR.md
+│   ├── verified_matrix.md
+│   └── verified_matrix_TR.md
+├── repro/
+│   ├── accelerate_default.yaml
+│   ├── cuda.lock
+│   ├── env.lock
+│   ├── pip_freeze.txt
+│   ├── python.md
+│   ├── python_TR.md
+│   ├── seed_policy.md
+│   └── seed_policy_TR.md
+├── requirements.txt
+├── run.sh
+├── scripts/
+│   ├── __init__.py
+│   ├── auto_demo_video.py
+│   ├── benchmarks_internal.py
+│   ├── bitnet_kernel_benchmark_standalone.py
+│   ├── bootstrap_venv.sh
+│   ├── build_investor_deck.py
+│   ├── build_validation_set.py
+│   ├── chat.py
+│   ├── check_57_matrix.py
+│   ├── check_doc_claim_consistency.py
+│   ├── check_tokenizer_sync.py
+│   ├── check_translation_pointer_policy.py
+│   ├── checkpoint_restore_drill.py
+│   ├── clean_runtime_artifacts.sh
+│   ├── cleanroom_verify.sh
+│   ├── data_pipeline.py
+│   ├── download_tr_tokenizer.py
+│   ├── drone_sitl_demo.py
+│   ├── eval.py
+│   ├── extract_dataset_refs.py
+│   ├── failure_budget_drill.py
+│   ├── golden_eval.py
+│   ├── golden_score.py
+│   ├── kaggle_onefile_demo_build30.py
+│   ├── kaggle_train_compare_build30.py
+│   ├── logbook_build.py
+│   ├── mac_simulation.py
+│   ├── md_build30_sweep.py
+│   ├── md_integrity_check.py
+│   ├── mini_titan_poc.py
+│   ├── mobile_export.py
+│   ├── nan_kill_test.py
+│   ├── operator_mode_gate.py
+│   ├── overfit_gate.py
+│   ├── README.md
+│   ├── README_TR.md
+│   ├── record_dataset_hashes.py
+│   ├── release_build30.sh
+│   ├── reports/
+│   │   ├── model_health.md
+│   │   └── model_health_TR.md
+│   ├── runs/
+│   │   └── preflight/
+│   │       └── config_snapshot.json
+│   ├── scaling_audit_math.py
+│   ├── secret_scan.py
+│   ├── smart_runner.py
+│   ├── smoke_train_benchmark.py
+│   ├── test_onnx_export.py
+│   ├── titan_onnx_stress_test.py
+│   ├── titan_preflight.py
+│   ├── train_smoke.py
+│   ├── train_tpu_turbo.py
+│   ├── update_system_hardware.py
+│   ├── verify_all.sh
+│   ├── verify_datasets.py
+│   ├── verify_onnx_local.py
+│   ├── version_checker.py
+│   ├── write_cuda_lock.py
+│   └── xray.py
+├── SDK_GUIDE.md
+├── SDK_GUIDE_TR.md
+├── SECURITY.md
+├── SECURITY_TR.md
+├── snake_demo.py
+├── TASK.md
+├── TASK_TR.md
+├── TECHNICAL_REPORT.md
+├── TECHNICAL_REPORT_TR.md
+├── tests/
+│   ├── test_57_matrix_gate.py
+│   ├── test_agi_cognitive.py
+│   ├── test_architecture_integrity.py
+│   ├── test_cognitive_extensions.py
+│   ├── test_comprehensive.py
+│   ├── test_continual_adapter.py
+│   ├── test_cpp_kernel_loader.py
+│   ├── test_drone_sitl_demo.py
+│   ├── test_eval_suites.py
+│   ├── test_export_metadata.py
+│   ├── test_kaggle_compare_script.py
+│   ├── test_kernel_dispatcher.py
+│   ├── test_kernel_equivalence.py
+│   ├── test_kpi_report_cli.py
+│   ├── test_lifelong_safety.py
+│   ├── test_mla_regressions.py
+│   ├── test_model.py
+│   ├── test_onnx_custom_op_contract.py
+│   ├── test_onnx_export_path.py
+│   ├── test_onnx_metadata_hook.py
+│   ├── test_orchestrator_swarm_runtime.py
+│   ├── test_sdk_api.py
+│   ├── test_sdk_pilot_cli.py
+│   ├── test_train_loop_sanity.py
+│   ├── test_triad_omega_api.py
+│   └── test_world_model_head.py
+├── tokenizer/
+│   ├── drift_report.md
+│   ├── drift_report_TR.md
+│   ├── stats.md
+│   ├── stats_TR.md
+│   ├── tokenizer.json
+│   └── tr/
+│       ├── README.md
+│       └── README_TR.md
+├── tools/
+│   ├── abuse_tests.md
+│   ├── abuse_tests_TR.md
+│   ├── contracts/
+│   │   ├── README.md
+│   │   └── README_TR.md
+│   └── sandbox/
+│       ├── README.md
+│       └── README_TR.md
+├── train/
+│   ├── __init__.py
+│   ├── continual_adapter.py
+│   └── train.py
+├── training_dynamics/
+│   ├── cold_vs_warm.md
+│   └── cold_vs_warm_TR.md
+├── TRAINING_PLAN.md
+├── TRAINING_PLAN_TR.md
+├── USAGE_GUIDE.md
+├── USAGE_GUIDE_TR.md
+├── USE_POLICY.md
+├── USE_POLICY_TR.md
+├── utils/
+│   ├── __init__.py
+│   ├── dataset_registry.py
+│   ├── logger.py
+│   └── safety.py
+├── WHITE_PAPER_LIQUIDROUTER.md
+└── WHITE_PAPER_LIQUIDROUTER_TR.md
 ```
 
 ### Clickable Path Map
