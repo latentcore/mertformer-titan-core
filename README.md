@@ -1686,6 +1686,7 @@ NİHAİ/  # project root
 │   ├── bitnet_kernel_benchmark_standalone.py  # standalone low-bit kernel benchmark
 │   ├── bootstrap_venv.sh  # shell automation script
 │   ├── build_investor_deck.py  # investor deck assembly helper
+│   ├── build_summary_pdf.py  # summary markdown to PDF generator
 │   ├── build_validation_set.py  # validation set constructor
 │   ├── chat.py  # local chat CLI runner
 │   ├── check_57_matrix.py  # closure-57 gate validator

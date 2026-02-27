@@ -1,8 +1,6 @@
 ![MertFormer Titan Header](assets/header.png)
 
-<div align="center">
-  <a href="README_SUMMARY.md">🇬🇧 English</a> | <a href="README_SUMMARY_TR.md">🇹🇷 Türkçe</a>
-</div>
+Language: [English](README_SUMMARY.md) | [Turkce](README_SUMMARY_TR.md)
 
 ---
 

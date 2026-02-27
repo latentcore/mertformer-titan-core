@@ -1684,6 +1684,7 @@ NİHAİ/  # proje kökü
 │   ├── bitnet_kernel_benchmark_standalone.py  # bağımsız düşük-bit kernel benchmarkı
 │   ├── bootstrap_venv.sh  # shell otomasyon scripti
 │   ├── build_investor_deck.py  # yatırımcı deck derleme yardımcısı
+│   ├── build_summary_pdf.py  # summary markdown dosyalarını PDF'e çevirir
 │   ├── build_validation_set.py  # doğrulama seti oluşturucu
 │   ├── chat.py  # yerel chat CLI çalıştırıcısı
 │   ├── check_57_matrix.py  # Closure-57 kapı doğrulayıcısı
