@@ -26,7 +26,7 @@ It combines BitNet (1.58-bit), Liquid dynamics, and MoE routing under a producti
 ## Verified Local Evidence (Latest Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `59 passed, 3 skipped` |
+| `python3 -m pytest -q` | `89 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -69,4 +69,3 @@ TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash run.sh
 - Usage guide: [USAGE_GUIDE.md](USAGE_GUIDE.md), [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md)
 - SDK guide: [SDK_GUIDE.md](SDK_GUIDE.md), [SDK_GUIDE_TR.md](SDK_GUIDE_TR.md)
 - Safety/policy: [SECURITY.md](SECURITY.md), [USE_POLICY.md](USE_POLICY.md)
-
