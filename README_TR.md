@@ -1958,3 +1958,14 @@ Gelecekteki **8B / 70B / 1T** araştırmaları koşullu bir hat olarak ele alın
 **"Tohumu ektik, şimdi ormanı izleme vakti."**
 
 </div>
+
+## Build30 V1 Final Kapanis Eki (2026-02-28)
+
+`scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` one-file companion dosyasi kapanis sozlesmesi seviyesine yukseltilmistir:
+
+- Payload semalari guncellendi: `build30_colab_math_fastproof_payload_v2`, `build30_colab_math_fastproof_compare_v2`, `kaggle_onefile_deep_build30_v6`.
+- Kati run/config yonetisimi: schema dogrulamasi, zorunlu alan fail-fast, unknown-key reddi, override/source trace.
+- Compile stall mitigasyonu: compile varsayilan OFF, timeout fallback, compile/cudagraph guard telemetry.
+- Kanit genisletmeleri: ownership proof, runtime fingerprint, redacted env snapshot, reproduce komutu.
+- Eval genisletmeleri: unseen-range zero-shot exact-match raporlama ve interpretability artefaktlari.
+- Ozellik takibi: tum maddeleri kapsayan `feature_coverage_matrix` ve completeness yuzdesi.

@@ -1960,3 +1960,14 @@ Future **8B / 70B / 1T** exploration is treated as a conditional research track 
 **"We planted the seed; now it's time to watch the forest."**
 
 </div>
+
+## Build30 V1 Final Closure Addendum (2026-02-28)
+
+The one-file companion at `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` was upgraded to a closure contract release track:
+
+- Payload schemas upgraded: `build30_colab_math_fastproof_payload_v2`, `build30_colab_math_fastproof_compare_v2`, `kaggle_onefile_deep_build30_v6`.
+- Strict run/config governance: schema validation, required-key fail-fast, unknown-key reject, override/source trace.
+- Compile stall mitigation: compile default OFF, timeout fallback, compile/cudagraph guard telemetry.
+- Evidence extensions: ownership proof, runtime fingerprint, redacted env snapshot, reproducible command string.
+- Evaluation extensions: unseen-range zero-shot exact-match reporting and interpretability artifacts.
+- Feature tracking: exhaustive `feature_coverage_matrix` with per-feature IDs and completeness percent.

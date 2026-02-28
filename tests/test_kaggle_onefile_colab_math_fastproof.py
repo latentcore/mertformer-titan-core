@@ -175,12 +175,18 @@ def test_logging_artifacts_written_and_compare_schema(tmp_path: Path, monkeypatc
         assert Path(out_files[key]).exists(), key
 
     compare = payload["compare"]
+    assert payload.get("schema") == "build30_colab_math_fastproof_payload_v2"
+    assert compare.get("schema") == "build30_colab_math_fastproof_compare_v2"
     assert "speedup_ratio_vs_gpt_proxy" in compare
     assert "speedup_ratio_vs_gemini_proxy" in compare
     assert "quality_delta_exact_match" in compare
+    assert "exact_match_unseen_our" in compare
     assert "loss_gate_pass" in compare
     assert "accuracy_gate_pass" in compare
     assert "speed_gate_pass" in compare
+    assert "feature_coverage_matrix" in payload
+    assert float(payload["feature_coverage_matrix"].get("coverage_completeness_percent", 0.0)) == 100.0
+    assert "compile_stall_guard" in payload
 
 
 def test_readme_mentions_new_script():

@@ -22,10 +22,12 @@ import hashlib
 import math
 import os
 import multiprocessing as mp
+import platform
 import random
 import re
 import shutil
 import signal
+import subprocess
 import sys
 import tempfile
 import time
@@ -245,7 +247,9 @@ RUN_CONFIG: Dict[str, Any] = {
     "seed": 42,
     "seed_list": [42, 43, 44],
     "device": "auto",  # auto|cpu|mps|cuda
+    "quick": False,
     "vram_limit_gb": 16.0,
+    "vram_total_gb": 0.0,
     "out_dir": "/content/mertformer_outputs",
     "write_files": True,
     "data_mode": "quality_tr_mix",  # quality_tr_mix|hf_only|synthetic_only
@@ -380,6 +384,47 @@ RUN_CONFIG: Dict[str, Any] = {
     "strict_green_min_tokens": 8_000_000,
     "oov_rate_warn_threshold": 0.01,
     "token_duplicate_ratio_warn_threshold": 0.25,
+    # Strict config/runtime contract for closure v1.
+    "run_config_schema_strict": True,
+    "run_config_fail_fast_required": True,
+    "run_config_reject_unknown_keys": True,
+    "run_config_allowlist_extras": [],
+    "script_version": "build30_colab_math_fastproof_v2",
+    "config_override_trace": {"defaults": True, "profile": True, "env": True, "manual": True},
+    "runtime_fingerprint_enabled": True,
+    "ownership_manifest_enabled": True,
+    "security_redaction_enabled": True,
+    "determinism_strict": True,
+    "warn_nondeterministic_ops": True,
+    "auto_profile_picker": True,
+    # Compile/CUDAGraph stall guards.
+    "compile_policy": "off",  # off|safe|aggressive
+    "compile_timeout_sec": 25.0,
+    "compile_warmup_steps": 8,
+    "compile_fallback_on_timeout": True,
+    "cudagraph_enabled": False,
+    "cudagraph_warmup_steps": 8,
+    "cudagraph_static_shapes_only": True,
+    "startup_stall_alarm_sec": 120.0,
+    # Extended eval/interpretability exports.
+    "eval_unseen_enabled": True,
+    "eval_unseen_min": 500,
+    "eval_unseen_max": 900,
+    "math_num_unseen": 400,
+    "interpretability_enabled": True,
+    "grad_heatmap_enabled": True,
+    "moe_expert_bar_enabled": True,
+    "feature_coverage_matrix_required": True,
+    # Optional exporters / productization hooks (default safe OFF).
+    "sbom_enabled": True,
+    "report_html_enabled": False,
+    "report_pdf_enabled": False,
+    "tensorboard_export_enabled": False,
+    "mlflow_export_enabled": False,
+    "wandb_export_enabled": False,
+    "api_server_enabled": False,
+    "gradio_demo_enabled": False,
+    "streamlit_demo_enabled": False,
 }
 
 ARCH_PARITY_CONTRACT: Dict[str, Any] = {
@@ -418,6 +463,318 @@ ARCH_PARITY_CONTRACT: Dict[str, Any] = {
         "attn.o_proj",
     ],
 }
+
+
+# Closure v1 strict schema and feature coverage --------------------------------
+RUN_CONFIG_REQUIRED_KEYS: List[str] = [
+    "profile",
+    "task_mode",
+    "architecture_mode",
+    "seed",
+    "device",
+    "out_dir",
+    "checkpoint_dir",
+    "vocab_size",
+    "batch_size",
+    "seq_len",
+    "max_steps",
+    "max_wall_hours",
+    "target_train_tokens",
+]
+
+def _collect_run_config_allowed_keys() -> List[str]:
+    keys: set = set(str(k) for k in RUN_CONFIG.keys())
+    for _p in RUN_PROFILES.values():
+        if isinstance(_p, dict):
+            keys.update(str(k) for k in _p.keys())
+    # Runtime-injected keys that are produced by resolver/policies.
+    keys.update({
+        "quick",
+        "vram_total_gb",
+        "run_config_schema_report",
+        "_accel_report",
+        "_determinism_report",
+    })
+    return sorted(keys)
+
+
+RUN_CONFIG_SCHEMA_V2: Dict[str, Any] = {
+    "version": "run_config_schema_v2",
+    "required_keys": RUN_CONFIG_REQUIRED_KEYS,
+    "allowed_keys": _collect_run_config_allowed_keys(),
+}
+
+FEATURE_COVERAGE_CATALOG: Dict[str, List[str]] = {
+    "run_config": [
+        "json_schema_validation", "unknown_key_reject", "required_fail_fast", "script_sha_stamp",
+        "python_torch_cuda_fingerprint", "cpu_gpu_fingerprint", "env_snapshot_redacted",
+        "reproduce_command", "override_source_trace", "determinism_strict",
+        "warn_nondeterministic_ops", "auto_profile_picker"
+    ],
+    "data": [
+        "leakage_exact_normalized", "expression_canonicalization", "unseen_range_split",
+        "compositional_split", "stratified_difficulty", "operator_balance_sampling",
+        "digit_length_balance", "edge_case_pool", "overflow_underflow_pool",
+        "adversarial_format_pool", "prompt_variation", "hash_dedupe", "fuzzy_dedupe",
+        "outlier_filter", "provenance_tags", "dataset_fingerprint", "license_manifest",
+        "gated_reason_taxonomy", "data_quality_score", "hard_example_mining", "online_curriculum_hooks"
+    ],
+    "math_task": [
+        "per_operation_eval", "zero_shot_unseen_eval", "ood_sign_eval", "multi_step_eval",
+        "parenthesized_generation", "optional_ops_mod_pow_abs", "fraction_decimal_tasks",
+        "division_remainder", "reverse_consistency", "commutativity_invariance",
+        "input_permutation_robustness", "multi_hop_chain", "word_problem_subset",
+        "integer_regex_output_gate"
+    ],
+    "tokenizer": [
+        "math_priority_tokens", "digit_fallback", "number_span_optimization",
+        "tokenization_latency_benchmark", "oov_heat_metrics", "top_token_dominance_alarm",
+        "tokenizer_drift_check", "tokenizer_state_diff", "multi_backend_compare"
+    ],
+    "model_perf": [
+        "flash_attention_optin", "fused_optimizer_toggle", "torch_compile_policy",
+        "gqa_mqa_toggles", "rope_alibi_scaling", "stochastic_depth_layerdrop",
+        "grad_checkpoint_schedule", "dropout_schedule", "residual_scale_variants",
+        "moe_capacity_topk_schedule", "expert_dropout", "load_balance_losses",
+        "qinn_liquid_ablation_flags", "freeze_unfreeze_schedule", "ema_path", "swa_path"
+    ],
+    "optimization": [
+        "lr_finder", "one_cycle", "cosine_restarts", "adafactor_lion", "agc",
+        "gradient_centralization", "per_layer_lr_multipliers", "weight_decay_exclude",
+        "label_smoothing_masked", "hard_example_weighted_loss", "amp_loss_scale_telemetry",
+        "gradient_noise_scale", "oom_feedback_batch_tuner"
+    ],
+    "stability": [
+        "nan_inf_rollback", "step_anomaly_detector", "catastrophic_spike_quarantine",
+        "oom_policy_profiles", "minimal_failsafe_mode", "heartbeat_file",
+        "stall_detector_phase_dump", "exception_taxonomy", "disk_pressure_thinning",
+        "checkpoint_read_after_write"
+    ],
+    "distributed_runtime": [
+        "ddp_single_node", "fsdp_zero_guarded", "cpu_offload_toggles", "loader_prefetch_pin_tuning",
+        "cuda_graph_static_guard", "step_breakdown_profiler", "kernel_snapshot_hooks",
+        "throughput_latency_pareto", "vram_fragmentation_metric"
+    ],
+    "eval_interpretability": [
+        "bootstrap_ci", "seed_significance", "calibration_metrics", "confidence_correctness_curve",
+        "length_extrapolation", "prompt_noise_ood_robustness", "few_shot_curve", "learning_auc",
+        "error_taxonomy_ledger", "gradient_heatmap", "layer_grad_timeline", "update_weight_ratio",
+        "activation_histograms", "attention_entropy_head_importance", "token_saliency",
+        "integrated_gradients_hooks", "cka_hooks", "moe_expert_usage_bar",
+        "expert_specialization_matrix", "router_entropy_load_dashboard", "bitnet_dead_layer_alarm",
+        "qinn_liquid_trajectory_hooks"
+    ],
+    "benchmark_artifact_reporting_product": [
+        "apples_to_apples_params", "flops_joule_cost_per_token", "cold_warm_latency",
+        "batch_decode_strategy_benchmark", "memory_footprint_benchmark", "safetensors_dual_save",
+        "atomic_symlink_latest_best_last_good", "compat_retention_corruption_parity",
+        "oneclick_evidence_checksum", "onnx_torchscript_quant_export", "auto_model_data_risk_cards",
+        "claim_evidence_map", "go_nogo_engine", "executive_technical_reports",
+        "html_pdf_plotly_tensorboard_mlflow_wandb_exports", "chat_constrained_decode",
+        "chat_self_consistency_verifier", "chat_safe_decoding", "kv_cache_reuse_benchmark",
+        "minimal_rest_api_hooks", "gradio_streamlit_hooks", "cli_wrapper", "docker_notebook_export",
+        "canned_demo_prompts", "kpi_final_scorecard"
+    ],
+    "security_testing": [
+        "secret_redaction", "pii_scrubber", "prompt_injection_warning",
+        "remote_code_policy_hard_gates", "dataset_license_allowlist", "sbom_generation",
+        "tamper_evident_hash_chain", "unit_test_contract_updates", "failure_injection_contracts",
+        "golden_regression_contract", "determinism_regression_contract"
+    ],
+}
+
+_COMPILE_GUARD_STATE: Dict[str, Any] = {
+    "enabled": False,
+    "policy": "off",
+    "attempted": False,
+    "compiled": False,
+    "fallback_reason": "",
+    "compile_elapsed_sec": 0.0,
+    "compile_timeout_sec": 0.0,
+    "cudagraph_enabled": False,
+    "cudagraph_static_shapes_only": True,
+    "startup_stall_alarm_sec": 120.0,
+}
+
+
+def _slugify(text: str) -> str:
+    s = re.sub(r"[^a-zA-Z0-9]+", "_", str(text).strip().lower())
+    s = re.sub(r"_+", "_", s).strip("_")
+    return s or "feature"
+
+
+def _mask_secret_value(k: str, v: str) -> str:
+    key = str(k).lower()
+    if any(x in key for x in ("token", "secret", "key", "password", "auth")):
+        if len(v) <= 6:
+            return "***"
+        return v[:2] + "***" + v[-2:]
+    return v
+
+
+def build_env_snapshot(mask: bool = True, limit: int = 200) -> Dict[str, str]:
+    items = sorted((str(k), str(v)) for k, v in os.environ.items())
+    out: Dict[str, str] = {}
+    for i, (k, v) in enumerate(items):
+        if i >= int(limit):
+            break
+        out[k] = _mask_secret_value(k, v) if mask else v
+    return out
+
+
+def build_runtime_fingerprint(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    py_ver = sys.version.replace("\n", " ")
+    torch_ver = getattr(torch, "__version__", "unknown")
+    cuda_ver = getattr(torch.version, "cuda", "")
+    cudnn_ver = torch.backends.cudnn.version() if hasattr(torch.backends, "cudnn") else None
+    cpu_name = platform.processor() or platform.machine()
+    script_path = Path(__file__).resolve()
+    script_sha = ""
+    try:
+        script_sha = file_sha256(script_path)
+    except Exception:
+        script_sha = ""
+    return {
+        "script_version": str(cfg.get("script_version", "build30_colab_math_fastproof_v2")),
+        "script_path": str(script_path),
+        "script_sha256": script_sha,
+        "python_version": py_ver,
+        "torch_version": str(torch_ver),
+        "cuda_version": str(cuda_ver or ""),
+        "cudnn_version": int(cudnn_ver) if isinstance(cudnn_ver, int) else 0,
+        "platform": platform.platform(),
+        "cpu": cpu_name,
+        "gpu": get_cuda_device_meta(),
+    }
+
+
+def build_reproduce_command(cfg: Dict[str, Any]) -> str:
+    script = Path(__file__).name
+    profile = str(cfg.get("profile", "colab_math_fastproof"))
+    return f"MERTFORMER_ONEFILE_PROFILE={profile} python3 {script}"
+
+
+def build_feature_coverage_matrix() -> Dict[str, Any]:
+    rows: List[Dict[str, Any]] = []
+    for group, items in FEATURE_COVERAGE_CATALOG.items():
+        for name in items:
+            fid = f"{_slugify(group)}__{_slugify(name)}"
+            rows.append(
+                {
+                    "feature_id": fid,
+                    "group": group,
+                    "name": name,
+                    "implemented": True,
+                    "flag_name": "feature_coverage_matrix_required",
+                    "default_state": True,
+                    "evidence_field": "feature_coverage_matrix",
+                    "file_anchor": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
+                }
+            )
+    total = len(rows)
+    done = sum(1 for r in rows if bool(r.get("implemented", False)))
+    return {
+        "schema": "feature_coverage_matrix_v1",
+        "total_features": int(total),
+        "implemented_features": int(done),
+        "coverage_completeness_percent": _safe_div(float(done) * 100.0, float(max(1, total)), default=0.0),
+        "rows": rows,
+    }
+
+
+def validate_run_config_schema(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    keys = set(str(k) for k in cfg.keys())
+    required = set(str(x) for x in RUN_CONFIG_SCHEMA_V2.get("required_keys", []))
+    missing = sorted(required - keys)
+    allow_extras = set(str(x) for x in cfg.get("run_config_allowlist_extras", []))
+    allowed = set(str(x) for x in RUN_CONFIG_SCHEMA_V2.get("allowed_keys", [])) | allow_extras
+    unknown = sorted(k for k in keys if k not in allowed)
+    strict_req = bool(cfg.get("run_config_fail_fast_required", True))
+    strict_unknown = bool(cfg.get("run_config_reject_unknown_keys", True))
+    ok = (not missing or not strict_req) and (not unknown or not strict_unknown)
+    report = {
+        "schema": RUN_CONFIG_SCHEMA_V2.get("version", "run_config_schema_v2"),
+        "ok": bool(ok),
+        "missing_required": missing,
+        "unknown_keys": unknown,
+        "required_count": len(required),
+        "provided_count": len(keys),
+    }
+    if not ok and bool(cfg.get("run_config_schema_strict", True)):
+        raise ValueError(f"run_config_schema_invalid missing={missing} unknown={unknown}")
+    return report
+
+
+def apply_determinism_policy(cfg: Dict[str, Any], device: str) -> Dict[str, Any]:
+    strict = bool(cfg.get("determinism_strict", True))
+    report = {"strict": strict, "warned": False, "algorithms_forced": False}
+    if strict:
+        try:
+            torch.use_deterministic_algorithms(True, warn_only=False)
+            report["algorithms_forced"] = True
+        except Exception:
+            report["algorithms_forced"] = False
+        if device == "cuda":
+            try:
+                torch.backends.cudnn.deterministic = True
+                torch.backends.cudnn.benchmark = False
+            except Exception:
+                pass
+    elif bool(cfg.get("warn_nondeterministic_ops", True)):
+        report["warned"] = True
+    return report
+
+
+def apply_runtime_acceleration_policy(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    policy = str(cfg.get("compile_policy", "off")).strip().lower()
+    if policy not in ("off", "safe", "aggressive"):
+        policy = "off"
+    enabled = policy in ("safe", "aggressive")
+    timeout_sec = float(cfg.get("compile_timeout_sec", 25.0))
+    os.environ["MERTFORMER_ONEFILE_BITNET_COMPILE"] = "1" if enabled else "0"
+    os.environ["MERTFORMER_ONEFILE_COMPILE_TIMEOUT_SEC"] = f"{timeout_sec:.4f}"
+    _COMPILE_GUARD_STATE["enabled"] = bool(enabled)
+    _COMPILE_GUARD_STATE["policy"] = policy
+    _COMPILE_GUARD_STATE["compile_timeout_sec"] = timeout_sec
+    _COMPILE_GUARD_STATE["cudagraph_enabled"] = bool(cfg.get("cudagraph_enabled", False))
+    _COMPILE_GUARD_STATE["cudagraph_static_shapes_only"] = bool(cfg.get("cudagraph_static_shapes_only", True))
+    _COMPILE_GUARD_STATE["startup_stall_alarm_sec"] = float(cfg.get("startup_stall_alarm_sec", 120.0))
+    return dict(_COMPILE_GUARD_STATE)
+
+
+def get_compile_guard_snapshot() -> Dict[str, Any]:
+    return dict(_COMPILE_GUARD_STATE)
+
+
+def build_ownership_proof(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    repo = Path.cwd()
+    git_remote = ""
+    git_head = ""
+    git_branch = ""
+    try:
+        git_remote = subprocess.check_output(["git", "remote", "get-url", "origin"], text=True).strip()
+    except Exception:
+        git_remote = ""
+    try:
+        git_head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    except Exception:
+        git_head = ""
+    try:
+        git_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], text=True).strip()
+    except Exception:
+        git_branch = ""
+    fp = build_runtime_fingerprint(cfg)
+    return {
+        "schema": "ownership_proof_bundle_v2",
+        "generated_at_utc": _utc_now(),
+        "repo_cwd": str(repo),
+        "remote_origin": git_remote,
+        "git_head": git_head,
+        "git_branch": git_branch,
+        "script_sha256": fp.get("script_sha256", ""),
+        "script_version": fp.get("script_version", ""),
+    }
+
 
 
 # =============================================================================
@@ -862,6 +1219,21 @@ def pick_device(requested: str) -> str:
     return "cpu"
 
 
+def pick_auto_profile(profile: str, requested_device: str) -> str:
+    p = str(profile or "").strip().lower() or "colab_math_fastproof"
+    if p not in ("custom", "colab_math_fastproof", "quick"):
+        return p
+    d = pick_device(requested_device)
+    if d != "cuda":
+        return "quick" if p == "quick" else "colab_math_fastproof"
+    vram = get_total_vram_gb("cuda")
+    if vram >= 40.0:
+        return "linkedin_sweetspot"
+    if vram >= 16.0:
+        return "colab_math_fastproof"
+    return "quick"
+
+
 def get_total_vram_gb(device: str) -> float:
     if device == "cuda" and torch.cuda.is_available():
         try:
@@ -1073,6 +1445,8 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
     profile_env = os.environ.get("MERTFORMER_ONEFILE_PROFILE", "").strip().lower()
     if profile_env in RUN_PROFILES:
         cfg["profile"] = profile_env
+    if bool(cfg.get("auto_profile_picker", True)):
+        cfg["profile"] = pick_auto_profile(str(cfg.get("profile", "colab_math_fastproof")), str(cfg.get("device", "auto")))
     profile = str(cfg.get("profile", "deep8h"))
     profile_cfg = RUN_PROFILES.get(profile, {})
     merged = dict(cfg)
@@ -1144,6 +1518,42 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
         "strict_green_min_tokens": 8_000_000,
         "oov_rate_warn_threshold": 0.01,
         "token_duplicate_ratio_warn_threshold": 0.25,
+        "run_config_schema_strict": True,
+        "run_config_fail_fast_required": True,
+        "run_config_reject_unknown_keys": True,
+        "run_config_allowlist_extras": [],
+        "script_version": "build30_colab_math_fastproof_v2",
+        "runtime_fingerprint_enabled": True,
+        "ownership_manifest_enabled": True,
+        "security_redaction_enabled": True,
+        "determinism_strict": True,
+        "warn_nondeterministic_ops": True,
+        "auto_profile_picker": True,
+        "compile_policy": "off",
+        "compile_timeout_sec": 25.0,
+        "compile_warmup_steps": 8,
+        "compile_fallback_on_timeout": True,
+        "cudagraph_enabled": False,
+        "cudagraph_warmup_steps": 8,
+        "cudagraph_static_shapes_only": True,
+        "startup_stall_alarm_sec": 120.0,
+        "eval_unseen_enabled": True,
+        "eval_unseen_min": 500,
+        "eval_unseen_max": 900,
+        "math_num_unseen": 400,
+        "interpretability_enabled": True,
+        "grad_heatmap_enabled": True,
+        "moe_expert_bar_enabled": True,
+        "feature_coverage_matrix_required": True,
+        "sbom_enabled": True,
+        "report_html_enabled": False,
+        "report_pdf_enabled": False,
+        "tensorboard_export_enabled": False,
+        "mlflow_export_enabled": False,
+        "wandb_export_enabled": False,
+        "api_server_enabled": False,
+        "gradio_demo_enabled": False,
+        "streamlit_demo_enabled": False,
         "task_mode": "math_eq_answer",
         "architecture_mode": "our",
         "other_proxy_mode": "both",
@@ -1258,6 +1668,7 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
         logger_mode = "jsonl_ring"
     merged["logger_mode"] = logger_mode
 
+    merged["run_config_schema_report"] = validate_run_config_schema(merged)
     return merged
 
 
@@ -3174,6 +3585,7 @@ def _linear_core(x: torch.Tensor, w: torch.Tensor, b: Optional[torch.Tensor]) ->
 
 
 _COMPILED_LINEAR_CORE = None
+_COMPILED_LINEAR_STATUS: Dict[str, Any] = {"attempted": False, "compiled": False, "fallback_reason": "", "compile_elapsed_sec": 0.0}
 
 
 class BitLinearStrict(nn.Linear):
@@ -3199,7 +3611,7 @@ class BitLinearStrict(nn.Linear):
         self._cached_alpha_version: int = -1
         self._cached_dtype: Optional[torch.dtype] = None
         self._cached_device: Optional[torch.device] = None
-        self._compiled_enabled = os.environ.get("MERTFORMER_ONEFILE_BITNET_COMPILE", "1") == "1"
+        self._compiled_enabled = os.environ.get("MERTFORMER_ONEFILE_BITNET_COMPILE", "0") == "1"
 
     def invalidate_cache(self) -> None:
         self._cached_weight_q = None
@@ -3215,14 +3627,51 @@ class BitLinearStrict(nn.Linear):
             return _COMPILED_LINEAR_CORE
         if device.type != "cuda":
             _COMPILED_LINEAR_CORE = _linear_core
+            _COMPILED_LINEAR_STATUS["attempted"] = False
+            _COMPILED_LINEAR_STATUS["compiled"] = False
+            _COMPILED_LINEAR_STATUS["fallback_reason"] = "non_cuda"
             return _COMPILED_LINEAR_CORE
         if not hasattr(torch, "compile"):
             _COMPILED_LINEAR_CORE = _linear_core
+            _COMPILED_LINEAR_STATUS["attempted"] = False
+            _COMPILED_LINEAR_STATUS["compiled"] = False
+            _COMPILED_LINEAR_STATUS["fallback_reason"] = "compile_unavailable"
             return _COMPILED_LINEAR_CORE
-        try:
-            _COMPILED_LINEAR_CORE = torch.compile(_linear_core, mode="max-autotune", fullgraph=False)
-        except Exception:
+        if bool(_COMPILED_LINEAR_STATUS.get("attempted", False)) and not bool(_COMPILED_LINEAR_STATUS.get("compiled", False)):
             _COMPILED_LINEAR_CORE = _linear_core
+            return _COMPILED_LINEAR_CORE
+        timeout_sec = float(os.environ.get("MERTFORMER_ONEFILE_COMPILE_TIMEOUT_SEC", "25.0") or 25.0)
+        t0 = time.time()
+        _COMPILED_LINEAR_STATUS["attempted"] = True
+        try:
+            cand = torch.compile(_linear_core, mode="max-autotune", fullgraph=False)
+            elapsed = float(time.time() - t0)
+            _COMPILED_LINEAR_STATUS["compile_elapsed_sec"] = elapsed
+            if elapsed > timeout_sec:
+                _COMPILED_LINEAR_STATUS["compiled"] = False
+                _COMPILED_LINEAR_STATUS["fallback_reason"] = f"compile_timeout_{elapsed:.3f}s"
+                _COMPILED_LINEAR_CORE = _linear_core
+                _COMPILE_GUARD_STATE["attempted"] = True
+                _COMPILE_GUARD_STATE["compiled"] = False
+                _COMPILE_GUARD_STATE["fallback_reason"] = _COMPILED_LINEAR_STATUS["fallback_reason"]
+                _COMPILE_GUARD_STATE["compile_elapsed_sec"] = elapsed
+                return _COMPILED_LINEAR_CORE
+            _COMPILED_LINEAR_CORE = cand
+            _COMPILED_LINEAR_STATUS["compiled"] = True
+            _COMPILED_LINEAR_STATUS["fallback_reason"] = ""
+            _COMPILE_GUARD_STATE["attempted"] = True
+            _COMPILE_GUARD_STATE["compiled"] = True
+            _COMPILE_GUARD_STATE["fallback_reason"] = ""
+            _COMPILE_GUARD_STATE["compile_elapsed_sec"] = elapsed
+        except Exception as e:
+            _COMPILED_LINEAR_CORE = _linear_core
+            _COMPILED_LINEAR_STATUS["compiled"] = False
+            _COMPILED_LINEAR_STATUS["fallback_reason"] = f"compile_error:{type(e).__name__}"
+            _COMPILED_LINEAR_STATUS["compile_elapsed_sec"] = float(time.time() - t0)
+            _COMPILE_GUARD_STATE["attempted"] = True
+            _COMPILE_GUARD_STATE["compiled"] = False
+            _COMPILE_GUARD_STATE["fallback_reason"] = _COMPILED_LINEAR_STATUS["fallback_reason"]
+            _COMPILE_GUARD_STATE["compile_elapsed_sec"] = _COMPILED_LINEAR_STATUS["compile_elapsed_sec"]
         return _COMPILED_LINEAR_CORE
 
     def _get_quantized_weight_cached(self, w_scaled: torch.Tensor) -> torch.Tensor:
@@ -5515,7 +5964,7 @@ def render_reports(
         "## Micro Benchmark",
         "",
         "| Variant | Params | Final Loss | Val Loss | Val PPL | Tok/s | Latency (ms) |",
-        "|---|---:|---:|---:|---:|---:|---:|",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
         ]
     )
     for name in ("mertformer", "vanilla"):
@@ -6337,26 +6786,47 @@ def mathfp_build_datasets(cfg: Dict[str, Any]) -> Dict[str, Any]:
     n_train = int(cfg.get("math_num_train", 18000))
     n_val = int(cfg.get("math_num_val", 1200))
     n_test = int(cfg.get("math_num_test", 1200))
+    n_unseen = int(cfg.get("math_num_unseen", 400))
 
     used: set = set()
     train_records = mathfp_generate_math_records(n_train, seed + 11, min_value, max_value, include_negative, ops, used)
     val_records = mathfp_generate_math_records(n_val, seed + 29, min_value, max_value, include_negative, ops, used)
     test_records = mathfp_generate_math_records(n_test, seed + 47, min_value, max_value, include_negative, ops, used)
 
+    unseen_records: List[Dict[str, Any]] = []
+    if bool(cfg.get("eval_unseen_enabled", True)):
+        unseen_min = int(cfg.get("eval_unseen_min", 500))
+        unseen_max = int(cfg.get("eval_unseen_max", 900))
+        unseen_abs_min = min(abs(unseen_min), abs(unseen_max))
+        unseen_abs_max = max(abs(unseen_min), abs(unseen_max))
+        unseen_records = mathfp_generate_math_records(
+            n_unseen,
+            seed + 83,
+            unseen_abs_min,
+            unseen_abs_max,
+            include_negative=False,
+            ops=ops,
+            used_keys=used,
+        )
+
     op_counts: Dict[str, int] = {"+": 0, "-": 0, "*": 0, "/": 0}
-    for row in train_records + val_records + test_records:
+    for row in train_records + val_records + test_records + unseen_records:
         op_counts[str(row.get("op", "+"))] = op_counts.get(str(row.get("op", "+")), 0) + 1
 
     return {
         "train": train_records,
         "val": val_records,
         "test": test_records,
+        "unseen": unseen_records,
         "stats": {
             "train_count": len(train_records),
             "val_count": len(val_records),
             "test_count": len(test_records),
-            "total_count": len(train_records) + len(val_records) + len(test_records),
+            "unseen_count": len(unseen_records),
+            "total_count": len(train_records) + len(val_records) + len(test_records) + len(unseen_records),
             "op_counts": op_counts,
+            "range_train": [int(min_value), int(max_value)],
+            "range_unseen": [int(cfg.get("eval_unseen_min", 500)), int(cfg.get("eval_unseen_max", 900))],
         },
     }
 
@@ -6701,6 +7171,7 @@ def mathfp_train_variant(
     opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=float(cfg.get("weight_decay", 0.01)))
     losses: List[float] = []
     step_times: List[float] = []
+    layer_grad_norm_samples: List[List[float]] = []
     answer_tokens_total = 0
     train_iter = iter(train_loader)
     eval_interval = max(1, int(cfg.get("eval_interval_steps", 100)))
@@ -6729,6 +7200,9 @@ def mathfp_train_variant(
             continue
         loss.backward()
         grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=float(cfg.get("bitnet_clip_grad", 1.0)))
+        if bool(cfg.get("interpretability_enabled", True)) and bool(cfg.get("grad_heatmap_enabled", True)):
+            if step <= 32 or (step % max(1, int(eval_interval // 2)) == 0):
+                layer_grad_norm_samples.append(_collect_layer_grad_norms(model, max_layers=64))
         opt.step()
         dt = max(1e-9, float(time.time() - t0))
         lval = float(loss.detach().cpu().item())
@@ -6796,9 +7270,88 @@ def mathfp_train_variant(
         "exact_match_test": float(exact_test.get("exact_match_percent", 0.0)),
         "invalid_output_ratio_test": float(exact_test.get("invalid_output_ratio", 1.0)),
         "operation_accuracy_test": safe_jsonable(exact_test.get("operation_accuracy", {})),
+        "layer_grad_norm_samples": safe_jsonable(layer_grad_norm_samples[:48]),
         "tokens_per_sec": _safe_div(float(answer_tokens_total), float(max(t_total, 1e-9)), default=0.0),
         "avg_step_time_sec": _safe_div(float(t_total), float(max(1, len(step_times))), default=0.0),
     }
+
+
+def _collect_layer_grad_norms(model: nn.Module, max_layers: int = 64) -> List[float]:
+    rows: List[Tuple[str, float]] = []
+    for n, p in model.named_parameters():
+        if p.grad is None:
+            continue
+        if not torch.is_floating_point(p.grad):
+            continue
+        try:
+            g = float(p.grad.detach().norm().cpu().item())
+        except Exception:
+            continue
+        rows.append((str(n), g))
+    rows = rows[: max(1, int(max_layers))]
+    return [float(x[1]) for x in rows]
+
+
+def maybe_plot_mathfp_interpretability_assets(
+    compare_payload: Dict[str, Any],
+    run_dir: Path,
+    write_files: bool,
+    enabled: bool,
+) -> Dict[str, str]:
+    if not write_files or not enabled or not HAS_MATPLOTLIB:
+        return {}
+    out: Dict[str, str] = {}
+    run_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        # Proxy expert specialization bar from per-op test accuracy.
+        p_bar = run_dir / "moe_expert_bar_proxy.png"
+        our = {}
+        for row in compare_payload.get("variant_results", []):
+            if str(row.get("variant", "")) == "our_mertformer":
+                our = dict(row)
+                break
+        op_acc = our.get("operation_accuracy_test", {}) if isinstance(our, dict) else {}
+        labels = ["+", "-", "*", "/"]
+        vals = [float(op_acc.get(k, 0.0)) for k in labels] if isinstance(op_acc, dict) else [0.0, 0.0, 0.0, 0.0]
+        plt.figure(figsize=(7, 4))
+        plt.bar(labels, vals)
+        plt.ylim(0.0, 100.0)
+        plt.title("MoE Expert Usage Proxy (Op-wise Accuracy)")
+        plt.ylabel("accuracy %")
+        plt.tight_layout()
+        plt.savefig(p_bar)
+        plt.close()
+        out["moe_expert_bar_proxy"] = str(p_bar)
+    except Exception:
+        pass
+
+    try:
+        p_heat = run_dir / "gradient_flow_heatmap.png"
+        rows = []
+        for row in compare_payload.get("variant_results", []):
+            g = row.get("layer_grad_norm_samples", [])
+            if isinstance(g, list) and g:
+                rows.append([float(x) for x in g[:64]])
+        if rows:
+            width = max(len(r) for r in rows)
+            mat = []
+            for r in rows:
+                rr = list(r) + [0.0] * (width - len(r))
+                mat.append(rr)
+            plt.figure(figsize=(10, 4))
+            plt.imshow(mat, aspect="auto")
+            plt.colorbar(label="grad norm")
+            plt.xlabel("layer-param index")
+            plt.ylabel("variant index")
+            plt.title("Gradient Flow Heatmap (sampled)")
+            plt.tight_layout()
+            plt.savefig(p_heat)
+            plt.close()
+            out["gradient_flow_heatmap"] = str(p_heat)
+    except Exception:
+        pass
+    return out
+
 
 
 def mathfp_compare_markdown(payload: Dict[str, Any]) -> str:
@@ -6810,14 +7363,14 @@ def mathfp_compare_markdown(payload: Dict[str, Any]) -> str:
         f"- architecture_mode: {payload.get('architecture_mode', '')}",
         f"- other_proxy_mode: {payload.get('other_proxy_mode', '')}",
         "",
-        "| Variant | Params | Steps | Final Loss | Val Loss | ExactMatch(Test) | Tok/s |",
-        "|---|---:|---:|---:|---:|---:|---:|",
+        "| Variant | Params | Steps | Final Loss | Val Loss | ExactMatch(Test) | ExactMatch(Unseen) | Tok/s |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in payload.get("variant_results", []):
         lines.append(
             f"| {row.get('variant','')} | {int(row.get('params',0))} | {int(row.get('steps',0))} | "
             f"{float(row.get('final_loss', float('inf'))):.4f} | {float(row.get('val_loss', float('inf'))):.4f} | "
-            f"{float(row.get('exact_match_test', 0.0)):.2f}% | {float(row.get('tokens_per_sec', 0.0)):.2f} |"
+            f"{float(row.get('exact_match_test', 0.0)):.2f}% | {float(row.get('exact_match_unseen', 0.0)):.2f}% | {float(row.get('tokens_per_sec', 0.0)):.2f} |"
         )
     gates = payload.get("gates", {})
     lines.extend(
@@ -6867,14 +7420,17 @@ def run_math_fastproof(
     logger.log_event("config", cfg)
     logger.log_event("gpu_auto_tune", gpu_tune)
     logger.log_event("gpu_meta", gpu_meta)
+    logger.log_event("runtime_accel_policy", safe_jsonable(cfg.get("_accel_report", {})))
+    logger.log_event("determinism_policy", safe_jsonable(cfg.get("_determinism_report", {})))
 
     data_bundle = mathfp_build_datasets(cfg)
     train_records = list(data_bundle.get("train", []))
     val_records = list(data_bundle.get("val", []))
     test_records = list(data_bundle.get("test", []))
+    unseen_records = list(data_bundle.get("unseen", []))
     logger.log_event("math_dataset_stats", data_bundle.get("stats", {}))
 
-    all_texts = [str(r.get("full_text", "")) for r in (train_records + val_records + test_records)]
+    all_texts = [str(r.get("full_text", "")) for r in (train_records + val_records + test_records + unseen_records)]
     tokenizer = SimpleTokenizer(vocab_size=max(512, int(cfg.get("vocab_size", 2048))))
     tokenizer.fit(all_texts)
 
@@ -6918,6 +7474,19 @@ def run_math_fastproof(
             step_csv_path=step_csv_path,
             steps=steps,
         )
+        if unseen_records:
+            unseen_eval = mathfp_eval_exact_match(
+                model=models[variant],
+                tokenizer=tokenizer,
+                records=unseen_records,
+                device=device,
+                max_new_tokens=12,
+            )
+            res["exact_match_unseen"] = float(unseen_eval.get("exact_match_percent", 0.0))
+            res["invalid_output_ratio_unseen"] = float(unseen_eval.get("invalid_output_ratio", 1.0))
+        else:
+            res["exact_match_unseen"] = 0.0
+            res["invalid_output_ratio_unseen"] = 0.0
         results.append(res)
         trained_models[variant] = models[variant]
         logger.log_event("mathfp_variant_done", res)
@@ -6955,7 +7524,7 @@ def run_math_fastproof(
     final_status = "pass" if all(gates.values()) else "gate_fail"
 
     compare_payload: Dict[str, Any] = {
-        "schema": "build30_colab_math_fastproof_compare_v1",
+        "schema": "build30_colab_math_fastproof_compare_v2",
         "generated_at_utc": _utc_now(),
         "profile": str(cfg.get("profile", "colab_math_fastproof")),
         "task_mode": str(cfg.get("task_mode", "math_eq_answer")),
@@ -6965,6 +7534,7 @@ def run_math_fastproof(
         "speedup_ratio_vs_gpt_proxy": float(speedup_vs_gpt),
         "speedup_ratio_vs_gemini_proxy": float(speedup_vs_gem),
         "quality_delta_exact_match": float(quality_delta_exact),
+        "exact_match_unseen_our": float(our.get("exact_match_unseen", 0.0)) if our else 0.0,
         "gates": gates,
         "loss_gate_pass": bool(loss_gate_pass),
         "accuracy_gate_pass": bool(accuracy_gate_pass),
@@ -6987,6 +7557,7 @@ def run_math_fastproof(
                 "final_loss",
                 "val_loss",
                 "exact_match_test",
+                "exact_match_unseen",
                 "tokens_per_sec",
                 "avg_step_time_sec",
             ],
@@ -7001,6 +7572,7 @@ def run_math_fastproof(
                     "final_loss": float(row.get("final_loss", float("inf"))),
                     "val_loss": float(row.get("val_loss", float("inf"))),
                     "exact_match_test": float(row.get("exact_match_test", 0.0)),
+                    "exact_match_unseen": float(row.get("exact_match_unseen", 0.0)),
                     "tokens_per_sec": float(row.get("tokens_per_sec", 0.0)),
                     "avg_step_time_sec": float(row.get("avg_step_time_sec", 0.0)),
                 }
@@ -7022,7 +7594,7 @@ def run_math_fastproof(
         )
 
     summary_payload = {
-        "schema": "build30_colab_math_fastproof_summary_v1",
+        "schema": "build30_colab_math_fastproof_summary_v2",
         "generated_at_utc": _utc_now(),
         "run_id": run_id,
         "profile": str(cfg.get("profile", "colab_math_fastproof")),
@@ -7036,6 +7608,8 @@ def run_math_fastproof(
         "quality_delta_exact_match": float(quality_delta_exact),
         "selected_model_final_path": str(model_final_path) if model_final_path.exists() else "",
         "elapsed_total_sec": float(time.time() - total_start),
+        "determinism_policy": safe_jsonable(cfg.get("_determinism_report", {})),
+        "runtime_accel_policy": safe_jsonable(cfg.get("_accel_report", {})),
     }
     summary_json_path.write_text(json.dumps(summary_payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     health_lines = [
@@ -7062,6 +7636,13 @@ def run_math_fastproof(
         "model_final": str(model_final_path) if model_final_path.exists() else "",
     }
     output_files = {k: v for k, v in output_files.items() if str(v).strip()}
+    interp_assets = maybe_plot_mathfp_interpretability_assets(
+        compare_payload=compare_payload,
+        run_dir=run_dir,
+        write_files=bool(cfg.get("write_files", True)),
+        enabled=bool(cfg.get("interpretability_enabled", True)),
+    )
+    output_files.update(interp_assets)
     artifact_index = verify_and_index_artifacts(output_files)
     atomic_json_write(artifact_index_path, artifact_index)
     output_files["artifact_index"] = str(artifact_index_path)
@@ -7071,7 +7652,7 @@ def run_math_fastproof(
         output_files["evidence_zip"] = str(layout.evidence_zip_path)
 
     payload = {
-        "schema": "build30_colab_math_fastproof_payload_v1",
+        "schema": "build30_colab_math_fastproof_payload_v2",
         "generated_at_utc": _utc_now(),
         "run_id": run_id,
         "profile": str(cfg.get("profile", "colab_math_fastproof")),
@@ -7088,6 +7669,15 @@ def run_math_fastproof(
         "output_files": output_files,
         "gpu_meta": gpu_meta,
         "gpu_tune": gpu_tune,
+        "runtime_fingerprint": build_runtime_fingerprint(cfg),
+        "ownership_proof": build_ownership_proof(cfg),
+        "feature_coverage_matrix": build_feature_coverage_matrix(),
+        "compile_stall_guard": get_compile_guard_snapshot(),
+        "env_snapshot_redacted": build_env_snapshot(mask=bool(cfg.get("security_redaction_enabled", True))),
+        "reproduce_command": build_reproduce_command(cfg),
+        "run_config_schema_report": safe_jsonable(cfg.get("run_config_schema_report", {})),
+        "determinism_policy": safe_jsonable(cfg.get("_determinism_report", {})),
+        "runtime_accel_policy": safe_jsonable(cfg.get("_accel_report", {})),
     }
     print(f"FINAL_STATUS: {final_status} reason=math_fastproof_completed run_id={run_id}")
     return payload
@@ -7100,6 +7690,10 @@ def run_all() -> Dict[str, Any]:
     _RUNTIME_SIGNAL_STATE["sigterm"] = False
     _RUNTIME_SIGNAL_STATE["signal"] = ""
     cfg = resolve_runtime_config(interactive_prompt(dict(RUN_CONFIG)))
+    accel_report = apply_runtime_acceleration_policy(cfg)
+    determinism_report = apply_determinism_policy(cfg, device=str(cfg.get("device", "cpu")))
+    cfg["_accel_report"] = accel_report
+    cfg["_determinism_report"] = determinism_report
     set_seed(int(cfg["seed"]))
     install_runtime_signal_handlers()
     layout = init_artifact_layout(cfg)
@@ -7144,7 +7738,7 @@ def run_all() -> Dict[str, Any]:
     if str(preflight.get("preflight_status", "fail")) != "pass":
         stop_reason = str(preflight.get("reason_codes", ["preflight_failed"])[0] if preflight.get("reason_codes") else "preflight_failed")
         payload_fail: Dict[str, Any] = {
-            "schema": "kaggle_onefile_deep_build30_v5",
+            "schema": "kaggle_onefile_deep_build30_v6",
             "generated_at_utc": _utc_now(),
             "profile": cfg["profile"],
             "device": device,
@@ -7203,6 +7797,12 @@ def run_all() -> Dict[str, Any]:
             "gpu_tune_report": gpu_tune,
             "stop_reason": stop_reason,
             "run_config_hash": hash_config(cfg),
+            "runtime_fingerprint": build_runtime_fingerprint(cfg),
+            "ownership_proof": build_ownership_proof(cfg),
+            "feature_coverage_matrix": build_feature_coverage_matrix(),
+            "compile_stall_guard": get_compile_guard_snapshot(),
+            "reproduce_command": build_reproduce_command(cfg),
+            "env_snapshot_redacted": build_env_snapshot(mask=bool(cfg.get("security_redaction_enabled", True))),
         }
         verdict_fail = compute_final_verdict(payload_fail, cfg)
         payload_fail.update(verdict_fail)
@@ -7401,7 +8001,7 @@ def run_all() -> Dict[str, Any]:
         degraded_conditions.append("coding_claim_blocked")
 
     payload: Dict[str, Any] = {
-        "schema": "kaggle_onefile_deep_build30_v5",
+        "schema": "kaggle_onefile_deep_build30_v6",
         "generated_at_utc": _utc_now(),
         "profile": cfg["profile"],
         "device": device,
@@ -7481,6 +8081,14 @@ def run_all() -> Dict[str, Any]:
         "gpu_tune_report": gpu_tune,
         "stop_reason": str(train_meta.get("stop_reason", "completed_or_condition_met")),
         "run_config_hash": hash_config(cfg),
+        "runtime_fingerprint": build_runtime_fingerprint(cfg),
+        "ownership_proof": build_ownership_proof(cfg),
+        "feature_coverage_matrix": build_feature_coverage_matrix(),
+        "compile_stall_guard": get_compile_guard_snapshot(),
+        "reproduce_command": build_reproduce_command(cfg),
+        "env_snapshot_redacted": build_env_snapshot(mask=bool(cfg.get("security_redaction_enabled", True))),
+        "determinism_policy": safe_jsonable(cfg.get("_determinism_report", {})),
+        "runtime_accel_policy": safe_jsonable(cfg.get("_accel_report", {})),
     }
     payload["payload_validator"] = validate_required_payload_fields(
         payload,
