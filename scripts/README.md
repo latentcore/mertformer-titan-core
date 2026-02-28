@@ -81,3 +81,14 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 ---
 
 Tip: `run.sh` covers the primary automated path (install + strict preflight + training). For review, prefer `scripts/verify_all.sh`.
+
+## Build30 Colab Math Fastproof V2 (V1 Closure)
+
+`scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` now includes guarded full-spectrum hooks for closure-grade PoC packaging.
+
+- Strict config schema v2 (`validate_run_config_schema`) with unknown-key reject/fail-fast.
+- Runtime fingerprint and ownership bundle (`runtime_fingerprint`, `ownership_proof`, `env_snapshot_redacted`, `reproduce_command`).
+- Compile/CUDAGraph stall guards (`compile_policy=off` default, timeout fallback, guard snapshot telemetry).
+- Zero-shot unseen math split (`eval_unseen_*`) and compare payload v2 (`exact_match_unseen`).
+- Interpretability outputs (`gradient_flow_heatmap.png`, `moe_expert_bar_proxy.png`) behind flags.
+- Feature coverage contract (`feature_coverage_matrix`) with completeness percent in payload.

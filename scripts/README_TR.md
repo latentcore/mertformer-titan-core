@@ -81,3 +81,14 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 ---
 
 Not: `run.sh` ana otomasyon yolunu kapsar (install + strict preflight + eğitim). Review için `scripts/verify_all.sh` önerilir.
+
+## Build30 Colab Math Fastproof V2 (V1 Kapanis)
+
+`scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` dosyasi kapanis seviyesi PoC paketlemesi icin korumali full-spectrum hooklar ile guncellendi.
+
+- Katı config schema v2 (`validate_run_config_schema`) ile unknown-key reddi/fail-fast.
+- Runtime fingerprint ve ownership paketi (`runtime_fingerprint`, `ownership_proof`, `env_snapshot_redacted`, `reproduce_command`).
+- Compile/CUDAGraph stall guard (`compile_policy=off` varsayilan, timeout fallback, guard telemetry).
+- Zero-shot unseen matematik split (`eval_unseen_*`) ve compare payload v2 (`exact_match_unseen`).
+- Interpretability ciktilari (`gradient_flow_heatmap.png`, `moe_expert_bar_proxy.png`) feature flag arkasinda.
+- Payload icinde completeness yuzdesi ile `feature_coverage_matrix` sozlesmesi.
