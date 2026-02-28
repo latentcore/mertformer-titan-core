@@ -29,7 +29,8 @@ def test_run_config_unknown_key_rejected_in_strict_mode():
 
 def test_required_core_keys_present():
     required = set(onefile.RUN_CONFIG_REQUIRED_KEYS)
-    assert required.issubset(set(onefile.RUN_CONFIG.keys()))
+    resolved = onefile.resolve_runtime_config(dict(onefile.RUN_CONFIG))
+    assert required.issubset(set(resolved.keys()))
 
 
 def test_defaults_include_compile_and_determinism_contract():
