@@ -171,6 +171,7 @@ Generated automatically.
 - `reports/drone_sitl_demo_TR.md`
 - `reports/efficiency_convergence_analysis.md`
 - `reports/efficiency_convergence_analysis_TR.md`
+- `reports/final_repo_audit.md`
 - `reports/final_sync_matrix.md`
 - `reports/final_sync_matrix_TR.md`
 - `reports/folder_structure_policy.md`
@@ -202,6 +203,7 @@ Generated automatically.
 - `reports/pitch_kit/04_KAYNAK_README_TR.md`
 - `reports/poc_protocol.md`
 - `reports/poc_protocol_TR.md`
+- `reports/release_closure_note.md`
 - `reports/release_snapshot.md`
 - `reports/release_snapshot_TR.md`
 - `reports/report_accuracy_audit.md`
