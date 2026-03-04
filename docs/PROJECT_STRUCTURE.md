@@ -285,6 +285,12 @@ Generated automatically.
 - `logs/operator_mode/operator_2026-03-04_04-07-02.manifest.json`
 - `logs/operator_mode/operator_2026-03-04_04-07-38.jsonl`
 - `logs/operator_mode/operator_2026-03-04_04-07-38.manifest.json`
+- `logs/operator_mode/operator_2026-03-04_04-09-13.jsonl`
+- `logs/operator_mode/operator_2026-03-04_04-09-13.manifest.json`
+- `logs/operator_mode/operator_2026-03-04_04-09-59.jsonl`
+- `logs/operator_mode/operator_2026-03-04_04-09-59.manifest.json`
+- `logs/operator_mode/operator_2026-03-04_04-10-05.jsonl`
+- `logs/operator_mode/operator_2026-03-04_04-10-05.manifest.json`
 - `logs/preflight/titan_preflight.log`
 - `logs/preflight/train_ready_status.json`
 - `logs/verify/closure_57_matrix.verify.json`
@@ -411,6 +417,7 @@ Generated automatically.
 - `reports/energy_baseline.json`
 - `reports/execution_trace.json`
 - `reports/fallback_policy_report.json`
+- `reports/final_repo_audit.md`
 - `reports/final_sync_matrix.md`
 - `reports/final_sync_matrix_TR.md`
 - `reports/folder_drift_report.json`
