@@ -4,8 +4,8 @@ This file is a human-readable snapshot of the repository at a review point-in-ti
 
 ## Snapshot
 
-- Date (local): 2026-02-18
-- Base Git SHA (short): `git rev-parse --short HEAD`
+- Date (local): 2026-03-04
+- Base Git SHA (short): `6f41827`
 - Baseline Python: 3.11 (see `repro/python.md`)
 - Default mode: offline-first (`TITAN_OFFLINE=1`)
 
@@ -50,7 +50,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 - `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
 - Locked artifact status: `skipped (expected: AGE_RECIPIENT_FILE missing)`
 - SHA-256:
-  - `d261fbcb98b74ac4afea40db1b149b4075362014935c0d4cfad84587cd93d44f` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
+  - `659505453dd3d0e92c609e4a194efd63b9be02113b0eff9de51b2787bf913374` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
   - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)
 
 ## Known Gates / Blockers

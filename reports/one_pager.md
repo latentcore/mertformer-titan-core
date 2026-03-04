@@ -1,7 +1,7 @@
 # MertFormer Titan One-Pager
 
 ## Summary
-MertFormer Titan is a 2.6B parameter, edge-native coding model designed to deliver near GPT-3.5 class capability at mobile compute cost. It combines 1.58-bit quantization, LiquidRouter MoE routing, and long-context attention for efficient on-device inference.
+MertFormer Titan is a 2.64B design-target parameter edge-native coding model (latest measured runtime total: ~3.70B) designed to deliver near GPT-3.5 class capability at mobile compute cost. It combines 1.58-bit quantization, LiquidRouter MoE routing, and long-context attention for efficient on-device inference.
 
 ## Problem
 Enterprise AI is expensive, cloud-dependent, and risky for privacy-sensitive workflows. Latency, data sovereignty, and operating cost block adoption in regulated and low-connectivity environments.

@@ -1,7 +1,7 @@
 # Technical Snapshot
 
 ## Architecture
-- Model size: 2.6B parameters (target).
+- Model size: 2.64B parameters (design target); latest measured runtime total: ~3.70B.
 - Quantization: BitNet 1.58-bit for weights.
 - Routing: LiquidRouter MoE with temporal dynamics.
 - Attention: Multi-Head Latent Attention with long-context readiness.
