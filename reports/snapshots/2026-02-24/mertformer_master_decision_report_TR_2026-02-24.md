@@ -21,7 +21,7 @@ Bu raporun baz aldığı canlı snapshot:
 - Runtime parametre (ölçülen): `3,698,246,156` (~3.70B)
 - Closure: `57/57 green`, in-scope pending yok
 - Benchmark claim eligibility: `false` (trained checkpoint eksik)
-- Test: `108 passed, 4 skipped`
+- Test: `111 passed, 3 skipped`
 
 Detay dosyası:
 - `reports/evidence_snapshot_2026-02-24.json`

@@ -20,7 +20,7 @@ bash scripts/verify_all.sh
 
 Expected outputs:
 - Secret scan: PASS
-- Pytest: PASS (`108 passed, 4 skipped`)
+- Pytest: PASS (`111 passed, 3 skipped`)
 - Preflight (offline): PASS
 - Operator gate (safe, offline): PASS
 

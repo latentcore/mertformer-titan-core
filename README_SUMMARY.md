@@ -24,7 +24,7 @@ It combines BitNet (1.58-bit), Liquid dynamics, and MoE routing under a producti
 ## Verified Local Evidence (Latest Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `108 passed, 4 skipped` |
+| `python3 -m pytest -q` | `111 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 

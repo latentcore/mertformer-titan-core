@@ -303,6 +303,12 @@ Generated automatically.
 - `logs/operator_mode/operator_2026-03-04_04-48-52.manifest.json`
 - `logs/operator_mode/operator_2026-03-04_04-56-25.jsonl`
 - `logs/operator_mode/operator_2026-03-04_04-56-25.manifest.json`
+- `logs/operator_mode/operator_2026-03-04_05-16-14.jsonl`
+- `logs/operator_mode/operator_2026-03-04_05-16-14.manifest.json`
+- `logs/operator_mode/operator_2026-03-04_05-17-39.jsonl`
+- `logs/operator_mode/operator_2026-03-04_05-17-39.manifest.json`
+- `logs/operator_mode/operator_2026-03-04_05-18-48.jsonl`
+- `logs/operator_mode/operator_2026-03-04_05-18-48.manifest.json`
 - `logs/preflight/titan_preflight.log`
 - `logs/preflight/train_ready_status.json`
 - `logs/verify/closure_57_matrix.verify.json`
@@ -518,8 +524,6 @@ Generated automatically.
 - `reports/unicode_path_guard_report.json`
 - `reports/verified_matrix.md`
 - `reports/verified_matrix_TR.md`
-- `reports/zip_denylist_audit_release_v2.json`
-- `reports/zip_denylist_audit_release_v2.md`
 - `repro/accelerate_default.yaml`
 - `repro/cuda.lock`
 - `repro/env.lock`

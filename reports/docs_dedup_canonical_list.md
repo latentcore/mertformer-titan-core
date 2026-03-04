@@ -225,7 +225,6 @@ Generated automatically.
 - `reports/technical_snapshot_TR.md`
 - `reports/verified_matrix.md`
 - `reports/verified_matrix_TR.md`
-- `reports/zip_denylist_audit_release_v2.md`
 - `repro/python.md`
 - `repro/python_TR.md`
 - `repro/seed_policy.md`
