@@ -4,7 +4,12 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-mkdir -p reports artifacts telemetry docs policy /Users/mertyunlu/Documents/reports
+DOCS_DIR="${HOME}/Documents"
+DOCS_REPORTS_DIR="$DOCS_DIR/reports"
+IMMUTABLE_ZIP="$DOCS_DIR/Proje_immutable_20260301_d22272ee9281e978.zip"
+LINKEDIN_ZIP="$DOCS_DIR/mertformer_outputs_LINKEDIN_run_20260220_175540.zip"
+
+mkdir -p reports artifacts telemetry docs policy "$DOCS_REPORTS_DIR"
 
 run_step() {
   local name="$1"; shift
@@ -26,12 +31,12 @@ run_step "linkcheck" .titan-venv/bin/python scripts/linkcheck_gate.py --root . -
 run_step "docs_inventory" .titan-venv/bin/python scripts/docs_inventory.py
 
 # Documents cleanup and hash fixes
-if [ -f /Users/mertyunlu/Documents/Proje.zip ] && [ -f /Users/mertyunlu/Documents/Proje_immutable_20260301_d22272ee9281e978.zip ]; then
-  rm -f /Users/mertyunlu/Documents/Proje.zip
+if [ -f "$DOCS_DIR/Proje.zip" ] && [ -f "$IMMUTABLE_ZIP" ]; then
+  rm -f "$DOCS_DIR/Proje.zip"
 fi
-find /Users/mertyunlu/Documents/mertformer_outputs -type f -name '.DS_Store' -delete 2>/dev/null || true
-if [ -f /Users/mertyunlu/Documents/mertformer_outputs_LINKEDIN_run_20260220_175540.zip ]; then
-  shasum -a 256 /Users/mertyunlu/Documents/mertformer_outputs_LINKEDIN_run_20260220_175540.zip > /Users/mertyunlu/Documents/mertformer_outputs_LINKEDIN_run_20260220_175540.zip.sha256
+find "$DOCS_DIR/mertformer_outputs" -type f -name '.DS_Store' -delete 2>/dev/null || true
+if [ -f "$LINKEDIN_ZIP" ]; then
+  shasum -a 256 "$LINKEDIN_ZIP" > "$LINKEDIN_ZIP.sha256"
 fi
 
 run_step "duplicate_zip_guard" .titan-venv/bin/python scripts/duplicate_zip_guard.py --out reports/duplicate_zip_guard_report.json
@@ -41,7 +46,7 @@ run_step "sync_manifest" .titan-venv/bin/python scripts/sync_manifest.py --root 
 
 # Hash manifests for docs/packages/documents
 find "$ROOT_DIR/docs" "$ROOT_DIR/packages" -type f -name "*.zip" -print0 2>/dev/null | xargs -0 shasum -a 256 | .titan-venv/bin/python scripts/hash_manifest_to_json.py --base "$ROOT_DIR" --pretty > reports/docs_packages_hash_manifest.json || true
-find /Users/mertyunlu/Documents -maxdepth 1 -type f -name "*.zip" -print0 2>/dev/null | xargs -0 shasum -a 256 | .titan-venv/bin/python scripts/hash_manifest_to_json.py --base / --pretty > /Users/mertyunlu/Documents/reports/documents_zip_hash_manifest.json || true
+find "$DOCS_DIR" -maxdepth 1 -type f -name "*.zip" -print0 2>/dev/null | xargs -0 shasum -a 256 | .titan-venv/bin/python scripts/hash_manifest_to_json.py --base / --pretty > "$DOCS_REPORTS_DIR/documents_zip_hash_manifest.json" || true
 
 # Dealroom reference/provenance
 run_step "dealroom_sync" .titan-venv/bin/python scripts/dealroom_sync.py
@@ -54,14 +59,15 @@ chmod u+w artifacts/demo_v1.mp4 artifacts/mertformer_release.zip artifacts/mertf
 run_step "demo_bundle" .titan-venv/bin/python scripts/generate_demo_bundle.py
 
 # Release artifact
-zip -r artifacts/mertformer_release.zip . -x ".git/*" "*/.git/*" "*.pyc" "*__pycache__*" ".titan-venv/*" ".lint-venv/*" ".venv/*" ".idea/*" ".pytest_cache/*" ".ruff_cache/*" ".mypy_cache/*" "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256"
+zip -r artifacts/mertformer_release.zip . -x ".git/*" "*/.git/*" "*.pyc" "*__pycache__*" ".titan-venv/*" ".lint-venv/*" ".venv/*" ".idea/*" ".pytest_cache/*" ".ruff_cache/*" ".mypy_cache/*" ".env" ".env.*" "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256"
 shasum -a 256 artifacts/mertformer_release.zip > artifacts/mertformer_release.zip.sha256
+run_step "zip_denylist_audit_artifact" bash -lc '.titan-venv/bin/python scripts/zip_denylist_audit.py --zip artifacts/mertformer_release.zip > reports/artifacts_zip_denylist_audit.json'
 
 # Immutable lock best effort
 chmod -w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 reports/demo_checksum.sha256 || true
-chmod -w /Users/mertyunlu/Documents/Proje_immutable_20260301_d22272ee9281e978.zip /Users/mertyunlu/Documents/Proje_immutable_20260301_d22272ee9281e978.zip.sha256 2>/dev/null || true
+chmod -w "$IMMUTABLE_ZIP" "$IMMUTABLE_ZIP.sha256" 2>/dev/null || true
 chflags uchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 reports/demo_checksum.sha256 2>/dev/null || true
-chflags uchg /Users/mertyunlu/Documents/Proje_immutable_20260301_d22272ee9281e978.zip /Users/mertyunlu/Documents/Proje_immutable_20260301_d22272ee9281e978.zip.sha256 2>/dev/null || true
+chflags uchg "$IMMUTABLE_ZIP" "$IMMUTABLE_ZIP.sha256" 2>/dev/null || true
 
 # GitHub policy and closure lock (best effort, does not fail one-shot)
 bash scripts/apply_github_policy.sh || true
