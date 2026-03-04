@@ -159,6 +159,11 @@ Generated automatically.
 - `reports/codex_deep_audit_EN.md`
 - `reports/codex_deep_audit_EN_TR.md`
 - `reports/codex_deep_audit_TR.md`
+- `reports/commercial_handover/contract_terms_checklist.md`
+- `reports/commercial_handover/handover_scope.md`
+- `reports/commercial_handover/known_issues.md`
+- `reports/commercial_handover/ownership_and_role.md`
+- `reports/commercial_handover/sla_kpi_90_180.md`
 - `reports/contamination_report_build30.md`
 - `reports/dataset_health.md`
 - `reports/dataset_health_TR.md`
@@ -225,7 +230,6 @@ Generated automatically.
 - `reports/technical_snapshot_TR.md`
 - `reports/verified_matrix.md`
 - `reports/verified_matrix_TR.md`
-- `reports/zip_denylist_audit_release_v2.md`
 - `repro/python.md`
 - `repro/python_TR.md`
 - `repro/seed_policy.md`

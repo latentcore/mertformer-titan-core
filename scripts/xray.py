@@ -172,6 +172,11 @@ def is_text_file(path: Path) -> bool:
         return False
 
 def should_skip_content(path: Path) -> bool:
+    name = path.name.lower()
+    # Secret files must never be dumped.
+    if name == ".env" or name.startswith(".env."):
+        return True
+
     parts = {p.lower() for p in path.parts}
     if "logs" in parts or "datasets" in parts or "checkpoints" in parts:
         return True

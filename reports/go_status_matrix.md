@@ -7,7 +7,7 @@ This matrix tracks what is fully completed in-repo and what remains external/ope
 
 | ID | Status | Evidence / Reason |
 | --- | --- | --- |
-| A1 | ✅ | Repo clean and synced (`git status --short` clean on both Desktop + NİHAİ_Deneme). |
+| A1 | ✅ | Repo clean and synced (`git status --short` clean on both Desktop + canonical repository root). |
 | A2 | ✅ | `strict_checkpoint=True` default in `mertformer_sdk/api.py`. |
 | A3 | ✅ | `mertformer verify` command in `mertformer_sdk/cli.py`. |
 | A4 | ✅ | `mertformer pilot-report --out ...` in `mertformer_sdk/cli.py`. |

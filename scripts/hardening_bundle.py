@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import os
 import random
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -23,7 +24,19 @@ def write_report(name: str, payload: dict) -> None:
 
 
 def run_static_analysis() -> dict:
-    cmd = [str(ROOT / ".titan-venv/bin/python"), "-m", "ruff", "check", "."]
+    python_bin = sys.executable
+    if os.environ.get("TITAN_PYTHON"):
+        candidate = os.environ["TITAN_PYTHON"]
+        if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+            python_bin = candidate
+        else:
+            resolved = shutil.which(candidate)
+            if resolved:
+                python_bin = resolved
+    elif (ROOT / ".titan-venv/bin/python").exists():
+        python_bin = str(ROOT / ".titan-venv/bin/python")
+
+    cmd = [python_bin, "-m", "ruff", "check", "."]
     p = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
     payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),

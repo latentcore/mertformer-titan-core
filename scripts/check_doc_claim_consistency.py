@@ -22,7 +22,7 @@ def read_text(path: Path) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check documentation claim/evidence consistency.")
-    parser.add_argument("--expected-test-stat", default="108 passed, 4 skipped")
+    parser.add_argument("--expected-test-stat", default="111 passed, 3 skipped")
     args = parser.parse_args()
 
     errors: list[str] = []

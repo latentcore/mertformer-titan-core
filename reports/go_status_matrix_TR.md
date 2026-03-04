@@ -7,7 +7,7 @@ Bu matris, repoda tamamen biten işleri ve dış/operasyonel olarak kalan işler
 
 | ID | Durum | Kanıt / Gerekçe |
 | --- | --- | --- |
-| A1 | ✅ | Repo temiz ve senkron (`git status --short` hem Desktop hem NİHAİ_Deneme temiz). |
+| A1 | ✅ | Repo temiz ve senkron (`git status --short` hem Desktop hem canonical depo kökü temiz). |
 | A2 | ✅ | `strict_checkpoint=True` varsayılanı: `mertformer_sdk/api.py`. |
 | A3 | ✅ | `mertformer verify` komutu: `mertformer_sdk/cli.py`. |
 | A4 | ✅ | `mertformer pilot-report --out ...` komutu: `mertformer_sdk/cli.py`. |

@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -18,7 +19,7 @@ def sha256(path: Path) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Detect duplicate zip files by sha256")
-    ap.add_argument("--root", action="append", default=["packages", "artifacts", "/Users/mertyunlu/Documents"])
+    ap.add_argument("--root", action="append", default=["packages", "artifacts", str(Path.home() / "Documents")])
     ap.add_argument("--out", default="reports/duplicate_zip_guard_report.json")
     ap.add_argument("--fail-on-duplicates", action="store_true")
     args = ap.parse_args()

@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -18,6 +19,25 @@ EXCLUDE_PARTS = {
     ".ruff_cache",
     ".mypy_cache",
 }
+
+
+SENSITIVE_FILE_NAMES = {".env"}
+
+
+def tracked_files(root: Path) -> list[Path]:
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "-z"],
+            check=True,
+            capture_output=True,
+        )
+        raw = proc.stdout.decode("utf-8", errors="replace")
+        rels = [p for p in raw.split("\0") if p]
+        return [root / rel for rel in rels]
+    except Exception:
+        return []
+
+
 
 
 def file_hash(path: Path) -> str:
@@ -37,8 +57,13 @@ def _rel_if_under(root: Path, target: Path) -> str | None:
 
 def collect_entries(root: Path, excluded_relpaths: set[str]) -> list[dict[str, object]]:
     entries: list[dict[str, object]] = []
-    for p in root.rglob("*"):
-        if not p.is_file():
+
+    candidates = tracked_files(root)
+    if not candidates:
+        candidates = [p for p in root.rglob("*") if p.is_file()]
+
+    for p in candidates:
+        if not p.exists() or not p.is_file():
             continue
         rel = p.relative_to(root)
         rel_s = str(rel)
@@ -46,6 +71,10 @@ def collect_entries(root: Path, excluded_relpaths: set[str]) -> list[dict[str, o
             continue
         if rel_s in excluded_relpaths:
             continue
+        name = rel.name.lower()
+        if name in SENSITIVE_FILE_NAMES or name.startswith(".env."):
+            continue
+
         st = p.stat()
         entries.append(
             {
@@ -55,6 +84,7 @@ def collect_entries(root: Path, excluded_relpaths: set[str]) -> list[dict[str, o
                 "mtime_utc": datetime.fromtimestamp(st.st_mtime, tz=timezone.utc).isoformat(),
             }
         )
+
     entries.sort(key=lambda x: str(x["path"]))
     return entries
 

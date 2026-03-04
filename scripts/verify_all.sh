@@ -11,11 +11,14 @@ export TITAN_OFFLINE="${TITAN_OFFLINE:-1}"
 export TITAN_WANDB="${TITAN_WANDB:-0}"
 
 if [[ -n "${TITAN_PYTHON:-}" ]]; then
-  if [[ ! -x "${TITAN_PYTHON}" ]]; then
-    echo "[verify] TITAN_PYTHON is set but not executable: ${TITAN_PYTHON}" >&2
+  if [[ -x "${TITAN_PYTHON}" ]]; then
+    PY="${TITAN_PYTHON}"
+  elif command -v "${TITAN_PYTHON}" >/dev/null 2>&1; then
+    PY="$(command -v "${TITAN_PYTHON}")"
+  else
+    echo "[verify] TITAN_PYTHON is set but not executable/in PATH: ${TITAN_PYTHON}" >&2
     exit 2
   fi
-  PY="${TITAN_PYTHON}"
 else
   if [[ ! -x ".titan-venv/bin/python" ]]; then
     echo "[verify] .titan-venv missing; bootstrapping local Python venv ..."
