@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-03-04T00:55:38.536811+00:00",
-  "root": "/Users/mertyunlu/Desktop/mertformer-titan-core",
+  "generated_utc": "2026-03-04T01:06:43.265739+00:00",
+  "root": ".",
   "scope": "release_core",
   "file_count": 6,
   "total_issues": 14,
@@ -11,7 +11,7 @@
   },
   "files": [
     {
-      "path": "/Users/mertyunlu/Desktop/mertformer-titan-core/README.md",
+      "path": "README.md",
       "issue_count": 7,
       "issues": [
         {
@@ -59,7 +59,7 @@
       ]
     },
     {
-      "path": "/Users/mertyunlu/Desktop/mertformer-titan-core/README_TR.md",
+      "path": "README_TR.md",
       "issue_count": 7,
       "issues": [
         {
@@ -107,22 +107,22 @@
       ]
     },
     {
-      "path": "/Users/mertyunlu/Desktop/mertformer-titan-core/docs/PROJECT_STRUCTURE.md",
+      "path": "docs/PROJECT_STRUCTURE.md",
       "issue_count": 0,
       "issues": []
     },
     {
-      "path": "/Users/mertyunlu/Desktop/mertformer-titan-core/reports/demo_script.md",
+      "path": "reports/demo_script.md",
       "issue_count": 0,
       "issues": []
     },
     {
-      "path": "/Users/mertyunlu/Desktop/mertformer-titan-core/reports/docs_dedup_canonical_list.md",
+      "path": "reports/docs_dedup_canonical_list.md",
       "issue_count": 0,
       "issues": []
     },
     {
-      "path": "/Users/mertyunlu/Desktop/mertformer-titan-core/reports/folder_structure_policy.md",
+      "path": "reports/folder_structure_policy.md",
       "issue_count": 0,
       "issues": []
     }

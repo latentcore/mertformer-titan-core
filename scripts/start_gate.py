@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -9,13 +10,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 
+def sanitize_text(text: str) -> str:
+    out = text
+    out = out.replace(str(ROOT), "<REPO_ROOT>")
+    out = re.sub(r"/Users/[^/]+/Desktop/[^\s\"']+", "<DESKTOP_PATH>", out)
+    return out
+
+
 def run(cmd: list[str]) -> dict:
     p = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
     return {
         "cmd": " ".join(cmd),
         "return_code": p.returncode,
-        "stdout_tail": p.stdout[-4000:],
-        "stderr_tail": p.stderr[-4000:],
+        "stdout_tail": sanitize_text(p.stdout[-4000:]),
+        "stderr_tail": sanitize_text(p.stderr[-4000:]),
         "ok": p.returncode == 0,
     }
 

@@ -21,7 +21,7 @@ def main() -> int:
 
     payload = {
         'generated_utc': datetime.now(timezone.utc).isoformat(),
-        'dealroom_path': str(DEALROOM),
+        'dealroom_path': str(DEALROOM.relative_to(ROOT)),
         'exists': DEALROOM.exists(),
         'git': {
             'branch': cmd(DEALROOM, 'git', 'branch', '--show-current') if DEALROOM.exists() else '',

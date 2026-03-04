@@ -131,7 +131,7 @@ def run_license_gate() -> dict:
     has = policy.exists()
     payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
-        "policy_path": str(policy),
+        "policy_path": str(policy.relative_to(ROOT)),
         "ok": has,
     }
     write_report("license_gate_report.json", payload)
@@ -188,7 +188,7 @@ def run_runbook_validation() -> dict:
     payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "ok": incident.exists(),
-        "runbook_reference": str(incident),
+        "runbook_reference": str(incident.relative_to(ROOT)),
     }
     write_report("runbook_validation_report.json", payload)
     return payload

@@ -44,7 +44,7 @@ def _all_md_files(root: Path) -> list[Path]:
     return sorted(files)
 
 
-def scan_file(path: Path) -> dict:
+def scan_file(root: Path, path: Path) -> dict:
     text = path.read_text(encoding="utf-8", errors="ignore")
     lines = text.splitlines()
     issues = []
@@ -73,7 +73,7 @@ def scan_file(path: Path) -> dict:
             if bad in low:
                 issues.append({"line": i, "type": "typo", "severity": "error", "detail": f"{bad} -> {good}"})
 
-    return {"path": str(path), "issue_count": len(issues), "issues": issues}
+    return {"path": str(path.relative_to(root)), "issue_count": len(issues), "issues": issues}
 
 
 def main() -> int:
@@ -90,7 +90,7 @@ def main() -> int:
     else:
         md_files = _release_core_files(root)
 
-    per_file = [scan_file(p) for p in md_files]
+    per_file = [scan_file(root, p) for p in md_files]
 
     severity_counter: Counter[str] = Counter()
     type_counter: Counter[str] = Counter()
@@ -104,7 +104,7 @@ def main() -> int:
 
     payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
-        "root": str(root),
+        "root": ".",
         "scope": args.scope,
         "file_count": len(md_files),
         "total_issues": int(sum(severity_counter.values())),

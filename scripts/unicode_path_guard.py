@@ -35,7 +35,7 @@ def main() -> int:
 
     payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
-        "root": str(root),
+        "root": ".",
         "non_ascii_count": len(hits),
         "non_ascii_paths": sorted(hits),
         "ok": len(hits) == 0,
