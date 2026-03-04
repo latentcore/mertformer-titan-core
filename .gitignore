@@ -84,3 +84,6 @@ scripts/reports/pilots/**
 *.bak
 temp_preflight_data/
 temp_preflight_logits/
+
+# Separate dealroom repository (kept outside main repo tracking)
+MertFormer_Titan_Dealroom_2026-02-23/
