@@ -86,6 +86,7 @@ Generated automatically.
 - `MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/deal_manifest_v2.json`
 - `MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/exposure_policy_v1.md`
 - `MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/final_operator_checklist.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/main_release_reference_v1.0.0.json`
 - `MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/originality_audit_v1.json`
 - `MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/ownership_proof_bundle_v2.json`
 - `MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/privacy_visibility_audit_v1.json`

@@ -1,7 +1,7 @@
 {
-  "generated_utc": "2026-03-04T00:58:36.844500+00:00",
+  "generated_utc": "2026-03-04T01:00:41.959614+00:00",
   "root": "/Users/mertyunlu/Desktop/mertformer-titan-core",
-  "entry_count": 642,
+  "entry_count": 643,
   "entries": [
     {
       "path": ".env",
@@ -506,6 +506,12 @@
       "size_bytes": 271,
       "sha256": "cf104d7096110ae7bc862536b718645122bdd32e68dcd635e0441c8a26ae92d6",
       "mtime_utc": "2026-02-23T19:09:36+00:00"
+    },
+    {
+      "path": "MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/main_release_reference_v1.0.0.json",
+      "size_bytes": 415,
+      "sha256": "56ac6a839b11d60127b53b0cdefe73b6a8978bd46c812a32647b828aec3624bc",
+      "mtime_utc": "2026-03-04T01:00:31.546488+00:00"
     },
     {
       "path": "MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/originality_audit_v1.json",
@@ -2315,9 +2321,9 @@
     },
     {
       "path": "reports/dealroom_reference.json",
-      "size_bytes": 508,
-      "sha256": "65e4a9d2d33654f94ac2ce88afb75fcd4fd53379ca2fe189445c9817e02ca21d",
-      "mtime_utc": "2026-03-04T00:58:04.396461+00:00"
+      "size_bytes": 502,
+      "sha256": "2f527b33b6d5bec47b14056897d75dcfe5c4a0a556c74aeea224b33b851e7212",
+      "mtime_utc": "2026-03-04T01:00:41.201257+00:00"
     },
     {
       "path": "reports/demo_checksum.sha256",
@@ -2610,8 +2616,8 @@
     {
       "path": "reports/ownership_proof_bundle.json",
       "size_bytes": 561,
-      "sha256": "c0aeea6d37b6ec0eda0dc3fba594ba49ecb51b61e2c38d49a65a65ec9c77255e",
-      "mtime_utc": "2026-03-04T00:58:04.412835+00:00"
+      "sha256": "d65b4e5dc551bfe5a78f9a6fa6e6e0f72e4a4e44df7208cbe6fa9a1b30c7e959",
+      "mtime_utc": "2026-03-04T01:00:41.217140+00:00"
     },
     {
       "path": "reports/pilot_acceptance_signoff.md",
@@ -2717,15 +2723,15 @@
     },
     {
       "path": "reports/release_closure_lock_report.json",
-      "size_bytes": 69,
-      "sha256": "ab108c5cca12fa21830a0c4a1e8f7569a96ae0b866c6c16304852a305ab8ad86",
-      "mtime_utc": "2026-03-04T00:55:52.981207+00:00"
+      "size_bytes": 68,
+      "sha256": "ac9af75a88c8c98fba5c4d5ec8febd82403d3100bb5636194857eb7de3b23763",
+      "mtime_utc": "2026-03-04T01:00:16.332484+00:00"
     },
     {
       "path": "reports/release_closure_note.md",
       "size_bytes": 133,
       "sha256": "175ba1e95aad9bca99eac38c3467456d4df70b074fe49a90438ca364a8c3ffd4",
-      "mtime_utc": "2026-03-04T00:55:52.960007+00:00"
+      "mtime_utc": "2026-03-04T01:00:16.319965+00:00"
     },
     {
       "path": "reports/release_snapshot.md",
@@ -2867,9 +2873,9 @@
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 10991,
-      "sha256": "e332dc3800d71056bc22705b4469b412efb1aeeb5221cb0c93e2c14fb86e82ee",
-      "mtime_utc": "2026-03-04T00:55:35.996605+00:00"
+      "size_bytes": 11227,
+      "sha256": "15d54271bc3ac52cd2f5c377a9eb84b35281665bfd425e77fb2271983e77b73d",
+      "mtime_utc": "2026-03-04T00:58:36.878606+00:00"
     },
     {
       "path": "reports/startup_selfcheck_report.json",
