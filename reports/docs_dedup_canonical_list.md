@@ -1,0 +1,345 @@
+# Docs Canonical List
+
+Generated automatically.
+
+- `.lint-venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md`
+- `.lint-venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md`
+- `.pytest_cache/README.md`
+- `CHANGELOG.md`
+- `CHANGELOG_TR.md`
+- `CONTRIBUTING.md`
+- `CONTRIBUTING_TR.md`
+- `DECISIONS.md`
+- `DECISIONS_TR.md`
+- `IMPLEMENTATION_PLAN.md`
+- `IMPLEMENTATION_PLAN_TR.md`
+- `INTERNAL_AGI_GAP.md`
+- `INTERNAL_AGI_GAP_TR.md`
+- `MODEL_CARD.md`
+- `MODEL_CARD_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/01_START_HERE/README_TR_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/02_EXECUTIVE/one_pager_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/02_EXECUTIVE/one_pager_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/02_EXECUTIVE/quick_decision_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/02_EXECUTIVE/quick_decision_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/02_EXECUTIVE/v1_closure_sync_v2.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/closure_57_matrix_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/closure_57_matrix_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/compile_cudagraph_stall_fix_note.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/feature_coverage_matrix_v2.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/live_validation_snapshot.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/report_accuracy_audit_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/report_accuracy_audit_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/runtime_disclosure.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/legal_cleanroom_signoff_internal.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/security_compliance_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/security_compliance_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/teacher_output_license_assessment.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/v1_closure_sync_v2.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/company_readiness_pack_v2.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/pilot_acceptance_signoff_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/pilot_acceptance_signoff_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/pilot_packages_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/pilot_packages_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/pilot_readiness_kit_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/pilot_readiness_kit_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/poc_protocol_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/poc_protocol_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/sales_funnel_90d_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/sales_funnel_90d_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/06_INVESTOR_ASSETS/founders_hub_application_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/06_INVESTOR_ASSETS/founders_hub_application_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/06_INVESTOR_ASSETS/private_placement_brief_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/06_INVESTOR_ASSETS/private_placement_brief_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/06_INVESTOR_ASSETS/v1_closure_sync_v2.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/07_OUTREACH_READY/DM_templates_TR_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/07_OUTREACH_READY/EXECUTE_NOW_48H_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/07_OUTREACH_READY/email_templates_TR_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/07_OUTREACH_READY/linkedin_posts_TR_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/07_OUTREACH_READY/v1_closure_sync_v2.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/08_GITHUB_GIST/gist_payload_TR_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/08_GITHUB_GIST/superseded_gists.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/08_GITHUB_GIST/v1_closure_sync_v2.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/liquidrouter_whitepaper_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/liquidrouter_whitepaper_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/model_card_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/model_card_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/technical_report_EN.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/technical_report_TR.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/v1_closure_sync_v2.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/claim_boundary_audit_v1.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/consistency_check_v1.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/exposure_policy_v1.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/final_operator_checklist.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/private_only_certificate_v1.md`
+- `MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/release_signoff_v1.md`
+- `PITCH.md`
+- `PITCH_TR.md`
+- `README.md`
+- `README_CHECKLIST.md`
+- `README_CHECKLIST_TR.md`
+- `README_SUMMARY.md`
+- `README_SUMMARY_TR.md`
+- `README_TR.md`
+- `SDK_GUIDE.md`
+- `SDK_GUIDE_TR.md`
+- `SECURITY.md`
+- `SECURITY_TR.md`
+- `TASK.md`
+- `TASK_TR.md`
+- `TECHNICAL_REPORT.md`
+- `TECHNICAL_REPORT_TR.md`
+- `TRAINING_PLAN.md`
+- `TRAINING_PLAN_TR.md`
+- `USAGE_GUIDE.md`
+- `USAGE_GUIDE_TR.md`
+- `USE_POLICY.md`
+- `USE_POLICY_TR.md`
+- `V2_BACKLOG_SEED.md`
+- `WHITE_PAPER_LIQUIDROUTER.md`
+- `WHITE_PAPER_LIQUIDROUTER_TR.md`
+- `ablations/bitlinear_off/README.md`
+- `ablations/bitlinear_off/README_TR.md`
+- `ablations/dense_only/README.md`
+- `ablations/dense_only/README_TR.md`
+- `ablations/no_liquid/README.md`
+- `ablations/no_liquid/README_TR.md`
+- `ablations/no_moe/README.md`
+- `ablations/no_moe/README_TR.md`
+- `ablations/results.md`
+- `ablations/results_TR.md`
+- `assets/sources/README.md`
+- `assets/sources/README_TR.md`
+- `datasets/INTERNAL_POLICY.md`
+- `datasets/INTERNAL_POLICY_TR.md`
+- `datasets/LICENSES.md`
+- `datasets/LICENSES_TR.md`
+- `datasets/README.md`
+- `datasets/README_TR.md`
+- `datasets/SOURCES.md`
+- `datasets/SOURCES_TR.md`
+- `datasets/inventory.md`
+- `datasets/inventory_TR.md`
+- `docs/PROJECT_STRUCTURE.md`
+- `economics/cost_model.md`
+- `economics/cost_model_TR.md`
+- `economics/efficiency_report.md`
+- `economics/efficiency_report_TR.md`
+- `experiments/exp_001_baseline/notes.md`
+- `experiments/exp_001_baseline/notes_TR.md`
+- `interfaces/inference_contract.md`
+- `interfaces/inference_contract_TR.md`
+- `limits/scaling_breakpoints.md`
+- `limits/scaling_breakpoints_TR.md`
+- `logs/README.md`
+- `logs/README_TR.md`
+- `logs/verify/closure_57_matrix.verify.md`
+- `logs/verify/closure_57_matrix.verify_TR.md`
+- `postmortems/README.md`
+- `postmortems/README_TR.md`
+- `postmortems/_template.md`
+- `postmortems/_template_TR.md`
+- `postmortems/example_001.md`
+- `postmortems/example_001_TR.md`
+- `prompts/changelog.md`
+- `prompts/changelog_TR.md`
+- `reports/asset_stack.md`
+- `reports/asset_stack_TR.md`
+- `reports/benchmarks/README.md`
+- `reports/benchmarks/README_TR.md`
+- `reports/benchmarks/kaggle_compare_build30.md`
+- `reports/cleanroom_verification.md`
+- `reports/cleanroom_verification_TR.md`
+- `reports/cli_smoke_log.md`
+- `reports/cli_smoke_log_TR.md`
+- `reports/closure_57_matrix.md`
+- `reports/closure_57_matrix_TR.md`
+- `reports/codex_deep_audit_DE.md`
+- `reports/codex_deep_audit_DE_TR.md`
+- `reports/codex_deep_audit_EN.md`
+- `reports/codex_deep_audit_EN_TR.md`
+- `reports/codex_deep_audit_TR.md`
+- `reports/contamination_report_build30.md`
+- `reports/dataset_health.md`
+- `reports/dataset_health_TR.md`
+- `reports/demo_notes.md`
+- `reports/demo_script.md`
+- `reports/demo_video_script.md`
+- `reports/demo_video_script_TR.md`
+- `reports/docs_dedup_canonical_list.md`
+- `reports/drone_sitl_demo.md`
+- `reports/drone_sitl_demo_TR.md`
+- `reports/efficiency_convergence_analysis.md`
+- `reports/efficiency_convergence_analysis_TR.md`
+- `reports/final_sync_matrix.md`
+- `reports/final_sync_matrix_TR.md`
+- `reports/folder_structure_policy.md`
+- `reports/founders_hub_application.md`
+- `reports/founders_hub_application_TR.md`
+- `reports/go_nogo_signoff_onepager.md`
+- `reports/go_nogo_signoff_onepager_TR.md`
+- `reports/go_status_matrix.md`
+- `reports/go_status_matrix_TR.md`
+- `reports/ip_licensing_split.md`
+- `reports/ip_licensing_split_TR.md`
+- `reports/kpi_contract_build30.md`
+- `reports/kpi_pack_v1.md`
+- `reports/kpi_pack_v1_TR.md`
+- `reports/legal_cleanroom_signoff_internal.md`
+- `reports/model_health.md`
+- `reports/model_health_TR.md`
+- `reports/one_pager.md`
+- `reports/one_pager_TR.md`
+- `reports/pilot_acceptance_signoff.md`
+- `reports/pilot_acceptance_signoff_TR.md`
+- `reports/pilot_offer_packages.md`
+- `reports/pilot_offer_packages_TR.md`
+- `reports/pilot_readiness_kit.md`
+- `reports/pilot_readiness_kit_TR.md`
+- `reports/pilots/README.md`
+- `reports/pilots/README_TR.md`
+- `reports/pitch_kit/04_KAYNAK_README.md`
+- `reports/pitch_kit/04_KAYNAK_README_TR.md`
+- `reports/poc_protocol.md`
+- `reports/poc_protocol_TR.md`
+- `reports/release_snapshot.md`
+- `reports/release_snapshot_TR.md`
+- `reports/report_accuracy_audit.md`
+- `reports/report_accuracy_audit_TR.md`
+- `reports/review_checklist.md`
+- `reports/review_checklist_TR.md`
+- `reports/sales_funnel_90d.md`
+- `reports/sales_funnel_90d_TR.md`
+- `reports/security_compliance.md`
+- `reports/security_compliance_TR.md`
+- `reports/snapshots/2026-02-24/mertformer_master_decision_report_TR_2026-02-24.md`
+- `reports/snapshots/2026-02-24/web_validation_sources_2026-02-24.md`
+- `reports/strategic_value.md`
+- `reports/strategic_value_TR.md`
+- `reports/system_hardware.md`
+- `reports/system_hardware_TR.md`
+- `reports/teacher_output_license_assessment.md`
+- `reports/technical_snapshot.md`
+- `reports/technical_snapshot_TR.md`
+- `reports/verified_matrix.md`
+- `reports/verified_matrix_TR.md`
+- `reports/zip_denylist_audit_release_v2.md`
+- `repro/python.md`
+- `repro/python_TR.md`
+- `repro/seed_policy.md`
+- `repro/seed_policy_TR.md`
+- `scripts/README.md`
+- `scripts/README_TR.md`
+- `scripts/reports/model_health.md`
+- `scripts/reports/model_health_TR.md`
+- `scripts/reports/pilots/pilot_001/sitl_20260211T214734Z/sitl_report.md`
+- `tokenizer/drift_report.md`
+- `tokenizer/drift_report_TR.md`
+- `tokenizer/stats.md`
+- `tokenizer/stats_TR.md`
+- `tokenizer/tr/README.md`
+- `tokenizer/tr/README_TR.md`
+- `tools/abuse_tests.md`
+- `tools/abuse_tests_TR.md`
+- `tools/contracts/README.md`
+- `tools/contracts/README_TR.md`
+- `tools/sandbox/README.md`
+- `tools/sandbox/README_TR.md`
+- `training_dynamics/cold_vs_warm.md`
+- `training_dynamics/cold_vs_warm_TR.md`
+
+## Duplicate Name Groups
+- `changelog.md`
+  - `CHANGELOG.md`
+  - `prompts/changelog.md`
+- `changelog_tr.md`
+  - `CHANGELOG_TR.md`
+  - `prompts/changelog_TR.md`
+- `closure_57_matrix_tr.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/closure_57_matrix_TR.md`
+  - `reports/closure_57_matrix_TR.md`
+- `founders_hub_application_tr.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/06_INVESTOR_ASSETS/founders_hub_application_TR.md`
+  - `reports/founders_hub_application_TR.md`
+- `legal_cleanroom_signoff_internal.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/legal_cleanroom_signoff_internal.md`
+  - `reports/legal_cleanroom_signoff_internal.md`
+- `license.md`
+  - `.lint-venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md`
+  - `.lint-venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md`
+- `model_card_tr.md`
+  - `MODEL_CARD_TR.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/model_card_TR.md`
+- `model_health.md`
+  - `reports/model_health.md`
+  - `scripts/reports/model_health.md`
+- `model_health_tr.md`
+  - `reports/model_health_TR.md`
+  - `scripts/reports/model_health_TR.md`
+- `one_pager_tr.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/02_EXECUTIVE/one_pager_TR.md`
+  - `reports/one_pager_TR.md`
+- `pilot_acceptance_signoff_tr.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/pilot_acceptance_signoff_TR.md`
+  - `reports/pilot_acceptance_signoff_TR.md`
+- `pilot_readiness_kit_tr.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/pilot_readiness_kit_TR.md`
+  - `reports/pilot_readiness_kit_TR.md`
+- `poc_protocol_tr.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/poc_protocol_TR.md`
+  - `reports/poc_protocol_TR.md`
+- `readme.md`
+  - `.pytest_cache/README.md`
+  - `README.md`
+  - `ablations/bitlinear_off/README.md`
+  - `ablations/dense_only/README.md`
+  - `ablations/no_liquid/README.md`
+  - `ablations/no_moe/README.md`
+  - `assets/sources/README.md`
+  - `datasets/README.md`
+  - `logs/README.md`
+  - `postmortems/README.md`
+  - `reports/benchmarks/README.md`
+  - `reports/pilots/README.md`
+  - `scripts/README.md`
+  - `tokenizer/tr/README.md`
+  - `tools/contracts/README.md`
+  - `tools/sandbox/README.md`
+- `readme_tr.md`
+  - `README_TR.md`
+  - `ablations/bitlinear_off/README_TR.md`
+  - `ablations/dense_only/README_TR.md`
+  - `ablations/no_liquid/README_TR.md`
+  - `ablations/no_moe/README_TR.md`
+  - `assets/sources/README_TR.md`
+  - `datasets/README_TR.md`
+  - `logs/README_TR.md`
+  - `postmortems/README_TR.md`
+  - `reports/benchmarks/README_TR.md`
+  - `reports/pilots/README_TR.md`
+  - `scripts/README_TR.md`
+  - `tokenizer/tr/README_TR.md`
+  - `tools/contracts/README_TR.md`
+  - `tools/sandbox/README_TR.md`
+- `report_accuracy_audit_tr.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/report_accuracy_audit_TR.md`
+  - `reports/report_accuracy_audit_TR.md`
+- `sales_funnel_90d_tr.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/sales_funnel_90d_TR.md`
+  - `reports/sales_funnel_90d_TR.md`
+- `security_compliance_tr.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/security_compliance_TR.md`
+  - `reports/security_compliance_TR.md`
+- `teacher_output_license_assessment.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/teacher_output_license_assessment.md`
+  - `reports/teacher_output_license_assessment.md`
+- `technical_report_tr.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/technical_report_TR.md`
+  - `TECHNICAL_REPORT_TR.md`
+- `v1_closure_sync_v2.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/02_EXECUTIVE/v1_closure_sync_v2.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/v1_closure_sync_v2.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/06_INVESTOR_ASSETS/v1_closure_sync_v2.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/07_OUTREACH_READY/v1_closure_sync_v2.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/08_GITHUB_GIST/v1_closure_sync_v2.md`
+  - `MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/v1_closure_sync_v2.md`

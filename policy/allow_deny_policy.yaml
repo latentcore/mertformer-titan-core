@@ -1,0 +1,51 @@
+version: 1
+policy_id: mertformer_allow_deny_canonical
+updated_utc: 2026-03-04T00:00:00Z
+allow:
+  file_extensions:
+    - .py
+    - .md
+    - .json
+    - .jsonl
+    - .yaml
+    - .yml
+    - .toml
+    - .txt
+    - .sh
+    - .cpp
+    - .h
+    - .hpp
+    - .ipynb
+    - .csv
+  paths:
+    - reports/
+    - scripts/
+    - config/
+    - model/
+    - layers/
+    - train/
+    - tests/
+    - benchmarks/
+    - datasets/
+    - policy/
+    - docs/
+    - packages/
+deny:
+  path_regex:
+    - '(^|/)__pycache__/'
+    - '(^|/)\.pytest_cache/'
+    - '(^|/)\.ruff_cache/'
+    - '(^|/)\.mypy_cache/'
+    - '(^|/)\.git/'
+    - '(^|/)\.titan-venv/'
+    - '(^|/)\.venv/'
+    - '(^|/)venv/'
+    - '(^|/)\.env$'
+    - '(^|/)checkpoints/'
+    - '(^|/)logs/'
+  secret_regex:
+    hf_token: '\\bhf_[A-Za-z0-9]{24,}\\b'
+    wandb_token: '\\bwandb_[A-Za-z0-9]{10,}\\b'
+    openai_key: '\\bsk-[A-Za-z0-9]{10,}\\b'
+    github_token: '\\bghp_[A-Za-z0-9]{20,}\\b'
+    aws_access_key: '\\bAKIA[0-9A-Z]{16}\\b'

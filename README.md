@@ -1,3 +1,26 @@
+## Release-Ready One-Shot Closure
+
+This repository includes a decision-complete, single-pass closure flow for engineering hardening and release evidence.
+
+### Canonical Root
+- repository root (current working tree)
+
+### Single Entry Point
+- `bash scripts/final_one_shot.sh`
+
+### Outputs
+- `reports/start_gate_report.json`
+- `reports/release_manifest.json`
+- `reports/project_structure_sync_report.json`
+- `reports/hardening_bundle_summary.json`
+- `artifacts/mertformer_release.zip`
+- `artifacts/mertformer_release.zip.sha256`
+- `artifacts/demo_v1.mp4`
+
+### Claims Boundary
+- This repository is **pre-training / unverified** for production-scale quality claims.
+- Release closure artifacts prove process integrity, not final model capability.
+
 ![MertFormer Titan Header](assets/header.png)
 
 <div align="center">
@@ -31,19 +54,19 @@ Outputs:
 <br />
 
 ```
- __  __          _   ______                              
- |  \/  |        | | |  ____|                             
- | \  / | ___ _ _| |_| |__ ___  _ __ _ __ ___   ___ _ __  
+ __  __          _   ______
+ |  \/  |        | | |  ____|
+ | \  / | ___ _ _| |_| |__ ___  _ __ _ __ ___   ___ _ __
  | |\/| |/ _ \ '__| __|  __/ _ \| '__| '_ ` _ \ / _ \ '__|
- | |  | |  __/ |  | |_| | | (_) | |  | | | | | |  __/ |   
- |_|  |_|\___|_|   \__|_|  \___/|_|  |_| |_| |_|\___|_|   
-      _______ _ _                 
-     |__   __(_) |                
-        | |   _| |_ __ _ _ __     
-        | |  | | __/ _` | '_ \    
-        | |  | | || (_| | | | |   
-        |_|  |_|\__\__,_|_| |_|   
-                                  
+ | |  | |  __/ |  | |_| | | (_) | |  | | | | | |  __/ |
+ |_|  |_|\___|_|   \__|_|  \___/|_|  |_| |_| |_|\___|_|
+      _______ _ _
+     |__   __(_) |
+        | |   _| |_ __ _ _ __
+        | |  | | __/ _` | '_ \
+        | |  | | || (_| | | | |
+        |_|  |_|\__\__,_|_| |_|
+
    M  O  B  I  L  E     F  I  R  S  T     E  D  G  E     A  I
 ```
 
@@ -54,7 +77,7 @@ Outputs:
 ## 🇹🇷 Executive Summary (Non-Technical)
 > **For decision makers who are not reading source code**
 
-**What is this project?**  
+**What is this project?**
 MertFormer is designed as an offline-first AI system that can run on controlled local hardware and continue operating without always-on cloud dependency.
 
 **Why is it strategically relevant?**
@@ -679,10 +702,10 @@ graph TD
         Phase3["🎭 REASONING - Layers 10-15<br/>Liquid Momentum | Strategic Logic & Cultural Adaptation"]
         Phase2["☁️ ABSTRACTION - Layers 3-9<br/>MoE Expert Distribution | Conceptual Depth & First Liquid Contact (L4)"]
         Phase1["🧱 FOUNDATION - Layers 0-2<br/>BitNet 1.58-bit | Grammar Setup & RMSNorm Stabilization"]
-        
+
         Phase1 ==> Phase2 ==> Phase3 ==> Phase4
     end
-    
+
     subgraph "The Engineering Heart of Every Layer (Block)"
         style BlockInner fill:#1a1a1a,stroke:#3fb1e3,stroke-width:2px
         BlockInner[Input] --> Norm1[RMSNorm]
@@ -746,8 +769,8 @@ MertFormer Titan (2.64B Parameters)
 | **Baseline** | 2.0 sec | 64 tok/s | 47% | 38 GB |
 | **v1.0 (Build 30) (Optimized)** | **~1.2 sec** (Est.) | **~107 tok/s** (Est.) | **~95%** (Target) | **~76 GB** (Target) |
 | **Speedup (Proj.)** | **+67%** | **+67%** | **+102%** | **+100%** |
-**Aggregate Throughput Target (Projected): up to 11,000 tok/s.**  
-This value is a roadmap target for aggregate system capacity under a defined deployment profile; it is **not** a single-device measured benchmark result.  
+**Aggregate Throughput Target (Projected): up to 11,000 tok/s.**
+This value is a roadmap target for aggregate system capacity under a defined deployment profile; it is **not** a single-device measured benchmark result.
 Operational meaning: higher concurrent session capacity, lower unit inference cost under load, and shorter queue times in multi-user scenarios.
 *Note: Performance metrics are pre-training estimates based on architecture simulation. BitNet 1.58 inference now includes an optional low-bit kernel path; the Tensor Core path is **experimental** and opt-in (`MERTFORMER_TENSORCORE=1`). Energy/TOPS gains still require real device measurement. Kernel criticism applies to inference only; BitNet training exists as a separate layer, and low-bit inference is explicitly a roadmap item. **Training still runs on standard PyTorch matmul paths; the low-bit kernel does not accelerate training.** Furthermore, the **Residual Scaling Effect** maintains signal stability throughout 18 layers using the 1/√2 (1/sqrt(2)) factor, aiming to keep gradient flow stable even in the deepest layer.*
 
@@ -1123,16 +1146,16 @@ liquid_spike_threshold = 5.0
 | **4. Soul (Identity)** | 75-85% | Personality, instruction | 10% of corpus |
 | **5. Tool Use** | 85-100% | Function calling, APIs | 15% of corpus |
 
-**Total Tokens**: ~24 Billion (high-quality, KD-focused)  
+**Total Tokens**: ~24 Billion (high-quality, KD-focused)
 *Note: Distillation boosts effective learning per token, but it does not increase raw token count.*
 
-This curriculum order and token budget are designed to be **sufficient for a strong general foundation**.  
+This curriculum order and token budget are designed to be **sufficient for a strong general foundation**.
 For **niche or proprietary domains**, we recommend **targeted fine-tuning** on domain data to maximize specialization.
 
 <a id="training-strategy-baseline-v28"></a>
 ### Training Strategy (Baseline -> v28, Claim-Safe)
 
-No emergency architecture change is required before baseline training.  
+No emergency architecture change is required before baseline training.
 However, the following items are high-impact quality multipliers for the first tuning cycle.
 
 **Recommended v28 tuning items (post-baseline evidence):**
@@ -1883,9 +1906,9 @@ All commercial/partner engagement follows written agreement terms and confidenti
 
 ## 📧 Contact
 
-**Project**: MertFormer Titan (Onyx Storm)  
-**Version**: v1.0 (Build 30, Pre-Training Baseline)  
-**Status**: 🟡 Pilot-Ready (training & benchmark claims pending)  
+**Project**: MertFormer Titan (Onyx Storm)
+**Version**: v1.0 (Build 30, Pre-Training Baseline)
+**Status**: 🟡 Pilot-Ready (training & benchmark claims pending)
 **Developed in Türkiye**
 
 ---
@@ -1922,7 +1945,7 @@ This project intentionally concludes at the proof-of-system level. The goal is t
 
 <a id="scalability-vision"></a>
 ### 📈 Scalability Vision (Claim-Safe)
-Build 30 is intentionally centered on **2.64B** validation and reproducible evidence gates.  
+Build 30 is intentionally centered on **2.64B** validation and reproducible evidence gates.
 Future **8B / 70B / 1T** exploration is treated as a conditional research track and is evaluated only after:
 - trained-checkpoint evidence on 2.64B,
 - reproducible benchmark outputs,

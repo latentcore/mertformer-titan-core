@@ -56,4 +56,15 @@ echo "[verify] Translation pointer policy gate ..."
 echo "[verify] Documentation claim consistency gate ..."
 "$PY" scripts/check_doc_claim_consistency.py
 
+
+
+echo "[verify] Unicode path guard gate ..."
+"$PY" scripts/unicode_path_guard.py --root . --out reports/unicode_path_guard_report.json --fail-on-hit
+
+echo "[verify] Duplicate zip guard gate ..."
+"$PY" scripts/duplicate_zip_guard.py --root packages --root artifacts --out reports/duplicate_zip_guard_report.json
+
+echo "[verify] Manifest sync gate ..."
+"$PY" scripts/sync_manifest.py --root . --manifest reports/release_manifest.json --structure docs/PROJECT_STRUCTURE.md --matrix reports/file_sync_matrix.json --sync-report reports/project_structure_sync_report.json --policy-report reports/policy_sync_report.json
+
 echo "[verify] OK"

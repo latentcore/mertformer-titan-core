@@ -1,0 +1,6 @@
+* @latentcore
+/config/ @latentcore
+/layers/ @latentcore
+/train/ @latentcore
+/scripts/ @latentcore
+/reports/ @latentcore

@@ -1,0 +1,123 @@
+{
+  "generated_utc": "2026-03-04T00:55:38.820260+00:00",
+  "md_file_count": 245,
+  "duplicate_name_group_count": 21,
+  "duplicate_name_groups": {
+    "license.md": [
+      ".lint-venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md",
+      ".lint-venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md"
+    ],
+    "readme.md": [
+      ".pytest_cache/README.md",
+      "README.md",
+      "ablations/bitlinear_off/README.md",
+      "ablations/dense_only/README.md",
+      "ablations/no_liquid/README.md",
+      "ablations/no_moe/README.md",
+      "assets/sources/README.md",
+      "datasets/README.md",
+      "logs/README.md",
+      "postmortems/README.md",
+      "reports/benchmarks/README.md",
+      "reports/pilots/README.md",
+      "scripts/README.md",
+      "tokenizer/tr/README.md",
+      "tools/contracts/README.md",
+      "tools/sandbox/README.md"
+    ],
+    "changelog.md": [
+      "CHANGELOG.md",
+      "prompts/changelog.md"
+    ],
+    "changelog_tr.md": [
+      "CHANGELOG_TR.md",
+      "prompts/changelog_TR.md"
+    ],
+    "model_card_tr.md": [
+      "MODEL_CARD_TR.md",
+      "MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/model_card_TR.md"
+    ],
+    "one_pager_tr.md": [
+      "MertFormer_Titan_Dealroom_2026-02-23/02_EXECUTIVE/one_pager_TR.md",
+      "reports/one_pager_TR.md"
+    ],
+    "v1_closure_sync_v2.md": [
+      "MertFormer_Titan_Dealroom_2026-02-23/02_EXECUTIVE/v1_closure_sync_v2.md",
+      "MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/v1_closure_sync_v2.md",
+      "MertFormer_Titan_Dealroom_2026-02-23/06_INVESTOR_ASSETS/v1_closure_sync_v2.md",
+      "MertFormer_Titan_Dealroom_2026-02-23/07_OUTREACH_READY/v1_closure_sync_v2.md",
+      "MertFormer_Titan_Dealroom_2026-02-23/08_GITHUB_GIST/v1_closure_sync_v2.md",
+      "MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/v1_closure_sync_v2.md"
+    ],
+    "closure_57_matrix_tr.md": [
+      "MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/closure_57_matrix_TR.md",
+      "reports/closure_57_matrix_TR.md"
+    ],
+    "report_accuracy_audit_tr.md": [
+      "MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/report_accuracy_audit_TR.md",
+      "reports/report_accuracy_audit_TR.md"
+    ],
+    "legal_cleanroom_signoff_internal.md": [
+      "MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/legal_cleanroom_signoff_internal.md",
+      "reports/legal_cleanroom_signoff_internal.md"
+    ],
+    "security_compliance_tr.md": [
+      "MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/security_compliance_TR.md",
+      "reports/security_compliance_TR.md"
+    ],
+    "teacher_output_license_assessment.md": [
+      "MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/teacher_output_license_assessment.md",
+      "reports/teacher_output_license_assessment.md"
+    ],
+    "pilot_acceptance_signoff_tr.md": [
+      "MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/pilot_acceptance_signoff_TR.md",
+      "reports/pilot_acceptance_signoff_TR.md"
+    ],
+    "pilot_readiness_kit_tr.md": [
+      "MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/pilot_readiness_kit_TR.md",
+      "reports/pilot_readiness_kit_TR.md"
+    ],
+    "poc_protocol_tr.md": [
+      "MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/poc_protocol_TR.md",
+      "reports/poc_protocol_TR.md"
+    ],
+    "sales_funnel_90d_tr.md": [
+      "MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/sales_funnel_90d_TR.md",
+      "reports/sales_funnel_90d_TR.md"
+    ],
+    "founders_hub_application_tr.md": [
+      "MertFormer_Titan_Dealroom_2026-02-23/06_INVESTOR_ASSETS/founders_hub_application_TR.md",
+      "reports/founders_hub_application_TR.md"
+    ],
+    "technical_report_tr.md": [
+      "MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/technical_report_TR.md",
+      "TECHNICAL_REPORT_TR.md"
+    ],
+    "readme_tr.md": [
+      "README_TR.md",
+      "ablations/bitlinear_off/README_TR.md",
+      "ablations/dense_only/README_TR.md",
+      "ablations/no_liquid/README_TR.md",
+      "ablations/no_moe/README_TR.md",
+      "assets/sources/README_TR.md",
+      "datasets/README_TR.md",
+      "logs/README_TR.md",
+      "postmortems/README_TR.md",
+      "reports/benchmarks/README_TR.md",
+      "reports/pilots/README_TR.md",
+      "scripts/README_TR.md",
+      "tokenizer/tr/README_TR.md",
+      "tools/contracts/README_TR.md",
+      "tools/sandbox/README_TR.md"
+    ],
+    "model_health.md": [
+      "reports/model_health.md",
+      "scripts/reports/model_health.md"
+    ],
+    "model_health_tr.md": [
+      "reports/model_health_TR.md",
+      "scripts/reports/model_health_TR.md"
+    ]
+  },
+  "ok": true
+}

@@ -1,0 +1,11 @@
+{
+  "generated_utc": "2026-03-04T01:00:41.173587+00:00",
+  "dealroom_path": "/Users/mertyunlu/Desktop/mertformer-titan-core/MertFormer_Titan_Dealroom_2026-02-23",
+  "exists": true,
+  "git": {
+    "branch": "codex/release-v1-final-dealroom",
+    "commit": "917c422fe5fab36f2c3faccd52e52c6ddd8bcb0f",
+    "remote": "origin\thttps://github.com/latentcore/mertformer-titan-dealroom-private.git (fetch)\norigin\thttps://github.com/latentcore/mertformer-titan-dealroom-private.git (push)"
+  },
+  "ok": true
+}

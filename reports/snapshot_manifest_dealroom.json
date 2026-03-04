@@ -1,0 +1,10 @@
+{
+  "generated_utc": "2026-03-04T00:57:49Z",
+  "repo": "dealroom",
+  "path": "/Users/mertyunlu/Desktop/mertformer-titan-core/MertFormer_Titan_Dealroom_2026-02-23",
+  "current_branch": "codex/v1-final-universal-poc-dealroom",
+  "head_commit": "3b06e08544410d2e8004b34469bd3cc17c0e94e8",
+  "snapshot_branch": "codex/snapshot-pre-v1-final-dealroom",
+  "snapshot_tag": "snapshot/pre-v1-final-dealroom",
+  "release_branch": "codex/release-v1-final-dealroom"
+}

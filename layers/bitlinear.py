@@ -15,10 +15,11 @@ __version__ = "1.0-BUILD30"
 __author__ = "Mert"
 
 import os
+from typing import Tuple
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import Tuple
 
 _LOWBIT_KERNEL_ENABLED = os.getenv("MERTFORMER_LOWBIT_KERNEL", "0") == "1"
 _TENSORCORE_ENABLED = os.getenv("MERTFORMER_TENSORCORE", "0") == "1"
@@ -42,20 +43,44 @@ def _try_lowbit_kernel(x: torch.Tensor, w: torch.Tensor, bias: torch.Tensor | No
 
         backend = select_backend(x, w)
         if backend == "triton_cuda":
-            from mertformer_sdk.kernels.triton_ternary import triton_ternary_linear, is_triton_available
+            from mertformer_sdk.kernels.triton_ternary import is_triton_available, triton_ternary_linear
 
             if not is_triton_available():
                 return None
             return triton_ternary_linear(x, w, bias, use_tensorcore=_TENSORCORE_ENABLED)
+
         if backend == "cpp_cpu":
             from mertformer_sdk.kernels.cpp.loader import bitnet_cpu_linear
 
             return bitnet_cpu_linear(x, w, bias)
+
+        if backend == "metal_fallback":
+            from mertformer_sdk.kernels.metal.engine import metal_linear
+
+            x_q = activation_quant(x)
+            w_q = weight_quant(w)
+            return metal_linear(x_q, w_q, bias)
+
+        if backend == "vulkan_fallback":
+            from mertformer_sdk.kernels.vulkan.engine import vulkan_linear
+
+            x_q = activation_quant(x)
+            w_q = weight_quant(w)
+            return vulkan_linear(x_q, w_q, bias)
+
+        if backend == "npu_fallback":
+            from mertformer_sdk.kernels.npu.engine import npu_linear
+
+            x_q = activation_quant(x)
+            w_q = weight_quant(w)
+            return npu_linear(x_q, w_q, bias)
+
         if backend == "mps_optimized":
             # MPS-optimized path (no custom shader): keep deterministic quantized math.
             x_q = activation_quant(x)
             w_q = weight_quant(w)
             return F.linear(x_q, w_q, bias)
+
         return None
     except Exception:
         return None
@@ -125,7 +150,7 @@ class BitLinear(nn.Linear):
         Returns:
             torch.Tensor: Çıktı tensörü / Output tensor
         """
-        # Opt-in low-bit kernel path (CUDA + Triton). Falls back safely.
+        # Opt-in low-bit kernel path. Falls back safely.
         lowbit_out = _try_lowbit_kernel(x, self.weight, self.bias)
         if lowbit_out is not None:
             return lowbit_out

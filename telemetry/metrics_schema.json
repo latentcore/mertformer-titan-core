@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "description": "System telemetry schema for training/inference readiness.",
+  "fields": [
+    {"name": "timestamp_utc", "type": "string"},
+    {"name": "stage", "type": "string"},
+    {"name": "cpu_percent", "type": "number"},
+    {"name": "ram_total_gb", "type": "number"},
+    {"name": "ram_used_gb", "type": "number"},
+    {"name": "device", "type": "string"},
+    {"name": "mixed_precision", "type": "string"}
+  ]
+}
