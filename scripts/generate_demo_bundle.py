@@ -43,6 +43,17 @@ def ensure_script(path: Path) -> None:
     )
 
 
+def ensure_writable(path: Path) -> None:
+    if not path.exists():
+        return
+    try:
+        mode = path.stat().st_mode
+        path.chmod(mode | 0o200)
+    except Exception:
+        # Best effort only; immutable flags may still block writes.
+        pass
+
+
 def _run_ffmpeg(video_path: Path, with_drawtext: bool) -> subprocess.CompletedProcess[str]:
     ffmpeg_bin = subprocess.run(["bash", "-lc", "command -v ffmpeg"], capture_output=True, text=True)
     if ffmpeg_bin.returncode != 0 or not ffmpeg_bin.stdout.strip():
@@ -76,6 +87,11 @@ def main() -> int:
     video_path = artifacts / "demo_v1.mp4"
     checksum_path = reports / "demo_checksum.sha256"
     validation_path = reports / "demo_validation_report.json"
+
+    ensure_writable(video_path)
+    ensure_writable(checksum_path)
+    ensure_writable(notes_path)
+    ensure_writable(validation_path)
 
     ensure_script(script_path)
 

@@ -2,7 +2,6 @@
 
 Generated automatically.
 
-- `.DS_Store`
 - `.env`
 - `.github/CODEOWNERS`
 - `.github/workflows/ci.yml`
@@ -123,7 +122,6 @@ Generated automatically.
 - `V2_BACKLOG_SEED.md`
 - `WHITE_PAPER_LIQUIDROUTER.md`
 - `WHITE_PAPER_LIQUIDROUTER_TR.md`
-- `ablations/.DS_Store`
 - `ablations/bitlinear_off/README.md`
 - `ablations/bitlinear_off/README_TR.md`
 - `ablations/dense_only/README.md`
@@ -309,6 +307,14 @@ Generated automatically.
 - `logs/operator_mode/operator_2026-03-04_05-17-39.manifest.json`
 - `logs/operator_mode/operator_2026-03-04_05-18-48.jsonl`
 - `logs/operator_mode/operator_2026-03-04_05-18-48.manifest.json`
+- `logs/operator_mode/operator_2026-03-04_05-31-39.jsonl`
+- `logs/operator_mode/operator_2026-03-04_05-31-39.manifest.json`
+- `logs/operator_mode/operator_2026-03-04_05-35-48.jsonl`
+- `logs/operator_mode/operator_2026-03-04_05-35-48.manifest.json`
+- `logs/operator_mode/operator_2026-03-04_05-39-19.jsonl`
+- `logs/operator_mode/operator_2026-03-04_05-39-19.manifest.json`
+- `logs/operator_mode/operator_2026-03-04_05-40-17.jsonl`
+- `logs/operator_mode/operator_2026-03-04_05-40-17.manifest.json`
 - `logs/preflight/titan_preflight.log`
 - `logs/preflight/train_ready_status.json`
 - `logs/verify/closure_57_matrix.verify.json`
@@ -413,6 +419,11 @@ Generated automatically.
 - `reports/codex_deep_audit_EN.md`
 - `reports/codex_deep_audit_EN_TR.md`
 - `reports/codex_deep_audit_TR.md`
+- `reports/commercial_handover/contract_terms_checklist.md`
+- `reports/commercial_handover/handover_scope.md`
+- `reports/commercial_handover/known_issues.md`
+- `reports/commercial_handover/ownership_and_role.md`
+- `reports/commercial_handover/sla_kpi_90_180.md`
 - `reports/contamination_report_build30.md`
 - `reports/dataset_health.md`
 - `reports/dataset_health_TR.md`

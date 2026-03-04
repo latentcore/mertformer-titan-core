@@ -46,6 +46,10 @@ find /Users/mertyunlu/Documents -maxdepth 1 -type f -name "*.zip" -print0 2>/dev
 # Dealroom reference/provenance
 run_step "dealroom_sync" .titan-venv/bin/python scripts/dealroom_sync.py
 
+# Ensure writable artifacts before regeneration
+chflags nouchg artifacts/demo_v1.mp4 artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 reports/demo_checksum.sha256 reports/demo_notes.md reports/demo_validation_report.json 2>/dev/null || true
+chmod u+w artifacts/demo_v1.mp4 artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 reports/demo_checksum.sha256 reports/demo_notes.md reports/demo_validation_report.json 2>/dev/null || true
+
 # Demo bundle
 run_step "demo_bundle" .titan-venv/bin/python scripts/generate_demo_bundle.py
 
@@ -63,12 +67,12 @@ chflags uchg /Users/mertyunlu/Documents/Proje_immutable_20260301_d22272ee9281e97
 bash scripts/apply_github_policy.sh || true
 bash scripts/release_closure_lock.sh v1.0.0 || true
 
-cat > reports/execution_trace.json <<'EOF'
+cat > reports/execution_trace.json <<'JSON'
 {
   "status": "completed",
   "flow": "final_one_shot",
   "notes": "All closure phases executed with fail-fast for critical gates and best-effort for external governance APIs."
 }
-EOF
+JSON
 
 echo "[final] COMPLETED"

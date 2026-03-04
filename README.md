@@ -249,6 +249,11 @@ Primary entry docs and checklists.
 - [snake_demo.py](snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
 - [USAGE_GUIDE.md](USAGE_GUIDE.md) — Operational usage guide (EN).
 - [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md) — Operational usage guide (TR).
+- [reports/commercial_handover/known_issues.md](reports/commercial_handover/known_issues.md) — Known issues register for transfer risk visibility.
+- [reports/commercial_handover/handover_scope.md](reports/commercial_handover/handover_scope.md) — Transfer scope and explicit out-of-scope boundaries.
+- [reports/commercial_handover/ownership_and_role.md](reports/commercial_handover/ownership_and_role.md) — Ownership model and decision rights after transfer.
+- [reports/commercial_handover/sla_kpi_90_180.md](reports/commercial_handover/sla_kpi_90_180.md) — 90/180 day SLA and KPI operating plan.
+- [reports/commercial_handover/contract_terms_checklist.md](reports/commercial_handover/contract_terms_checklist.md) — Contract checklist for IP, liability, operations and exit.
 
 **SDK**
 Package + CLI for edge deployments.

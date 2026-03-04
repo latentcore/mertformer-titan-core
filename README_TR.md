@@ -249,6 +249,11 @@ Ana giriş dokümanları ve checklistler.
 - [snake_demo.py](snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
 - [USAGE_GUIDE.md](USAGE_GUIDE.md) — Operasyonel kullanım kılavuzu (EN).
 - [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md) — Operasyonel kullanım kılavuzu (TR).
+- [reports/commercial_handover/known_issues.md](reports/commercial_handover/known_issues.md) — Devir risk görünürlüğü için bilinen sorunlar kaydı.
+- [reports/commercial_handover/handover_scope.md](reports/commercial_handover/handover_scope.md) — Devir kapsamı ve kapsam dışı sınırlar.
+- [reports/commercial_handover/ownership_and_role.md](reports/commercial_handover/ownership_and_role.md) — Devir sonrası sahiplik modeli ve karar hakları.
+- [reports/commercial_handover/sla_kpi_90_180.md](reports/commercial_handover/sla_kpi_90_180.md) — 90/180 gün SLA ve KPI işletim planı.
+- [reports/commercial_handover/contract_terms_checklist.md](reports/commercial_handover/contract_terms_checklist.md) — IP, sorumluluk, operasyon ve çıkış için sözleşme checklisti.
 
 **SDK**
 Edge dağıtım için paket + CLI.
