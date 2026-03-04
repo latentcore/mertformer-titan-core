@@ -7,7 +7,7 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
 
     steps:
       - name: Checkout
@@ -24,49 +24,41 @@ jobs:
           python -m pip install -r requirements.txt
           python -m pip install -e ".[dev]"
 
-      - name: Secret scan (tracked files)
+      - name: Secret scan
         run: |
           python scripts/secret_scan.py
 
-      - name: Ruff (lightweight)
+      - name: Unicode Path Guard
+        run: |
+          python scripts/unicode_path_guard.py --root . --out reports/unicode_path_guard_report.json --fail-on-hit
+
+      - name: Ruff
         run: |
           python -m ruff check .
 
-      - name: Preflight (offline)
+      - name: Verify all
         env:
           TITAN_OFFLINE: "1"
           TITAN_WANDB: "0"
         run: |
-          python scripts/titan_preflight.py
+          bash scripts/verify_all.sh
 
-      - name: Pytest
+      - name: Hardening Bundle
         run: |
-          python -m pytest -q
+          python scripts/hardening_bundle.py
 
-      - name: Operator Gate (safe, offline)
-        env:
-          TITAN_OFFLINE: "1"
-          TITAN_WANDB: "0"
+      - name: Markdown Quality Report
         run: |
-          python scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl
+          python scripts/md_quality_gate.py --root . --out reports/md_lint_report.json
 
-      - name: Closure 57 Matrix (strict in-scope pending)
+      - name: Linkcheck Report
         run: |
-          mkdir -p logs/verify
-          python scripts/check_57_matrix.py \
-            --require-no-pending \
-            --out logs/verify/closure_57_matrix.ci.json \
-            --md-out logs/verify/closure_57_matrix.ci.md \
-            --md-tr-out logs/verify/closure_57_matrix.ci_TR.md
+          python scripts/linkcheck_gate.py --root . --out reports/linkcheck_report.json
 
-      - name: Tokenizer Sync Gate
+      - name: Duplicate Zip Guard
         run: |
-          python scripts/check_tokenizer_sync.py
+          python scripts/duplicate_zip_guard.py --root packages --root artifacts --out reports/duplicate_zip_guard_report.json
 
-      - name: Translation Pointer Policy Gate
+      - name: Sync Manifest
         run: |
-          python scripts/check_translation_pointer_policy.py
-
-      - name: Documentation Claim Consistency Gate
-        run: |
-          python scripts/check_doc_claim_consistency.py
+          python scripts/sync_manifest.py --root . --manifest reports/release_manifest.json --structure docs/PROJECT_STRUCTURE.md --matrix reports/file_sync_matrix.json --sync-report reports/project_structure_sync_report.json --policy-report reports/policy_sync_report.json

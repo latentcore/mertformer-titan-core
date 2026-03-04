@@ -24,7 +24,7 @@ BitNet (1.58-bit), Liquid dinamikleri ve MoE yönlendirmesini üretim-öncelikli
 ## Doğrulanmış Yerel Kanıt (Son Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `89 passed, 3 skipped` |
+| `python3 -m pytest -q` | `108 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 

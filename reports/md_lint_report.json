@@ -1,0 +1,131 @@
+{
+  "generated_utc": "2026-03-04T00:55:38.536811+00:00",
+  "root": "/Users/mertyunlu/Desktop/mertformer-titan-core",
+  "scope": "release_core",
+  "file_count": 6,
+  "total_issues": 14,
+  "error_count": 0,
+  "warning_count": 14,
+  "issue_type_counts": {
+    "heading_jump": 14
+  },
+  "files": [
+    {
+      "path": "/Users/mertyunlu/Desktop/mertformer-titan-core/README.md",
+      "issue_count": 7,
+      "issues": [
+        {
+          "line": 160,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        },
+        {
+          "line": 670,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        },
+        {
+          "line": 901,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        },
+        {
+          "line": 987,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        },
+        {
+          "line": 995,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        },
+        {
+          "line": 1046,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        },
+        {
+          "line": 1125,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        }
+      ]
+    },
+    {
+      "path": "/Users/mertyunlu/Desktop/mertformer-titan-core/README_TR.md",
+      "issue_count": 7,
+      "issues": [
+        {
+          "line": 160,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        },
+        {
+          "line": 668,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        },
+        {
+          "line": 899,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        },
+        {
+          "line": 985,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        },
+        {
+          "line": 993,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        },
+        {
+          "line": 1044,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        },
+        {
+          "line": 1124,
+          "type": "heading_jump",
+          "severity": "warning",
+          "detail": "jump from h1 to h3"
+        }
+      ]
+    },
+    {
+      "path": "/Users/mertyunlu/Desktop/mertformer-titan-core/docs/PROJECT_STRUCTURE.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "/Users/mertyunlu/Desktop/mertformer-titan-core/reports/demo_script.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "/Users/mertyunlu/Desktop/mertformer-titan-core/reports/docs_dedup_canonical_list.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "/Users/mertyunlu/Desktop/mertformer-titan-core/reports/folder_structure_policy.md",
+      "issue_count": 0,
+      "issues": []
+    }
+  ],
+  "ok": true
+}

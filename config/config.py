@@ -492,6 +492,23 @@ class MertFormerConfig:
     # Attention Dropout: Regularization (eğitimde kullanılır, inference'ta kapalı)
     attention_dropout: float = 0.1
 
+    # -------------------------------------------------------------------------
+    # 11. FINAL CLOSURE FLAGS (Config-driven operations)
+    # -------------------------------------------------------------------------
+    enable_cpp_kernel: bool = True
+    enable_metal_kernel: bool = True
+    enable_vulkan_kernel: bool = True
+    enable_npu_direct: bool = True
+    enable_zero_copy: bool = True
+
+    enable_formal_gate: bool = True
+    enable_doc_quality_gate: bool = True
+    enable_language_quality_gate: bool = True
+    enable_release_lock: bool = True
+
+    ram_hard_ceiling_gb: float = 12.0
+    benchmark_profile: str = "safe"  # safe|full
+
 
 def _load_yaml(path: Path) -> Dict[str, Any]:
     """Best-effort YAML loader. Returns empty dict if missing or unavailable."""

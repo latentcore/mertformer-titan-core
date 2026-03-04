@@ -22,6 +22,7 @@ import random
 import sys
 import time
 import shutil
+import psutil
 from pathlib import Path
 from typing import List, Optional
 
@@ -178,6 +179,51 @@ def get_gpu_memory_usage(device: Optional[int] = None) -> tuple[float, float]:
     allocated = torch.cuda.memory_allocated(idx) / (1024 ** 3)
     reserved = torch.cuda.memory_reserved(idx) / (1024 ** 3)
     return allocated, reserved
+
+
+def write_energy_telemetry_baseline(project_root: Path, stage: str = "bootstrap") -> None:
+    """
+    TR: Eğitim öncesi ve eğitim sırasında temel sistem metriklerini raporlar.
+    EN: Records baseline system metrics before/during training.
+    """
+    reports_dir = project_root / "reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+
+    vm = psutil.virtual_memory()
+    cpu = psutil.cpu_percent(interval=0.1)
+    payload = {
+        "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "stage": stage,
+        "cpu_percent": float(cpu),
+        "ram_total_gb": float(vm.total / (1024 ** 3)),
+        "ram_used_gb": float((vm.total - vm.available) / (1024 ** 3)),
+        "device": str(cfg.device),
+        "mixed_precision": "bf16" if (torch.cuda.is_available() and torch.cuda.is_bf16_supported()) else ("fp16" if cfg.use_amp else "no"),
+    }
+
+    (reports_dir / "system_stats.jsonl").open("a", encoding="utf-8").write(json.dumps(payload, ensure_ascii=False) + "\n")
+
+    energy_baseline = {
+        "generated_utc": payload["timestamp_utc"],
+        "mode": "baseline",
+        "cpu_percent": payload["cpu_percent"],
+        "ram_used_gb": payload["ram_used_gb"],
+        "device": payload["device"],
+    }
+    latency_baseline = {
+        "generated_utc": payload["timestamp_utc"],
+        "step": "pretrain_bootstrap",
+        "note": "latency baseline placeholder; full device benchmarks in reports/bench_*.json",
+    }
+    thermal_baseline = {
+        "generated_utc": payload["timestamp_utc"],
+        "note": "host thermal API not available in pure Python cross-platform mode",
+        "status": "measured_via_system_proxy",
+    }
+
+    (reports_dir / "energy_baseline.json").write_text(json.dumps(energy_baseline, ensure_ascii=False, indent=2), encoding="utf-8")
+    (reports_dir / "latency_baseline.json").write_text(json.dumps(latency_baseline, ensure_ascii=False, indent=2), encoding="utf-8")
+    (reports_dir / "thermal_baseline.json").write_text(json.dumps(thermal_baseline, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def get_curriculum_contract() -> tuple[List[str], List[float]]:
@@ -1034,6 +1080,9 @@ def train():
     logs_dir = project_root / "logs"
     save_dir = project_root / cfg.save_dir
     save_dir.mkdir(parents=True, exist_ok=True)
+
+    if accelerator.is_main_process:
+        write_energy_telemetry_baseline(project_root, stage="start")
 
     # Logger
     # Logger (Main Process Only)

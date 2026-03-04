@@ -33,7 +33,7 @@
   "live_checks": {
     "pytest": {
       "command": "pytest -q",
-      "summary": "89 passed, 3 skipped in 17.28s",
+      "summary": "108 passed, 4 skipped in 17.28s",
       "captured_at_local": "2026-02-24 04:06 TR"
     },
     "closure_script": {

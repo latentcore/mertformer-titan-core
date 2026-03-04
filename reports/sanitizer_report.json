@@ -1,0 +1,7 @@
+{
+  "generated_utc": "2026-03-04T00:55:37.435438+00:00",
+  "tooling_available": true,
+  "status": "pass",
+  "ok": true,
+  "reason": "sanitizer smoke not required for python-only path"
+}

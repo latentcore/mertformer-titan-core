@@ -1,3 +1,26 @@
+## Tek Seferde Release Kapanış
+
+Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı tek-geçiş kapanış akışı içerir.
+
+### Canonical Kök
+- depo kökü (mevcut çalışma ağacı)
+
+### Tek Giriş Noktası
+- `bash scripts/final_one_shot.sh`
+
+### Çıktılar
+- `reports/start_gate_report.json`
+- `reports/release_manifest.json`
+- `reports/project_structure_sync_report.json`
+- `reports/hardening_bundle_summary.json`
+- `artifacts/mertformer_release.zip`
+- `artifacts/mertformer_release.zip.sha256`
+- `artifacts/demo_v1.mp4`
+
+### İddia Sınırı
+- Bu depo, üretim kalite iddiası için **pre-training / doğrulanmamış** durumdadır.
+- Release kapanış çıktıları model kalitesini değil, süreç bütünlüğünü kanıtlar.
+
 ![MertFormer Titan Header](assets/header.png)
 
 <div align="center">
@@ -31,19 +54,19 @@ mertformer 57-report --out reports/closure_57_matrix.json
 <br />
 
 ```
- __  __          _   ______                              
- |  \/  |        | | |  ____|                             
- | \  / | ___ _ _| |_| |__ ___  _ __ _ __ ___   ___ _ __  
+ __  __          _   ______
+ |  \/  |        | | |  ____|
+ | \  / | ___ _ _| |_| |__ ___  _ __ _ __ ___   ___ _ __
  | |\/| |/ _ \ '__| __|  __/ _ \| '__| '_ ` _ \ / _ \ '__|
- | |  | |  __/ |  | |_| | | (_) | |  | | | | | |  __/ |   
- |_|  |_|\___|_|   \__|_|  \___/|_|  |_| |_| |_|\___|_|   
-      _______ _ _                 
-     |__   __(_) |                
-        | |   _| |_ __ _ _ __     
-        | |  | | __/ _` | '_ \    
-        | |  | | || (_| | | | |   
-        |_|  |_|\__\__,_|_| |_|   
-                                  
+ | |  | |  __/ |  | |_| | | (_) | |  | | | | | |  __/ |
+ |_|  |_|\___|_|   \__|_|  \___/|_|  |_| |_| |_|\___|_|
+      _______ _ _
+     |__   __(_) |
+        | |   _| |_ __ _ _ __
+        | |  | | __/ _` | '_ \
+        | |  | | || (_| | | | |
+        |_|  |_|\__\__,_|_| |_|
+
    M  O  B  I  L  E     F  I  R  S  T     E  D  G  E     A  I
 ```
 
@@ -54,7 +77,7 @@ mertformer 57-report --out reports/closure_57_matrix.json
 ## 🇹🇷 Sivil/Komutan Özeti (Teknik Olmayan Okuyucu İçin)
 > **Kaynak kod okumayan karar vericiler için**
 
-**Bu proje nedir?**  
+**Bu proje nedir?**
 MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımda çalışmak üzere tasarlanmış offline-first bir yapay zeka altyapısıdır.
 
 **Neden stratejiktir?**
@@ -67,7 +90,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `89 passed, 3 skipped` |
+| `python3 -m pytest -q` | `108 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -80,7 +103,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`89 passed, 3 skipped`)
+   - `pytest` geçti (`108 passed, 4 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -677,10 +700,10 @@ graph TD
         Phase3["🎭 MUHAKEME (REASONING) - Katman 10-15<br/>Liquid Momentum | Stratejik Mantık & Kültürel Adaptasyon"]
         Phase2["☁️ SOYUTLAMA (ABSTRACTION) - Katman 3-9<br/>MoE Uzman Dağıtımı | Kavramsal Derinlik & İlk Liquid Teması (L4)"]
         Phase1["🧱 TEMEL (FOUNDATION) - Katman 0-2<br/>BitNet 1.58-bit | Gramer Kurulumu & RMSNorm Stabilizasyonu"]
-        
+
         Phase1 ==> Phase2 ==> Phase3 ==> Phase4
     end
-    
+
     subgraph "Her Katmanın (Blok) Mühendislik Kalbi"
         style BlockInner fill:#1a1a1a,stroke:#3fb1e3,stroke-width:2px
         BlockInner[Giriş] --> Norm1[RMSNorm]
@@ -744,8 +767,8 @@ MertFormer Titan (2.64B Parametre)
 | **Temel (Baseline)** | 2.0 sn | 64 tok/sn | %47 | 38 GB |
 | **v1.0 (Build 30) (Optimize)** | **~1.2 sn** (Tahmini) | **~107 tok/sn** (Tahmini) | **~%95** (Hedef) | **~76 GB** (Hedef) |
 | **Hızlanma (Öngörü)** | **+%67** | **+%67** | **+%102** | **+%100** |
-**Toplam Throughput Hedefi (Projeksiyon): 11.000 tok/sn seviyesine kadar.**  
-Bu değer, tanımlı dağıtım profilindeki toplam sistem kapasitesi için yol haritası hedefidir; **tek cihazda ölçülmüş benchmark sonucu değildir**.  
+**Toplam Throughput Hedefi (Projeksiyon): 11.000 tok/sn seviyesine kadar.**
+Bu değer, tanımlı dağıtım profilindeki toplam sistem kapasitesi için yol haritası hedefidir; **tek cihazda ölçülmüş benchmark sonucu değildir**.
 Operasyonel anlamı: daha yüksek eşzamanlı oturum kapasitesi, yük altında daha düşük birim inference maliyeti ve çok kullanıcılı senaryolarda daha kısa kuyruk süreleri.
 *Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir. BitNet 1.58 çıkarımı opsiyonel düşük-bit kernel yolu içerir; Tensor Core yolu **deneysel** ve opt-in’dir (`MERTFORMER_TENSORCORE=1`). Enerji/TOPS kazanımları gerçek cihaz ölçümü gerektirir. Kernel eleştirisi sadece inference için geçerlidir; BitNet eğitim katmanı mevcut, low-bit inference ise açıkça yol haritası maddesidir. **Eğitim hâlâ standart PyTorch matmul yollarıyla yürür; düşük-bit kernel eğitimi hızlandırmaz.** Ayrıca, **Residual Scaling Etkisi** ile 18 katman boyunca sinyal kararlılığı, 1/√2 (1/sqrt(2)) katsayısı ile korunarak en derin katmanda bile gradyan akışının stabil kalması hedeflenmektedir.*
 
@@ -1122,16 +1145,16 @@ liquid_spike_threshold = 5.0
 | **4. Ruh (Kimlik)** | %75-85 | Kişilik, talimat takibi | Corpus'un %10'u |
 | **5. Araç Kullanımı** | %85-100 | Fonksiyon çağırma, API | Corpus'un %15'i |
 
-**Toplam Token**: ~24 Milyar (yüksek kaliteli, KD odaklı)  
+**Toplam Token**: ~24 Milyar (yüksek kaliteli, KD odaklı)
 *Not: Damıtma, token başına etkin öğrenmeyi artırır; ancak ham token sayısını artırmaz.*
 
-Bu eğitim sırası ve token bütçesi, **güçlü bir temel için yeterli** olacak şekilde tasarlanmıştır.  
+Bu eğitim sırası ve token bütçesi, **güçlü bir temel için yeterli** olacak şekilde tasarlanmıştır.
 **Niş veya özel alanlar** için, en yüksek uzmanlık seviyesine çıkmak amaçıyla **hedefli fine‑tune** önerilir.
 
 <a id="egitim-stratejisi-baseline-v28"></a>
 ### Eğitim Stratejisi (Baseline -> v28, Claim-Safe)
 
-Baseline eğitim öncesinde acil bir mimari değişiklik zorunlu değildir.  
+Baseline eğitim öncesinde acil bir mimari değişiklik zorunlu değildir.
 Ancak ilk tuning turunda aşağıdaki maddeler kalite çarpanı olarak ele alınmalıdır.
 
 **Önerilen v28 tuning maddeleri (baseline kanıtından sonra):**
@@ -1883,8 +1906,8 @@ Tüm ticari/kurumsal etkileşimler, `LICENSE` ile uyumlu yazılı sözleşme ve 
 ## 📧 İletişim
 
 **Proje**: MertFormer Titan (Onyx Storm)
-**Sürüm**: v1.0 (Build 30, Eğitim Öncesi Baseline)  
-**Durum**: 🟡 Pilota Hazır (eğitim ve benchmark iddiaları beklemede)  
+**Sürüm**: v1.0 (Build 30, Eğitim Öncesi Baseline)
+**Durum**: 🟡 Pilota Hazır (eğitim ve benchmark iddiaları beklemede)
 **Türkiye'de geliştirildi**
 
 ---
@@ -1921,7 +1944,7 @@ Bu proje, tasarım gereği proof-of-system seviyesinde tamamlanır. Amaç, gerç
 
 <a id="olceklenebilirlik-vizyonu"></a>
 ### 📈 Ölçeklenebilirlik Vizyonu (Claim-Safe)
-Build 30, bilinçli olarak **2.64B** doğrulama ve tekrar üretilebilir kanıt kapılarına odaklanır.  
+Build 30, bilinçli olarak **2.64B** doğrulama ve tekrar üretilebilir kanıt kapılarına odaklanır.
 Gelecekteki **8B / 70B / 1T** araştırmaları koşullu bir hat olarak ele alınır ve yalnızca şu şartlardan sonra değerlendirilir:
 - 2.64B için eğitimli checkpoint kanıtı,
 - tekrar üretilebilir benchmark çıktıları,

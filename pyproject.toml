@@ -51,6 +51,9 @@ mertformer = "mertformer_sdk.cli:main"
 packages = [
   "mertformer_sdk",
   "mertformer_sdk.kernels",
+  "mertformer_sdk.kernels.metal",
+  "mertformer_sdk.kernels.vulkan",
+  "mertformer_sdk.kernels.npu",
   "mertformer_sdk.utils",
   "config",
   "layers",
