@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-03-04T01:56:44.902615+00:00",
+  "generated_utc": "2026-03-04T02:03:55.093518+00:00",
   "root": ".",
   "entry_count": 666,
   "entries": [
@@ -2532,8 +2532,8 @@
     {
       "path": "reports/duplicate_zip_guard_report.json",
       "size_bytes": 170,
-      "sha256": "8edf081e200f7e8b1db06010019151eddbe18651ebe5532e98795ca0b87c5acc",
-      "mtime_utc": "2026-03-04T01:56:43.338280+00:00"
+      "sha256": "d23da761ed1c22acc6e5d310c5e9eb4185e5381d609b9c1a3ea15a9b7773fdc2",
+      "mtime_utc": "2026-03-04T02:03:45.221535+00:00"
     },
     {
       "path": "reports/efficiency_convergence_analysis.md",
