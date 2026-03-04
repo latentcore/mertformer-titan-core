@@ -1,7 +1,7 @@
 {
-  "generated_utc": "2026-03-04T01:12:37.537838+00:00",
+  "generated_utc": "2026-03-04T01:14:52.594561+00:00",
   "root": ".",
-  "entry_count": 656,
+  "entry_count": 658,
   "entries": [
     {
       "path": ".env",
@@ -23,9 +23,9 @@
     },
     {
       "path": ".gitignore",
-      "size_bytes": 1398,
-      "sha256": "d7ad104977690fe8540973c32e1503608befc7ccaf4ab2a80d8ce32c0a0466b4",
-      "mtime_utc": "2026-02-20T00:48:40+00:00"
+      "size_bytes": 1502,
+      "sha256": "fa54dbdc10aab56fd0ff066dc83d465dc21591c4b0ae98c01c9e11cb5cc5ccc6",
+      "mtime_utc": "2026-03-04T01:13:54.370166+00:00"
     },
     {
       "path": "CHANGELOG.md",
@@ -1241,9 +1241,9 @@
     },
     {
       "path": "logs/operator_mode/ALL_LOGS.jsonl",
-      "size_bytes": 212569,
-      "sha256": "039e17b33c34b401d62d8e967b39e19b73e45aa529f641da00c4916fa995ce5c",
-      "mtime_utc": "2026-03-04T01:12:34.568547+00:00"
+      "size_bytes": 222071,
+      "sha256": "09394564332beb7794ae1579103d6f7959581935e6b1c14483ffc86171a2e1c0",
+      "mtime_utc": "2026-03-04T01:14:49.976320+00:00"
     },
     {
       "path": "logs/operator_mode/operator_2026-02-11_22-28-43.manifest.json",
@@ -1750,10 +1750,22 @@
       "mtime_utc": "2026-03-04T01:12:34.568999+00:00"
     },
     {
+      "path": "logs/operator_mode/operator_2026-03-04_04-14-42.jsonl",
+      "size_bytes": 8709,
+      "sha256": "d0dbdb4b40609a1ec04d1c5f0d091c671805c3547492907b3cc76157c3be8400",
+      "mtime_utc": "2026-03-04T01:14:49.975903+00:00"
+    },
+    {
+      "path": "logs/operator_mode/operator_2026-03-04_04-14-42.manifest.json",
+      "size_bytes": 1360,
+      "sha256": "27ad417f9c61af4c7a6321849fad38ad4d55cdf404bfa6cd6fe944f5584dddd9",
+      "mtime_utc": "2026-03-04T01:14:49.976652+00:00"
+    },
+    {
       "path": "logs/preflight/titan_preflight.log",
       "size_bytes": 3200,
-      "sha256": "6b799563696ca8c597e7342dd3a47a4030cdfa293f7e339c67a37ef227111c04",
-      "mtime_utc": "2026-03-04T01:12:24.857983+00:00"
+      "sha256": "3f704b9066b6c06be94040c5c09447ef9125755224966e121f8b5893a223d8f4",
+      "mtime_utc": "2026-03-04T01:14:41.141759+00:00"
     },
     {
       "path": "logs/preflight/train_ready_status.json",
@@ -1764,20 +1776,20 @@
     {
       "path": "logs/verify/closure_57_matrix.verify.json",
       "size_bytes": 16385,
-      "sha256": "83ea135e2c450e5b02bccbcca0a26ba6c7f5ce23ecd8930e95a72bf9ce4e1f86",
-      "mtime_utc": "2026-03-04T01:12:34.962977+00:00"
+      "sha256": "e152364a4f3f4391f38a374ce3b8bff9a5f4f62c69451f183ba924fd65be0831",
+      "mtime_utc": "2026-03-04T01:14:50.242541+00:00"
     },
     {
       "path": "logs/verify/closure_57_matrix.verify.md",
       "size_bytes": 4454,
       "sha256": "b9abe033034972555cd8923346c1b1ee896f6788e307e6b88e97d3e4fda7e04d",
-      "mtime_utc": "2026-03-04T01:12:34.963114+00:00"
+      "mtime_utc": "2026-03-04T01:14:50.242685+00:00"
     },
     {
       "path": "logs/verify/closure_57_matrix.verify_TR.md",
       "size_bytes": 4495,
       "sha256": "e39c435ecac6bb4e2c03924c216c7dff32a707a6cb5dfd5bad72a21edd0d8a55",
-      "mtime_utc": "2026-03-04T01:12:34.963200+00:00"
+      "mtime_utc": "2026-03-04T01:14:50.242775+00:00"
     },
     {
       "path": "mertformer_sdk.egg-info/PKG-INFO",
@@ -2269,7 +2281,7 @@
       "path": "reports/benchmarks/internal_smoke_summary.json",
       "size_bytes": 54,
       "sha256": "93885b4fecdf4b4dd0a387586e481a834ae56a69d9571a066955cdac3ae4c780",
-      "mtime_utc": "2026-03-04T01:12:34.271997+00:00"
+      "mtime_utc": "2026-03-04T01:14:49.772653+00:00"
     },
     {
       "path": "reports/benchmarks/kaggle_compare_build30.csv",
@@ -2472,8 +2484,8 @@
     {
       "path": "reports/duplicate_zip_guard_report.json",
       "size_bytes": 170,
-      "sha256": "33631cb1893b76e7afc9560573111e8f7a6481edea9ca617fa5a6a4d5ad99c01",
-      "mtime_utc": "2026-03-04T01:12:36.728045+00:00"
+      "sha256": "0dfa961548d3b5608872c91a0596a0a62dcf630b4a741b5581da1a513015da67",
+      "mtime_utc": "2026-03-04T01:14:51.914914+00:00"
     },
     {
       "path": "reports/efficiency_convergence_analysis.md",
@@ -3024,8 +3036,8 @@
     {
       "path": "reports/unicode_path_guard_report.json",
       "size_bytes": 135,
-      "sha256": "a4314a61b512ce41076da20c66bd78da7080e98d122efc4d3fa78457bd7b7a26",
-      "mtime_utc": "2026-03-04T01:12:35.550696+00:00"
+      "sha256": "e8b99911f65e5103dca747e1b315ee39a1e162f89494abc694125e6c04d8249b",
+      "mtime_utc": "2026-03-04T01:14:50.772223+00:00"
     },
     {
       "path": "reports/verified_matrix.md",

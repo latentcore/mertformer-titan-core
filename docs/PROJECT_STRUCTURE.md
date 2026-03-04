@@ -293,6 +293,8 @@ Generated automatically.
 - `logs/operator_mode/operator_2026-03-04_04-10-05.manifest.json`
 - `logs/operator_mode/operator_2026-03-04_04-12-26.jsonl`
 - `logs/operator_mode/operator_2026-03-04_04-12-26.manifest.json`
+- `logs/operator_mode/operator_2026-03-04_04-14-42.jsonl`
+- `logs/operator_mode/operator_2026-03-04_04-14-42.manifest.json`
 - `logs/preflight/titan_preflight.log`
 - `logs/preflight/train_ready_status.json`
 - `logs/verify/closure_57_matrix.verify.json`
