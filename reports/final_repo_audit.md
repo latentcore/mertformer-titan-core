@@ -1,6 +1,6 @@
 # Final Repo Audit
 
-Generated UTC: 2026-03-04T01:11:30Z
+Generated UTC: 2026-03-04T01:49:00Z
 
 ## Scope
 - One-shot closure workflow executed via `scripts/final_one_shot.sh`.
@@ -33,10 +33,15 @@ Generated UTC: 2026-03-04T01:11:30Z
 
 ## Provenance
 - Main signed commit/tag: `v1.0.0`
-- Main PR merges: `#6`, `#7`, `#8`, `#9`
+- Main PR merges: `#6`, `#7`, `#8`, `#9`, `#10`, `#11`, `#12`
 - Dealroom signed commit/tag: `v1.0.0-dealroom`
 - Dealroom PR merge: `#2`
 - Ownership bundle: `reports/ownership_proof_bundle.json`
+
+## Post-Closure CI Hotfix (2026-03-04)
+- Root cause: CI `verify_all` stage re-bootstrapped `.titan-venv` when `TITAN_PYTHON` was set to a command name, triggering duplicate dependency install and disk exhaustion.
+- Fix 1: `scripts/verify_all.sh` now accepts both executable paths and PATH-resolvable command names for `TITAN_PYTHON`.
+- Fix 2: `.github/workflows/ci.yml` sets `TITAN_PYTHON=python3` in `Verify all` to reuse the existing setup-python environment.
 
 ## Notes
 - GitHub branch-protection API update returned HTTP 403 on account plan limit; see `reports/github_policy_report.json`.
