@@ -73,11 +73,11 @@ def main() -> int:
         issues = scan(f)
         missing_total += len(issues)
         if issues:
-            findings.append({"path": str(f), "missing_links": issues})
+            findings.append({"path": str(f.relative_to(root)), "missing_links": issues})
 
     payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
-        "root": str(root),
+        "root": ".",
         "scope": args.scope,
         "md_file_count": len(md_files),
         "missing_link_count": missing_total,

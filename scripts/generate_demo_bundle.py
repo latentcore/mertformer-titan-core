@@ -110,7 +110,7 @@ def main() -> int:
                 "# Demo Notes",
                 "",
                 f"Generated UTC: {datetime.now(timezone.utc).isoformat()}",
-                f"Video: {video_path}",
+                f"Video: {video_path.relative_to(ROOT)}",
                 f"Checksum: {digest}",
                 f"Commit: {commit}",
                 f"Generator mode: {'ffmpeg_color_fallback' if used_fallback else 'ffmpeg_drawtext'}",
@@ -126,16 +126,16 @@ def main() -> int:
                 "generated_utc": datetime.now(timezone.utc).isoformat(),
                 "ok": True,
                 "used_fallback": used_fallback,
-                "video_path": str(video_path),
-                "checksum_path": str(checksum_path),
-                "notes_path": str(notes_path),
+                "video_path": str(video_path.relative_to(ROOT)),
+                "checksum_path": str(checksum_path.relative_to(ROOT)),
+                "notes_path": str(notes_path.relative_to(ROOT)),
             },
             indent=2,
         ),
         encoding="utf-8",
     )
 
-    print(json.dumps({"ok": True, "video": str(video_path), "used_fallback": used_fallback}))
+    print(json.dumps({"ok": True, "video": str(video_path.relative_to(ROOT)), "used_fallback": used_fallback}))
     return 0
 
 

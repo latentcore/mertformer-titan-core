@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-03-04T00:55:50.248853+00:00",
+  "generated_utc": "2026-03-04T01:06:45.042321+00:00",
   "ok": true,
   "used_fallback": true,
-  "video_path": "/Users/mertyunlu/Desktop/mertformer-titan-core/artifacts/demo_v1.mp4",
-  "checksum_path": "/Users/mertyunlu/Desktop/mertformer-titan-core/reports/demo_checksum.sha256",
-  "notes_path": "/Users/mertyunlu/Desktop/mertformer-titan-core/reports/demo_notes.md"
+  "video_path": "artifacts/demo_v1.mp4",
+  "checksum_path": "reports/demo_checksum.sha256",
+  "notes_path": "reports/demo_notes.md"
 }

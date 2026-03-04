@@ -51,11 +51,14 @@ def main() -> int:
         p = Path(raw_path)
         resolved = (base / p).resolve() if not p.is_absolute() else p.resolve()
         meta = file_meta(resolved)
+        try:
+            rel_path = str(resolved.relative_to(base))
+        except Exception:
+            rel_path = str(p)
         entries.append(
             {
                 "sha256": digest,
-                "path": str(p),
-                "absolute_path": str(resolved),
+                "path": rel_path,
                 **meta,
             }
         )

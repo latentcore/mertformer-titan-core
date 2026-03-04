@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -16,22 +17,36 @@ def pip_freeze() -> list[str]:
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]
 
 
+def parse_component(line: str) -> tuple[str, str]:
+    if "==" in line:
+        name, ver = line.split("==", 1)
+        return name, ver
+
+    if line.startswith("-e "):
+        raw = line[3:].strip()
+        cleaned = re.sub(r"[^a-zA-Z0-9._-]+", "-", raw.strip("/"))
+        cleaned = cleaned.split("-")[-1] or "editable-local"
+        return f"editable-{cleaned}", "editable"
+
+    cleaned = re.sub(r"[^a-zA-Z0-9._-]+", "-", line)
+    return cleaned or "unknown", "unknown"
+
+
 def main() -> int:
     out = Path("reports/sbom.cdx.json")
     out.parent.mkdir(parents=True, exist_ok=True)
 
     components = []
     for line in pip_freeze():
-        if "==" in line:
-            name, ver = line.split("==", 1)
-        else:
-            name, ver = line, "unknown"
-        components.append({
-            "type": "library",
-            "name": name,
-            "version": ver,
-            "purl": f"pkg:pypi/{name}@{ver}",
-        })
+        name, ver = parse_component(line)
+        components.append(
+            {
+                "type": "library",
+                "name": name,
+                "version": ver,
+                "purl": f"pkg:pypi/{name}@{ver}",
+            }
+        )
 
     payload = {
         "bomFormat": "CycloneDX",

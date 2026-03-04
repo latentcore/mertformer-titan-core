@@ -95,7 +95,7 @@ def main() -> int:
 
     manifest = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
-        "root": str(root),
+        "root": ".",
         "entry_count": len(entries),
         "entries": entries,
     }
@@ -105,15 +105,12 @@ def main() -> int:
 
     build_structure_md(entry_paths, structure_path)
 
-    structure_set = set(entry_paths)
-    manifest_set = set(entry_paths)
-
     matrix_payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
-        "manifest_count": len(manifest_set),
-        "structure_count": len(structure_set),
-        "missing_in_structure": sorted(manifest_set - structure_set),
-        "missing_in_manifest": sorted(structure_set - manifest_set),
+        "manifest_count": len(entry_paths),
+        "structure_count": len(entry_paths),
+        "missing_in_structure": [],
+        "missing_in_manifest": [],
         "ok": True,
     }
 
@@ -128,12 +125,12 @@ def main() -> int:
     sync_path.parent.mkdir(parents=True, exist_ok=True)
     sync_path.write_text(json.dumps(sync_payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    policy_file = root / "policy" / "allow_deny_policy.yaml"
+    policy_file = Path("policy/allow_deny_policy.yaml")
     policy_payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "policy_file": str(policy_file),
-        "policy_exists": policy_file.exists(),
-        "ok": policy_file.exists(),
+        "policy_exists": (root / policy_file).exists(),
+        "ok": (root / policy_file).exists(),
     }
     policy_path.parent.mkdir(parents=True, exist_ok=True)
     policy_path.write_text(json.dumps(policy_payload, ensure_ascii=False, indent=2), encoding="utf-8")
