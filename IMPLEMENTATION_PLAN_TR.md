@@ -20,7 +20,6 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 - Internal truth benchmarking, HumanEval/MBPP çıktıları ile yapılır.
 
 ## Phase 2: Asset Production
-- Offline demo video senaryosu.
 - One-pager ve technical snapshot.
 - Founders Hub başvuru taslağı.
 

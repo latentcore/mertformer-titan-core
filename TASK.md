@@ -17,7 +17,6 @@
 - [x] Internal Truth Benchmarking runner (HumanEval/MBPP): `scripts/benchmarks_internal.py`
 
 ## Phase 2: Minimal Prototype Stack (Assets)
-- [x] Demo Video Script (offline MacBook Air): `reports/demo_video_script.md`
 - [x] Investor Deck / One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`, `PITCH.md`, `TECHNICAL_REPORT.md`
 - [x] Microsoft Founders Hub Application Draft: `reports/founders_hub_application.md`
 

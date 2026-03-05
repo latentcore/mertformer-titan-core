@@ -20,7 +20,6 @@ Boring stability and learning speed. Success is operational discipline measured 
 - Internal truth benchmarking uses HumanEval and MBPP outputs for scoring.
 
 ## Phase 2: Asset Production
-- Demo video script for an offline MacBook Air showcase.
 - One-pager and technical snapshot for rapid investor review.
 - Founders Hub application draft ready for submission.
 

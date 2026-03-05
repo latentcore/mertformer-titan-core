@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-03-05T21:11:14.651305+00:00",
+  "generated_utc": "2026-03-05T21:18:51.434124+00:00",
   "root": ".",
   "scope": "release_core",
-  "file_count": 7,
+  "file_count": 6,
   "total_issues": 14,
   "error_count": 0,
   "warning_count": 14,
@@ -15,43 +15,43 @@
       "issue_count": 7,
       "issues": [
         {
-          "line": 160,
+          "line": 159,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
         },
         {
-          "line": 675,
+          "line": 672,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
         },
         {
-          "line": 906,
+          "line": 903,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
         },
         {
-          "line": 992,
+          "line": 989,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
         },
         {
-          "line": 1000,
+          "line": 997,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
         },
         {
-          "line": 1051,
+          "line": 1046,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
         },
         {
-          "line": 1130,
+          "line": 1125,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
@@ -63,43 +63,43 @@
       "issue_count": 7,
       "issues": [
         {
-          "line": 160,
+          "line": 159,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
         },
         {
-          "line": 673,
+          "line": 670,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
         },
         {
-          "line": 904,
+          "line": 901,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
         },
         {
-          "line": 990,
+          "line": 987,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
         },
         {
-          "line": 998,
+          "line": 995,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
         },
         {
-          "line": 1049,
+          "line": 1044,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
         },
         {
-          "line": 1129,
+          "line": 1124,
           "type": "heading_jump",
           "severity": "warning",
           "detail": "jump from h1 to h3"
@@ -108,11 +108,6 @@
     },
     {
       "path": "docs/PROJECT_STRUCTURE.md",
-      "issue_count": 0,
-      "issues": []
-    },
-    {
-      "path": "reports/demo_script.md",
       "issue_count": 0,
       "issues": []
     },

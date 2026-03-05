@@ -31,4 +31,3 @@
 
 ## Deployment
 - ONNX export and mobile pipeline scripts in `scripts/`.
-- Offline demo flow documented in `reports/demo_video_script.md`.

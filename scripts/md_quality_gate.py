@@ -24,7 +24,6 @@ def _release_core_files(root: Path) -> list[Path]:
     targets = [
         root / "README.md",
         root / "README_TR.md",
-        root / "reports" / "demo_script.md",
         root / "reports" / "final_repo_audit.md",
         root / "reports" / "folder_structure_policy.md",
         root / "reports" / "docs_dedup_canonical_list.md",

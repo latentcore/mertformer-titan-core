@@ -42,8 +42,6 @@ This audit maps external report claims to repo evidence. Each claim is labeled:
 ## F) Roadmap / Assets
 - "Founders Hub application ready." TRUE
   - Evidence: `reports/founders_hub_application.md`
-- "Demo video script ready." TRUE
-  - Evidence: `reports/demo_video_script.md`
 
 ## Summary
 Architecture and safety tooling are real. Performance and device-level claims are framed as targets and require full training + device profiling to validate.

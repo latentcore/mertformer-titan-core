@@ -10,8 +10,6 @@ This file lists the launch assets and their source files.
 - Investor brief (TR): `PITCH_TR.md`
 - Investor deck (PPTX, EN): `reports/investor_deck.pptx`
 - Investor deck (PPTX, TR): `reports/investor_deck_TR.pptx`
-- Demo video script (EN): `reports/demo_video_script.md`
-- Demo video script (TR): `reports/demo_video_script_TR.md`
 - Founders Hub application draft (EN): `reports/founders_hub_application.md`
 - Founders Hub application draft (TR): `reports/founders_hub_application_TR.md`
 - Security & Compliance (EN): `reports/security_compliance.md`

@@ -110,7 +110,7 @@ SLIDES_EN = [
         "bullets": [
             "Master run (2.64B design target) with telemetry gates",
             "Benchmark validation + pilot deployments",
-            "Asset stack + demo video for launch",
+            "Asset stack + launch materials",
         ],
     },
     {
@@ -211,7 +211,7 @@ SLIDES_TR = [
         "bullets": [
             "Telemetri gate’leri ile 2.64B tasarım hedefli master run",
             "Benchmark doğrulama + pilot dağıtımlar",
-            "Lansman için asset stack + demo video",
+            "Lansman için asset stack + materyaller",
         ],
     },
     {

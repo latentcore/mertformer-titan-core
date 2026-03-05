@@ -72,7 +72,6 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 
 ## Varlıklar
 - `build_investor_deck.py` — PPTX yatırımcı deck üretimi.
-- `auto_demo_video.py` — Opsiyonel demo video otomasyonu (ffmpeg gerekli).
 
 ## Klasörler
 - `scripts/reports/` — Script ürettiği rapor çıktıları.

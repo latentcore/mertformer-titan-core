@@ -238,12 +238,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── dataset_health.md  # documentation/report file
 │   ├── dataset_health_TR.md  # Turkish document counterpart
 │   ├── dealroom_reference.json  # JSON data artifact
-│   ├── demo_checksum.sha256  # artifact checksum
-│   ├── demo_notes.md  # documentation/report file
-│   ├── demo_script.md  # documentation/report file
-│   ├── demo_validation_report.json  # JSON data artifact
-│   ├── demo_video_script.md  # documentation/report file
-│   ├── demo_video_script_TR.md  # Turkish document counterpart
 │   ├── determinism_report.json  # JSON data artifact
 │   ├── differential_backend_report.json  # JSON data artifact
 │   ├── docs_dedup_canonical_list.md  # documentation/report file
@@ -352,7 +346,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── README_TR.md  # Turkish document counterpart
 │   ├── __init__.py  # Python module/script
 │   ├── apply_github_policy.sh  # shell automation script
-│   ├── auto_demo_video.py  # Python module/script
 │   ├── benchmarks_internal.py  # Python module/script
 │   ├── bitnet_kernel_benchmark_standalone.py  # Python module/script
 │   ├── bootstrap_venv.sh  # shell automation script
@@ -378,7 +371,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── failure_budget_drill.py  # Python module/script
 │   ├── final_one_shot.sh  # shell automation script
 │   ├── generate_bench_reports.py  # Python module/script
-│   ├── generate_demo_bundle.py  # Python module/script
 │   ├── generate_energy_baselines.py  # Python module/script
 │   ├── generate_sbom.py  # Python module/script
 │   ├── golden_eval.py  # Python module/script

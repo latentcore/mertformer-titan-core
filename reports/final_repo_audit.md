@@ -27,8 +27,6 @@ Generated UTC: 2026-03-04T01:49:00Z
 ## Release Artifacts
 - `artifacts/mertformer_release.zip`
 - `artifacts/mertformer_release.zip.sha256`
-- `artifacts/demo_v1.mp4`
-- `reports/demo_checksum.sha256`
 - `reports/release_manifest.json`
 
 ## Provenance

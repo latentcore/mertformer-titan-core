@@ -52,11 +52,8 @@ find "$DOCS_DIR" -maxdepth 1 -type f -name "*.zip" -print0 2>/dev/null | xargs -
 run_step "dealroom_sync" .titan-venv/bin/python scripts/dealroom_sync.py
 
 # Ensure writable artifacts before regeneration
-chflags nouchg artifacts/demo_v1.mp4 artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 reports/demo_checksum.sha256 reports/demo_notes.md reports/demo_validation_report.json 2>/dev/null || true
-chmod u+w artifacts/demo_v1.mp4 artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 reports/demo_checksum.sha256 reports/demo_notes.md reports/demo_validation_report.json 2>/dev/null || true
-
-# Demo bundle
-run_step "demo_bundle" .titan-venv/bin/python scripts/generate_demo_bundle.py
+chflags nouchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 2>/dev/null || true
+chmod u+w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 2>/dev/null || true
 
 # Release artifact
 zip -r artifacts/mertformer_release.zip . -x ".git/*" "*/.git/*" "*.pyc" "*__pycache__*" ".titan-venv/*" ".lint-venv/*" ".venv/*" ".idea/*" ".pytest_cache/*" ".ruff_cache/*" ".mypy_cache/*" ".env" ".env.*" "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256"
@@ -64,9 +61,9 @@ shasum -a 256 artifacts/mertformer_release.zip > artifacts/mertformer_release.zi
 run_step "zip_denylist_audit_artifact" bash -lc '.titan-venv/bin/python scripts/zip_denylist_audit.py --zip artifacts/mertformer_release.zip > reports/artifacts_zip_denylist_audit.json'
 
 # Immutable lock best effort
-chmod -w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 reports/demo_checksum.sha256 || true
+chmod -w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 || true
 chmod -w "$IMMUTABLE_ZIP" "$IMMUTABLE_ZIP.sha256" 2>/dev/null || true
-chflags uchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 reports/demo_checksum.sha256 2>/dev/null || true
+chflags uchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 2>/dev/null || true
 chflags uchg "$IMMUTABLE_ZIP" "$IMMUTABLE_ZIP.sha256" 2>/dev/null || true
 
 # GitHub policy and closure lock (best effort, does not fail one-shot)

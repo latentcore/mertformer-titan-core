@@ -15,7 +15,6 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 - `reports/hardening_bundle_summary.json`
 - `artifacts/mertformer_release.zip`
 - `artifacts/mertformer_release.zip.sha256`
-- `artifacts/demo_v1.mp4`
 
 ### İddia Sınırı
 - Bu depo, üretim kalite iddiası için **pre-training / doğrulanmamış** durumdadır.
@@ -332,8 +331,6 @@ Yatırımcı materyalleri ve lansman varlıkları.
 - [reports/technical_snapshot_TR.md](reports/technical_snapshot_TR.md) — Teknik snapshot (TR).
 - [reports/asset_stack.md](reports/asset_stack.md) — Asset index (EN).
 - [reports/asset_stack_TR.md](reports/asset_stack_TR.md) — Asset index (TR).
-- [reports/demo_video_script.md](reports/demo_video_script.md) — Demo video script (EN).
-- [reports/demo_video_script_TR.md](reports/demo_video_script_TR.md) — Demo video script (TR).
 - [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4) — 30 saniyelik snake demo kanıt videosu.
 - [assets/snake_demo_preview.gif](assets/snake_demo_preview.gif) — Gömülü snake demo önizlemesi (GIF).
 - [assets/sources/README.md](assets/sources/README.md) — Düzenlenebilir görsel kaynak arşiv standardı (EN).
@@ -1012,8 +1009,6 @@ Aşağıdaki maddeler uygulanmıştır ve kanıt dosyaları ile eşlenmiştir:
 - Master Training (2.64B tasarım hedefi): eğitim donanımında çalıştırılacak (yerelde koşulmadı)
 - Internal Truth Benchmarks (HumanEval/MBPP): `scripts/benchmarks_internal.py`
 - Phase 2: Asset Stack
-- Demo Video Script (offline): `reports/demo_video_script.md`
-- Opsiyonel Otomatik Demo Video: `scripts/auto_demo_video.py` (ffmpeg gerekli)
 - Snake kanıt videosu üretimi: `.titan-venv/bin/python snake_demo.py --headless --record assets/snake_demo_proof.mp4 --record-seconds 30`
 - One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`, `PITCH.md`
 - Founders Hub Başvuru Taslağı: `reports/founders_hub_application.md`
@@ -1645,12 +1640,6 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── dataset_health.md  # dokümantasyon/rapor dosyası
 │   ├── dataset_health_TR.md  # Türkçe doküman karşılığı
 │   ├── dealroom_reference.json  # JSON veri artefaktı
-│   ├── demo_checksum.sha256  # artefakt özeti
-│   ├── demo_notes.md  # dokümantasyon/rapor dosyası
-│   ├── demo_script.md  # dokümantasyon/rapor dosyası
-│   ├── demo_validation_report.json  # JSON veri artefaktı
-│   ├── demo_video_script.md  # dokümantasyon/rapor dosyası
-│   ├── demo_video_script_TR.md  # Türkçe doküman karşılığı
 │   ├── determinism_report.json  # JSON veri artefaktı
 │   ├── differential_backend_report.json  # JSON veri artefaktı
 │   ├── docs_dedup_canonical_list.md  # dokümantasyon/rapor dosyası
@@ -1759,7 +1748,6 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   │       └── config_snapshot.json  # JSON veri artefaktı
 │   ├── __init__.py  # Python modülü/scripti
 │   ├── apply_github_policy.sh  # shell otomasyon scripti
-│   ├── auto_demo_video.py  # Python modülü/scripti
 │   ├── benchmarks_internal.py  # Python modülü/scripti
 │   ├── bitnet_kernel_benchmark_standalone.py  # Python modülü/scripti
 │   ├── bootstrap_venv.sh  # shell otomasyon scripti
@@ -1785,7 +1773,6 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── failure_budget_drill.py  # Python modülü/scripti
 │   ├── final_one_shot.sh  # shell otomasyon scripti
 │   ├── generate_bench_reports.py  # Python modülü/scripti
-│   ├── generate_demo_bundle.py  # Python modülü/scripti
 │   ├── generate_energy_baselines.py  # Python modülü/scripti
 │   ├── generate_sbom.py  # Python modülü/scripti
 │   ├── golden_eval.py  # Python modülü/scripti

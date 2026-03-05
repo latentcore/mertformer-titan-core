@@ -31,4 +31,3 @@
 
 ## Dağıtım
 - ONNX export ve mobil pipeline `scripts/` altında.
-- Offline demo akışı `reports/demo_video_script.md` içinde.

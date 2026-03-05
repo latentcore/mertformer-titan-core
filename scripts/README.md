@@ -72,7 +72,6 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 
 ## Assets
 - `build_investor_deck.py` — Generates the PPTX investor deck.
-- `auto_demo_video.py` — Optional demo video automation (ffmpeg required).
 
 ## Folders
 - `scripts/reports/` — Script-generated report artifacts.
