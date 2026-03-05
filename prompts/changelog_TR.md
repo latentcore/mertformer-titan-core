@@ -1,3 +1,3 @@
-# Prompt Degisiklik Gunlugu
+# Prompt Değişiklik Günlüğü
 
-- v1: Ilk sistem promptu.
+- v1: İlk sistem promptu.

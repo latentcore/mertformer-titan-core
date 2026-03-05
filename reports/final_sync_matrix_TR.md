@@ -10,7 +10,7 @@ Kural: uygun olan her tracked `X.md` dosyasının `X_TR.md` karşılığı olmal
 | --- | --- |
 | Eksik eşleşme | 0 |
 | Yetim `_TR.md` dosyası | 1 (`reports/codex_deep_audit_TR.md`, bilinçli ana TR denetim dosyası) |
-| Derin denetim pointer politikasi | EN_TR + DE_TR dosyalari `reports/codex_deep_audit_TR.md` icin pointer dosyalaridir |
+| Derin denetim pointer politikası | EN_TR + DE_TR dosyaları `reports/codex_deep_audit_TR.md` için pointer dosyalaridir |
 | Bu final geçişinde eklenenler | `reports/pilot_readiness_kit_TR.md`, `reports/pilot_offer_packages_TR.md`, `reports/sales_funnel_90d_TR.md`, `reports/drone_sitl_demo_TR.md`, `reports/cleanroom_verification_TR.md`, `reports/go_status_matrix_TR.md` |
 
 ## 2) Build Etiketi Tutarlılığı

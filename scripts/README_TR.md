@@ -13,7 +13,7 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 ## Kanonik One-File Path
 - Resmi/kanonik one-file script: `scripts/kaggle_onefile_demo_build30.py`
 - Colab fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
-- Repo disi one-file kopyalari desteklenmez ve drift kaynagi sayilir.
+- Repo dışı one-file kopyaları desteklenmez ve drift kaynağı sayılır.
 
 ## Çekirdek Akışlar
 - `smart_runner.py` — Ana orkestratör: veri → distill → eğitim.
@@ -27,10 +27,10 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - `bootstrap_venv.sh` — `.titan-venv` üretir (Python 3.11 baseline). Demo için `--demo` ile `pygame` kurar.
 - `verify_all.sh` — Offline-first verify-all: secret scan → pytest → preflight → operator gate (safe).
 - `secret_scan.py` — Track'li dosyalarda olası secret pattern taraması (CI gate).
-- `check_tokenizer_sync.py` — Kanonik tokenizer spec senkronunu zorunlu kilar (`interfaces/tokenizer_spec.json` -> `tokenizer/tokenizer.json`).
-- `check_translation_pointer_policy.py` — Derin denetim TR counterpart dosyalarinda pointer politikasini zorunlu kilar.
-- `check_doc_claim_consistency.py` — Ana dokumanlarda claim/evidence tutarliligini kontrol eder.
-- `clean_runtime_artifacts.sh` — Runtime artefaktlarini temizler (kök `kaggle_onefile_build30_*.jsonl` dahil).
+- `check_tokenizer_sync.py` — Kanonik tokenizer spec senkronunu zorunlu kılar (`interfaces/tokenizer_spec.json` -> `tokenizer/tokenizer.json`).
+- `check_translation_pointer_policy.py` — Derin denetim TR counterpart dosyalarında pointer politikasını zorunlu kılar.
+- `check_doc_claim_consistency.py` — Ana dokümanlarda claim/evidence tutarliligini kontrol eder.
+- `clean_runtime_artifacts.sh` — Runtime artefaktlarını temizler (kök `kaggle_onefile_build30_*.jsonl` dahil).
 - `zip_denylist_audit.py` — Release zip'i denylist yol/secret pattern kontrolünden geçirir.
 
 ## Değerlendirme & Benchmark
@@ -82,13 +82,13 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 
 Not: `run.sh` ana otomasyon yolunu kapsar (install + strict preflight + eğitim). Review için `scripts/verify_all.sh` önerilir.
 
-## Build30 Colab Math Fastproof V2 (V1 Kapanis)
+## Build30 Colab Math Fastproof V2 (V1 Kapanış)
 
-`scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` dosyasi kapanis seviyesi PoC paketlemesi icin korumali full-spectrum hooklar ile guncellendi.
+`scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` dosyası kapanış seviyesi PoC paketlemesi için korumalı full-spectrum hooklar ile güncellendi.
 
 - Katı config schema v2 (`validate_run_config_schema`) ile unknown-key reddi/fail-fast.
 - Runtime fingerprint ve ownership paketi (`runtime_fingerprint`, `ownership_proof`, `env_snapshot_redacted`, `reproduce_command`).
-- Compile/CUDAGraph stall guard (`compile_policy=off` varsayilan, timeout fallback, guard telemetry).
+- Compile/CUDAGraph stall guard (`compile_policy=off` varsayılan, timeout fallback, guard telemetry).
 - Zero-shot unseen matematik split (`eval_unseen_*`) ve compare payload v2 (`exact_match_unseen`).
-- Interpretability ciktilari (`gradient_flow_heatmap.png`, `moe_expert_bar_proxy.png`) feature flag arkasinda.
-- Payload icinde completeness yuzdesi ile `feature_coverage_matrix` sozlesmesi.
+- Interpretability çıktıları (`gradient_flow_heatmap.png`, `moe_expert_bar_proxy.png`) feature flag arkasında.
+- Payload içinde completeness yüzdesi ile `feature_coverage_matrix` sözleşmesi.

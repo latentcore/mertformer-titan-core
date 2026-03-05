@@ -1,26 +1,26 @@
-# Kullanım Politikasi — MertFormer Titan
+# Kullanım Politikası — MertFormer Titan
 
-## Amac
+## Amaç
 Bu politika, MertFormer Titan kodu, model ve artefaktlarinin kabul edilebilir
-ve sinirli kullanımini tanimlar.
+ve sınırlı kullanımini tanımlar.
 
-## Izin Verilen Kullanım
-- Kontrollu ortamlarda arastirma ve değerlendirme
-- Cihaz ici/edge denemeleri
-- Uyum (compliance) denetimi altinda prototipleme
+## İzin Verilen Kullanım
+- Kontrollü ortamlarda araştırma ve değerlendirme
+- Cihaz içi/edge denemeleri
+- Uyum (compliance) denetimi altında prototipleme
 
-## Kisitli Kullanım
-- Insan denetimi olmadan yuksek riskli karar verme
-- Veri lisanslari veya gizlilik kurallarini ihlal eden kullanım
-- Zarar, taciz veya suistimal iceren otomasyonlar
+## Kısıtlı Kullanım
+- İnsan denetimi olmadan yüksek riskli karar verme
+- Veri lisansları veya gizlilik kurallarını ihlal eden kullanım
+- Zarar, taciz veya suistimal içeren otomasyonlar
 
-## Veri Isleme
-- Hassas/verisi regule edilmis icerigi onay olmadan kullanma
-- Veri minimizasyonu ve saklama politikalarina uy
+## Veri İşleme
+- Hassas/verisi regüle edilmiş içeriği onay olmadan kullanma
+- Veri minimizasyonu ve saklama politikalarına uy
 
-## Guvenlik
-- Gizli anahtarlari (.env, token) versiyon kontrolune koyma
+## Güvenlik
+- Gizli anahtarları (.env, token) versiyon kontrolüne koyma
 - Eğitim öncesi preflight kontrolleri çalıştir
 
-## Yaptirim
-Ihlaller, erisim iptali ve ilgili yetkililere bildirim ile sonuclanabilir.
+## Yaptırım
+İhlaller, erişim iptali ve ilgili yetkililere bildirim ile sonuçlanabilir.

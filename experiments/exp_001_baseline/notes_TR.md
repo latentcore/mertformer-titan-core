@@ -1,9 +1,9 @@
-# Deney Notlari: exp_001_baseline
+# Deney Notları: exp_001_baseline
 
-Durum: **Planlandi**
+Durum: **Planlandı**
 
 - Amaç:
-- Donanim:
+- Donanım:
 - Veri snapshot:
-- Degisiklikler:
-- Gozlemler:
+- Değişiklikler:
+- Gözlemler:

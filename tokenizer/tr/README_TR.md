@@ -1,9 +1,9 @@
-# Türkçe Tokenizer Onbellek (Opt-in)
+# Türkçe Tokenizer Önbellek (Opt-in)
 
-Bu klasor Türkçe tokenizer onbellek alani icindir. Indirmek için:
+Bu klasör Türkçe tokenizer önbellek alanı içindir. İndirmek için:
 
 ```bash
 python scripts/download_tr_tokenizer.py
 ```
 
-Varsayilan davranis ogretmen tokenizer'dir. `use_tr_tokenizer=true` ile opt-in olur.
+Varsayılan davranış öğretmen tokenizer'dir. `use_tr_tokenizer=true` ile opt-in olur.

@@ -1,12 +1,12 @@
-# Tool Sozlesmeleri
+# Tool Sözleşmeleri
 
-Tool cagirilari için giris/cikis sözleşmelerini tanimlar.
+Tool cagirilari için giriş/çıkış sözleşmelerini tanımlar.
 
-## Sozlesme Sablonu
-- **name**: tool adi (string)
-- **inputs**: JSON obje, schema tanimli
-- **outputs**: JSON obje, schema tanimli
-- **errors**: olasi hata kodlari listesi
+## Sözleşme Şablonu
+- **name**: tool adı (string)
+- **inputs**: JSON obje, schema tanımlı
+- **outputs**: JSON obje, schema tanımlı
+- **errors**: olası hata kodları listesi
 
 ## Örnek
 ```

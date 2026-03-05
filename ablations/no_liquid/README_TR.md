@@ -1,6 +1,6 @@
 # Ablation: Liquid Kapalı
 
-**Amaç**: Liquid katmanlarin stabilite ve routing uzerindeki etkisini olcmek.
+**Amaç**: Liquid katmanlarin stabilite ve routing üzerindeki etkisini ölçmek.
 
 **Config değişikliği**:
 - `use_liquid: false`

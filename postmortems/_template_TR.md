@@ -1,9 +1,9 @@
-# Postmortem Sablonu
+# Postmortem Şablonu
 
 - **Olay ID**:
 - **Tarih/Saat**:
 - **Etkisi**:
-- **Kok Sebep**:
+- **Kök Sebep**:
 - **Tespit**:
 - **Çözüm**:
-- **Onleme**:
+- **Önleme**:

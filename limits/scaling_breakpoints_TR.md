@@ -1,23 +1,23 @@
-# Olcekleme Kirilma Noktalari
+# Ölçekleme Kırılma Noktaları
 
 Durum: **Ölçüm bekliyor** (üretim koşuları gerekir).
 
-Eğitim donanımı ile kosu sonrasi doldurun:
-- GPU basina max stabil batch size.
-- NaN/Inf esikleri ve hata senaryolari.
-- Baglam uzunlugu stabilitesi ve bozulma baslangici.
-- Expert collapse esikleri ve cozumleri.
+Eğitim donanımı ile koşu sonrası doldurun:
+- GPU başına max stabil batch size.
+- NaN/Inf eşikleri ve hata senaryoları.
+- Bağlam uzunluğu stabilitesi ve bozulma başlangıcı.
+- Expert collapse eşikleri ve çözümleri.
 
 ## Batch Size
 - Max stabil batch size:
-- NaN esigi:
+- NaN eşiği:
 
-## Baglam Uzunlugu
-- Stabil baglam uzunlugu:
-- Bozulma baslangici:
+## Bağlam Uzunluğu
+- Stabil bağlam uzunluğu:
+- Bozulma başlangıcı:
 
 ## Router Doygunlugu
-- Expert collapse esigi:
-- Mitigasyon notlari:
+- Expert collapse eşiği:
+- Mitigasyon notları:
 
 `limits/stress_curves.png` grafikleri, koşular tamamlandığında güncellenecek.

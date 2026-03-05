@@ -1,15 +1,15 @@
-# Ablasyon Sonuclari
+# Ablasyon Sonuçları
 
 Durum: **Ölçüm bekliyor** (tam eğitim donanımı gerekir).
 
-Tabloyu nasil dolduracaginiz:
+Tabloyu nasıl dolduracaginiz:
 - Her ablation konfigürasyonunu çalıştirin (bkz: `ablations/*/README.md`).
-- Final loss, konverjans notlari ve stabilite sorunlarini kaydedin.
-- Eğitim sonrasi benchmark farklarini (HumanEval/MBPP/GSM8K) ekleyin.
+- Final loss, konverjans notları ve stabilite sorunlarını kaydedin.
+- Eğitim sonrası benchmark farklarini (HumanEval/MBPP/GSM8K) ekleyin.
 
 | Ablasyon | Hedef | Durum | Notlar |
 | --- | --- | --- | --- |
-| no_moe | Dense-only temel cizgiyi olc | Beklemede | Eğitim donanımı gerekir |
+| no_moe | Dense-only temel çizgiyi olc | Beklemede | Eğitim donanımı gerekir |
 | no_liquid | Liquid katmanlarinin etkisini olc | Beklemede | Eğitim donanımı gerekir |
-| dense_only | MoE + Liquid kapali | Beklemede | Eğitim donanımı gerekir |
-| bitlinear_off | BitNet kapali temel cizgi | Beklemede | Eğitim donanımı gerekir |
+| dense_only | MoE + Liquid kapalı | Beklemede | Eğitim donanımı gerekir |
+| bitlinear_off | BitNet kapalı temel çizgi | Beklemede | Eğitim donanımı gerekir |

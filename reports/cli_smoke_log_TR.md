@@ -5,7 +5,7 @@
 python3 -m mertformer_sdk.cli info
 ```
 
-## Cikti
+## Çıktı
 ```
 ⛔ CRITICAL: NO GPU DETECTED OR VRAM UNREADABLE.
    -> Switching to CPU/MPS Safe Mode (Very Slow)
@@ -19,5 +19,5 @@ python3 -m mertformer_sdk.cli info
 ```
 
 ## Notlar
-- `run` ve `export` komutlari checkpoint ve/veya tokenizer indirmesi gerektirir.
-- Bu adim, buyuk indirmelerden kacinmak için **bilerek** çalıştirilmadi.
+- `run` ve `export` komutları checkpoint ve/veya tokenizer indirmesi gerektirir.
+- Bu adım, büyük indirmelerden kaçınmak için **bilerek** çalıştirilmadi.

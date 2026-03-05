@@ -1,7 +1,7 @@
 # Dataset Envanteri (Otomatik)
 
-Bu dosya, kod tabaninda referanslanan dataset kimliklerinin otomatik envanteridir (best-effort).
-Lisans/provenans dogrulamasi icin `datasets/SOURCES*.md` ve `datasets/LICENSES*.md` dosyalarini referans alin.
+Bu dosya, kod tabanında referanslanan dataset kimliklerinin otomatik envanteridir (best-effort).
+Lisans/provenans doğrulaması için `datasets/SOURCES*.md` ve `datasets/LICENSES*.md` dosyalarını referans alın.
 
 | Dataset | License (best-effort) | HF URL | Refs |
 | --- | --- | --- | --- |

@@ -1,49 +1,49 @@
-# Rapor Dogruluk Denetimi (v1.0 (Build 30))
+# Rapor Doğruluk Denetimi (v1.0 (Build 30))
 
-Bu denetim, rapordaki iddialari repo kanıtlarıyla eslestirir. Etiketler:
-- DOGRU (uygulama var, kanitli)
-- HEDEF / TAHMIN (acikca hedef olarak yazildi; ölçüm bekliyor)
-- DOGRULAMA BEKLIYOR (eğitim/cihaz olcumu gerekir)
-- KALDIRILDI (iddia dokumandan cikarildi veya yumuşatildi)
+Bu denetim, rapordaki iddiaları repo kanıtlarıyla eslestirir. Etiketler:
+- DOĞRU (uygulama var, kanıtlı)
+- HEDEF / TAHMIN (açıkça hedef olarak yazıldı; ölçüm bekliyor)
+- DOĞRULAMA BEKLIYOR (eğitim/cihaz ölçümü gerekir)
+- KALDIRILDI (iddia dokümandan çıkarıldı veya yumuşatıldı)
 
-## A) Yonetici Ozeti / Durum
-- "Cekirdek muhendislik isi." DOGRU
-  - Kanit: `scripts/titan_preflight.py`, `scripts/operator_mode_gate.py`, `orchestrator/failure_budget.py`
-- "S25/M4 uzerinde GPT-3.5 sinifi." HEDEF / TAHMIN
-  - Eğitim sonrasi hedef olarak sunuluyor; cihaz benchmark'i yok.
+## A) Yönetici Özeti / Durum
+- "Çekirdek mühendislik işi." DOĞRU
+  - Kanıt: `scripts/titan_preflight.py`, `scripts/operator_mode_gate.py`, `orchestrator/failure_budget.py`
+- "S25/M4 üzerinde GPT-3.5 sınıfı." HEDEF / TAHMIN
+  - Eğitim sonrası hedef olarak sunuluyor; cihaz benchmark'i yok.
 - "Production-grade / locked & sealed." KALDIRILDI
-  - Dokumanlarda durum eğitim öncesi olarak güncellendi.
+  - Dokümanlarda durum eğitim öncesi olarak güncellendi.
 
 ## B) BitNet b1.58 / Enerji
-- "Ternary agirliklar uygulanmis." DOGRU
-  - Kanit: `layers/bitlinear.py`
-- "0.65 GB agirlik / %93.75 tasarruf." HEDEF / TAHMIN
+- "Ternary ağırlıklar uygulanmış." DOĞRU
+  - Kanıt: `layers/bitlinear.py`
+- "0.65 GB ağırlık / %93.75 tasarruf." HEDEF / TAHMIN
   - Teorik; ölçüm bekliyor.
-- "Carpma yerine toplama, ~70x enerji." DOGRULAMA BEKLIYOR
-  - Low-bit kernel yolu var, ama enerji/TOPS olcumu yok.
+- "Çarpma yerine toplama, ~70x enerji." DOĞRULAMA BEKLIYOR
+  - Low-bit kernel yolu var, ama enerji/TOPS ölçümü yok.
 
-## C) NPU / Kernel Uyumlulugu
-- "Ternary için ozel kernel gerekir." DOGRULAMA BEKLIYOR
+## C) NPU / Kernel Uyumluluğu
+- "Ternary için özel kernel gerekir." DOĞRULAMA BEKLIYOR
   - Bitpack hook'lari var, vendor kernel hala gerekli.
-  - Kanit: `scripts/mobile_export.py` (bitpack metadata)
+  - Kanıt: `scripts/mobile_export.py` (bitpack metadata)
 
 ## D) LiquidRouter / MoE Stabilitesi
-- "CfC tabanli router var." DOGRU
-  - Kanit: `layers/liquid.py`
-- "Jitter/entropy otomatik duzeltme." DOGRULAMA BEKLIYOR
-  - Izleme var; otomatik duzeltme henuz dogrulanmadi.
+- "CfC tabanlı router var." DOĞRU
+  - Kanıt: `layers/liquid.py`
+- "Jitter/entropy otomatik düzeltme." DOĞRULAMA BEKLIYOR
+  - İzleme var; otomatik düzeltme henüz doğrulanmadı.
 
 ## E) Offline Distillation
-- "Offline logits hatti var." DOGRU
-  - Kanit: `orchestrator/distillation_manager.py`, `train/train.py`
-- "%75 maliyet dususu." KALDIRILDI
+- "Offline logits hattı var." DOĞRU
+  - Kanıt: `orchestrator/distillation_manager.py`, `train/train.py`
+- "%75 maliyet düşüşü." KALDIRILDI
   - Ölçüm olmadan iddia edilmez.
 
-## F) Yol Haritasi / Assetler
-- "Founders Hub basvurusu hazir." DOGRU
-  - Kanit: `reports/founders_hub_application.md`
-- "Demo video script hazir." DOGRU
-  - Kanit: `reports/demo_video_script.md`
+## F) Yol Haritası / Assetler
+- "Founders Hub başvurusu hazır." DOĞRU
+  - Kanıt: `reports/founders_hub_application.md`
+- "Demo video script hazır." DOĞRU
+  - Kanıt: `reports/demo_video_script.md`
 
-## Ozet
-Mimari ve safety altyapisi gerçek. Performans ve cihaz iddialari hedef olarak yazildi; tam eğitim ve cihaz profili ile dogrulanmalidir.
+## Özet
+Mimari ve safety altyapısı gerçek. Performans ve cihaz iddiaları hedef olarak yazıldı; tam eğitim ve cihaz profili ile doğrulanmalıdır.

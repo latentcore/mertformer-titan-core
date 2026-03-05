@@ -1,6 +1,6 @@
 # Python Baseline (Review-Ready)
 
-Bu repo, ekosistem surprizlerini azaltmak için **Python 3.11** baseline’ina pinlenmistir
+Bu repo, ekosistem surprizlerini azaltmak için **Python 3.11** baseline’ına pinlenmistir
 (PyTorch/Transformers uyumu, stabil wheel’ler, `snake_demo.py` pygame demosu).
 
 ## Lokal Kurulum (macOS/Linux)

@@ -1,6 +1,6 @@
-# Tokenizer Istatistikleri (Şablon)
+# Tokenizer İstatistikleri (Şablon)
 
-Tokenizer snapshot sonrasi doldurun:
+Tokenizer snapshot sonrası doldurun:
 - vocab size
-- ozel tokenlar
-- örnek basina ortalama token
+- özel tokenlar
+- örnek başına ortalama token

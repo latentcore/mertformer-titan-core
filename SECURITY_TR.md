@@ -1,22 +1,22 @@
-# Guvenlik ve Emniyet Politikasi
+# Güvenlik ve Emniyet Politikası
 
 ## Kapsam
-Bu dokuman, MertFormer Titan ve eğitim/değerlendirme hatti için guvenlik sinirlarini tanimlar.
+Bu doküman, MertFormer Titan ve eğitim/değerlendirme hattı için güvenlik sınırlarını tanımlar.
 
-## Kullanım Sinirlari
-- Modeli zararli, kotuye kullanım veya yasa disi amaclarla kullanmayin.
-- Eğitim sirasinda hassas veya regule verileri dis servislerle paylasmayin.
+## Kullanım Sınırları
+- Modeli zararlı, kötüye kullanım veya yasa dışı amaçlarla kullanmayın.
+- Eğitim sırasında hassas veya regüle verileri dış servislerle paylaşmayın.
 
 ## Kill-Switch ve Failure Budget
-- Sayisal kararsizlik, kill-switch drill'leri ve failure budget korumalari ile ele alinir.
+- Sayısal kararsızlık, kill-switch drill'leri ve failure budget korumaları ile ele alınır.
 - Bkz: `scripts/nan_kill_test.py`, `orchestrator/failure_budget.py`.
 
-## Veri Yonetimi
-- Veri seti lisanslarina ve kaynaklarina saygi gosterin.
+## Veri Yönetimi
+- Veri seti lisanslarına ve kaynaklarına saygı gösterin.
 - Lisans izin vermedikce veri setlerini yeniden dagitmayin.
 
 ## Raporlama
-- Olayları `postmortems/` altinda sablonla kaydedin.
+- Olayları `postmortems/` altında sablonla kaydedin.
 - Çözüm sonrası önleyici adımları güncelleyin.
 
 ## Durum

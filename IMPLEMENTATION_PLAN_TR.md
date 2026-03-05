@@ -15,7 +15,7 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 - Golden samples, 50 promptluk stabil mantık kontrol seti.
 
 ## Phase 1: Telemetry-Driven Execution
-- Expected vs Actual: tokens/sec, loss slope ve GPU kullanımının karşılaştırılması.
+- Expected vs Actual: tokens/seç, loss slope ve GPU kullanımının karşılaştırılması.
 - Master training, telemetry threshold’ları ve failure budget ile yönetilir.
 - Internal truth benchmarking, HumanEval/MBPP çıktıları ile yapılır.
 
@@ -41,31 +41,31 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 - Golden sample seti 50 prompt içerir.
 - Asset stack eksiksizdir.
 
-## Acil Kapanis Protokolu (v1.0 (Build 30))
-- Eğitim/teacher akisi zorunlu olmadikca degistirilmez.
-- Tum kernel yolları opt-in ve deneysel kalir.
-- README/README_TR uyumu (Docs Index + Dizin) saglanir.
-- Testler kosulur ve cache temizligi yapilir.
+## Acil Kapanış Protokolü (v1.0 (Build 30))
+- Eğitim/teacher akışı zorunlu olmadıkça degistirilmez.
+- Tüm kernel yolları opt-in ve deneysel kalır.
+- README/README_TR uyumu (Docs Index + Dizin) sağlanır.
+- Testler kosulur ve cache temizliği yapılır.
 
-## QAT Plani (Ne Zaman / Nasil)
-- Ne zaman: Stabil bir temel checkpoint alindiktan sonra.
-- Nasil:
-  - Faz A (Pilot, 1-2 gun): 1-5% alt kume ile QAT ac, sabit seed kullan.
-  - Faz B (Karsilastirma, 1 gun): loss/throughput degerlerini baseline ile karsilastir.
-  - Faz C (Yayginlastirma, 2-3 gun): Faz B olumluysa tam müfredat için ac.
+## QAT Planı (Ne Zaman / Nasıl)
+- Ne zaman: Stabil bir temel checkpoint alındıktan sonra.
+- Nasıl:
+  - Faz A (Pilot, 1-2 gün): 1-5% alt küme ile QAT ac, sabit seed kullan.
+  - Faz B (Karşılaştırma, 1 gün): loss/throughput değerlerini baseline ile karşılaştır.
+  - Faz C (Yayginlastirma, 2-3 gün): Faz B olumluysa tam müfredat için ac.
 - Hedef: Low-bit inference kalitesini artirirken stabiliteyi korumak.
-- Cikis kriteri: Val loss gerilemesin, stabilite spike olmasin.
+- Çıkış kriteri: Val loss gerilemesin, stabilite spike olmasın.
 
-## Türkçe Tokenizer POC (Risk Kontrollu)
-- Varsayilan ogretmen tokenizer kalir.
-- Opt-in bayrak ile `tokenizer/tr` kullanilir.
-- Pilot adimlari:
-  - Faz A (30-60 dk): 500-1,000 sample tokenize et, ortalama token uzunlugunu karsilastir.
-  - Faz B (1-2 saat): 200-step mini-train (CPU/MPS), loss trendini karsilastir.
-  - Faz C (ayni gun): loss bozulursa otomatik geri donus.
-- Cikis kriteri: %5'ten fazla token uzunlugu sismegi yok ve loss stabil.
+## Türkçe Tokenizer POC (Risk Kontrollü)
+- Varsayılan öğretmen tokenizer kalır.
+- Opt-in bayrak ile `tokenizer/tr` kullanılır.
+- Pilot adımları:
+  - Faz A (30-60 dk): 500-1,000 sample tokenize et, ortalama token uzunluğunu karşılaştır.
+  - Faz B (1-2 saat): 200-step mini-train (CPU/MPS), loss trendini karşılaştır.
+  - Faz C (aynı gün): loss bozulursa otomatik geri dönüş.
+- Çıkış kriteri: %5'ten fazla token uzunluğu sismegi yok ve loss stabil.
 
 ## Kernel Deneysel + Tensor Core Opt-in
 - Deneysel low-bit kernel opt-in (CUDA + Triton gerekli).
-- Tensor-core yolu opt-in (`MERTFORMER_TENSORCORE=1`) ve dogruluk oncelikli.
-- Performans iddialari için gerçek profil gerekir.
+- Tensor-core yolu opt-in (`MERTFORMER_TENSORCORE=1`) ve doğruluk öncelikli.
+- Performans iddiaları için gerçek profil gerekir.

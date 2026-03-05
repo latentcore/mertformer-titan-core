@@ -2,11 +2,11 @@
 
 Durum: **Ölçüm bekliyor** (üretim koşuları gerekir).
 
-Eğitim koşuları sonrasi doldurun:
-- Tokens/sec
+Eğitim koşuları sonrası doldurun:
+- Tokens/seç
 - GPU kullanımi
 - Bellek ayak izi
 - Enerji tahminleri
 - 1M token maliyeti
 
-Kullanilan run konfigürasyonu, donanim profili ve dataset snapshot bilgisini ekleyin.
+Kullanılan run konfigürasyonu, donanım profili ve dataset snapshot bilgisini ekleyin.

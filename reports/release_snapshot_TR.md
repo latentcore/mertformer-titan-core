@@ -34,7 +34,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 ## Önemli Dokümanlar
 
 - Mühendislik denetimi: `reports/codex_deep_audit_EN.md`, `reports/codex_deep_audit_DE.md`, `reports/codex_deep_audit_TR.md`
-- TR denetim dosyalari yonlendirme (pointer) dosyalaridir: `reports/codex_deep_audit_EN_TR.md`, `reports/codex_deep_audit_DE_TR.md` (kanonik TR icerik: `reports/codex_deep_audit_TR.md`)
+- TR denetim dosyaları yönlendirme (pointer) dosyalarıdır: `reports/codex_deep_audit_EN_TR.md`, `reports/codex_deep_audit_DE_TR.md` (kanonik TR içerik: `reports/codex_deep_audit_TR.md`)
 - Verified vs Target matrisi: `reports/verified_matrix.md`, `reports/verified_matrix_TR.md`
 - Dış inceleme checklisti: `reports/review_checklist.md`, `reports/review_checklist_TR.md`
 - Final senkron matrisi: `reports/final_sync_matrix.md`, `reports/final_sync_matrix_TR.md`
@@ -50,14 +50,14 @@ TITAN_OFFLINE=1 bash run.sh --test
 - `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
 - Locked artefakt durumu: `skipped (expected: AGE_RECIPIENT_FILE missing)`
 - SHA-256:
-  - `0cecc01665cc85d85cbbcce15ddee26e9bd684353fb231c2cea183a095ac9ab6` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
+  - `1286573e85cde637ad0b4e442e8c1c2251e62624a97c09b7faef21ad12ccbd89` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
   - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)
 
 ## Bilinen Gate / Blokerler
 
 - Dataset uyum kapısı:
   - ✅ Lisanslar doğrulandı (`datasets/LICENSES*.md` içinde `TBD` yok)
-  - ✅ Snapshot registry `datasets/hashes.json` içinde kayitli (pinlenen revision + manifest fingerprint)
+  - ✅ Snapshot registry `datasets/hashes.json` içinde kayıtlı (pinlenen revision + manifest fingerprint)
 - Kalan iş, operasyonel ve eğitim sonrası:
   - Hedef donanımda üretim eğitimini çalıştırmak
   - Üretilen checkpoint'lerden benchmark raporlarını almak

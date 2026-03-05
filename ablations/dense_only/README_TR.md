@@ -1,6 +1,6 @@
 # Ablation: Sadece Dense
 
-**Amaç**: MoE ve Liquid kapali, tam dense baseline.
+**Amaç**: MoE ve Liquid kapalı, tam dense baseline.
 
 **Config değişikliği**:
 - `use_moe: false`

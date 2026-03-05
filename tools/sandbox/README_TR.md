@@ -2,17 +2,17 @@
 
 Tool kullanımı için güvenli yürütme sınırlarını tanımlar.
 
-## Izinli
-- Proje klasorunde salt-okuma erisimi
+## İzinli
+- Proje klasorunde salt-okuma erişimi
 - Deterministik tool kullanımi (yan etki yok)
-- Sinirli CPU/GPU kullanımi
+- Sınırlı CPU/GPU kullanımi
 
 ## Yasak
-- Sistem duzeyinde yikici islemler
-- Onayli env disinda gizli bilgi okuma
-- Ag kapaliyken dis URL cagrisi
+- Sistem düzeyinde yıkıcı işlemler
+- Onaylı env dışında gizli bilgi okuma
+- Ağ kapalıyken dış URL çağrısı
 
-## Varsayilanlar
-- Tool cagrilari acik ve loglu olur
-- Her tool için timeout uygulanir
+## Varsayılanlar
+- Tool çağrıları açık ve loglu olur
+- Her tool için timeout uygulanır
 - Hatalar net neden kodlariyla verilir

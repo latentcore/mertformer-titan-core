@@ -1,11 +1,11 @@
 # Pointer: EN Audit Turkish Counterpart
 
-Bu dosya, tekrar edilen tam metin yerine yonlendirme (pointer) dosyasidir.
+Bu dosya, tekrar edilen tam metin yerine yönlendirme (pointer) dosyasidir.
 
-Kanonik Turkce denetim raporu:
+Kanonik Türkçe denetim raporu:
 - `reports/codex_deep_audit_TR.md`
 
 Politika:
-- Bu dosya kisa pointer olarak kalir.
-- Asil icerik guncellemeleri yalnizca `reports/codex_deep_audit_TR.md` uzerinden yapilir.
-- EN karsiligi: `reports/codex_deep_audit_EN.md`
+- Bu dosya kısa pointer olarak kalır.
+- Asıl içerik güncellemeleri yalnızca `reports/codex_deep_audit_TR.md` üzerinden yapılır.
+- EN karşılığı: `reports/codex_deep_audit_EN.md`

@@ -1,6 +1,6 @@
 ![MertFormer Titan Header](assets/header.png)
 
-Dil: [English](README_SUMMARY.md) | [Turkce](README_SUMMARY_TR.md)
+Dil: [English](README_SUMMARY.md) | [Türkçe](README_SUMMARY_TR.md)
 
 ---
 
