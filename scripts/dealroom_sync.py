@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DEALROOM = ROOT / 'MertFormer_Titan_Dealroom_2026-02-23'
+DEALROOM = ROOT / 'mertformer-titan-dealroom-private'
 
 
 def cmd(cwd: Path, *args: str) -> str:

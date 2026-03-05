@@ -5,7 +5,7 @@
   "zip_sha256": "071f238393037352cc3d1efe82677ea3ba6510dabbe5bfba3c99cd1c9011922f",
   "included_roots": [
     "Proje",
-    "MertFormer_Titan_Dealroom_2026-02-23",
+    "mertformer-titan-dealroom-private",
     "__MACOSX"
   ],
   "old_entry_count": 94049,
@@ -14,212 +14,212 @@
   "removed_entries_count": 6877,
   "added_entries_sample": [
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/COMMIT_EDITMSG",
+      "mertformer-titan-dealroom-private/.git/COMMIT_EDITMSG",
       1229803965,
       66
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/HEAD",
+      "mertformer-titan-dealroom-private/.git/HEAD",
       2289679319,
       54
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/config",
+      "mertformer-titan-dealroom-private/.git/config",
       2720461765,
       457
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/index",
+      "mertformer-titan-dealroom-private/.git/index",
       1495570130,
       8032
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/logs/HEAD",
+      "mertformer-titan-dealroom-private/.git/logs/HEAD",
       99827022,
       1565
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/logs/refs/heads/codex/v1-final-universal-poc-dealroom",
+      "mertformer-titan-dealroom-private/.git/logs/refs/heads/codex/v1-final-universal-poc-dealroom",
       266545460,
       636
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/logs/refs/remotes/origin/codex/v1-final-universal-poc-dealroom",
+      "mertformer-titan-dealroom-private/.git/logs/refs/remotes/origin/codex/v1-final-universal-poc-dealroom",
       46091181,
       326
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/11/2f8a0ea4b048709cff3ca64561250a3664a5ec",
+      "mertformer-titan-dealroom-private/.git/objects/11/2f8a0ea4b048709cff3ca64561250a3664a5ec",
       3035122573,
       866
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/23/ab4c2a02a8405f6c149b69c03efe63722b6e4d",
+      "mertformer-titan-dealroom-private/.git/objects/23/ab4c2a02a8405f6c149b69c03efe63722b6e4d",
       1300638398,
       492
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/36/d52255734d8215f38eb8d99e5f7cc0b6bbdacc",
+      "mertformer-titan-dealroom-private/.git/objects/36/d52255734d8215f38eb8d99e5f7cc0b6bbdacc",
       4157942527,
       503
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/3b/06e08544410d2e8004b34469bd3cc17c0e94e8",
+      "mertformer-titan-dealroom-private/.git/objects/3b/06e08544410d2e8004b34469bd3cc17c0e94e8",
       2387622459,
       217
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/42/982b000c35f08fea5ef09629042181d9518dcb",
+      "mertformer-titan-dealroom-private/.git/objects/42/982b000c35f08fea5ef09629042181d9518dcb",
       538876963,
       673
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/4c/a553e9c03e1374488b210c85ece88625a04489",
+      "mertformer-titan-dealroom-private/.git/objects/4c/a553e9c03e1374488b210c85ece88625a04489",
       271425965,
       165
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/53/7b996fa87c15b0394c3a9e7d0ba1ffa271ce36",
+      "mertformer-titan-dealroom-private/.git/objects/53/7b996fa87c15b0394c3a9e7d0ba1ffa271ce36",
       3173824897,
       391
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/59/6fda9d7b08f55d86290b7cbff8999073c74657",
+      "mertformer-titan-dealroom-private/.git/objects/59/6fda9d7b08f55d86290b7cbff8999073c74657",
       556319990,
       392
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/5f/cd179a87295438c2137be0d7f6e3d896450186",
+      "mertformer-titan-dealroom-private/.git/objects/5f/cd179a87295438c2137be0d7f6e3d896450186",
       1825692089,
       271
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/62/72a37e62781b1272973302a2d2b14f133d032b",
+      "mertformer-titan-dealroom-private/.git/objects/62/72a37e62781b1272973302a2d2b14f133d032b",
       1554302870,
       196
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/77/4e9f5b8872f7a1b2b760a8f675b1b768b04423",
+      "mertformer-titan-dealroom-private/.git/objects/77/4e9f5b8872f7a1b2b760a8f675b1b768b04423",
       2139680061,
       271
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/92/c2dc4a1513764198fc18608391a6d052ad44b0",
+      "mertformer-titan-dealroom-private/.git/objects/92/c2dc4a1513764198fc18608391a6d052ad44b0",
       435664184,
       320
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/96/9d94fb130d4d5378896d4d50de331e5912d684",
+      "mertformer-titan-dealroom-private/.git/objects/96/9d94fb130d4d5378896d4d50de331e5912d684",
       3310685454,
       221
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/9f/2f304c72919c0e0cc81ab8220700322c3f43d1",
+      "mertformer-titan-dealroom-private/.git/objects/9f/2f304c72919c0e0cc81ab8220700322c3f43d1",
       2192237888,
       392
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/a7/007b4d9d42d2d75a06242ea2aa89c637c52037",
+      "mertformer-titan-dealroom-private/.git/objects/a7/007b4d9d42d2d75a06242ea2aa89c637c52037",
       227390386,
       794
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/cb/2fb7c4a9510c243f7f8a5aba8f6488c268b224",
+      "mertformer-titan-dealroom-private/.git/objects/cb/2fb7c4a9510c243f7f8a5aba8f6488c268b224",
       2846940926,
       469
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/d3/2ecc769a7c1f2d70da1d8713655cd5dd62e82d",
+      "mertformer-titan-dealroom-private/.git/objects/d3/2ecc769a7c1f2d70da1d8713655cd5dd62e82d",
       480592806,
       517
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/e0/fe4d20a6de82139aa027b273864928533fa3ce",
+      "mertformer-titan-dealroom-private/.git/objects/e0/fe4d20a6de82139aa027b273864928533fa3ce",
       2127647841,
       395
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/e9/b022db37e55e1197058f1e9ba10f5955929fe2",
+      "mertformer-titan-dealroom-private/.git/objects/e9/b022db37e55e1197058f1e9ba10f5955929fe2",
       3891913635,
       186
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/f9/b23b619761e80298ac3564775b6d60923b79eb",
+      "mertformer-titan-dealroom-private/.git/objects/f9/b23b619761e80298ac3564775b6d60923b79eb",
       803138793,
       554
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/fc/af098861cb229530521cfc8eeb7b53f39e53c9",
+      "mertformer-titan-dealroom-private/.git/objects/fc/af098861cb229530521cfc8eeb7b53f39e53c9",
       2084140334,
       673
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/fd/02b506fedaca6ff83dc6295a14bda511143b18",
+      "mertformer-titan-dealroom-private/.git/objects/fd/02b506fedaca6ff83dc6295a14bda511143b18",
       117563825,
       230
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/refs/heads/codex/v1-final-universal-poc-dealroom",
+      "mertformer-titan-dealroom-private/.git/refs/heads/codex/v1-final-universal-poc-dealroom",
       1797937227,
       41
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/refs/remotes/origin/codex/v1-final-universal-poc-dealroom",
+      "mertformer-titan-dealroom-private/.git/refs/remotes/origin/codex/v1-final-universal-poc-dealroom",
       1797937227,
       41
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/02_EXECUTIVE/v1_closure_sync_v2.md",
+      "mertformer-titan-dealroom-private/02_EXECUTIVE/v1_closure_sync_v2.md",
       2868892096,
       192
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/compile_cudagraph_stall_fix_note.md",
+      "mertformer-titan-dealroom-private/03_TECH_EVIDENCE/compile_cudagraph_stall_fix_note.md",
       2662351425,
       760
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/03_TECH_EVIDENCE/feature_coverage_matrix_v2.md",
+      "mertformer-titan-dealroom-private/03_TECH_EVIDENCE/feature_coverage_matrix_v2.md",
       2868229185,
       772
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/04_SECURITY_LEGAL/v1_closure_sync_v2.md",
+      "mertformer-titan-dealroom-private/04_SECURITY_LEGAL/v1_closure_sync_v2.md",
       2868892096,
       192
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/company_readiness_pack_v2.md",
+      "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/company_readiness_pack_v2.md",
       2001475660,
       871
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/06_INVESTOR_ASSETS/v1_closure_sync_v2.md",
+      "mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/v1_closure_sync_v2.md",
       2868892096,
       192
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/07_OUTREACH_READY/v1_closure_sync_v2.md",
+      "mertformer-titan-dealroom-private/07_OUTREACH_READY/v1_closure_sync_v2.md",
       2868892096,
       192
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/08_GITHUB_GIST/v1_closure_sync_v2.md",
+      "mertformer-titan-dealroom-private/08_GITHUB_GIST/v1_closure_sync_v2.md",
       2868892096,
       192
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/v1_closure_sync_v2.md",
+      "mertformer-titan-dealroom-private/09_APPENDIX/v1_closure_sync_v2.md",
       2868892096,
       192
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/commit_chain_manifest_v2.json",
+      "mertformer-titan-dealroom-private/MANIFEST/commit_chain_manifest_v2.json",
       1044634836,
       1234
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/MANIFEST/ownership_proof_bundle_v2.json",
+      "mertformer-titan-dealroom-private/MANIFEST/ownership_proof_bundle_v2.json",
       3404072632,
       1899
     ],
@@ -266,252 +266,252 @@
   ],
   "removed_entries_sample": [
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/",
+      "mertformer-titan-dealroom-private/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.DS_Store",
+      "mertformer-titan-dealroom-private/.DS_Store",
       4080668993,
       6148
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/",
+      "mertformer-titan-dealroom-private/.git/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/COMMIT_EDITMSG",
+      "mertformer-titan-dealroom-private/.git/COMMIT_EDITMSG",
       755716039,
       67
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/HEAD",
+      "mertformer-titan-dealroom-private/.git/HEAD",
       1466196917,
       21
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/config",
+      "mertformer-titan-dealroom-private/.git/config",
       1524724329,
       333
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/hooks/",
+      "mertformer-titan-dealroom-private/.git/hooks/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/index",
+      "mertformer-titan-dealroom-private/.git/index",
       826340012,
       6864
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/info/",
+      "mertformer-titan-dealroom-private/.git/info/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/logs/",
+      "mertformer-titan-dealroom-private/.git/logs/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/logs/HEAD",
+      "mertformer-titan-dealroom-private/.git/logs/HEAD",
       3211018502,
       887
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/logs/refs/",
+      "mertformer-titan-dealroom-private/.git/logs/refs/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/logs/refs/heads/",
+      "mertformer-titan-dealroom-private/.git/logs/refs/heads/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/logs/refs/remotes/",
+      "mertformer-titan-dealroom-private/.git/logs/refs/remotes/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/logs/refs/remotes/origin/",
+      "mertformer-titan-dealroom-private/.git/logs/refs/remotes/origin/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/",
+      "mertformer-titan-dealroom-private/.git/objects/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/04/",
+      "mertformer-titan-dealroom-private/.git/objects/04/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/05/",
+      "mertformer-titan-dealroom-private/.git/objects/05/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/08/",
+      "mertformer-titan-dealroom-private/.git/objects/08/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/0b/",
+      "mertformer-titan-dealroom-private/.git/objects/0b/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/0c/",
+      "mertformer-titan-dealroom-private/.git/objects/0c/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/0e/",
+      "mertformer-titan-dealroom-private/.git/objects/0e/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/10/",
+      "mertformer-titan-dealroom-private/.git/objects/10/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/14/",
+      "mertformer-titan-dealroom-private/.git/objects/14/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/17/",
+      "mertformer-titan-dealroom-private/.git/objects/17/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/18/",
+      "mertformer-titan-dealroom-private/.git/objects/18/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/19/",
+      "mertformer-titan-dealroom-private/.git/objects/19/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/1d/",
+      "mertformer-titan-dealroom-private/.git/objects/1d/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/1e/",
+      "mertformer-titan-dealroom-private/.git/objects/1e/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/1f/",
+      "mertformer-titan-dealroom-private/.git/objects/1f/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/22/",
+      "mertformer-titan-dealroom-private/.git/objects/22/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/27/",
+      "mertformer-titan-dealroom-private/.git/objects/27/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/2a/",
+      "mertformer-titan-dealroom-private/.git/objects/2a/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/2b/",
+      "mertformer-titan-dealroom-private/.git/objects/2b/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/2c/",
+      "mertformer-titan-dealroom-private/.git/objects/2c/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/2d/",
+      "mertformer-titan-dealroom-private/.git/objects/2d/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/2e/",
+      "mertformer-titan-dealroom-private/.git/objects/2e/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/2f/",
+      "mertformer-titan-dealroom-private/.git/objects/2f/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/30/",
+      "mertformer-titan-dealroom-private/.git/objects/30/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/35/",
+      "mertformer-titan-dealroom-private/.git/objects/35/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/3b/",
+      "mertformer-titan-dealroom-private/.git/objects/3b/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/3e/",
+      "mertformer-titan-dealroom-private/.git/objects/3e/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/40/",
+      "mertformer-titan-dealroom-private/.git/objects/40/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/41/",
+      "mertformer-titan-dealroom-private/.git/objects/41/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/43/",
+      "mertformer-titan-dealroom-private/.git/objects/43/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/45/",
+      "mertformer-titan-dealroom-private/.git/objects/45/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/46/",
+      "mertformer-titan-dealroom-private/.git/objects/46/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/48/",
+      "mertformer-titan-dealroom-private/.git/objects/48/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/50/",
+      "mertformer-titan-dealroom-private/.git/objects/50/",
       0,
       0
     ],
     [
-      "MertFormer_Titan_Dealroom_2026-02-23/.git/objects/52/",
+      "mertformer-titan-dealroom-private/.git/objects/52/",
       0,
       0
     ]

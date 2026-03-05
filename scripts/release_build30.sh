@@ -23,7 +23,7 @@ rm -f "$REL_ZIP" "$LOCKED_AGE"
 (
   cd "$ROOT_DIR"
   zip -rq "$REL_ZIP" . \
-    -x '.git/*' '*/.git/*' 'MertFormer_Titan_Dealroom_2026-02-23/.git/*' \
+    -x '.git/*' '*/.git/*' 'mertformer-titan-dealroom-private/.git/*' \
        '.titan-venv/*' '.titan-venv.bak_*/*' '.lint-venv/*' '.venv/*' \
        '__pycache__/*' '*/__pycache__/*' '*.pyc' '.pytest_cache/*' '*/.pytest_cache/*' '.ruff_cache/*' '*/.ruff_cache/*' '.mypy_cache/*' '*/.mypy_cache/*' \
        'logs/*' '.DS_Store' 'packages/*' '.env' '.env.*' 'checkpoints/*' \

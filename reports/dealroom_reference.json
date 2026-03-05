@@ -1,11 +1,11 @@
 {
-  "generated_utc": "2026-03-05T20:50:03.670326+00:00",
-  "dealroom_path": "MertFormer_Titan_Dealroom_2026-02-23",
+  "generated_utc": "2026-03-05T21:10:59.942458+00:00",
+  "dealroom_path": "mertformer-titan-dealroom-private",
   "exists": true,
   "git": {
     "branch": "main",
-    "commit": "de970e2119da7465dce5d7e750b39cd4c9598ffe",
-    "remote": "origin\thttps://github.com/latentcore/mertformer-titan-v27.git (fetch)\norigin\thttps://github.com/latentcore/mertformer-titan-v27.git (push)"
+    "commit": "a46a611eb9285d9a4f67b02bd407f4ccd4885895",
+    "remote": "origin\thttps://github.com/latentcore/mertformer-titan-dealroom-private.git (fetch)\norigin\thttps://github.com/latentcore/mertformer-titan-dealroom-private.git (push)"
   },
   "ok": true
 }

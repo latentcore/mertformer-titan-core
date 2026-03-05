@@ -194,8 +194,8 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 ---
 
 [![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg?style=flat-square)](./LICENSE)
-[![Repository: Private](https://img.shields.io/badge/Repository-Private-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
-[![Status: Pre-Training](https://img.shields.io/badge/Status-Pre--Training-yellow.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-v27)
+[![Repository: Private](https://img.shields.io/badge/Repository-Private-orange.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-core)
+[![Status: Pre-Training](https://img.shields.io/badge/Status-Pre--Training-yellow.svg?style=flat-square)](https://github.com/latentcore/mertformer-titan-core)
 [![Architecture: BitNet 1.58b](https://img.shields.io/badge/Architecture-BitNet%201.58b-orange.svg?style=flat-square)](https://www.microsoft.com/en-us/research/publication/the-era-of-1-bit-llms-all-large-language-models-are-in-1-58-bits/)
 [![Reference: BitNet 1-bit](https://img.shields.io/badge/Reference-BitNet%201--bit-lightgrey.svg?style=flat-square)](https://arxiv.org/abs/2310.11453)
 
@@ -2076,7 +2076,7 @@ Future **13B / 70B / 256B** exploration is treated as a conditional research tra
   year = {2026},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{https://github.com/latentcore/mertformer-titan-v27}}
+  howpublished = {\url{https://github.com/latentcore/mertformer-titan-core}}
 }
 ```
 
