@@ -26,7 +26,8 @@ SLIDES_EN = [
     {
         "title": "MertFormer Titan",
         "bullets": [
-            "Edge-native coding model (2.6B target)",
+            "Edge-native coding model (2.64B design target)",
+            "Current build runtime total: ~3.70B",
             "Operator-mode verified pipeline",
             "Offline-first, mobile compute focus",
         ],
@@ -50,7 +51,7 @@ SLIDES_EN = [
     {
         "title": "Product",
         "bullets": [
-            "2.6B parameter target model for coding",
+            "2.64B design-target model for coding",
             "Offline operation on mobile-class hardware",
             "Security-first with reproducibility gates",
             "SDK + CLI for edge deployments",
@@ -107,7 +108,7 @@ SLIDES_EN = [
     {
         "title": "Roadmap",
         "bullets": [
-            "Master run (2.6B) with telemetry gates",
+            "Master run (2.64B design target) with telemetry gates",
             "Benchmark validation + pilot deployments",
             "Asset stack + demo video for launch",
         ],
@@ -126,7 +127,8 @@ SLIDES_TR = [
     {
         "title": "MertFormer Titan",
         "bullets": [
-            "Edge-native kodlama modeli (2.6B hedef)",
+            "Edge-native kodlama modeli (2.64B tasarım hedefi)",
+            "Mevcut build runtime toplamı: ~3.70B",
             "Operator-mode doğrulanmış pipeline",
             "Offline-öncelikli, mobil compute odaklı",
         ],
@@ -150,7 +152,7 @@ SLIDES_TR = [
     {
         "title": "Ürün",
         "bullets": [
-            "Kodlama için 2.6B parametre hedef model",
+            "Kodlama için 2.64B tasarım hedefli model",
             "Mobil sınıf donanımda offline çalışma",
             "Reproducibility gate’leriyle güvenlik‑öncelik",
             "Edge dağıtım için SDK + CLI",
@@ -207,7 +209,7 @@ SLIDES_TR = [
     {
         "title": "Yol Haritası",
         "bullets": [
-            "Telemetri gate’leri ile 2.6B master run",
+            "Telemetri gate’leri ile 2.64B tasarım hedefli master run",
             "Benchmark doğrulama + pilot dağıtımlar",
             "Lansman için asset stack + demo video",
         ],

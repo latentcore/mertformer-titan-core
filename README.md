@@ -519,8 +519,8 @@ Name expansion:
 - Router health monitoring
 
 ### 6. **Advanced Training Pipeline** 🚂
-- **Knowledge Distillation**: Llama-3.3-70B → 2.6B (80% alpha)
-- **4-Stage Curriculum**: Logic → Knowledge → Language → Soul
+- **Knowledge Distillation**: Llama-3.3-70B → 2.64B design target (80% alpha)
+- **4 Core Stages + 1 Tool-Use/API Phase**: Logic → Knowledge → Language → Soul (+ Tool Use/API)
 - **WSD Scheduler**: Warmup-Stable-Decay (grokking-optimized)
 - **Differential Learning Rates**: Router 1.5x, Body 1.0x
 - **Early Stopping**: Patience-based with best checkpoint saving
@@ -685,7 +685,7 @@ The journey of data from Layer 0 to 17:
 *   **Layer 4 (First Liquid Contact):** **Critical Threshold.** The first `LiquidMixer` (CfC) kicks in here, instilling the first sense of "temporal flow" and "momentum."
 *   **Layer 5 (Fluid Attention):** Data gaining fluidity is filtered by `MLA` in a deeper dimension, strengthening contextual relationships.
 *   **Layer 6 (Complex Syntax):** Indirect structures within sentences are resolved; `MoE` experts continue specific analyses.
-*   **Layer 7 (Mathematical Stability):** Foundation for logical inferences is laid; the `UnitaryQINN` layer seals the mathematical stability of the network.
+*   **Layer 7 (Mathematical Stability):** Foundation for logical inferences is laid; the `UnitaryQINN` path remains available only when `use_qinn=true` (Build 30 default: OFF).
 *   **Layer 8 (Abstraction):** Data evolves from concrete words to abstract concepts; the hierarchical structure is deepened with `MLA`.
 *   **Layer 9 (Intent Analysis):** Decision mechanisms strengthen; the model begins to grasp user intent and the background of the question.
 *   **Layer 10 (Second Liquid Contact):** **Critical Threshold.** The second `LiquidMixer` activates here; data's temporal memory and speed are dynamically refreshed during complex reasoning.
@@ -1011,7 +1011,7 @@ The following items are implemented and tied to concrete files/logs:
 - Golden Sample Eval (50 prompts): `datasets/golden_samples.jsonl`, `scripts/golden_eval.py`
 - Phase 1: Telemetry-Driven Execution
 - Expected vs Actual tracking scaffold: `orchestrator/telemetry.py`
-- Master Training (2.6B): execution on training hardware (not run locally)
+- Master Training (2.64B design target): execution on training hardware (not run locally)
 - Internal Truth Benchmarks (HumanEval/MBPP): `scripts/benchmarks_internal.py`
 - Phase 2: Asset Stack
 - Demo Video Script (offline): `reports/demo_video_script.md`
@@ -1141,7 +1141,7 @@ liquid_spike_threshold = 5.0
 | `HF_TOKEN` | unset | online ops | Required for authenticated online dataset/model operations. |
 | `WANDB_API_KEY` | unset | tracking | Required only when WandB is enabled in online mode. |
 
-### Curriculum Learning (4 Stages)
+### Curriculum Learning (4 Core Stages + 1 Tool-Use/API Phase)
 
 | Stage | Steps | Focus | Dataset Size |
 | :--- | :---: | :--- | :--- |
@@ -1202,23 +1202,29 @@ python scripts/mobile_export.py
 ```
 
 Generates:
-- `checkpoints/nano_titan_build27.onnx` (Dynamic axes)
+- `checkpoints/mertformer_titan_prod/titan_s25_fp32.onnx` (Dynamic axes)
+- `checkpoints/mertformer_titan_prod/titan_s25_int8_quantized.onnx`
 - Optimized for Samsung S25 NPU
 - INT8 quantization ready
 
 ### Inference
 
+Use a trained checkpoint for deployment/runtime validation:
+
 ```python
-from titan_chat import TitanChat
+from mertformer_sdk.api import load_model, generate
 
-# Load model
-chat = TitanChat(checkpoint="checkpoints/nano_titan_build27_best.pt")
+model, tokenizer, device = load_model(
+    ckpt="checkpoints/my_trained.pt",
+    strict_checkpoint=True,
+)
 
-# Generate
-response = chat.generate(
+response = generate(
+    model,
+    tokenizer,
     prompt="What is the meaning of life?",
-    max_tokens=256,
-    temperature=0.7
+    max_new_tokens=256,
+    temperature=0.7,
 )
 print(response)
 ```

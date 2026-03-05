@@ -517,8 +517,8 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 - Yönlendirici sağlık izleme
 
 ### 6. **Gelişmiş Eğitim Hattı** 🚂
-- **Bilgi Damıtma (Knowledge Distillation)**: Llama-3.3-70B → 2.6B (%80 alpha)
-- **4 Aşamalı Müfredat**: Mantık → Bilgi → Dil → Ruh
+- **Bilgi Damıtma (Knowledge Distillation)**: Llama-3.3-70B → 2.64B tasarım hedefi (%80 alpha)
+- **4 Çekirdek Aşama + 1 Araç/API Fazı**: Mantık → Bilgi → Dil → Ruh (+ Araç Kullanımı/API)
 - **WSD Zamanlayıcı**: Warmup-Stable-Decay (grokking optimize edilmiş)
 - **Diferansiyel Öğrenme Oranları**: Router 1.5x, Gövde 1.0x
 - **Erken Durdurma**: Sabır tabanlı en iyi kontrol noktası kaydı
@@ -683,7 +683,7 @@ Verinin 0'dan 17'ye kadar olan yolculuğu:
 *   **Katman 4 (İlk Liquid Teması):** **Kritik Eşik.** İlk `LiquidMixer` (CfC) burada devreye girerek veriye ilk "zamansal akış" ve "momentum" algısını yükler.
 *   **Katman 5 (Akışkan Dikkat):** Akışkanlık kazanan veri, `MLA` tarafından daha derin bir boyutta süzülerek bağlamsal ilişkiler güçlendirilir.
 *   **Katman 6 (Karmaşık Sözdizimi):** Cümle içindeki dolaylı yapılar çözülür; `MoE` uzmanları spesifik analizlere devam eder.
-*   **Katman 7 (Matematiksel Kararlılık):** Mantıksal çıkarımların temeli atılır; `UnitaryQINN` katmanı ağın matematiksel stabilitesini mühürler.
+*   **Katman 7 (Matematiksel Kararlılık):** Mantıksal çıkarımların temeli atılır; `UnitaryQINN` yolu yalnızca `use_qinn=true` olduğunda devreye alınır (Build 30 varsayılanı: KAPALI).
 *   **Katman 8 (Soyutlama):** Veri somut kelimelerden soyut kavramlara evrilir; hiyerarşik yapı `MLA` ile derinleştirilir.
 *   **Katman 9 (Niyet Analizi):** Karar mekanizmaları güçlenir; model kullanıcı niyetini ve sorunun arka planını kavramaya başlar.
 *   **Katman 10 (İkinci Liquid Teması):** **Kritik Eşik.** İkinci `LiquidMixer` burada aktifleşir; karmaşık mantık yürütme sırasında verinin zamansal hafızası ve hızı dinamik olarak tazelenir.
@@ -1009,7 +1009,7 @@ Aşağıdaki maddeler uygulanmıştır ve kanıt dosyaları ile eşlenmiştir:
 - Golden Sample Eval (50 prompt): `datasets/golden_samples.jsonl`, `scripts/golden_eval.py`
 - Phase 1: Telemetry-Driven Execution
 - Expected vs Actual altyapısı: `orchestrator/telemetry.py`
-- Master Training (2.6B): eğitim donanımında çalıştırılacak (yerelde koşulmadı)
+- Master Training (2.64B tasarım hedefi): eğitim donanımında çalıştırılacak (yerelde koşulmadı)
 - Internal Truth Benchmarks (HumanEval/MBPP): `scripts/benchmarks_internal.py`
 - Phase 2: Asset Stack
 - Demo Video Script (offline): `reports/demo_video_script.md`
@@ -1140,7 +1140,7 @@ liquid_spike_threshold = 5.0
 | `HF_TOKEN` | unset | online operasyon | Kimlik doğrulamalı online dataset/model adımları için gerekir. |
 | `WANDB_API_KEY` | unset | izleme | Sadece online modda WandB açıkken gerekir. |
 
-### Müfredatla Öğrenme (4 Aşama)
+### Müfredatla Öğrenme (4 Çekirdek Aşama + 1 Araç/API Fazı)
 
 | Aşama | Adımlar | Odak | Veri Seti Boyutu |
 | :--- | :---: | :--- | :--- |
@@ -1201,23 +1201,29 @@ python scripts/mobile_export.py
 ```
 
 Şunları oluşturur:
-- `checkpoints/nano_titan_build27.onnx` (Dinamik eksenler)
+- `checkpoints/mertformer_titan_prod/titan_s25_fp32.onnx` (Dinamik eksenler)
+- `checkpoints/mertformer_titan_prod/titan_s25_int8_quantized.onnx`
 - Samsung S25 NPU için optimize edildi
 - INT8 kuantizasyon hazır
 
 ### Çıkarım (Inference)
 
+Dağıtım/çalışma zamanı doğrulaması için eğitimli checkpoint kullanın:
+
 ```python
-from titan_chat import TitanChat
+from mertformer_sdk.api import load_model, generate
 
-# Modeli yükle
-chat = TitanChat(checkpoint="checkpoints/nano_titan_build27_best.pt")
+model, tokenizer, device = load_model(
+    ckpt="checkpoints/my_trained.pt",
+    strict_checkpoint=True,
+)
 
-# Üret
-response = chat.generate(
+response = generate(
+    model,
+    tokenizer,
     prompt="Hayatın anlamı nedir?",
-    max_tokens=256,
-    temperature=0.7
+    max_new_tokens=256,
+    temperature=0.7,
 )
 print(response)
 ```

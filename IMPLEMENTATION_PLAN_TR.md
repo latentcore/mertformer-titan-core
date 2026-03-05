@@ -30,7 +30,7 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 ## Çalıştırma Sırası (Operator Mode)
 1. `scripts/operator_mode_gate.py` (safe mod, yerel).
 2. `scripts/operator_mode_gate.py --full` (eğitim donanımı).
-3. Master run (2.6B) telemetry + failure budget ile.
+3. Master run (2.64B tasarım hedefi) telemetry + failure budget ile.
 4. Benchmark ve asset güncellemeleri.
 
 ## Kabul Kriterleri

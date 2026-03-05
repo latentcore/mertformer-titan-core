@@ -1,29 +1,11 @@
 {
-  "generated_utc": "2026-03-04T02:32:04.660942+00:00",
-  "md_file_count": 251,
+  "generated_utc": "2026-03-05T19:28:01.071881+00:00",
+  "md_file_count": 249,
   "duplicate_name_group_count": 21,
   "duplicate_name_groups": {
     "license.md": [
       ".lint-venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md",
       ".lint-venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md"
-    ],
-    "readme.md": [
-      ".pytest_cache/README.md",
-      "README.md",
-      "ablations/bitlinear_off/README.md",
-      "ablations/dense_only/README.md",
-      "ablations/no_liquid/README.md",
-      "ablations/no_moe/README.md",
-      "assets/sources/README.md",
-      "datasets/README.md",
-      "logs/README.md",
-      "postmortems/README.md",
-      "reports/benchmarks/README.md",
-      "reports/pilots/README.md",
-      "scripts/README.md",
-      "tokenizer/tr/README.md",
-      "tools/contracts/README.md",
-      "tools/sandbox/README.md"
     ],
     "changelog.md": [
       "CHANGELOG.md",
@@ -92,6 +74,23 @@
     "technical_report_tr.md": [
       "MertFormer_Titan_Dealroom_2026-02-23/09_APPENDIX/technical_report_TR.md",
       "TECHNICAL_REPORT_TR.md"
+    ],
+    "readme.md": [
+      "README.md",
+      "ablations/bitlinear_off/README.md",
+      "ablations/dense_only/README.md",
+      "ablations/no_liquid/README.md",
+      "ablations/no_moe/README.md",
+      "assets/sources/README.md",
+      "datasets/README.md",
+      "logs/README.md",
+      "postmortems/README.md",
+      "reports/benchmarks/README.md",
+      "reports/pilots/README.md",
+      "scripts/README.md",
+      "tokenizer/tr/README.md",
+      "tools/contracts/README.md",
+      "tools/sandbox/README.md"
     ],
     "readme_tr.md": [
       "README_TR.md",

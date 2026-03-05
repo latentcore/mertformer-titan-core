@@ -30,7 +30,7 @@ Boring stability and learning speed. Success is operational discipline measured 
 ## Run Order (Operator Mode)
 1. `scripts/operator_mode_gate.py` in safe mode on local machine.
 2. `scripts/operator_mode_gate.py --full` on training hardware.
-3. Master run (2.6B) with telemetry and failure budget active.
+3. Master run (2.64B design target) with telemetry and failure budget active.
 4. Internal benchmarks and asset updates after major checkpoints.
 
 ## Acceptance Criteria

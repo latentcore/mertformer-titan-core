@@ -4,7 +4,6 @@ Generated automatically.
 
 - `.lint-venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md`
 - `.lint-venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md`
-- `.pytest_cache/README.md`
 - `CHANGELOG.md`
 - `CHANGELOG_TR.md`
 - `CONTRIBUTING.md`
@@ -133,8 +132,6 @@ Generated automatically.
 - `limits/scaling_breakpoints_TR.md`
 - `logs/README.md`
 - `logs/README_TR.md`
-- `logs/verify/closure_57_matrix.verify.md`
-- `logs/verify/closure_57_matrix.verify_TR.md`
 - `postmortems/README.md`
 - `postmortems/README_TR.md`
 - `postmortems/_template.md`
@@ -208,6 +205,7 @@ Generated automatically.
 - `reports/pitch_kit/04_KAYNAK_README_TR.md`
 - `reports/poc_protocol.md`
 - `reports/poc_protocol_TR.md`
+- `reports/proje_zip_rebuild_manifest_v2.md`
 - `reports/release_closure_note.md`
 - `reports/release_snapshot.md`
 - `reports/release_snapshot_TR.md`
@@ -295,7 +293,6 @@ Generated automatically.
   - `MertFormer_Titan_Dealroom_2026-02-23/05_COMMERCIAL_PILOT/poc_protocol_TR.md`
   - `reports/poc_protocol_TR.md`
 - `readme.md`
-  - `.pytest_cache/README.md`
   - `README.md`
   - `ablations/bitlinear_off/README.md`
   - `ablations/dense_only/README.md`

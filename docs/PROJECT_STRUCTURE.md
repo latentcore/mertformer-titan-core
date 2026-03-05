@@ -288,6 +288,8 @@ Generated automatically.
 - `reports/pilots/README_TR.md`
 - `reports/poc_protocol.md`
 - `reports/poc_protocol_TR.md`
+- `reports/proje_zip_rebuild_manifest_v2.json`
+- `reports/proje_zip_rebuild_manifest_v2.md`
 - `reports/ram_guard_report.json`
 - `reports/release_closure_lock_report.json`
 - `reports/release_closure_note.md`

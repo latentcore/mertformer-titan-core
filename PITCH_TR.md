@@ -4,7 +4,7 @@
 Kurumsal yapay zeka şu an bulut bağımlı bir maliyet (Opex) yüküdür. **MertFormer Titan**, bulut masraflarını ve veri sızıntısını sıfırlamak üzere tasarlanmış, 1.58-bit "Edge-Native" (Cihaz Özgü) bir mimaridir ve son kullanıcı cihazlarında **GPT-3.5 klasmanında verimlilik hedefi** sunar.
 
 ### ⚡ Ürün
-Otonom yazılım geliştirme süreçleri için optimize edilmiş 2.6B parametreli kodlama motoru.
+Otonom yazılım geliştirme süreçleri için optimize edilmiş 2.64B tasarım hedefli kodlama motoru (mevcut build runtime toplamı: ~3.70B).
 - **Hız**: Mobil NPU üzerinde <50ms/token hedefi (**Mimari simülasyon bazlı**).
 - **Verimlilik**: Üçlü (Ternary) BitLinear ağırlıkları ile %93 bellek tasarrufu.
 
