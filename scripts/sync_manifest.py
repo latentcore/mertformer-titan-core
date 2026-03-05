@@ -7,6 +7,7 @@ import json
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 EXCLUDE_PARTS = {
     ".git",
@@ -89,10 +90,99 @@ def collect_entries(root: Path, excluded_relpaths: set[str]) -> list[dict[str, o
     return entries
 
 
+def structure_comment(rel: str, is_dir: bool) -> str:
+    p = Path(rel)
+    name = p.name
+    lower = name.lower()
+    suffix = p.suffix.lower()
+
+    if is_dir:
+        return "directory"
+    if name == ".gitignore":
+        return "git ignore policy"
+    if name == "Dockerfile":
+        return "container build baseline"
+    if name == "CITATION.cff":
+        return "citation metadata"
+    if name == "pyproject.toml":
+        return "project metadata"
+    if name == "LICENSE":
+        return "license terms (EN)"
+    if name == "LICENSE_TR":
+        return "license terms (TR)"
+    if name == "README.md":
+        return "primary documentation (EN)"
+    if name == "README_TR.md" or lower.endswith("_tr.md"):
+        return "Turkish document counterpart"
+    if suffix == ".md":
+        return "documentation/report file"
+    if suffix == ".py":
+        return "Python module/script"
+    if suffix == ".sh":
+        return "shell automation script"
+    if suffix in {".yaml", ".yml"}:
+        return "YAML configuration file"
+    if suffix == ".jsonl":
+        return "JSONL data/log artifact"
+    if suffix == ".json":
+        return "JSON schema artifact" if "schema" in lower else "JSON data artifact"
+    if suffix == ".csv":
+        return "CSV data artifact"
+    if suffix == ".txt":
+        return "text artifact"
+    if suffix == ".cpp":
+        return "C++ source file"
+    if suffix in {".png", ".gif", ".mp4", ".svg"}:
+        return "media asset"
+    if suffix == ".sha256":
+        return "artifact checksum"
+    if suffix in {".pdf", ".pptx", ".age"}:
+        return "artifact"
+    if suffix == ".toml":
+        return "TOML configuration file"
+    return "artifact"
+
+
+def build_tree(paths: list[str]) -> dict[str, Any]:
+    root: dict[str, Any] = {"dirs": {}, "files": []}
+    for rel in sorted(paths):
+        parts = Path(rel).parts
+        node = root
+        for part in parts[:-1]:
+            node = node["dirs"].setdefault(part, {"dirs": {}, "files": []})
+        node["files"].append(parts[-1])
+    return root
+
+
+def emit_tree(node: dict[str, Any], prefix: str = "", parent_parts: tuple[str, ...] = ()) -> list[str]:
+    lines: list[str] = []
+    dir_names = sorted(node["dirs"])
+    file_names = sorted(node["files"])
+    entries = [(name, True) for name in dir_names] + [(name, False) for name in file_names]
+
+    for idx, (name, is_dir) in enumerate(entries):
+        last = idx == len(entries) - 1
+        branch = "└── " if last else "├── "
+        rel = "/".join(parent_parts + (name,))
+        display = f"{name}/" if is_dir else name
+        lines.append(f"{prefix}{branch}{display}  # {structure_comment(rel, is_dir)}")
+        if is_dir:
+            child_prefix = prefix + ("    " if last else "│   ")
+            lines.extend(emit_tree(node["dirs"][name], child_prefix, parent_parts + (name,)))
+    return lines
+
+
 def build_structure_md(paths: list[str], out_path: Path) -> None:
-    lines = ["# PROJECT_STRUCTURE", "", "Generated automatically.", ""]
-    for rel in paths:
-        lines.append(f"- `{rel}`")
+    lines = [
+        "# PROJECT_STRUCTURE",
+        "",
+        "Generated automatically from tracked files with inline role comments.",
+        "",
+        "```text",
+        "mertformer-titan-core/  # project root (git ls-files inventory)",
+    ]
+    lines.extend(emit_tree(build_tree(paths)))
+    lines.append("```")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
