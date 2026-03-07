@@ -1,13 +1,18 @@
 {
-  "generated_utc": "2026-03-07T01:34:35.533050+00:00",
+  "generated_utc": "2026-03-07T01:39:21.207616+00:00",
   "root": ".",
   "scope": "all",
-  "file_count": 245,
+  "file_count": 248,
   "total_issues": 0,
   "error_count": 0,
   "warning_count": 0,
   "issue_type_counts": {},
   "files": [
+    {
+      "path": ".pytest_cache/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
     {
       "path": "CHANGELOG.md",
       "issue_count": 0,
@@ -365,6 +370,16 @@
     },
     {
       "path": "logs/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "logs/verify/closure_57_matrix.verify.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "logs/verify/closure_57_matrix.verify_TR.md",
       "issue_count": 0,
       "issues": []
     },
