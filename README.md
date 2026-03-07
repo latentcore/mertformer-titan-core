@@ -125,10 +125,10 @@ TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash run.sh
 ### Portable Train-Ready Checklist (Zip/Transfer Workflow)
 1. Select profile contract:
 ```bash
-# Stable baseline (default)
+#- Stable baseline (default)
 bash run.sh --train-ready
 
-# Max architecture overlay (all advanced flags in one switch)
+#- Max architecture overlay (all advanced flags in one switch)
 TITAN_PROFILE=max_arch bash run.sh --train-ready
 ```
 2. Validate strict readiness without starting training:
@@ -599,13 +599,13 @@ Runtime note:
 
 Profile examples:
 ```bash
-# Stable baseline (default)
+#- Stable baseline (default)
 bash run.sh
 
-# Max architecture profile
+#- Max architecture profile
 TITAN_PROFILE=max_arch bash run.sh
 
-# Readiness-only gate
+#- Readiness-only gate
 bash run.sh --train-ready
 ```
 
@@ -867,7 +867,7 @@ mertformer pilot-report --out reports/pilot_report.json
 ```python
 from mertformer_sdk.api import load_model, generate, benchmark
 
-# Use a trained checkpoint in production/pilot flows.
+#- Use a trained checkpoint in production/pilot flows.
 model, tokenizer, device = load_model(
     ckpt="checkpoints/my_trained.pt",
     strict_checkpoint=True,
@@ -978,7 +978,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 ### Training (Online / Training Hardware)
 
 ```bash
-# Explicitly enable online mode + (optional) WandB + installs
+#- Explicitly enable online mode + (optional) WandB + installs
 TITAN_OFFLINE=0 TITAN_WANDB=1 TITAN_INSTALL=1 bash run.sh
 ```
 
@@ -991,7 +991,7 @@ Run the single-entry safety and readiness suite (safe mode by default):
 
 ```bash
 TITAN_OFFLINE=1 .titan-venv/bin/python scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl
-# Use --full on training hardware
+#- Use --full on training hardware
 ```
 
 ### Operator Mode Checklist (Evidence-Backed)
@@ -1028,7 +1028,7 @@ Run preflight (offline-first):
 
 ```bash
 TITAN_OFFLINE=1 .titan-venv/bin/python scripts/titan_preflight.py
-# or:
+#- or:
 TITAN_OFFLINE=1 bash run.sh --test
 ```
 
@@ -1093,30 +1093,30 @@ The following block demonstrates how a MertFormer Agent analyzes and resolves a 
 
 Key hyperparameters:
 ```python
-# Model Architecture
+#- Model Architecture
 hidden_size = 2048
 num_layers = 18
 num_heads = 16
 intermediate_size = 5632
 
-# Training
+#- Training
 learning_rate = 1.5e-3
 max_steps = 45000
 warmup_steps = 3000
 batch_size = 128  # Global (auto-configured per GPU)
 grad_clip = 2.0
 
-# Distillation
+#- Distillation
 teacher_model = "meta-llama/Llama-3.3-70B-Instruct"
 distill_alpha = 0.8  # Dynamic (0.8 → 0.15)
 teacher_temp = 1.0
 
-# Optimizations
+#- Optimizations
 use_torch_compile = False
 torch_compile_mode = "max-autotune"
 use_gradient_checkpointing = True
 
-# Safety
+#- Safety
 early_stop_patience = 5
 liquid_warmup_steps = 10000
 liquid_spike_threshold = 5.0

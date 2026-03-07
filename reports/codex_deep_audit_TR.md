@@ -1,6 +1,6 @@
 # Codex Derin Denetim — MertFormer Titan (v1.0 Build 30)
-**Repo:** `.`  
-**Denetim Tarihi (yerel):** 2026-02-06  
+**Repo:** `.`
+**Denetim Tarihi (yerel):** 2026-02-06
 **Denetim Tipi:** Kod + Dokümantasyon + Çalıştirmali Doğrulama (offline-first)
 
 ## Kısa Özet (6-10 satır)
@@ -9,7 +9,7 @@ Bu repo; “mobile-first / NPU hedefli” bir LLM mimarisi için BitLinear (dü�
 ---
 
 ## 1) Bağlam ve Kapsam
-Amaç: Projeyi tarafsız, kanıta dayalı ve üçüncü kişilerin de doğrulayabileceği şekilde değerlendirmek (mimari, kod kalitesi, pipeline, doğrulama); pazarlama iddialarını “doğru kabul etmeden” ayrıştırmak.  
+Amaç: Projeyi tarafsız, kanıta dayalı ve üçüncü kişilerin de doğrulayabileceği şekilde değerlendirmek (mimari, kod kalitesi, pipeline, doğrulama); pazarlama iddialarını “doğru kabul etmeden” ayrıştırmak.
 Kapsam dışı: Tam eğitim koşmak (günler/haftalar) veya gerçek cihaz/benchmark validasyonu (reprodusibl checkpoint + ölçüm yok).
 
 **Etiketleme Kuralları (Şeffaflık):**
@@ -58,7 +58,7 @@ Yorum (Assumption):
 ### 3.1 Modül Haritası (Verified (Code))
 - **Konfig:** `config/config.py` (global `cfg`, overlay’ler, validasyon)
 - **Model:** `model/transformers.py` (embedding, blocks, KV-cache, generate)
-- **Katmanlar:** `layers/`  
+- **Katmanlar:** `layers/`
   - `bitlinear.py`: aktivasyon quant + ternary weight quant (STE) + opsiyonel Triton kernel
   - `mla.py`: attention + RoPE + KV-cache + GQA repeat logic
   - `moe.py`: MoE dispatch + LiquidRouter (stateful) + aux loss + collapse handling
@@ -92,7 +92,7 @@ Yüksek seviye akış:
 7. Normal mod: eğitim pipeline’i **TITAN_OFFLINE=1** iken default olarak kapalı (safety gate)
 
 ### 4.2 Ops Notu: Venv Relocation (Verified (Code)+Assumption)
-Repo’daki `/.titan-venv` taşınmış/relocated görünüyor olabilir (bazı venv CLI’lari shebang problemi yaşayabilir).  
+Repo’daki `/.titan-venv` taşınmış/relocated görünüyor olabilir (bazı venv CLI’lari shebang problemi yaşayabilir).
 `python -m pip` / `python -m wandb` ile `run.sh` daha sağlam; ama `.titan-venv/bin/*` altındaki direkt CLI çalıştirmalari yine de bozulabilir (Assumption; kurulum yoluna bağlı).
 
 ---
@@ -128,44 +128,44 @@ Repo’daki `/.titan-venv` taşınmış/relocated görünüyor olabilir (bazı v
 
 ## 7) Bulgular (Tarafsız, Öncelikli)
 ### P0 — Eğitim sonrası kanıtlar eksik (Checkpoint/Benchmark/Cihaz ölçümleri)
-**Gözlem (Verified (Code)):** Repo bilerek “Pre-Training”; reprodusibl training checkpoint’i ve benchmark output’u yok.  
-**Risk:** performans/NPU/enerji rakamları hedef olarak kalır; teknik değerlendirme pipeline-merkezli olur.  
+**Gözlem (Verified (Code)):** Repo bilerek “Pre-Training”; reprodusibl training checkpoint’i ve benchmark output’u yok.
+**Risk:** performans/NPU/enerji rakamları hedef olarak kalır; teknik değerlendirme pipeline-merkezli olur.
 **Öneri:** hedef donanımda ilk eğitimi koş + `scripts/benchmarks_internal.py` çıktılarını `reports/benchmarks/` altına ekle; README’deki hedefleri “Verified”e çevir.
 
 ### P0 — Uyum süreci (gated / karma lisanslı kaynaklar)
-**Gözlem (Verified (Code)):** `datasets/LICENSES*.md` ve `datasets/hashes.json` mevcut; ancak `bigcode/the-stack-v2` gated ve karma upstream lisanslı.  
-**Risk:** kurumsal/denetimli eğitim için hukuki/uyum onayı gerekir.  
+**Gözlem (Verified (Code)):** `datasets/LICENSES*.md` ve `datasets/hashes.json` mevcut; ancak `bigcode/the-stack-v2` gated ve karma upstream lisanslı.
+**Risk:** kurumsal/denetimli eğitim için hukuki/uyum onayı gerekir.
 **Öneri:** ic policy + sign-off ile belgelemek veya daha kolay lisanslı veri kaynaklariyla devam etmek.
 
 ### P1 — Platform: `torch.jit.script` Deprecation (Torch)
-**Gözlem (Verified (Run)):** test koşularında uyarılar var; JIT uzun vadede “legacy”.  
-**Etkisi:** orta vadede migrasyon ihtiyacı (örneğin `torch.compile` / `torch.export`).  
+**Gözlem (Verified (Run)):** test koşularında uyarılar var; JIT uzun vadede “legacy”.
+**Etkisi:** orta vadede migrasyon ihtiyacı (örneğin `torch.compile` / `torch.export`).
 **Öneri:** JIT yolunu opsiyonel tut; yerine geçiş için roadmap yaz.
 
 ### P1 — Konfig/Dayanıklılık: GQA/KV-head hatalı ayarlara karşı “hard fail” (şu an korumalı)
-**Gözlem (Verified (Code)+Verified (Run)):** Guard olmadan `num_kv_heads > num_heads` invalid shape üretebilir.  
-**Durum:** **Denetimde düzeltildi**: `layers/mla.py` guard + test fixture `cfg.num_kv_heads` patchli -> pytest yeşil.  
+**Gözlem (Verified (Code)+Verified (Run)):** Guard olmadan `num_kv_heads > num_heads` invalid shape üretebilir.
+**Durum:** **Denetimde düzeltildi**: `layers/mla.py` guard + test fixture `cfg.num_kv_heads` patchli -> pytest yeşil.
 **Öneri:** bu validasyonu ek olarak `config/config.py` tarafında da merkezi hale getir (SSOT).
 
 ### P1 — Secret hijyeni: “loglarda token yok” bir süreç kapısı (kısmen çözüldü)
-**Gözlem (Verified (Code)):** preflight artık token fragmanı loglamiyor (redacted).  
-**Durum:** **Denetimde düzeltildi** (kod + eski log/doc snippet’leri redacted).  
+**Gözlem (Verified (Code)):** preflight artık token fragmanı loglamiyor (redacted).
+**Durum:** **Denetimde düzeltildi** (kod + eski log/doc snippet’leri redacted).
 **Öneri:** CI/Operator gate’te secret scanner: `logs/` + `README*` + `reports/`.
 
 ### P2 — Preflight: network check “uzun süreli transfer” baslatmamali
-**Gözlem (Verified (Run)):** Streaming-sample download (HF backend’e göre) arkaplanda transfer tetikleyip process’in “ALL GREEN”ten sonra bile bitmemesine yol açabilir.  
-**Durum:** **Denetimde düzeltildi**: default check metadata bazlı; streaming-sample opt-in (`TITAN_PREFLIGHT_STREAM_SAMPLE=1`).  
+**Gözlem (Verified (Run)):** Streaming-sample download (HF backend’e göre) arkaplanda transfer tetikleyip process’in “ALL GREEN”ten sonra bile bitmemesine yol açabilir.
+**Durum:** **Denetimde düzeltildi**: default check metadata bazlı; streaming-sample opt-in (`TITAN_PREFLIGHT_STREAM_SAMPLE=1`).
 **Öneri:** preflight’i bilerek hafif tut; network check’ler için timeout uygula.
 
 ### P2 — Import side-effect / Global state
-**Gözlem (Verified (Code)):** global `cfg` ve bazı import side-effect’ler (auto-tuning/print).  
-**Etkisi:** SDK/test/orchestrator entegrasyonunda sürpriz davranışlar.  
+**Gözlem (Verified (Code)):** global `cfg` ve bazı import side-effect’ler (auto-tuning/print).
+**Etkisi:** SDK/test/orchestrator entegrasyonunda sürpriz davranışlar.
 **Öneri:** side-effect’leri `main()`/açık init fonksiyonları arkasına taşı; config’i her run için immutable snapshot yap.
 
 ---
 
 ## 8) Olgunluk (Kategori)
-**Siniflama:** **Engineering PoC / Ar-Ge (Pre-Training), review-ready**  
+**Siniflama:** **Engineering PoC / Ar-Ge (Pre-Training), review-ready**
 Gerekçe (Verified (Code)+Verified (Run)):
 - **Artışı:** mimari bloklar + training skeleton + operator gate + SDK var; offline-first doğrulama pipeline’i yeşil.
 - **Eksisi:** reprodusibl training checkpoint/benchmark raporu yok; hedef rakamlar eğitim/benchmark olmadan hedef olarak kalır.
@@ -175,9 +175,9 @@ Gerekçe (Verified (Code)+Verified (Run)):
 ---
 
 ## 9) Ekip Tahmini (Kaç kişi?)
-**Kanıt (Verified (Run)):** Git geçmişi **1 author** gösteriyor (103 commit).  
-**En olası:** **1 kişi** ana geliştirici.  
-**Alternatif (Assumption):** 1 ana geliştirici + ara ara reviewer/tool (Git’te gorunmeyebilir).  
+**Kanıt (Verified (Run)):** Git geçmişi **1 author** gösteriyor (103 commit).
+**En olası:** **1 kişi** ana geliştirici.
+**Alternatif (Assumption):** 1 ana geliştirici + ara ara reviewer/tool (Git’te gorunmeyebilir).
 **Güvenli cümle:** “En az 1, çok büyük olasılıkla 1”.
 
 ---
@@ -203,5 +203,5 @@ Gerekçe (Verified (Code)+Verified (Run)):
 - SDK CLI: `mertformer_sdk/cli.py` (entry: `mertformer`)
 
 ## Ek B — Lokal artefakt notu
-Bazı büyük dosyalar (`*.zip`, `tokenizer/tr/*`) `.gitignore` ile ignore ediliyor.  
+Bazı büyük dosyalar (`*.zip`, `tokenizer/tr/*`) `.gitignore` ile ignore ediliyor.
 Test/Export sırasında büyük artefaktlar oluşabilir (örneğin `*.onnx.data`).

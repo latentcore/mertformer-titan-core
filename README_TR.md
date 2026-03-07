@@ -125,10 +125,10 @@ TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash run.sh
 ### Taşınabilir Eğitim Hazırlık Checklist'i (Zip/Taşı/Çalıştır)
 1. Profil sözleşmesini seç:
 ```bash
-# Stabil baseline (varsayılan)
+#- Stabil baseline (varsayılan)
 bash run.sh --train-ready
 
-# Max mimari overlay (ileri bayraklar tek anahtar)
+#- Max mimari overlay (ileri bayraklar tek anahtar)
 TITAN_PROFILE=max_arch bash run.sh --train-ready
 ```
 2. Eğitimi başlatmadan strict readiness doğrulaması:
@@ -597,13 +597,13 @@ Bu modüller kodda uygulanmıştır ve eğitim/çıkarım öncesi config ile aç
 
 Profil örnekleri:
 ```bash
-# Stabil baseline (varsayılan)
+#- Stabil baseline (varsayılan)
 bash run.sh
 
-# Max mimari profil
+#- Max mimari profil
 TITAN_PROFILE=max_arch bash run.sh
 
-# Sadece readiness kapısı
+#- Sadece readiness kapısı
 bash run.sh --train-ready
 ```
 
@@ -865,7 +865,7 @@ mertformer pilot-report --out reports/pilot_report.json
 ```python
 from mertformer_sdk.api import load_model, generate, benchmark
 
-# Üretim/pilot akışında eğitimli checkpoint kullanın.
+#- Üretim/pilot akışında eğitimli checkpoint kullanın.
 model, tokenizer, device = load_model(
     ckpt="checkpoints/my_trained.pt",
     strict_checkpoint=True,
@@ -976,7 +976,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 ### Eğitim (Online / Eğitim Donanımı)
 
 ```bash
-# Online modu açıkça etkinleştir + (opsiyonel) WandB + kurulum
+#- Online modu açıkça etkinleştir + (opsiyonel) WandB + kurulum
 TITAN_OFFLINE=0 TITAN_WANDB=1 TITAN_INSTALL=1 bash run.sh
 ```
 
@@ -989,7 +989,7 @@ Tek girişli güvenlik ve hazır olma süiti (varsayılan güvenli mod):
 
 ```bash
 TITAN_OFFLINE=1 .titan-venv/bin/python scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl
-# Eğitim donanımında tam mod için --full kullanın
+#- Eğitim donanımında tam mod için --full kullanın
 ```
 
 ### Operator Modu Kontrol Listesi (Kanıt Dosyaları)
@@ -1026,7 +1026,7 @@ Preflight (offline-first):
 
 ```bash
 TITAN_OFFLINE=1 .titan-venv/bin/python scripts/titan_preflight.py
-# veya:
+#- veya:
 TITAN_OFFLINE=1 bash run.sh --test
 ```
 
@@ -1091,31 +1091,31 @@ Aşağıdaki blok, bir MertFormer Ajanının karmaşık bir hatayı nasıl anali
 
 Temel hiperparametreler:
 ```python
-# Model Mimarisi
+#- Model Mimarisi
 hidden_size = 2048
 num_layers = 18
 num_heads = 16
 intermediate_size = 5632
 
-# Eğitim
+#- Eğitim
 learning_rate = 1.5e-3
 max_steps = 45000
 warmup_steps = 3000
 batch_size = 128  # Global (GPU başına otomatik yapılandırılır)
 grad_clip = 2.0
 
-# Damıtma (Distillation)
+#- Damıtma (Distillation)
 teacher_model = "meta-llama/Llama-3.3-70B-Instruct"
 distill_alpha = 0.8  # Dinamik (0.8 → 0.15)
 teacher_temp = 1.0
 
-# Optimizasyonlar
+#- Optimizasyonlar
 use_torch_compile = True
 torch_compile_mode = "max-autotune"
 use_gradient_checkpointing = True
 gradient_checkpoint_policy = "selective"
 
-# Güvenlik
+#- Güvenlik
 early_stop_patience = 5
 liquid_warmup_steps = 10000
 liquid_spike_threshold = 5.0

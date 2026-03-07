@@ -1,6 +1,6 @@
 # Codex Deep Audit — MertFormer Titan (v1.0 Build 30)
-**Repo:** `.`  
-**Audit date (local):** 2026-02-06  
+**Repo:** `.`
+**Audit date (local):** 2026-02-06
 **Audit type:** Code + Docs + Run Verification (offline-first)
 
 ## Executive Summary (6-10 lines)
@@ -9,7 +9,7 @@ This repository is an R&D + engineering PoC for a “mobile-first / NPU-targeted
 ---
 
 ## 1) Context & Scope
-Goal: provide a neutral, evidence-based, third-party-readable evaluation (architecture, code quality, pipelines, verification), without assuming marketing claims are true.  
+Goal: provide a neutral, evidence-based, third-party-readable evaluation (architecture, code quality, pipelines, verification), without assuming marketing claims are true.
 Out of scope: full pre-training (days/weeks) and real device benchmarking (requires trained checkpoints + measurement infrastructure).
 
 **Labeling rules (transparency):**
@@ -127,29 +127,29 @@ The repo standardizes around `.titan-venv/bin/python` and uses module invocation
 
 ## 7) Findings (Neutral, prioritized)
 ### P0 — Post-training evidence is missing (checkpoints/benchmarks/device profiling)
-**Observation (Verified (Code)):** repo is intentionally “Pre-Training”; no reproducible training checkpoints or benchmark outputs are included.  
-**Risk:** performance/NPU/energy numbers remain targets; evaluation is pipeline-centric.  
+**Observation (Verified (Code)):** repo is intentionally “Pre-Training”; no reproducible training checkpoints or benchmark outputs are included.
+**Risk:** performance/NPU/energy numbers remain targets; evaluation is pipeline-centric.
 **Recommendation:** run a first training session on target hardware and commit sanitized benchmark outputs under `reports/benchmarks/`; then convert README targets to verified metrics.
 
 ### P0 — Compliance process still required for gated/mixed-license sources
-**Observation (Verified (Code)):** dataset docs + snapshot/hash registry exist, but `bigcode/the-stack-v2` is gated and has mixed upstream licenses.  
-**Risk:** corporate/regulatory training runs require explicit legal/compliance sign-off.  
+**Observation (Verified (Code)):** dataset docs + snapshot/hash registry exist, but `bigcode/the-stack-v2` is gated and has mixed upstream licenses.
+**Risk:** corporate/regulatory training runs require explicit legal/compliance sign-off.
 **Recommendation:** document internal sign-off (policy + approval) or pin alternative datasets with simpler terms.
 
 ### P1 — Platform: `torch.jit.script` deprecation (Torch)
-**Observation (Verified (Run)):** warnings exist; JIT is long-term “legacy”.  
-**Impact:** medium-term migration cost (e.g., `torch.compile` / `torch.export`).  
+**Observation (Verified (Run)):** warnings exist; JIT is long-term “legacy”.
+**Impact:** medium-term migration cost (e.g., `torch.compile` / `torch.export`).
 **Recommendation:** keep JIT path optional and define a migration roadmap.
 
 ### P2 — Import side-effects / global state (`cfg`)
-**Observation (Verified (Code)):** `config/config.py` creates global `cfg` and prints at import time.  
-**Impact:** SDK/tests/orchestrator integrations can see surprising side-effects.  
+**Observation (Verified (Code)):** `config/config.py` creates global `cfg` and prints at import time.
+**Impact:** SDK/tests/orchestrator integrations can see surprising side-effects.
 **Recommendation:** move side-effects behind explicit init functions; treat config as an immutable snapshot per run.
 
 ---
 
 ## 8) Maturity / Category
-**Category:** **Engineering PoC / R&D (Pre-Training), review-ready**  
+**Category:** **Engineering PoC / R&D (Pre-Training), review-ready**
 Rationale (Verified (Code)+Verified (Run)):
 - **Pros:** core architecture blocks + training skeleton + operator gates + SDK exist; offline-first verification pipeline is green.
 - **Cons:** no trained checkpoints/benchmark reports; targets remain targets until training/benchmarks exist.
@@ -157,9 +157,9 @@ Rationale (Verified (Code)+Verified (Run)):
 ---
 
 ## 9) Team Estimate (How many people built this?)
-**Evidence (Verified (Run)):** Git history shows **1 author** (103 commits).  
-**Most likely:** **1** primary developer.  
-**Alternative (Assumption):** 1 core developer + occasional reviewers/tools (not visible in Git).  
+**Evidence (Verified (Run)):** Git history shows **1 author** (103 commits).
+**Most likely:** **1** primary developer.
+**Alternative (Assumption):** 1 core developer + occasional reviewers/tools (not visible in Git).
 **Safe statement:** “At least 1, very likely 1.”
 
 ---

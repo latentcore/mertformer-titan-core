@@ -1,6 +1,6 @@
 # Codex Deep Audit — MertFormer Titan (v1.0 Build 30)
-**Repo:** `.`  
-**Audit-Datum (lokal):** 2026-02-06  
+**Repo:** `.`
+**Audit-Datum (lokal):** 2026-02-06
 **Audit-Typ:** Code + Dokumentation + Run-Verifikation (offline-first)
 
 ## Kisa TR Ozet (6-10 satir)
@@ -9,7 +9,7 @@ Bu repo; “mobile-first / NPU hedefli” bir LLM mimarisi icin BitLinear (dusuk
 ---
 
 ## 1) Kontext & Umfang
-Ziel: Das Projekt neutral, belegbar und fuer Dritte nachvollziehbar bewerten (Architektur, Code-Qualitaet, Pipeline, Verifikation), ohne Marketingannahmen zu uebernehmen.  
+Ziel: Das Projekt neutral, belegbar und fuer Dritte nachvollziehbar bewerten (Architektur, Code-Qualitaet, Pipeline, Verifikation), ohne Marketingannahmen zu uebernehmen.
 Nicht-Ziel: Volltraining (Tage/Wochen) oder echte Device-/Benchmark-Validierung (dafuer fehlen reproduzierbare Checkpoints + Messungen).
 
 **Labeling-Regeln (Transparenz):**
@@ -58,7 +58,7 @@ Interpretation (Assumption):
 ### 3.1 Modulkarte (Verified (Code))
 - **Konfiguration:** `config/config.py` (Global `cfg`, Overlays, Validierung)
 - **Modell:** `model/transformers.py` (Embedding, Blocks, KV-Cache, Generate)
-- **Layer:** `layers/`  
+- **Layer:** `layers/`
   - `bitlinear.py`: Aktivations-Quant + ternary Weight-Quant (STE) + optional Triton-Kernel
   - `mla.py`: Attention + RoPE + KV-Cache + GQA Repeat-Logic
   - `moe.py`: MoE Dispatch + LiquidRouter (stateful) + Aux Loss + Collapse Handling
@@ -92,7 +92,7 @@ High-Level Ablauf:
 7. Normalmodus: Training-Pipeline ist **deaktiviert** solange `TITAN_OFFLINE=1` (Safety Gate)
 
 ### 4.2 Ops-Hinweis: Venv-Relocation (Verified (Code)+Assumption)
-Die Repo-`/.titan-venv` wirkt verschoben/relocated (einige venv-CLIs koennen Shebang-Probleme haben).  
+Die Repo-`/.titan-venv` wirkt verschoben/relocated (einige venv-CLIs koennen Shebang-Probleme haben).
 Mit `python -m pip` / `python -m wandb` ist `run.sh` robuster, aber direkte CLI-Aufrufe aus `.titan-venv/bin/*` koennen trotzdem brechen (Assumption; je nach Installationspfad).
 
 ---
@@ -128,44 +128,44 @@ Mit `python -m pip` / `python -m wandb` ist `run.sh` robuster, aber direkte CLI-
 
 ## 7) Findings (Neutral, priorisiert)
 ### P0 — Post-Training Evidenz fehlt (Checkpoints/Benchmarks/Device-Profiling)
-**Beobachtung (Verified (Code)):** Repo ist bewusst “Pre-Training”; es gibt keine reproduzierbaren Trainings-Checkpoints oder Benchmark-Outputs.  
-**Risiko:** Performance-/NPU-/Energy-Zahlen bleiben Targets; technische Bewertung ist pipeline-zentriert.  
+**Beobachtung (Verified (Code)):** Repo ist bewusst “Pre-Training”; es gibt keine reproduzierbaren Trainings-Checkpoints oder Benchmark-Outputs.
+**Risiko:** Performance-/NPU-/Energy-Zahlen bleiben Targets; technische Bewertung ist pipeline-zentriert.
 **Empfehlung:** Erste Trainings-Session auf Zielhardware + `scripts/benchmarks_internal.py` Outputs unter `reports/benchmarks/` ablegen; danach README Targets → Verified umstellen.
 
 ### P0 — Compliance Prozess (gated / mixed-license Quellen)
-**Beobachtung (Verified (Code)):** `datasets/LICENSES*.md` und `datasets/hashes.json` sind vorhanden; `bigcode/the-stack-v2` ist jedoch gated und hat gemischte Upstream-Lizenzen.  
-**Risiko:** Kuratorische/legale Freigabe ist fuer kuratierte/denetimli Trainingslaeufe erforderlich.  
+**Beobachtung (Verified (Code)):** `datasets/LICENSES*.md` und `datasets/hashes.json` sind vorhanden; `bigcode/the-stack-v2` ist jedoch gated und hat gemischte Upstream-Lizenzen.
+**Risiko:** Kuratorische/legale Freigabe ist fuer kuratierte/denetimli Trainingslaeufe erforderlich.
 **Empfehlung:** Interne Freigabe dokumentieren (Policy + Sign-off) oder alternative, einfacher lizenzierbare Datenquellen pinnen.
 
 ### P1 — Plattform: `torch.jit.script` Deprecation (Torch)
-**Beobachtung (Verified (Run)):** Warnungen im Testlauf; JIT ist langfristig “legacy”.  
-**Impact:** mittelfristig Migrationsaufwand (z.B. `torch.compile` / `torch.export`).  
+**Beobachtung (Verified (Run)):** Warnungen im Testlauf; JIT ist langfristig “legacy”.
+**Impact:** mittelfristig Migrationsaufwand (z.B. `torch.compile` / `torch.export`).
 **Empfehlung:** JIT-Pfad optional halten und Roadmap fuer Ersatz definieren.
 
 ### P1 — Konfig/Robustheit: GQA/KV-Head Validierung muss hart failen (jetzt abgesichert)
-**Beobachtung (Verified (Code)+Verified (Run)):** Ohne Guards kann `num_kv_heads > num_heads` zu invaliden Shapes fuehren.  
-**Status:** **Remediated waehrend Audit**: Guards in `layers/mla.py` + Test-Fixture patcht `cfg.num_kv_heads` → Pytest gruen.  
+**Beobachtung (Verified (Code)+Verified (Run)):** Ohne Guards kann `num_kv_heads > num_heads` zu invaliden Shapes fuehren.
+**Status:** **Remediated waehrend Audit**: Guards in `layers/mla.py` + Test-Fixture patcht `cfg.num_kv_heads` → Pytest gruen.
 **Empfehlung:** Validierung ggf. zusaetzlich zentral in `config/config.py` verankern (Single Source of Truth).
 
 ### P1 — Secret Hygiene: “kein Token in Logs” ist ein Prozess-Gate (teilweise behoben)
-**Beobachtung (Verified (Code)):** Preflight loggt jetzt keine Token-Fragmente mehr (redacted).  
-**Status:** **Remediated waehrend Audit** (Code + alte Log-Snippets/Docs redacted).  
+**Beobachtung (Verified (Code)):** Preflight loggt jetzt keine Token-Fragmente mehr (redacted).
+**Status:** **Remediated waehrend Audit** (Code + alte Log-Snippets/Docs redacted).
 **Empfehlung:** Zusaetzlich CI/Operator-Gate: Secret-Scanner auf `logs/` + `README*` + `reports/`.
 
 ### P2 — Preflight: Netzwerkcheck darf keine “Long-Running Transfers” starten
-**Beobachtung (Verified (Run)):** Ein Streaming-Sample Download kann (je nach HF-Backend) Hintergrundtransfers triggern, wodurch der Preflight-Prozess trotz “ALL GREEN” nicht sauber beendet.  
-**Status:** **Remediated waehrend Audit**: Default-Check ist nun metadata-basiert; Streaming-Sample ist opt-in (`TITAN_PREFLIGHT_STREAM_SAMPLE=1`).  
+**Beobachtung (Verified (Run)):** Ein Streaming-Sample Download kann (je nach HF-Backend) Hintergrundtransfers triggern, wodurch der Preflight-Prozess trotz “ALL GREEN” nicht sauber beendet.
+**Status:** **Remediated waehrend Audit**: Default-Check ist nun metadata-basiert; Streaming-Sample ist opt-in (`TITAN_PREFLIGHT_STREAM_SAMPLE=1`).
 **Empfehlung:** Preflight bewusst “leichtgewichtig” halten; Timeouts fuer Netzwerkchecks setzen.
 
 ### P2 — Import-Side-Effects / Global State
-**Beobachtung (Verified (Code)):** Globales `cfg` und teils Side-Effects beim Import (Auto-Tuning/Prints).  
-**Impact:** SDK/Test/Orchestrator-Integration kann “zufaellig” Verhalten aendern.  
+**Beobachtung (Verified (Code)):** Globales `cfg` und teils Side-Effects beim Import (Auto-Tuning/Prints).
+**Impact:** SDK/Test/Orchestrator-Integration kann “zufaellig” Verhalten aendern.
 **Empfehlung:** Side-Effects hinter `main()`/explizite Init-Funktionen; config als immutable Snapshot pro Run.
 
 ---
 
 ## 8) Reifegrad-Einstufung (Kategorie)
-**Einstufung:** **Engineering PoC / R&D (Pre-Training), review-ready**  
+**Einstufung:** **Engineering PoC / R&D (Pre-Training), review-ready**
 Begruendung (Verified (Code)+Verified (Run)):
 - **Plus:** Architekturbausteine + Trainings-Skeleton + Operator Gates + SDK sind implementiert; offline-first Verify-Pipeline ist gruen.
 - **Minus:** Kein reproduzierbarer Trainings-Checkpoint/Benchmark-Report im Repo; Targets bleiben Targets bis Training/Benchmarks vorliegen.
@@ -175,9 +175,9 @@ Kurz: Stark als technische Machbarkeits- und Pipeline-Demo sowie fuer Engineerin
 ---
 
 ## 9) Team-Estimate (Wie viele Personen?)
-**Evidence (Verified (Run)):** Git-Historie zeigt **1 Autor** (103 Commits).  
-**Wahrscheinlich:** **1 Person** als Hauptentwickler.  
-**Alternative (Assumption):** 1 Kernentwickler + gelegentliche Reviewer/Tools (nicht sichtbar in Git).  
+**Evidence (Verified (Run)):** Git-Historie zeigt **1 Autor** (103 Commits).
+**Wahrscheinlich:** **1 Person** als Hauptentwickler.
+**Alternative (Assumption):** 1 Kernentwickler + gelegentliche Reviewer/Tools (nicht sichtbar in Git).
 **Sichere Aussage:** “Mindestens 1, sehr wahrscheinlich 1”.
 
 ---
@@ -203,5 +203,5 @@ Kurz: Stark als technische Machbarkeits- und Pipeline-Demo sowie fuer Engineerin
 - SDK CLI: `mertformer_sdk/cli.py` (Entry: `mertformer`)
 
 ## Anhang B — Hinweis zu lokalen Artefakten
-Einige grosse Dateien (`*.zip`, `tokenizer/tr/*`) sind per `.gitignore` ignoriert.  
+Einige grosse Dateien (`*.zip`, `tokenizer/tr/*`) sind per `.gitignore` ignoriert.
 Waerend Tests/Exports koennen grosse Artefakte entstehen (z.B. `*.onnx.data`).

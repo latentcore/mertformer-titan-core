@@ -4,7 +4,6 @@ Generated automatically.
 
 - `.lint-venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md`
 - `.lint-venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md`
-- `.pytest_cache/README.md`
 - `CHANGELOG.md`
 - `CHANGELOG_TR.md`
 - `CONTRIBUTING.md`
@@ -292,7 +291,6 @@ Generated automatically.
   - `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/poc_protocol_TR.md`
   - `reports/poc_protocol_TR.md`
 - `readme.md`
-  - `.pytest_cache/README.md`
   - `README.md`
   - `ablations/bitlinear_off/README.md`
   - `ablations/dense_only/README.md`

@@ -7,7 +7,7 @@ Dil: [English](README_SUMMARY.md) | [Türkçe](README_SUMMARY_TR.md)
 # MertFormer Titan - Dış Kullanıcı Özeti (Build 30)
 
 ## Bu Proje Nedir?
-MertFormer Titan, kontrollü, denetlenebilir ve insan onaylı kullanım için tasarlanmış mobil-öncelikli, offline çalışabilen bir yapay zeka mimarisidir.  
+MertFormer Titan, kontrollü, denetlenebilir ve insan onaylı kullanım için tasarlanmış mobil-öncelikli, offline çalışabilen bir yapay zeka mimarisidir.
 BitNet (1.58-bit), Liquid dinamikleri ve MoE yönlendirmesini üretim-öncelikli bir mühendislik yaklaşımıyla birleştirir.
 
 ## Mevcut Durum

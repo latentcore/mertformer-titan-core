@@ -1,7 +1,7 @@
 # MertFormer SDK Kılavuzu (Hızlı)
 
 ## SDK Nedir?
-MertFormer Titan için model yükleme, üretim, dışa aktarma ve benchmark adımlarını sağlayan hafif bir Python paketidir.  
+MertFormer Titan için model yükleme, üretim, dışa aktarma ve benchmark adımlarını sağlayan hafif bir Python paketidir.
 SDK **opt-in** çalışır ve eğitim hattını değiştirmez.
 
 ## Kurulum (repo kökünden)
@@ -25,7 +25,7 @@ text = generate(model, tokenizer, "Merhaba MertFormer!", max_new_tokens=64)
 print(text)
 ```
 
-`load_model(..., strict_checkpoint=True)` varsayılandır. Checkpoint yoksa `FileNotFoundError` verir.  
+`load_model(..., strict_checkpoint=True)` varsayılandır. Checkpoint yoksa `FileNotFoundError` verir.
 Sadece random-weight smoke/demo için `load_model(..., strict_checkpoint=False)` kullanın.
 
 ## CLI Hızlı Başlangıç
@@ -40,7 +40,7 @@ mertformer kpi-report --out reports/kpi_report_v1.json
 mertformer 57-report --out reports/closure_57_matrix.json
 ```
 
-`run` ve `benchmark` komutları varsayılan olarak checkpoint ister.  
+`run` ve `benchmark` komutları varsayılan olarak checkpoint ister.
 Sadece iddia dışı demo için `--allow-random` kullanın.
 
 ## KPI Raporu (Build 30)
@@ -80,13 +80,13 @@ CPU-only ortamlarda low-bit kernel otomatik kapanır ve standart float yol çal�
 - Ağır eğitim kanıtları kapanış raporlarında `Evidence Pending` olarak açıkça işaretlenir.
 
 ## SSS
-**S: QAT nedir?**  
+**S: QAT nedir?**
 C: Quantization-Aware Training. Eğitim sırasında quantization simülasyonu yaparak low-bit inference kalitesini artırır. Genelde stabil bir temel modelden sonra uygulanır.
 
-**S: Türkçe tokenizer var mı?**  
+**S: Türkçe tokenizer var mı?**
 C: Evet, opt-in. Varsayılan olarak kapalıdır.
 - `scripts/download_tr_tokenizer.py` ile indir
 - `config/config.py` içinde `use_tr_tokenizer=true` ayarla
 
-**S: Kernel production-ready mi?**  
+**S: Kernel production-ready mi?**
 C: Doğruluk öncelikli deneysel referans kernel vardır. Performans iddiaları için gerçek profil ölçümü gerekir.

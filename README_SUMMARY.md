@@ -7,7 +7,7 @@ Language: [English](README_SUMMARY.md) | [Turkce](README_SUMMARY_TR.md)
 # MertFormer Titan - External Summary (Build 30)
 
 ## What This Project Is
-MertFormer Titan is a mobile-first, offline-capable AI architecture designed for controlled, auditable, and human-supervised use.  
+MertFormer Titan is a mobile-first, offline-capable AI architecture designed for controlled, auditable, and human-supervised use.
 It combines BitNet (1.58-bit), Liquid dynamics, and MoE routing under a production-first engineering approach.
 
 ## Current Status
