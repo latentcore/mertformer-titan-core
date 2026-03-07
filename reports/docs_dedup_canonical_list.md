@@ -4,6 +4,7 @@ Generated automatically.
 
 - `.lint-venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md`
 - `.lint-venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md`
+- `.pytest_cache/README.md`
 - `CHANGELOG.md`
 - `CHANGELOG_TR.md`
 - `CONTRIBUTING.md`
@@ -201,6 +202,7 @@ Generated automatically.
 - `reports/pitch_kit/04_KAYNAK_README_TR.md`
 - `reports/poc_protocol.md`
 - `reports/poc_protocol_TR.md`
+- `reports/presentation_readiness_final.md`
 - `reports/proje_zip_rebuild_manifest_v2.md`
 - `reports/release_closure_note.md`
 - `reports/release_snapshot.md`
@@ -290,6 +292,7 @@ Generated automatically.
   - `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/poc_protocol_TR.md`
   - `reports/poc_protocol_TR.md`
 - `readme.md`
+  - `.pytest_cache/README.md`
   - `README.md`
   - `ablations/bitlinear_off/README.md`
   - `ablations/dense_only/README.md`

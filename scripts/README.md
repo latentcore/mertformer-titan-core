@@ -31,6 +31,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - `check_translation_pointer_policy.py` — Enforces pointer policy for translated deep-audit counterparts.
 - `check_doc_claim_consistency.py` — Checks claim/evidence consistency in key docs.
 - `clean_runtime_artifacts.sh` — Cleans runtime artifacts (including root `kaggle_onefile_build30_*.jsonl`).
+- `run_and_clean_pycache.py` — Runs any command and then guarantees post-run cache cleanup (`--full-clean` includes `.DS_Store`, `.cache`, `.ipynb_checkpoints`, `.tox`, `.nox`, `.hypothesis`, `.vs`).
 - `zip_denylist_audit.py` — Audits release zip against denylisted paths and secret patterns.
 
 ## Evaluation & Benchmarks

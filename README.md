@@ -1802,6 +1802,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── release_build30.sh  # shell automation script
 │   ├── release_closure_lock.sh  # shell automation script
 │   ├── repro_build_check.py  # Python module/script
+│   ├── run_and_clean_pycache.py  # Python module/script (run command + guaranteed post-run cache sweep)
 │   ├── scaling_audit_math.py  # Python module/script
 │   ├── secret_scan.py  # Python module/script
 │   ├── smart_runner.py  # Python module/script

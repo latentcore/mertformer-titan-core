@@ -67,6 +67,15 @@ Snake canlı demo:
 - Venv path uyuşmazlığı:
   - Komutları modül stili çalıştırın: `.titan-venv/bin/python -m ...`
 
+## 6.5) Otomatik Cache Temizleme Sarmalayıcısı
+
+Komut çalıştırma + koşu sonu garantili cache temizliği için bu sarmalayıcıyı kullanın:
+
+```bash
+python3 scripts/run_and_clean_pycache.py --full-clean --include-tool-caches -- \
+  python3 -m pytest -q
+```
+
 ## 7) Güvenlik Politikası (Zorunlu)
 
 - Secret değerleri asla yazdırmayın/commit etmeyin.

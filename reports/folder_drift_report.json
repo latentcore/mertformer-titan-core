@@ -1,25 +1,14 @@
 {
-  "generated_utc": "2026-03-07T00:46:14.280666+00:00",
-  "md_file_count": 246,
+  "generated_utc": "2026-03-07T01:22:32.768919+00:00",
+  "md_file_count": 248,
   "duplicate_name_group_count": 21,
   "duplicate_name_groups": {
     "license.md": [
       ".lint-venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md",
       ".lint-venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md"
     ],
-    "changelog.md": [
-      "CHANGELOG.md",
-      "prompts/changelog.md"
-    ],
-    "changelog_tr.md": [
-      "CHANGELOG_TR.md",
-      "prompts/changelog_TR.md"
-    ],
-    "model_card_tr.md": [
-      "MODEL_CARD_TR.md",
-      "mertformer-titan-dealroom-private/09_APPENDIX/model_card_TR.md"
-    ],
     "readme.md": [
+      ".pytest_cache/README.md",
       "README.md",
       "ablations/bitlinear_off/README.md",
       "ablations/dense_only/README.md",
@@ -35,6 +24,18 @@
       "tokenizer/tr/README.md",
       "tools/contracts/README.md",
       "tools/sandbox/README.md"
+    ],
+    "changelog.md": [
+      "CHANGELOG.md",
+      "prompts/changelog.md"
+    ],
+    "changelog_tr.md": [
+      "CHANGELOG_TR.md",
+      "prompts/changelog_TR.md"
+    ],
+    "model_card_tr.md": [
+      "MODEL_CARD_TR.md",
+      "mertformer-titan-dealroom-private/09_APPENDIX/model_card_TR.md"
     ],
     "readme_tr.md": [
       "README_TR.md",

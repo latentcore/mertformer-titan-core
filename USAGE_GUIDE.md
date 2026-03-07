@@ -67,6 +67,15 @@ Generate 30s proof video (headless):
 - `venv command path mismatch`:
   - Use module style commands: `.titan-venv/bin/python -m ...`
 
+## 6.5) Auto Cache Sweep Wrapper
+
+Use this wrapper when you want command execution + guaranteed cache cleanup in one call:
+
+```bash
+python3 scripts/run_and_clean_pycache.py --full-clean --include-tool-caches -- \
+  python3 -m pytest -q
+```
+
 ## 7) Security Policy (Must)
 
 - Never print or commit secret values.

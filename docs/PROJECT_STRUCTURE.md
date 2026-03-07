@@ -290,6 +290,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── pilot_readiness_kit_TR.md  # Turkish document counterpart
 │   ├── poc_protocol.md  # documentation/report file
 │   ├── poc_protocol_TR.md  # Turkish document counterpart
+│   ├── presentation_readiness_final.md  # documentation/report file
 │   ├── proje_zip_rebuild_manifest_v2.json  # JSON data artifact
 │   ├── proje_zip_rebuild_manifest_v2.md  # documentation/report file
 │   ├── ram_guard_report.json  # JSON data artifact
@@ -299,6 +300,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── release_snapshot_TR.md  # Turkish document counterpart
 │   ├── report_accuracy_audit.md  # documentation/report file
 │   ├── report_accuracy_audit_TR.md  # Turkish document counterpart
+│   ├── report_truth_matrix.md  # documentation/report file
 │   ├── repro_build_report.json  # JSON data artifact
 │   ├── review_checklist.md  # documentation/report file
 │   ├── review_checklist_TR.md  # Turkish document counterpart
@@ -325,7 +327,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── thermal_baseline.json  # JSON data artifact
 │   ├── unicode_path_guard_report.json  # JSON data artifact
 │   ├── verified_matrix.md  # documentation/report file
-│   └── verified_matrix_TR.md  # Turkish document counterpart
+│   ├── verified_matrix_TR.md  # Turkish document counterpart
+│   ├── zip_audit_artifacts.json  # JSON data artifact
+│   └── zip_audit_packages.json  # JSON data artifact
 ├── repro/  # directory
 │   ├── accelerate_default.yaml  # YAML configuration file
 │   ├── cuda.lock  # artifact

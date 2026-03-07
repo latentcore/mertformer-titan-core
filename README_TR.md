@@ -1800,6 +1800,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── release_build30.sh  # shell otomasyon scripti
 │   ├── release_closure_lock.sh  # shell otomasyon scripti
 │   ├── repro_build_check.py  # Python modülü/scripti
+│   ├── run_and_clean_pycache.py  # Python modülü/scripti (komut çalıştır + koşu sonrası cache temizliği)
 │   ├── scaling_audit_math.py  # Python modülü/scripti
 │   ├── secret_scan.py  # Python modülü/scripti
 │   ├── smart_runner.py  # Python modülü/scripti
