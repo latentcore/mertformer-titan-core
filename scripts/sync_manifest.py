@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -30,6 +31,78 @@ SOP_RUNTIME_OUTPUTS = (
 )
 
 
+PYTHON_ROLE_OVERRIDES: dict[str, tuple[str, str]] = {
+    "config/config.py": (
+        "runtime configuration model and validation helpers",
+        "çalışma zamanı konfigürasyon modeli ve doğrulama yardımcıları",
+    ),
+    "model/transformers.py": (
+        "MertFormer model assembly and forward graph",
+        "MertFormer model montajı ve ileri geçiş grafiği",
+    ),
+    "train/train.py": (
+        "main training loop entrypoint",
+        "ana eğitim döngüsü giriş noktası",
+    ),
+    "train/continual_adapter.py": (
+        "continual learning adapter path for training",
+        "eğitim için continual learning adaptör yolu",
+    ),
+    "layers/bitlinear.py": (
+        "BitLinear low-bit linear layer implementation",
+        "BitLinear düşük-bit linear katman implementasyonu",
+    ),
+    "layers/bitnet_patch.py": (
+        "BitNet quantization patch and runtime hooks",
+        "BitNet kuantizasyon patch ve runtime kancaları",
+    ),
+    "layers/cognitive_extensions.py": (
+        "optional cognitive extension blocks",
+        "opsiyonel bilişsel genişletme blokları",
+    ),
+    "layers/ffn.py": (
+        "feed-forward network blocks (dense and sparse paths)",
+        "feed-forward ağ blokları (dense ve sparse yollar)",
+    ),
+    "layers/lifelong_safety.py": (
+        "lifelong safety guard layer",
+        "yaşam boyu güvenlik koruma katmanı",
+    ),
+    "layers/liquid.py": (
+        "liquid neural dynamics layers",
+        "liquid sinir dinamik katmanları",
+    ),
+    "layers/mertformer_block.py": (
+        "core transformer block composition",
+        "çekirdek transformer blok bileşimi",
+    ),
+    "layers/mla.py": (
+        "multi-head latent attention implementation",
+        "çok başlı latent attention implementasyonu",
+    ),
+    "layers/moe.py": (
+        "mixture-of-experts routing and expert execution",
+        "mixture-of-experts yönlendirme ve uzman çalıştırma",
+    ),
+    "layers/qinn.py": (
+        "QINN experimental regulation layer (feature-flag)",
+        "QINN deneysel regülasyon katmanı (feature-flag)",
+    ),
+    "layers/world_model_head.py": (
+        "world-model auxiliary head",
+        "dünya-modeli yardımcı çıktı kafası",
+    ),
+    "scripts/sync_manifest.py": (
+        "release manifest and project-structure sync generator",
+        "release manifest ve proje-yapısı senkron üreticisi",
+    ),
+    "scripts/docs_inventory.py": (
+        "markdown inventory and folder policy reporter",
+        "markdown envanteri ve klasör politika raporlayıcısı",
+    ),
+}
+
+
 def tracked_files(root: Path) -> list[Path]:
     try:
         proc = subprocess.run(
@@ -42,7 +115,6 @@ def tracked_files(root: Path) -> list[Path]:
         return [root / rel for rel in rels]
     except Exception:
         return []
-
 
 
 
@@ -110,68 +182,210 @@ def collect_entries(root: Path, excluded_relpaths: set[str]) -> list[dict[str, o
     return entries
 
 
-def structure_comment(rel: str, is_dir: bool) -> str:
+def _normalize_rel(rel: str) -> str:
+    return rel.replace("\\", "/")
+
+
+def _humanize_stem(stem: str) -> str:
+    return stem.replace("_", " ").replace("-", " ").strip()
+
+
+def _python_role(rel: str, lang: str) -> str:
+    rel_l = _normalize_rel(rel).lower()
+    p = Path(rel_l)
+    name = p.name
+    stem = p.stem
+    parts = [part.lower() for part in p.parts]
+
+    override = PYTHON_ROLE_OVERRIDES.get(rel_l)
+    if override:
+        return override[0] if lang == "en" else override[1]
+
+    if name == "__init__.py":
+        if len(parts) >= 2:
+            pkg = parts[-2]
+            return (
+                f"{pkg} package initializer and exports"
+                if lang == "en"
+                else f"{pkg} paket başlatıcısı ve dışa aktarmalar"
+            )
+        return "package initializer" if lang == "en" else "paket başlatıcısı"
+
+    if parts and parts[0] == "tests" and stem.startswith("test_"):
+        target = _humanize_stem(stem.removeprefix("test_"))
+        return (
+            f"automated test module for {target}"
+            if lang == "en"
+            else f"{target} için otomatik test modülü"
+        )
+
+    if parts and parts[0] == "scripts":
+        target = _humanize_stem(stem)
+        return (
+            f"automation script for {target}"
+            if lang == "en"
+            else f"{target} için otomasyon scripti"
+        )
+
+    if parts and parts[0] == "eval":
+        target = _humanize_stem(stem)
+        return (
+            f"evaluation routine for {target}"
+            if lang == "en"
+            else f"{target} için değerlendirme rutini"
+        )
+
+    if parts and parts[0] == "orchestrator":
+        target = _humanize_stem(stem)
+        return (
+            f"orchestrator runtime component for {target}"
+            if lang == "en"
+            else f"{target} için orkestratör runtime bileşeni"
+        )
+
+    if parts and parts[0] == "mertformer_sdk":
+        target = _humanize_stem(stem)
+        return (
+            f"SDK component for {target}"
+            if lang == "en"
+            else f"{target} için SDK bileşeni"
+        )
+
+    target = _humanize_stem(stem)
+    return f"module for {target}" if lang == "en" else f"{target} için modül"
+
+
+def _comment_map(lang: str) -> dict[str, str]:
+    if lang == "tr":
+        return {
+            "directory": "dizin",
+            "gitignore": "git ignore politikası",
+            "dockerfile": "container build baseline",
+            "citation": "atıf metaverisi",
+            "pyproject": "proje metaverisi",
+            "license_en": "lisans koşulları (EN)",
+            "license_tr": "lisans koşulları (TR)",
+            "readme_en": "ana dokümantasyon (EN)",
+            "readme_tr": "Türkçe doküman karşılığı",
+            "run_and_clean_pycache": (
+                "Python modülü/scripti (komut çalıştırma + garanti pycache temizliği; "
+                "venv cache temizliği için --include-venv-caches kullan)"
+            ),
+            "sop_summary": "dokümantasyon/rapor dosyası (tek komut uçtan uca SOP özeti; her çalıştırmada üzerine yazılır)",
+            "sop_log": "metin/log artefaktı (tek komut uçtan uca SOP ham logu; her çalıştırmada üzerine yazılır)",
+            "md": "dokümantasyon/rapor dosyası",
+            "sh": "kabuk otomasyon scripti",
+            "yaml": "YAML yapılandırma dosyası",
+            "jsonl": "JSONL veri/log artefaktı",
+            "json_schema": "JSON şema artefaktı",
+            "json_data": "JSON veri artefaktı",
+            "csv": "CSV veri artefaktı",
+            "txt": "metin artefaktı",
+            "log": "metin/log artefaktı",
+            "cpp": "C++ kaynak dosyası",
+            "media": "medya varlığı",
+            "sha256": "artefakt sağlama toplamı",
+            "artifact": "artefakt",
+            "toml": "TOML yapılandırma dosyası",
+        }
+    return {
+        "directory": "directory",
+        "gitignore": "git ignore policy",
+        "dockerfile": "container build baseline",
+        "citation": "citation metadata",
+        "pyproject": "project metadata",
+        "license_en": "license terms (EN)",
+        "license_tr": "license terms (TR)",
+        "readme_en": "primary documentation (EN)",
+        "readme_tr": "Turkish document counterpart",
+        "run_and_clean_pycache": (
+            "Python module/script (run command + guaranteed post-run cache sweep; "
+            "add --include-venv-caches for venv cache cleanup)"
+        ),
+        "sop_summary": "documentation/report file (single-command end-to-end SOP summary; overwritten each run)",
+        "sop_log": "text/log artifact (single-command end-to-end SOP raw log; overwritten each run)",
+        "md": "documentation/report file",
+        "sh": "shell automation script",
+        "yaml": "YAML configuration file",
+        "jsonl": "JSONL data/log artifact",
+        "json_schema": "JSON schema artifact",
+        "json_data": "JSON data artifact",
+        "csv": "CSV data artifact",
+        "txt": "text artifact",
+        "log": "text/log artifact",
+        "cpp": "C++ source file",
+        "media": "media asset",
+        "sha256": "artifact checksum",
+        "artifact": "artifact",
+        "toml": "TOML configuration file",
+    }
+
+
+def structure_comment(rel: str, is_dir: bool, lang: str = "en") -> str:
     p = Path(rel)
     name = p.name
     lower = name.lower()
     suffix = p.suffix.lower()
+    comments = _comment_map(lang)
 
     if is_dir:
-        return "directory"
+        return comments["directory"]
     if name == ".gitignore":
-        return "git ignore policy"
+        return comments["gitignore"]
     if name == "Dockerfile":
-        return "container build baseline"
+        return comments["dockerfile"]
     if name == "CITATION.cff":
-        return "citation metadata"
+        return comments["citation"]
     if name == "pyproject.toml":
-        return "project metadata"
+        return comments["pyproject"]
     if name == "LICENSE":
-        return "license terms (EN)"
+        return comments["license_en"]
     if name == "LICENSE_TR":
-        return "license terms (TR)"
+        return comments["license_tr"]
     if name == "README.md":
-        return "primary documentation (EN)"
+        return comments["readme_en"]
     if name == "README_TR.md" or lower.endswith("_tr.md"):
-        return "Turkish document counterpart"
+        return comments["readme_tr"]
     if lower == "run_and_clean_pycache.py":
-        return (
-            "Python module/script (run command + guaranteed post-run cache sweep; "
-            "add --include-venv-caches for venv cache cleanup)"
-        )
+        return comments["run_and_clean_pycache"]
     if lower == "one_command_full_sop_summary.md":
-        return "documentation/report file (single-command end-to-end SOP summary; overwritten each run)"
+        return comments["sop_summary"]
     if lower == "one_command_full_sop.log":
-        return "text/log artifact (single-command end-to-end SOP raw log; overwritten each run)"
+        return comments["sop_log"]
     if suffix == ".md":
-        return "documentation/report file"
+        return comments["md"]
     if suffix == ".py":
-        return "Python module/script"
+        role = _python_role(rel, lang)
+        return (
+            f"Python module/script ({role})"
+            if lang == "en"
+            else f"Python modülü/scripti ({role})"
+        )
     if suffix == ".sh":
-        return "shell automation script"
+        return comments["sh"]
     if suffix in {".yaml", ".yml"}:
-        return "YAML configuration file"
+        return comments["yaml"]
     if suffix == ".jsonl":
-        return "JSONL data/log artifact"
+        return comments["jsonl"]
     if suffix == ".json":
-        return "JSON schema artifact" if "schema" in lower else "JSON data artifact"
+        return comments["json_schema"] if "schema" in lower else comments["json_data"]
     if suffix == ".csv":
-        return "CSV data artifact"
+        return comments["csv"]
     if suffix == ".txt":
-        return "text artifact"
+        return comments["txt"]
     if suffix == ".log":
-        return "text/log artifact"
+        return comments["log"]
     if suffix == ".cpp":
-        return "C++ source file"
+        return comments["cpp"]
     if suffix in {".png", ".gif", ".mp4", ".svg"}:
-        return "media asset"
+        return comments["media"]
     if suffix == ".sha256":
-        return "artifact checksum"
+        return comments["sha256"]
     if suffix in {".pdf", ".pptx", ".age"}:
-        return "artifact"
+        return comments["artifact"]
     if suffix == ".toml":
-        return "TOML configuration file"
-    return "artifact"
+        return comments["toml"]
+    return comments["artifact"]
 
 
 def build_tree(paths: list[str]) -> dict[str, Any]:
@@ -185,7 +399,12 @@ def build_tree(paths: list[str]) -> dict[str, Any]:
     return root
 
 
-def emit_tree(node: dict[str, Any], prefix: str = "", parent_parts: tuple[str, ...] = ()) -> list[str]:
+def emit_tree(
+    node: dict[str, Any],
+    prefix: str = "",
+    parent_parts: tuple[str, ...] = (),
+    lang: str = "en",
+) -> list[str]:
     lines: list[str] = []
     dir_names = sorted(node["dirs"])
     file_names = sorted(node["files"])
@@ -196,26 +415,61 @@ def emit_tree(node: dict[str, Any], prefix: str = "", parent_parts: tuple[str, .
         branch = "└── " if last else "├── "
         rel = "/".join(parent_parts + (name,))
         display = f"{name}/" if is_dir else name
-        lines.append(f"{prefix}{branch}{display}  # {structure_comment(rel, is_dir)}")
+        lines.append(f"{prefix}{branch}{display}  # {structure_comment(rel, is_dir, lang)}")
         if is_dir:
             child_prefix = prefix + ("    " if last else "│   ")
-            lines.extend(emit_tree(node["dirs"][name], child_prefix, parent_parts + (name,)))
+            lines.extend(emit_tree(node["dirs"][name], child_prefix, parent_parts + (name,), lang))
+    return lines
+
+
+def build_structure_lines(paths: list[str], *, lang: str) -> list[str]:
+    root_comment = (
+        "project root (git ls-files inventory)"
+        if lang == "en"
+        else "proje kökü (git ls-files envanteri)"
+    )
+    lines = [f"mertformer-titan-core/  # {root_comment}"]
+    lines.extend(emit_tree(build_tree(paths), lang=lang))
     return lines
 
 
 def build_structure_md(paths: list[str], out_path: Path) -> None:
+    structure_lines = build_structure_lines(paths, lang="en")
     lines = [
         "# PROJECT_STRUCTURE",
         "",
         "Generated automatically from tracked files with inline role comments.",
         "",
         "```text",
-        "mertformer-titan-core/  # project root (git ls-files inventory)",
     ]
-    lines.extend(emit_tree(build_tree(paths)))
+    lines.extend(structure_lines)
     lines.append("```")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def sync_readme_structure_block(
+    readme_path: Path,
+    section_heading: str,
+    structure_lines: list[str],
+) -> bool:
+    if not readme_path.exists():
+        return False
+
+    content = readme_path.read_text(encoding="utf-8")
+    pattern = re.compile(
+        rf"({re.escape(section_heading)}.*?)(```text\n)(.*?)(\n```)",
+        re.DOTALL,
+    )
+    match = pattern.search(content)
+    if not match:
+        return False
+
+    replacement_block = "```text\n" + "\n".join(structure_lines) + "\n```"
+    updated = content[: match.start(2)] + replacement_block + content[match.end(4) :]
+    if updated != content:
+        readme_path.write_text(updated, encoding="utf-8")
+    return True
 
 
 def main() -> int:
@@ -256,6 +510,20 @@ def main() -> int:
 
     build_structure_md(entry_paths, structure_path)
 
+    readme_sync = {
+        "README.md": sync_readme_structure_block(
+            root / "README.md",
+            "### Canonical Layout (Build 30)",
+            build_structure_lines(entry_paths, lang="en"),
+        ),
+        "README_TR.md": sync_readme_structure_block(
+            root / "README_TR.md",
+            "### Kanonik Yerleşim (Build 30)",
+            build_structure_lines(entry_paths, lang="tr"),
+        ),
+    }
+    readme_sync_ok = all(readme_sync.values())
+
     matrix_payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "manifest_count": len(entry_paths),
@@ -270,7 +538,8 @@ def main() -> int:
 
     sync_payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
-        "ok": True,
+        "ok": bool(matrix_payload["ok"] and readme_sync_ok),
+        "readme_sync": readme_sync,
         "details": matrix_payload,
     }
     sync_path.parent.mkdir(parents=True, exist_ok=True)
@@ -286,7 +555,7 @@ def main() -> int:
     policy_path.parent.mkdir(parents=True, exist_ok=True)
     policy_path.write_text(json.dumps(policy_payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    ok = bool(policy_payload["ok"])
+    ok = bool(policy_payload["ok"] and sync_payload["ok"])
     print(json.dumps({"manifest_entries": len(entries), "ok": ok}, ensure_ascii=False))
     return 0 if ok else 1
 
