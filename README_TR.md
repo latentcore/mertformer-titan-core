@@ -1801,6 +1801,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── nan_kill_test.py  # Python modülü/scripti
 │   ├── operator_mode_gate.py  # Python modülü/scripti
 │   ├── overfit_gate.py  # Python modülü/scripti
+│   ├── one_command_full_sop.sh  # shell otomasyon scripti (tek komut tam SOP çalıştırıcısı; sanitize edilmiş reports/one_command_full_sop.log ve reports/one_command_full_sop_summary.md üretir)
 │   ├── ram_guard.py  # Python modülü/scripti
 │   ├── README.md  # ana dokümantasyon (EN)
 │   ├── README_TR.md  # Türkçe doküman karşılığı

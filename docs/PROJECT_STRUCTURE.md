@@ -397,6 +397,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── nan_kill_test.py  # Python module/script
 │   ├── operator_mode_gate.py  # Python module/script
 │   ├── overfit_gate.py  # Python module/script
+│   ├── one_command_full_sop.sh  # shell automation script (single-command full SOP runner; writes sanitized reports/one_command_full_sop.log and reports/one_command_full_sop_summary.md)
 │   ├── ram_guard.py  # Python module/script
 │   ├── record_dataset_hashes.py  # Python module/script
 │   ├── release_build30.sh  # shell automation script
