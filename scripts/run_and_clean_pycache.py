@@ -9,8 +9,11 @@ import sys
 from pathlib import Path
 
 
-IGNORE_DIRS = {
+ALWAYS_IGNORE_DIRS = {
     ".git",
+}
+
+VENV_DIRS = {
     ".titan-venv",
     ".lint-venv",
     ".venv",
@@ -63,6 +66,7 @@ def _collect_targets(
     root: Path,
     include_tool_caches: bool,
     full_clean: bool,
+    include_venv_caches: bool,
 ) -> tuple[list[Path], list[Path]]:
     dirs_to_remove: list[Path] = []
     files_to_remove: list[Path] = []
@@ -81,8 +85,11 @@ def _collect_targets(
     for current, dirs, files in os.walk(root, topdown=True):
         current_path = Path(current)
 
-        # Prune ignored folders early to avoid unnecessary traversal.
-        dirs[:] = [d for d in dirs if d not in IGNORE_DIRS]
+        # Keep .git pruned always; include venv trees only when explicitly requested.
+        if include_venv_caches:
+            dirs[:] = [d for d in dirs if d not in ALWAYS_IGNORE_DIRS]
+        else:
+            dirs[:] = [d for d in dirs if d not in ALWAYS_IGNORE_DIRS and d not in VENV_DIRS]
 
         for d in list(dirs):
             if d in cache_dirs:
@@ -105,6 +112,7 @@ def cleanup(
     root: Path,
     include_tool_caches: bool,
     full_clean: bool,
+    include_venv_caches: bool,
     dry_run: bool,
     verbose: bool,
 ) -> dict[str, int]:
@@ -112,6 +120,7 @@ def cleanup(
         root,
         include_tool_caches=include_tool_caches,
         full_clean=full_clean,
+        include_venv_caches=include_venv_caches,
     )
 
     if verbose:
@@ -168,6 +177,11 @@ def parse_args(argv: list[str]) -> tuple[argparse.Namespace, list[str]]:
         action="store_true",
         help="Also remove broader cache artifacts (.DS_Store, .cache, .ipynb_checkpoints, .tox, .nox, .hypothesis, .vs, ...)",
     )
+    parser.add_argument(
+        "--include-venv-caches",
+        action="store_true",
+        help="Also scan venv folders (.titan-venv/.venv/venv/env) for cache cleanup",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Print summary only; do not delete")
     parser.add_argument("--verbose", action="store_true", help="Print each discovered target")
 
@@ -190,7 +204,9 @@ def main(argv: list[str]) -> int:
     print(f"[runner] cleanup_root={root}")
     print(
         f"[runner] include_tool_caches={bool(args.include_tool_caches)} "
-        f"full_clean={bool(args.full_clean)} dry_run={bool(args.dry_run)}"
+        f"full_clean={bool(args.full_clean)} "
+        f"include_venv_caches={bool(args.include_venv_caches)} "
+        f"dry_run={bool(args.dry_run)}"
     )
 
     rc = 1
@@ -207,6 +223,7 @@ def main(argv: list[str]) -> int:
             root,
             include_tool_caches=bool(args.include_tool_caches),
             full_clean=bool(args.full_clean),
+            include_venv_caches=bool(args.include_venv_caches),
             dry_run=bool(args.dry_run),
             verbose=bool(args.verbose),
         )

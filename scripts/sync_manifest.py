@@ -24,6 +24,11 @@ EXCLUDE_PARTS = {
 
 SENSITIVE_FILE_NAMES = {".env"}
 
+SOP_RUNTIME_OUTPUTS = (
+    "reports/one_command_full_sop_summary.md",
+    "reports/one_command_full_sop.log",
+)
+
 
 def tracked_files(root: Path) -> list[Path]:
     try:
@@ -60,8 +65,23 @@ def collect_entries(root: Path, excluded_relpaths: set[str]) -> list[dict[str, o
     entries: list[dict[str, object]] = []
 
     candidates = tracked_files(root)
+    if candidates:
+        for rel in SOP_RUNTIME_OUTPUTS:
+            p = root / rel
+            if p.exists() and p.is_file():
+                candidates.append(p)
     if not candidates:
         candidates = [p for p in root.rglob("*") if p.is_file()]
+
+    dedup: list[Path] = []
+    seen: set[str] = set()
+    for p in candidates:
+        key = str(p.resolve())
+        if key in seen:
+            continue
+        seen.add(key)
+        dedup.append(p)
+    candidates = dedup
 
     for p in candidates:
         if not p.exists() or not p.is_file():
@@ -114,6 +134,15 @@ def structure_comment(rel: str, is_dir: bool) -> str:
         return "primary documentation (EN)"
     if name == "README_TR.md" or lower.endswith("_tr.md"):
         return "Turkish document counterpart"
+    if lower == "run_and_clean_pycache.py":
+        return (
+            "Python module/script (run command + guaranteed post-run cache sweep; "
+            "add --include-venv-caches for venv cache cleanup)"
+        )
+    if lower == "one_command_full_sop_summary.md":
+        return "documentation/report file (single-command end-to-end SOP summary; overwritten each run)"
+    if lower == "one_command_full_sop.log":
+        return "text/log artifact (single-command end-to-end SOP raw log; overwritten each run)"
     if suffix == ".md":
         return "documentation/report file"
     if suffix == ".py":
@@ -130,6 +159,8 @@ def structure_comment(rel: str, is_dir: bool) -> str:
         return "CSV data artifact"
     if suffix == ".txt":
         return "text artifact"
+    if suffix == ".log":
+        return "text/log artifact"
     if suffix == ".cpp":
         return "C++ source file"
     if suffix in {".png", ".gif", ".mp4", ".svg"}:

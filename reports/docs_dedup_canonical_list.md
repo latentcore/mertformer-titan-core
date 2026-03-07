@@ -190,6 +190,7 @@ Generated automatically.
 - `reports/legal_cleanroom_signoff_internal.md`
 - `reports/model_health.md`
 - `reports/model_health_TR.md`
+- `reports/one_command_full_sop_summary.md`
 - `reports/one_pager.md`
 - `reports/one_pager_TR.md`
 - `reports/pilot_acceptance_signoff.md`

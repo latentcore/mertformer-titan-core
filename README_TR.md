@@ -1393,6 +1393,12 @@ Planlanan Türkçe veri kaynakları:
 
 ---
 
+### SOP Çıktı Artefaktları
+
+- `reports/one_command_full_sop_summary.md` — Uçtan uca tek komut SOP koşusunun tek belgede özet sonucu.
+- `reports/one_command_full_sop.log` — Aynı koşunun ham tam yürütme logu.
+- Not: her yeni full SOP koşusunda bu iki dosya güncellenir/üzerine yazılır.
+
 <a id="proje-yapısı"></a>
 ## 📂 Proje Yapısı
 
@@ -1682,6 +1688,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── md_lint_report.json  # JSON veri artefaktı
 │   ├── model_health.md  # dokümantasyon/rapor dosyası
 │   ├── model_health_TR.md  # Türkçe doküman karşılığı
+│   ├── one_command_full_sop.log  # metin/log artefaktı (tek komut uçtan uca SOP ham logu; her koşuda üzerine yazılır)
+│   ├── one_command_full_sop_summary.md  # dokümantasyon/rapor dosyası (tek komut uçtan uca SOP özeti; her koşuda üzerine yazılır)
 │   ├── one_pager.md  # dokümantasyon/rapor dosyası
 │   ├── one_pager_TR.md  # Türkçe doküman karşılığı
 │   ├── ownership_proof_bundle.json  # JSON veri artefaktı
@@ -1800,7 +1808,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── release_build30.sh  # shell otomasyon scripti
 │   ├── release_closure_lock.sh  # shell otomasyon scripti
 │   ├── repro_build_check.py  # Python modülü/scripti
-│   ├── run_and_clean_pycache.py  # Python modülü/scripti (komut çalıştır + koşu sonrası cache temizliği)
+│   ├── run_and_clean_pycache.py  # Python modülü/scripti (komut çalıştır + koşu sonrası cache temizliği; venv cache için --include-venv-caches)
 │   ├── scaling_audit_math.py  # Python modülü/scripti
 │   ├── secret_scan.py  # Python modülü/scripti
 │   ├── smart_runner.py  # Python modülü/scripti

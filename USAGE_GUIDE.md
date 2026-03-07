@@ -72,7 +72,7 @@ Generate 30s proof video (headless):
 Use this wrapper when you want command execution + guaranteed cache cleanup in one call:
 
 ```bash
-python3 scripts/run_and_clean_pycache.py --full-clean --include-tool-caches -- \
+python3 scripts/run_and_clean_pycache.py --full-clean --include-tool-caches --include-venv-caches -- \
   python3 -m pytest -q
 ```
 

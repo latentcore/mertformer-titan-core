@@ -72,7 +72,7 @@ Snake canlı demo:
 Komut çalıştırma + koşu sonu garantili cache temizliği için bu sarmalayıcıyı kullanın:
 
 ```bash
-python3 scripts/run_and_clean_pycache.py --full-clean --include-tool-caches -- \
+python3 scripts/run_and_clean_pycache.py --full-clean --include-tool-caches --include-venv-caches -- \
   python3 -m pytest -q
 ```
 

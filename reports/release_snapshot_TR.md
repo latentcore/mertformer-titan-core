@@ -48,10 +48,10 @@ TITAN_OFFLINE=1 bash run.sh --test
 
 - `MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`
 - `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
-- Locked artefakt durumu: `skipped (expected: AGE_RECIPIENT_FILE missing)`
+- Locked artefakt durumu: `generated`
 - SHA-256:
-  - `a54626251355f02398e1d05f7c58cd017db051447432c012868f364bca6ad755` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
-  - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)
+  - `eb29e1b911f11b4610b9965462a51ec203cff914cb548eb518eb50539e6857fd` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
+  - `72a4d179f573ea4218fc14a5b281b6ded64f21ded6f81dcd90cfe735b003ccd7` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)
 
 ## Bilinen Gate / Blokerler
 

@@ -279,6 +279,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── md_lint_report.json  # JSON data artifact
 │   ├── model_health.md  # documentation/report file
 │   ├── model_health_TR.md  # Turkish document counterpart
+│   ├── one_command_full_sop.log  # text/log artifact (single-command end-to-end SOP raw log; overwritten each run)
+│   ├── one_command_full_sop_summary.md  # documentation/report file (single-command end-to-end SOP summary; overwritten each run)
 │   ├── one_pager.md  # documentation/report file
 │   ├── one_pager_TR.md  # Turkish document counterpart
 │   ├── ownership_proof_bundle.json  # JSON data artifact
@@ -400,7 +402,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── release_build30.sh  # shell automation script
 │   ├── release_closure_lock.sh  # shell automation script
 │   ├── repro_build_check.py  # Python module/script
-│   ├── run_and_clean_pycache.py  # Python module/script
+│   ├── run_and_clean_pycache.py  # Python module/script (run command + guaranteed post-run cache sweep; add --include-venv-caches for venv cache cleanup)
 │   ├── scaling_audit_math.py  # Python module/script
 │   ├── secret_scan.py  # Python module/script
 │   ├── smart_runner.py  # Python module/script
