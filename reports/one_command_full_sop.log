@@ -1,4 +1,4 @@
-[run] start_utc=2026-03-07T01:59:22Z
+[run] start_utc=2026-03-07T03:10:38Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
@@ -11,7 +11,7 @@ s........................................                                [100%]
 .titan-venv/lib/python3.11/site-packages/torch/jit/_script.py:1480
 .titan-venv/lib/python3.11/site-packages/torch/jit/_script.py:1480
 .titan-venv/lib/python3.11/site-packages/torch/jit/_script.py:1480
-  /Users/mertyunlu/Desktop/mertformer-titan-core/.titan-venv/lib/python3.11/site-packages/torch/jit/_script.py:1480: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  <REPO_ROOT>/.titan-venv/lib/python3.11/site-packages/torch/jit/_script.py:1480: DeprecationWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
     warnings.warn(
 
 <frozen importlib._bootstrap>:241
@@ -25,7 +25,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-111 passed, 3 skipped, 6 warnings in 17.55s
+111 passed, 3 skipped, 6 warnings in 77.65s (0:01:17)
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -44,8 +44,10 @@ scripts/test_onnx_export.py::test_export
 🛡️ Teacher Model mocked (Prevented 140GB download).
 ⚙️  Pre-computing logits for preflight...
 🔄 Resuming from Chunk 0
-Distilling preflight (Chunk 0): 0it [00:00, ?it/s]✅ Saved Final Chunk 0: /Users/mertyunlu/Desktop/mertformer-titan-core/temp_preflight_logits/preflight_test_part_0.pt
-Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
+
+Distilling preflight (Chunk 0): 0it [00:00, ?it/s]✅ Saved Final Chunk 0: <REPO_ROOT>/temp_preflight_logits/preflight_test_part_0.pt
+
+Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✅ Distillation pipeline: PROVEN (Logits generated/saved).
 ✈️ STEP 4: MOE GURU LEARNING TEST...
 ✈️ 🏗️  CONFIG: Using 'Mini-Titan' (2 Layers, 256 Hidden, forced MoE/Liquid) for RAM safety.
@@ -56,13 +58,13 @@ scripts/test_onnx_export.py::test_export
 ✅ MertFormer forward/backward pass verified.
 ✅ OVERALL SYSTEM STATUS: 100% PROTECTED & READY.
 ✈️ CLEANUP: Removing temporary files...
-✈️ Removed /Users/mertyunlu/Desktop/mertformer-titan-core/temp_preflight_data
-✈️ Removed /Users/mertyunlu/Desktop/mertformer-titan-core/temp_preflight_logits
+✈️ Removed <REPO_ROOT>/temp_preflight_data
+✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 0.53s
+✈️ Preflight Duration: 1.09s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
-✈️ Full Report: /Users/mertyunlu/Desktop/mertformer-titan-core/logs/preflight/titan_preflight.log
+✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
 ✈️ ============================================================
 [verify] Operator mode gate (safe, offline) ...
 Checkpoint restore drill: PASS
@@ -71,7 +73,7 @@ Overfit step 0: loss=121.5519
 Overfit step 12: loss=117.8494
 Overfit step 24: loss=113.7169
 Overfit step 36: loss=97.5475
-Overfit step 48: loss=50.8537
+Overfit step 48: loss=50.8496
 Overfit gate: PASS
 Golden samples: 50
 - algorithms: 13
@@ -104,7 +106,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 7.08729887008667,
+  "elapsed_sec": 9.414626836776733,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -130,9 +132,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-03-07T01:59:51Z",
-        "cpu_percent": 16.0,
-        "ram_used_gb": 5.781463623046875,
+        "timestamp_utc": "2026-03-07T03:12:17Z",
+        "cpu_percent": 40.9,
+        "ram_used_gb": 6.3816986083984375,
         "ram_total_gb": 16.0
       }
     },
@@ -145,8 +147,8 @@ Benchmark runner configured. Use --run to execute.
 [verify] Closure 57 matrix gate (strict in-scope pending) ...
 {"total_items": 57, "green_items": 57, "all_green": true, "no_pending_in_scope": true, "in_scope_pending_ids": [], "out_of_scope_pending_ids": [8, 9, 11, 12, 51, 52, 54, 55, 56, 57], "evidence_pending_ids": [8, 9, 11, 12, 51, 52, 54, 55, 56, 57]}
 [verify] Tokenizer sync gate ...
-canonical=/Users/mertyunlu/Desktop/mertformer-titan-core/interfaces/tokenizer_spec.json
-mirror=/Users/mertyunlu/Desktop/mertformer-titan-core/tokenizer/tokenizer.json
+canonical=<REPO_ROOT>/interfaces/tokenizer_spec.json
+mirror=<REPO_ROOT>/tokenizer/tokenizer.json
 canonical_sha256=21d29a6ad849dd9ef567e5d750e15ac08d4d445bd0985bb736f40c66a18fa95e
 mirror_sha256=21d29a6ad849dd9ef567e5d750e15ac08d4d445bd0985bb736f40c66a18fa95e
 OK: tokenizer spec files are byte-identical
@@ -177,29 +179,30 @@ OK: unicode path guard; hits=0
 OK: duplicate zip guard; groups=0
 [run] step=intermediate_cache_cleanup
 [runner] cmd=bash -lc true
-[runner] cleanup_root=/Users/mertyunlu/Desktop/mertformer-titan-core
+[runner] cleanup_root=<REPO_ROOT>
 [runner] include_tool_caches=True full_clean=True include_venv_caches=True dry_run=False
-[cleanup] dirs_found=549 files_found=0 dirs_removed=549 files_removed=0
+[cleanup] dirs_found=549 files_found=1 dirs_removed=549 files_removed=1
 [run] step=clean_runtime_artifacts_check
 OK: runtime artifacts and caches are clean
 [run] step=release_build30
-canonical=/Users/mertyunlu/Desktop/mertformer-titan-core/interfaces/tokenizer_spec.json
-mirror=/Users/mertyunlu/Desktop/mertformer-titan-core/tokenizer/tokenizer.json
+canonical=<REPO_ROOT>/interfaces/tokenizer_spec.json
+mirror=<REPO_ROOT>/tokenizer/tokenizer.json
 canonical_sha256=21d29a6ad849dd9ef567e5d750e15ac08d4d445bd0985bb736f40c66a18fa95e
 mirror_sha256=21d29a6ad849dd9ef567e5d750e15ac08d4d445bd0985bb736f40c66a18fa95e
 OK: tokenizer spec files are byte-identical
 {
-  "zip_path": "/Users/mertyunlu/Desktop/mertformer-titan-core/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip",
+  "zip_path": "<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip",
   "ok": true,
   "deny_hits": [],
   "secret_hits": [],
   "deny_count": 0,
   "secret_count": 0
 }
-release_zip=/Users/mertyunlu/Desktop/mertformer-titan-core/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
-release_sha256=eb29e1b911f11b4610b9965462a51ec203cff914cb548eb518eb50539e6857fd
-locked_age=/Users/mertyunlu/Desktop/mertformer-titan-core/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age
-locked_sha256=72a4d179f573ea4218fc14a5b281b6ded64f21ded6f81dcd90cfe735b003ccd7
+WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
+release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
+release_sha256=b0205ec3a949911889f6f0d00c2596df3389270141df36350fc4521037579ce8
+locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age
+locked_sha256=
 [run] step=zip_denylist_audit zip=packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
 {
   "zip_path": "packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip",
@@ -211,4 +214,4 @@ locked_sha256=72a4d179f573ea4218fc14a5b281b6ded64f21ded6f81dcd90cfe735b003ccd7
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-03-07T02:00:01Z
+[run] end_utc=2026-03-07T03:12:27Z
