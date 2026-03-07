@@ -1,3 +1,17 @@
+## MertFormer Titan (Build 30)
+
+Kontrollü yerel dağıtım için offline-first, denetlenebilir ve görev odaklı yapay zeka altyapısı.
+Mevcut olgunluk: **pilota hazır eğitim öncesi baseline** (eğitim/benchmark iddiaları beklemede).
+
+### Okuyucu Hızlı Linkleri
+- Türkçe özet: [README_SUMMARY_TR.md](README_SUMMARY_TR.md)
+- English summary: [README_SUMMARY.md](README_SUMMARY.md)
+- English full doc: [README.md](README.md)
+
+### İddia Sınırı
+- Bu depo, üretim kalite iddiası için **pre-training / doğrulanmamış** durumdadır.
+- Release kapanış çıktıları model kalitesini değil, süreç bütünlüğünü kanıtlar.
+
 ## Tek Seferde Release Kapanış
 
 Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı tek-geçiş kapanış akışı içerir.
@@ -16,9 +30,6 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 - `artifacts/mertformer_release.zip`
 - `artifacts/mertformer_release.zip.sha256`
 
-### İddia Sınırı
-- Bu depo, üretim kalite iddiası için **pre-training / doğrulanmamış** durumdadır.
-- Release kapanış çıktıları model kalitesini değil, süreç bütünlüğünü kanıtlar.
 
 ![MertFormer Titan Header](assets/header.png)
 

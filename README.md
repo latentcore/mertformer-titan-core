@@ -1,3 +1,17 @@
+## MertFormer Titan (Build 30)
+
+Offline-first, auditable, mission-focused AI infrastructure for controlled local deployment.
+Current maturity: **pilot-ready pre-training baseline** (training/benchmark claims pending).
+
+### Quick Reader Links
+- English summary: [README_SUMMARY.md](README_SUMMARY.md)
+- Turkish summary: [README_SUMMARY_TR.md](README_SUMMARY_TR.md)
+- Turkish full doc: [README_TR.md](README_TR.md)
+
+### Claims Boundary
+- This repository is **pre-training / unverified** for production-scale quality claims.
+- Release closure artifacts prove process integrity, not final model capability.
+
 ## Release-Ready One-Shot Closure
 
 This repository includes a decision-complete, single-pass closure flow for engineering hardening and release evidence.
@@ -16,9 +30,6 @@ This repository includes a decision-complete, single-pass closure flow for engin
 - `artifacts/mertformer_release.zip`
 - `artifacts/mertformer_release.zip.sha256`
 
-### Claims Boundary
-- This repository is **pre-training / unverified** for production-scale quality claims.
-- Release closure artifacts prove process integrity, not final model capability.
 
 ![MertFormer Titan Header](assets/header.png)
 
