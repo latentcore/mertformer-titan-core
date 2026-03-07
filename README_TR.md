@@ -430,6 +430,8 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 - [tokenizer/stats_TR.md](tokenizer/stats_TR.md) — Tokenizer istatistikleri (TR).
 - [tokenizer/drift_report.md](tokenizer/drift_report.md) — Tokenizer drift raporu (EN).
 - [tokenizer/drift_report_TR.md](tokenizer/drift_report_TR.md) — Tokenizer drift raporu (TR).
+- [tokenizer/tr/README.md](tokenizer/tr/README.md) — Turkish tokenizer cache note (EN).
+- [tokenizer/tr/README_TR.md](tokenizer/tr/README_TR.md) — Turkish tokenizer cache note (TR).
 - [ablations/results.md](ablations/results.md) — Ablation sonuçları (EN).
 - [ablations/results_TR.md](ablations/results_TR.md) — Ablation sonuçları (TR).
 - [ablations/no_moe/README.md](ablations/no_moe/README.md) — MoE kapalı ablation (EN).
@@ -944,45 +946,48 @@ bash run.sh --cleanroom-verify
 TITAN_OFFLINE=1 bash run.sh --test
 ```
 
-### Full Preflight Log (Raw)
+### Full Preflight Log (Güncel Snapshot, 2026-03-07)
 
 ```text
-2026-02-10 00:37:39,468 - [INFO] - ✈️ ============================================================
-2026-02-10 00:37:39,468 - [INFO] - ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
-2026-02-10 00:37:39,468 - [INFO] - ✈️ ============================================================
-2026-02-10 00:37:39,469 - [INFO] - ✈️ Loading secrets from ./.env...
-2026-02-10 00:37:39,469 - [INFO] - ✈️ STEP 1: SECRET SCAN...
-2026-02-10 00:37:39,469 - [INFO] - 🛡️ HF_TOKEN detected (redacted)
-2026-02-10 00:37:39,469 - [INFO] - 🛡️ WANDB_API_KEY detected (redacted)
-2026-02-10 00:37:39,469 - [INFO] - ✅ Secrets check completed.
-2026-02-10 00:37:39,469 - [INFO] - ✈️ STEP 2: ARCHITECTURAL AUDIT...
-2026-02-10 00:37:39,469 - [INFO] - ✅ Layer configuration validated: No Liquid/MoE conflicts.
-2026-02-10 00:37:39,469 - [INFO] - ✅ MLA Dimensions: Consistent (2048 features).
-2026-02-10 00:37:39,469 - [INFO] - ✅ BitNet b1.58 logic: ACTIVE (Locked).
-2026-02-10 00:37:39,469 - [INFO] - ✈️ STEP 3: DATA & DISTILLATION TEST...
-2026-02-10 00:37:41,391 - [INFO] - ✈️ Offline mode: skipping Hugging Face connectivity checks.
-2026-02-10 00:37:41,392 - [INFO] - 🛡️ Teacher Model mocked (Prevented 140GB download).
-2026-02-10 00:37:41,392 - [INFO] - ⚙️  Pre-computing logits for preflight...
-2026-02-10 00:37:41,488 - [INFO] - ✅ Saved Final Chunk 0: ./temp_preflight_logits/preflight_test_part_0.pt
-2026-02-10 00:37:41,488 - [INFO] - ✅ Distillation pipeline: PROVEN (Logits generated/saved).
-2026-02-10 00:37:41,488 - [INFO] - ✈️ STEP 4: MOE GURU LEARNING TEST...
-2026-02-10 00:37:41,488 - [INFO] - ✈️ 🏗️  CONFIG: Using 'Mini-Titan' (2 Layers, 256 Hidden, forced MoE/Liquid) for RAM safety.
-2026-02-10 00:37:41,668 - [INFO] - ✈️ Checking Architectural Gradient Health...
-2026-02-10 00:37:41,674 - [INFO] - ✅ MoE Learning: PROVEN (48 expert params receiving gradients).
-2026-02-10 00:37:41,674 - [INFO] - ✅ Liquid Dynamics: PROVEN (7 liquid params receiving gradients).
-2026-02-10 00:37:41,675 - [INFO] - ✈️ Shared Expert Grad: OK
-2026-02-10 00:37:41,675 - [INFO] - ✅ MertFormer forward/backward pass verified.
-2026-02-10 00:37:41,676 - [INFO] - ✅ OVERALL SYSTEM STATUS: 100% PROTECTED & READY.
-2026-02-10 00:37:41,676 - [INFO] - ✈️ CLEANUP: Removing temporary files...
-2026-02-10 00:37:41,676 - [INFO] - ✈️ Removed ./temp_preflight_data
-2026-02-10 00:37:41,677 - [INFO] - ✈️ Removed ./temp_preflight_logits
-2026-02-10 00:37:41,677 - [INFO] - ✅ CLEANUP: Done.
-2026-02-10 00:37:41,677 - [INFO] - ✈️ Preflight Duration: 2.21s
-2026-02-10 00:37:41,677 - [INFO] - ✈️ ============================================================
-2026-02-10 00:37:41,677 - [INFO] - ✈️ RESULT: 🏆 ALL GREEN
-2026-02-10 00:37:41,677 - [INFO] - ✈️ Full Report: ./logs/preflight/titan_preflight.log
-2026-02-10 00:37:41,677 - [INFO] - ✈️ ============================================================
+2026-03-07 21:25:01,761 - [INFO] - ✈️ ============================================================
+2026-03-07 21:25:01,761 - [INFO] - ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
+2026-03-07 21:25:01,761 - [INFO] - ✈️ ============================================================
+2026-03-07 21:25:01,761 - [WARNING] - ⚠️ .env file not found, skipping local load.
+2026-03-07 21:25:01,761 - [INFO] - ✈️ STEP 1: SECRET SCAN...
+2026-03-07 21:25:01,761 - [WARNING] - ⚠️ HF_TOKEN missing (offline mode): OK (online checks will be skipped).
+2026-03-07 21:25:01,761 - [WARNING] - ⚠️ WANDB_API_KEY missing (offline mode): OK (WandB checks disabled).
+2026-03-07 21:25:01,761 - [INFO] - ✅ Secrets check completed.
+2026-03-07 21:25:01,761 - [INFO] - ✈️ STEP 2: ARCHITECTURAL AUDIT...
+2026-03-07 21:25:01,761 - [INFO] - ✅ Layer configuration validated: No Liquid/MoE conflicts.
+2026-03-07 21:25:01,761 - [INFO] - ✅ MLA Dimensions: Consistent (2048 features).
+2026-03-07 21:25:01,761 - [INFO] - ✅ BitNet b1.58 logic: ACTIVE (Locked).
+2026-03-07 21:25:01,761 - [INFO] - ✈️ STEP 3: DATA & DISTILLATION TEST...
+2026-03-07 21:25:02,483 - [INFO] - ✈️ Offline mode: skipping Hugging Face connectivity checks.
+2026-03-07 21:25:02,483 - [INFO] - 🛡️ Teacher Model mocked (Prevented 140GB download).
+2026-03-07 21:25:02,483 - [INFO] - ⚙️  Pre-computing logits for preflight...
+2026-03-07 21:25:02,722 - [INFO] - ✅ Saved Final Chunk 0: <REPO_ROOT>/temp_preflight_logits/preflight_test_part_0.pt
+2026-03-07 21:25:02,723 - [INFO] - ✅ Distillation pipeline: PROVEN (Logits generated/saved).
+2026-03-07 21:25:02,723 - [INFO] - ✈️ STEP 4: MOE GURU LEARNING TEST...
+2026-03-07 21:25:02,724 - [INFO] - ✈️ 🏗️  CONFIG: Using 'Mini-Titan' (2 Layers, 256 Hidden, forced MoE/Liquid) for RAM safety.
+2026-03-07 21:25:02,909 - [INFO] - ✈️ Checking Architectural Gradient Health...
+2026-03-07 21:25:02,915 - [INFO] - ✅ MoE Learning: PROVEN (48 expert params receiving gradients).
+2026-03-07 21:25:02,915 - [INFO] - ✅ Liquid Dynamics: PROVEN (7 liquid params receiving gradients).
+2026-03-07 21:25:02,915 - [INFO] - ✈️ Shared Expert Grad: OK
+2026-03-07 21:25:02,915 - [INFO] - ✅ MertFormer forward/backward pass verified.
+2026-03-07 21:25:02,916 - [INFO] - ✅ OVERALL SYSTEM STATUS: 100% PROTECTED & READY.
+2026-03-07 21:25:02,916 - [INFO] - ✈️ CLEANUP: Removing temporary files...
+2026-03-07 21:25:02,916 - [INFO] - ✈️ Removed <REPO_ROOT>/temp_preflight_data
+2026-03-07 21:25:02,940 - [INFO] - ✈️ Removed <REPO_ROOT>/temp_preflight_logits
+2026-03-07 21:25:02,940 - [INFO] - ✅ CLEANUP: Done.
+2026-03-07 21:25:02,940 - [INFO] - ✈️ Preflight Duration: 1.18s
+2026-03-07 21:25:02,940 - [INFO] - ✈️ ============================================================
+2026-03-07 21:25:02,940 - [INFO] - ✈️ RESULT: 🏆 ALL GREEN
+2026-03-07 21:25:02,940 - [INFO] - ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
+2026-03-07 21:25:02,940 - [INFO] - ✈️ ============================================================
 ```
+
+Historical snapshot (2026-02-10) arşiv kanıtı olarak git geçmişinde korunur.
+
 
 ### Eğitim (Online / Eğitim Donanımı)
 
@@ -1409,6 +1414,14 @@ Planlanan Türkçe veri kaynakları:
 - `reports/one_command_full_sop_summary.md` — Uçtan uca tek komut SOP koşusunun tek belgede özet sonucu.
 - `reports/one_command_full_sop.log` — Aynı koşunun ham tam yürütme logu.
 - Not: her yeni full SOP koşusunda bu iki dosya güncellenir/üzerine yazılır.
+
+### Son SOP Snapshot (Kaynak: `reports/one_command_full_sop_summary.md`)
+
+- Kanonik kaynak: `reports/one_command_full_sop_summary.md` (her full SOP koşusunda yenilenir)
+- Dahil edilen kontroller: `pytest`, `md_quality_all`, `linkcheck_all`, `unicode_path_guard`, `duplicate_zip_guard`, `clean_runtime_artifacts_check`, `zip_denylist_audit`, `secret_scan`
+- Güncel paket hash değeri özet dosyada `release_zip_sha256` alanında tutulur
+- Ham log: `reports/one_command_full_sop.log`
+
 
 <a id="proje-yapısı"></a>
 ## 📂 Proje Yapısı

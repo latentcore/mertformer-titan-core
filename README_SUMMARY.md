@@ -33,6 +33,10 @@ Closure artifacts:
 - `reports/closure_57_matrix.md`
 - `reports/closure_57_matrix_TR.md`
 
+## Latest SOP Evidence
+- Summary: `reports/one_command_full_sop_summary.md`
+- Raw log: `reports/one_command_full_sop.log`
+
 ## Quick Start (External Reviewer)
 1. Create/refresh virtual environment:
 ```bash

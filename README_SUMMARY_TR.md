@@ -33,6 +33,10 @@ Closure artefaktları:
 - `reports/closure_57_matrix.md`
 - `reports/closure_57_matrix_TR.md`
 
+## Son SOP Kanıtı
+- Özet: `reports/one_command_full_sop_summary.md`
+- Ham log: `reports/one_command_full_sop.log`
+
 ## Hızlı Başlangıç (Dış İnceleyici)
 1. Sanal ortamı oluştur/güncelle:
 ```bash
