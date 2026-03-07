@@ -1,4 +1,4 @@
-[run] start_utc=2026-03-07T03:10:38Z
+[run] start_utc=2026-03-07T04:54:51Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
@@ -25,7 +25,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-111 passed, 3 skipped, 6 warnings in 77.65s (0:01:17)
+111 passed, 3 skipped, 6 warnings in 23.94s
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -61,7 +61,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <REPO_ROOT>/temp_preflight_data
 ✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 1.09s
+✈️ Preflight Duration: 1.65s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
@@ -73,7 +73,7 @@ Overfit step 0: loss=121.5519
 Overfit step 12: loss=117.8494
 Overfit step 24: loss=113.7169
 Overfit step 36: loss=97.5475
-Overfit step 48: loss=50.8496
+Overfit step 48: loss=50.8422
 Overfit gate: PASS
 Golden samples: 50
 - algorithms: 13
@@ -106,7 +106,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 9.414626836776733,
+  "elapsed_sec": 14.03983187675476,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -132,9 +132,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-03-07T03:12:17Z",
-        "cpu_percent": 40.9,
-        "ram_used_gb": 6.3816986083984375,
+        "timestamp_utc": "2026-03-07T04:55:38Z",
+        "cpu_percent": 22.1,
+        "ram_used_gb": 6.2056121826171875,
         "ram_total_gb": 16.0
       }
     },
@@ -161,7 +161,7 @@ OK: unicode path guard; hits=0
 [verify] Duplicate zip guard gate ...
 OK: duplicate zip guard; groups=0
 [verify] Manifest sync gate ...
-{"manifest_entries": 475, "ok": true}
+{"manifest_entries": 476, "ok": true}
 [verify] OK
 [run] step=md_quality_all
 md_quality: scope=all files=249 errors=0 warnings=0
@@ -170,7 +170,7 @@ linkcheck: scope=all files=249 missing=0
 [run] step=docs_inventory
 {"ok": true, "md_files": 251, "dup_groups": 21}
 [run] step=sync_manifest
-{"manifest_entries": 475, "ok": true}
+{"manifest_entries": 476, "ok": true}
 [run] step=dealroom_sync
 {"ok": true}
 [run] step=unicode_path_guard
@@ -181,7 +181,7 @@ OK: duplicate zip guard; groups=0
 [runner] cmd=bash -lc true
 [runner] cleanup_root=<REPO_ROOT>
 [runner] include_tool_caches=True full_clean=True include_venv_caches=True dry_run=False
-[cleanup] dirs_found=549 files_found=1 dirs_removed=549 files_removed=1
+[cleanup] dirs_found=576 files_found=0 dirs_removed=576 files_removed=0
 [run] step=clean_runtime_artifacts_check
 OK: runtime artifacts and caches are clean
 [run] step=release_build30
@@ -200,7 +200,7 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
-release_sha256=b0205ec3a949911889f6f0d00c2596df3389270141df36350fc4521037579ce8
+release_sha256=5ec0010a660419cec3fbe88e7d6506af5051f744f992c8484a934b07c40736b8
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=zip_denylist_audit zip=packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
@@ -214,4 +214,4 @@ locked_sha256=
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-03-07T03:12:27Z
+[run] end_utc=2026-03-07T04:55:56Z

@@ -3,7 +3,7 @@
   "specVersion": "1.5",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-03-04T02:32:01.083508+00:00",
+    "timestamp": "2026-03-07T04:54:12.523713+00:00",
     "component": {
       "type": "application",
       "name": "mertformer-titan-core"
@@ -13,8 +13,8 @@
     {
       "type": "library",
       "name": "accelerate",
-      "version": "1.12.0",
-      "purl": "pkg:pypi/accelerate@1.12.0"
+      "version": "1.13.0",
+      "purl": "pkg:pypi/accelerate@1.13.0"
     },
     {
       "type": "library",
@@ -33,6 +33,12 @@
       "name": "aiosignal",
       "version": "1.4.0",
       "purl": "pkg:pypi/aiosignal@1.4.0"
+    },
+    {
+      "type": "library",
+      "name": "annotated-doc",
+      "version": "0.0.4",
+      "purl": "pkg:pypi/annotated-doc@0.0.4"
     },
     {
       "type": "library",
@@ -55,20 +61,20 @@
     {
       "type": "library",
       "name": "bitsandbytes",
-      "version": "0.49.1",
-      "purl": "pkg:pypi/bitsandbytes@0.49.1"
+      "version": "0.49.2",
+      "purl": "pkg:pypi/bitsandbytes@0.49.2"
     },
     {
       "type": "library",
       "name": "certifi",
-      "version": "2026.1.4",
-      "purl": "pkg:pypi/certifi@2026.1.4"
+      "version": "2026.2.25",
+      "purl": "pkg:pypi/certifi@2026.2.25"
     },
     {
       "type": "library",
       "name": "charset-normalizer",
-      "version": "3.4.4",
-      "purl": "pkg:pypi/charset-normalizer@3.4.4"
+      "version": "3.4.5",
+      "purl": "pkg:pypi/charset-normalizer@3.4.5"
     },
     {
       "type": "library",
@@ -79,14 +85,14 @@
     {
       "type": "library",
       "name": "coverage",
-      "version": "7.13.3",
-      "purl": "pkg:pypi/coverage@7.13.3"
+      "version": "7.13.4",
+      "purl": "pkg:pypi/coverage@7.13.4"
     },
     {
       "type": "library",
       "name": "datasets",
-      "version": "4.5.0",
-      "purl": "pkg:pypi/datasets@4.5.0"
+      "version": "4.6.1",
+      "purl": "pkg:pypi/datasets@4.6.1"
     },
     {
       "type": "library",
@@ -97,8 +103,8 @@
     {
       "type": "library",
       "name": "filelock",
-      "version": "3.20.3",
-      "purl": "pkg:pypi/filelock@3.20.3"
+      "version": "3.25.0",
+      "purl": "pkg:pypi/filelock@3.25.0"
     },
     {
       "type": "library",
@@ -109,8 +115,8 @@
     {
       "type": "library",
       "name": "fsspec",
-      "version": "2025.10.0",
-      "purl": "pkg:pypi/fsspec@2025.10.0"
+      "version": "2026.2.0",
+      "purl": "pkg:pypi/fsspec@2026.2.0"
     },
     {
       "type": "library",
@@ -139,8 +145,8 @@
     {
       "type": "library",
       "name": "hf-xet",
-      "version": "1.2.0",
-      "purl": "pkg:pypi/hf-xet@1.2.0"
+      "version": "1.3.2",
+      "purl": "pkg:pypi/hf-xet@1.3.2"
     },
     {
       "type": "library",
@@ -157,8 +163,8 @@
     {
       "type": "library",
       "name": "huggingface_hub",
-      "version": "1.4.0",
-      "purl": "pkg:pypi/huggingface_hub@1.4.0"
+      "version": "1.6.0",
+      "purl": "pkg:pypi/huggingface_hub@1.6.0"
     },
     {
       "type": "library",
@@ -198,15 +204,9 @@
     },
     {
       "type": "library",
-      "name": "# Editable install with no version control (mertformer-sdk",
-      "version": "1.0.0a0)",
-      "purl": "pkg:pypi/# Editable install with no version control (mertformer-sdk@1.0.0a0)"
-    },
-    {
-      "type": "library",
-      "name": "editable-editable-local",
+      "name": "editable-mertformer_sdk",
       "version": "editable",
-      "purl": "pkg:pypi/editable-editable-local@editable"
+      "purl": "pkg:pypi/editable-mertformer_sdk@editable"
     },
     {
       "type": "library",
@@ -253,20 +253,26 @@
     {
       "type": "library",
       "name": "onnx-ir",
-      "version": "0.1.15",
-      "purl": "pkg:pypi/onnx-ir@0.1.15"
+      "version": "0.2.0",
+      "purl": "pkg:pypi/onnx-ir@0.2.0"
     },
     {
       "type": "library",
       "name": "onnx-simplifier",
-      "version": "0.4.36",
-      "purl": "pkg:pypi/onnx-simplifier@0.4.36"
+      "version": "0.5.0",
+      "purl": "pkg:pypi/onnx-simplifier@0.5.0"
     },
     {
       "type": "library",
       "name": "onnxscript",
-      "version": "0.6.0",
-      "purl": "pkg:pypi/onnxscript@0.6.0"
+      "version": "0.6.2",
+      "purl": "pkg:pypi/onnxscript@0.6.2"
+    },
+    {
+      "type": "library",
+      "name": "onnxsim",
+      "version": "0.4.36",
+      "purl": "pkg:pypi/onnxsim@0.4.36"
     },
     {
       "type": "library",
@@ -277,8 +283,8 @@
     {
       "type": "library",
       "name": "pandas",
-      "version": "3.0.0",
-      "purl": "pkg:pypi/pandas@3.0.0"
+      "version": "3.0.1",
+      "purl": "pkg:pypi/pandas@3.0.1"
     },
     {
       "type": "library",
@@ -288,15 +294,9 @@
     },
     {
       "type": "library",
-      "name": "pillow",
-      "version": "12.1.1",
-      "purl": "pkg:pypi/pillow@12.1.1"
-    },
-    {
-      "type": "library",
       "name": "platformdirs",
-      "version": "4.5.1",
-      "purl": "pkg:pypi/platformdirs@4.5.1"
+      "version": "4.9.4",
+      "purl": "pkg:pypi/platformdirs@4.9.4"
     },
     {
       "type": "library",
@@ -325,8 +325,8 @@
     {
       "type": "library",
       "name": "pyarrow",
-      "version": "23.0.0",
-      "purl": "pkg:pypi/pyarrow@23.0.0"
+      "version": "23.0.1",
+      "purl": "pkg:pypi/pyarrow@23.0.1"
     },
     {
       "type": "library",
@@ -342,21 +342,9 @@
     },
     {
       "type": "library",
-      "name": "pygame",
-      "version": "2.6.1",
-      "purl": "pkg:pypi/pygame@2.6.1"
-    },
-    {
-      "type": "library",
       "name": "Pygments",
       "version": "2.19.2",
       "purl": "pkg:pypi/Pygments@2.19.2"
-    },
-    {
-      "type": "library",
-      "name": "pypdf",
-      "version": "6.7.4",
-      "purl": "pkg:pypi/pypdf@6.7.4"
     },
     {
       "type": "library",
@@ -385,14 +373,8 @@
     {
       "type": "library",
       "name": "regex",
-      "version": "2026.1.15",
-      "purl": "pkg:pypi/regex@2026.1.15"
-    },
-    {
-      "type": "library",
-      "name": "reportlab",
-      "version": "4.4.10",
-      "purl": "pkg:pypi/reportlab@4.4.10"
+      "version": "2026.2.28",
+      "purl": "pkg:pypi/regex@2026.2.28"
     },
     {
       "type": "library",
@@ -403,14 +385,14 @@
     {
       "type": "library",
       "name": "rich",
-      "version": "14.3.2",
-      "purl": "pkg:pypi/rich@14.3.2"
+      "version": "14.3.3",
+      "purl": "pkg:pypi/rich@14.3.3"
     },
     {
       "type": "library",
       "name": "ruff",
-      "version": "0.15.0",
-      "purl": "pkg:pypi/ruff@0.15.0"
+      "version": "0.15.5",
+      "purl": "pkg:pypi/ruff@0.15.5"
     },
     {
       "type": "library",
@@ -421,8 +403,8 @@
     {
       "type": "library",
       "name": "scipy",
-      "version": "1.17.0",
-      "purl": "pkg:pypi/scipy@1.17.0"
+      "version": "1.17.1",
+      "purl": "pkg:pypi/scipy@1.17.1"
     },
     {
       "type": "library",
@@ -433,8 +415,8 @@
     {
       "type": "library",
       "name": "sentry-sdk",
-      "version": "2.52.0",
-      "purl": "pkg:pypi/sentry-sdk@2.52.0"
+      "version": "2.54.0",
+      "purl": "pkg:pypi/sentry-sdk@2.54.0"
     },
     {
       "type": "library",
@@ -481,14 +463,14 @@
     {
       "type": "library",
       "name": "transformers",
-      "version": "5.1.0",
-      "purl": "pkg:pypi/transformers@5.1.0"
+      "version": "5.3.0",
+      "purl": "pkg:pypi/transformers@5.3.0"
     },
     {
       "type": "library",
-      "name": "typer-slim",
-      "version": "0.21.1",
-      "purl": "pkg:pypi/typer-slim@0.21.1"
+      "name": "typer",
+      "version": "0.24.1",
+      "purl": "pkg:pypi/typer@0.24.1"
     },
     {
       "type": "library",
@@ -511,8 +493,8 @@
     {
       "type": "library",
       "name": "wandb",
-      "version": "0.24.2",
-      "purl": "pkg:pypi/wandb@0.24.2"
+      "version": "0.25.0",
+      "purl": "pkg:pypi/wandb@0.25.0"
     },
     {
       "type": "library",
@@ -523,8 +505,8 @@
     {
       "type": "library",
       "name": "yarl",
-      "version": "1.22.0",
-      "purl": "pkg:pypi/yarl@1.22.0"
+      "version": "1.23.0",
+      "purl": "pkg:pypi/yarl@1.23.0"
     },
     {
       "type": "library",

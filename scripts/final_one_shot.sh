@@ -56,7 +56,8 @@ chflags nouchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip
 chmod u+w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 2>/dev/null || true
 
 # Release artifact
-zip -r artifacts/mertformer_release.zip . -x ".git/*" "*/.git/*" "*.pyc" "*__pycache__*" ".titan-venv/*" ".lint-venv/*" ".venv/*" ".idea/*" ".pytest_cache/*" ".ruff_cache/*" ".mypy_cache/*" ".env" ".env.*" "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256"
+rm -f artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256
+zip -r artifacts/mertformer_release.zip . -x ".git/*" "*/.git/*" "*.pyc" "*__pycache__*" ".titan-venv/*" ".lint-venv/*" ".venv/*" ".idea/*" ".pytest_cache/*" ".ruff_cache/*" ".mypy_cache/*" ".env" ".env.*" "logs/*" "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256"
 shasum -a 256 artifacts/mertformer_release.zip > artifacts/mertformer_release.zip.sha256
 run_step "zip_denylist_audit_artifact" bash -lc '.titan-venv/bin/python scripts/zip_denylist_audit.py --zip artifacts/mertformer_release.zip > reports/artifacts_zip_denylist_audit.json'
 
