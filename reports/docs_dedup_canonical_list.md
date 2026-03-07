@@ -207,6 +207,7 @@ Generated automatically.
 - `reports/release_snapshot_TR.md`
 - `reports/report_accuracy_audit.md`
 - `reports/report_accuracy_audit_TR.md`
+- `reports/report_truth_matrix.md`
 - `reports/review_checklist.md`
 - `reports/review_checklist_TR.md`
 - `reports/sales_funnel_90d.md`

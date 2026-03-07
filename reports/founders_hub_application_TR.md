@@ -23,7 +23,7 @@ Regüle sektörler, savunma sınıfı iş akışları ve düşük bağlantılı 
 - Reproducibility gate’leri ve forensik loglama.
 
 ## Çekiş (Traction)
-- Mimari ve eğitim pipeline tamamlandı.
+- Mimari ve eğitim pipeline uygulandı; tam eğitim koşusu ve benchmark kanıtları pending.
 - Gate suite ve asset stack hazır.
 - HumanEval/MBPP runner’ları hazır.
 
