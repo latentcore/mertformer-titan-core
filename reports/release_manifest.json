@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-03-07T18:07:06.979979+00:00",
+  "generated_utc": "2026-03-07T18:08:29.283301+00:00",
   "root": ".",
   "entry_count": 476,
   "entries": [
@@ -1213,7 +1213,7 @@
       "path": "reports/benchmarks/internal_smoke_summary.json",
       "size_bytes": 54,
       "sha256": "93885b4fecdf4b4dd0a387586e481a834ae56a69d9571a066955cdac3ae4c780",
-      "mtime_utc": "2026-03-07T18:05:13.545557+00:00"
+      "mtime_utc": "2026-03-07T18:08:21.321421+00:00"
     },
     {
       "path": "reports/benchmarks/kaggle_compare_build30.csv",
@@ -1367,9 +1367,9 @@
     },
     {
       "path": "reports/dealroom_reference.json",
-      "size_bytes": 425,
-      "sha256": "66d45d478b8dc986fd36351b5f84ebbc0cce3eb0a2bd548df86bf37caf12fe23",
-      "mtime_utc": "2026-03-07T18:06:51.349665+00:00"
+      "size_bytes": 566,
+      "sha256": "092eda1eac725c7937e05be79b711236f792c731a2bd792d56dd28f88e0a2b8f",
+      "mtime_utc": "2026-03-07T18:07:15.392206+00:00"
     },
     {
       "path": "reports/determinism_report.json",
@@ -1387,7 +1387,7 @@
       "path": "reports/docs_dedup_canonical_list.md",
       "size_bytes": 14908,
       "sha256": "2bff174953c89514602ca71ed6ad285cab3d39a4336118656a9222a48c58d17b",
-      "mtime_utc": "2026-03-07T18:05:20.643816+00:00"
+      "mtime_utc": "2026-03-07T18:08:29.153334+00:00"
     },
     {
       "path": "reports/docs_packages_hash_manifest.json",
@@ -1410,8 +1410,8 @@
     {
       "path": "reports/duplicate_zip_guard_report.json",
       "size_bytes": 170,
-      "sha256": "d3e1f0f59027a1e5560af9d707e74662f03528b7d8c6513ef03e823e87e502b0",
-      "mtime_utc": "2026-03-07T18:06:51.350724+00:00"
+      "sha256": "8eec74ba67bfce9e9c6cf2716ca331ee5f33477ed463fbb001ef541759816cd0",
+      "mtime_utc": "2026-03-07T18:08:27.250069+00:00"
     },
     {
       "path": "reports/efficiency_convergence_analysis.md",
@@ -1464,14 +1464,14 @@
     {
       "path": "reports/folder_drift_report.json",
       "size_bytes": 4597,
-      "sha256": "b7e2be7e59a46a95ac264be827886048e44cb6b7952d1fb809b1ddd5d8de650d",
-      "mtime_utc": "2026-03-07T18:06:51.351755+00:00"
+      "sha256": "5fb39616f442e8584a705d23e2a6b1272fd017dd9da6a6a4e9dbd68b09d8b62c",
+      "mtime_utc": "2026-03-07T18:08:29.154210+00:00"
     },
     {
       "path": "reports/folder_structure_policy.md",
       "size_bytes": 274,
       "sha256": "ccac9a74cb638146dc0b0c9396e0a254fc42ad31aba643b73cb8afc25e446157",
-      "mtime_utc": "2026-03-07T18:05:20.643961+00:00"
+      "mtime_utc": "2026-03-07T18:08:29.153516+00:00"
     },
     {
       "path": "reports/founders_hub_application.md",
@@ -1596,14 +1596,14 @@
     {
       "path": "reports/linkcheck_report.json",
       "size_bytes": 173,
-      "sha256": "24f274f9b24fd51cb7c05bec2b19db369d173d2c5f4327ecc91967cd5dd1b9a9",
-      "mtime_utc": "2026-03-07T18:06:51.353406+00:00"
+      "sha256": "67e2dbd6ebc467edba9ebdbaa8cc757683b0232afc5ce5ecae0b6998af1facc9",
+      "mtime_utc": "2026-03-07T18:08:28.654171+00:00"
     },
     {
       "path": "reports/md_lint_report.json",
       "size_bytes": 28087,
-      "sha256": "50e06759745c53bf2aad64f14f6c62a3e2f3287fc7b7d659681bb578adf5e520",
-      "mtime_utc": "2026-03-07T18:06:51.353881+00:00"
+      "sha256": "4c281f8e92c3fa5fe0fe66fbfd3f0e022027bdc5bd828ead484072c16fc863f5",
+      "mtime_utc": "2026-03-07T18:08:28.117331+00:00"
     },
     {
       "path": "reports/model_health.md",
@@ -1619,15 +1619,15 @@
     },
     {
       "path": "reports/one_command_full_sop.log",
-      "size_bytes": 8162,
-      "sha256": "04e43d126fabd2ae6f4edb6742350875330b76286e93f399da04b200ce134f34",
-      "mtime_utc": "2026-03-07T18:06:51.354219+00:00"
+      "size_bytes": 9453,
+      "sha256": "0114b8f7d8071d87c863df543e6abd6b4b7d3ecabb95eed56bd77e6bba540b5c",
+      "mtime_utc": "2026-03-07T18:07:22.623302+00:00"
     },
     {
       "path": "reports/one_command_full_sop_summary.md",
-      "size_bytes": 609,
-      "sha256": "5056ad9c5cf0aa1bc8f50afdc34bf8c1343aebce3424fc7b16adbbf38f8d1e9f",
-      "mtime_utc": "2026-03-07T18:06:51.354507+00:00"
+      "size_bytes": 990,
+      "sha256": "b729371b5cbb4a6756b2dd584c2c093811333080b49c40fa78f0af6ed19dad47",
+      "mtime_utc": "2026-03-07T18:07:15.393978+00:00"
     },
     {
       "path": "reports/one_pager.md",
@@ -1643,9 +1643,9 @@
     },
     {
       "path": "reports/ownership_proof_bundle.json",
-      "size_bytes": 563,
-      "sha256": "0f7e7449d5825e11e9264812116d84d7096df95cd4b9a1dc17c54cb2b49f3d1a",
-      "mtime_utc": "2026-03-07T18:06:51.354838+00:00"
+      "size_bytes": 704,
+      "sha256": "3e038eb6c027aa892e9fbfc0d540b8f4ff0befef3e52aca1ef353053b99d8527",
+      "mtime_utc": "2026-03-07T18:07:15.394242+00:00"
     },
     {
       "path": "reports/pilot_acceptance_signoff.md",
@@ -1745,15 +1745,15 @@
     },
     {
       "path": "reports/release_snapshot.md",
-      "size_bytes": 2474,
-      "sha256": "e420d8bea85245ad934178d5ce77545ade2b6c1c829d74a3ff0f9e65dbab4181",
-      "mtime_utc": "2026-03-07T18:06:51.356894+00:00"
+      "size_bytes": 2683,
+      "sha256": "c1758211a1ee1d6620a8fb26a2bc4011fd102c12eb5a2380b19f5bd1b58f57f2",
+      "mtime_utc": "2026-03-07T18:07:15.394517+00:00"
     },
     {
       "path": "reports/release_snapshot_TR.md",
-      "size_bytes": 2556,
-      "sha256": "6526b5604503d84b71aa34f96f0d887cb2651dc9042eab47f2ccda365b2c1020",
-      "mtime_utc": "2026-03-07T18:06:51.357257+00:00"
+      "size_bytes": 2765,
+      "sha256": "55f4f4d02ae5bee0e351441b31425b7ab4a5b6abb8797be4e6fb674a11ee6cc2",
+      "mtime_utc": "2026-03-07T18:07:15.394774+00:00"
     },
     {
       "path": "reports/report_accuracy_audit.md",
@@ -1962,8 +1962,8 @@
     {
       "path": "reports/unicode_path_guard_report.json",
       "size_bytes": 135,
-      "sha256": "dc8141fc6e863d10e84d28124709c95bd2528ac81464cdceb57c747248fd4857",
-      "mtime_utc": "2026-03-07T18:06:51.360512+00:00"
+      "sha256": "dcdf79a800dba58b6d25b2e1df71ffb082cd3e9327dbdedf05baee8c7ecf355e",
+      "mtime_utc": "2026-03-07T18:08:23.657799+00:00"
     },
     {
       "path": "reports/verified_matrix.md",
