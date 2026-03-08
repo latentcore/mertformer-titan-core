@@ -61,8 +61,17 @@ DOWNLOADS_DIR = detect_output_dir()
 BASE_FILENAME = "MertFormer_Smart_Dump"
 TIMEOUT_SECONDS = 10
 
-# BU UZANTILARIN SADECE İSMİ YAZILIR, İÇERİĞİ OKUNMAZ (Gereksizler Listesi)
-SKIP_CONTENT_EXTENSIONS = {
+# XRAY içinde tüm skip politikalarını override ederek mutlaka içerik dökülecek dosyalar.
+# Not: Bu liste "deny" değil "force-include" politikasıdır.
+FORCE_INCLUDE_RELATIVE_PATHS = {
+    "README.md",
+    "README_TR.md",
+    "reports/one_command_full_sop.log",
+    "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
+}
+
+# Bu uzantılar varsayılan olarak binary/sistem kabul edilir.
+BINARY_SYSTEM_EXTENSIONS = {
     # Python Cache / Sistem
     ".pyc", ".pyo", ".pyd", ".DS_Store",
     # Resim / Medya
@@ -107,9 +116,46 @@ SKIP_DIR_NAMES = {
 MAX_TEXT_FILE_BYTES = int(os.environ.get("XRAY_MAX_TEXT_BYTES", "120000"))
 
 
+def sanitize_policy_conflicts():
+    """Force-include hedefleriyle çakışan skip kurallarını otomatik temizle."""
+    forced_suffixes = {Path(rel).suffix.lower() for rel in FORCE_INCLUDE_RELATIVE_PATHS if Path(rel).suffix}
+    for suffix in forced_suffixes:
+        BINARY_SYSTEM_EXTENSIONS.discard(suffix)
+
+    forced_parent_dirs = set()
+    for rel in FORCE_INCLUDE_RELATIVE_PATHS:
+        parts = Path(rel).parts[:-1]
+        forced_parent_dirs.update(p.lower() for p in parts)
+    for parent in forced_parent_dirs:
+        SKIP_DIR_NAMES.discard(parent)
+
+sanitize_policy_conflicts()
+
+
 # -------------------------------------------------------------------------
 # YARDIMCI FONKSİYONLAR
 # -------------------------------------------------------------------------
+
+
+def to_root_relative_posix(path: Path) -> str:
+    try:
+        rel = path.resolve().relative_to(ROOT_DIR.resolve())
+        return rel.as_posix()
+    except Exception:
+        return path.as_posix()
+
+
+def is_force_include(path: Path) -> bool:
+    rel = to_root_relative_posix(path)
+    return rel in FORCE_INCLUDE_RELATIVE_PATHS
+
+
+def has_force_include_descendant(path: Path) -> bool:
+    prefix = to_root_relative_posix(path).strip('/')
+    if not prefix:
+        return bool(FORCE_INCLUDE_RELATIVE_PATHS)
+    dotted = prefix + "/"
+    return any(rel.startswith(dotted) for rel in FORCE_INCLUDE_RELATIVE_PATHS)
 
 def timed_input(prompt, timeout):
     print(prompt, end='', flush=True)
@@ -160,8 +206,11 @@ def log(message: str, file_handle=None):
 
 def is_text_file(path: Path) -> bool:
     """Dosyanın metin mi binary mi olduğunu kontrol eder."""
+    if is_force_include(path):
+        return True
+
     # 1. Uzantı kontrolü (Hızlı eleme)
-    if path.suffix.lower() in SKIP_CONTENT_EXTENSIONS:
+    if path.suffix.lower() in BINARY_SYSTEM_EXTENSIONS:
         return False
     # 2. İçerik kontrolü (Kesin sonuç)
     try:
@@ -172,6 +221,9 @@ def is_text_file(path: Path) -> bool:
         return False
 
 def should_skip_content(path: Path) -> bool:
+    if is_force_include(path):
+        return False
+
     name = path.name.lower()
     # Secret files must never be dumped.
     if name == ".env" or name.startswith(".env."):
@@ -198,6 +250,9 @@ def should_skip_content(path: Path) -> bool:
 
 
 def should_skip_dir(path: Path) -> bool:
+    if has_force_include_descendant(path):
+        return False
+
     # Virtualenv / backup venv klasörlerini direkt atla (adil ve hızlı)
     if "venv" in path.name.lower():
         return True
@@ -251,14 +306,14 @@ def write_tree(path: Path, file_handle, prefix: str = ""):
                     file_size = entry.stat().st_size
 
                     # 🚨 Aşırı büyük text dosyaları tamamen binary gibi davran
-                    if file_size > 1_000_000:  # 1MB üstü = muhtemelen dataset/tokenizer/log/artefact
+                    if file_size > 1_000_000 and not is_force_include(entry):
                         log(
                             f"{new_prefix}    [İÇERİK GİZLENDİ: Aşırı büyük dosya ({file_size} bytes)]",
                             file_handle
                         )
                         continue
 
-                    if file_size > MAX_TEXT_FILE_BYTES:
+                    if file_size > MAX_TEXT_FILE_BYTES and not is_force_include(entry):
                         log(
                             f"{new_prefix}    [İÇERİK GİZLENDİ: Dosya çok büyük ({file_size} bytes, limit {MAX_TEXT_FILE_BYTES} bytes)]",
                             file_handle
