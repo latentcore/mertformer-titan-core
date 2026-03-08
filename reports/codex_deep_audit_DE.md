@@ -4,7 +4,7 @@
 **Audit-Typ:** Code + Dokumentation + Run-Verifikation (offline-first)
 
 ## Kisa TR Ozet (6-10 satir)
-Bu repo; “mobile-first / NPU hedefli” bir LLM mimarisi icin BitLinear (dusuk-bit agirlik simulasyonu), MLA attention, MoE + LiquidRouter routing ve Liquid/CfC dinamik katmanlarini bir araya getiren kapsamli bir Ar-Ge + engineering PoC calismasi. Mimarinin ve egitim iskeletinin calistigi dogrulandi: secret scan PASS, preflight PASS, operator-mode gate PASS, pytest PASS (`21 passed, 4 skipped`) ve `run.sh --test` offline-first PASS. Dataset kaynak/lisans envanteri artik kodla hizali (inventory + LICENSES + snapshot/hash registry mevcut; `datasets/hashes.json` pinlenmis revision + manifest fingerprint iceriyor); bununla birlikte `bigcode/the-stack-v2` gibi gated/karma lisansli kaynaklar kurumsal egitimde hukuki onay sureci gerektirir. Dokumantasyon genis ama performans/NPU hiz/enerji gibi rakamlar su an “hedef/iddia” seviyesinde (reprodusibl checkpoint + benchmark raporu yok). Seviye: **Engineering PoC / Ar-Ge (Pre-Training)**; “review-ready” (muhendislik incelemesi ve egitime baslamak icin) ama “production-ready” degil (egitim + benchmark + cihaz profili eksik). Git gecmisi tek author gosteriyor; en olasi ekip: 1 kisi (belirsizlik payi: tool/yardimci katkilar Git’te gorunmeyebilir).
+Bu repo; “mobile-first / NPU hedefli” bir LLM mimarisi icin BitLinear (dusuk-bit agirlik simulasyonu), MLA-labeled GQA attention, MoE + LiquidRouter routing ve Liquid/CfC dinamik katmanlarini bir araya getiren kapsamli bir Ar-Ge + engineering PoC calismasi. Mimarinin ve egitim iskeletinin calistigi dogrulandi: secret scan PASS, preflight PASS, operator-mode gate PASS, pytest PASS (`21 passed, 4 skipped`) ve `run.sh --test` offline-first PASS. Dataset kaynak/lisans envanteri artik kodla hizali (inventory + LICENSES + snapshot/hash registry mevcut; `datasets/hashes.json` pinlenmis revision + manifest fingerprint iceriyor); bununla birlikte `bigcode/the-stack-v2` gibi gated/karma lisansli kaynaklar kurumsal egitimde hukuki onay sureci gerektirir. Dokumantasyon genis ama performans/NPU hiz/enerji gibi rakamlar su an “hedef/iddia” seviyesinde (reprodusibl checkpoint + benchmark raporu yok). Seviye: **Engineering PoC / Ar-Ge (Pre-Training)**; “review-ready” (muhendislik incelemesi ve egitime baslamak icin) ama “production-ready” degil (egitim + benchmark + cihaz profili eksik). Git gecmisi tek author gosteriyor; en olasi ekip: 1 kisi (belirsizlik payi: tool/yardimci katkilar Git’te gorunmeyebilir).
 
 ---
 
@@ -64,7 +64,7 @@ Interpretation (Assumption):
   - `moe.py`: MoE Dispatch + LiquidRouter (stateful) + Aux Loss + Collapse Handling
   - `liquid.py`: CfC/LiquidCell + (optional) JIT-Pfad + Residual/Norm
   - `qinn.py`: optionaler unitary Layer (Cayley Transform)
-  - `mertformer_block.py`: Block-Komposition (Norm -> MLA -> optional Liquid -> FFN/MoE -> optional QINN)
+  - `mertformer_block.py`: Block-Komposition (Norm -> MLA-labeled GQA -> optional Liquid -> FFN/MoE -> optional QINN)
 - **Training:** `train/train.py` (Accelerate, Curriculum, Offline/Online Distillation, Checkpoints, Export)
 - **Scripts/Ops:** `run.sh`, `scripts/bootstrap_venv.sh`, `scripts/verify_all.sh`, `scripts/titan_preflight.py`, `scripts/operator_mode_gate.py`, `scripts/overfit_gate.py`, `scripts/checkpoint_restore_drill.py`, `scripts/failure_budget_drill.py`
 - **Dataset Compliance:** `scripts/extract_dataset_refs.py` (Inventory), `scripts/record_dataset_hashes.py` (Snapshot/Hash Registry), `datasets/SOURCES*.md`, `datasets/LICENSES*.md`, `datasets/hashes.json`

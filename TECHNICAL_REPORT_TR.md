@@ -10,7 +10,7 @@
 Yapay zeka ekosistemi, bulut tabanlı devasa modellerden cihaz içi (on-device) çalışan, enerji verimliliği yüksek ve gizlilik odaklı Küçük Dil Modellerine (SLM) doğru evrilmektedir. Bu evrimin en uç noktasında yer alan **MertFormer Titan (Onyx Storm) v1.0 (Build 30)** projesi, modern derin öğrenme literatüründeki en gelişmiş dört paradigmanın stratejik bir sentezidir:
 
 1.  **BitNet 1.58-bit Kuantizasyonu** (Verimlilik)
-2.  **Çok Başlı Latent Dikkat (MLA)** (Bellek)
+2.  **MLA etiketli GQA dikkat bloğu (mevcut implementasyon)** (Bellek)
 3.  **Seyrek Uzmanlar Karışımı (MoE)** (Kapasite)
 4.  **Liquid Sinir Ağları (LNN)** (Dinamizm)
 
@@ -33,12 +33,13 @@ $$w_q = \text{clamp}(\text{round}(\frac{w}{\gamma + \epsilon}), -1, 1)$$
 
 *   **Residual Scaling Etkisi (Hedef):** 18 katman boyunca sinyal kararlılığı, 1/√2 (1/sqrt(2)) katsayısı ile korunur; gerçek doğrulama gerekir.
 
-### 2.2 Çok Başlı Latent Dikkat (MLA)
-Cihaz içi çıkarımda en büyük engel olan KV Cache darboğazını `mla.py` ile çözer. DeepSeek-V2 mantığını kullanarak KV tensörlerini düşük dereceli (low-rank) latent vektörlere sıkıştırır.
+### 2.2 MLA Etiketli GQA Dikkat Bloğu (Mevcut Implementasyon)
+`mla.py` modülü, `MLA` sınıf adı altında GQA tarzı bir attention çekirdeği uygular. KV başlıkları (`num_kv_heads`) azaltılıp paylaştırılır ve çalışma anında query başlıklarına çoğaltılır.
 
-*   **KV Cache Küçülmesi (Tahmini):** %93.3
-*   **Sonuç (Hedef):** 4096+ token uzunluklarında mobil bellek limitlerine sığması hedeflenir; cihaz doğrulaması gerekir.
+*   **Mevcut mekanizma:** GQA projeksiyonu + KV head çoğaltma (latent down/up bottleneck değil).
+*   **Cache verim yolu:** Opsiyonel kısa/uzun hiyerarşik KV cache modu decode anında bellek baskısını düşürebilir (hedef davranış; profile bağlı).
 *   **RoPE:** $\theta = 100,000$ ile uzun bağlam desteği.
+*   **Doğruluk sınırı:** Tam latent-MLA bottleneck bu sürümde roadmap kalemidir.
 
 ### 2.3 Liquid Neural Networks (CfC)
 Projenin "canlı" kalbi. Biyolojik nöronlardan (C. elegans) esinlenen Kapalı Form Sürekli Zamanlı (CfC) hücreleri, girdiye bağımlı diferansiyel denklemlerle çalışır.
@@ -51,20 +52,20 @@ Formül:
 $$h(t) = A + (h_{prev} - A) \odot \exp(-\tau \Delta t)$$
 
 ### 2.4 LiquidRouter & MoE
-Dünyada bir ilk: MoE yönlendiricisi olarak Liquid Network kullanımı.
-Geleneksel yönlendiriciler "o anki" tokena bakarken, **LiquidRouter** geçmiş tokenların momentumunu da hesaba katarak uzman seçimi yapar.
+`LiquidRouter`, MoE token yönlendirmesi için zamansal Conv tabanlı bir yönlendirici olarak uygulanır (`causal depthwise Conv1d` + rolling state buffer).
+Yönlendirme politikası token-choice top-k'dır ve `LiquidMixer/LiquidCell` içindeki CfC yolundan ayrı değerlendirilmelidir.
 
 | Parametre | Değer |
 | :--- | :--- |
 | Uzman Sayısı | 8 |
 | Aktif Uzman (Top-k) | 2 |
-| Yönlendirici | **LiquidRouter** (Dinamik) |
+| Yönlendirici | `LiquidRouter` (Conv1d + state buffer) |
 | Ara Boyut | 5632 (SwiGLU) |
 
-**LiquidRouter'ın Stratejik Farkı:**
-*   **Momentum Bazlı Yönlendirme:** Standart "hafızasız" yönlendiricilerin aksine, verinin geliş hızını ve zamansal momentumunu (`Fluid Path`) analiz eder.
+**LiquidRouter'ın Stratejik Farkı (Claim-Safe):**
+*   **Zamansal yönlendirme:** Verinin geliş hızını ve kısa geçmişini (`Fluid Path`) analiz eder; formal üstünlük iddiası içermez.
 *   **Causal Conv1d Entegrasyonu:** Uzman seçimi sırasında geçmiş 4 token'lık pencereyi (`history_window`) dikkate alarak stratejik bir zeka sergiler.
-*   **Donanım Verimliliği (Hedef):** NPU üzerinde anlamlı enerji tasarrufu hedeflenir; cihaz profili gerekir.
+*   **Donanım verimliliği (Hedef):** Yönlendirme kararsızlığını azaltmayı ve NPU davranışını iyileştirmeyi hedefler; cihaz profili gerekir.
 
 ### 2.5 Sinaptik Katman Hiyerarşisi (Layer-by-Layer Taxonomy)
 MertFormer Titan'ın 18 katmanlı yapısı, veriyi kademeli bir "bilgeliğe" dönüştürür:
@@ -177,7 +178,7 @@ Mimari tutarlı, donanım hedefi doğru ve pazar bu çözüme aç durumdadır. P
 ## 9. Hendek Doğrulama ve Yayın Yol Haritası (Moat Validation)
 
 VC standartlarına uygun olarak, projenin "Hendek" (Moat) değerini kanıtlama adımları:
-1. **Whitepaper**: `LiquidRouter` ve `BitNet-MLA` sinerjisinin matematiksel ispatını içeren teknik makalenin yayını.
+1. **Whitepaper**: `LiquidRouter + MLA etiketli GQA + BitNet` sinerjisinin matematiksel ispatını içeren teknik makalenin yayını.
 2. **Açık Benchmark**: MMLU, GSM8K ve HumanEval skorlarının bağımsız denetçilerce doğrulanması.
 3. **Canlı Demo**: Fiziksel bir Samsung S25 üzerinde 100% cihaz içi (on-device) kod üretimi videosu.
 

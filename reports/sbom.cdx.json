@@ -3,7 +3,7 @@
   "specVersion": "1.5",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-03-07T04:54:12.523713+00:00",
+    "timestamp": "2026-03-08T01:38:41.135578+00:00",
     "component": {
       "type": "application",
       "name": "mertformer-titan-core"
@@ -204,9 +204,15 @@
     },
     {
       "type": "library",
-      "name": "editable-mertformer_sdk",
+      "name": "# Editable install with no version control (mertformer-sdk",
+      "version": "0.1.0)",
+      "purl": "pkg:pypi/# Editable install with no version control (mertformer-sdk@0.1.0)"
+    },
+    {
+      "type": "library",
+      "name": "editable-core",
       "version": "editable",
-      "purl": "pkg:pypi/editable-mertformer_sdk@editable"
+      "purl": "pkg:pypi/editable-core@editable"
     },
     {
       "type": "library",

@@ -61,6 +61,7 @@ mertformer 57-report --out reports/closure_57_matrix.json
 - `reports/closure_57_matrix.json`
 - `reports/closure_57_matrix.md`
 - `reports/closure_57_matrix_TR.md`
+- Şeffaflık notu: Closure-57 süreç düzeyinde yeşildir (`57/57`) ve mevcut raporda `out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]` listelenir.
 <br />
 
 ```
@@ -458,7 +459,9 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 <a id="genel-bakış"></a>
 ## 🎯 Genel Bakış
 
-MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** için tasarlanmış, son teknoloji ürünü **2.64B parametreli** bir dil modelidir. **BitNet 1.58-bit kuantizasyon**, **Liquid Neural Networks**, **Seyrek Uzmanlar Karışımı (MoE)** ve **Çok Başlı Latent Dikkat (MLA)** teknolojilerini birleştirerek, tamamen bir akıllı telefonda çalışırken **GPT-3.5 seviyesinde performans hedefler (eğitim öncesi hedef)**.
+MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** için tasarlanmış, son teknoloji ürünü **2.64B parametreli** bir dil modelidir. **BitNet 1.58-bit kuantizasyon**, **Liquid Neural Networks**, **Seyrek Uzmanlar Karışımı (MoE)** ve **MLA etiketli GQA dikkat bloğu (mevcut implementasyon)** teknolojilerini birleştirerek, tamamen bir akıllı telefonda çalışırken **GPT-3.5 seviyesinde performans hedefler (eğitim öncesi hedef)**.
+
+Mimari doğruluk notu: `layers/mla.py` sınıf adı `MLA` olarak korunur; mevcut attention çekirdeği GQA tabanlıdır (`num_kv_heads` projeksiyonu + KV head çoğaltma). Tam latent-MLA bottleneck yol haritası kalemidir.
 
 İsim açılımı:
 - **MERT**: **Modüler Uçta Akıl Yürütme Transformer**
@@ -495,16 +498,18 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 - Gradyan akışı için Straight-Through Estimator (STE)
 - Stabilite için RMS ölçekleme (legacy yol Build 30 içine entegre edildi)
 
-### 2. **LiquidRouter (Dünyada İlk)** 🌍
-- **Yenilik**: Liquid Sinir Ağlarının **MoE Yönlendirmesi** için kullanıldığı ilk mimari.
+### 2. **LiquidRouter (Zamansal Conv Yönlendirici)** 🌍
+- **Implementasyon gerçeği**: MoE yönlendirmesi causal depthwise `Conv1d` + rolling state buffer ile yapılır.
+- **CfC ayrımı**: Kapalı form sürekli zamanlı (CfC) hücreler `LiquidMixer/LiquidCell` içinde çalışır; `LiquidRouter` içinde değil.
 - **Etki**: Standart (hafızasız) yönlendiricilere kıyasla **tahmini %15-20 daha iyi yönlendirme kalitesi**.
 - **Zamansal Rota**: Geçmişi hatırlayan "Trafik Polisi" mantığıyla uzman çökmesini önler.
 - **Dinamik**: Stabilite için zaman sabiti adaptasyonu ve jitter desteği.
 - **Akademik Değer**: Koşullu hesaplamada (conditional computation) yeni bir paradigma.
 
-### 3. **Çok Başlı Latent Dikkat (MLA)** 🧠
+### 3. **MLA Etiketli GQA Dikkat Bloğu (Mevcut Implementasyon)** 🧠
+- GQA tabanlı KV paylaşımı (`num_heads=16`, `num_kv_heads=8` varsayılan profil).
 - LLaMA-3 uyumlu RoPE (interleaved & decoupled)
-- KV önbellek sıkıştırma (%40-50 bellek tasarrufu)
+- Opsiyonel hiyerarşik KV cache yolu (kısa/uzun ayrımı) ile decode verimliliği.
 - Stabilite için QK normalizasyonu
 - Flash Attention 2 entegrasyonu (+%30 hızlanma)
 - Uzun bağlam hazır (theta=100K)
@@ -518,6 +523,7 @@ MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** içi
 
 ### 5. **Seyrek Uzmanlar Karışımı (MoE) & 🚀 LiquidRouter** 🧩
 - 8 uzman, top-2 yönlendirme
+- Yönlendirme politikası: token-choice top-k.
 - **Momentum Bazlı Yönlendirme:** Standart yönlendiricilerin aksine, `LiquidRouter` sadece anlık kelimeye değil, verinin geliş hızına ve zamansal momentumuna (`Fluid Path`) bakarak uzman seçer.
 - **Causal Conv1d Entegrasyonu:** Uzman seçimi sırasında geçmiş 4 token'lık pencereyi (`history_window`) dikkate alarak "trafik polisinden" ziyade bir "stratejik zeka" gibi çalışır.
 - **Donanım Uyumluluğu:** `LiquidRouter`ın keskin seçimleri sayesinde gereksiz uzmanların tetiklenmesi önlenir, bu da Samsung S25 NPU biriminde tahmini %40'a varan enerji tasarrufu sağlar.
@@ -637,8 +643,8 @@ bash run.sh --train-ready
       │  TRANSFORMER BLOĞU [Katman 0-17]  (Yinelemeli Süreç)                      │
       │                                                                           │
       │  ┌──────────────┐    ┌─────────────────────────────────────────────────┐  │
-      │  │ RMSNorm (F)  │───►│ [MLA] ÇOK BAŞLI LATENT DİKKAT (Attention)       │  │
-      │  └──────────────┘    │ » Boyut: 512 (Sıkıştırılmış KV)                 │  │
+      │  │ RMSNorm (F)  │───►│ [MLA ETIKETLI GQA] ATTENTION       │  │
+      │  └──────────────┘    │ » GQA başlıkları: Q=16, KV=8 (varsayılan profil)                 │  │
       │                      │ » İşlem: Softmax(Q·K^T / √d) · V                │  │
       │                      │ » Donanım: FlashAttn2 Kernel (SRAM Optimize)    │  │
       │                      └────────────────────────┬────────────────────────┘  │
@@ -687,19 +693,19 @@ bash run.sh --train-ready
 Verinin 0'dan 17'ye kadar olan yolculuğu:
 
 *   **Katman 0 (Giriş Bloğu):** Vektörleştirilen verinin ilk durağıdır; temel kelime ilişkileri kurulur ve `RMSNorm` ile sinyal genliği stabilize edilir.
-*   **Katman 1 (Gramer Temeli):** Dilin en temel yapı taşları işlenir; `MLA` (Attention) mekanizması ilk odaklanma haritasını oluşturur.
+*   **Katman 1 (Gramer Temeli):** Dilin en temel yapı taşları işlenir; `MLA` etiketli GQA attention mekanizması ilk odaklanma haritasını oluşturur.
 *   **Katman 2 (Verimlilik Mührü):** Kelimeler arası basit bağlamlar kurulur; `BitNet 1.58-bit` yapısı sayesinde tüm ağırlıklar $\{-1, 0, +1\}$ uzayında en düşük enerjiyle işlenir.
 *   **Katman 3 (Uzman Dağıtımı):** Anlamsal yoğunluk artar; `MoE` yapısı devreye girerek veriyi ilgili 8 uzmandan en uygun 2'sine yönlendirir.
 *   **Katman 4 (İlk Liquid Teması):** **Kritik Eşik.** İlk `LiquidMixer` (CfC) burada devreye girerek veriye ilk "zamansal akış" ve "momentum" algısını yükler.
-*   **Katman 5 (Akışkan Dikkat):** Akışkanlık kazanan veri, `MLA` tarafından daha derin bir boyutta süzülerek bağlamsal ilişkiler güçlendirilir.
+*   **Katman 5 (Akışkan Dikkat):** Akışkanlık kazanan veri, `MLA` etiketli GQA attention tarafından daha derin bir boyutta süzülerek bağlamsal ilişkiler güçlendirilir.
 *   **Katman 6 (Karmaşık Sözdizimi):** Cümle içindeki dolaylı yapılar çözülür; `MoE` uzmanları spesifik analizlere devam eder.
 *   **Katman 7 (Matematiksel Kararlılık):** Mantıksal çıkarımların temeli atılır; `UnitaryQINN` yolu yalnızca `use_qinn=true` olduğunda devreye alınır (Build 30 varsayılanı: KAPALI).
-*   **Katman 8 (Soyutlama):** Veri somut kelimelerden soyut kavramlara evrilir; hiyerarşik yapı `MLA` ile derinleştirilir.
+*   **Katman 8 (Soyutlama):** Veri somut kelimelerden soyut kavramlara evrilir; hiyerarşik yapı `MLA` etiketli GQA attention ile derinleştirilir.
 *   **Katman 9 (Niyet Analizi):** Karar mekanizmaları güçlenir; model kullanıcı niyetini ve sorunun arka planını kavramaya başlar.
 *   **Katman 10 (İkinci Liquid Teması):** **Kritik Eşik.** İkinci `LiquidMixer` burada aktifleşir; karmaşık mantık yürütme sırasında verinin zamansal hafızası ve hızı dinamik olarak tazelenir.
 *   **Katman 11 (Stratejik Karar):** Akışkanlık kazanan mantık, `MoE` uzmanları tarafından stratejik yanıt parametrelerine dönüştürülür.
 *   **Katman 12 (Üst Seviye Anlam):** Bilgi "bilgelik" seviyesine yaklaşır; cümlenin tonu, amaçı ve hedefi bu aşamada netleşir.
-*   **Katman 13 (Yanıt İnşası):** Üretilecek cevabın iskeleti kurulur; `MLA` cevabın en kritik noktalarına odaklanır.
+*   **Katman 13 (Yanıt İnşası):** Üretilecek cevabın iskeleti kurulur; `MLA` etiketli GQA attention cevabın en kritik noktalarına odaklanır.
 *   **Katman 14 (Kültürel Adaptasyon):** Teknik detaylar ile Türkçe kültürel ve deyimsel yapılar bu aşamada modele enjekte edilir.
 *   **Katman 15 (Ön Final Analizi):** Cevap son formunu almadan önceki son büyük denetim ve kalite kontrol katmanıdır.
 *   **Katman 16 (Nihai Liquid Mührü):** **Kritik Eşik.** Son `LiquidMixer` devreye girer; tüm bilgi çıkıştan önce nihai bir "akışkan zekaya" dönüştürülür ve zamansal tutarlılık mühürlenir.
@@ -722,7 +728,7 @@ graph TD
     subgraph "Her Katmanın (Blok) Mühendislik Kalbi"
         style BlockInner fill:#1a1a1a,stroke:#3fb1e3,stroke-width:2px
         BlockInner[Giriş] --> Norm1[RMSNorm]
-        Norm1 --> MLA["Çok Başlı Latent Dikkat (MLA)"]
+        Norm1 --> MLA["MLA Etiketli GQA Dikkat Bloğu (Mevcut Implementasyon)"]
         MLA --> Norm2[RMSNorm]
         Norm2 --> Router{"LiquidRouter (Zamansal Seçici)"}
         Router -- "En Uygun 2 Uzman" --> MoE["BitSwiGLU Uzmanları"]
@@ -738,14 +744,14 @@ MertFormer Titan (2.64B Parametre)
 ├── Gömme Katmanı (Embedding Layer) (128256 kelime hazinesi, Llama-3 tokenizer)
 ├── 18× Transformer Blokları
 │   ├── RMSNorm (torch.compile ile birleştirilmiş)
-│   ├── Çok Başlı Latent Dikkat (MLA)
+│   ├── MLA etiketli GQA dikkat bloğu (mevcut implementasyon)
 │   │   ├── BitLinear İzdüşümleri (Q, K, V, O)
 │   │   ├── RoPE (theta=100K, uzun bağlam hazır)
 │   │   ├── QK Normalizasyonu (stabilite)
 │   │   ├── Flash Attention 2 (eğitim modu)
 │   │   └── KV Önbellek (inference modu)
 │   ├── LiquidMixer (katmanlar 4, 10, 16)
-│   │   ├── Causal Conv1d (zamansal bağlam)
+│   │   ├── LiquidCell (CfC çekirdeği)
 │   │   ├── Dinamik Tau (zaman sabiti)
 │   │   ├── CfC Güncelleme Kuralı
 │   │   └── Artık (Residual) + LayerNorm
@@ -2002,7 +2008,7 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 - **Microsoft Research**: BitNet kuantizasyon araştırması
 - **Liquid AI**: Liquid Neural Networks (CfC) ilhamı
 - **Araştırma Konumlandırması**: MertFormer, MoE yönlendirmesine liquid dinamiklerini entegre ederek zamansal zekaya ortogonal bir yaklaşım geliştirir.
-- **DeepSeek**: Çok Başlı Latent Dikkat (MLA) mimarisi
+- **DeepSeek**: MLA literatürü için ilham (bu repoda mevcut implementasyon MLA etiketli GQA)
 - **HazyResearch / Stanford (Tri Dao ve ekip)**: Flash Attention 2
 - **PyTorch**: Temel eğitim ve çıkarım çerçevesi
 - **Triton**: Deneysel düşük-bit kernel çalışmaları
@@ -2086,7 +2092,7 @@ Gelecekteki **13B / 70B / 256B** araştırmaları koşullu bir hat olarak ele al
 ### 🚫 MertFormer Titan Ne Değildir?
 *   **Genel Bir Chatbot Değildir**: Özellikle kod orkestrasyonu ve yapısal mantık yürütme için optimize edilmiştir.
 *   **Bulut-Ölçekli Altyapı Rakibi Değildir**: Devasa veri merkezleri üzerinden genel bulut hizmeti vermek yerine, özel ve yerel cihaz içi "uç" (edge) yürütme için optimize edilmiştir.
-*   **Sıradan Bir Transformer Değildir**: CfC, MLA ve BitNet katmanlarının standart dışı bir sentezidir.
+*   **Sıradan Bir Transformer Değildir**: CfC, MLA etiketli GQA attention ve BitNet katmanlarının standart dışı bir sentezidir.
 
 ---
 

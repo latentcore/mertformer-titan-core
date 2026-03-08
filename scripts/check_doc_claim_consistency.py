@@ -15,9 +15,37 @@ SNAP_TR = ROOT / "reports/release_snapshot_TR.md"
 
 TEST_STAT_RE = re.compile(r"(\d+\s+passed,\s*\d+\s+skipped)")
 
+# Snapshot history is intentionally frozen; skip from global claim-pattern scans.
+EXCLUDED_PREFIXES = [
+    ROOT / "reports" / "snapshots",
+]
+
+BANNED_PATTERNS = [
+    re.compile(r"\bWorld'?s\s+First\b", re.IGNORECASE),
+    re.compile(r"\bfirst\s+empirically\s+stable\b", re.IGNORECASE),
+    re.compile(r"\bfirst-ever\b", re.IGNORECASE),
+    re.compile(r"\bDünyada\s+bir\s+ilk\b", re.IGNORECASE),
+    re.compile(r"\bCfC-based\s+router\b", re.IGNORECASE),
+    re.compile(r"\bCfC\s+tabanlı\s+router\b", re.IGNORECASE),
+]
+
 
 def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8", errors="ignore")
+
+
+def is_excluded(path: Path) -> bool:
+    p = path.resolve()
+    return any(str(p).startswith(str(prefix.resolve())) for prefix in EXCLUDED_PREFIXES)
+
+
+def iter_public_markdown() -> list[Path]:
+    files: list[Path] = []
+    for path in ROOT.rglob("*.md"):
+        if is_excluded(path):
+            continue
+        files.append(path)
+    return sorted(files)
 
 
 def main() -> int:
@@ -38,6 +66,12 @@ def main() -> int:
         ("README.md", en, "pre-training"),
         ("README.md", en, "not to claim a production-ready or certified platform"),
         ("README_TR.md", tr, "proof-of-system"),
+        ("README.md", en, "MLA-labeled GQA attention (current implementation)"),
+        ("README_TR.md", tr, "MLA etiketli GQA dikkat bloğu (mevcut implementasyon)"),
+        ("README.md", en, "Routing policy: token-choice top-k."),
+        ("README_TR.md", tr, "Yönlendirme politikası: token-choice top-k."),
+        ("README.md", en, "out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]"),
+        ("README_TR.md", tr, "out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]"),
     ]
     for name, text, needle in required_pairs:
         if needle not in text:
@@ -79,6 +113,13 @@ def main() -> int:
         errors.append(
             "release_snapshot_TR.md must explicitly mark audit EN_TR/DE_TR docs as pointer files"
         )
+
+    for md_path in iter_public_markdown():
+        text = read_text(md_path)
+        rel = md_path.relative_to(ROOT)
+        for pat in BANNED_PATTERNS:
+            if pat.search(text):
+                errors.append(f"banned claim pattern in {rel}: /{pat.pattern}/")
 
     if errors:
         print("FAIL: documentation claim consistency check failed")

@@ -28,8 +28,10 @@ This audit maps external report claims to repo evidence. Each claim is labeled:
   - Evidence: `scripts/mobile_export.py` (bitpack metadata)
 
 ## D) LiquidRouter / MoE Stability
-- "CfC-based router exists." TRUE
-  - Evidence: `layers/liquid.py`
+- "LiquidRouter is Conv1d + state-buffer based." TRUE
+  - Evidence: `layers/moe.py` (LiquidRouter)
+  - "CfC path exists in LiquidMixer/LiquidCell." TRUE
+    - Evidence: `layers/liquid.py`
 - "Auto jitter/entropy correction." PENDING VALIDATION
   - Monitoring exists; auto-correction is not yet validated.
 

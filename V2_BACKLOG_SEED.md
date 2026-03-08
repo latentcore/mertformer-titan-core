@@ -5,6 +5,7 @@
 - cudagraph static-shape validator hardening
 - distributed mode contract (DDP/FSDP/ZeRO)
 - optimizer plugin matrix (AdamW/Lion/Adafactor)
+- liquid_spike_counter cleanup (v1.0.1 housekeeping: wire to safeguard path or remove dead placeholder, then add regression test)
 
 ## Track B — Data and Evaluation
 - unseen-range curriculum sweeps

@@ -1,7 +1,7 @@
 # Model Kartı — MertFormer Titan (v1.0 (Build 30))
 
 ## Genel Bakış
-MertFormer Titan, BitNet 1.58-bit katmanları, LiquidRouter MoE ve MLA temelli,
+MertFormer Titan, BitNet 1.58-bit katmanları, LiquidRouter MoE ve MLA etiketli GQA attention (mevcut implementasyon) temelli,
 mobil-odaklı 2.64B parametreli bir dil modelidir. Bu kart **eğitim öncesi**
 durumu yansıtır ve kullanım amacı, sınırlar ve bilinen boşlukları belgeler.
 

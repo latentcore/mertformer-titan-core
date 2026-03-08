@@ -9,7 +9,7 @@ A 2.64B design-target coding engine specialized for autonomous software lifecycl
 - **Efficiency**: 93% memory reduction via ternary BitLinear weights.
 
 ## 🏰 The Moat
-1. **Mathematical Momentum**: Proprietary `LiquidRouter` (CfC-based) ensures context-aware routing that surpasses standard MoE stability.
+1. **Mathematical Momentum**: Proprietary `LiquidRouter` (causal Conv1d + state buffer) provides temporal, context-aware token routing; CfC dynamics are implemented in `LiquidMixer/LiquidCell`.
 2. **Economic Floor**: Zero-cost inference platform for private enterprise clouds.
 3. **Founder Alpha**: Rapid execution architecture by a systems-focused founder with atypical execution velocity.
 

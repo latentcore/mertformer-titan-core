@@ -3922,6 +3922,10 @@ class LiquidMixer(nn.Module):
         self.state = torch.zeros(batch_size, self.hidden, device=device, dtype=dtype)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # NOTE: Simplified Euler ODE without learnable tau (standalone companion).
+        # Production uses continuous-time decay with learnable tau
+        # (tau_input_w, tau_hidden_w, tau_bias + softplus clamp).
+        # See layers/liquid.py jit_liquid_loop_cached for full implementation.
         b, t, h = x.shape
         if self.state.numel() == 0 or self.state.shape != (b, h) or self.state.device != x.device:
             self.reset_state(b, x.device, x.dtype)
@@ -4324,9 +4328,6 @@ class MertFormerBlock(nn.Module):
             ff_out = self.ff(ff_in)
             aux = torch.zeros((), device=x.device, dtype=x.dtype)
         x = x + ff_out * self.residual_scale
-
-        if self.qinn is not None:
-            x = self.qinn(x)
         if self.hebbian is not None:
             x = self.hebbian(x)
         if self.neuro_symbolic is not None:
@@ -4335,6 +4336,8 @@ class MertFormerBlock(nn.Module):
             x, lif = self.lifelong(x)
             stats["lifelong_drift"] = lif["drift"]
             stats["lifelong_gain"] = lif["gain"]
+        if self.qinn is not None:
+            x = self.qinn(x)
 
         return x, aux, present, stats
 

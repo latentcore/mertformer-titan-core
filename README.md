@@ -61,6 +61,7 @@ Outputs:
 - `reports/closure_57_matrix.json`
 - `reports/closure_57_matrix.md`
 - `reports/closure_57_matrix_TR.md`
+- Transparency note: Closure-57 is process-green (`57/57`) and currently reports `out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]`.
 <br />
 
 ```
@@ -458,7 +459,9 @@ Security, provenance, reproducibility, and ops notes.
 <a id="overview"></a>
 ## 🎯 Overview
 
-MertFormer Titan is a cutting-edge **2.64B parameter** language model designed for **on-device inference** on mobile platforms. Combining **BitNet 1.58-bit quantization**, **Liquid Neural Networks**, **Sparse Mixture of Experts (MoE)**, and **Multi-Head Latent Attention (MLA)**, it **targets GPT-3.5 level performance (pre-training target)** while running entirely on a smartphone.
+MertFormer Titan is a cutting-edge **2.64B parameter** language model designed for **on-device inference** on mobile platforms. Combining **BitNet 1.58-bit quantization**, **Liquid Neural Networks**, **Sparse Mixture of Experts (MoE)**, and **MLA-labeled GQA attention (current implementation)**, it **targets GPT-3.5 level performance (pre-training target)** while running entirely on a smartphone.
+
+Architecture truth note: `layers/mla.py` class naming is `MLA`, while the current attention core is GQA-based (`num_kv_heads` projection + KV head replication). Full latent-MLA bottleneck remains a roadmap item.
 
 Name expansion:
 - **MERT**: **Modular Edge Reasoning Transformer**
@@ -495,16 +498,18 @@ Name expansion:
 - Straight-Through Estimator (STE) for gradient flow
 - RMS scaling for stability (legacy path integrated into Build 30)
 
-### 2. **LiquidRouter (World's First)** 🌍
-- **Novelty**: First-ever use of Liquid Neural Networks for **MoE Routing** (Traffic control, not just memory).
+### 2. **LiquidRouter (Temporal Conv Router)** 🌍
+- **Implementation truth**: Causal depthwise `Conv1d` + rolling state buffer routes MoE tokens.
+- **CfC separation**: Closed-form continuous-time (CfC) cells run in `LiquidMixer/LiquidCell`, not inside `LiquidRouter`.
 - **Impact**: **estimated 15-20% better routing quality** vs standard routers (stateless).
 - **Temporal Routing**: Decisions are based on **historical context**, preventing expert collapse.
 - **Dynamic**: Time-constant adaptation with jitter boost for stability.
 - **Academic value**: A new paradigm in conditional computation.
 
-### 3. **Multi-Head Latent Attention (MLA)** 🧠
+### 3. **MLA-labeled GQA Attention (Current Implementation)** 🧠
+- GQA-based KV sharing (`num_heads=16`, `num_kv_heads=8` default profile).
 - LLaMA-3 compatible RoPE (interleaved & decoupled)
-- KV cache compression (40-50% memory saving)
+- Optional hierarchical KV cache path (short/long split) for decode efficiency.
 - QK normalization for stability
 - Flash Attention 2 integration (+30% speedup)
 - Long-context ready (theta=100K)
@@ -518,6 +523,7 @@ Name expansion:
 
 ### 5. **Sparse Mixture of Experts (MoE) & 🚀 LiquidRouter** 🧩
 - 8 experts, top-2 routing
+- Routing policy: token-choice top-k.
 - **Momentum-Based Routing:** Unlike standard routers, `LiquidRouter` selects experts by looking at the data's arrival speed and temporal momentum (`Fluid Path`), not just the immediate word.
 - **Causal Conv1d Integration:** It acts more like "strategic intelligence" than a "traffic controller" by considering the past 4-token window (`history_window`) during expert selection.
 - **Hardware Compatibility:** `LiquidRouter`'s sharp selections prevent unnecessary expert triggers, leading to an estimated up to 40% energy savings on the Samsung S25 NPU unit.
@@ -637,8 +643,8 @@ bash run.sh --train-ready
       │  TRANSFORMER BLOCK [Layers 0-17]  (Iterative Process)                     │
       │                                                                           │
       │  ┌──────────────┐    ┌─────────────────────────────────────────────────┐  │
-      │  │ RMSNorm (F)  │───►│ [MLA] MULTI-HEAD LATENT ATTENTION               │  │
-      │  └──────────────┘    │ » Dim: 512 (Compressed KV)                      │  │
+      │  │ RMSNorm (F)  │───►│ [MLA-LABELED GQA] ATTENTION               │  │
+      │  └──────────────┘    │ » GQA heads: Q=16, KV=8 (default profile)                      │  │
       │                      │ » Op: Softmax(Q·K^T / √d) · V                   │  │
       │                      │ » H/W: FlashAttn2 Kernel (SRAM Optimized)       │  │
       │                      └────────────────────────┬────────────────────────┘  │
@@ -687,19 +693,19 @@ bash run.sh --train-ready
 The journey of data from Layer 0 to 17:
 
 *   **Layer 0 (Input Block):** First stop for vectorized data; basic word relationships are established and signal amplitude is stabilized using `RMSNorm`.
-*   **Layer 1 (Grammar Foundation):** Processing the most fundamental building blocks of language; the `MLA` (Attention) mechanism creates the initial focus map.
+*   **Layer 1 (Grammar Foundation):** Processing the most fundamental building blocks of language; the `MLA`-labeled GQA attention mechanism creates the initial focus map.
 *   **Layer 2 (Efficiency Seal):** Simple context between words is established; thanks to the `BitNet 1.58-bit` structure, all weights are processed with the lowest energy in the $\{-1, 0, +1\}$ space.
 *   **Layer 3 (Expert Distribution):** Semantic density increases; the `MoE` structure directs data to the most appropriate 2 out of 8 experts.
 *   **Layer 4 (First Liquid Contact):** **Critical Threshold.** The first `LiquidMixer` (CfC) kicks in here, instilling the first sense of "temporal flow" and "momentum."
-*   **Layer 5 (Fluid Attention):** Data gaining fluidity is filtered by `MLA` in a deeper dimension, strengthening contextual relationships.
+*   **Layer 5 (Fluid Attention):** Data gaining fluidity is filtered by `MLA`-labeled GQA attention in a deeper dimension, strengthening contextual relationships.
 *   **Layer 6 (Complex Syntax):** Indirect structures within sentences are resolved; `MoE` experts continue specific analyses.
 *   **Layer 7 (Mathematical Stability):** Foundation for logical inferences is laid; the `UnitaryQINN` path remains available only when `use_qinn=true` (Build 30 default: OFF).
-*   **Layer 8 (Abstraction):** Data evolves from concrete words to abstract concepts; the hierarchical structure is deepened with `MLA`.
+*   **Layer 8 (Abstraction):** Data evolves from concrete words to abstract concepts; the hierarchical structure is deepened with `MLA`-labeled GQA attention.
 *   **Layer 9 (Intent Analysis):** Decision mechanisms strengthen; the model begins to grasp user intent and the background of the question.
 *   **Layer 10 (Second Liquid Contact):** **Critical Threshold.** The second `LiquidMixer` activates here; data's temporal memory and speed are dynamically refreshed during complex reasoning.
 *   **Layer 11 (Strategic Decision):** Logic gaining fluidity is converted into strategic response parameters by `MoE` experts.
 *   **Layer 12 (High-Level Meaning):** Information approaches the "wisdom" level; the tone, purpose, and target of the sentence become clear at this stage.
-*   **Layer 13 (Response Construction):** The skeleton of the generated answer is built; `MLA` focuses on the most critical points of the response.
+*   **Layer 13 (Response Construction):** The skeleton of the generated answer is built; `MLA`-labeled GQA attention focuses on the most critical points of the response.
 *   **Layer 14 (Cultural Adaptation):** Technical details and cultural/idiomatic structures are injected into the model at this stage.
 *   **Layer 15 (Pre-Final Analysis):** The final major audit and quality control layer before the response takes its final form.
 *   **Layer 16 (Final Liquid Seal):** **Critical Threshold.** Final `LiquidMixer` engages; all information is transformed into a final "fluid intelligence" and temporal consistency is sealed before exit.
@@ -722,7 +728,7 @@ graph TD
     subgraph "The Engineering Heart of Every Layer (Block)"
         style BlockInner fill:#1a1a1a,stroke:#3fb1e3,stroke-width:2px
         BlockInner[Input] --> Norm1[RMSNorm]
-        Norm1 --> MLA["Multi-Head Latent Attention (MLA)"]
+        Norm1 --> MLA["MLA-labeled GQA Attention (Current Implementation)"]
         MLA --> Norm2[RMSNorm]
         Norm2 --> Router{"LiquidRouter (Temporal Selector)"}
         Router -- "Top-2 Experts" --> MoE["BitSwiGLU Experts"]
@@ -738,14 +744,14 @@ MertFormer Titan (2.64B Parameters)
 ├── Embedding Layer (128256 vocab, Llama-3 tokenizer)
 ├── 18× Transformer Blocks
 │   ├── RMSNorm (fused with torch.compile)
-│   ├── Multi-Head Latent Attention (MLA)
+│   ├── MLA-labeled GQA attention (current implementation)
 │   │   ├── BitLinear Projections (Q, K, V, O)
 │   │   ├── RoPE (theta=100K, long-context ready)
 │   │   ├── QK Normalization (stability)
 │   │   ├── Flash Attention 2 (training mode)
 │   │   └── KV Cache (inference mode)
 │   ├── LiquidMixer (layers 4, 10, 16)
-│   │   ├── Causal Conv1d (temporal context)
+│   │   ├── LiquidCell (CfC core)
 │   │   ├── Dynamic Tau (time-constant)
 │   │   ├── CfC Update Rule
 │   │   └── Residual + LayerNorm
@@ -2002,7 +2008,7 @@ This project is **confidential and proprietary**. All rights are reserved by the
 - **Microsoft Research**: BitNet quantization research
 - **Liquid AI**: Liquid Neural Networks (CfC) inspiration
 - **Research Positioning**: MertFormer explores an orthogonal path to temporal intelligence by integrating liquid dynamics into MoE routing.
-- **DeepSeek**: Multi-Head Latent Attention (MLA) architecture
+- **DeepSeek**: MLA literature inspiration (current implementation in this repo is MLA-labeled GQA)
 - **HazyResearch / Stanford (Tri Dao et al.)**: Flash Attention 2
 - **PyTorch**: Core training and inference framework
 - **Triton**: Experimental low-bit kernel research
@@ -2085,7 +2091,7 @@ Future **13B / 70B / 256B** exploration is treated as a conditional research tra
 ### 🚫 What MertFormer Titan Is NOT
 *   **Not a General Chatbot**: Optimized specifically for code orchestration and structural reasoning.
 *   **Not a Cloud-Scale Infrastructure Competitor**: Designed for private, local execution rather than massive web-scale serving via data centers.
-*   **Not a Legacy Transformer**: This is a non-standard synthesis of CfC, MLA, and BitNet layers.
+*   **Not a Legacy Transformer**: This is a non-standard synthesis of CfC, MLA-labeled GQA attention, and BitNet layers.
 
 ---
 

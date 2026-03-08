@@ -28,8 +28,10 @@ Bu denetim, rapordaki iddiaları repo kanıtlarıyla eslestirir. Etiketler:
   - Kanıt: `scripts/mobile_export.py` (bitpack metadata)
 
 ## D) LiquidRouter / MoE Stabilitesi
-- "CfC tabanlı router var." DOĞRU
-  - Kanıt: `layers/liquid.py`
+- "LiquidRouter Conv1d + state-buffer tabanlıdır." DOĞRU
+  - Kanıt: `layers/moe.py` (LiquidRouter)
+  - "CfC yolu LiquidMixer/LiquidCell içinde var." DOĞRU
+    - Kanıt: `layers/liquid.py`
 - "Jitter/entropy otomatik düzeltme." DOĞRULAMA BEKLIYOR
   - İzleme var; otomatik düzeltme henüz doğrulanmadı.
 

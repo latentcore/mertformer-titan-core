@@ -1,28 +1,37 @@
 # Teknik Makale: LiquidRouter Mimarisi
-**Seyrek Uzmanlar Karışımı (MoE) İçin Zamansal-Duyarlı Yönlendirme**
+**Seyrek Uzmanlar Karışımı İçin Zamansal Yönlendirme (Truth-Locked Build30)**
 
 ## 1. Özet
-MertFormer Titan mimarisi, Seyrek Uzmanlar Karışımı (MoE) için Kapalı Form Sürekli-Zamanlı (CfC) sinir ağlarını kullanan yeni bir kapılama mekanizması olan **LiquidRouter**'ı tanıtır. Token'ları birbirinden bağımsız olaylar olarak gören geleneksel "statik" yönlendiricilerin aksine LiquidRouter, zamansal momentumu koruyarak cihaz içi yapay zeka uygulamalarında uzman kullanımını ve yönlendirme kararlılığını önemli ölçüde artırır.
+MertFormer Titan içinde **LiquidRouter**, MoE kapılama hattında zamansal token yönlendirmesi için kullanılır. Mevcut implementasyonda LiquidRouter, `layers/moe.py` içinde **causal depthwise Conv1d + rolling state buffer** mekanizmasıdır. Bu yol, `layers/liquid.py` içindeki CfC (`LiquidMixer/LiquidCell`) yolundan ayrı değerlendirilmelidir.
 
-## 2. Problem: Statik MoE Çökmesi
-Geleneksel MoE yönlendiricileri, uzman seçmek için basit bir doğrusal projeksiyon ve ardından Softmax kullanır. Bu yaklaşım şu sorunlara yol açar:
-- **Uzman Çökmesi (Expert Collapse)**: Geçmiş bağlam eksikliği nedeniyle sadece birkaç uzmanın aşırı kullanılması.
-- **Çıkarım Titremesi (Inference Jitter)**: Token'lar arasında uzmanların hızla değişmesi, NPU donanımında önbellek hatalarına ve gecikme artışına neden olur.
+## 2. Problem: Statik MoE Kararsızlığı
+Geleneksel MoE yönlendiricileri bazı uzmanlara aşırı yük bindirebilir ve ardışık tokenlar arasında dengesiz uzman geçişleri üretebilir. Bu durum edge çalışma zamanında yönlendirme oynaklığını artırabilir.
 
-## 3. Çözüm: CfC Tabanlı Akışkan Yönlendirme
-LiquidRouter, standart kapılama ağını bir **Akışkan Sinir Ağı (LNN)** hücresiyle değiştirir. Yönlendirme kararını sürekli bir diferansiyel denklem olarak modelleyerek sistem şunları kazanır:
-- **Zamansal Bağlam**: $x_t$ token'ı için uzman seçimi, $x_{t-1 \dots t-n}$ token'larının gizli durumundan ve momentumundan etkilenir.
-- **Yumuşak Geçişler**: CfC'nin "akışkan" doğası, yönlendirme kararlarının mantıklı bir şekilde evrilmesini sağlar ve donanım düzeyinde bağlam değiştirmeyi (context switching) azaltır.
+## 3. Build30 Mevcut Yönlendirme Mekanizması
+LiquidRouter iki sinyali birleştirir:
+- **Main path:** token-anlık projeksiyon ile uzman logitleri.
+- **Fluid path:** kısa geçmiş penceresi (`history_window`) üzerinde causal depthwise Conv1d + runtime state.
 
-### Matematiksel Temel
-Yönlendirme ağırlığı $G(t)$ şu şekilde hesaplanır:
-$$G(t) = \sigma(CfC(x_t, h_{t-1}))$$
-Burada $CfC$, sinirsel ODE'nin Kapalı Form çözümünü temsil eder ve verinin "akışını" izleyen verimli, donanıma duyarlı hesaplamaya olanak tanır.
+Uzman seçimi MoE tarafında **token-choice top-k** olarak uygulanır.
 
-## 4. Donanım Sinerjisi
-NPU'lar (Snapdragon 8 Elite gibi) üzerinde LiquidRouter enerji tüketimini şu şekilde optimize eder:
-1. **Öngörülü Aktivasyon**: Token tam olarak ulaşmadan önce olası uzman yollarını önceden hesaplar.
-2. **Azaltılmış Geçiş**: Yeni uzman ağırlıklarının NPU'nun yerel belleğine yüklenmesinin yüksek enerji maliyetini minimize eder.
+### Matematiksel Özet (Implementasyon Uyumlu)
+Token özellikleri `x_t` olsun.
+- Main logits: `g_main(t) = W_main * x_t`
+- Fluid logits: `g_fluid(t) = W_fluid * Conv1d_causal(x_{t-k+1:t})`
+- Router çıktısı: `g(t) = g_main(t) + g_fluid(t)`
+- Seçim: token-choice `top-k(g(t))`
 
-## 5. Sonuç
-LiquidRouter, MertFormer Titan için dilin zamansal doğasına saygı duyan, ampirik olarak kararlı ve cihaz üzerinde çalışan ilk MoE mimarisini sağlayan stratejik bir hendek (moat) oluşturur.
+## 4. CfC Ayrımı (Kritik)
+CfC dinamikleri mimaride vardır; ancak router çekirdeği değildir:
+- **Router:** Conv1d + state buffer (`layers/moe.py`)
+- **CfC yolu:** `LiquidMixer/LiquidCell` (`layers/liquid.py`)
+
+Build30 için bu ayrım bilinçli bir tasarım kararına karşılık gelir ve dış iletişimde net korunmalıdır.
+
+## 5. Donanım Niyeti ve İddia Sınırı
+- Hedef niyet: yönlendirme geçiş kararsızlığını azaltmak ve edge runtime davranışını iyileştirmek.
+- Gecikme/enerji üstünlüğü iddiaları gerçek cihaz ölçümü olmadan yalnızca **hedef/tahmin** düzeyindedir.
+- Bağımsız kanıt olmadan “dünyada ilk” veya “ampirik olarak en iyi” iddiası yapılmaz.
+
+## 6. Sonuç
+LiquidRouter, MertFormer Titan’ın seyrek MoE yığınında zamansal Conv yönlendirme bileşenidir. Build30 bunu offline-first edge kısıtlarına uyumlu, implementasyon-gerçekliğinde ve claim-safe bir mekanizma olarak tanımlar.

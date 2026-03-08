@@ -4,7 +4,7 @@
 - Model size: 2.64B parameters (design target); latest measured runtime total: ~3.70B.
 - Quantization: BitNet 1.58-bit for weights.
 - Routing: LiquidRouter MoE with temporal dynamics.
-- Attention: Multi-Head Latent Attention with long-context readiness.
+- Attention: MLA-labeled GQA attention (current implementation) with long-context readiness.
 
 ## Training Pipeline
 - Distillation pipeline with offline logits support.

@@ -2,7 +2,7 @@
 
 ## Overview
 MertFormer Titan is a 2.64B-parameter, mobile-first language model built around
-BitNet 1.58-bit layers, LiquidRouter MoE, and MLA. This card reflects the
+BitNet 1.58-bit layers, LiquidRouter MoE, and MLA-labeled GQA attention (current implementation). This card reflects the
 **pre-training** stage and documents intended use, constraints, and known gaps.
 
 ## Intended Use

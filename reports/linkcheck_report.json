@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-03-07T18:44:22.377295+00:00",
+  "generated_utc": "2026-03-08T01:38:43.111435+00:00",
   "root": ".",
-  "scope": "all",
-  "md_file_count": 249,
+  "scope": "release_core",
+  "md_file_count": 6,
   "missing_link_count": 0,
   "findings": [],
   "ok": true

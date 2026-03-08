@@ -9,7 +9,7 @@ Otonom yazılım geliştirme süreçleri için optimize edilmiş 2.64B tasarım 
 - **Verimlilik**: Üçlü (Ternary) BitLinear ağırlıkları ile %93 bellek tasarrufu.
 
 ## 🏰 Stratejik Hendek (The Moat)
-1. **Matematiksel Akış**: Standart router'ların aksine zamansal momentumu işleyen tescilli `LiquidRouter` (CfC) teknolojisi.
+1. **Matematiksel Akış**: Tescilli `LiquidRouter` (causal Conv1d + state buffer) zamansal bağlamlı token yönlendirmesi sağlar; CfC dinamikleri `LiquidMixer/LiquidCell` içinde çalışır.
 2. **Ekonomik Taban**: Özel kurumsal bulutlar için sıfır işletme maliyetli çıkarım (inference) platformu.
 3. **Founder Alpha**: Atipik yürütme hızına sahip, sistem odaklı kurucu tarafından inşa edilen yüksek alfalı mimari.
 

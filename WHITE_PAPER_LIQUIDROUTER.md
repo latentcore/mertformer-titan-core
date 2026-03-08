@@ -1,28 +1,37 @@
 # White Paper: LiquidRouter Architecture
-**Temporal-Aware Routing for Sparse Mixture of Experts**
+**Temporal-Aware Routing for Sparse Mixture of Experts (Truth-Locked Build30)**
 
 ## 1. Abstract
-The MertFormer Titan architecture introduces the **LiquidRouter**, a novel gating mechanism for Sparse Mixture of Experts (MoE) that leverages Closed-Form Continuous-time (CfC) neural networks. Unlike traditional "stateless" routers that treat tokens as independent events, LiquidRouter preserves temporal momentum, significantly improving expert utilization and routing stability in on-device AI applications.
+MertFormer Titan uses **LiquidRouter** as the MoE gating path for temporal token routing. In the current implementation, LiquidRouter is a **causal depthwise Conv1d + rolling state buffer** mechanism in `layers/moe.py`. This should be read separately from the CfC path, which is implemented in `layers/liquid.py` (`LiquidMixer/LiquidCell`).
 
-## 2. The Problem: Stateless MoE Collapse
-Traditional MoE routers use a simple linear projection followed by a Softmax to select experts. This approach suffers from:
-- **Expert Collapse**: Over-utilization of a few experts due to lack of historical context.
-- **Inference Jitter**: Rapidly switching experts between tokens leads to cache misses and increased latency on NPU hardware.
+## 2. The Problem: Stateless MoE Instability
+Traditional MoE routers can over-concentrate traffic into a few experts and oscillate between experts across adjacent tokens. This can increase routing variance and degrade practical edge efficiency.
 
-## 3. The Solution: CfC-Based Liquid Routing
-LiquidRouter replaces the standard gating network with a **Liquid Neural Network (LNN)** cell. By modeling the routing decision as a continuous differential equation, the system gains:
-- **Temporal Context**: The choice of an expert for token $x_t$ is influenced by the hidden state and momentum of tokens $x_{t-1 \dots t-n}$.
-- **Smooth Transitions**: The "fluid" nature of CfC ensures that routing decisions evolve logically, reducing hardware-level context switching.
+## 3. Current Build30 Routing Mechanism
+LiquidRouter currently combines two signals:
+- **Main path:** token-local projection for expert logits.
+- **Fluid path:** causal depthwise Conv1d over a short token history window (`history_window`) with a rolling runtime state.
 
-### Mathematical Foundation
-The routing weight $G(t)$ is calculated as:
-$$G(t) = \sigma(CfC(x_t, h_{t-1}))$$
-Where $CfC$ represents the Closed-Form solution to the neural ODE, allowing for efficient, hardware-aware computation that tracks the "flow" of data.
+Routing is executed as **token-choice top-k** in MoE dispatch.
 
-## 4. Hardware Sinergy
-On NPUs (like the Snapdragon 8 Elite), LiquidRouter optimizes energy consumption by:
-1. **Predictive Activation**: Pre-calculating likely expert paths before the token fully arrives.
-2. **Reduced Switching**: Minimizing the high-energy cost of loading new expert weights into the NPU's local memory.
+### Mathematical Sketch (Implementation-Aligned)
+Let token features be `x_t`.
+- Main logits: `g_main(t) = W_main * x_t`
+- Fluid logits: `g_fluid(t) = W_fluid * Conv1d_causal(x_{t-k+1:t})`
+- Router output: `g(t) = g_main(t) + g_fluid(t)`
+- Selection: token-choice `top-k(g(t))`
 
-## 5. Conclusion
-LiquidRouter is a strategic moat for MertFormer Titan, providing the first empirically stable, on-device MoE architecture that respects the temporal nature of language.
+## 4. CfC Separation (Important)
+CfC dynamics are present in the architecture, but not as the router kernel:
+- **Router:** Conv1d + state buffer (`layers/moe.py`)
+- **CfC path:** `LiquidMixer/LiquidCell` (`layers/liquid.py`)
+
+This separation is intentional in Build30 and must be reflected in partner-facing claims.
+
+## 5. Hardware Intent and Claim Boundary
+- Target intent: reduce unstable routing transitions and improve edge-runtime behavior.
+- Any latency/energy superiority remains **target/estimate** until measured on real devices.
+- No precedence or superiority claim is made without independent evidence.
+
+## 6. Conclusion
+LiquidRouter is a temporal Conv routing component within MertFormer Titan’s sparse MoE stack. Build30 documents this as an implementation-ready, claim-safe mechanism aligned with offline-first edge constraints.

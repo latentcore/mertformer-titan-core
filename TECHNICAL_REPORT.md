@@ -10,7 +10,7 @@
 The AI ecosystem is evolving from massive cloud-based models toward on-device, energy-efficient, and privacy-focused Small Language Models (SLMs). At the forefront of this evolution, the **MertFormer Titan (Onyx Storm) v1.0 (Build 30)** project is a strategic synthesis of the four most advanced paradigms in modern deep learning literature:
 
 1.  **BitNet 1.58-bit Quantization** (Efficiency)
-2.  **Multi-Head Latent Attention (MLA)** (Memory)
+2.  **MLA-labeled GQA Attention (current implementation)** (Memory)
 3.  **Sparse Mixture of Experts (MoE)** (Capacity)
 4.  **Liquid Neural Networks (LNN)** (Dynamism)
 
@@ -34,12 +34,13 @@ $$w_q = \text{clamp}(\text{round}(\frac{w}{\gamma + \epsilon}), -1, 1)$$
 
 *   **Residual Scaling Effect (Target):** Signal stability is maintained across 18 layers using the 1/√2 (1/sqrt(2)) factor; empirical validation required.
 
-### 2.2 Multi-Head Latent Attention (MLA)
-It resolves the KV Cache bottleneck—the biggest obstacle in on-device inference—with `mla.py`. Utilizing the DeepSeek-V2 logic, it compresses KV tensors into low-rank latent vectors.
+### 2.2 MLA-labeled GQA Attention (current implementation)
+The `mla.py` module currently implements a GQA-style attention core under the `MLA` class name. KV heads are reduced and shared (`num_kv_heads`) and then broadcast to query heads at runtime.
 
-*   **KV Cache Reduction (Estimate):** 93.3%
-*   **Result (Target):** Even with context lengths of 4096+ tokens, it aims to stay within mobile memory limits; requires device validation.
+*   **Current mechanism:** GQA projection + KV head replication (not latent down/up bottleneck).
+*   **Cache efficiency path:** Optional hierarchical short/long KV cache mode can reduce decode-time memory pressure (target behavior; profile-dependent).
 *   **RoPE:** Long-context support with $\theta = 100,000$.
+*   **Truth boundary:** Full latent-MLA bottleneck remains a roadmap item.
 
 ### 2.3 Liquid Neural Networks (CfC)
 The "living" heart of the project. Inspired by biological neurons (C. elegans), Closed-Form Continuous-time (CfC) cells work with input-dependent differential equations.
@@ -52,20 +53,20 @@ The "living" heart of the project. Inspired by biological neurons (C. elegans), 
 $$h(t) = A + (h_{prev} - A) \odot \exp(-\tau \Delta t)$$
 
 ### 2.4 LiquidRouter & MoE
-A world first: using a Liquid Network as an MoE router.
-While traditional routers look at the "current" token, the **LiquidRouter** makes expert selections by also accounting for the momentum of past tokens.
+`LiquidRouter` is implemented as a temporal Conv router (`causal depthwise Conv1d` + rolling state buffer) that informs MoE token routing.
+Routing policy is token-choice top-k and should be read separately from the CfC path used by `LiquidMixer/LiquidCell`.
 
 | Parameter | Value |
 | :--- | :--- |
 | Number of Experts | 8 |
 | Active Experts (Top-k) | 2 |
-| Router | **LiquidRouter** (Dynamic) |
+| Router | `LiquidRouter` (Conv1d + state buffer) |
 | Intermediate Dim | 5632 (SwiGLU) |
 
-**Strategic Edge of LiquidRouter:**
-*   **Momentum-Based Routing:** Unlike standard "stateless" routers, it analyzes the data's arrival speed and temporal momentum (`Fluid Path`).
+**Strategic Edge of LiquidRouter (Claim-Safe):**
+*   **Temporal routing:** It analyzes data-arrival speed and short history (`Fluid Path`) without claiming formal superiority.
 *   **Causal Conv1d Integration:** Displays strategic intelligence by considering the past 4-token window (`history_window`) during expert selection.
-*   **Hardware Efficiency (Target):** Aims for material NPU energy savings; requires device profiling.
+*   **Hardware efficiency (Target):** Aims for lower routing instability and better NPU behavior; requires device profiling.
 
 ### 2.5 Synaptic Layer Hierarchy (Layer-by-Layer Taxonomy)
 MertFormer Titan's 18-layer structure transforms data into gradual "wisdom":
@@ -176,7 +177,7 @@ The architecture is technically consistent, the hardware target is precise, and 
 ## 9. Moat Validation & Release Roadmap
 
 Steps to validate the project's "Moat" according to VC standards:
-1. **Whitepaper**: Publication of a technical paper proving the mathematical synergy of `LiquidRouter` and `BitNet-MLA`.
+1. **Whitepaper**: Publication of a technical paper proving the mathematical synergy of `LiquidRouter + MLA-labeled GQA + BitNet`.
 2. **Open Benchmarks**: Independent verification of MMLU, GSM8K, and HumanEval scores.
 3. **Live Demo**: A video demonstrating 100% on-device code generation on a physical Samsung S25.
 
