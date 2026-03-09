@@ -1,0 +1,12 @@
+{
+  "profile": "strict_online_training_readiness",
+  "status": "FAIL",
+  "reason_code": "MISSING_HF_TOKEN",
+  "checks": {
+    "hf_token": {
+      "status": "FAIL",
+      "detail": "HF_TOKEN missing"
+    }
+  },
+  "elapsed_s": 0.0
+}
