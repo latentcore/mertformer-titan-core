@@ -69,10 +69,11 @@ fi
   run_step "unicode_path_guard" "$PY_BIN" scripts/unicode_path_guard.py --root . --out reports/unicode_path_guard_report.json --fail-on-hit
   run_step "duplicate_zip_guard" "$PY_BIN" scripts/duplicate_zip_guard.py --root packages --root artifacts --out reports/duplicate_zip_guard_report.json
   run_step "intermediate_cache_cleanup" "$PY_BIN" scripts/run_and_clean_pycache.py --root . --include-tool-caches --full-clean --include-venv-caches -- bash -lc true
-  run_step "clean_runtime_artifacts_check" bash scripts/clean_runtime_artifacts.sh --check
-  run_step "release_build30" bash scripts/release_build30.sh
-  run_step "zip_denylist_audit zip=$REL_ZIP" "$PY_BIN" scripts/zip_denylist_audit.py --zip "$REL_ZIP"
-  run_step "secret_scan" "$PY_BIN" scripts/secret_scan.py
+run_step "clean_runtime_artifacts_check" bash scripts/clean_runtime_artifacts.sh --check
+run_step "release_build30" bash scripts/release_build30.sh
+run_step "artifact_release_zip" bash scripts/build_artifacts_release_zip.sh
+run_step "zip_denylist_audit zip=$REL_ZIP" "$PY_BIN" scripts/zip_denylist_audit.py --zip "$REL_ZIP"
+run_step "secret_scan" "$PY_BIN" scripts/secret_scan.py
 
   echo "[run] end_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 } 2>&1 | tee "$RAW_LOG"
@@ -172,3 +173,19 @@ PY
 echo "[run] SOP artifacts refreshed:"
 echo " - reports/one_command_full_sop.log"
 echo " - reports/one_command_full_sop_summary.md"
+
+SOP_AUTO_COMMIT="${SOP_AUTO_COMMIT:-1}"
+SOP_AUTO_PUSH="${SOP_AUTO_PUSH:-1}"
+SOP_COMMIT_MSG="${SOP_COMMIT_MSG:-chore: refresh SOP validation artifacts (pass)}"
+
+if git rev-parse --is-inside-work-tree &>/dev/null; then
+  if [[ "$SOP_AUTO_COMMIT" == "1" ]]; then
+    git add reports packages artifacts || true
+    if ! git diff --cached --quiet; then
+      git commit -m "$SOP_COMMIT_MSG"
+      if [[ "$SOP_AUTO_PUSH" == "1" ]]; then
+        git push origin "$(git branch --show-current)"
+      fi
+    fi
+  fi
+fi
