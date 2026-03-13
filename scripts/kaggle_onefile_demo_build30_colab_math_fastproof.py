@@ -16,6 +16,7 @@ Notes:
 from __future__ import annotations
 
 import csv
+import argparse
 import io
 import json
 import hashlib
@@ -353,6 +354,7 @@ RUN_CONFIG: Dict[str, Any] = {
     "logger_ring_size": 5000,
     "logger_jsonl_path": "",
     "logger_basename": "colab_math_fastproof_run_log.jsonl",
+    "bundle_out": "",
     # Chat decode guards
     "chat_decode_completion_only": True,
     "chat_context_truncate": True,
@@ -852,6 +854,8 @@ def init_artifact_layout(cfg: Dict[str, Any]) -> ArtifactLayout:
     if not logger_basename:
         logger_basename = "kaggle_onefile_build30_log.jsonl"
     logger_jsonl_path = run_dir / "logs" / logger_basename
+    bundle_out = str(cfg.get("bundle_out", "")).strip()
+    evidence_zip_path = Path(bundle_out).expanduser() if bundle_out else (run_dir / f"{run_id}_evidence.zip")
     layout = ArtifactLayout(
         artifact_root=artifact_root,
         run_id=run_id,
@@ -866,7 +870,7 @@ def init_artifact_layout(cfg: Dict[str, Any]) -> ArtifactLayout:
         artifact_index_path=run_dir / "artifacts_index.json",
         zip_manifest_path=run_dir / "zip_manifest.json",
         public_summary_path=run_dir / "public_summary.json",
-        evidence_zip_path=run_dir / f"{run_id}_evidence.zip",
+        evidence_zip_path=evidence_zip_path,
         logger_jsonl_path=logger_jsonl_path,
     )
     # Hard fail by design if path contract is not writable.
@@ -875,12 +879,14 @@ def init_artifact_layout(cfg: Dict[str, Any]) -> ArtifactLayout:
     ensure_writable_dir(layout.checkpoint_dir, "checkpoint_dir")
     ensure_writable_dir(layout.eval_snapshot_dir, "eval_snapshot_dir")
     ensure_writable_dir(layout.logger_jsonl_path.parent, "logger_dir")
+    ensure_writable_dir(layout.evidence_zip_path.parent, "evidence_zip_dir")
     cfg["artifact_root"] = str(layout.artifact_root)
     cfg["artifact_run_id"] = layout.run_id
     cfg["artifact_run_dir"] = str(layout.run_dir)
     cfg["out_dir"] = str(layout.artifact_root)
     cfg["checkpoint_dir"] = str(layout.checkpoint_dir)
     cfg["logger_jsonl_path"] = str(layout.logger_jsonl_path.resolve())
+    cfg["bundle_out"] = str(layout.evidence_zip_path)
     _RUNTIME_LAST_LAYOUT["run_dir"] = str(layout.run_dir)
     _RUNTIME_LAST_LAYOUT["traceback_path"] = str(layout.traceback_path)
     _RUNTIME_LAST_LAYOUT["last_state_path"] = str(layout.last_state_path)
@@ -1491,6 +1497,7 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
         "step_log_interval": 1,
         "logger_ring_size": 5000,
         "logger_jsonl_path": "",
+        "bundle_out": "",
         "chat_decode_completion_only": True,
         "chat_context_truncate": True,
         "hf_candidate_process_timeout": True,
@@ -1670,6 +1677,52 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
 
     merged["run_config_schema_report"] = validate_run_config_schema(merged)
     return merged
+
+
+def parse_cli_overrides() -> Dict[str, Any]:
+    parser = argparse.ArgumentParser(add_help=True)
+    parser.add_argument("--profile", type=str, default="")
+    parser.add_argument("--interactive", action="store_true")
+    parser.add_argument("--interactive-menu", action="store_true")
+    parser.add_argument("--max-wall-hours", type=float, default=None)
+    parser.add_argument("--max-steps", type=int, default=None)
+    parser.add_argument("--artifact-root", type=str, default="")
+    parser.add_argument("--out-dir", type=str, default="")
+    parser.add_argument("--checkpoint-dir", type=str, default="")
+    parser.add_argument("--resume-path", type=str, default="")
+    parser.add_argument("--bundle-out", type=str, default="")
+    parser.add_argument("--allow-notebook-input", action="store_true")
+    parser.add_argument("--force-interactive-input", action="store_true")
+
+    args, _ = parser.parse_known_args()
+    overrides: Dict[str, Any] = {}
+    if args.profile:
+        overrides["profile"] = str(args.profile)
+    if args.interactive:
+        overrides["interactive"] = True
+    if args.interactive_menu:
+        overrides["interactive_menu"] = True
+    if args.max_wall_hours is not None:
+        overrides["max_wall_hours"] = float(args.max_wall_hours)
+    if args.max_steps is not None:
+        overrides["max_steps"] = int(args.max_steps)
+    if args.artifact_root:
+        overrides["artifact_root"] = str(args.artifact_root)
+    if args.out_dir:
+        overrides["out_dir"] = str(args.out_dir)
+    if args.checkpoint_dir:
+        overrides["checkpoint_dir"] = str(args.checkpoint_dir)
+    if args.resume_path:
+        overrides["resume_mode"] = "path"
+        overrides["resume_path"] = str(args.resume_path)
+        overrides["checkpoint_path"] = str(args.resume_path)
+    if args.bundle_out:
+        overrides["bundle_out"] = str(args.bundle_out)
+    if args.allow_notebook_input:
+        overrides["allow_notebook_input"] = True
+    if args.force_interactive_input:
+        overrides["force_interactive_input"] = True
+    return overrides
 
 
 def maybe_autocast(device: str, enabled: bool):
@@ -7692,7 +7745,10 @@ def run_all() -> Dict[str, Any]:
     total_start = time.time()
     _RUNTIME_SIGNAL_STATE["sigterm"] = False
     _RUNTIME_SIGNAL_STATE["signal"] = ""
-    cfg = resolve_runtime_config(interactive_prompt(dict(RUN_CONFIG)))
+    cli_overrides = parse_cli_overrides()
+    base_cfg = dict(RUN_CONFIG)
+    base_cfg.update(cli_overrides)
+    cfg = resolve_runtime_config(interactive_prompt(base_cfg))
     accel_report = apply_runtime_acceleration_policy(cfg)
     determinism_report = apply_determinism_policy(cfg, device=str(cfg.get("device", "cpu")))
     cfg["_accel_report"] = accel_report
