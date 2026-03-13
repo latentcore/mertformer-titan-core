@@ -69,11 +69,23 @@ fi
   run_step "unicode_path_guard" "$PY_BIN" scripts/unicode_path_guard.py --root . --out reports/unicode_path_guard_report.json --fail-on-hit
   run_step "duplicate_zip_guard" "$PY_BIN" scripts/duplicate_zip_guard.py --root packages --root artifacts --out reports/duplicate_zip_guard_report.json
   run_step "intermediate_cache_cleanup" "$PY_BIN" scripts/run_and_clean_pycache.py --root . --include-tool-caches --full-clean --include-venv-caches -- bash -lc true
-run_step "clean_runtime_artifacts_check" bash scripts/clean_runtime_artifacts.sh --check
-run_step "release_build30" bash scripts/release_build30.sh
-run_step "artifact_release_zip" bash scripts/build_artifacts_release_zip.sh
-run_step "zip_denylist_audit zip=$REL_ZIP" "$PY_BIN" scripts/zip_denylist_audit.py --zip "$REL_ZIP"
-run_step "secret_scan" "$PY_BIN" scripts/secret_scan.py
+  run_step "clean_runtime_artifacts_check" bash scripts/clean_runtime_artifacts.sh --check
+  run_step "release_build30" bash scripts/release_build30.sh
+  run_step "artifact_release_zip" bash scripts/build_artifacts_release_zip.sh
+  if [[ "${SOP_PLOT_TRAINING_LOG:-0}" == "1" ]]; then
+    LOG_PATH_CAND="${SOP_TRAINING_LOG:-}"
+    if [[ -z "$LOG_PATH_CAND" ]]; then
+      LOG_PATH_CAND=$(ls -t "$ROOT_DIR"/logs/*.jsonl 2>/dev/null | head -n 1 || true)
+    fi
+    if [[ -n "$LOG_PATH_CAND" && -f "$LOG_PATH_CAND" ]]; then
+      run_step "plot_training_log" "$PY_BIN" scripts/plot_training_log.py "$LOG_PATH_CAND" --out reports/training_dashboard.png
+      echo "training_dashboard=reports/training_dashboard.png"
+    else
+      echo "plot_training_log: skipped (no jsonl log found)"
+    fi
+  fi
+  run_step "zip_denylist_audit zip=$REL_ZIP" "$PY_BIN" scripts/zip_denylist_audit.py --zip "$REL_ZIP"
+  run_step "secret_scan" "$PY_BIN" scripts/secret_scan.py
 
   echo "[run] end_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 } 2>&1 | tee "$RAW_LOG"
@@ -111,6 +123,7 @@ duplicate_ok = False
 runtime_clean_ok = False
 zip_ok = False
 secret_ok = False
+dashboard_path = ""
 release_sha = ""
 locked_sha = ""
 
@@ -133,6 +146,8 @@ for line in clean.splitlines():
         runtime_clean_ok = True
     elif line.startswith("OK: no secret patterns detected in tracked files."):
         secret_ok = True
+    elif line.startswith("training_dashboard="):
+        dashboard_path = line.split("=", 1)[1].strip()
     elif line.startswith("release_sha256="):
         release_sha = line.split("=", 1)[1].strip()
     elif line.startswith("locked_sha256="):
@@ -158,6 +173,7 @@ summary = "\n".join(
         f"- clean_runtime_artifacts_check: {'PASS' if runtime_clean_ok else 'FAIL'}",
         f"- zip_denylist_audit: {zip_status}",
         f"- secret_scan: {'PASS' if secret_ok else 'FAIL'}",
+        f"- training_dashboard: {dashboard_path or 'not_generated'}",
         f"- release_zip_sha256: `{release_sha}`",
         f"- locked_age_sha256: `{locked_sha}`",
         f"- locked_age_generated: {locked_generated}",
@@ -174,8 +190,8 @@ echo "[run] SOP artifacts refreshed:"
 echo " - reports/one_command_full_sop.log"
 echo " - reports/one_command_full_sop_summary.md"
 
-SOP_AUTO_COMMIT="${SOP_AUTO_COMMIT:-1}"
-SOP_AUTO_PUSH="${SOP_AUTO_PUSH:-1}"
+SOP_AUTO_COMMIT="${SOP_AUTO_COMMIT:-0}"
+SOP_AUTO_PUSH="${SOP_AUTO_PUSH:-0}"
 SOP_COMMIT_MSG="${SOP_COMMIT_MSG:-chore: refresh SOP validation artifacts (pass)}"
 
 if git rev-parse --is-inside-work-tree &>/dev/null; then

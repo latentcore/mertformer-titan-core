@@ -64,6 +64,8 @@ Generated automatically.
 - `datasets/SOURCES_TR.md`
 - `datasets/inventory.md`
 - `datasets/inventory_TR.md`
+- `docs/CHAIN_MAP.md`
+- `docs/CHAIN_MAP_TR.md`
 - `docs/PROJECT_STRUCTURE.md`
 - `economics/cost_model.md`
 - `economics/cost_model_TR.md`

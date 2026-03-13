@@ -1,15 +1,110 @@
 {
-  "generated_utc": "2026-03-08T01:38:43.077593+00:00",
+  "generated_utc": "2026-03-13T04:58:15.213162+00:00",
   "root": ".",
-  "scope": "release_core",
-  "file_count": 6,
+  "scope": "all",
+  "file_count": 251,
   "total_issues": 0,
   "error_count": 0,
   "warning_count": 0,
   "issue_type_counts": {},
   "files": [
     {
+      "path": ".pytest_cache/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "CHANGELOG.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "CHANGELOG_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "CONTRIBUTING_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "DECISIONS.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "DECISIONS_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "IMPLEMENTATION_PLAN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "IMPLEMENTATION_PLAN_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "INTERNAL_AGI_GAP.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "INTERNAL_AGI_GAP_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "MODEL_CARD.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "MODEL_CARD_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "PITCH.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "PITCH_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
       "path": "README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "README_CHECKLIST.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "README_CHECKLIST_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "README_SUMMARY.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "README_SUMMARY_TR.md",
       "issue_count": 0,
       "issues": []
     },
@@ -19,7 +114,722 @@
       "issues": []
     },
     {
+      "path": "SDK_GUIDE.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "SDK_GUIDE_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "SECURITY.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "SECURITY_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "TASK.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "TASK_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "TECHNICAL_REPORT.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "TECHNICAL_REPORT_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "TRAINING_PLAN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "TRAINING_PLAN_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "USAGE_GUIDE.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "USAGE_GUIDE_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "USE_POLICY.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "USE_POLICY_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "V2_BACKLOG_SEED.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "WHITE_PAPER_LIQUIDROUTER.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "WHITE_PAPER_LIQUIDROUTER_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "ablations/bitlinear_off/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "ablations/bitlinear_off/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "ablations/dense_only/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "ablations/dense_only/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "ablations/no_liquid/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "ablations/no_liquid/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "ablations/no_moe/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "ablations/no_moe/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "ablations/results.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "ablations/results_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "assets/sources/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "assets/sources/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "datasets/INTERNAL_POLICY.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "datasets/INTERNAL_POLICY_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "datasets/LICENSES.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "datasets/LICENSES_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "datasets/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "datasets/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "datasets/SOURCES.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "datasets/SOURCES_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "datasets/inventory.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "datasets/inventory_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "docs/CHAIN_MAP.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "docs/CHAIN_MAP_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
       "path": "docs/PROJECT_STRUCTURE.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "economics/cost_model.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "economics/cost_model_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "economics/efficiency_report.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "economics/efficiency_report_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "experiments/exp_001_baseline/notes.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "experiments/exp_001_baseline/notes_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "interfaces/inference_contract.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "interfaces/inference_contract_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "limits/scaling_breakpoints.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "limits/scaling_breakpoints_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "logs/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "logs/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "logs/verify/closure_57_matrix.verify.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "logs/verify/closure_57_matrix.verify_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/01_START_HERE/README_TR_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/02_EXECUTIVE/one_pager_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/02_EXECUTIVE/one_pager_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/02_EXECUTIVE/quick_decision_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/02_EXECUTIVE/quick_decision_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/02_EXECUTIVE/v1_closure_sync_v2.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/03_TECH_EVIDENCE/closure_57_matrix_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/03_TECH_EVIDENCE/closure_57_matrix_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/03_TECH_EVIDENCE/compile_cudagraph_stall_fix_note.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/03_TECH_EVIDENCE/feature_coverage_matrix_v2.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/03_TECH_EVIDENCE/live_validation_snapshot.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/03_TECH_EVIDENCE/report_accuracy_audit_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/03_TECH_EVIDENCE/report_accuracy_audit_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/03_TECH_EVIDENCE/runtime_disclosure.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/04_SECURITY_LEGAL/legal_cleanroom_signoff_internal.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/04_SECURITY_LEGAL/security_compliance_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/04_SECURITY_LEGAL/security_compliance_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/04_SECURITY_LEGAL/teacher_output_license_assessment.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/04_SECURITY_LEGAL/v1_closure_sync_v2.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/company_readiness_pack_v2.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_acceptance_signoff_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_acceptance_signoff_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_packages_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_packages_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_readiness_kit_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_readiness_kit_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/poc_protocol_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/poc_protocol_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/sales_funnel_90d_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/sales_funnel_90d_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/founders_hub_application_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/founders_hub_application_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/private_placement_brief_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/private_placement_brief_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/v1_closure_sync_v2.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/07_OUTREACH_READY/DM_templates_TR_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/07_OUTREACH_READY/EXECUTE_NOW_48H_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/07_OUTREACH_READY/email_templates_TR_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/07_OUTREACH_READY/linkedin_posts_TR_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/07_OUTREACH_READY/v1_closure_sync_v2.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/08_GITHUB_GIST/gist_payload_TR_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/08_GITHUB_GIST/superseded_gists.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/08_GITHUB_GIST/v1_closure_sync_v2.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/09_APPENDIX/liquidrouter_whitepaper_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/09_APPENDIX/liquidrouter_whitepaper_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/09_APPENDIX/model_card_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/09_APPENDIX/model_card_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/09_APPENDIX/technical_report_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/09_APPENDIX/technical_report_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/09_APPENDIX/v1_closure_sync_v2.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/MANIFEST/claim_boundary_audit_v1.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/MANIFEST/consistency_check_v1.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/MANIFEST/exposure_policy_v1.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/MANIFEST/final_operator_checklist.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/MANIFEST/private_only_certificate_v1.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "mertformer-titan-dealroom-private/MANIFEST/release_signoff_v1.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "postmortems/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "postmortems/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "postmortems/_template.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "postmortems/_template_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "postmortems/example_001.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "postmortems/example_001_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "prompts/changelog.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "prompts/changelog_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/asset_stack.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/asset_stack_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/benchmarks/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/benchmarks/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/benchmarks/kaggle_compare_build30.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/cleanroom_verification.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/cleanroom_verification_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/cli_smoke_log.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/cli_smoke_log_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/closure_57_matrix.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/closure_57_matrix_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/codex_deep_audit_DE.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/codex_deep_audit_DE_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/codex_deep_audit_EN.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/codex_deep_audit_EN_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/codex_deep_audit_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/commercial_handover/contract_terms_checklist.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/commercial_handover/handover_scope.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/commercial_handover/known_issues.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/commercial_handover/ownership_and_role.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/commercial_handover/sla_kpi_90_180.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/contamination_report_build30.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/dataset_health.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/dataset_health_TR.md",
       "issue_count": 0,
       "issues": []
     },
@@ -29,12 +839,427 @@
       "issues": []
     },
     {
+      "path": "reports/drone_sitl_demo.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/drone_sitl_demo_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/efficiency_convergence_analysis.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/efficiency_convergence_analysis_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
       "path": "reports/final_repo_audit.md",
       "issue_count": 0,
       "issues": []
     },
     {
+      "path": "reports/final_sync_matrix.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/final_sync_matrix_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
       "path": "reports/folder_structure_policy.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/founders_hub_application.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/founders_hub_application_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/go_nogo_signoff_onepager.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/go_nogo_signoff_onepager_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/go_status_matrix.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/go_status_matrix_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/ip_licensing_split.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/ip_licensing_split_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/kpi_contract_build30.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/kpi_pack_v1.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/kpi_pack_v1_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/legal_cleanroom_signoff_internal.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/model_health.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/model_health_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/one_command_full_sop_summary.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/one_pager.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/one_pager_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/pilot_acceptance_signoff.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/pilot_acceptance_signoff_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/pilot_offer_packages.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/pilot_offer_packages_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/pilot_readiness_kit.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/pilot_readiness_kit_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/pilots/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/pilots/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/pitch_kit/04_KAYNAK_README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/pitch_kit/04_KAYNAK_README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/poc_protocol.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/poc_protocol_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/presentation_readiness_final.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/proje_zip_rebuild_manifest_v2.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/release_closure_note.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/release_snapshot.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/release_snapshot_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/report_accuracy_audit.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/report_accuracy_audit_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/report_truth_matrix.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/review_checklist.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/review_checklist_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/sales_funnel_90d.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/sales_funnel_90d_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/security_compliance.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/security_compliance_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/snapshots/2026-02-24/mertformer_master_decision_report_TR_2026-02-24.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/snapshots/2026-02-24/web_validation_sources_2026-02-24.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/strategic_value.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/strategic_value_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/system_hardware.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/system_hardware_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/teacher_output_license_assessment.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/technical_snapshot.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/technical_snapshot_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/verified_matrix.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "reports/verified_matrix_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "repro/python.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "repro/python_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "repro/seed_policy.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "repro/seed_policy_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "scripts/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "scripts/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "scripts/reports/model_health.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "scripts/reports/model_health_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "scripts/reports/pilots/pilot_001/sitl_20260211T214734Z/sitl_report.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "tokenizer/drift_report.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "tokenizer/drift_report_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "tokenizer/stats.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "tokenizer/stats_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "tokenizer/tr/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "tokenizer/tr/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "tools/abuse_tests.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "tools/abuse_tests_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "tools/contracts/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "tools/contracts/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "tools/sandbox/README.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "tools/sandbox/README_TR.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "training_dynamics/cold_vs_warm.md",
+      "issue_count": 0,
+      "issues": []
+    },
+    {
+      "path": "training_dynamics/cold_vs_warm_TR.md",
       "issue_count": 0,
       "issues": []
     }
