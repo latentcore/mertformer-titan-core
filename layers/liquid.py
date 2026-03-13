@@ -196,8 +196,8 @@ def jit_liquid_loop(
 
 class LiquidMixer(nn.Module):
     """
-    TR: Liquid Mixer V25.0 - JIT Accelerated.
-    EN: Liquid Mixer V25.0 - JIT Accelerated.
+    TR: Liquid Mixer Build30 V2 - fast_path (torch.compile guarded).
+    EN: Liquid Mixer Build30 V2 - fast_path (torch.compile guarded).
     """
 
     def __init__(self, h: int, fast_path: Optional[bool] = None) -> None:

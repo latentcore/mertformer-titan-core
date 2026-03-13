@@ -39,7 +39,7 @@ class RMSNorm(nn.Module):
     TR: Root Mean Square Normalization - LayerNorm alternatifi, daha hızlı.
     EN: Root Mean Square Normalization - Faster alternative to LayerNorm.
     
-    V27.0: Fused kernel optimization with torch.compile for 10-15% speedup.
+    V27.0: torch.compile removed for safer export/inference control.
     """
 
     def __init__(self, dim: int, eps: float = 1e-6) -> None:

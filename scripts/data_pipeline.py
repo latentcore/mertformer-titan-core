@@ -47,10 +47,10 @@ STAGE_DIRS = {
     5: Path("datasets/stage5_tools")
 }
 
-# TR: Stage 1: Saf Lójik (%45 toplam token)
-# EN: Stage 1: Pure Logic (45% total tokens)
-# TR: Kaynaklar birbirine göre ağırlıklı, toplam örneklere göre normalize edilir.
-# EN: Sources weighted relative to each other, normalized by total samples.
+# TR: Stage 1: Saf Lojik (%42 toplam token)
+# EN: Stage 1: Pure Logic (42% total tokens)
+# TR: Kaynaklar stage-ici agirliklidir; stage icinde normalize edilir.
+# EN: Sources are stage-local weights; normalized within the stage.
 STAGE1_SOURCES = [
     {
         "dataset": "bigcode/the-stack-v2",
@@ -82,8 +82,8 @@ STAGE1_SOURCES = [
     }
 ]
 
-# TR: Stage 2: Dünya Bilgisi (%35 toplam token)
-# EN: Stage 2: World Knowledge (35% total tokens)
+# TR: Stage 2: Dünya Bilgisi (%30 toplam token)
+# EN: Stage 2: World Knowledge (30% total tokens)
 # TR: %35: HuggingFaceFW/fineweb-edu (Sadece Reasoning/Eğitici)
 # EN: 35%: HuggingFaceFW/fineweb-edu (Reasoning/Educational only)
 STAGE2_SOURCES = [
@@ -98,8 +98,8 @@ STAGE2_SOURCES = [
     }
 ]
 
-# TR: Stage 3: Kimlik ve Dil (%7 toplam token)
-# EN: Stage 3: Identity & Language (7% total tokens)
+# TR: Stage 3: Kimlik ve Dil (%8 toplam token)
+# EN: Stage 3: Identity & Language (8% total tokens)
 # TR: %3.5: uonlp/CulturaX (Sadece Türkçe alt kümesi, filtrelenmiş)
 # EN: 3.5%: uonlp/CulturaX (Turkish subset only, filtered)
 # TR: %3.5: HuggingFaceTB/cosmopedia (Sentetik Yüksek Kalite)
@@ -522,11 +522,11 @@ def main(target_samples: int = 12_000_000, login_hf: bool = False) -> None:
     EN: Executes Titan Onyx Storm curriculum learning data download.
 
     İşlem / Process:
-    - Stage 1: Pure Logic (45%) - Code + Math
-    - Stage 2: World Knowledge (35%) - Educational content
-    - Stage 3: Identity & Language (7%) - Turkish + Synthetic
-    - Stage 4: Soul (3%) - High-quality dialogue/instruction
-    - Stage 5: Tool Use (10%) - Function calling/Tool use
+    - Stage 1: Pure Logic (42%) - Code + Math
+    - Stage 2: World Knowledge (30%) - Educational content
+    - Stage 3: Identity & Language (8%) - Turkish + Synthetic
+    - Stage 4: Soul (8%) - High-quality dialogue/instruction
+    - Stage 5: Tool Use (12%) - Function calling/Tool use
     """
     print("="*60)
     print("🚀 TITAN ONYX STORM - CURRICULUM LEARNING DATA PIPELINE")
