@@ -15,7 +15,7 @@ TR: Zincir Düşünce (CoT) ve Düşünce Ağacı (ToT) tabanlı çok stratejili
 EN: Chain-of-Thought (CoT) and Tree-of-Thought (ToT) based multi-strategy reasoning engine.
 """
 
-__version__ = "1.0-BUILD30"
+__version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
 import time

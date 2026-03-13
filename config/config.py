@@ -11,7 +11,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30"
+__version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
 import os
@@ -188,7 +188,7 @@ class MertFormerConfig:
     # TR: 1. SİSTEM KİMLİĞİ / EN: 1. SYSTEM IDENTITY
     # -------------------------------------------------------------------------
     model_name: str = "MertFormer_Titan_S25_Prod"
-    version: str = "v1.0-TITAN-BUILD30"
+    version: str = "v1.0-TITAN-BUILD30-V2"
 
     # TR: Cihazı Otomatik Bul (Once NVIDIA, Yoksa Mac MPS, Yoksa CPU)
     # EN: Auto-detect device (First NVIDIA, then Mac MPS, then CPU)

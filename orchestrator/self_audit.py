@@ -15,7 +15,7 @@ TR: Çıktı denetimi — hallüsinasyon tespiti, tutarlılık kontrolü, güven
 EN: Output audit — hallucination detection, consistency check, safety verification.
 """
 
-__version__ = "1.0-BUILD30"
+__version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
 import re

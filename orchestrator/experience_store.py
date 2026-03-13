@@ -15,7 +15,7 @@ TR: Deneyim deposu — episodik öğrenme, strateji adaptasyonu, performans izle
 EN: Experience store — episodic learning, strategy adaptation, performance tracking.
 """
 
-__version__ = "1.0-BUILD30"
+__version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
 import json

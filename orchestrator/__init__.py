@@ -92,4 +92,4 @@ __all__ = [
     "CognitiveResult",
 ]
 
-__version__ = "1.0-BUILD30"
+__version__ = "1.0-BUILD30-V2"

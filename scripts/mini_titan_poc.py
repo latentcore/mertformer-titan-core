@@ -14,7 +14,7 @@ Target : Rigorous Benchmark with Cryptographic Proof
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30"
+__version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
 import os

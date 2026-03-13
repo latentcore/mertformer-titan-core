@@ -15,7 +15,7 @@ TR: Araç çalıştırma motoru — governance-gated, sandboxed, timeout-enforce
 EN: Tool execution engine — governance-gated, sandboxed, timeout-enforced.
 """
 
-__version__ = "1.0-BUILD30"
+__version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
 import math
