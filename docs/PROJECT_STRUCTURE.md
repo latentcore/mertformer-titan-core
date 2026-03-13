@@ -308,6 +308,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── report_accuracy_audit_TR.md  # Turkish document counterpart
 │   ├── report_truth_matrix.md  # documentation/report file
 │   ├── repro_build_report.json  # JSON data artifact
+│   ├── resume_compat_report.json  # JSON data artifact
 │   ├── review_checklist.md  # documentation/report file
 │   ├── review_checklist_TR.md  # Turkish document counterpart
 │   ├── runbook_validation_report.json  # JSON data artifact
@@ -411,6 +412,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── release_build30.sh  # shell automation script
 │   ├── release_closure_lock.sh  # shell automation script
 │   ├── repro_build_check.py  # Python module/script (automation script for repro build check)
+│   ├── resume_compat_check.py  # Python module/script (automation script for resume compat check)
 │   ├── run_and_clean_pycache.py  # Python module/script (run command + guaranteed post-run cache sweep; add --include-venv-caches for venv cache cleanup)
 │   ├── scaling_audit_math.py  # Python module/script (automation script for scaling audit math)
 │   ├── secret_scan.py  # Python module/script (automation script for secret scan)
@@ -424,6 +426,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── train_smoke.py  # Python module/script (automation script for train smoke)
 │   ├── train_tpu_turbo.py  # Python module/script (automation script for train tpu turbo)
 │   ├── unicode_path_guard.py  # Python module/script (automation script for unicode path guard)
+│   ├── update_investor_deck.py  # Python module/script (automation script for update investor deck)
 │   ├── update_system_hardware.py  # Python module/script (automation script for update system hardware)
 │   ├── verify_all.sh  # shell automation script
 │   ├── verify_datasets.py  # Python module/script (automation script for verify datasets)

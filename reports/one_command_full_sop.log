@@ -1,4 +1,4 @@
-[run] start_utc=2026-03-13T06:35:40Z
+[run] start_utc=2026-03-13T06:56:54Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
@@ -25,7 +25,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-111 passed, 3 skipped, 6 warnings in 15.36s
+111 passed, 3 skipped, 6 warnings in 12.44s
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -64,7 +64,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <REPO_ROOT>/temp_preflight_data
 ✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 3.01s
+✈️ Preflight Duration: 3.02s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
@@ -75,8 +75,8 @@ Failure budget drill: PASS
 Overfit step 0: loss=121.5519
 Overfit step 12: loss=117.8494
 Overfit step 24: loss=113.7169
-Overfit step 36: loss=97.5477
-Overfit step 48: loss=50.8443
+Overfit step 36: loss=97.5475
+Overfit step 48: loss=50.8516
 Overfit gate: PASS
 Golden samples: 50
 - algorithms: 13
@@ -109,7 +109,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 6.980587005615234,
+  "elapsed_sec": 7.207268238067627,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -135,9 +135,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-03-13T06:36:09Z",
-        "cpu_percent": 11.1,
-        "ram_used_gb": 6.68646240234375,
+        "timestamp_utc": "2026-03-13T06:57:20Z",
+        "cpu_percent": 14.9,
+        "ram_used_gb": 7.0849151611328125,
         "ram_total_gb": 16.0
       }
     },
@@ -164,7 +164,7 @@ OK: unicode path guard; hits=0
 [verify] Duplicate zip guard gate ...
 OK: duplicate zip guard; groups=0
 [verify] Manifest sync gate ...
-{"manifest_entries": 487, "ok": true}
+{"manifest_entries": 490, "ok": true}
 [verify] OK
 [run] step=cfc_moe_tolerance_check
 [tolerance] PASS (max_diff_moe=0.000000 max_diff_cfc=0.000014)
@@ -175,7 +175,7 @@ linkcheck: scope=all files=255 missing=0
 [run] step=docs_inventory
 {"ok": true, "md_files": 257, "dup_groups": 21}
 [run] step=sync_manifest
-{"manifest_entries": 487, "ok": true}
+{"manifest_entries": 490, "ok": true}
 [run] step=dealroom_sync
 {"ok": true}
 [run] step=unicode_path_guard
@@ -186,7 +186,7 @@ OK: duplicate zip guard; groups=0
 [runner] cmd=bash -lc true
 [runner] cleanup_root=<REPO_ROOT>
 [runner] include_tool_caches=True full_clean=True include_venv_caches=True dry_run=False
-[cleanup] dirs_found=578 files_found=0 dirs_removed=578 files_removed=0
+[cleanup] dirs_found=663 files_found=0 dirs_removed=663 files_removed=0
 [run] step=clean_runtime_artifacts_check
 OK: runtime artifacts and caches are clean
 [run] step=release_build30
@@ -205,7 +205,7 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
-release_sha256=70157efa52b044ee8db78d7368fd0f2b4de7168f02defb49d24893876ba23a76
+release_sha256=5ac6303ae5d4c17eea44a6b35db5f9da285096dde4071d2b8b047e3f63319c67
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=artifact_release_zip
@@ -815,7 +815,7 @@ locked_sha256=
   adding: reports/benchmarks/kaggle_compare_build30.md (deflated 31%)
   adding: reports/benchmarks/agentic_suite_build30.json (deflated 73%)
   adding: reports/bench_npu_report.json (deflated 9%)
-  adding: reports/investor_deck.pptx (deflated 29%)
+  adding: reports/investor_deck.pptx (deflated 32%)
   adding: reports/cleanroom_verification.md (deflated 51%)
   adding: reports/go_status_matrix_TR.md (deflated 53%)
   adding: reports/poc_protocol_TR.md (deflated 44%)
@@ -824,7 +824,7 @@ locked_sha256=
   adding: reports/system_stats.jsonl (deflated 78%)
   adding: reports/release_closure_note.md (deflated 15%)
   adding: reports/runbook_validation_report.json (deflated 11%)
-  adding: reports/investor_deck_TR.pptx (deflated 28%)
+  adding: reports/investor_deck_TR.pptx (deflated 32%)
   adding: reports/presentation_readiness_final.md (deflated 51%)
   adding: reports/report_accuracy_audit_TR.md (deflated 47%)
   adding: reports/zip_audit_packages.json (deflated 26%)
@@ -883,4 +883,4 @@ locked_sha256=
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-03-13T06:36:26Z
+[run] end_utc=2026-03-13T06:57:37Z

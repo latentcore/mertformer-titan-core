@@ -1768,6 +1768,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── report_accuracy_audit_TR.md  # Türkçe doküman karşılığı
 │   ├── report_truth_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── repro_build_report.json  # JSON veri artefaktı
+│   ├── resume_compat_report.json  # JSON veri artefaktı
 │   ├── review_checklist.md  # dokümantasyon/rapor dosyası
 │   ├── review_checklist_TR.md  # Türkçe doküman karşılığı
 │   ├── runbook_validation_report.json  # JSON veri artefaktı
@@ -1871,6 +1872,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── release_build30.sh  # kabuk otomasyon scripti
 │   ├── release_closure_lock.sh  # kabuk otomasyon scripti
 │   ├── repro_build_check.py  # Python modülü/scripti (repro build check için otomasyon scripti)
+│   ├── resume_compat_check.py  # Python modülü/scripti (resume compat check için otomasyon scripti)
 │   ├── run_and_clean_pycache.py  # Python modülü/scripti (komut çalıştırma + garanti pycache temizliği; venv cache temizliği için --include-venv-caches kullan)
 │   ├── scaling_audit_math.py  # Python modülü/scripti (scaling audit math için otomasyon scripti)
 │   ├── secret_scan.py  # Python modülü/scripti (secret scan için otomasyon scripti)
@@ -1884,6 +1886,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── train_smoke.py  # Python modülü/scripti (train smoke için otomasyon scripti)
 │   ├── train_tpu_turbo.py  # Python modülü/scripti (train tpu turbo için otomasyon scripti)
 │   ├── unicode_path_guard.py  # Python modülü/scripti (unicode path guard için otomasyon scripti)
+│   ├── update_investor_deck.py  # Python modülü/scripti (update investor deck için otomasyon scripti)
 │   ├── update_system_hardware.py  # Python modülü/scripti (update system hardware için otomasyon scripti)
 │   ├── verify_all.sh  # kabuk otomasyon scripti
 │   ├── verify_datasets.py  # Python modülü/scripti (verify datasets için otomasyon scripti)
