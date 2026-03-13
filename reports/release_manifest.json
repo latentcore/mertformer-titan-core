@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-03-13T07:26:45.833497+00:00",
+  "generated_utc": "2026-03-13T08:10:31.939851+00:00",
   "root": ".",
   "entry_count": 490,
   "entries": [
@@ -366,8 +366,8 @@
     {
       "path": "artifacts/mertformer_release.zip.sha256",
       "size_bytes": 99,
-      "sha256": "97d647525edb53382ce24af860a2630bd00608fcbecc15b9318bc865c715dfd9",
-      "mtime_utc": "2026-03-13T06:57:36.939437+00:00"
+      "sha256": "d8ba661262d6dba1b4366f4bdd085e8c1ae33e876797d73c84eb7825263533c7",
+      "mtime_utc": "2026-03-13T07:26:51.900843+00:00"
     },
     {
       "path": "assets/header.png",
@@ -1171,7 +1171,7 @@
       "path": "reports/artifacts_zip_denylist_audit.json",
       "size_bytes": 147,
       "sha256": "97132cd397a8e2e1d83c39627441dd846b932577f91f0a95a0fc5f4f7cebef78",
-      "mtime_utc": "2026-03-13T06:57:36.986730+00:00"
+      "mtime_utc": "2026-03-13T07:26:51.947695+00:00"
     },
     {
       "path": "reports/asset_stack.md",
@@ -1249,7 +1249,7 @@
       "path": "reports/benchmarks/internal_smoke_summary.json",
       "size_bytes": 54,
       "sha256": "93885b4fecdf4b4dd0a387586e481a834ae56a69d9571a066955cdac3ae4c780",
-      "mtime_utc": "2026-03-13T07:26:36.603227+00:00"
+      "mtime_utc": "2026-03-13T08:10:22.862073+00:00"
     },
     {
       "path": "reports/benchmarks/kaggle_compare_build30.csv",
@@ -1284,8 +1284,8 @@
     {
       "path": "reports/cfc_moe_tolerance_report.json",
       "size_bytes": 1447,
-      "sha256": "7b3d35717d3834171f0143f7a1b8ffc36d30eebde55fb263af55f57d1861d1f5",
-      "mtime_utc": "2026-03-13T07:26:44.663300+00:00"
+      "sha256": "eb11a604f1c46ad7e968b85f55c42a6e5fad464519fe65a0bc749413b2fd79b5",
+      "mtime_utc": "2026-03-13T08:10:30.779613+00:00"
     },
     {
       "path": "reports/cleanroom_verification.md",
@@ -1410,8 +1410,8 @@
     {
       "path": "reports/dealroom_reference.json",
       "size_bytes": 425,
-      "sha256": "92d2582650f2cf370d3bc141b4c1891e31de49bcdc0022faf41fff6804a80560",
-      "mtime_utc": "2026-03-13T06:57:30.739792+00:00"
+      "sha256": "a3972c8534fbd5067c9406404003a51e8b086aab7fa3b3ab07d910804560eb41",
+      "mtime_utc": "2026-03-13T07:26:45.896146+00:00"
     },
     {
       "path": "reports/determinism_report.json",
@@ -1429,7 +1429,7 @@
       "path": "reports/docs_dedup_canonical_list.md",
       "size_bytes": 15049,
       "sha256": "faccf46c8877309541aa29a57d30625a9501dd9fe69368f3683f2558e9d0f196",
-      "mtime_utc": "2026-03-13T07:26:45.770371+00:00"
+      "mtime_utc": "2026-03-13T08:10:31.877819+00:00"
     },
     {
       "path": "reports/docs_packages_hash_manifest.json",
@@ -1452,8 +1452,8 @@
     {
       "path": "reports/duplicate_zip_guard_report.json",
       "size_bytes": 170,
-      "sha256": "a080d62b06e6ef0a069b50bf31e59912f3a824b29dee95a0c04a5cb35260afc8",
-      "mtime_utc": "2026-03-13T07:26:39.866359+00:00"
+      "sha256": "93fa4246a40f38595255f02152e74133b6bb07d00aa1006da947f5cf2fbd2655",
+      "mtime_utc": "2026-03-13T08:10:25.969085+00:00"
     },
     {
       "path": "reports/efficiency_convergence_analysis.md",
@@ -1506,14 +1506,14 @@
     {
       "path": "reports/folder_drift_report.json",
       "size_bytes": 4597,
-      "sha256": "add4700b1181afa5791d293069f29a3c97f8f2684baec7faf901b87ac1666f87",
-      "mtime_utc": "2026-03-13T07:26:45.770775+00:00"
+      "sha256": "0dc794644f74c7b817fd47ff16a458f39edd04504d3a261f958cb1ec5dde4596",
+      "mtime_utc": "2026-03-13T08:10:31.878274+00:00"
     },
     {
       "path": "reports/folder_structure_policy.md",
       "size_bytes": 274,
       "sha256": "ccac9a74cb638146dc0b0c9396e0a254fc42ad31aba643b73cb8afc25e446157",
-      "mtime_utc": "2026-03-13T07:26:45.770473+00:00"
+      "mtime_utc": "2026-03-13T08:10:31.877930+00:00"
     },
     {
       "path": "reports/founders_hub_application.md",
@@ -1638,14 +1638,14 @@
     {
       "path": "reports/linkcheck_report.json",
       "size_bytes": 173,
-      "sha256": "c01ed4810a41be203ff1e1337657191f3ee9f0cdd7a9dff4b204c76d13fb44da",
-      "mtime_utc": "2026-03-13T07:26:45.521102+00:00"
+      "sha256": "b05e631020b09c3c773283c3bfe84ffdd83a7a82a6599043e049a28a189be843",
+      "mtime_utc": "2026-03-13T08:10:31.625080+00:00"
     },
     {
       "path": "reports/md_lint_report.json",
       "size_bytes": 28642,
-      "sha256": "71251d87fd611db8ed9f7e430f900e5b474b2ab07651c66afa51ab343d10017a",
-      "mtime_utc": "2026-03-13T07:26:45.251314+00:00"
+      "sha256": "c6f3956d0dc55f9ac6b0dd31635372ecd1c60fc0c1aab747d92b64875db6fcb5",
+      "mtime_utc": "2026-03-13T08:10:31.359716+00:00"
     },
     {
       "path": "reports/model_health.md",
@@ -1662,14 +1662,14 @@
     {
       "path": "reports/one_command_full_sop.log",
       "size_bytes": 47238,
-      "sha256": "c19eb5cdfc94905e3379f993a4b496d83e49aa814c8a9de2d966fc6734dd929f",
-      "mtime_utc": "2026-03-13T07:26:01.843505+00:00"
+      "sha256": "d4370abaf80db0443e2bde7f3270de50792088869f2c57e88a80a26447a139c2",
+      "mtime_utc": "2026-03-13T08:09:48.736191+00:00"
     },
     {
       "path": "reports/one_command_full_sop_summary.md",
       "size_bytes": 735,
-      "sha256": "d9d9d7e8948f33e06fccee571ce9cc060cb119626b5008792a8a66e402d551a9",
-      "mtime_utc": "2026-03-13T06:57:37.241964+00:00"
+      "sha256": "51d6aa83565a41d924c55b45eb811586915e068f440318c0df1da6c747644a92",
+      "mtime_utc": "2026-03-13T07:26:52.202281+00:00"
     },
     {
       "path": "reports/one_pager.md",
@@ -1686,8 +1686,8 @@
     {
       "path": "reports/ownership_proof_bundle.json",
       "size_bytes": 563,
-      "sha256": "d08ef577266be8f35ab6a43d1f91169a3460517ed9e06191f2de55cf0e262d1d",
-      "mtime_utc": "2026-03-13T06:57:30.757571+00:00"
+      "sha256": "2896f97b08657f3b9d93758a1572f542bc81697acf050afe653840ce7d6ac620",
+      "mtime_utc": "2026-03-13T07:26:45.914466+00:00"
     },
     {
       "path": "reports/pilot_acceptance_signoff.md",
@@ -1788,14 +1788,14 @@
     {
       "path": "reports/release_snapshot.md",
       "size_bytes": 2474,
-      "sha256": "4acbb833d3b83d8cfca53cd4b72e4e8c8df7e671ed4b99a39025dde640f2278e",
-      "mtime_utc": "2026-03-13T06:57:35.097297+00:00"
+      "sha256": "4e19c21ab0eaf38b5fb02c9e80eacb46bc6fdb8cdd428fa61b982cce0d9afd86",
+      "mtime_utc": "2026-03-13T07:26:50.123123+00:00"
     },
     {
       "path": "reports/release_snapshot_TR.md",
       "size_bytes": 2556,
-      "sha256": "7e0e46dc9ac90a56142798afea67d3eb193f48fe64ee5eec3ca3204e839cf213",
-      "mtime_utc": "2026-03-13T06:57:35.097579+00:00"
+      "sha256": "c132c413eef30bf26ff2f71bf777e01ebb6d6fd74c2dbfe455ed9f6ca86bad89",
+      "mtime_utc": "2026-03-13T07:26:50.123265+00:00"
     },
     {
       "path": "reports/report_accuracy_audit.md",
@@ -2016,8 +2016,8 @@
     {
       "path": "reports/unicode_path_guard_report.json",
       "size_bytes": 135,
-      "sha256": "9aafe08af93931f387a13cf4f80515aadc57addef611128253732338d73d802b",
-      "mtime_utc": "2026-03-13T07:26:37.933921+00:00"
+      "sha256": "9118350b75e35f82bec5b8ac616355997d901ffb18963acb598f2fa129f5cc48",
+      "mtime_utc": "2026-03-13T08:10:24.166642+00:00"
     },
     {
       "path": "reports/verified_matrix.md",
@@ -2035,7 +2035,7 @@
       "path": "reports/zip_audit_artifacts.json",
       "size_bytes": 147,
       "sha256": "97132cd397a8e2e1d83c39627441dd846b932577f91f0a95a0fc5f4f7cebef78",
-      "mtime_utc": "2026-03-13T06:57:36.986740+00:00"
+      "mtime_utc": "2026-03-13T07:26:51.947705+00:00"
     },
     {
       "path": "reports/zip_audit_packages.json",
@@ -2479,7 +2479,7 @@
       "path": "scripts/runs/preflight/config_snapshot.json",
       "size_bytes": 4788,
       "sha256": "f7360fc517bd78a76aea252fe56672b385d821c666dd6e4d94ae918d15f3ecdb",
-      "mtime_utc": "2026-03-13T07:26:24.273411+00:00"
+      "mtime_utc": "2026-03-13T08:10:10.920248+00:00"
     },
     {
       "path": "scripts/scaling_audit_math.py",
@@ -2531,9 +2531,9 @@
     },
     {
       "path": "scripts/titan_preflight.py",
-      "size_bytes": 24970,
-      "sha256": "e0786ef3d079d6c7fd3d546a232433a9fbcc78763fd06b8b59f0c653b283b511",
-      "mtime_utc": "2026-03-13T05:37:10.079051+00:00"
+      "size_bytes": 25251,
+      "sha256": "58c22e02f887bc4012d29b9cf950c8774f5e01f413a38ce1e29d4f5fbbe5d9aa",
+      "mtime_utc": "2026-03-13T08:09:29.066725+00:00"
     },
     {
       "path": "scripts/train_smoke.py",
