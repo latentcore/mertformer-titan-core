@@ -15,15 +15,17 @@ __version__ = "1.0-BUILD30"
 __author__ = "Mert"
 
 import argparse
+import hashlib
 import json
 import os
 import random
 import sys
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from datasets import load_dataset
 from tqdm import tqdm
+from collections import deque
 
 # Ensure project-local imports work when launched as: python scripts/data_pipeline.py
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -135,27 +137,16 @@ STAGE3_SOURCES = [
     }
 ]
 
-# TR: Stage 4: Ruh ve Kimlik (%3 toplam token)
-# EN: Stage 4: Soul & Identity (3% total tokens)
-# TR: %1.5: OpenAssistant/oasst_top1_2023-08-25 (Yüksek Kalite İnsan Diyaloğu)
-# EN: 1.5%: OpenAssistant/oasst_top1_2023-08-25 (High Quality Human Dialogue)
-# TR: %1.5: mlabonne/guanaco-llama2-1k (Temiz Talimat Takibi)
-# EN: 1.5%: mlabonne/guanaco-llama2-1k (Clean Instruction Following)
+# TR: Stage 4: Ruh ve Kimlik (%8 toplam token)
+# EN: Stage 4: Soul & Identity (8% total tokens)
+# TR: Çeşitlendirilmiş, instruction‑following ağırlıklı kaynaklar.
+# EN: Diversified instruction‑following sources.
 STAGE4_SOURCES = [
     {
         "dataset": "OpenAssistant/oasst_top1_2023-08-25",
         "split": "train",
-        "field": "text",
-        "ratio": 0.010, # 1%
-        "filters": None,
-        "min_length": 50,
-        "max_length": 10000
-    },
-    {
-        "dataset": "mlabonne/guanaco-llama2-1k",
-        "split": "train",
-        "field": "text",
-        "ratio": 0.005, # 0.5%
+        "field": ["text", "conversation", "messages"],
+        "ratio": 0.40,
         "filters": None,
         "min_length": 50,
         "max_length": 10000
@@ -163,8 +154,8 @@ STAGE4_SOURCES = [
     {
         "dataset": "TFLai/Turkish-Alpaca", # [FIX] Replaced broken link with active repo
         "split": "train",
-        "field": "output", # Targeting output for safety
-        "ratio": 0.010, 
+        "field": ["output", "text", "instruction", "response"],
+        "ratio": 0.30,
         "filters": None,
         "min_length": 10,
         "max_length": 5000
@@ -172,27 +163,57 @@ STAGE4_SOURCES = [
     {
         "dataset": "turkish-nlp-suite/InstrucTurca", 
         "split": "train",
-        "field": "Output", # [FIX] Case-sensitive field name found in verify
-        "ratio": 0.010, 
+        "field": ["Output", "output", "text"],
+        "ratio": 0.20,
         "filters": None,
         "min_length": 10,
         "max_length": 10000
+    },
+    {
+        "dataset": "teknium/OpenHermes-2.5",  # Optional general instruction set
+        "split": "train",
+        "field": ["text", "conversations", "prompt", "response"],
+        "ratio": 0.10,
+        "filters": None,
+        "min_length": 50,
+        "max_length": 12000,
+        "optional": True,
     }
 ]
 
-# TR: Stage 5: Araç Kullanımı (%10 toplam token)
-# EN: Stage 5: Tool Use (10% total tokens)
-# TR: %10: glaiveai/glaive-function-calling-v2 (Fonksiyon Çağırı/Araç Kullanımı)
-# EN: 10%: glaiveai/glaive-function-calling-v2 (Function Calling/Tool Use)
+# TR: Stage 5: Araç Kullanımı (%12 toplam token)
+# EN: Stage 5: Tool Use (12% total tokens)
+# TR: Çoklu tool-use kaynakları (gated ise optional).
+# EN: Multi-source tool-use (optional if gated).
 STAGE5_SOURCES = [
     {
         "dataset": "glaiveai/glaive-function-calling-v2",
         "split": "train",
         "field": "text",
-        "ratio": 0.10, # 10% of total
+        "ratio": 0.60,
         "filters": None,
         "min_length": 100,
         "max_length": 15000
+    },
+    {
+        "dataset": "gorilla-llm/gorilla-openfunctions-v2",
+        "split": "train",
+        "field": ["text", "prompt", "response", "conversation"],
+        "ratio": 0.25,
+        "filters": None,
+        "min_length": 100,
+        "max_length": 15000,
+        "optional": True,
+    },
+    {
+        "dataset": "NousResearch/FC-1k",
+        "split": "train",
+        "field": ["text", "instruction", "output"],
+        "ratio": 0.15,
+        "filters": None,
+        "min_length": 100,
+        "max_length": 15000,
+        "optional": True,
     }
 ]
 
@@ -278,7 +299,57 @@ def filter_by_language(text, language_codes):
     return False
 
 
-def download_stage(stage_num, sources, target_samples_per_source):
+class RollingDeduper:
+    def __init__(
+        self,
+        enabled: bool = True,
+        max_entries: int = 2_000_000,
+        hash_bytes: int = 8,
+        normalize: bool = True,
+    ) -> None:
+        self.enabled = bool(enabled)
+        self.max_entries = int(max_entries)
+        self.hash_bytes = int(hash_bytes)
+        self.normalize = bool(normalize)
+        self._seen: set[int] = set()
+        self._queue: deque[int] = deque()
+
+    def _norm(self, text: str) -> str:
+        if not self.normalize:
+            return text
+        return " ".join(text.lower().split())
+
+    def _fingerprint(self, text: str) -> int:
+        norm = self._norm(text)
+        digest = hashlib.blake2b(norm.encode("utf-8", errors="ignore"), digest_size=self.hash_bytes).digest()
+        return int.from_bytes(digest, "big", signed=False)
+
+    def accept(self, text: str) -> bool:
+        if not self.enabled:
+            return True
+        fp = self._fingerprint(text)
+        if fp in self._seen:
+            return False
+        self._seen.add(fp)
+        self._queue.append(fp)
+        if len(self._queue) > self.max_entries:
+            old = self._queue.popleft()
+            self._seen.discard(old)
+        return True
+
+
+def _extract_text(sample: Dict[str, object], field: object) -> str:
+    if isinstance(field, (list, tuple)):
+        for f in field:
+            if isinstance(f, str) and f in sample and sample[f] is not None:
+                return str(sample[f])
+        return ""
+    if isinstance(field, str):
+        return str(sample.get(field, ""))
+    return ""
+
+
+def download_stage(stage_num, sources, target_samples_per_source, deduper: Optional[RollingDeduper] = None):
     """TR: Verimli kalıcı streaming iterator'lar kullanarak belirli bir stage için veri indir. / EN: Download data for a specific stage using efficient persistent streaming iterators."""
     stage_dir = STAGE_DIRS[stage_num]
     stage_output = stage_dir / f"stage{stage_num}_data.jsonl"
@@ -298,7 +369,8 @@ def download_stage(stage_num, sources, target_samples_per_source):
 
     # 2. Initialize Persistent Iterators (Crucial for Speed)
     # loading dataset once and iterating is O(1), vs reloading every sample O(N)
-    iterators = {}
+    iterators: Dict[int, object] = {}
+    active_sources: List[int] = []
     for i, src in enumerate(sources):
         print(f"   🔌 Connecting to stream: {src['dataset']}...")
         try:
@@ -314,19 +386,29 @@ def download_stage(stage_num, sources, target_samples_per_source):
                 streaming=True
             ).shuffle(seed=42, buffer_size=10_000) # Use shuffle buffer instead of expensive skip
             iterators[i] = iter(ds)
+            active_sources.append(i)
         except Exception as e:
-            print(f"   ❌ Failed to connect {src['dataset']}: {e}")
+            if bool(src.get("optional", False)):
+                print(f"   ⚠️ Optional source unavailable: {src['dataset']} ({e})")
+            else:
+                print(f"   ❌ Failed to connect {src['dataset']}: {e}")
             iterators[i] = None
+
+    if not active_sources:
+        print("❌ No active data sources available for this stage.")
+        return 0
 
     collected = 0
     source_collected = {i: 0 for i in range(len(sources))}
     
     # Calculate samples per source based on ratio
-    total_ratio = sum(s["ratio"] for s in sources)
-    samples_per_source = {
-        i: int(target_samples_per_source * (s["ratio"] / total_ratio))
-        for i, s in enumerate(sources)
-    }
+    active_ratio = sum(float(sources[i]["ratio"]) for i in active_sources)
+    samples_per_source = {}
+    for i in range(len(sources)):
+        if i in active_sources:
+            samples_per_source[i] = int(target_samples_per_source * (sources[i]["ratio"] / active_ratio))
+        else:
+            samples_per_source[i] = 0
     
     pbar = tqdm(total=sum(samples_per_source.values()), desc=f"Stage {stage_num}")
     
@@ -366,7 +448,7 @@ def download_stage(stage_num, sources, target_samples_per_source):
             sample = next(src_iter)
             
             # Extract text
-            text = sample.get(source["field"], "")
+            text = _extract_text(sample, source.get("field", ""))
             if not isinstance(text, str):
                 text = str(text) if text is not None else ""
             
@@ -378,6 +460,9 @@ def download_stage(stage_num, sources, target_samples_per_source):
             
             # Filter by language if needed
             if source["filters"] and not filter_by_language(text, source["filters"]):
+                continue
+
+            if deduper is not None and not deduper.accept(text):
                 continue
             
             # [V27.6 IO FIX] Buffer Write Strategy
@@ -467,25 +552,44 @@ def main(target_samples: int = 12_000_000, login_hf: bool = False) -> None:
     stage_names = list(getattr(cfg, "curriculum_stage_names", []))
     stage_counts: Dict[str, int] = {}
     
+    dedup_enabled = bool(getattr(cfg, "dedup_enabled", True))
+    dedup_scope = str(getattr(cfg, "dedup_scope", "global"))
+    dedup = RollingDeduper(
+        enabled=dedup_enabled,
+        max_entries=int(getattr(cfg, "dedup_max_entries", 2_000_000)),
+        hash_bytes=int(getattr(cfg, "dedup_hash_bytes", 8)),
+        normalize=bool(getattr(cfg, "dedup_normalize", True)),
+    )
+
     # Stage 1
     stage1_target = int(TARGET_SAMPLES * stage_ratios[0])
-    stage_counts[stage_names[0]] = download_stage(1, STAGE1_SOURCES, stage1_target)
+    stage_counts[stage_names[0]] = download_stage(
+        1, STAGE1_SOURCES, stage1_target, deduper=dedup if dedup_scope == "global" else RollingDeduper(**dedup.__dict__)
+    )
     
     # Stage 2
     stage2_target = int(TARGET_SAMPLES * stage_ratios[1])
-    stage_counts[stage_names[1]] = download_stage(2, STAGE2_SOURCES, stage2_target)
+    stage_counts[stage_names[1]] = download_stage(
+        2, STAGE2_SOURCES, stage2_target, deduper=dedup if dedup_scope == "global" else RollingDeduper(**dedup.__dict__)
+    )
     
     # Stage 3
     stage3_target = int(TARGET_SAMPLES * stage_ratios[2])
-    stage_counts[stage_names[2]] = download_stage(3, STAGE3_SOURCES, stage3_target)
+    stage_counts[stage_names[2]] = download_stage(
+        3, STAGE3_SOURCES, stage3_target, deduper=dedup if dedup_scope == "global" else RollingDeduper(**dedup.__dict__)
+    )
     
     # Stage 4
     stage4_target = int(TARGET_SAMPLES * stage_ratios[3])
-    stage_counts[stage_names[3]] = download_stage(4, STAGE4_SOURCES, stage4_target)
+    stage_counts[stage_names[3]] = download_stage(
+        4, STAGE4_SOURCES, stage4_target, deduper=dedup if dedup_scope == "global" else RollingDeduper(**dedup.__dict__)
+    )
 
     # Stage 5
     stage5_target = int(TARGET_SAMPLES * stage_ratios[4])
-    stage_counts[stage_names[4]] = download_stage(5, STAGE5_SOURCES, stage5_target)
+    stage_counts[stage_names[4]] = download_stage(
+        5, STAGE5_SOURCES, stage5_target, deduper=dedup if dedup_scope == "global" else RollingDeduper(**dedup.__dict__)
+    )
     
     print(f"\n{'='*60}")
     print("✅ TITAN DATA PIPELINE COMPLETE")

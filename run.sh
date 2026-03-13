@@ -321,27 +321,50 @@ fi
 # ------------------------------------------------------------------------------
 # ⚙️ 4. ACCELERATE YAPILANDIRMASI (AUTO-CONFIG) - GÜNCELLENDİ
 # ------------------------------------------------------------------------------
-if [ ! -f ~/.cache/huggingface/accelerate/default_config.yaml ]; then
+ACCEL_CFG="${HOME}/.cache/huggingface/accelerate/default_config.yaml"
+FORCE_ACCEL_RECONF="${TITAN_FORCE_ACCELERATE_RECONF:-0}"
+
+if command -v nvidia-smi &> /dev/null; then
+    NUM_PROCS=$(nvidia-smi -L | wc -l)
+else
+    NUM_PROCS=1
+fi
+
+# MANTIK DÜZELTMESİ: Tek GPU ise MULTI_GPU olmamalı
+DIST_TYPE="MULTI_GPU"
+USE_CPU="false"
+if [ "$NUM_PROCS" -eq 1 ]; then
+    DIST_TYPE="NO"
+fi
+if [[ "$OS_TYPE" == "Darwin" ]]; then
+    DIST_TYPE="NO" # Mac için şimdilik en güvenli yol
+fi
+
+if [ -f "$ACCEL_CFG" ]; then
+    CUR_PROCS=$(grep -E "^num_processes:" "$ACCEL_CFG" | awk '{print $2}' | tr -d "'\"")
+    CUR_DIST=$(grep -E "^distributed_type:" "$ACCEL_CFG" | awk '{print $2}' | tr -d "'\"")
+
+    if [[ -n "$CUR_PROCS" && -n "$CUR_DIST" ]]; then
+        if [[ "$CUR_PROCS" != "$NUM_PROCS" || "$CUR_DIST" != "$DIST_TYPE" ]]; then
+            if [[ "$FORCE_ACCEL_RECONF" == "1" ]]; then
+                echo "⚙️  Accelerate config mismatch detected; forcing reconfigure."
+                rm -f "$ACCEL_CFG"
+            else
+                echo "❌ ERROR [ACCELERATE_CONFIG_MISMATCH]"
+                echo "   Found num_processes=${CUR_PROCS}, distributed_type=${CUR_DIST}"
+                echo "   Expected num_processes=${NUM_PROCS}, distributed_type=${DIST_TYPE}"
+                echo "   Action: set TITAN_FORCE_ACCELERATE_RECONF=1 or update ${ACCEL_CFG}"
+                exit 1
+            fi
+        fi
+    fi
+fi
+
+if [ ! -f "$ACCEL_CFG" ]; then
     echo "⚙️ Auto-Configuring Accelerate..."
     mkdir -p ~/.cache/huggingface/accelerate
 
-    if command -v nvidia-smi &> /dev/null; then
-        NUM_PROCS=$(nvidia-smi -L | wc -l)
-    else
-        NUM_PROCS=1
-    fi
-
-    # MANTIK DÜZELTMESİ: Tek GPU ise MULTI_GPU olmamalı
-    DIST_TYPE="MULTI_GPU"
-    USE_CPU="false"
-    if [ "$NUM_PROCS" -eq 1 ]; then
-        DIST_TYPE="NO"
-    fi
-    if [[ "$OS_TYPE" == "Darwin" ]]; then
-        DIST_TYPE="NO" # Mac için şimdilik en güvenli yol
-    fi
-
-    cat <<EOT > ~/.cache/huggingface/accelerate/default_config.yaml
+    cat <<EOT > "$ACCEL_CFG"
 compute_environment: LOCAL_MACHINE
 distributed_type: $DIST_TYPE
 downcast_bf16: 'no'

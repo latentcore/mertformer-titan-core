@@ -244,6 +244,7 @@ class MLA(nn.Module):
         
         # Dropout
         self.attn_dropout = nn.Dropout(getattr(cfg, "attention_dropout", 0.0))
+        self.use_flash_attn_inference = bool(getattr(cfg, "use_flash_attn_inference", False))
 
         # Max sequence guard
         self.max_seq = int(getattr(cfg, "max_seq_len", 8192))
@@ -395,16 +396,25 @@ class MLA(nn.Module):
         # -------------------------------------------------------------------------
         # FLASH ATTENTION 2
         # -------------------------------------------------------------------------
-        if FLASH_ATTN_AVAILABLE and self.training and past_key_value is None and q.is_cuda:
+        use_flash = (
+            FLASH_ATTN_AVAILABLE
+            and q.is_cuda
+            and past_key_value is None
+            and (self.training or self.use_flash_attn_inference)
+            and not _is_onnx_export()
+        )
+        if use_flash:
             q_flash = q.transpose(1, 2).contiguous()  # [B, T, H, D]
             k_flash = k.transpose(1, 2).contiguous()
             v_flash = v.transpose(1, 2).contiguous()
             
             out = flash_attn_func(
-                q_flash, k_flash, v_flash,
+                q_flash,
+                k_flash,
+                v_flash,
                 dropout_p=self.attn_dropout.p if self.training else 0.0,
                 causal=True,
-                softmax_scale=1.0 / math.sqrt(self.head_dim)
+                softmax_scale=1.0 / math.sqrt(self.head_dim),
             )
             out = out.transpose(1, 2)
         else:

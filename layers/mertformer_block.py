@@ -139,13 +139,13 @@ class MertFormerBlock(nn.Module):
         if getattr(cfg, "use_liquid", False):
             liquid_layers_idx = getattr(cfg, "liquid_layers_idx", None)
             if liquid_layers_idx and self.layer_id in liquid_layers_idx:
-                self.liquid = LiquidMixer(H)
+                self.liquid = LiquidMixer(H, fast_path=bool(getattr(cfg, "liquid_fast_path", True)))
             else:
                 # TR: İndeksler verilmemişse every_n lojigine fallback
                 # EN: Fallback to every_n logic if indices not provided
                 liq_every = int(getattr(cfg, "liquid_every_n_layers", 0))
                 if liq_every > 0 and ((self.layer_id + 1) % liq_every == 0):
-                    self.liquid = LiquidMixer(H)
+                    self.liquid = LiquidMixer(H, fast_path=bool(getattr(cfg, "liquid_fast_path", True)))
 
         # TR: Global Workspace broadcast (opsiyonel)
         # EN: Optional global workspace broadcast

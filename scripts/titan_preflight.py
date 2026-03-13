@@ -39,6 +39,7 @@ from model.transformers import MertFormer
 LOG_DIR = PROJECT_ROOT / "logs" / "preflight"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 TEST_LOG_PATH = LOG_DIR / "titan_preflight.log"
+SNAPSHOT_PATH = PROJECT_ROOT / "scripts" / "runs" / "preflight" / "config_snapshot.json"
 
 # Temp Storage
 TEMP_DATA_DIR = PROJECT_ROOT / "temp_preflight_data"
@@ -98,6 +99,82 @@ def cleanup():
 def write_train_ready_report(payload: Dict[str, Any]) -> None:
     report_path = LOG_DIR / "train_ready_status.json"
     report_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
+def _serialize_cfg() -> Dict[str, Any]:
+    """Serialize cfg into JSON-safe dict (best-effort)."""
+    out: Dict[str, Any] = {}
+    for k, v in cfg.__dict__.items():
+        try:
+            json.dumps(v)
+            out[k] = v
+        except TypeError:
+            out[k] = str(v)
+    return out
+
+
+def write_config_snapshot() -> None:
+    SNAPSHOT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    payload = _serialize_cfg()
+    SNAPSHOT_PATH.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    log(f"Config snapshot written: {SNAPSHOT_PATH}", "info")
+
+
+def _stage_jsonl_paths() -> Dict[str, Path]:
+    return {
+        "stage1": PROJECT_ROOT / "datasets" / "stage1" / "stage1_data.jsonl",
+        "stage2": PROJECT_ROOT / "datasets" / "stage2" / "stage2_data.jsonl",
+        "stage3": PROJECT_ROOT / "datasets" / "stage3" / "stage3_data.jsonl",
+        "stage4": PROJECT_ROOT / "datasets" / "stage4_soul" / "stage4_data.jsonl",
+        "stage5": PROJECT_ROOT / "datasets" / "stage5_tools" / "stage5_data.jsonl",
+    }
+
+
+def check_stage_jsonl(offline: bool) -> bool:
+    missing = [name for name, path in _stage_jsonl_paths().items() if not path.exists()]
+    if missing:
+        msg = f"Stage JSONL missing: {', '.join(missing)}"
+        if offline:
+            if os.environ.get("TITAN_PREFLIGHT_ALLOW_MISSING_STAGE_JSONL", "0") == "1":
+                log(msg + " (override: allow missing in offline mode)", "warning")
+                return True
+            log(msg, "error")
+            return False
+        log(msg + " (online mode will generate via smart_runner)", "warning")
+        return True
+    log("Stage JSONL files present.", "success")
+    return True
+
+
+def check_cuda_lock(strict: bool) -> bool:
+    lock_path = PROJECT_ROOT / "repro" / "cuda.lock"
+    content = ""
+    if lock_path.exists():
+        content = lock_path.read_text(encoding="utf-8", errors="ignore").strip()
+
+    ok = bool(content) and "unknown" not in content.lower()
+    if ok:
+        log("CUDA lock file present.", "success")
+        return True
+
+    if os.environ.get("TITAN_PREFLIGHT_WRITE_CUDA_LOCK", "0") == "1" and torch.cuda.is_available():
+        try:
+            subprocess.check_call([sys.executable, str(PROJECT_ROOT / "scripts" / "write_cuda_lock.py")])
+            content = lock_path.read_text(encoding="utf-8", errors="ignore").strip()
+            ok = bool(content) and "unknown" not in content.lower()
+        except Exception as exc:
+            log(f"CUDA lock auto-write failed: {exc}", "warning")
+
+    if ok:
+        log("CUDA lock file present (auto-written).", "success")
+        return True
+
+    msg = "CUDA lock missing or unknown (run scripts/write_cuda_lock.py on training hardware)."
+    if strict and torch.cuda.is_available():
+        log(msg, "error")
+        return False
+    log(msg, "warning")
+    return True
 
 
 def _check_writable_dir(path: Path) -> tuple[bool, str]:
@@ -167,6 +244,7 @@ def strict_training_readiness_profile() -> int:
             "wikimedia/wikipedia",
             "OpenAssistant/oasst_top1_2023-08-25",
             "glaiveai/glaive-function-calling-v2",
+            "gorilla-llm/gorilla-openfunctions-v2",
             "openai/gsm8k",
             "uonlp/CulturaX",
             "TIGER-Lab/MathInstruct",
@@ -186,6 +264,17 @@ def strict_training_readiness_profile() -> int:
         if failing_ds:
             reason_code = "DATASET_API_UNREACHABLE"
             raise RuntimeError(f"dataset API checks failed: {failing_ds}")
+
+        # Stage JSONL presence (warn unless strict override).
+        missing_stage = [name for name, path in _stage_jsonl_paths().items() if not path.exists()]
+        checks["stage_jsonl"] = {
+            "status": "PASS" if not missing_stage else "WARN",
+            "missing": missing_stage,
+            "policy": "online smart_runner can generate if missing",
+        }
+        if missing_stage and os.environ.get("TITAN_PREFLIGHT_REQUIRE_STAGE_JSONL", "0") == "1":
+            reason_code = "STAGE_JSONL_MISSING"
+            raise RuntimeError(f"stage JSONL missing: {missing_stage}")
 
         # Filesystem and write permission checks for train outputs/distillation.
         required_paths = [
@@ -229,6 +318,18 @@ def strict_training_readiness_profile() -> int:
         if not disk_ok:
             reason_code = "INSUFFICIENT_DISK"
             raise RuntimeError(f"disk free too low: {free_gb:.2f}GB < {min_disk_gb:.2f}GB")
+
+        # CUDA lock (strict when GPU present unless override).
+        strict_cuda_lock = os.environ.get("TITAN_PREFLIGHT_STRICT_CUDA_LOCK", "1") == "1"
+        cuda_ok = check_cuda_lock(strict=strict_cuda_lock)
+        checks["cuda_lock"] = {
+            "status": "PASS" if cuda_ok else "FAIL",
+            "strict": strict_cuda_lock,
+            "path": str(PROJECT_ROOT / "repro" / "cuda.lock"),
+        }
+        if not cuda_ok and strict_cuda_lock and torch.cuda.is_available():
+            reason_code = "CUDA_LOCK_MISSING"
+            raise RuntimeError("cuda.lock missing or unknown")
 
         status = "PASS"
         reason_code = "READY"
@@ -511,8 +612,12 @@ def run_default_profile() -> int:
     
     try:
         load_env()
+        write_config_snapshot()
         if not check_secrets():
             return 1
+        if not check_stage_jsonl(offline=os.environ.get("TITAN_OFFLINE", "1") != "0"):
+            return 1
+        check_cuda_lock(strict=False)
         if not architectural_audit():
             return 1
         if not data_distill_test():

@@ -341,6 +341,7 @@ class MoE(nn.Module):
         self.collapse_threshold: float = 0.85  # Max load threshold for collapse detection
         self.moe_capacity_enforce: bool = bool(getattr(cfg, "moe_capacity_enforce", True))
         self.moe_capacity_factor: float = float(getattr(cfg, "moe_capacity_factor", 1.25))
+        self.dispatch_mode: str = str(getattr(cfg, "moe_dispatch_mode", "sequential")).lower()
         
         # Telemetry & Collapse State
         self.register_buffer("last_expert_load", torch.zeros(self.num_experts))
@@ -749,38 +750,10 @@ class MoE(nn.Module):
         # -----------------------------
         # 3) Dispatch (Uzmanlara Dağıtım)
         # -----------------------------
-        out_flat = x_flat.new_zeros((N, H))
-
-        # TR: GPU->CPU sync yapan unique(...).tolist() yerine sabit uzman döngüsü
-        # EN: Avoid unique(...).tolist() CPU sync; use fixed expert loop
-        for expert_id_int, expert in enumerate(self.experts):
-
-            # Maskeleme: Hangi token'lar bu uzmanı seçti?
-            expert_mask = topk_idx == expert_id_int
-
-            # Bu token'ın herhangi bir slotunda bu uzman var mı?
-            token_mask = expert_mask.any(dim=-1)
-            if not token_mask.any():
-                continue
-
-            # Sadece seçen token'ları al
-            selected_x = x_flat[token_mask]  # (M, H)
-            expert_param = next(expert.parameters(), None)
-            if expert_param is not None and selected_x.dtype != expert_param.dtype:
-                selected_x = selected_x.to(dtype=expert_param.dtype)
-
-            # Uzmanı çalıştır
-            expert_out = expert(selected_x)  # (M, H)
-            if expert_out.dtype != out_flat.dtype:
-                expert_out = expert_out.to(dtype=out_flat.dtype)
-
-            # Ağırlıklandırma: Bu token için bu uzmana ait weight'lerin toplamı
-            weights = (
-                topk_vals[token_mask] * expert_mask[token_mask].float()
-            ).sum(dim=-1, keepdim=True)  # (M, 1)
-
-            # Sonuca ekle (scatter add)
-            out_flat[token_mask] += expert_out * weights
+        if self.dispatch_mode == "parallel":
+            out_flat = self._dispatch_parallel(x_flat, topk_idx, topk_vals, capacity_mask)
+        else:
+            out_flat = self._dispatch_sequential(x_flat, topk_idx, topk_vals)
 
         # -----------------------------
         # 4) Shared Expert (Dtype Safe & [FIX 3] Sigmoid Gate)
@@ -809,3 +782,75 @@ class MoE(nn.Module):
 
         # [FIX 3] Keep aux_loss as float32 for precision stability
         return out, aux_loss
+
+    def _dispatch_sequential(
+        self, x_flat: torch.Tensor, topk_idx: torch.Tensor, topk_vals: torch.Tensor
+    ) -> torch.Tensor:
+        N, H = x_flat.shape
+        out_flat = x_flat.new_zeros((N, H))
+        for expert_id_int, expert in enumerate(self.experts):
+            expert_mask = topk_idx == expert_id_int
+            token_mask = expert_mask.any(dim=-1)
+            if not token_mask.any():
+                continue
+            selected_x = x_flat[token_mask]
+            expert_param = next(expert.parameters(), None)
+            if expert_param is not None and selected_x.dtype != expert_param.dtype:
+                selected_x = selected_x.to(dtype=expert_param.dtype)
+            expert_out = expert(selected_x)
+            if expert_out.dtype != out_flat.dtype:
+                expert_out = expert_out.to(dtype=out_flat.dtype)
+            weights = (topk_vals[token_mask] * expert_mask[token_mask].float()).sum(dim=-1, keepdim=True)
+            out_flat[token_mask] += expert_out * weights
+        return out_flat
+
+    def _dispatch_parallel(
+        self,
+        x_flat: torch.Tensor,
+        topk_idx: torch.Tensor,
+        topk_vals: torch.Tensor,
+        capacity_mask: torch.Tensor,
+    ) -> torch.Tensor:
+        N, H = x_flat.shape
+        k = topk_idx.size(-1)
+        out_flat = x_flat.new_zeros((N, H))
+
+        token_idx = torch.arange(N, device=topk_idx.device).repeat_interleave(k)
+        expert_idx = topk_idx.reshape(-1)
+        weights = topk_vals.reshape(-1)
+        mask = capacity_mask.reshape(-1)
+        if mask.numel() > 0:
+            token_idx = token_idx[mask]
+            expert_idx = expert_idx[mask]
+            weights = weights[mask]
+
+        if expert_idx.numel() == 0:
+            return out_flat
+
+        order = torch.argsort(expert_idx)
+        expert_sorted = expert_idx[order]
+        token_sorted = token_idx[order]
+        weight_sorted = weights[order]
+
+        counts = torch.bincount(expert_sorted, minlength=self.num_experts)
+        if counts.numel() == 0:
+            return out_flat
+
+        start = 0
+        for expert_id_int, expert in enumerate(self.experts):
+            cnt = int(counts[expert_id_int].item())
+            if cnt == 0:
+                continue
+            end = start + cnt
+            idx = token_sorted[start:end]
+            w = weight_sorted[start:end].unsqueeze(-1)
+            selected_x = x_flat.index_select(0, idx)
+            expert_param = next(expert.parameters(), None)
+            if expert_param is not None and selected_x.dtype != expert_param.dtype:
+                selected_x = selected_x.to(dtype=expert_param.dtype)
+            expert_out = expert(selected_x)
+            if expert_out.dtype != out_flat.dtype:
+                expert_out = expert_out.to(dtype=out_flat.dtype)
+            out_flat.index_add_(0, idx, expert_out * w)
+            start = end
+        return out_flat

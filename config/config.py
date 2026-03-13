@@ -350,13 +350,22 @@ class MertFormerConfig:
         ]
     )
     curriculum_stage_ratios: list[float] = field(
-        default_factory=lambda: [0.45, 0.35, 0.07, 0.03, 0.10]
+        # V2 curriculum rebalance: higher instruction + tool-use share.
+        default_factory=lambda: [0.42, 0.30, 0.08, 0.08, 0.12]
     )
 
     # Token-first budget (env-overridable to support fixed-steps production profile)
-    target_tokens_min: int = int(os.environ.get("TITAN_TARGET_TOKENS_MIN", 70_000_000_000))
-    token_budget_mode: str = os.environ.get("TITAN_TOKEN_BUDGET_MODE", "open_ended")  # {"open_ended", "fixed_steps"}
+    # Default now fixed_steps-aligned with 45k schedule (23.59296B tokens @ 128x4096).
+    target_tokens_min: int = int(os.environ.get("TITAN_TARGET_TOKENS_MIN", 23_600_000_000))
+    token_budget_mode: str = os.environ.get("TITAN_TOKEN_BUDGET_MODE", "fixed_steps")  # {"open_ended", "fixed_steps"}
     estimated_tokens_per_sample: int = 512
+
+    # Dataset dedup policy (V2)
+    dedup_enabled: bool = os.environ.get("TITAN_DEDUP_ENABLED", "1") == "1"
+    dedup_scope: str = os.environ.get("TITAN_DEDUP_SCOPE", "global")  # {"global", "stage"}
+    dedup_hash_bytes: int = int(os.environ.get("TITAN_DEDUP_HASH_BYTES", 8))
+    dedup_max_entries: int = int(os.environ.get("TITAN_DEDUP_MAX", 2_000_000))
+    dedup_normalize: bool = os.environ.get("TITAN_DEDUP_NORMALIZE", "1") == "1"
 
     # Distillation policy: teacher access must be valid on gated model.
     require_gated_teacher: bool = True
@@ -418,6 +427,11 @@ class MertFormerConfig:
     learning_rate: float = 1.5e-3
     weight_decay: float = 0.1
     warmup_steps: int = 3000  # [TITAN SCALE-UP] Adjusted for 45k total steps
+
+    # Runtime fast paths (V2)
+    liquid_fast_path: bool = os.environ.get("TITAN_LIQUID_FAST_PATH", "1") == "1"
+    moe_dispatch_mode: str = os.environ.get("TITAN_MOE_DISPATCH", "parallel")  # {"parallel", "sequential"}
+    use_flash_attn_inference: bool = os.environ.get("TITAN_FLASH_ATTN_INFER", "0") == "1"
     # [TITAN PREFLIGHT] Support env var override for testing
     max_steps: int = int(os.environ.get("TITAN_MAX_STEPS", 45000))  
 

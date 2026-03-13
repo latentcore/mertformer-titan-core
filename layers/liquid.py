@@ -17,6 +17,7 @@ __author__ = "Mert"
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import os
 import sys
 import warnings
 from typing import Optional, Tuple
@@ -199,10 +200,14 @@ class LiquidMixer(nn.Module):
     EN: Liquid Mixer V25.0 - JIT Accelerated.
     """
 
-    def __init__(self, h: int) -> None:
+    def __init__(self, h: int, fast_path: Optional[bool] = None) -> None:
         super().__init__()
         self.cell = LiquidCell(h)
         self.norm = nn.LayerNorm(h)
+        if fast_path is None:
+            fast_path = os.environ.get("TITAN_LIQUID_FAST_PATH", "1") == "1"
+        self.fast_path = bool(fast_path)
+        self._compiled_train_loop = None
 
         # TR: Eval/inference quant cache (checkpoint'e yazılmaz)
         # EN: Eval/inference quant cache (excluded from checkpoints)
@@ -331,10 +336,17 @@ class LiquidMixer(nn.Module):
         # TR: Çıkarım: JIT döngüsü kullan -> NPU optimizasyonu.
         # EN: Inference: JIT loop use -> NPU optimization.
         if self.training:
-            out_seq = torch.empty(B, T, H, device=x.device, dtype=x.dtype).contiguous()
-            for t in range(T):
-                h = self.cell(x[:, t, :], h, dt)
-                out_seq[:, t, :] = h
+            if self.fast_path and x.device.type != "mps":
+                try:
+                    out_seq, h = self._train_loop_compiled(x, h, dt)
+                except Exception as exc:
+                    warnings.warn(
+                        f"Liquid fast path failed; falling back to eager: {exc}",
+                        RuntimeWarning,
+                    )
+                    out_seq, h = self._train_loop(x, h, dt)
+            else:
+                out_seq, h = self._train_loop(x, h, dt)
         else:
             # TR: Eval'de quant cache ile JIT döngüsü (forward başına tekrar quant yok)
             # EN: Eval uses quant cache + JIT loop (no repeated quant per forward)
@@ -356,6 +368,26 @@ class LiquidMixer(nn.Module):
         if return_state:
             return y, h
         return y
+
+    def _train_loop(self, x: torch.Tensor, h: torch.Tensor, dt: float) -> Tuple[torch.Tensor, torch.Tensor]:
+        B, T, H = x.shape
+        out_seq = torch.empty(B, T, H, device=x.device, dtype=x.dtype).contiguous()
+        for t in range(T):
+            h = self.cell(x[:, t, :], h, dt)
+            out_seq[:, t, :] = h
+        return out_seq, h
+
+    def _train_loop_compiled(self, x: torch.Tensor, h: torch.Tensor, dt: float) -> Tuple[torch.Tensor, torch.Tensor]:
+        if self._compiled_train_loop is None:
+            try:
+                self._compiled_train_loop = torch.compile(self._train_loop, mode="reduce-overhead")
+            except Exception as exc:
+                warnings.warn(
+                    f"Liquid fast path compile disabled: {exc}",
+                    RuntimeWarning,
+                )
+                self._compiled_train_loop = self._train_loop
+        return self._compiled_train_loop(x, h, dt)
 
     def load_state_dict(self, *args, **kwargs):
         out = super().load_state_dict(*args, **kwargs)
