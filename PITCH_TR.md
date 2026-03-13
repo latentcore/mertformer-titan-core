@@ -15,3 +15,6 @@ Otonom yazılım geliştirme süreçleri için optimize edilmiş 2.64B tasarım 
 
 ## 🚀 Vizyon
 3 milyar parametre altındaki **Dünyanın En Hızlı Cihaz İçi Kodlama Modeli** standardını belirlemek; derin teknoloji prototipinden girişim ölçeğinde üretim katmanına geçmek.
+
+## V2 Refactor Note
+Build 30 V2 adds dedup, parallel MoE dispatch, CfC fast path, and stricter training gates.

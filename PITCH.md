@@ -15,3 +15,6 @@ A 2.64B design-target coding engine specialized for autonomous software lifecycl
 
 ## 🚀 Goal
 To establish the industry standard for the **Fastest On-Device Coding Model under 3B parameters**, transitioning from a deep-tech prototype to a venture-scale production layer.
+
+## V2 Refactor Note
+Build 30 V2 adds dedup, parallel MoE dispatch, CfC fast path, and stricter training gates.

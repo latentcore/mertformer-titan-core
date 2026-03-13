@@ -17,6 +17,7 @@ codebase, models, and artifacts.
 ## Data Handling
 - Do not upload sensitive or regulated data without explicit approval
 - Follow data minimization and retention policies
+- Verify new dataset additions against `datasets/LICENSES.md` and `datasets/SOURCES.md` before training
 
 ## Security
 - Keep secrets (.env, tokens) out of version control

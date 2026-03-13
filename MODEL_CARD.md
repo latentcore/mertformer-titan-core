@@ -1,9 +1,14 @@
-# Model Card — MertFormer Titan (v1.0 (Build 30))
+# Model Card — MertFormer Titan (v1.0 (Build 30 V2))
 
 ## Overview
 MertFormer Titan is a 2.64B-parameter, mobile-first language model built around
 BitNet 1.58-bit layers, LiquidRouter MoE, and MLA-labeled GQA attention (current implementation). This card reflects the
 **pre-training** stage and documents intended use, constraints, and known gaps.
+
+## V2 Updates
+- Cross-dataset deduplication enabled in data pipeline.
+- MoE dispatch supports parallel gather/scatter mode.
+- LiquidMixer fast path available behind `liquid_fast_path`.
 
 ## Intended Use
 - On-device/edge inference research and prototyping

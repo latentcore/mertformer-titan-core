@@ -2,6 +2,21 @@
 
 All notable changes to this project are tracked in this file.
 
+## v1.0.0-build30-v2 - 2026-03-13
+
+### Added
+- Cross-dataset deduplication path in data pipeline.
+- MoE parallel dispatch mode and CfC fast path toggle.
+- Onefile demo CLI enhancements + training log dashboard script.
+- SOP tolerance check for CfC/MoE loss parity.
+
+### Changed
+- Build 30 V2 version sync across core docs and model metadata.
+- Training token budget defaulted to fixed-steps gating.
+
+### Validation
+- SOP full run (verify_all, md_quality, linkcheck, sync_manifest) PASS.
+
 ## v0.1.0-pilot-ready - 2026-02-08
 
 ### Added

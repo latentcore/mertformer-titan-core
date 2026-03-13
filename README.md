@@ -1,7 +1,9 @@
-## MertFormer Titan (Build 30)
+## MertFormer Titan (Build 30 V2)
 
 Offline-first, auditable, mission-focused AI infrastructure for controlled local deployment.
 Current maturity: **pilot-ready pre-training baseline** (training/benchmark claims pending).
+
+**Build 30 V2 note:** V2 refactor pass adds dedup pipeline, MoE dispatch parallel path, CfC fast path, and stricter train gates. Claims remain pre-training.
 
 ### Quick Reader Links
 - English summary: [README_SUMMARY.md](README_SUMMARY.md)
@@ -39,7 +41,7 @@ This repository includes a decision-complete, single-pass closure flow for engin
 
 ---
 
-## Lawful Safety Deployment Policy (Build 30)
+## Lawful Safety Deployment Policy (Build 30 V2)
 
 This repository is designed for lawful, auditable, human-approved deployment.
 
@@ -50,7 +52,7 @@ This repository is designed for lawful, auditable, human-approved deployment.
 
 ## Closure 57 Report
 
-Build 30 includes a machine-checkable closure gate:
+Build 30 V2 includes a machine-checkable closure gate:
 
 ```bash
 python3 scripts/check_57_matrix.py
@@ -83,7 +85,7 @@ Outputs:
 
 # 🦅 MertFormer Titan: Autonomous Swarm Architecture
 > **Target: near-frontier coding capability at mobile compute cost (pending training/benchmarks).**
-> **Development Stage:** Pilot-ready pre-training baseline (`Build 30`, training/benchmark claims pending).
+> **Development Stage:** Pilot-ready pre-training baseline (`Build 30 V2`, training/benchmark claims pending).
 
 ## 🇹🇷 Executive Summary (Non-Technical)
 > **For decision makers who are not reading source code**
@@ -108,7 +110,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ## 🚀 Training Readiness (Operational)
 **Status:** `READY TO START TRAINING PIPELINE (GATED)`
 
-**Feature highlight:** Build30 now includes a strict `run.sh --train-ready` gate with machine-readable reason codes for portable multi-GPU handoff.
+**Feature highlight:** Build30 V2 now includes a strict `run.sh --train-ready` gate with machine-readable reason codes for portable multi-GPU handoff.
 
 This repository is no longer in idea/prototype-only state. Core validation gates are green and the training pipeline can be launched as soon as the final data/hardware prerequisites are satisfied.
 
@@ -128,8 +130,17 @@ This repository is no longer in idea/prototype-only state. Core validation gates
 - Dataset license/hash workflow must remain compliant.
 - Target hardware allocation (GPU/edge) must be reserved.
 - Full training run and benchmark outputs will be recorded only after those prerequisites.
+- Token budget (V2): default `TITAN_TOKEN_BUDGET_MODE=fixed_steps`, `TITAN_MAX_STEPS=45000`, `TITAN_TARGET_TOKENS_MIN=23.6B`.
+- Precomputed logits path: `TITAN_LOGITS_PATH` (default `./datasets/logits/`).
 - Default token budget now uses `fixed_steps` (45K). Use `TITAN_TOKEN_BUDGET_MODE=open_ended` only with an explicit target override.
 - Offline runs require pre-generated stage JSONL (`python scripts/data_pipeline.py`).
+- Accelerate config must match GPU count (set `TITAN_FORCE_ACCELERATE_RECONF=1` to regenerate).
+- `cuda.lock` must be created on the target training hardware.
+- `HF_TOKEN` required for gated teacher/datasets in online mode.
+
+### Minimum Training Hardware (Claim-Safe)
+- Dev smoke/preflight: CPU/MPS, 16 GB RAM, 50 GB free disk.
+- Master training target: 8x A100 80GB (or equivalent), 1 TB fast SSD, NVLink recommended.
 
 ### Start command (when prerequisites are satisfied)
 ```bash
@@ -152,6 +163,7 @@ bash run.sh --train-ready
 3. Required environment variables:
 - `HF_TOKEN` (required, gated teacher + online datasets)
 - `WANDB_API_KEY` (optional)
+- See `.env.example` for the full list.
 4. One-command training start after transfer/unzip:
 ```bash
 bash run.sh
@@ -171,7 +183,7 @@ bash run.sh
 | **Benchmarks** | ⛔ Not eligible for claim without a trained checkpoint (`NOT ELIGIBLE FOR CLAIM`) |
 
 ### Parameter Disclosure (Claim Boundary)
-- **Design target (Build 30):** `2.64B` parameters.
+- **Design target (Build 30 V2):** `2.64B` parameters.
 - **Latest measured runtime total:** `3,698,246,156` parameters (`~3.70B`).
 - **Interpretation:** `2.64B` is the architecture/positioning target; `~3.70B` is the current measured runtime total and is the authoritative figure for factual claims.
 
@@ -262,6 +274,11 @@ Primary entry docs and checklists.
 - [snake_demo.py](snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
 - [USAGE_GUIDE.md](USAGE_GUIDE.md) — Operational usage guide (EN).
 - [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md) — Operational usage guide (TR).
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — Troubleshooting guide (EN).
+- [TROUBLESHOOTING_TR.md](TROUBLESHOOTING_TR.md) — Troubleshooting guide (TR).
+- [MODEL_LICENSE.md](MODEL_LICENSE.md) — Model license summary (EN).
+- [MODEL_LICENSE_TR.md](MODEL_LICENSE_TR.md) — Model license summary (TR).
+- [.env.example](.env.example) — Environment variable template.
 - [docs/CHAIN_MAP.md](docs/CHAIN_MAP.md) — Connected vs independent chain map (EN).
 - [docs/CHAIN_MAP_TR.md](docs/CHAIN_MAP_TR.md) — Connected vs independent chain map (TR).
 - [reports/commercial_handover/known_issues.md](reports/commercial_handover/known_issues.md) — Known issues register for transfer risk visibility.
@@ -510,7 +527,7 @@ See the full map: [`docs/CHAIN_MAP.md`](docs/CHAIN_MAP.md)
 - INT8 activations: `[-127, 127]`
 - **theoretical ~20x smaller than FP32** (32-bit → 1.58-bit; requires low-bit inference path)
 - Straight-Through Estimator (STE) for gradient flow
-- RMS scaling for stability (legacy path integrated into Build 30)
+- RMS scaling for stability (legacy path integrated into Build 30 V2)
 
 ### 2. **LiquidRouter (Temporal Conv Router)** 🌍
 - **Implementation truth**: Causal depthwise `Conv1d` + rolling state buffer routes MoE tokens.
@@ -554,7 +571,7 @@ See the full map: [`docs/CHAIN_MAP.md`](docs/CHAIN_MAP.md)
 - **Early Stopping**: Patience-based with best checkpoint saving
 - **Dynamic Alpha**: Progressive distillation weight adjustment
 
-### 7. **Performance Optimizations (v1.0 (Build 30))** ⚡
+### 7. **Performance Optimizations (v1.0 (Build 30 V2))** ⚡
 - ✅ **Flash Attention 2**: Projected +30% speedup (A100/H100)
 - ✅ **Fused RMSNorm**: Projected +10% speedup (torch.compile)
 - ✅ **torch.compile (max-autotune)**: Projected +15% speedup
@@ -572,14 +589,14 @@ See the full map: [`docs/CHAIN_MAP.md`](docs/CHAIN_MAP.md)
 - ✅ **Liquid Spike Safeguards**: 3-strike freeze mechanism
 - ✅ **Best Checkpoint Saving**: Preserves optimal model state
 
-### 9. **Technological Edge (Build 30 Upgrade)** 🛠️
+### 9. **Technological Edge (Build 30 V2 Upgrade)** 🛠️
 - **GaLore Integration**: Gradient Low-Rank Projection optimization for memory efficiency on Consumer GPUs (Locked).
 - **8-bit AdamW**: Memory-optimized optimizer reduces optimizer state footprint by 75% (Locked).
 - **Offline Knowledge Distillation**: Pre-computed Llama-3-70B logits for zero-overhead teacher training (requires precomputed shards; falls back to online teacher if missing).
 - **Smart Parallel Orchestration (Hyper-Threading)**: Zero-latency pipeline where data download, distillation, and training happen concurrently.
 
 ### QINN Status (Current Build)
-- **Default state:** `use_qinn=False` (disabled in Build 30).
+- **Default state:** `use_qinn=False` (disabled in Build 30 V2).
 - **Why disabled now:** prioritizes training stability, throughput, and edge/NPU compatibility in the primary path.
 - **If enabled later:** can be evaluated as an experimental regularization layer, but may add compute overhead and convergence risk.
 - **Reference path:** `layers/qinn.py` (kept in codebase for controlled ablation use).
@@ -589,7 +606,7 @@ See the full map: [`docs/CHAIN_MAP.md`](docs/CHAIN_MAP.md)
 <a id="architecture"></a>
 ## 🏗️ Architecture
 
-### Build 30 Cognitive Extensions (Feature-Flag, default OFF)
+### Build 30 V2 Cognitive Extensions (Feature-Flag, default OFF)
 These modules are implemented in code and can be enabled from config before training/inference runs:
 
 - `use_hierarchical_kv_cache` -> Hierarchical KV cache short/long split (`layers/mla.py`)
@@ -643,7 +660,7 @@ bash run.sh --train-ready
 ```text
       ╔═══════════════════════════════════════════════════════════════════════════╗
       ║  M E R T F O R M E R   T I T A N   (O N Y X   S T O R M)                  ║
-      ║  » ARCHITECTURE BLUEPRINT v1.0 (Build 30) // TARGET: SAMSUNG S25 NPU «    ║
+      ║  » ARCHITECTURE BLUEPRINT v1.0 (Build 30 V2) // TARGET: SAMSUNG S25 NPU «    ║
       ╚═══════════════════════════════════════════════════════════════════════════╝
                                             │
       ┌─────────────────────────────────────▼─────────────────────────────────────┐
@@ -713,7 +730,7 @@ The journey of data from Layer 0 to 17:
 *   **Layer 4 (First Liquid Contact):** **Critical Threshold.** The first `LiquidMixer` (CfC) kicks in here, instilling the first sense of "temporal flow" and "momentum."
 *   **Layer 5 (Fluid Attention):** Data gaining fluidity is filtered by `MLA`-labeled GQA attention in a deeper dimension, strengthening contextual relationships.
 *   **Layer 6 (Complex Syntax):** Indirect structures within sentences are resolved; `MoE` experts continue specific analyses.
-*   **Layer 7 (Mathematical Stability):** Foundation for logical inferences is laid; the `UnitaryQINN` path remains available only when `use_qinn=true` (Build 30 default: OFF).
+*   **Layer 7 (Mathematical Stability):** Foundation for logical inferences is laid; the `UnitaryQINN` path remains available only when `use_qinn=true` (Build 30 V2 default: OFF).
 *   **Layer 8 (Abstraction):** Data evolves from concrete words to abstract concepts; the hierarchical structure is deepened with `MLA`-labeled GQA attention.
 *   **Layer 9 (Intent Analysis):** Decision mechanisms strengthen; the model begins to grasp user intent and the background of the question.
 *   **Layer 10 (Second Liquid Contact):** **Critical Threshold.** The second `LiquidMixer` activates here; data's temporal memory and speed are dynamically refreshed during complex reasoning.
@@ -800,7 +817,7 @@ MertFormer Titan (2.64B Parameters)
 | Configuration | Time/Step | Throughput | GPU Utilization | VRAM Usage |
 | :--- | :---: | :---: | :---: | :---: |
 | **Baseline** | 2.0 sec | 64 tok/s | 47% | 38 GB |
-| **v1.0 (Build 30) (Optimized)** | **~1.2 sec** (Est.) | **~107 tok/s** (Est.) | **~95%** (Target) | **~76 GB** (Target) |
+| **v1.0 (Build 30 V2) (Optimized)** | **~1.2 sec** (Est.) | **~107 tok/s** (Est.) | **~95%** (Target) | **~76 GB** (Target) |
 | **Speedup (Proj.)** | **+67%** | **+67%** | **+102%** | **+100%** |
 **Aggregate Throughput Target (Projected): up to 11,000 tok/s.**
 This value is a roadmap target for aggregate system capacity under a defined deployment profile; it is **not** a single-device measured benchmark result.
@@ -1292,6 +1309,12 @@ This section lists realistic integration paths with explicit current status.
 **Status: Pre-Training Projection (Not Eligible for Claim)**
 *All metrics below are targets/estimates and require empirical validation after a full training run with a real checkpoint.*
 
+### Benchmark Placeholders (To Be Measured)
+| Benchmark | Status | Notes |
+| :--- | :---: | :--- |
+| GSM8K | TBD | Will be reported after a trained checkpoint. |
+| HumanEval | TBD | Will be reported after a trained checkpoint. |
+
 ### Comparison with Similar Models
 
 | Model | Parameters | Quantization | Mobile-Ready | On-Device | Turkish Support |
@@ -1357,7 +1380,7 @@ Planned Turkish data sources:
 
 ### Q: Why 2.64B parameters? Could it be larger?
 
-**A**: 2.64B is the **current design target (Build 30) for mobile-class deployment**:
+**A**: 2.64B is the **current design target (Build 30 V2) for mobile-class deployment**:
 - Fits Samsung S25-class memory budgets (12GB RAM)
 - ~0.65GB weights with BitNet (estimate)
 - Strong speed/quality balance
@@ -1388,7 +1411,7 @@ Planned Turkish data sources:
 
 **A**: On **8x A100 80GB** (projection, **not a benchmark claim**):
 - Baseline: ~25 hours (45K steps x 2 sec/step)
-- v1.0 (Build 30) optimized: **estimate only** (45K steps; wall time depends on throughput and hardware; measured after run)
+- v1.0 (Build 30 V2) optimized: **estimate only** (45K steps; wall time depends on throughput and hardware; measured after run)
 - ~10 hours estimated savings
 
 ### Q: Does it really run on Samsung S25?
@@ -1453,7 +1476,7 @@ Planned Turkish data sources:
 - `Data & Evidence`: `datasets/`, `reports/`, `logs/`, `interfaces/`
 - `Research & Extensions`: `ablations/`, `experiments/`, `orchestrator/`, `economics/`, `limits/`
 
-### Canonical Layout (Build 30)
+### Canonical Layout (Build 30 V2)
 
 ```text
 mertformer-titan-core/  # project root (git ls-files inventory)
@@ -1516,6 +1539,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── inventory.md  # documentation/report file
 │   ├── inventory_TR.md  # Turkish document counterpart
 │   └── validation.jsonl  # JSONL data/log artifact
+├── docs/  # directory
+│   ├── CHAIN_MAP.md  # documentation/report file
+│   └── CHAIN_MAP_TR.md  # Turkish document counterpart
 ├── economics/  # directory
 │   ├── cost_model.md  # documentation/report file
 │   ├── cost_model_TR.md  # Turkish document counterpart
@@ -1853,6 +1879,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── one_command_full_sop.sh  # shell automation script
 │   ├── operator_mode_gate.py  # Python module/script (automation script for operator mode gate)
 │   ├── overfit_gate.py  # Python module/script (automation script for overfit gate)
+│   ├── plot_training_log.py  # Python module/script (automation script for plot training log)
 │   ├── ram_guard.py  # Python module/script (automation script for ram guard)
 │   ├── record_dataset_hashes.py  # Python module/script (automation script for record dataset hashes)
 │   ├── release_build30.sh  # shell automation script
@@ -2059,7 +2086,7 @@ All commercial/partner engagement follows written agreement terms and confidenti
 ## 📧 Contact
 
 **Project**: MertFormer Titan (Onyx Storm)
-**Version**: v1.0 (Build 30, Pre-Training Baseline)
+**Version**: v1.0 (Build 30 V2, Pre-Training Baseline)
 **Status**: 🟡 Pilot-Ready (training & benchmark claims pending)
 **Developed in Türkiye**
 
@@ -2097,7 +2124,7 @@ This project intentionally concludes at the proof-of-system level. The goal is t
 
 <a id="scalability-vision"></a>
 ### 📈 Scalability Vision (Claim-Safe)
-Build 30 is intentionally centered on **2.64B** validation and reproducible evidence gates.
+Build 30 V2 is intentionally centered on **2.64B** validation and reproducible evidence gates.
 Future **13B / 70B / 256B** exploration is treated as a conditional research track and is evaluated only after:
 - trained-checkpoint evidence on 2.64B,
 - reproducible benchmark outputs,

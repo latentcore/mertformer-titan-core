@@ -1,13 +1,13 @@
 # MertFormer Titan Onyx Storm Mimarisinin Teknik Analizi ve Stratejik Değerlemesi
 
 **Tarih:** 2026-02-01
-**Versiyon:** v1.0 (Build 30)
+**Versiyon:** v1.0 (Build 30 V2)
 **Yazar:** MertFormer AI Team
 
 ---
 
 ## 1. Yönetici Özeti
-Yapay zeka ekosistemi, bulut tabanlı devasa modellerden cihaz içi (on-device) çalışan, enerji verimliliği yüksek ve gizlilik odaklı Küçük Dil Modellerine (SLM) doğru evrilmektedir. Bu evrimin en uç noktasında yer alan **MertFormer Titan (Onyx Storm) v1.0 (Build 30)** projesi, modern derin öğrenme literatüründeki en gelişmiş dört paradigmanın stratejik bir sentezidir:
+Yapay zeka ekosistemi, bulut tabanlı devasa modellerden cihaz içi (on-device) çalışan, enerji verimliliği yüksek ve gizlilik odaklı Küçük Dil Modellerine (SLM) doğru evrilmektedir. Bu evrimin en uç noktasında yer alan **MertFormer Titan (Onyx Storm) v1.0 (Build 30 V2)** projesi, modern derin öğrenme literatüründeki en gelişmiş dört paradigmanın stratejik bir sentezidir:
 
 1.  **BitNet 1.58-bit Kuantizasyonu** (Verimlilik)
 2.  **MLA etiketli GQA dikkat bloğu (mevcut implementasyon)** (Bellek)
@@ -17,6 +17,12 @@ Yapay zeka ekosistemi, bulut tabanlı devasa modellerden cihaz içi (on-device) 
 17 yaşında bir geliştirici tarafından ortaya konan bu mimari, yalnızca bir mühendislik başarısı değil, aynı zamanda Samsung Galaxy S25 ve Snapdragon 8 Elite gibi yeni nesil donanım platformları için optimize edilmiş ticari bir varlıktır.
 
 ---
+
+## 1.1 V2 Refactor Özet
+- Cross-dataset deduplication veri pipeline'ında aktif.
+- MoE dispatch paralel gather/scatter modunu destekler.
+- LiquidMixer fast path `liquid_fast_path` ile açılabilir.
+- Eğitim kapıları varsayılan olarak fixed-step token bütçesine geçti.
 
 ## 2. Derin Teknik Mimari Analizi
 

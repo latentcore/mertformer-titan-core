@@ -40,3 +40,6 @@ Licensing and enterprise deployment of on-device inference stacks.
 ## Risks and Mitigations
 - Risk: Training cost and convergence.
 - Mitigation: Failure budget and telemetry-driven execution gates.
+
+
+Build 30 V2 refactor note: dedup pipeline, parallel MoE dispatch, CfC fast path, stricter training gates.

@@ -1,5 +1,7 @@
 # MertFormer Titan One-Pager (TR)
 
+**Version:** Build 30 V2
+
 ## Özet
 MertFormer Titan, mobil hesaplama maliyetinde GPT-3.5 hedefli bir seviyeyi amaçlayan, 2.64B tasarım hedefli edge-native bir kodlama modelidir (mevcut ölçülen runtime toplamı: ~3.70B). 1.58-bit kuantizasyon, LiquidRouter MoE ve uzun bağlam dikkatini birleştirir.
 
@@ -30,3 +32,6 @@ Kurumsal on‑device deploy ve özel inference lisanslama.
 
 ## İstek
 Edge kodlama pilot ortakları ve stratejik dağıtım tasarımı.
+
+
+V2 refactor: dedup pipeline, parallel MoE dispatch, CfC fast path, stricter train gates.

@@ -1,6 +1,10 @@
 # V2 Backlog Seed (Post V1 Closure)
 
 ## Completed in Build30 V2 Refactor
+- Build30 V2 version sync across core docs + metadata
+- .env.example + TROUBLESHOOTING + MODEL_LICENSE added
+- CfC/MoE tolerance check integrated into SOP
+- Kaggle/Colab wall-time caps (11.5h/23.5h) + resume guard
 - dataset dedup (rolling hash, configurable scope)
 - stage 4/5 curriculum expansion + ratio rebalance
 - MoE dispatch parallel gather/scatter path (sequential fallback retained)

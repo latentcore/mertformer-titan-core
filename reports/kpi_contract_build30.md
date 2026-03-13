@@ -1,7 +1,7 @@
-# KPI Contract (Technical) — Build 30
+# KPI Contract (Technical) — Build 30 V2
 
 ## Document Control
-- Date (UTC): 2026-02-22
+- Date (UTC): 2026-03-13
 - Scope: Technical GO KPI contract for pre-claim operation
 - Status: `ACTIVE`
 
@@ -24,6 +24,9 @@ This KPI contract defines objective pass criteria for technical GO only.
 5. Doc claim consistency
    - Command: `python3 scripts/check_doc_claim_consistency.py`
    - Pass criterion: consistency check passes
+6. CfC/MoE tolerance check
+   - Command: `python3 scripts/cfc_moe_tolerance_check.py --out reports/cfc_moe_tolerance_report.json`
+   - Pass criterion: report `ok=true` and max loss diff <= 1%
 
 ## Measured vs Target Policy
 - Measured: values produced by the commands above.

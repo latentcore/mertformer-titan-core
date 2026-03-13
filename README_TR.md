@@ -1,7 +1,9 @@
-## MertFormer Titan (Build 30)
+## MertFormer Titan (Build 30 V2)
 
 Kontrollü yerel dağıtım için offline-first, denetlenebilir ve görev odaklı yapay zeka altyapısı.
 Mevcut olgunluk: **pilota hazır eğitim öncesi baseline** (eğitim/benchmark iddiaları beklemede).
+
+**Build 30 V2 notu:** V2 refactor turu; dedup pipeline, MoE paralel dispatch yolu, CfC fast path ve daha sıkı eğitim kapıları ekler. İddialar hâlâ eğitim öncesidir.
 
 ### Okuyucu Hızlı Linkleri
 - Türkçe özet: [README_SUMMARY_TR.md](README_SUMMARY_TR.md)
@@ -39,7 +41,7 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 
 ---
 
-## Yasal Güvenlik Politikası (Build 30)
+## Yasal Güvenlik Politikası (Build 30 V2)
 
 Bu repo yalnızca yasal, denetlenebilir ve insan onaylı kullanım için tasarlanmıştır.
 
@@ -50,7 +52,7 @@ Bu repo yalnızca yasal, denetlenebilir ve insan onaylı kullanım için tasarla
 
 ## Closure 57 Raporu
 
-Build 30 ile birlikte makine tarafından doğrulanabilen kapanış kapısı vardır:
+Build 30 V2 ile birlikte makine tarafından doğrulanabilen kapanış kapısı vardır:
 
 ```bash
 python3 scripts/check_57_matrix.py
@@ -83,7 +85,7 @@ mertformer 57-report --out reports/closure_57_matrix.json
 
 # 🦅 MertFormer Titan: Otonom Sürü Mimarisi
 > **Hedef: Mobil maliyetle, sınır-üstü kodlama yeteneği (eğitim/benchmark sonrası).**
-> **Geliştirme Aşaması:** Pilota hazır eğitim öncesi baseline (`Build 30`, eğitim/benchmark iddiaları beklemede).
+> **Geliştirme Aşaması:** Pilota hazır eğitim öncesi baseline (`Build 30 V2`, eğitim/benchmark iddiaları beklemede).
 
 ## 🇹🇷 Sivil/Komutan Özeti (Teknik Olmayan Okuyucu İçin)
 > **Kaynak kod okumayan karar vericiler için**
@@ -108,7 +110,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ## 🚀 Eğitim Hazırlık Durumu (Operasyonel)
 **Durum:** `EĞİTİM PIPELINE'I BAŞLATMAYA HAZIR (KAPILI/GATED)`
 
-**Öne çıkan özellik:** Build30 ile `run.sh --train-ready` strict kapısı eklendi; taşınabilir multi-GPU handoff için makine-okur reason-code üretir.
+**Öne çıkan özellik:** Build30 V2 ile `run.sh --train-ready` strict kapısı eklendi; taşınabilir multi-GPU handoff için makine-okur reason-code üretir.
 
 Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama kapıları yeşildir ve veri/donanım önkoşulları tamamlandığında eğitim akışı doğrudan başlatılabilir.
 
@@ -171,7 +173,7 @@ bash run.sh
 | **Benchmarklar** | ⛔ Eğitimli checkpoint olmadan iddia için uygun değil (`NOT ELIGIBLE FOR CLAIM`) |
 
 ### Parametre Açıklaması (İddia Sınırı)
-- **Tasarım hedefi (Build 30):** `2.64B` parametre.
+- **Tasarım hedefi (Build 30 V2):** `2.64B` parametre.
 - **Son ölçülen runtime toplamı:** `3,698,246,156` parametre (`~3.70B`).
 - **Yorum:** `2.64B` mimari/konumlandırma hedefidir; `~3.70B` mevcut ölçülen runtime toplamıdır ve olgusal iddialarda esas alınmalıdır.
 
@@ -262,6 +264,11 @@ Ana giriş dokümanları ve checklistler.
 - [snake_demo.py](snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
 - [USAGE_GUIDE.md](USAGE_GUIDE.md) — Operasyonel kullanım kılavuzu (EN).
 - [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md) — Operasyonel kullanım kılavuzu (TR).
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — Sorun giderme kılavuzu (EN).
+- [TROUBLESHOOTING_TR.md](TROUBLESHOOTING_TR.md) — Sorun giderme kılavuzu (TR).
+- [MODEL_LICENSE.md](MODEL_LICENSE.md) — Model lisansı özeti (EN).
+- [MODEL_LICENSE_TR.md](MODEL_LICENSE_TR.md) — Model lisansı özeti (TR).
+- [.env.example](.env.example) — Ortam değişkeni şablonu.
 - [docs/CHAIN_MAP.md](docs/CHAIN_MAP.md) — Bağlı vs bağımsız zincir haritası (EN).
 - [docs/CHAIN_MAP_TR.md](docs/CHAIN_MAP_TR.md) — Bağlı vs bağımsız zincir haritası (TR).
 - [reports/commercial_handover/known_issues.md](reports/commercial_handover/known_issues.md) — Devir risk görünürlüğü için bilinen sorunlar kaydı.
@@ -510,7 +517,7 @@ Tam harita: [`docs/CHAIN_MAP_TR.md`](docs/CHAIN_MAP_TR.md)
 - INT8 aktivasyonlar: `[-127, 127]`
 - **FP32’ye göre teorik ~20x daha küçük** (32-bit → 1.58-bit; low-bit inference yolu gerektirir)
 - Gradyan akışı için Straight-Through Estimator (STE)
-- Stabilite için RMS ölçekleme (legacy yol Build 30 içine entegre edildi)
+- Stabilite için RMS ölçekleme (legacy yol Build 30 V2 içine entegre edildi)
 
 ### 2. **LiquidRouter (Zamansal Conv Yönlendirici)** 🌍
 - **Implementasyon gerçeği**: MoE yönlendirmesi causal depthwise `Conv1d` + rolling state buffer ile yapılır.
@@ -554,7 +561,7 @@ Tam harita: [`docs/CHAIN_MAP_TR.md`](docs/CHAIN_MAP_TR.md)
 - **Erken Durdurma**: Sabır tabanlı en iyi kontrol noktası kaydı
 - **Dinamik Alpha**: Aşamalı damıtma ağırlığı ayarlaması
 
-### 7. **Performans Optimizasyonları (v1.0 (Build 30))** ⚡
+### 7. **Performans Optimizasyonları (v1.0 (Build 30 V2))** ⚡
 - ✅ **Flash Attention 2**: Tahmini +%30 hızlanma (A100/H100)
 - ✅ **Fused RMSNorm**: Tahmini +%10 hızlanma (torch.compile)
 - ✅ **torch.compile (max-autotune)**: Tahmini +%15 hızlanma
@@ -572,14 +579,14 @@ Tam harita: [`docs/CHAIN_MAP_TR.md`](docs/CHAIN_MAP_TR.md)
 - ✅ **Liquid Ani Artış Korumaları**: 3 aşamalı dondurma mekanizması
 - ✅ **En İyi Kontrol Noktası Kaydı**: Optimal model durumunu korur
 
-### 9. **Teknolojik Üstünlük (Build 30 Yükseltmesi)** 🛠️
+### 9. **Teknolojik Üstünlük (Build 30 V2 Yükseltmesi)** 🛠️
 - **GaLore Entegrasyonu**: Tüketici GPU'larında bellek verimliliği için Gradient Low-Rank Projection optimizasyonu (Kilitli).
 - **8-bit AdamW**: Bellek optimize edilmiş optimizer, optimizer durum belleğini %75 azaltır (Kilitli).
 - **Çevrimdışı Bilgi Damıtma (Offline KD)**: Sıfır yüklü öğretmen eğitimi için önceden hesaplanmış Llama-3-70B logitleri (precomputed shard gerektirir; yoksa online öğretmene düşer).
 - **Akıllı Paralel Orkestrasyon (Hyper-Threading)**: Veri indirme, damıtma ve eğitimin eş zamanlı gerçekleştiği sıfır gecikmeli boru hattı.
 
 ### QINN Durumu (Mevcut Build)
-- **Varsayılan durum:** `use_qinn=False` (Build 30'de kapalı).
+- **Varsayılan durum:** `use_qinn=False` (Build 30 V2'de kapalı).
 - **Şu an neden kapalı:** ana eğitim hattında stabilite, throughput ve edge/NPU uyumluluğu önceliklendirildi.
 - **İleride açılırsa:** deneysel bir düzenleme katmanı olarak ablation ile test edilebilir; ek hesaplama yükü ve yakınsama riski oluşturabilir.
 - **Referans dosya:** `layers/qinn.py` (kontrollü deneyler için kod tabanında tutulur).
@@ -589,7 +596,7 @@ Tam harita: [`docs/CHAIN_MAP_TR.md`](docs/CHAIN_MAP_TR.md)
 <a id="mimari"></a>
 ## 🏗️ Mimari
 
-### Build 30 Bilişsel Genişletmeler (Feature-Flag, varsayılan KAPALI)
+### Build 30 V2 Bilişsel Genişletmeler (Feature-Flag, varsayılan KAPALI)
 Bu modüller kodda uygulanmıştır ve eğitim/çıkarım öncesi config ile açılabilir:
 
 - `use_hierarchical_kv_cache` -> Kısa/uzun ayrımlı hiyerarşik KV cache (`layers/mla.py`)
@@ -643,7 +650,7 @@ bash run.sh --train-ready
 ```text
       ╔═══════════════════════════════════════════════════════════════════════════╗
       ║  M E R T F O R M E R   T I T A N   (O N Y X   S T O R M)                  ║
-      ║  » TEKNİK PLAN v1.0 (Build 30) // HEDEF: SAMSUNG S25 NPU «                ║
+      ║  » TEKNİK PLAN v1.0 (Build 30 V2) // HEDEF: SAMSUNG S25 NPU «                ║
       ╚═══════════════════════════════════════════════════════════════════════════╝
                                             │
       ┌─────────────────────────────────────▼─────────────────────────────────────┐
@@ -713,7 +720,7 @@ Verinin 0'dan 17'ye kadar olan yolculuğu:
 *   **Katman 4 (İlk Liquid Teması):** **Kritik Eşik.** İlk `LiquidMixer` (CfC) burada devreye girerek veriye ilk "zamansal akış" ve "momentum" algısını yükler.
 *   **Katman 5 (Akışkan Dikkat):** Akışkanlık kazanan veri, `MLA` etiketli GQA attention tarafından daha derin bir boyutta süzülerek bağlamsal ilişkiler güçlendirilir.
 *   **Katman 6 (Karmaşık Sözdizimi):** Cümle içindeki dolaylı yapılar çözülür; `MoE` uzmanları spesifik analizlere devam eder.
-*   **Katman 7 (Matematiksel Kararlılık):** Mantıksal çıkarımların temeli atılır; `UnitaryQINN` yolu yalnızca `use_qinn=true` olduğunda devreye alınır (Build 30 varsayılanı: KAPALI).
+*   **Katman 7 (Matematiksel Kararlılık):** Mantıksal çıkarımların temeli atılır; `UnitaryQINN` yolu yalnızca `use_qinn=true` olduğunda devreye alınır (Build 30 V2 varsayılanı: KAPALI).
 *   **Katman 8 (Soyutlama):** Veri somut kelimelerden soyut kavramlara evrilir; hiyerarşik yapı `MLA` etiketli GQA attention ile derinleştirilir.
 *   **Katman 9 (Niyet Analizi):** Karar mekanizmaları güçlenir; model kullanıcı niyetini ve sorunun arka planını kavramaya başlar.
 *   **Katman 10 (İkinci Liquid Teması):** **Kritik Eşik.** İkinci `LiquidMixer` burada aktifleşir; karmaşık mantık yürütme sırasında verinin zamansal hafızası ve hızı dinamik olarak tazelenir.
@@ -800,7 +807,7 @@ MertFormer Titan (2.64B Parametre)
 | Yapılandırma | Süre/Adım | Verim (Throughput) | GPU Kullanımı | VRAM Kullanımı |
 | :--- | :---: | :---: | :---: | :---: |
 | **Temel (Baseline)** | 2.0 sn | 64 tok/sn | %47 | 38 GB |
-| **v1.0 (Build 30) (Optimize)** | **~1.2 sn** (Tahmini) | **~107 tok/sn** (Tahmini) | **~%95** (Hedef) | **~76 GB** (Hedef) |
+| **v1.0 (Build 30 V2) (Optimize)** | **~1.2 sn** (Tahmini) | **~107 tok/sn** (Tahmini) | **~%95** (Hedef) | **~76 GB** (Hedef) |
 | **Hızlanma (Öngörü)** | **+%67** | **+%67** | **+%102** | **+%100** |
 **Toplam Throughput Hedefi (Projeksiyon): 11.000 tok/sn seviyesine kadar.**
 Bu değer, tanımlı dağıtım profilindeki toplam sistem kapasitesi için yol haritası hedefidir; **tek cihazda ölçülmüş benchmark sonucu değildir**.
@@ -1339,7 +1346,7 @@ MertFormer Titan, sadece bir AI modeli değil, **dijital bağımsızlık manifes
 3. **Kültürel Koruma**: Türk dili ve kültürü AI'da temsil edilir
 4. **Ekonomik Tasarruf**: Bulut maliyeti yok, cihazda çalışır
 
-### Türkçe Corpus (Build 30 Sonrası Yol Haritası)
+### Türkçe Corpus (Build 30 V2 Sonrası Yol Haritası)
 
 Planlanan Türkçe veri kaynakları:
 - **Vikipedi TR**: ~500K makale
@@ -1357,7 +1364,7 @@ Planlanan Türkçe veri kaynakları:
 
 ### S: Neden 2.64B parametre? Daha büyük olabilir miydi?
 
-**C**: 2.64B, **Build 30 için mevcut tasarım hedefidir**:
+**C**: 2.64B, **Build 30 V2 için mevcut tasarım hedefidir**:
 - Samsung S25 (12GB RAM) rahatça çalıştırır
 - BitNet ile ~0.65GB weights (tahmini)
 - Hız/kalite dengesi mükemmel
@@ -1388,7 +1395,7 @@ Planlanan Türkçe veri kaynakları:
 
 **C**: **8x A100 80GB için projeksiyon**dur (**benchmark iddiası değildir**):
 - Temel: ~25 saat (45K adım × 2 sn/adım)
-- v1.0 (Build 30) Optimize: **tahmini** (45K adım; süre donanım/throughput'a bağlı, koşu sonrası netleşir)
+- v1.0 (Build 30 V2) Optimize: **tahmini** (45K adım; süre donanım/throughput'a bağlı, koşu sonrası netleşir)
 - **10 saat tasarruf!**
 
 ### S: Samsung S25'te gerçekten çalışır mı?
@@ -1396,7 +1403,7 @@ Planlanan Türkçe veri kaynakları:
 **C**: **Evet, teorik olarak**:
 - ONNX export hazır
 - NPU optimizasyonu planlandı
-- Gerçek cihaz testi: Build 30 sonrası yol haritası
+- Gerçek cihaz testi: Build 30 V2 sonrası yol haritası
 - Gerçek cihaz performans ölçümleri henüz tamamlanmadı
 
 ### S: Low-bit kernel production-ready mi?
@@ -1453,7 +1460,7 @@ Planlanan Türkçe veri kaynakları:
 - `Veri ve Kanıt`: `datasets/`, `reports/`, `logs/`, `interfaces/`
 - `Araştırma ve Uzantılar`: `ablations/`, `experiments/`, `orchestrator/`, `economics/`, `limits/`
 
-### Kanonik Yerleşim (Build 30)
+### Kanonik Yerleşim (Build 30 V2)
 
 ```text
 mertformer-titan-core/  # proje kökü (git ls-files envanteri)
@@ -1516,6 +1523,9 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── inventory.md  # dokümantasyon/rapor dosyası
 │   ├── inventory_TR.md  # Türkçe doküman karşılığı
 │   └── validation.jsonl  # JSONL veri/log artefaktı
+├── docs/  # dizin
+│   ├── CHAIN_MAP.md  # dokümantasyon/rapor dosyası
+│   └── CHAIN_MAP_TR.md  # Türkçe doküman karşılığı
 ├── economics/  # dizin
 │   ├── cost_model.md  # dokümantasyon/rapor dosyası
 │   ├── cost_model_TR.md  # Türkçe doküman karşılığı
@@ -1853,6 +1863,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── one_command_full_sop.sh  # kabuk otomasyon scripti
 │   ├── operator_mode_gate.py  # Python modülü/scripti (operator mode gate için otomasyon scripti)
 │   ├── overfit_gate.py  # Python modülü/scripti (overfit gate için otomasyon scripti)
+│   ├── plot_training_log.py  # Python modülü/scripti (plot training log için otomasyon scripti)
 │   ├── ram_guard.py  # Python modülü/scripti (ram guard için otomasyon scripti)
 │   ├── record_dataset_hashes.py  # Python modülü/scripti (record dataset hashes için otomasyon scripti)
 │   ├── release_build30.sh  # kabuk otomasyon scripti
@@ -2060,7 +2071,7 @@ Tüm ticari/kurumsal etkileşimler, `LICENSE` ile uyumlu yazılı sözleşme ve 
 ## 📧 İletişim
 
 **Proje**: MertFormer Titan (Onyx Storm)
-**Sürüm**: v1.0 (Build 30, Eğitim Öncesi Baseline)
+**Sürüm**: v1.0 (Build 30 V2, Eğitim Öncesi Baseline)
 **Durum**: 🟡 Pilota Hazır (eğitim ve benchmark iddiaları beklemede)
 **Türkiye'de geliştirildi**
 
@@ -2098,7 +2109,7 @@ Bu proje, tasarım gereği proof-of-system seviyesinde tamamlanır. Amaç, gerç
 
 <a id="olceklenebilirlik-vizyonu"></a>
 ### 📈 Ölçeklenebilirlik Vizyonu (Claim-Safe)
-Build 30, bilinçli olarak **2.64B** doğrulama ve tekrar üretilebilir kanıt kapılarına odaklanır.
+Build 30 V2, bilinçli olarak **2.64B** doğrulama ve tekrar üretilebilir kanıt kapılarına odaklanır.
 Gelecekteki **13B / 70B / 256B** araştırmaları koşullu bir hat olarak ele alınır ve yalnızca şu şartlardan sonra değerlendirilir:
 - 2.64B için eğitimli checkpoint kanıtı,
 - tekrar üretilebilir benchmark çıktıları,

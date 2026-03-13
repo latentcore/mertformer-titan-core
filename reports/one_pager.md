@@ -1,5 +1,7 @@
 # MertFormer Titan One-Pager
 
+**Version:** Build 30 V2
+
 ## Summary
 MertFormer Titan is a 2.64B design-target parameter edge-native coding model (latest measured runtime total: ~3.70B) designed to deliver near GPT-3.5 class capability at mobile compute cost. It combines 1.58-bit quantization, LiquidRouter MoE routing, and long-context attention for efficient on-device inference.
 
@@ -30,3 +32,6 @@ Licensing for enterprise on-device deployments and private inference stacks.
 
 ## Ask
 Pilot partners for edge coding workflows and strategic deployment design.
+
+
+V2 refactor: dedup pipeline, parallel MoE dispatch, CfC fast path, stricter train gates.

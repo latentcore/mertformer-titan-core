@@ -40,3 +40,6 @@ Kurumsal on‑device inference lisanslama ve özel dağıtımlar.
 ## Riskler ve Önlemler
 - Risk: Eğitim maliyeti ve yakınsama.
 - Önlem: Failure budget ve telemetry‑driven execution.
+
+
+Build 30 V2 refactor note: dedup pipeline, parallel MoE dispatch, CfC fast path, stricter training gates.

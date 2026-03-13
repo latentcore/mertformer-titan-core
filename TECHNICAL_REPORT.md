@@ -1,13 +1,13 @@
 # Technical Analysis and Strategic Valuation of the MertFormer Titan Onyx Storm Architecture
 
-**Date:** 2026-02-01
-**Version:** v1.0 (Build 30)
+**Date:** 2026-03-13
+**Version:** v1.0 (Build 30 V2)
 **Author:** MertFormer AI Team
 
 ---
 
 ## 1. Executive Summary
-The AI ecosystem is evolving from massive cloud-based models toward on-device, energy-efficient, and privacy-focused Small Language Models (SLMs). At the forefront of this evolution, the **MertFormer Titan (Onyx Storm) v1.0 (Build 30)** project is a strategic synthesis of the four most advanced paradigms in modern deep learning literature:
+The AI ecosystem is evolving from massive cloud-based models toward on-device, energy-efficient, and privacy-focused Small Language Models (SLMs). At the forefront of this evolution, the **MertFormer Titan (Onyx Storm) v1.0 (Build 30 V2)** project is a strategic synthesis of the four most advanced paradigms in modern deep learning literature:
 
 1.  **BitNet 1.58-bit Quantization** (Efficiency)
 2.  **MLA-labeled GQA Attention (current implementation)** (Memory)
@@ -17,6 +17,12 @@ The AI ecosystem is evolving from massive cloud-based models toward on-device, e
 Conceptualized by a 17-year-old developer, this architecture is not only an engineering triumph but also a commercial asset optimized for next-generation hardware platforms like the Samsung Galaxy S25 and Snapdragon 8 Elite.
 
 ---
+
+## 1.1 V2 Refactor Highlights
+- Cross-dataset deduplication enabled in the data pipeline.
+- MoE dispatch supports parallel gather/scatter mode.
+- LiquidMixer fast path available behind `liquid_fast_path`.
+- Training gates now default to fixed-step token budgeting.
 
 ## 2. Deep Technical Architecture Analysis
 

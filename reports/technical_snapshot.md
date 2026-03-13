@@ -1,5 +1,7 @@
 # Technical Snapshot
 
+**Version:** Build 30 V2
+
 ## Architecture
 - Model size: 2.64B parameters (design target); latest measured runtime total: ~3.70B.
 - Quantization: BitNet 1.58-bit for weights.
@@ -31,3 +33,6 @@
 
 ## Deployment
 - ONNX export and mobile pipeline scripts in `scripts/`.
+
+
+V2 refactor: dedup pipeline, parallel MoE dispatch, CfC fast path, stricter train gates.

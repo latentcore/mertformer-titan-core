@@ -4,14 +4,15 @@ Language: [English](README_SUMMARY.md) | [Turkce](README_SUMMARY_TR.md)
 
 ---
 
-# MertFormer Titan - External Summary (Build 30)
+# MertFormer Titan - External Summary (Build 30 V2)
 
 ## What This Project Is
 MertFormer Titan is a mobile-first, offline-capable AI architecture designed for controlled, auditable, and human-supervised use.
 It combines BitNet (1.58-bit), Liquid dynamics, and MoE routing under a production-first engineering approach.
 
 ## Current Status
-- **Stage**: Pilot-ready, pre-training baseline (`Build 30`)
+- **Stage**: Pilot-ready, pre-training baseline (`Build 30 V2`)
+- **Token budget (V2)**: `TITAN_TOKEN_BUDGET_MODE=fixed_steps`, `TITAN_MAX_STEPS=45000`, `TITAN_TARGET_TOKENS_MIN=23.6B`.
 - **Positioning**: Proof-of-system for real-world constrained environments
 - **Not claimed yet**: Final benchmark superiority and production-grade performance claims (require trained checkpoint evidence)
 

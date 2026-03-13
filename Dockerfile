@@ -1,12 +1,12 @@
 # ==============================================================================
-# MERTFORMER TITAN - PRODUCTION CONTAINER (V30.0)
+# MERTFORMER TITAN - PRODUCTION CONTAINER (V30.0-V2)
 # ==============================================================================
 # Base: PyTorch 2.6 + CUDA 12.4 + cuDNN 9 (Devel for compilation)
 FROM pytorch/pytorch:2.6.0-cuda12.4-cudnn9-devel
 
 # Metadata
 LABEL maintainer="MertFormer Team"
-LABEL version="30.0-FINAL"
+LABEL version="30.0-V2"
 LABEL description="MertFormer Titan Production Training Environment"
 
 # Set working directory

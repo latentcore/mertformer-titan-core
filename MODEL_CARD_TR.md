@@ -1,9 +1,14 @@
-# Model Kartı — MertFormer Titan (v1.0 (Build 30))
+# Model Kartı — MertFormer Titan (v1.0 (Build 30 V2))
 
 ## Genel Bakış
 MertFormer Titan, BitNet 1.58-bit katmanları, LiquidRouter MoE ve MLA etiketli GQA attention (mevcut implementasyon) temelli,
 mobil-odaklı 2.64B parametreli bir dil modelidir. Bu kart **eğitim öncesi**
 durumu yansıtır ve kullanım amacı, sınırlar ve bilinen boşlukları belgeler.
+
+## V2 Güncellemeleri
+- Cross-dataset deduplication veri pipeline'ında aktif.
+- MoE dispatch paralel gather/scatter modu destekler.
+- LiquidMixer fast path `liquid_fast_path` ile açılabilir.
 
 ## Amaçlanan Kullanım
 - Cihaz içi/edge çıkarım araştırması ve prototipleme

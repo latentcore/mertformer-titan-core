@@ -4,14 +4,15 @@ Dil: [English](README_SUMMARY.md) | [Türkçe](README_SUMMARY_TR.md)
 
 ---
 
-# MertFormer Titan - Dış Kullanıcı Özeti (Build 30)
+# MertFormer Titan - Dış Kullanıcı Özeti (Build 30 V2)
 
 ## Bu Proje Nedir?
 MertFormer Titan, kontrollü, denetlenebilir ve insan onaylı kullanım için tasarlanmış mobil-öncelikli, offline çalışabilen bir yapay zeka mimarisidir.
 BitNet (1.58-bit), Liquid dinamikleri ve MoE yönlendirmesini üretim-öncelikli bir mühendislik yaklaşımıyla birleştirir.
 
 ## Mevcut Durum
-- **Aşama**: Pilota hazır eğitim öncesi baseline (`Build 30`)
+- **Aşama**: Pilota hazır eğitim öncesi baseline (`Build 30 V2`)
+- **Token bütçesi (V2)**: `TITAN_TOKEN_BUDGET_MODE=fixed_steps`, `TITAN_MAX_STEPS=45000`, `TITAN_TARGET_TOKENS_MIN=23.6B`.
 - **Konumlandırma**: Gerçek dünya kısıtlarında proof-of-system
 - **Henüz iddia edilmeyen**: Nihai benchmark üstünlüğü ve production performans iddiaları (eğitimli checkpoint kanıtı gerekir)
 

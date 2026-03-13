@@ -1,5 +1,7 @@
 # Teknik Özet (TR)
 
+**Version:** Build 30 V2
+
 ## Mimari
 - Model boyutu: 2.64B parametre (tasarım hedefi); mevcut ölçülen runtime toplamı: ~3.70B.
 - Kuantizasyon: BitNet 1.58‑bit.
@@ -31,3 +33,6 @@
 
 ## Dağıtım
 - ONNX export ve mobil pipeline `scripts/` altında.
+
+
+V2 refactor: dedup pipeline, parallel MoE dispatch, CfC fast path, stricter train gates.
