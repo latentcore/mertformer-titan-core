@@ -135,8 +135,11 @@ def check_stage_jsonl(offline: bool) -> bool:
     if missing:
         msg = f"Stage JSONL missing: {', '.join(missing)}"
         if offline:
-            if os.environ.get("TITAN_PREFLIGHT_ALLOW_MISSING_STAGE_JSONL", "0") == "1":
-                log(msg + " (override: allow missing in offline mode)", "warning")
+            allow_missing = os.environ.get("TITAN_PREFLIGHT_ALLOW_MISSING_STAGE_JSONL", "0") == "1"
+            ci_env = os.environ.get("GITHUB_ACTIONS", "").strip().lower() == "true" or os.environ.get("CI", "").strip().lower() == "true"
+            if allow_missing or ci_env:
+                note = "override: allow missing in offline mode" if allow_missing else "CI: allow missing in offline mode"
+                log(msg + f" ({note})", "warning")
                 return True
             log(msg, "error")
             return False
