@@ -225,6 +225,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── bench_npu_report.json  # JSON data artifact
 │   ├── bench_vulkan_report.json  # JSON data artifact
 │   ├── bench_zero_copy_report.json  # JSON data artifact
+│   ├── cfc_moe_tolerance_report.json  # JSON data artifact
 │   ├── cleanroom_verification.md  # documentation/report file
 │   ├── cleanroom_verification_TR.md  # Turkish document counterpart
 │   ├── cli_smoke_log.md  # documentation/report file
@@ -363,6 +364,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── build_investor_deck.py  # Python module/script (automation script for build investor deck)
 │   ├── build_summary_pdf.py  # Python module/script (automation script for build summary pdf)
 │   ├── build_validation_set.py  # Python module/script (automation script for build validation set)
+│   ├── cfc_moe_tolerance_check.py  # Python module/script (automation script for cfc moe tolerance check)
 │   ├── chat.py  # Python module/script (automation script for chat)
 │   ├── check_57_matrix.py  # Python module/script (automation script for check 57 matrix)
 │   ├── check_doc_claim_consistency.py  # Python module/script (automation script for check doc claim consistency)
@@ -512,6 +514,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── LICENSE_TR  # license terms (TR)
 ├── MODEL_CARD.md  # documentation/report file
 ├── MODEL_CARD_TR.md  # Turkish document counterpart
+├── MODEL_LICENSE.md  # documentation/report file
+├── MODEL_LICENSE_TR.md  # Turkish document counterpart
 ├── PITCH.md  # documentation/report file
 ├── PITCH_TR.md  # Turkish document counterpart
 ├── README.md  # primary documentation (EN)
@@ -532,6 +536,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── TECHNICAL_REPORT_TR.md  # Turkish document counterpart
 ├── TRAINING_PLAN.md  # documentation/report file
 ├── TRAINING_PLAN_TR.md  # Turkish document counterpart
+├── TROUBLESHOOTING.md  # documentation/report file
+├── TROUBLESHOOTING_TR.md  # Turkish document counterpart
 ├── USAGE_GUIDE.md  # documentation/report file
 ├── USAGE_GUIDE_TR.md  # Turkish document counterpart
 ├── USE_POLICY.md  # documentation/report file

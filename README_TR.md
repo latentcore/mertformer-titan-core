@@ -1685,6 +1685,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── bench_npu_report.json  # JSON veri artefaktı
 │   ├── bench_vulkan_report.json  # JSON veri artefaktı
 │   ├── bench_zero_copy_report.json  # JSON veri artefaktı
+│   ├── cfc_moe_tolerance_report.json  # JSON veri artefaktı
 │   ├── cleanroom_verification.md  # dokümantasyon/rapor dosyası
 │   ├── cleanroom_verification_TR.md  # Türkçe doküman karşılığı
 │   ├── cli_smoke_log.md  # dokümantasyon/rapor dosyası
@@ -1823,6 +1824,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── build_investor_deck.py  # Python modülü/scripti (build investor deck için otomasyon scripti)
 │   ├── build_summary_pdf.py  # Python modülü/scripti (build summary pdf için otomasyon scripti)
 │   ├── build_validation_set.py  # Python modülü/scripti (build validation set için otomasyon scripti)
+│   ├── cfc_moe_tolerance_check.py  # Python modülü/scripti (cfc moe tolerance check için otomasyon scripti)
 │   ├── chat.py  # Python modülü/scripti (chat için otomasyon scripti)
 │   ├── check_57_matrix.py  # Python modülü/scripti (check 57 matrix için otomasyon scripti)
 │   ├── check_doc_claim_consistency.py  # Python modülü/scripti (check doc claim consistency için otomasyon scripti)
@@ -1972,6 +1974,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── LICENSE_TR  # lisans koşulları (TR)
 ├── MODEL_CARD.md  # dokümantasyon/rapor dosyası
 ├── MODEL_CARD_TR.md  # Türkçe doküman karşılığı
+├── MODEL_LICENSE.md  # dokümantasyon/rapor dosyası
+├── MODEL_LICENSE_TR.md  # Türkçe doküman karşılığı
 ├── PITCH.md  # dokümantasyon/rapor dosyası
 ├── PITCH_TR.md  # Türkçe doküman karşılığı
 ├── README.md  # ana dokümantasyon (EN)
@@ -1992,6 +1996,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── TECHNICAL_REPORT_TR.md  # Türkçe doküman karşılığı
 ├── TRAINING_PLAN.md  # dokümantasyon/rapor dosyası
 ├── TRAINING_PLAN_TR.md  # Türkçe doküman karşılığı
+├── TROUBLESHOOTING.md  # dokümantasyon/rapor dosyası
+├── TROUBLESHOOTING_TR.md  # Türkçe doküman karşılığı
 ├── USAGE_GUIDE.md  # dokümantasyon/rapor dosyası
 ├── USAGE_GUIDE_TR.md  # Türkçe doküman karşılığı
 ├── USE_POLICY.md  # dokümantasyon/rapor dosyası

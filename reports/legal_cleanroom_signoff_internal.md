@@ -1,14 +1,20 @@
-# Legal Cleanroom Signoff (Internal) — Build 30
+# Legal Cleanroom Signoff (Internal) — Build 30 V2
 
 ## Document Control
-- Date (UTC): 2026-02-22
-- Scope: Build 30 technical GO package
+- Date (UTC): 2026-03-13
+- Scope: Build 30 V2 technical GO package (delta from 2026-02-22 signoff)
 - Owner: Internal engineering
 - Status: `INTERNAL_SIGNOFF_COMPLETE`
 - Legal force: `NON-BINDING` (not external counsel approval)
+- Previous signoff: 2026-02-22 (Build 30)
 
 ## Purpose
 This document records the internal legal/compliance readiness check for cleanroom and data provenance before training operations.
+
+## V2 Addendum (2026-03-13)
+- Build 30 V2 introduces dedup pipeline, MoE parallel dispatch path, and Liquid/CfC fast-path opt-in.
+- No expansion of licensed data sources without corresponding entries in `datasets/LICENSES*.md` and `datasets/SOURCES*.md`.
+- Claim boundary remains unchanged: `NOT ELIGIBLE FOR CLAIM` without trained checkpoint evidence.
 
 ## Measured vs Target
 - **Measured (in-repo evidence):**

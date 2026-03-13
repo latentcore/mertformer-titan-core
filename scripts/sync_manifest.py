@@ -513,12 +513,12 @@ def main() -> int:
     readme_sync = {
         "README.md": sync_readme_structure_block(
             root / "README.md",
-            "### Canonical Layout (Build 30)",
+            "### Canonical Layout (Build 30 V2)",
             build_structure_lines(entry_paths, lang="en"),
         ),
         "README_TR.md": sync_readme_structure_block(
             root / "README_TR.md",
-            "### Kanonik Yerleşim (Build 30)",
+            "### Kanonik Yerleşim (Build 30 V2)",
             build_structure_lines(entry_paths, lang="tr"),
         ),
     }

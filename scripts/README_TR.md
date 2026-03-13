@@ -75,9 +75,11 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - `download_tr_tokenizer.py` — Türkçe tokenizer indirme (opt‑in).
 - `logbook_build.py` — Birleşik logbook üreticisi (çıktı `logs/` altında gitignored artifact).
 - `version_checker.py` — Sürüm tutarlılık kontrolü (deprecated marker bulursa hata verir).
+- `resume_compat_check.py` — Resume uyumunu doğrular ve `reports/resume_compat_report.json` yazar.
 
 ## Varlıklar
 - `build_investor_deck.py` — PPTX yatırımcı deck üretimi.
+- `update_investor_deck.py` — Yatırımcı deck PPTX dosyasını Build 30 V2 ile günceller (otomatik V2 slaytı + metin dönüşümü).
 
 ## Klasörler
 - `scripts/reports/` — Script ürettiği rapor çıktıları.

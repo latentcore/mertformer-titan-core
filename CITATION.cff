@@ -1,10 +1,19 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it."
 title: "MertFormer Titan (Onyx Storm)"
-version: "v1.0 (Build 30)"
-date-released: "2026-02-05"
+version: "v1.0-TITAN-BUILD30-V2"
+date-released: "2026-03-13"
 authors:
   - family-names: "Yunlu"
     given-names: "Mert"
-repository-code: "https://github.com/latentcore/mertformer-titan"
-url: "https://github.com/latentcore/mertformer-titan"
+repository-code: "https://github.com/latentcore/mertformer-titan-core"
+url: "https://github.com/latentcore/mertformer-titan-core"
+abstract: "Offline-first, auditable mobile-edge LLM infrastructure using BitNet 1.58-bit quantization, LiquidRouter MoE, and CfC dynamics."
+keywords:
+  - BitNet
+  - MoE
+  - LiquidRouter
+  - CfC
+  - edge AI
+  - offline-first
+license: "Proprietary"

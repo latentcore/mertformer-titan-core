@@ -77,9 +77,11 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - `download_tr_tokenizer.py` — Turkish tokenizer download (opt-in).
 - `logbook_build.py` — Unified logbook builder (writes under `logs/` as a gitignored artifact).
 - `version_checker.py` — Version consistency checker (fails on deprecated markers).
+- `resume_compat_check.py` — Verifies resume compatibility and writes `reports/resume_compat_report.json`.
 
 ## Assets
 - `build_investor_deck.py` — Generates the PPTX investor deck.
+- `update_investor_deck.py` — Updates investor deck PPTX to Build 30 V2 (auto V2 slide + text replacements).
 
 ## Folders
 - `scripts/reports/` — Script-generated report artifacts.
