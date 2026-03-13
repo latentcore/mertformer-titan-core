@@ -1,0 +1,12 @@
+{
+  "schema": "resume_compat_report_v2",
+  "generated_at_utc": "2026-03-13T06:31:36Z",
+  "status": "PASS",
+  "checkpoint_path": "/Users/mertyunlu/Desktop/mertformer-titan-core/reports/_resume_compat_tmp/mertformer_resume_v2_latest.pt",
+  "resume_step": 42,
+  "missing_keys": 0,
+  "unexpected_keys": 0,
+  "missing_keys_sample": [],
+  "unexpected_keys_sample": [],
+  "error": ""
+}

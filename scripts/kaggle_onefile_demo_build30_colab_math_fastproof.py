@@ -350,6 +350,9 @@ RUN_CONFIG: Dict[str, Any] = {
     "bitnet_skip_attention_qkvo": True,
     # MoE mode
     "moe_mode": "true_sparse_topk",  # true_sparse_topk|dense_debug
+    "moe_dispatch_mode": "parallel",  # sequential|parallel
+    "liquid_fast_path": True,
+    "use_flash_attn_inference": True,
     # Logger memory safety
     "logger_mode": "jsonl_ring",  # in_memory|jsonl_ring
     "step_log_interval": 1,
@@ -3994,22 +3997,22 @@ class NeuromodulatoryGainLayer(nn.Module):
 
 
 class LiquidMixer(nn.Module):
-    def __init__(self, hidden: int, dt: float = 1.0) -> None:
+    def __init__(self, hidden: int, dt: float = 1.0, fast_path: bool = True) -> None:
         super().__init__()
         self.hidden = int(hidden)
         self.dt = float(dt)
         self.in_proj = nn.Linear(hidden, hidden)
         self.gate_proj = nn.Linear(hidden, hidden)
         self.register_buffer("state", torch.empty(0), persistent=False)
+        self.fast_path = bool(fast_path)
+        self._compiled_forward = None
 
     def reset_state(self, batch_size: int, device: torch.device, dtype: torch.dtype) -> None:
         self.state = torch.zeros(batch_size, self.hidden, device=device, dtype=dtype)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def _forward_slow(self, x: torch.Tensor) -> torch.Tensor:
         # NOTE: Simplified Euler ODE without learnable tau (standalone companion).
-        # Production uses continuous-time decay with learnable tau
-        # (tau_input_w, tau_hidden_w, tau_bias + softplus clamp).
-        # See layers/liquid.py jit_liquid_loop_cached for full implementation.
+        # Production uses continuous-time decay with learnable tau.
         b, t, h = x.shape
         if self.state.numel() == 0 or self.state.shape != (b, h) or self.state.device != x.device:
             self.reset_state(b, x.device, x.dtype)
@@ -4023,6 +4026,26 @@ class LiquidMixer(nn.Module):
             outs.append(xi + gate * st)
         self.state = st.detach()
         return torch.stack(outs, dim=1)
+
+    def _maybe_compile(self) -> None:
+        if self._compiled_forward is not None:
+            return
+        if hasattr(torch, "compile"):
+            try:
+                self._compiled_forward = torch.compile(self._forward_slow, mode="reduce-overhead")
+                return
+            except Exception:
+                pass
+        self._compiled_forward = self._forward_slow
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if self.fast_path and x.device.type == "cuda":
+            self._maybe_compile()
+            try:
+                return self._compiled_forward(x)
+            except Exception:
+                return self._forward_slow(x)
+        return self._forward_slow(x)
 
 
 class LiquidRouter(nn.Module):
@@ -4116,6 +4139,7 @@ class MoELayer(nn.Module):
         use_structural_plasticity: bool = False,
         structural_update_interval: int = 100,
         moe_mode: str = "true_sparse_topk",
+        dispatch_mode: str = "sequential",
     ) -> None:
         super().__init__()
         self.hidden = int(hidden)
@@ -4123,6 +4147,7 @@ class MoELayer(nn.Module):
         self.experts = nn.ModuleList([SwiGLUFFN(hidden, intermediate) for _ in range(num_experts)])
         self.shared = SwiGLUFFN(hidden, intermediate)
         self.moe_mode = str(moe_mode)
+        self.dispatch_mode = str(dispatch_mode).lower()
         self.use_structural_plasticity = bool(use_structural_plasticity)
         self.structural_update_interval = int(structural_update_interval)
         self.register_buffer("usage", torch.zeros(num_experts), persistent=False)
@@ -4131,9 +4156,6 @@ class MoELayer(nn.Module):
     def _structural_update(self) -> None:
         if not self.use_structural_plasticity:
             return
-        # Safety: avoid in-graph parameter mutation during training backward.
-        # Structural updates are deferred/off in active training steps to prevent
-        # autograd version-counter breaks.
         if self.training:
             return
         if self._step == 0 or self._step % max(1, self.structural_update_interval) != 0:
@@ -4149,6 +4171,75 @@ class MoELayer(nn.Module):
                 pd.copy_(0.9 * ps + 0.1 * torch.randn_like(ps) * 0.01)
         self.usage.mul_(0.5)
 
+    def _dispatch_sequential(
+        self,
+        x_flat: torch.Tensor,
+        top_idx: torch.Tensor,
+        top_w: torch.Tensor,
+        capacity_mask: torch.Tensor,
+    ) -> torch.Tensor:
+        b = x_flat.size(0)
+        out_flat = torch.zeros_like(x_flat)
+        for expert_id, expert in enumerate(self.experts):
+            expert_mask = top_idx == expert_id
+            if capacity_mask is not None:
+                expert_mask = expert_mask & capacity_mask
+            token_mask = expert_mask.any(dim=-1)
+            if not bool(token_mask.any().item()):
+                continue
+            selected_x = x_flat[token_mask]
+            expert_out = expert(selected_x)
+            weights = (top_w[token_mask] * expert_mask[token_mask].float()).sum(dim=-1, keepdim=True)
+            out_flat[token_mask] += expert_out * weights
+        return out_flat
+
+    def _dispatch_parallel(
+        self,
+        x_flat: torch.Tensor,
+        top_idx: torch.Tensor,
+        top_w: torch.Tensor,
+        capacity_mask: torch.Tensor,
+    ) -> torch.Tensor:
+        n, h = x_flat.shape
+        k = top_idx.size(-1)
+        out_flat = x_flat.new_zeros((n, h))
+
+        token_idx = torch.arange(n, device=top_idx.device).repeat_interleave(k)
+        expert_idx = top_idx.reshape(-1)
+        weights = top_w.reshape(-1)
+        if capacity_mask is not None:
+            mask = capacity_mask.reshape(-1)
+            if mask.numel() > 0:
+                token_idx = token_idx[mask]
+                expert_idx = expert_idx[mask]
+                weights = weights[mask]
+
+        if expert_idx.numel() == 0:
+            return out_flat
+
+        order = torch.argsort(expert_idx)
+        expert_sorted = expert_idx[order]
+        token_sorted = token_idx[order]
+        weight_sorted = weights[order]
+
+        counts = torch.bincount(expert_sorted, minlength=len(self.experts))
+        if counts.numel() == 0:
+            return out_flat
+
+        start = 0
+        for expert_id, expert in enumerate(self.experts):
+            cnt = int(counts[expert_id].item())
+            if cnt == 0:
+                continue
+            end = start + cnt
+            idx = token_sorted[start:end]
+            w = weight_sorted[start:end].unsqueeze(-1)
+            selected_x = x_flat.index_select(0, idx)
+            expert_out = expert(selected_x)
+            out_flat.index_add_(0, idx, expert_out * w)
+            start = end
+        return out_flat
+
     def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, Dict[str, float]]:
         b, t, h = x.shape
         xf = x.view(b * t, h)
@@ -4161,17 +4252,10 @@ class MoELayer(nn.Module):
             chosen = expert_out.gather(1, gather_idx)
             out_flat = (chosen * top_w.unsqueeze(-1)).sum(dim=1)
         else:
-            for expert_id, expert in enumerate(self.experts):
-                expert_mask = top_idx == expert_id
-                if capacity_mask is not None:
-                    expert_mask = expert_mask & capacity_mask
-                token_mask = expert_mask.any(dim=-1)
-                if not bool(token_mask.any().item()):
-                    continue
-                selected_x = xf[token_mask]
-                expert_out = expert(selected_x)
-                weights = (top_w[token_mask] * expert_mask[token_mask].float()).sum(dim=-1, keepdim=True)
-                out_flat[token_mask] += expert_out * weights
+            if self.dispatch_mode == "parallel":
+                out_flat = self._dispatch_parallel(xf, top_idx, top_w, capacity_mask)
+            else:
+                out_flat = self._dispatch_sequential(xf, top_idx, top_w, capacity_mask)
 
         out_flat = out_flat + 0.25 * self.shared(xf)
         out = out_flat.view(b, t, h)
@@ -4202,6 +4286,7 @@ class MLA(nn.Module):
         head_dim: int,
         rope_dim: Optional[int] = None,
         dropout: float = 0.0,
+        use_flash_attn_inference: bool = True,
     ) -> None:
         super().__init__()
         self.hidden = int(hidden)
@@ -4209,6 +4294,7 @@ class MLA(nn.Module):
         self.num_kv_heads = int(num_kv_heads)
         self.head_dim = int(head_dim)
         self.dropout = float(dropout)
+        self.use_flash_attn_inference = bool(use_flash_attn_inference)
 
         self.q_proj = nn.Linear(hidden, self.num_heads * self.head_dim)
         self.k_proj = nn.Linear(hidden, self.num_kv_heads * self.head_dim)
@@ -4261,8 +4347,9 @@ class MLA(nn.Module):
 
         k_rep = self._repeat_kv(k)
         v_rep = self._repeat_kv(v)
+        use_flash = bool(self.training or self.use_flash_attn_inference)
 
-        if hasattr(F, "scaled_dot_product_attention"):
+        if hasattr(F, "scaled_dot_product_attention") and use_flash:
             out = F.scaled_dot_product_attention(
                 q.contiguous(),
                 k_rep.contiguous(),
@@ -4359,11 +4446,12 @@ class MertFormerBlock(nn.Module):
                 use_structural_plasticity=cfg.use_structural_plasticity,
                 structural_update_interval=cfg.structural_update_interval,
                 moe_mode=cfg.moe_mode,
+                dispatch_mode=cfg.moe_dispatch_mode,
             )
         else:
             self.ff = SwiGLUFFN(cfg.hidden_size, cfg.intermediate_size, dropout=cfg.dropout)
 
-        self.liquid = LiquidMixer(cfg.hidden_size, dt=cfg.liquid_dt) if self.use_liquid else None
+        self.liquid = LiquidMixer(cfg.hidden_size, dt=cfg.liquid_dt, fast_path=cfg.liquid_fast_path) if self.use_liquid else None
         self.qinn = QINNLayer(cfg.hidden_size, rank=min(64, cfg.hidden_size // 4)) if self.use_qinn else None
         self.hebbian = (
             HebbianPlasticityLayer(
