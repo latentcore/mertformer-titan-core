@@ -1,8 +1,8 @@
 {
   "schema": "resume_compat_report_v2",
-  "generated_at_utc": "2026-03-13T06:55:02Z",
+  "generated_at_utc": "2026-03-13T06:56:26Z",
   "status": "PASS",
-  "checkpoint_path": "/Users/mertyunlu/Desktop/mertformer-titan-core/reports/_resume_compat_tmp/mertformer_resume_v2_latest.pt",
+  "checkpoint_path": "reports/_resume_compat_tmp/mertformer_resume_v2_latest.pt",
   "resume_step": 42,
   "missing_keys": 0,
   "unexpected_keys": 0,

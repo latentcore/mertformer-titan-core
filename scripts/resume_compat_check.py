@@ -82,6 +82,10 @@ def _utc_now() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
+def _sanitize_path(value: str) -> str:
+    return value.replace(str(PROJECT_ROOT), "<REPO_ROOT>")
+
+
 def main() -> int:
     report_path = PROJECT_ROOT / "reports" / "resume_compat_report.json"
     tmp_rel = "reports/_resume_compat_tmp"
@@ -132,10 +136,11 @@ def main() -> int:
             normalized = _normalize_state_dict_keys_for_model(state["model"], model_check)
             missing, unexpected = model_check.load_state_dict(normalized, strict=False)
 
+            ckpt_rel = str(ckpt_path.relative_to(PROJECT_ROOT))
             report.update(
                 {
                     "status": "PASS",
-                    "checkpoint_path": str(ckpt_path),
+                    "checkpoint_path": _sanitize_path(ckpt_rel),
                     "resume_step": int(payload.get("step", 0)),
                     "missing_keys": len(missing),
                     "unexpected_keys": len(unexpected),
@@ -147,7 +152,7 @@ def main() -> int:
                 report["status"] = "FAIL"
                 report["error"] = f"resume_step_mismatch expected={step} got={payload.get('step', 0)}"
     except Exception as exc:
-        report["error"] = f"{type(exc).__name__}: {exc}"
+        report["error"] = _sanitize_path(f"{type(exc).__name__}: {exc}")
     finally:
         try:
             report_path.parent.mkdir(parents=True, exist_ok=True)
