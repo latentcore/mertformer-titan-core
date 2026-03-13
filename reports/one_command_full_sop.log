@@ -1,4 +1,4 @@
-[run] start_utc=2026-03-13T08:09:48Z
+[run] start_utc=2026-03-13T08:20:24Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
@@ -25,7 +25,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-111 passed, 3 skipped, 6 warnings in 18.80s
+111 passed, 3 skipped, 6 warnings in 18.87s
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -64,7 +64,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <REPO_ROOT>/temp_preflight_data
 ✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 3.27s
+✈️ Preflight Duration: 3.29s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
@@ -75,8 +75,8 @@ Failure budget drill: PASS
 Overfit step 0: loss=121.5519
 Overfit step 12: loss=117.8494
 Overfit step 24: loss=113.7169
-Overfit step 36: loss=97.5475
-Overfit step 48: loss=50.8536
+Overfit step 36: loss=97.5476
+Overfit step 48: loss=50.8442
 Overfit gate: PASS
 Golden samples: 50
 - algorithms: 13
@@ -109,7 +109,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 6.93178391456604,
+  "elapsed_sec": 6.941756963729858,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -135,9 +135,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-03-13T08:10:21Z",
-        "cpu_percent": 11.2,
-        "ram_used_gb": 7.3266143798828125,
+        "timestamp_utc": "2026-03-13T08:20:57Z",
+        "cpu_percent": 20.5,
+        "ram_used_gb": 7.3985595703125,
         "ram_total_gb": 16.0
       }
     },
@@ -205,7 +205,7 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
-release_sha256=24050ce40645c3654374e415826faf69554507b920e28343d355c802917317b6
+release_sha256=735c399cccdb8ff0b11a157224f8c770ca2bd0bb633d21d3e2b8138759138c39
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=artifact_release_zip
@@ -727,7 +727,7 @@ locked_sha256=
   adding: reports/docs_packages_hash_manifest.json (deflated 33%)
   adding: reports/report_truth_matrix.md (deflated 57%)
   adding: reports/cfc_moe_tolerance_report.json (deflated 68%)
-  adding: reports/release_snapshot_TR.md (deflated 50%)
+  adding: reports/release_snapshot_TR.md (deflated 51%)
   adding: reports/sales_funnel_90d.md (deflated 38%)
   adding: reports/pilot_readiness_kit.md (deflated 44%)
   adding: reports/kpi_contract_build30.md (deflated 51%)
@@ -764,7 +764,7 @@ locked_sha256=
   adding: reports/snapshot_manifest_main.json (deflated 45%)
   adding: reports/go_nogo_signoff_onepager.md (deflated 42%)
   adding: reports/strategic_value_TR.md (deflated 39%)
-  adding: reports/file_sync_matrix.json (deflated 33%)
+  adding: reports/file_sync_matrix.json (deflated 32%)
   adding: reports/go_nogo_signoff_onepager_TR.md (deflated 38%)
   adding: reports/asset_stack.md (deflated 66%)
   adding: reports/cli_smoke_log.md (deflated 27%)
@@ -788,7 +788,7 @@ locked_sha256=
   adding: reports/kpi_report_v1.json (deflated 68%)
   adding: reports/md_lint_report.json (deflated 91%)
   adding: reports/model_health_TR.md (deflated 24%)
-  adding: reports/one_command_full_sop_summary.md (deflated 41%)
+  adding: reports/one_command_full_sop_summary.md (deflated 40%)
   adding: reports/drone_sitl_demo.md (deflated 45%)
   adding: reports/thermal_baseline.json (deflated 2%)
   adding: reports/kpi_pack_v1.md (deflated 41%)
@@ -883,4 +883,4 @@ locked_sha256=
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-03-13T08:10:38Z
+[run] end_utc=2026-03-13T08:21:14Z
