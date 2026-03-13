@@ -413,6 +413,7 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
     pbar = tqdm(total=sum(samples_per_source.values()), desc=f"Stage {stage_num}")
     
     consecutive_failures = 0
+    total_ratio = sum(float(sources[i]["ratio"]) for i in active_sources)
     
     # [V27.6 IO FIX] Write Buffer Initialization
     write_buffer = []
@@ -422,9 +423,9 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
         # Select source based on ratio
         r = random.random() * total_ratio
         cum = 0.0
-        source_idx = 0
-        for i, src in enumerate(sources):
-            cum += src["ratio"]
+        source_idx = active_sources[0]
+        for i in active_sources:
+            cum += float(sources[i]["ratio"])
             if r <= cum:
                 source_idx = i
                 break
