@@ -32,7 +32,6 @@ This repository includes a decision-complete, single-pass closure flow for engin
 - `artifacts/mertformer_release.zip`
 - `artifacts/mertformer_release.zip.sha256`
 
-
 ![MertFormer Titan Header](assets/header.png)
 
 <div align="center">
@@ -401,7 +400,6 @@ Open full clip: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
 - [reports/cli_smoke_log.md](reports/cli_smoke_log.md) — CLI smoke log (EN).
 - [reports/cli_smoke_log_TR.md](reports/cli_smoke_log_TR.md) — CLI smoke log (TR).
 
-*Note: This step did not modify PPTX files (per plan). We can add a one-line update later if needed.*
 
 **Ops & Governance**
 Security, provenance, reproducibility, and ops notes.
@@ -743,7 +741,6 @@ The journey of data from Layer 0 to 17:
 *   **Layer 17 (Final Block):** Final checks are performed; data processed via `RMSNorm` and `LM Head` is converted into word probabilities (logits) to be presented to the user.
 ```
 
-
 ```mermaid
 graph TD
     subgraph "MertFormer Titan: 18-Layer Synaptic Flow"
@@ -855,7 +852,6 @@ Thanks to the BitNet architecture, MertFormer runs not just on flagships, but on
 - **RAM**: 2GB (Target; uses ~0.65GB VRAM estimate)
 - **Storage**: 2GB free space
 - **OS**: Android 10+ / iOS 15+ / Windows / macOS / Linux
-
 
 ---
 
@@ -1024,7 +1020,6 @@ TITAN_OFFLINE=1 bash run.sh --test
 ```
 
 Historical snapshot (2026-02-10) is preserved in git history for audit continuity.
-
 
 ### Training (Online / Training Hardware)
 
@@ -1464,7 +1459,6 @@ Planned Turkish data sources:
 - Included checks: `pytest`, `md_quality_all`, `linkcheck_all`, `unicode_path_guard`, `duplicate_zip_guard`, `clean_runtime_artifacts_check`, `zip_denylist_audit`, `secret_scan`
 - Latest package hash is recorded in the summary file under `release_zip_sha256`
 - Raw log: `reports/one_command_full_sop.log`
-
 
 <a id="project-structure"></a>
 ## 📂 Project Structure
