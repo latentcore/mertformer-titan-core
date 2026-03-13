@@ -54,6 +54,9 @@ bash run.sh --train-ready
 ```bash
 TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash run.sh
 ```
+Notes:
+- Default token budget is `fixed_steps` (45K). Use `TITAN_TOKEN_BUDGET_MODE=open_ended` only with explicit target override.
+- Offline runs require pre-generated stage JSONL (`python scripts/data_pipeline.py`).
 
 ## External Pilot Usage Model
 - Run reproducible validation gates in the customer environment.

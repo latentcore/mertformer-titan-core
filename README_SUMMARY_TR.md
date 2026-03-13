@@ -54,6 +54,9 @@ bash run.sh --train-ready
 ```bash
 TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash run.sh
 ```
+Notlar:
+- Varsayılan token bütçesi `fixed_steps` (45K). `open_ended` yalnızca açık hedef override ile kullanılmalıdır.
+- Offline koşularda stage JSONL önceden üretilmelidir (`python scripts/data_pipeline.py`).
 
 ## Dış Pilot Kullanım Modeli
 - Müşteri ortamında tekrarlanabilir doğrulama kapılarını çalıştırın.

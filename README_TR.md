@@ -128,6 +128,8 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama
 - Dataset lisans/hash iş akışı uyumlu kalmalıdır.
 - Hedef donanım (GPU/edge) kaynağı ayrılmış olmalıdır.
 - Tam eğitim koşusu ve benchmark çıktıları bu önkoşullardan sonra kayda alınır.
+- Varsayılan token bütçesi artık `fixed_steps` (45K). `open_ended` yalnızca açık hedef override ile kullanılmalıdır.
+- Offline koşularda stage JSONL önceden üretilmelidir (`python scripts/data_pipeline.py`).
 
 ### Başlatma komutu (önkoşullar tamamlandığında)
 ```bash
@@ -260,6 +262,8 @@ Ana giriş dokümanları ve checklistler.
 - [snake_demo.py](snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
 - [USAGE_GUIDE.md](USAGE_GUIDE.md) — Operasyonel kullanım kılavuzu (EN).
 - [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md) — Operasyonel kullanım kılavuzu (TR).
+- [docs/CHAIN_MAP.md](docs/CHAIN_MAP.md) — Bağlı vs bağımsız zincir haritası (EN).
+- [docs/CHAIN_MAP_TR.md](docs/CHAIN_MAP_TR.md) — Bağlı vs bağımsız zincir haritası (TR).
 - [reports/commercial_handover/known_issues.md](reports/commercial_handover/known_issues.md) — Devir risk görünürlüğü için bilinen sorunlar kaydı.
 - [reports/commercial_handover/handover_scope.md](reports/commercial_handover/handover_scope.md) — Devir kapsamı ve kapsam dışı sınırlar.
 - [reports/commercial_handover/ownership_and_role.md](reports/commercial_handover/ownership_and_role.md) — Devir sonrası sahiplik modeli ve karar hakları.
@@ -466,6 +470,16 @@ Mimari doğruluk notu: `layers/mla.py` sınıf adı `MLA` olarak korunur; mevcut
 İsim açılımı:
 - **MERT**: **Modüler Uçta Akıl Yürütme Transformer**
 - **MertFormer**: **Cihaz Üstü Modüler Yürütme ve Güvenilirlik için Modüler Uçta Akıl Yürütme Transformer Çatısı**
+
+### 🔗 Zincir Haritası (Bağlı vs Bağımsız)
+```mermaid
+flowchart TD
+  A["Stage JSONL (datasets/stage*)"] --> B["Eğitim (run.sh → train/train.py)"]
+  B --> C["Loglar (logs/*.jsonl)"]
+  C --> D["SOP artefaktları (reports + packages/artifacts zip)"]
+```
+
+Tam harita: [`docs/CHAIN_MAP_TR.md`](docs/CHAIN_MAP_TR.md)
 
 ### Neden MertFormer Titan?
 
@@ -1161,13 +1175,13 @@ liquid_spike_threshold = 5.0
 
 | Aşama | Adımlar | Odak | Veri Seti Boyutu |
 | :--- | :---: | :--- | :--- |
-| **1. Mantık & Muhakeme** | %0-25 | Matematik, kodlama, mantık | Corpus'un %25'i |
-| **2. Dünya Bilgisi** | %25-55 | Gerçekler, tarih, bilim | Corpus'un %30'u |
-| **3. Dil (TR)** | %55-75 | Gramer, akıcılık, kültür | Corpus'un %20'si |
-| **4. Ruh (Kimlik)** | %75-85 | Kişilik, talimat takibi | Corpus'un %10'u |
-| **5. Araç Kullanımı** | %85-100 | Fonksiyon çağırma, API | Corpus'un %15'i |
+| **1. Mantık & Muhakeme** | %0-42 | Matematik, kodlama, mantık | Corpus'un %42'si |
+| **2. Dünya Bilgisi** | %42-72 | Gerçekler, tarih, bilim | Corpus'un %30'u |
+| **3. Dil (TR)** | %72-80 | Gramer, akıcılık, kültür | Corpus'un %8'i |
+| **4. Ruh (Kimlik)** | %80-88 | Kişilik, talimat takibi | Corpus'un %8'i |
+| **5. Araç Kullanımı** | %88-100 | Fonksiyon çağırma, API | Corpus'un %12'si |
 
-**Toplam Token**: ~24 Milyar (yüksek kaliteli, KD odaklı)
+**Toplam Token**: ~23.6 Milyar (yüksek kaliteli, KD odaklı)
 *Not: Damıtma, token başına etkin öğrenmeyi artırır; ancak ham token sayısını artırmaz.*
 
 Bu eğitim sırası ve token bütçesi, **güçlü bir temel için yeterli** olacak şekilde tasarlanmıştır.
@@ -1374,7 +1388,7 @@ Planlanan Türkçe veri kaynakları:
 
 **C**: **8x A100 80GB için projeksiyon**dur (**benchmark iddiası değildir**):
 - Temel: ~25 saat (45K adım × 2 sn/adım)
-- v1.0 (Build 30) Optimize: **~15 saat** (45K adım × 1.2 sn/adım)
+- v1.0 (Build 30) Optimize: **tahmini** (45K adım; süre donanım/throughput'a bağlı, koşu sonrası netleşir)
 - **10 saat tasarruf!**
 
 ### S: Samsung S25'te gerçekten çalışır mı?
@@ -1766,6 +1780,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── technical_snapshot.md  # dokümantasyon/rapor dosyası
 │   ├── technical_snapshot_TR.md  # Türkçe doküman karşılığı
 │   ├── thermal_baseline.json  # JSON veri artefaktı
+│   ├── training_readiness_manifest.json  # JSON veri artefaktı
 │   ├── unicode_path_guard_report.json  # JSON veri artefaktı
 │   ├── verified_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── verified_matrix_TR.md  # Türkçe doküman karşılığı
@@ -1794,6 +1809,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── benchmarks_internal.py  # Python modülü/scripti (benchmarks internal için otomasyon scripti)
 │   ├── bitnet_kernel_benchmark_standalone.py  # Python modülü/scripti (bitnet kernel benchmark standalone için otomasyon scripti)
 │   ├── bootstrap_venv.sh  # kabuk otomasyon scripti
+│   ├── build_artifacts_release_zip.sh  # kabuk otomasyon scripti
 │   ├── build_investor_deck.py  # Python modülü/scripti (build investor deck için otomasyon scripti)
 │   ├── build_summary_pdf.py  # Python modülü/scripti (build summary pdf için otomasyon scripti)
 │   ├── build_validation_set.py  # Python modülü/scripti (build validation set için otomasyon scripti)

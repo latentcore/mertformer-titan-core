@@ -10,7 +10,7 @@ See also:
 
 ## Training Curriculum (from `scripts/data_pipeline.py`)
 
-### Stage 1 — Logic / Code + Math (target ratio: 45%)
+### Stage 1 — Logic / Code + Math (target ratio: 42%)
 - `bigcode/the-stack-v2` (train; filtered by language)
   Purpose: large-scale code corpus
   Dataset card: https://huggingface.co/datasets/bigcode/the-stack-v2
@@ -24,13 +24,13 @@ See also:
   Dataset card: https://huggingface.co/datasets/openai/gsm8k
   Status: referenced in code; revision pinned + manifest fingerprint recorded in `datasets/hashes.json`
 
-### Stage 2 — World Knowledge (target ratio: 35%)
+### Stage 2 — World Knowledge (target ratio: 30%)
 - `HuggingFaceFW/fineweb-edu` (train)
   Purpose: educational web corpus
   Dataset card: https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu
   Status: referenced in code; revision pinned + manifest fingerprint recorded in `datasets/hashes.json`
 
-### Stage 3 — Identity & Language (target ratio: 7%)
+### Stage 3 — Identity & Language (target ratio: 8%)
 - `wikimedia/wikipedia` (train; subset `20231101.tr`)
   Purpose: clean Turkish encyclopedia text
   Dataset card: https://huggingface.co/datasets/wikimedia/wikipedia
@@ -44,14 +44,10 @@ See also:
   Dataset card: https://huggingface.co/datasets/HuggingFaceTB/cosmopedia
   Status: referenced in code; revision pinned + manifest fingerprint recorded in `datasets/hashes.json`
 
-### Stage 4 — Soul / Instruction (target ratio: 3%)
+### Stage 4 — Soul / Instruction (target ratio: 8%)
 - `OpenAssistant/oasst_top1_2023-08-25` (train)
   Purpose: high-quality human dialog / instruction
   Dataset card: https://huggingface.co/datasets/OpenAssistant/oasst_top1_2023-08-25
-  Status: referenced in code; revision pinned + manifest fingerprint recorded in `datasets/hashes.json`
-- `mlabonne/guanaco-llama2-1k` (train)
-  Purpose: instruction-following samples
-  Dataset card: https://huggingface.co/datasets/mlabonne/guanaco-llama2-1k
   Status: referenced in code; revision pinned + manifest fingerprint recorded in `datasets/hashes.json`
 - `TFLai/Turkish-Alpaca` (train)
   Purpose: Turkish instruction following
@@ -61,12 +57,24 @@ See also:
   Purpose: Turkish instruction data
   Dataset card: https://huggingface.co/datasets/turkish-nlp-suite/InstrucTurca
   Status: referenced in code; revision pinned + manifest fingerprint recorded in `datasets/hashes.json`
+- `teknium/OpenHermes-2.5` (train; optional)
+  Purpose: general instruction set (optional fallback)
+  Dataset card: https://huggingface.co/datasets/teknium/OpenHermes-2.5
+  Status: referenced in code; verify license in `datasets/LICENSES.md`
 
-### Stage 5 — Tools / Function Calling (target ratio: 10%)
+### Stage 5 — Tools / Function Calling (target ratio: 12%)
 - `glaiveai/glaive-function-calling-v2` (train)
   Purpose: function calling / tool use
   Dataset card: https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2
   Status: referenced in code; revision pinned + manifest fingerprint recorded in `datasets/hashes.json`
+- `gorilla-llm/gorilla-openfunctions-v2` (train; optional)
+  Purpose: tool-use diversity (optional/gated)
+  Dataset card: https://huggingface.co/datasets/gorilla-llm/gorilla-openfunctions-v2
+  Status: referenced in code; verify license in `datasets/LICENSES.md`
+- `NousResearch/FC-1k` (train; optional)
+  Purpose: lightweight function-calling expansion
+  Dataset card: https://huggingface.co/datasets/NousResearch/FC-1k
+  Status: referenced in code; verify license in `datasets/LICENSES.md`
 
 ## Evaluation / Benchmarks (from `scripts/benchmarks_internal.py`, `eval/gsm8k.py`)
 - `openai_humaneval` (test)

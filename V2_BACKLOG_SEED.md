@@ -1,5 +1,13 @@
 # V2 Backlog Seed (Post V1 Closure)
 
+## Completed in Build30 V2 Refactor
+- dataset dedup (rolling hash, configurable scope)
+- stage 4/5 curriculum expansion + ratio rebalance
+- MoE dispatch parallel gather/scatter path (sequential fallback retained)
+- Liquid CfC training fast path (torch.compile guarded)
+- FlashAttention inference opt-in flag
+- SOP plot integration + artifacts zip refresh
+
 ## Track A — Core Runtime
 - compile policy auto-profiler
 - cudagraph static-shape validator hardening

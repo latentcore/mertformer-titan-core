@@ -327,6 +327,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── technical_snapshot.md  # documentation/report file
 │   ├── technical_snapshot_TR.md  # Turkish document counterpart
 │   ├── thermal_baseline.json  # JSON data artifact
+│   ├── training_readiness_manifest.json  # JSON data artifact
 │   ├── unicode_path_guard_report.json  # JSON data artifact
 │   ├── verified_matrix.md  # documentation/report file
 │   ├── verified_matrix_TR.md  # Turkish document counterpart
@@ -355,6 +356,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── benchmarks_internal.py  # Python module/script (automation script for benchmarks internal)
 │   ├── bitnet_kernel_benchmark_standalone.py  # Python module/script (automation script for bitnet kernel benchmark standalone)
 │   ├── bootstrap_venv.sh  # shell automation script
+│   ├── build_artifacts_release_zip.sh  # shell automation script
 │   ├── build_investor_deck.py  # Python module/script (automation script for build investor deck)
 │   ├── build_summary_pdf.py  # Python module/script (automation script for build summary pdf)
 │   ├── build_validation_set.py  # Python module/script (automation script for build validation set)

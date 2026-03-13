@@ -13,7 +13,7 @@
         {
           "dataset": "HuggingFaceFW/fineweb-edu",
           "file": "scripts/data_pipeline.py",
-          "line": 89,
+          "line": 91,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"HuggingFaceFW/fineweb-edu\","
         }
@@ -30,7 +30,7 @@
         {
           "dataset": "HuggingFaceTB/cosmopedia",
           "file": "scripts/data_pipeline.py",
-          "line": 127,
+          "line": 129,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"HuggingFaceTB/cosmopedia\","
         }
@@ -41,8 +41,25 @@
       }
     },
     {
+      "dataset": "NousResearch/FC-1k",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "NousResearch/FC-1k",
+          "file": "scripts/data_pipeline.py",
+          "line": 209,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"NousResearch/FC-1k\","
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/NousResearch/FC-1k"
+      }
+    },
+    {
       "dataset": "OpenAssistant/oasst_top1_2023-08-25",
-      "ref_count": 2,
+      "ref_count": 3,
       "refs": [
         {
           "dataset": "OpenAssistant/oasst_top1_2023-08-25",
@@ -54,7 +71,14 @@
         {
           "dataset": "OpenAssistant/oasst_top1_2023-08-25",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2373,
+          "line": 2404,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"OpenAssistant/oasst_top1_2023-08-25\", \"split\": \"train[:2%]\", \"field\": \"text\"},"
+        },
+        {
+          "dataset": "OpenAssistant/oasst_top1_2023-08-25",
+          "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
+          "line": 2948,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"OpenAssistant/oasst_top1_2023-08-25\", \"split\": \"train[:2%]\", \"field\": \"text\"},"
         }
@@ -71,7 +95,7 @@
         {
           "dataset": "TFLai/Turkish-Alpaca",
           "file": "scripts/data_pipeline.py",
-          "line": 164,
+          "line": 155,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"TFLai/Turkish-Alpaca\", # [FIX] Replaced broken link with active repo"
         }
@@ -83,19 +107,26 @@
     },
     {
       "dataset": "TIGER-Lab/MathInstruct",
-      "ref_count": 2,
+      "ref_count": 3,
       "refs": [
         {
           "dataset": "TIGER-Lab/MathInstruct",
           "file": "scripts/data_pipeline.py",
-          "line": 63,
+          "line": 65,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"TIGER-Lab/MathInstruct\", # [FIX] Nvidia repo removed, switched to TIGER-Lab"
         },
         {
           "dataset": "TIGER-Lab/MathInstruct",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2343,
+          "line": 2374,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"TIGER-Lab/MathInstruct\", \"split\": \"train[:1%]\", \"field\": \"instruction\"},"
+        },
+        {
+          "dataset": "TIGER-Lab/MathInstruct",
+          "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
+          "line": 2918,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"TIGER-Lab/MathInstruct\", \"split\": \"train[:1%]\", \"field\": \"instruction\"},"
         }
@@ -107,19 +138,26 @@
     },
     {
       "dataset": "bigcode/the-stack-v2",
-      "ref_count": 2,
+      "ref_count": 3,
       "refs": [
         {
           "dataset": "bigcode/the-stack-v2",
           "file": "scripts/data_pipeline.py",
-          "line": 54,
+          "line": 56,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"bigcode/the-stack-v2\","
         },
         {
           "dataset": "bigcode/the-stack-v2",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2361,
+          "line": 2392,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"bigcode/the-stack-v2\", \"split\": \"train[:0.02%]\", \"field\": \"content\"},"
+        },
+        {
+          "dataset": "bigcode/the-stack-v2",
+          "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
+          "line": 2936,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"bigcode/the-stack-v2\", \"split\": \"train[:0.02%]\", \"field\": \"content\"},"
         }
@@ -131,12 +169,19 @@
     },
     {
       "dataset": "codeparrot/github-code",
-      "ref_count": 1,
+      "ref_count": 2,
       "refs": [
         {
           "dataset": "codeparrot/github-code",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2356,
+          "line": 2387,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"codeparrot/github-code\","
+        },
+        {
+          "dataset": "codeparrot/github-code",
+          "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
+          "line": 2931,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"codeparrot/github-code\","
         }
@@ -153,7 +198,7 @@
         {
           "dataset": "glaiveai/glaive-function-calling-v2",
           "file": "scripts/data_pipeline.py",
-          "line": 189,
+          "line": 190,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"glaiveai/glaive-function-calling-v2\","
         }
@@ -161,6 +206,23 @@
       "metadata": {
         "license": null,
         "hf_url": "https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2"
+      }
+    },
+    {
+      "dataset": "gorilla-llm/gorilla-openfunctions-v2",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "gorilla-llm/gorilla-openfunctions-v2",
+          "file": "scripts/data_pipeline.py",
+          "line": 199,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"gorilla-llm/gorilla-openfunctions-v2\","
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/gorilla-llm/gorilla-openfunctions-v2"
       }
     },
     {
@@ -181,30 +243,13 @@
       }
     },
     {
-      "dataset": "mlabonne/guanaco-llama2-1k",
-      "ref_count": 1,
-      "refs": [
-        {
-          "dataset": "mlabonne/guanaco-llama2-1k",
-          "file": "scripts/data_pipeline.py",
-          "line": 155,
-          "kind": "pipeline_source",
-          "snippet": "\"dataset\": \"mlabonne/guanaco-llama2-1k\","
-        }
-      ],
-      "metadata": {
-        "license": null,
-        "hf_url": "https://huggingface.co/datasets/mlabonne/guanaco-llama2-1k"
-      }
-    },
-    {
       "dataset": "openai/gsm8k",
-      "ref_count": 5,
+      "ref_count": 6,
       "refs": [
         {
           "dataset": "openai/gsm8k",
           "file": "scripts/data_pipeline.py",
-          "line": 72,
+          "line": 74,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"openai/gsm8k\","
         },
@@ -218,7 +263,14 @@
         {
           "dataset": "openai/gsm8k",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2342,
+          "line": 2373,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"openai/gsm8k\", \"subset\": \"main\", \"split\": \"train\", \"field\": \"question\"},"
+        },
+        {
+          "dataset": "openai/gsm8k",
+          "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
+          "line": 2917,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"openai/gsm8k\", \"subset\": \"main\", \"split\": \"train\", \"field\": \"question\"},"
         },
@@ -260,20 +312,44 @@
       }
     },
     {
+      "dataset": "teknium/OpenHermes-2.5",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "teknium/OpenHermes-2.5",
+          "file": "scripts/data_pipeline.py",
+          "line": 173,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"teknium/OpenHermes-2.5\",  # Optional general instruction set"
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/teknium/OpenHermes-2.5"
+      }
+    },
+    {
       "dataset": "turkish-nlp-suite/InstrucTurca",
-      "ref_count": 2,
+      "ref_count": 3,
       "refs": [
         {
           "dataset": "turkish-nlp-suite/InstrucTurca",
           "file": "scripts/data_pipeline.py",
-          "line": 173,
+          "line": 164,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"turkish-nlp-suite/InstrucTurca\","
         },
         {
           "dataset": "turkish-nlp-suite/InstrucTurca",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2374,
+          "line": 2405,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"turkish-nlp-suite/InstrucTurca\", \"split\": \"train[:5%]\", \"field\": \"Output\"},"
+        },
+        {
+          "dataset": "turkish-nlp-suite/InstrucTurca",
+          "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
+          "line": 2949,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"turkish-nlp-suite/InstrucTurca\", \"split\": \"train[:5%]\", \"field\": \"Output\"},"
         }
@@ -285,26 +361,33 @@
     },
     {
       "dataset": "uonlp/CulturaX",
-      "ref_count": 3,
+      "ref_count": 4,
       "refs": [
         {
           "dataset": "uonlp/CulturaX",
           "file": "scripts/data_pipeline.py",
-          "line": 117,
+          "line": 119,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"uonlp/CulturaX\", # [NEW] Massive Web Scale Turkish"
         },
         {
           "dataset": "uonlp/CulturaX",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2330,
+          "line": 2361,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"uonlp/CulturaX\", \"subset\": \"tr\", \"split\": \"train[:0.2%]\", \"field\": \"text\"},"
+        },
+        {
+          "dataset": "uonlp/CulturaX",
+          "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
+          "line": 2905,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"uonlp/CulturaX\", \"subset\": \"tr\", \"split\": \"train[:0.2%]\", \"field\": \"text\"},"
         },
         {
           "dataset": "uonlp/CulturaX",
           "file": "scripts/titan_preflight.py",
-          "line": 346,
+          "line": 444,
           "kind": "dataset_info",
           "snippet": "api.dataset_info(\"uonlp/CulturaX\", token=hf_token)"
         }
@@ -316,19 +399,26 @@
     },
     {
       "dataset": "wikimedia/wikipedia",
-      "ref_count": 2,
+      "ref_count": 3,
       "refs": [
         {
           "dataset": "wikimedia/wikipedia",
           "file": "scripts/data_pipeline.py",
-          "line": 107,
+          "line": 109,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"wikimedia/wikipedia\","
         },
         {
           "dataset": "wikimedia/wikipedia",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2329,
+          "line": 2360,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"wikimedia/wikipedia\", \"subset\": \"20231101.tr\", \"split\": \"train[:2%]\", \"field\": \"text\"},"
+        },
+        {
+          "dataset": "wikimedia/wikipedia",
+          "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
+          "line": 2904,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"wikimedia/wikipedia\", \"subset\": \"20231101.tr\", \"split\": \"train[:2%]\", \"field\": \"text\"},"
         }

@@ -10,7 +10,7 @@ Bkz:
 
 ## Eğitim Curriculum’u (`scripts/data_pipeline.py`)
 
-### Stage 1 — Lojik / Kod + Matematik (hedef oran: %45)
+### Stage 1 — Lojik / Kod + Matematik (hedef oran: %42)
 - `bigcode/the-stack-v2` (train; dil filtreli)
   Amaç: büyük ölçekli kod korpusu
   Dataset card: https://huggingface.co/datasets/bigcode/the-stack-v2
@@ -24,13 +24,13 @@ Bkz:
   Dataset card: https://huggingface.co/datasets/openai/gsm8k
   Durum: kodda referansli; revision pin + manifest fingerprint `datasets/hashes.json` içinde kayıtlı
 
-### Stage 2 — Dünya Bilgisi (hedef oran: %35)
+### Stage 2 — Dünya Bilgisi (hedef oran: %30)
 - `HuggingFaceFW/fineweb-edu` (train)
   Amaç: eğitici web korpusu
   Dataset card: https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu
   Durum: kodda referansli; revision pin + manifest fingerprint `datasets/hashes.json` içinde kayıtlı
 
-### Stage 3 — Kimlik ve Dil (hedef oran: %7)
+### Stage 3 — Kimlik ve Dil (hedef oran: %8)
 - `wikimedia/wikipedia` (train; subset `20231101.tr`)
   Amaç: temiz Türkçe ansiklopedi metni
   Dataset card: https://huggingface.co/datasets/wikimedia/wikipedia
@@ -44,14 +44,10 @@ Bkz:
   Dataset card: https://huggingface.co/datasets/HuggingFaceTB/cosmopedia
   Durum: kodda referansli; revision pin + manifest fingerprint `datasets/hashes.json` içinde kayıtlı
 
-### Stage 4 — Ruh / Talimat (hedef oran: %3)
+### Stage 4 — Ruh / Talimat (hedef oran: %8)
 - `OpenAssistant/oasst_top1_2023-08-25` (train)
   Amaç: yüksek kalite insan diyaloğu / talimat
   Dataset card: https://huggingface.co/datasets/OpenAssistant/oasst_top1_2023-08-25
-  Durum: kodda referansli; revision pin + manifest fingerprint `datasets/hashes.json` içinde kayıtlı
-- `mlabonne/guanaco-llama2-1k` (train)
-  Amaç: talimat takibi örnekleri
-  Dataset card: https://huggingface.co/datasets/mlabonne/guanaco-llama2-1k
   Durum: kodda referansli; revision pin + manifest fingerprint `datasets/hashes.json` içinde kayıtlı
 - `TFLai/Turkish-Alpaca` (train)
   Amaç: Türkçe talimat takibi
@@ -61,12 +57,24 @@ Bkz:
   Amaç: Türkçe talimat verisi
   Dataset card: https://huggingface.co/datasets/turkish-nlp-suite/InstrucTurca
   Durum: kodda referansli; revision pin + manifest fingerprint `datasets/hashes.json` içinde kayıtlı
+- `teknium/OpenHermes-2.5` (train; opsiyonel)
+  Amaç: genel instruction seti (opsiyonel fallback)
+  Dataset card: https://huggingface.co/datasets/teknium/OpenHermes-2.5
+  Durum: kodda referansli; lisans `datasets/LICENSES_TR.md` içinde doğrulanmalı
 
-### Stage 5 — Araç Kullanımi / Function Calling (hedef oran: %10)
+### Stage 5 — Araç Kullanımi / Function Calling (hedef oran: %12)
 - `glaiveai/glaive-function-calling-v2` (train)
   Amaç: function calling / tool use
   Dataset card: https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2
   Durum: kodda referansli; revision pin + manifest fingerprint `datasets/hashes.json` içinde kayıtlı
+- `gorilla-llm/gorilla-openfunctions-v2` (train; opsiyonel)
+  Amaç: tool-use çeşitliliği (opsiyonel/gated)
+  Dataset card: https://huggingface.co/datasets/gorilla-llm/gorilla-openfunctions-v2
+  Durum: kodda referansli; lisans `datasets/LICENSES_TR.md` içinde doğrulanmalı
+- `NousResearch/FC-1k` (train; opsiyonel)
+  Amaç: hafif function-calling genişletmesi
+  Dataset card: https://huggingface.co/datasets/NousResearch/FC-1k
+  Durum: kodda referansli; lisans `datasets/LICENSES_TR.md` içinde doğrulanmalı
 
 ## Değerlendirme / Benchmark (`scripts/benchmarks_internal.py`, `eval/gsm8k.py`)
 - `openai_humaneval` (test)

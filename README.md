@@ -128,6 +128,8 @@ This repository is no longer in idea/prototype-only state. Core validation gates
 - Dataset license/hash workflow must remain compliant.
 - Target hardware allocation (GPU/edge) must be reserved.
 - Full training run and benchmark outputs will be recorded only after those prerequisites.
+- Default token budget now uses `fixed_steps` (45K). Use `TITAN_TOKEN_BUDGET_MODE=open_ended` only with an explicit target override.
+- Offline runs require pre-generated stage JSONL (`python scripts/data_pipeline.py`).
 
 ### Start command (when prerequisites are satisfied)
 ```bash
@@ -260,6 +262,8 @@ Primary entry docs and checklists.
 - [snake_demo.py](snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
 - [USAGE_GUIDE.md](USAGE_GUIDE.md) — Operational usage guide (EN).
 - [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md) — Operational usage guide (TR).
+- [docs/CHAIN_MAP.md](docs/CHAIN_MAP.md) — Connected vs independent chain map (EN).
+- [docs/CHAIN_MAP_TR.md](docs/CHAIN_MAP_TR.md) — Connected vs independent chain map (TR).
 - [reports/commercial_handover/known_issues.md](reports/commercial_handover/known_issues.md) — Known issues register for transfer risk visibility.
 - [reports/commercial_handover/handover_scope.md](reports/commercial_handover/handover_scope.md) — Transfer scope and explicit out-of-scope boundaries.
 - [reports/commercial_handover/ownership_and_role.md](reports/commercial_handover/ownership_and_role.md) — Ownership model and decision rights after transfer.
@@ -466,6 +470,16 @@ Architecture truth note: `layers/mla.py` class naming is `MLA`, while the curren
 Name expansion:
 - **MERT**: **Modular Edge Reasoning Transformer**
 - **MertFormer**: **Modular Edge Reasoning Transformer Framework for On-device Modular Execution and Reliability**
+
+### 🔗 Chain Map (Connected vs Independent)
+```mermaid
+flowchart TD
+  A["Stage JSONL (datasets/stage*)"] --> B["Training (run.sh → train/train.py)"]
+  B --> C["Logs (logs/*.jsonl)"]
+  C --> D["SOP artifacts (reports + packages/artifacts zips)"]
+```
+
+See the full map: [`docs/CHAIN_MAP.md`](docs/CHAIN_MAP.md)
 
 ### Why MertFormer Titan?
 
@@ -1160,13 +1174,13 @@ liquid_spike_threshold = 5.0
 
 | Stage | Steps | Focus | Dataset Size |
 | :--- | :---: | :--- | :--- |
-| **1. Logic & Reasoning** | 0-25% | Math, coding, logic | 25% of corpus |
-| **2. World Knowledge** | 25-55% | Facts, history, science | 30% of corpus |
-| **3. Language (TR)** | 55-75% | Grammar, fluency, culture | 20% of corpus |
-| **4. Soul (Identity)** | 75-85% | Personality, instruction | 10% of corpus |
-| **5. Tool Use** | 85-100% | Function calling, APIs | 15% of corpus |
+| **1. Logic & Reasoning** | 0-42% | Math, coding, logic | 42% of corpus |
+| **2. World Knowledge** | 42-72% | Facts, history, science | 30% of corpus |
+| **3. Language (TR)** | 72-80% | Grammar, fluency, culture | 8% of corpus |
+| **4. Soul (Identity)** | 80-88% | Personality, instruction | 8% of corpus |
+| **5. Tool Use** | 88-100% | Function calling, APIs | 12% of corpus |
 
-**Total Tokens**: ~24 Billion (high-quality, KD-focused)
+**Total Tokens**: ~23.6 Billion (high-quality, KD-focused)
 *Note: Distillation boosts effective learning per token, but it does not increase raw token count.*
 
 This curriculum order and token budget are designed to be **sufficient for a strong general foundation**.
@@ -1374,7 +1388,7 @@ Planned Turkish data sources:
 
 **A**: On **8x A100 80GB** (projection, **not a benchmark claim**):
 - Baseline: ~25 hours (45K steps x 2 sec/step)
-- v1.0 (Build 30) optimized: **~15 hours** (45K steps x 1.2 sec/step)
+- v1.0 (Build 30) optimized: **estimate only** (45K steps; wall time depends on throughput and hardware; measured after run)
 - ~10 hours estimated savings
 
 ### Q: Does it really run on Samsung S25?
@@ -1766,6 +1780,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── technical_snapshot.md  # documentation/report file
 │   ├── technical_snapshot_TR.md  # Turkish document counterpart
 │   ├── thermal_baseline.json  # JSON data artifact
+│   ├── training_readiness_manifest.json  # JSON data artifact
 │   ├── unicode_path_guard_report.json  # JSON data artifact
 │   ├── verified_matrix.md  # documentation/report file
 │   ├── verified_matrix_TR.md  # Turkish document counterpart
@@ -1794,6 +1809,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── benchmarks_internal.py  # Python module/script (automation script for benchmarks internal)
 │   ├── bitnet_kernel_benchmark_standalone.py  # Python module/script (automation script for bitnet kernel benchmark standalone)
 │   ├── bootstrap_venv.sh  # shell automation script
+│   ├── build_artifacts_release_zip.sh  # shell automation script
 │   ├── build_investor_deck.py  # Python module/script (automation script for build investor deck)
 │   ├── build_summary_pdf.py  # Python module/script (automation script for build summary pdf)
 │   ├── build_validation_set.py  # Python module/script (automation script for build validation set)
