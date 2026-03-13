@@ -1,5 +1,5 @@
 """
-Kaggle One-File Demo (Build 30, Colab Math Fastproof Companion)
+Kaggle One-File Demo (Build 30 V2, Colab Math Fastproof Companion)
 ----------------------------------------------------------------
 Single-file, repo-import-free script for:
 - Colab-first fastproof training (<=1h target) on synthetic arithmetic
@@ -189,6 +189,8 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         # Colab-oriented fastproof profile for arithmetic learning-speed validation.
         "quick": False,
         "max_wall_hours": 1.0,
+        "max_wall_hours_locked": False,
+        "wall_time_profile": "profile_default",
         "target_train_tokens": 3_000_000,
         "max_steps": 2400,
         "batch_size": 16,
@@ -1436,6 +1438,23 @@ def is_notebook_runtime() -> bool:
         return False
 
 
+
+
+def detect_kaggle_runtime() -> bool:
+    return bool(
+        os.environ.get("KAGGLE_KERNEL_RUN_TYPE")
+        or os.environ.get("KAGGLE_URL_BASE")
+        or os.environ.get("KAGGLE_KERNEL_RUN_ID")
+    )
+
+
+def detect_colab_runtime() -> bool:
+    return bool(
+        os.environ.get("COLAB_GPU")
+        or os.environ.get("COLAB_TPU_ADDR")
+        or os.environ.get("COLAB_BACKEND_VERSION")
+    )
+
 def can_accept_user_input(cfg: Dict[str, Any]) -> bool:
     if bool(cfg.get("force_interactive_input", False)):
         return True
@@ -1462,6 +1481,8 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
     # Ensure required runtime keys exist for all profiles (including custom).
     required_defaults = {
         "max_wall_hours": 1.0,
+        "max_wall_hours_locked": False,
+        "wall_time_profile": "profile_default",
         "target_train_tokens": 2_000_000,
         "max_steps": 10_000,
         "batch_size": 2,
@@ -1675,6 +1696,15 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
         logger_mode = "jsonl_ring"
     merged["logger_mode"] = logger_mode
 
+    
+    if not bool(merged.get("max_wall_hours_locked", False)):
+        if detect_kaggle_runtime():
+            merged["max_wall_hours"] = 11.5
+            merged["wall_time_profile"] = "kaggle_default"
+        elif detect_colab_runtime():
+            merged["max_wall_hours"] = 23.5
+            merged["wall_time_profile"] = "colab_default"
+
     merged["run_config_schema_report"] = validate_run_config_schema(merged)
     return merged
 
@@ -1704,6 +1734,7 @@ def parse_cli_overrides() -> Dict[str, Any]:
         overrides["interactive_menu"] = True
     if args.max_wall_hours is not None:
         overrides["max_wall_hours"] = float(args.max_wall_hours)
+        overrides["max_wall_hours_locked"] = True
     if args.max_steps is not None:
         overrides["max_steps"] = int(args.max_steps)
     if args.artifact_root:

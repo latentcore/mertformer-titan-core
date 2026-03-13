@@ -3,7 +3,7 @@
 ==============================================================================
 MERTFORMER TITAN — TRAINING LOG VISUALIZER
 ------------------------------------------------------------------------------
-Build 30 · Forensic-grade training analysis
+Build 30 V2 · Forensic-grade training analysis
 
 Usage:
     python scripts/plot_training_log.py <path_to_jsonl_log>

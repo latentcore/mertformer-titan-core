@@ -44,6 +44,11 @@ jobs:
         run: |
           bash scripts/verify_all.sh
 
+
+      - name: CfC/MoE tolerance check
+        run: |
+          python scripts/cfc_moe_tolerance_check.py --out reports/cfc_moe_tolerance_report.json
+
       - name: Hardening Bundle
         run: |
           python scripts/hardening_bundle.py

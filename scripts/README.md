@@ -22,6 +22,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - `operator_mode_gate.py` — Single-entry ops gate (safety + sanity checks).
 - `overfit_gate.py` — 1MB overfit gate (safe/full modes).
 - `train_smoke.py` — Tiny offline training sanity loop (CPU/MPS).
+- `cfc_moe_tolerance_check.py` — CfC/MoE loss tolerance check (<=1% diff).
 
 ## Review-Ready Tooling
 - `bootstrap_venv.sh` — Creates `.titan-venv` (Python 3.11 baseline). Use `--demo` to install `pygame`.
@@ -40,6 +41,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Both artifacts are refreshed/overwritten on each full SOP run.
 
 ## Evaluation & Benchmarks
+- `plot_training_log.py` — Training JSONL → dashboard plotter (`reports/training_dashboard.png`).
 - `golden_eval.py` — Golden sample evaluator (50 prompts).
 - `golden_score.py` — Assertion-based golden scorer (`reports/benchmarks/golden_summary.json`).
 - `benchmarks_internal.py` — HumanEval / MBPP output generator (SKIP if checkpoint/datasets are unavailable).

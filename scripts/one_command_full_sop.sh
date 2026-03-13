@@ -61,6 +61,7 @@ fi
   echo "[run] start_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
   run_step "verify_all" env TITAN_OFFLINE=1 TITAN_WANDB=0 TITAN_PYTHON="$PY_BIN" bash scripts/verify_all.sh
+  run_step "cfc_moe_tolerance_check" "$PY_BIN" scripts/cfc_moe_tolerance_check.py --out reports/cfc_moe_tolerance_report.json
   run_step "md_quality_all" "$PY_BIN" scripts/md_quality_gate.py --root . --scope all --out reports/md_lint_report.json
   run_step "linkcheck_all" "$PY_BIN" scripts/linkcheck_gate.py --root . --scope all --out reports/linkcheck_report.json
   run_step "docs_inventory" "$PY_BIN" scripts/docs_inventory.py
@@ -124,6 +125,8 @@ runtime_clean_ok = False
 zip_ok = False
 secret_ok = False
 dashboard_path = ""
+tolerance_line = ""
+tolerance_ok = False
 release_sha = ""
 locked_sha = ""
 
@@ -146,6 +149,9 @@ for line in clean.splitlines():
         runtime_clean_ok = True
     elif line.startswith("OK: no secret patterns detected in tracked files."):
         secret_ok = True
+    elif line.startswith("[tolerance]"):
+        tolerance_line = line.strip()
+        tolerance_ok = "PASS" in line
     elif line.startswith("training_dashboard="):
         dashboard_path = line.split("=", 1)[1].strip()
     elif line.startswith("release_sha256="):
@@ -171,6 +177,7 @@ summary = "\n".join(
         f"- unicode_path_guard: {'PASS' if unicode_ok else 'FAIL'}",
         f"- duplicate_zip_guard: {'PASS' if duplicate_ok else 'FAIL'}",
         f"- clean_runtime_artifacts_check: {'PASS' if runtime_clean_ok else 'FAIL'}",
+        f"- cfc_moe_tolerance_check: {tolerance_line or 'not_found'}",
         f"- zip_denylist_audit: {zip_status}",
         f"- secret_scan: {'PASS' if secret_ok else 'FAIL'}",
         f"- training_dashboard: {dashboard_path or 'not_generated'}",

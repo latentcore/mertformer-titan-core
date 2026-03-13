@@ -13,11 +13,11 @@ if [[ -z "$PY_BIN" ]]; then
   fi
 fi
 
-ART_DIR="$ROOT_DIR/artifacts"
+ART_DIR="artifacts"
 ZIP_PATH="$ART_DIR/mertformer_release.zip"
 SHA_PATH="$ART_DIR/mertformer_release.zip.sha256"
-REPORT_A="$ROOT_DIR/reports/artifacts_zip_denylist_audit.json"
-REPORT_B="$ROOT_DIR/reports/zip_audit_artifacts.json"
+REPORT_A="reports/artifacts_zip_denylist_audit.json"
+REPORT_B="reports/zip_audit_artifacts.json"
 
 mkdir -p "$ART_DIR" "$ROOT_DIR/reports"
 
@@ -26,7 +26,7 @@ zip -r "$ZIP_PATH" . \
   -x ".git/*" "*/.git/*" "*.pyc" "*__pycache__*" \
      ".titan-venv/*" ".lint-venv/*" ".venv/*" ".idea/*" \
      ".pytest_cache/*" ".ruff_cache/*" ".mypy_cache/*" \
-     ".env" ".env.*" "logs/*" \
+     ".env" ".env.*" "logs/*" "reports/.one_command_full_sop_raw.*" \
      "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256"
 
 shasum -a 256 "$ZIP_PATH" > "$SHA_PATH"
