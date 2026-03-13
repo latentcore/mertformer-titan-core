@@ -17,6 +17,8 @@ Generated automatically.
 - `INTERNAL_AGI_GAP_TR.md`
 - `MODEL_CARD.md`
 - `MODEL_CARD_TR.md`
+- `MODEL_LICENSE.md`
+- `MODEL_LICENSE_TR.md`
 - `PITCH.md`
 - `PITCH_TR.md`
 - `README.md`
@@ -35,6 +37,8 @@ Generated automatically.
 - `TECHNICAL_REPORT_TR.md`
 - `TRAINING_PLAN.md`
 - `TRAINING_PLAN_TR.md`
+- `TROUBLESHOOTING.md`
+- `TROUBLESHOOTING_TR.md`
 - `USAGE_GUIDE.md`
 - `USAGE_GUIDE_TR.md`
 - `USE_POLICY.md`

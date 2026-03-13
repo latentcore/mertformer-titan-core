@@ -1,6 +1,6 @@
 {
   "model_name": "MertFormer_Titan_S25_Prod",
-  "version": "v1.0-TITAN-BUILD30",
+  "version": "v1.0-TITAN-BUILD30-V2",
   "device": "mps",
   "seed": 1453,
   "vocab_size": 128256,

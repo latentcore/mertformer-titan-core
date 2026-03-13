@@ -63,6 +63,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── inventory.md  # documentation/report file
 │   ├── inventory_TR.md  # Turkish document counterpart
 │   └── validation.jsonl  # JSONL data/log artifact
+├── docs/  # directory
+│   ├── CHAIN_MAP.md  # documentation/report file
+│   └── CHAIN_MAP_TR.md  # Turkish document counterpart
 ├── economics/  # directory
 │   ├── cost_model.md  # documentation/report file
 │   ├── cost_model_TR.md  # Turkish document counterpart
@@ -400,6 +403,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── one_command_full_sop.sh  # shell automation script
 │   ├── operator_mode_gate.py  # Python module/script (automation script for operator mode gate)
 │   ├── overfit_gate.py  # Python module/script (automation script for overfit gate)
+│   ├── plot_training_log.py  # Python module/script (automation script for plot training log)
 │   ├── ram_guard.py  # Python module/script (automation script for ram guard)
 │   ├── record_dataset_hashes.py  # Python module/script (automation script for record dataset hashes)
 │   ├── release_build30.sh  # shell automation script

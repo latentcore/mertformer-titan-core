@@ -1,4 +1,4 @@
-[run] start_utc=2026-03-13T04:56:25Z
+[run] start_utc=2026-03-13T05:45:30Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
@@ -25,7 +25,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-111 passed, 3 skipped, 6 warnings in 29.20s
+111 passed, 3 skipped, 6 warnings in 20.90s
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -64,7 +64,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <REPO_ROOT>/temp_preflight_data
 ✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 49.79s
+✈️ Preflight Duration: 3.55s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
@@ -76,7 +76,7 @@ Overfit step 0: loss=121.5519
 Overfit step 12: loss=117.8494
 Overfit step 24: loss=113.7169
 Overfit step 36: loss=97.5475
-Overfit step 48: loss=50.8517
+Overfit step 48: loss=50.8537
 Overfit gate: PASS
 Golden samples: 50
 - algorithms: 13
@@ -109,7 +109,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 13.674811840057373,
+  "elapsed_sec": 7.5089030265808105,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -135,9 +135,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-03-13T04:58:05Z",
-        "cpu_percent": 14.6,
-        "ram_used_gb": 6.743133544921875,
+        "timestamp_utc": "2026-03-13T05:46:06Z",
+        "cpu_percent": 31.8,
+        "ram_used_gb": 6.8358154296875,
         "ram_total_gb": 16.0
       }
     },
@@ -164,16 +164,18 @@ OK: unicode path guard; hits=0
 [verify] Duplicate zip guard gate ...
 OK: duplicate zip guard; groups=0
 [verify] Manifest sync gate ...
-{"manifest_entries": 478, "ok": true}
+{"manifest_entries": 481, "ok": true}
 [verify] OK
+[run] step=cfc_moe_tolerance_check
+[tolerance] PASS (max_diff_moe=0.000000 max_diff_cfc=0.000014)
 [run] step=md_quality_all
-md_quality: scope=all files=251 errors=0 warnings=0
+md_quality: scope=all files=255 errors=0 warnings=0
 [run] step=linkcheck_all
-linkcheck: scope=all files=251 missing=0
+linkcheck: scope=all files=255 missing=0
 [run] step=docs_inventory
-{"ok": true, "md_files": 253, "dup_groups": 21}
+{"ok": true, "md_files": 257, "dup_groups": 21}
 [run] step=sync_manifest
-{"manifest_entries": 478, "ok": true}
+{"manifest_entries": 481, "ok": true}
 [run] step=dealroom_sync
 {"ok": true}
 [run] step=unicode_path_guard
@@ -184,7 +186,7 @@ OK: duplicate zip guard; groups=0
 [runner] cmd=bash -lc true
 [runner] cleanup_root=<REPO_ROOT>
 [runner] include_tool_caches=True full_clean=True include_venv_caches=True dry_run=False
-[cleanup] dirs_found=584 files_found=13 dirs_removed=584 files_removed=13
+[cleanup] dirs_found=577 files_found=0 dirs_removed=577 files_removed=0
 [run] step=clean_runtime_artifacts_check
 OK: runtime artifacts and caches are clean
 [run] step=release_build30
@@ -203,7 +205,7 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
-release_sha256=6cd1a6e57d57b244fe6bad5548961c1feca23a68ee1b27359857ef0bb599d9b2
+release_sha256=a13151000e23d6718b6f3b5cdd432fe01d03aad35a36d6b3edfc8523400084a2
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=artifact_release_zip
@@ -219,14 +221,14 @@ locked_sha256=
   adding: tools/sandbox/README.md (deflated 35%)
   adding: tools/sandbox/README_TR.md (deflated 35%)
   adding: USE_POLICY.md (deflated 42%)
-  adding: PITCH_TR.md (deflated 35%)
+  adding: PITCH_TR.md (deflated 36%)
   adding: training_dynamics/ (stored 0%)
   adding: training_dynamics/cold_vs_warm_TR.md (deflated 5%)
   adding: training_dynamics/cold_vs_warm.md (deflated 11%)
   adding: SDK_GUIDE_TR.md (deflated 54%)
   adding: layers/ (stored 0%)
   adding: layers/qinn.py (deflated 59%)
-  adding: layers/ffn.py (deflated 61%)
+  adding: layers/ffn.py (deflated 60%)
   adding: layers/cognitive_extensions.py (deflated 74%)
   adding: layers/liquid.py (deflated 70%)
   adding: layers/bitlinear.py (deflated 67%)
@@ -244,6 +246,7 @@ locked_sha256=
   adding: CHANGELOG.md (deflated 51%)
   adding: CHANGELOG_TR.md (deflated 48%)
   adding: TECHNICAL_REPORT_TR.md (deflated 51%)
+  adding: TROUBLESHOOTING.md (deflated 47%)
   adding: config/ (stored 0%)
   adding: config/config.py (deflated 67%)
   adding: config/__init__.py (stored 0%)
@@ -353,7 +356,7 @@ locked_sha256=
   adding: utils/__init__.py (stored 0%)
   adding: utils/logger.py (deflated 74%)
   adding: utils/safety.py (deflated 58%)
-  adding: PITCH.md (deflated 36%)
+  adding: PITCH.md (deflated 37%)
   adding: TECHNICAL_REPORT.md (deflated 52%)
   adding: TRAINING_PLAN.md (deflated 51%)
   adding: docs/ (stored 0%)
@@ -371,6 +374,7 @@ locked_sha256=
   adding: README.md (deflated 72%)
   adding: DECISIONS_TR.md (deflated 25%)
   adding: README_CHECKLIST_TR.md (deflated 44%)
+  adding: MODEL_LICENSE.md (deflated 33%)
   adding: mertformer-titan-dealroom-private/ (stored 0%)
   adding: mertformer-titan-dealroom-private/MANIFEST/ (stored 0%)
   adding: mertformer-titan-dealroom-private/MANIFEST/final_operator_checklist.md (deflated 26%)
@@ -507,6 +511,7 @@ locked_sha256=
   adding: scripts/record_dataset_hashes.py (deflated 65%)
   adding: scripts/generate_energy_baselines.py (deflated 57%)
   adding: scripts/check_translation_pointer_policy.py (deflated 58%)
+  adding: scripts/cfc_moe_tolerance_check.py (deflated 69%)
   adding: scripts/hash_manifest_to_json.py (deflated 57%)
   adding: scripts/extract_dataset_refs.py (deflated 64%)
   adding: scripts/titan_onnx_stress_test.py (deflated 56%)
@@ -547,7 +552,7 @@ locked_sha256=
   adding: scripts/operator_mode_gate.py (deflated 70%)
   adding: scripts/kaggle_train_compare_build30.py (deflated 73%)
   adding: scripts/scaling_audit_math.py (deflated 64%)
-  adding: scripts/build_artifacts_release_zip.sh (deflated 55%)
+  adding: scripts/build_artifacts_release_zip.sh (deflated 53%)
   adding: scripts/chat.py (deflated 64%)
   adding: scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py (deflated 77%)
   adding: scripts/README_TR.md (deflated 52%)
@@ -599,7 +604,7 @@ locked_sha256=
   adding: .github/ (stored 0%)
   adding: .github/CODEOWNERS (deflated 53%)
   adding: .github/workflows/ (stored 0%)
-  adding: .github/workflows/ci.yml (deflated 65%)
+  adding: .github/workflows/ci.yml (deflated 66%)
   adding: model/ (stored 0%)
   adding: model/transformers.py (deflated 70%)
   adding: model/__init__.py (stored 0%)
@@ -630,6 +635,7 @@ locked_sha256=
   adding: mertformer_sdk.egg-info/dependency_links.txt (stored 0%)
   adding: TASK.md (deflated 49%)
   adding: V2_BACKLOG_SEED.md (deflated 42%)
+  adding: TROUBLESHOOTING_TR.md (deflated 47%)
   adding: telemetry/ (stored 0%)
   adding: telemetry/metrics_schema.json (deflated 58%)
   adding: eval/ (stored 0%)
@@ -639,6 +645,7 @@ locked_sha256=
   adding: eval/gsm8k.py (deflated 66%)
   adding: eval/golden.py (deflated 35%)
   adding: eval/humaneval.py (deflated 36%)
+  adding: MODEL_LICENSE_TR.md (deflated 30%)
   adding: CONTRIBUTING_TR.md (deflated 30%)
   adding: TASK_TR.md (deflated 45%)
   adding: data/ (stored 0%)
@@ -668,7 +675,7 @@ locked_sha256=
   adding: orchestrator/agent_registry.py (deflated 72%)
   adding: orchestrator/failure_budget.py (deflated 70%)
   adding: orchestrator/distillation_manager.py (deflated 71%)
-  adding: orchestrator/paths.py (deflated 56%)
+  adding: orchestrator/paths.py (deflated 55%)
   adding: orchestrator/memory.py (deflated 72%)
   adding: orchestrator/tool_registry.py (deflated 58%)
   adding: orchestrator/__init__.py (deflated 65%)
@@ -704,7 +711,7 @@ locked_sha256=
   adding: reports/release_snapshot.md (deflated 53%)
   adding: reports/verified_matrix.md (deflated 53%)
   adding: reports/sales_funnel_90d_TR.md (deflated 36%)
-  adding: reports/technical_snapshot.md (deflated 46%)
+  adding: reports/technical_snapshot.md (deflated 45%)
   adding: reports/pitch_kit/ (stored 0%)
   adding: reports/pitch_kit/04_KAYNAK_README_TR.md (deflated 61%)
   adding: reports/pitch_kit/01_VIZYON_Buluttan_Bagimsiz_Ozet.m4a (deflated 27%)
@@ -717,10 +724,11 @@ locked_sha256=
   adding: reports/drone_sitl_demo_TR.md (deflated 44%)
   adding: reports/docs_packages_hash_manifest.json (deflated 33%)
   adding: reports/report_truth_matrix.md (deflated 57%)
+  adding: reports/cfc_moe_tolerance_report.json (deflated 68%)
   adding: reports/release_snapshot_TR.md (deflated 51%)
   adding: reports/sales_funnel_90d.md (deflated 38%)
   adding: reports/pilot_readiness_kit.md (deflated 44%)
-  adding: reports/kpi_contract_build30.md (deflated 50%)
+  adding: reports/kpi_contract_build30.md (deflated 51%)
   adding: reports/proje_zip_rebuild_manifest_v2.json (deflated 81%)
   adding: reports/efficiency_convergence_analysis.md (deflated 51%)
   adding: reports/dataset_health_TR.md (deflated 53%)
@@ -778,7 +786,7 @@ locked_sha256=
   adding: reports/kpi_report_v1.json (deflated 68%)
   adding: reports/md_lint_report.json (deflated 91%)
   adding: reports/model_health_TR.md (deflated 24%)
-  adding: reports/one_command_full_sop_summary.md (deflated 39%)
+  adding: reports/one_command_full_sop_summary.md (deflated 40%)
   adding: reports/drone_sitl_demo.md (deflated 45%)
   adding: reports/thermal_baseline.json (deflated 2%)
   adding: reports/kpi_pack_v1.md (deflated 41%)
@@ -787,7 +795,7 @@ locked_sha256=
   adding: reports/project_structure_sync_report.json (deflated 48%)
   adding: reports/verified_matrix_TR.md (deflated 52%)
   adding: reports/hardening_bundle_summary.json (deflated 47%)
-  adding: reports/one_pager_TR.md (deflated 42%)
+  adding: reports/one_pager_TR.md (deflated 41%)
   adding: reports/sanitizer_report.json (deflated 22%)
   adding: reports/report_accuracy_audit.md (deflated 50%)
   adding: reports/final_sync_matrix_TR.md (deflated 49%)
@@ -819,18 +827,15 @@ locked_sha256=
   adding: reports/zip_audit_packages.json (deflated 26%)
   adding: reports/proje_zip_rebuild_manifest_v2.md (deflated 32%)
   adding: reports/codex_deep_audit_EN_TR.md (deflated 36%)
-  adding: reports/dealroom_reference.json (deflated 45%)
-  adding: reports/one_command_full_sop.log (deflated 62%)
-  adding: reports/one_pager.md (deflated 48%)
+  adding: reports/dealroom_reference.json (deflated 44%)
+  adding: reports/one_command_full_sop.log (deflated 79%)
+  adding: reports/one_pager.md (deflated 47%)
   adding: reports/ram_guard_report.json (deflated 35%)
   adding: reports/release_closure_lock_report.json (deflated 19%)
   adding: reports/pilot_acceptance_signoff.md (deflated 50%)
   adding: reports/review_checklist.md (deflated 50%)
   adding: reports/bench_metal_report.json (deflated 8%)
   adding: reports/repro_build_report.json (deflated 52%)
-  adding: reports/.one_command_full_sop_raw.XXXXXX.log
-	zip warning:  file size changed while zipping reports/.one_command_full_sop_raw.XXXXXX.log
- (deflated 79%)
   adding: reports/ip_licensing_split.md (deflated 51%)
   adding: reports/codex_deep_audit_DE_TR.md (deflated 36%)
   adding: reports/duplicate_zip_guard_report.json (deflated 28%)
@@ -863,7 +868,7 @@ locked_sha256=
   adding: reports/founders_hub_application_TR.md (deflated 41%)
   adding: reports/legal_cleanroom_signoff_internal.md (deflated 50%)
   adding: DECISIONS.md (deflated 29%)
-  adding: MODEL_CARD_TR.md (deflated 40%)
+  adding: MODEL_CARD_TR.md (deflated 41%)
 plot_training_log: skipped (no jsonl log found)
 [run] step=zip_denylist_audit zip=packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
 {
@@ -876,4 +881,4 @@ plot_training_log: skipped (no jsonl log found)
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-03-13T04:58:29Z
+[run] end_utc=2026-03-13T05:46:23Z
