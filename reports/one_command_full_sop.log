@@ -1,4 +1,4 @@
-[run] start_utc=2026-03-13T05:45:30Z
+[run] start_utc=2026-03-13T06:35:40Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
@@ -25,7 +25,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-111 passed, 3 skipped, 6 warnings in 20.90s
+111 passed, 3 skipped, 6 warnings in 15.36s
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -64,7 +64,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <REPO_ROOT>/temp_preflight_data
 ✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 3.55s
+✈️ Preflight Duration: 3.01s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
@@ -75,8 +75,8 @@ Failure budget drill: PASS
 Overfit step 0: loss=121.5519
 Overfit step 12: loss=117.8494
 Overfit step 24: loss=113.7169
-Overfit step 36: loss=97.5475
-Overfit step 48: loss=50.8537
+Overfit step 36: loss=97.5477
+Overfit step 48: loss=50.8443
 Overfit gate: PASS
 Golden samples: 50
 - algorithms: 13
@@ -109,7 +109,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 7.5089030265808105,
+  "elapsed_sec": 6.980587005615234,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -135,9 +135,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-03-13T05:46:06Z",
-        "cpu_percent": 31.8,
-        "ram_used_gb": 6.8358154296875,
+        "timestamp_utc": "2026-03-13T06:36:09Z",
+        "cpu_percent": 11.1,
+        "ram_used_gb": 6.68646240234375,
         "ram_total_gb": 16.0
       }
     },
@@ -164,7 +164,7 @@ OK: unicode path guard; hits=0
 [verify] Duplicate zip guard gate ...
 OK: duplicate zip guard; groups=0
 [verify] Manifest sync gate ...
-{"manifest_entries": 481, "ok": true}
+{"manifest_entries": 487, "ok": true}
 [verify] OK
 [run] step=cfc_moe_tolerance_check
 [tolerance] PASS (max_diff_moe=0.000000 max_diff_cfc=0.000014)
@@ -175,7 +175,7 @@ linkcheck: scope=all files=255 missing=0
 [run] step=docs_inventory
 {"ok": true, "md_files": 257, "dup_groups": 21}
 [run] step=sync_manifest
-{"manifest_entries": 481, "ok": true}
+{"manifest_entries": 487, "ok": true}
 [run] step=dealroom_sync
 {"ok": true}
 [run] step=unicode_path_guard
@@ -186,7 +186,7 @@ OK: duplicate zip guard; groups=0
 [runner] cmd=bash -lc true
 [runner] cleanup_root=<REPO_ROOT>
 [runner] include_tool_caches=True full_clean=True include_venv_caches=True dry_run=False
-[cleanup] dirs_found=577 files_found=0 dirs_removed=577 files_removed=0
+[cleanup] dirs_found=578 files_found=0 dirs_removed=578 files_removed=0
 [run] step=clean_runtime_artifacts_check
 OK: runtime artifacts and caches are clean
 [run] step=release_build30
@@ -205,7 +205,7 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
-release_sha256=a13151000e23d6718b6f3b5cdd432fe01d03aad35a36d6b3edfc8523400084a2
+release_sha256=70157efa52b044ee8db78d7368fd0f2b4de7168f02defb49d24893876ba23a76
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=artifact_release_zip
@@ -240,7 +240,7 @@ locked_sha256=
   adding: layers/lifelong_safety.py (deflated 66%)
   adding: layers/mertformer_block.py (deflated 69%)
   adding: LICENSE (deflated 52%)
-  adding: requirements.txt (deflated 47%)
+  adding: requirements.txt (deflated 46%)
   adding: README_SUMMARY_TR.pdf (deflated 18%)
   adding: WHITE_PAPER_LIQUIDROUTER.md (deflated 49%)
   adding: CHANGELOG.md (deflated 51%)
@@ -264,7 +264,7 @@ locked_sha256=
   adding: MODEL_CARD.md (deflated 42%)
   adding: Dockerfile (deflated 47%)
   adding: WHITE_PAPER_LIQUIDROUTER_TR.md (deflated 47%)
-  adding: CITATION.cff (deflated 36%)
+  adding: CITATION.cff (deflated 38%)
   adding: experiments/ (stored 0%)
   adding: experiments/exp_001_baseline/ (stored 0%)
   adding: experiments/exp_001_baseline/metrics.json (deflated 15%)
@@ -538,6 +538,7 @@ locked_sha256=
   adding: scripts/build_validation_set.py (deflated 71%)
   adding: scripts/build_summary_pdf.py (deflated 68%)
   adding: scripts/bitnet_kernel_benchmark_standalone.py (deflated 74%)
+  adding: scripts/update_investor_deck.py (deflated 63%)
   adding: scripts/sync_manifest.py (deflated 71%)
   adding: scripts/__init__.py (stored 0%)
   adding: scripts/train_tpu_turbo.py (deflated 61%)
@@ -598,6 +599,7 @@ locked_sha256=
   adding: scripts/reports/model_health_TR.md (deflated 24%)
   adding: scripts/reports/model_health.md (deflated 24%)
   adding: scripts/duplicate_zip_guard.py (deflated 53%)
+  adding: scripts/resume_compat_check.py (deflated 67%)
   adding: scripts/checkpoint_restore_drill.py (deflated 66%)
   adding: packages/ (stored 0%)
   adding: packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip (stored 0%)
@@ -786,10 +788,11 @@ locked_sha256=
   adding: reports/kpi_report_v1.json (deflated 68%)
   adding: reports/md_lint_report.json (deflated 91%)
   adding: reports/model_health_TR.md (deflated 24%)
-  adding: reports/one_command_full_sop_summary.md (deflated 40%)
+  adding: reports/one_command_full_sop_summary.md (deflated 41%)
   adding: reports/drone_sitl_demo.md (deflated 45%)
   adding: reports/thermal_baseline.json (deflated 2%)
   adding: reports/kpi_pack_v1.md (deflated 41%)
+  adding: reports/resume_compat_report.json (deflated 41%)
   adding: reports/unicode_path_guard_report.json (deflated 20%)
   adding: reports/release_manifest.json (deflated 72%)
   adding: reports/project_structure_sync_report.json (deflated 48%)
@@ -827,7 +830,7 @@ locked_sha256=
   adding: reports/zip_audit_packages.json (deflated 26%)
   adding: reports/proje_zip_rebuild_manifest_v2.md (deflated 32%)
   adding: reports/codex_deep_audit_EN_TR.md (deflated 36%)
-  adding: reports/dealroom_reference.json (deflated 44%)
+  adding: reports/dealroom_reference.json (deflated 45%)
   adding: reports/one_command_full_sop.log (deflated 79%)
   adding: reports/one_pager.md (deflated 47%)
   adding: reports/ram_guard_report.json (deflated 35%)
@@ -866,10 +869,9 @@ locked_sha256=
   adding: reports/founders_hub_application.md (deflated 46%)
   adding: reports/asset_stack_TR.md (deflated 62%)
   adding: reports/founders_hub_application_TR.md (deflated 41%)
-  adding: reports/legal_cleanroom_signoff_internal.md (deflated 50%)
+  adding: reports/legal_cleanroom_signoff_internal.md (deflated 51%)
   adding: DECISIONS.md (deflated 29%)
   adding: MODEL_CARD_TR.md (deflated 41%)
-plot_training_log: skipped (no jsonl log found)
 [run] step=zip_denylist_audit zip=packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
 {
   "zip_path": "packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip",
@@ -881,4 +883,4 @@ plot_training_log: skipped (no jsonl log found)
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-03-13T05:46:23Z
+[run] end_utc=2026-03-13T06:36:26Z
