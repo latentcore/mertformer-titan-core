@@ -39,9 +39,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
-import os
-_CUBLAS_WORKSPACE_PRESET = "CUBLAS_WORKSPACE_CONFIG" in os.environ
-os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+_CUBLAS_WORKSPACE_ALLOWED = (":4096:8", ":16:8")
+_CUBLAS_WORKSPACE_ORIG = os.environ.get("CUBLAS_WORKSPACE_CONFIG", "")
+_CUBLAS_WORKSPACE_PRESET = _CUBLAS_WORKSPACE_ORIG in _CUBLAS_WORKSPACE_ALLOWED
+if not _CUBLAS_WORKSPACE_PRESET:
+    os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
 
 import torch
 import torch.nn as nn
@@ -722,17 +724,19 @@ def apply_determinism_policy(cfg: Dict[str, Any], device: str) -> Dict[str, Any]
     warn_only = False
     if strict:
         if device == "cuda":
-            if not os.environ.get("CUBLAS_WORKSPACE_CONFIG"):
-                os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
-                report["cublas_workspace_config"] = os.environ.get("CUBLAS_WORKSPACE_CONFIG")
             try:
                 cuda_initialized = torch.cuda.is_initialized()
             except Exception:
                 cuda_initialized = False
-            if cuda_initialized and not _CUBLAS_WORKSPACE_PRESET:
+            env_val = os.environ.get("CUBLAS_WORKSPACE_CONFIG", "")
+            invalid_env = env_val not in _CUBLAS_WORKSPACE_ALLOWED
+            if invalid_env:
+                os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+                report["cublas_workspace_config"] = os.environ.get("CUBLAS_WORKSPACE_CONFIG")
+            if cuda_initialized and invalid_env:
                 warn_only = True
                 report["determinism_warn_only"] = True
-                report["determinism_reason"] = "cuda_initialized_before_cublas_workspace_config"
+                report["determinism_reason"] = "cuda_initialized_before_valid_cublas_workspace_config"
         try:
             torch.use_deterministic_algorithms(True, warn_only=warn_only)
             report["algorithms_forced"] = not warn_only
