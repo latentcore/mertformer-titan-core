@@ -39,6 +39,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
+import os
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -716,6 +719,9 @@ def apply_determinism_policy(cfg: Dict[str, Any], device: str) -> Dict[str, Any]
     strict = bool(cfg.get("determinism_strict", True))
     report = {"strict": strict, "warned": False, "algorithms_forced": False}
     if strict:
+        if device == "cuda" and not os.environ.get("CUBLAS_WORKSPACE_CONFIG"):
+            os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+            report["cublas_workspace_config"] = os.environ.get("CUBLAS_WORKSPACE_CONFIG")
         try:
             torch.use_deterministic_algorithms(True, warn_only=False)
             report["algorithms_forced"] = True
