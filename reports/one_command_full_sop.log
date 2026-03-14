@@ -1,4 +1,4 @@
-[run] start_utc=2026-03-13T09:37:02Z
+[run] start_utc=2026-03-14T04:11:36Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
@@ -25,7 +25,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-111 passed, 3 skipped, 6 warnings in 91.43s (0:01:31)
+111 passed, 3 skipped, 6 warnings in 87.02s (0:01:27)
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -64,7 +64,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <REPO_ROOT>/temp_preflight_data
 ✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 7.79s
+✈️ Preflight Duration: 6.73s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
@@ -109,7 +109,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 15.564146280288696,
+  "elapsed_sec": 14.896025896072388,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -135,9 +135,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-03-13T09:39:05Z",
-        "cpu_percent": 27.9,
-        "ram_used_gb": 6.9077301025390625,
+        "timestamp_utc": "2026-03-14T04:13:33Z",
+        "cpu_percent": 15.6,
+        "ram_used_gb": 7.9380645751953125,
         "ram_total_gb": 16.0
       }
     },
@@ -205,7 +205,7 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
-release_sha256=9d703fbad46404ac11bae9ac8f53ea1317bbd1c36cb72a9fdacf70b19bf27d8a
+release_sha256=618e113f883b47a8f185e61181de636f19ecf1bd34063031479a0e393b6ffb45
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=artifact_release_zip
@@ -764,7 +764,7 @@ locked_sha256=
   adding: reports/snapshot_manifest_main.json (deflated 45%)
   adding: reports/go_nogo_signoff_onepager.md (deflated 42%)
   adding: reports/strategic_value_TR.md (deflated 39%)
-  adding: reports/file_sync_matrix.json (deflated 32%)
+  adding: reports/file_sync_matrix.json (deflated 33%)
   adding: reports/go_nogo_signoff_onepager_TR.md (deflated 38%)
   adding: reports/asset_stack.md (deflated 66%)
   adding: reports/cli_smoke_log.md (deflated 27%)
@@ -793,7 +793,7 @@ locked_sha256=
   adding: reports/thermal_baseline.json (deflated 2%)
   adding: reports/kpi_pack_v1.md (deflated 41%)
   adding: reports/resume_compat_report.json (deflated 41%)
-  adding: reports/unicode_path_guard_report.json (deflated 20%)
+  adding: reports/unicode_path_guard_report.json (deflated 21%)
   adding: reports/release_manifest.json (deflated 72%)
   adding: reports/project_structure_sync_report.json (deflated 48%)
   adding: reports/verified_matrix_TR.md (deflated 52%)
@@ -883,4 +883,4 @@ locked_sha256=
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-03-13T09:39:42Z
+[run] end_utc=2026-03-14T04:14:07Z

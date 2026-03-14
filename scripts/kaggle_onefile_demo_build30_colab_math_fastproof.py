@@ -4384,6 +4384,7 @@ class MertFormerCfg:
     use_liquid: bool = True
     liquid_layers_idx: Tuple[int, ...] = (0, 3, 6)
     liquid_dt: float = 1.0
+    liquid_fast_path: bool = True
     use_qinn: bool = False
     use_hebbian_plasticity: bool = True
     hebbian_eta: float = 0.01
@@ -4406,6 +4407,7 @@ class MertFormerCfg:
     use_structural_plasticity: bool = True
     structural_update_interval: int = 50
     moe_mode: str = "true_sparse_topk"
+    moe_dispatch_mode: str = "parallel"
     use_learned_pos_embedding: bool = False
     use_gradient_checkpointing: bool = False
     embedding_scale: bool = True
@@ -5802,6 +5804,7 @@ def run_benchmark_suite(
         rope_dim=((int(cfg["mert_hidden"]) // int(cfg["mert_heads"])) // 2) * 2,
         use_moe=bool(cfg["mert_use_moe"]),
         use_liquid=bool(cfg["mert_use_liquid"]),
+        liquid_fast_path=bool(cfg.get("liquid_fast_path", True)),
         use_qinn=bool(cfg["mert_use_qinn"]),
         use_hebbian_plasticity=bool(cfg["mert_enable_all_extensions"]),
         use_neuro_symbolic_layer=bool(cfg["mert_enable_all_extensions"]),
@@ -5812,6 +5815,7 @@ def run_benchmark_suite(
         use_cross_expert_sync_bus=bool(cfg["mert_enable_all_extensions"]),
         use_structural_plasticity=bool(cfg["mert_enable_all_extensions"]),
         moe_mode=str(cfg.get("moe_mode", "true_sparse_topk")),
+        moe_dispatch_mode=str(cfg.get("moe_dispatch_mode", "parallel")),
         use_learned_pos_embedding=bool(cfg.get("use_learned_pos_embedding", False)),
         use_gradient_checkpointing=False,
         embedding_scale=bool(cfg.get("embedding_scale", True)),
@@ -6531,6 +6535,7 @@ def build_mert_cfg(cfg: Dict[str, Any]) -> MertFormerCfg:
         rope_dim=max(2, rope_dim),
         use_moe=bool(cfg["mert_use_moe"]),
         use_liquid=bool(cfg["mert_use_liquid"]),
+        liquid_fast_path=bool(cfg.get("liquid_fast_path", True)),
         use_qinn=bool(cfg["mert_use_qinn"]),
         use_hebbian_plasticity=enable,
         use_neuro_symbolic_layer=enable,
@@ -6541,6 +6546,7 @@ def build_mert_cfg(cfg: Dict[str, Any]) -> MertFormerCfg:
         use_cross_expert_sync_bus=enable,
         use_structural_plasticity=enable,
         moe_mode=str(cfg.get("moe_mode", "true_sparse_topk")),
+        moe_dispatch_mode=str(cfg.get("moe_dispatch_mode", "parallel")),
         use_learned_pos_embedding=bool(cfg.get("use_learned_pos_embedding", False)),
         use_gradient_checkpointing=bool(cfg.get("use_gradient_checkpointing", False)),
         embedding_scale=bool(cfg.get("embedding_scale", True)),
