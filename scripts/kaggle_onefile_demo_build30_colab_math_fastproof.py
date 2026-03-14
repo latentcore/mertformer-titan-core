@@ -40,6 +40,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import os
+_CUBLAS_WORKSPACE_PRESET = "CUBLAS_WORKSPACE_CONFIG" in os.environ
 os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
 import torch
@@ -718,15 +719,27 @@ def validate_run_config_schema(cfg: Dict[str, Any]) -> Dict[str, Any]:
 def apply_determinism_policy(cfg: Dict[str, Any], device: str) -> Dict[str, Any]:
     strict = bool(cfg.get("determinism_strict", True))
     report = {"strict": strict, "warned": False, "algorithms_forced": False}
+    warn_only = False
     if strict:
-        if device == "cuda" and not os.environ.get("CUBLAS_WORKSPACE_CONFIG"):
-            os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
-            report["cublas_workspace_config"] = os.environ.get("CUBLAS_WORKSPACE_CONFIG")
+        if device == "cuda":
+            if not os.environ.get("CUBLAS_WORKSPACE_CONFIG"):
+                os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+                report["cublas_workspace_config"] = os.environ.get("CUBLAS_WORKSPACE_CONFIG")
+            try:
+                cuda_initialized = torch.cuda.is_initialized()
+            except Exception:
+                cuda_initialized = False
+            if cuda_initialized and not _CUBLAS_WORKSPACE_PRESET:
+                warn_only = True
+                report["determinism_warn_only"] = True
+                report["determinism_reason"] = "cuda_initialized_before_cublas_workspace_config"
         try:
-            torch.use_deterministic_algorithms(True, warn_only=False)
-            report["algorithms_forced"] = True
+            torch.use_deterministic_algorithms(True, warn_only=warn_only)
+            report["algorithms_forced"] = not warn_only
+            report["warn_only"] = warn_only
         except Exception:
             report["algorithms_forced"] = False
+            report["warn_only"] = warn_only
         if device == "cuda":
             try:
                 torch.backends.cudnn.deterministic = True
