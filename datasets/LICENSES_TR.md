@@ -4,7 +4,7 @@ Tüm datasetler kendi lisansları/terimleri ile uyumlu olmalıdır (gated datase
 Bu tablo, gerçek eğitim öncesi **tek kaynaktan kontrol listesi** olarak kullanılır.
 
 Notlar:
-- “TBD” olan satırlar, production eğitim için **blocker** kabul edilir (dataset card / upstream repo’dan dogrulanmadan eğitime girilmez).
+- “TBD” olan satirlar, **cekirdek egitim datasetleri** icin production egitimde **blocker** kabul edilir (dataset card / upstream repo’dan dogrulanmadan egitime girilmez). Opsiyonel/demo datasetler dogrulanana kadar devre disi tutulmalidir.
 - Snapshot hash’leri `datasets/hashes.json` içinde tutulur ve eğitim öncesi doldurulmalidir.
 
 | Dataset | Lisans | Referans URL | Durum |
@@ -23,6 +23,8 @@ Notlar:
 | `glaiveai/glaive-function-calling-v2` | Apache-2.0 | https://www.apache.org/licenses/LICENSE-2.0 | Verified (HF metadata) |
 | `gorilla-llm/gorilla-openfunctions-v2` | TBD | https://huggingface.co/datasets/gorilla-llm/gorilla-openfunctions-v2 | Dataset card üzerinden doğrula |
 | `NousResearch/FC-1k` | TBD | https://huggingface.co/datasets/NousResearch/FC-1k | Dataset card üzerinden doğrula |
+| `codeparrot/github-code` | TBD | https://huggingface.co/datasets/codeparrot/github-code | Demo-only (Build30 V2 core egitimde degil); dataset card uzerinden dogrula |
+| `mlabonne/guanaco-llama2-1k` | TBD | https://huggingface.co/datasets/mlabonne/guanaco-llama2-1k | Legacy/optional; dataset card uzerinden dogrula |
 | `openai_humaneval` | MIT | https://opensource.org/licenses/MIT | Verified (bilinen) |
 | `mbpp` (`sanitized`) | CC-BY-4.0 | https://creativecommons.org/licenses/by/4.0/ | Verified (bilinen) |
 | `wikitext` (`wikitext-2-raw-v1`) | CC BY-SA 4.0 | https://creativecommons.org/licenses/by-sa/4.0/ | Verified (bilinen) |

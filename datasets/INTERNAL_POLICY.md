@@ -22,6 +22,6 @@ This document defines the policy for **internal** datasets shipped or referenced
 
 ## Review Gate
 Before any production training run:
-- `datasets/LICENSES*.md` must contain **no** `TBD` for training datasets.
+- `datasets/LICENSES*.md` must contain **no** `TBD` for **core training datasets**; optional/demo datasets must remain disabled until verified.
 - `datasets/hashes.json` must be filled for the exact snapshot used.
 

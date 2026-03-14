@@ -96,6 +96,19 @@ See also:
   Dataset card: https://huggingface.co/datasets/wikitext
   Status: referenced in code; revision pinned + manifest fingerprint recorded in `datasets/hashes.json`
 
+
+## Demo / onefile-only datasets (non-training)
+- `codeparrot/github-code` (demo baseline; used in onefile scripts only)
+  Purpose: legacy code corpus baseline for Kaggle/Colab demo
+  Dataset card: https://huggingface.co/datasets/codeparrot/github-code
+  Status: referenced in onefile demo; **not part of Build30 V2 core training**
+
+## Legacy / trace-only datasets (not in Build30 V2 curriculum)
+- `mlabonne/guanaco-llama2-1k` (legacy trace; not used in Build30 V2 pipeline)
+  Purpose: historical small instruction subset used for earlier experiments
+  Dataset card: https://huggingface.co/datasets/mlabonne/guanaco-llama2-1k
+  Status: present in hashes registry for traceability; **not used in Build30 V2 core training**
+
 ## Internal / custom
 - Stage curriculum sets (stage1–stage5) (local jsonl snapshots)
   Purpose: curated internal curriculum outputs (after download/filtering)

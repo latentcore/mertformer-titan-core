@@ -2,6 +2,22 @@
 
 Bu dosya projedeki önemli değişiklikleri takip eder.
 
+
+## v1.0.0-build30-v2 - 2026-03-13
+
+### Eklenenler
+- Veri pipeline'ında cross-dataset deduplication hattı eklendi.
+- MoE paralel dispatch modu ve CfC fast path toggle eklendi.
+- Onefile demo CLI geliştirmeleri + training log dashboard scripti.
+- CfC/MoE loss parity için SOP tolerans kontrolü.
+
+### Değişenler
+- Build 30 V2 sürüm senkronu core dokümanlar ve model metadata genelinde yapıldı.
+- Training token budget varsayılanı fixed-steps gating olarak ayarlandı.
+
+### Doğrulama
+- SOP tam koşu (verify_all, md_quality, linkcheck, sync_manifest) PASS.
+
 ## v0.1.0-pilot-ready - 2026-02-08
 
 ### Eklenenler

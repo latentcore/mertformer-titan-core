@@ -36,10 +36,10 @@ Opsiyonel: küçük eğitim smoke testi (CPU/MPS):
 Eğitimden önce:
 - `datasets/inventory.md` ve `datasets/inventory_TR.md` kod referanslarıyla uyumlu ( `scripts/extract_dataset_refs.py` ile üretilir )
 - `datasets/SOURCES*.md` pipeline ve eval'in referans ettiği tüm datasetleri listeler
-- `datasets/LICENSES*.md` eğitimde kullanılacak datasetler için **TBD/Unknown lisans bırakmaz**
+- `datasets/LICENSES*.md` çekirdek eğitim datasetleri için **TBD/Unknown lisans bırakmaz**; opsiyonel/demo datasetler doğrulanana kadar devre dışı tutulmalıdır
 - `datasets/hashes.json` gerçek eğitimde kullanılacak snapshotlar için revision + tarih + SHA256 hash ile doldurulmuş olmalıdır (air-gapped uyumlu)
 
-Eğer lisans tablosunda `TBD` varsa veya snapshot hash'leri eksikse, eğitim **review-ready değildir**.
+Eğer **çekirdek eğitim** lisanslarında `TBD` varsa veya snapshot hash'leri eksikse, eğitim **review-ready değildir**. Opsiyonel/demo datasetler doğrulanana kadar devre dışı tutulmalıdır.
 
 Validation veri politikası:
 - Smoke test için küçük validation dosyası kabul edilebilir.
@@ -93,7 +93,7 @@ Davranış:
 ## “Eğitimi Başlat” Checklist (Yazdırılabilir)
 
 - [ ] `bash scripts/verify_all.sh` PASS (offline).
-- [ ] `datasets/LICENSES*.md` eğitim datasetleri için **TBD içermiyor**.
+- [ ] `datasets/LICENSES*.md` cekirdek egitim datasetleri icin **TBD icermiyor** (opsiyonel/demo datasetler devre disi tutulmalidir).
 - [ ] `datasets/hashes.json` eğitimde kullanılacak snapshot hash’leriyle dolduruldu.
 - [ ] İddia seviyesi modda `datasets/validation.jsonl` temsil gücüne sahip ve minimum örnek kapısını geçiyor.
 - [ ] Training config review edildi (seed, dtype, model boyutu, batch ayarları).

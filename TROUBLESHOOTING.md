@@ -30,4 +30,4 @@
 
 ## 8) Token budget runs longer than expected
 **Symptom:** Training exceeds planned steps.
-**Fix:** Use `TITAN_PROFILE=fixed_steps` or set `TITAN_MAX_STEPS` explicitly.
+**Fix:** Use `TITAN_TOKEN_BUDGET_MODE=fixed_steps` or set `TITAN_MAX_STEPS` explicitly.

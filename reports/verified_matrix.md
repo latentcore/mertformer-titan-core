@@ -29,7 +29,7 @@ Legend used below:
 | `run.sh --test` offline-first (no external login/download) | ✅ Verified (Run) | `TITAN_OFFLINE=1 bash run.sh --test` |
 | Dataset IDs inventory from code | ✅ Verified (Run) | `python scripts/extract_dataset_refs.py` → `datasets/inventory*` |
 | Dataset sources documented | ✅ Verified (Code) | `datasets/SOURCES*.md` |
-| Dataset licenses documented (checklist) | 🔎 Verified (Code) | `datasets/LICENSES*.md` (no `TBD` entries for training datasets) |
+| Dataset licenses documented (checklist) | 🔎 Verified (Code) | `datasets/LICENSES*.md` (core training datasets verified; optional/demo entries may remain `TBD` until enabled) |
 | Dataset snapshot hashes recorded | ✅ Verified (Run) | `python scripts/record_dataset_hashes.py` → `datasets/hashes.json` |
 | Training “tiny smoke” (CPU/MPS) | ✅ Verified (Run) | `python scripts/train_smoke.py --cleanup` |
 | Full training run (end-to-end) | 🎯 Target / Claim | Requires training hardware + real data snapshots |

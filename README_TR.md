@@ -1153,10 +1153,9 @@ distill_alpha = 0.8  # Dinamik (0.8 → 0.15)
 teacher_temp = 1.0
 
 #- Optimizasyonlar
-use_torch_compile = True
+use_torch_compile = False
 torch_compile_mode = "max-autotune"
 use_gradient_checkpointing = True
-gradient_checkpoint_policy = "selective"
 
 #- Güvenlik
 early_stop_patience = 5

@@ -30,4 +30,4 @@
 
 ## 8) Token bütçesi beklenenden uzun sürüyor
 **Belirti:** Eğitim planlanan adım sayısını aşıyor.
-**Çözüm:** `TITAN_PROFILE=fixed_steps` veya `TITAN_MAX_STEPS` kullanın.
+**Çözüm:** `TITAN_TOKEN_BUDGET_MODE=fixed_steps` veya `TITAN_MAX_STEPS` kullanın.

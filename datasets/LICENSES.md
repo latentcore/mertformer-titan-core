@@ -4,7 +4,7 @@ All datasets must comply with their original licenses and terms (including gated
 This table is the **single checklist** used before any real training run.
 
 Notes:
-- “TBD” entries are **blockers** for a production training run until verified on the dataset card / upstream repository.
+- “TBD” entries are **blockers** for a production training run for **core training datasets**; optional/demo entries must remain disabled until verified on the dataset card / upstream repository.
 - Snapshot hashes live in `datasets/hashes.json` and must be filled before training.
 
 | Dataset | License | Reference URL | Status |
@@ -23,6 +23,8 @@ Notes:
 | `glaiveai/glaive-function-calling-v2` | Apache-2.0 | https://www.apache.org/licenses/LICENSE-2.0 | Verified (HF metadata) |
 | `gorilla-llm/gorilla-openfunctions-v2` | TBD | https://huggingface.co/datasets/gorilla-llm/gorilla-openfunctions-v2 | Verify on dataset card |
 | `NousResearch/FC-1k` | TBD | https://huggingface.co/datasets/NousResearch/FC-1k | Verify on dataset card |
+| `codeparrot/github-code` | TBD | https://huggingface.co/datasets/codeparrot/github-code | Demo-only (not in Build30 V2 core training); verify on dataset card |
+| `mlabonne/guanaco-llama2-1k` | TBD | https://huggingface.co/datasets/mlabonne/guanaco-llama2-1k | Legacy/optional; verify on dataset card |
 | `openai_humaneval` | MIT | https://opensource.org/licenses/MIT | Verified (known) |
 | `mbpp` (`sanitized`) | CC-BY-4.0 | https://creativecommons.org/licenses/by/4.0/ | Verified (known) |
 | `wikitext` (`wikitext-2-raw-v1`) | CC BY-SA 4.0 | https://creativecommons.org/licenses/by-sa/4.0/ | Verified (known) |

@@ -50,13 +50,13 @@ TITAN_OFFLINE=1 bash run.sh --test
 - `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
 - Locked artefakt durumu: `skipped (expected: AGE_RECIPIENT_FILE missing)`
 - SHA-256:
-  - `f1143b81335187de2ffaa177bb433bd935ed485e19caf389c980cd4ef16d5500` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
+  - `a89aa56f512ffabe2a09667228d7c2b857a0a5cc0f160bb079d1f83f502410c3` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
   - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)
 
 ## Bilinen Gate / Blokerler
 
 - Dataset uyum kapısı:
-  - ✅ Lisanslar doğrulandı (`datasets/LICENSES*.md` içinde `TBD` yok)
+  - 🟡 Çekirdek eğitim datasetleri için lisanslar doğrulandı; opsiyonel/demo girdiler `datasets/LICENSES*.md` içinde `TBD` olarak kalır (etkinleştirilmeden önce doğrulanmalı)
   - ✅ Snapshot registry `datasets/hashes.json` içinde kayıtlı (pinlenen revision + manifest fingerprint)
 - Kalan iş, operasyonel ve eğitim sonrası:
   - Hedef donanımda üretim eğitimini çalıştırmak

@@ -103,3 +103,17 @@ Bkz:
 - Golden samples (dahili promptlar)
   Amaç: regresyon kontrolleri
   Durum: dahili (trackli) + SHA256 `datasets/hashes.json` içinde kayıtlı
+
+
+## Demo / tek-dosya datasetleri (egitim disi)
+- `codeparrot/github-code` (demo baseline; sadece onefile scriptlerinde)
+  Amac: Kaggle/Colab demo icin legacy kod korpusu
+  Dataset card: https://huggingface.co/datasets/codeparrot/github-code
+  Durum: onefile demo referansi; **Build30 V2 core egitimde kullanilmaz**
+
+## Legacy / izleme amacli datasetler (Build30 V2 mufredatinda yok)
+- `mlabonne/guanaco-llama2-1k` (legacy trace; Build30 V2 pipeline'da yok)
+  Amac: onceki deneylerde kullanilan kucuk instruction alt kumesi
+  Dataset card: https://huggingface.co/datasets/mlabonne/guanaco-llama2-1k
+  Durum: hashes kayitlari traceability icin tutulur; **Build30 V2 core egitimde kullanilmaz**
+

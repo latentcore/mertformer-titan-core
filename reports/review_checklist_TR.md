@@ -53,7 +53,7 @@ Envanterin tamam olduğunu doğrula:
 - Snapshot hash kaydı: `datasets/hashes.json`
 
 Üretim eğitimi için sert kural:
-- Eğitim datasetlerinde `TBD` lisans kalamaz
+- Çekirdek eğitim datasetlerinde `TBD` lisans kalamaz (opsiyonel/demo datasetler doğrulanana kadar devre dışı kalmalı)
 - Gerçek eğitimde kullanılacak snapshotlar için hash kayıtları doldurulmuş olmalı
 
 ## 5) Reprodüsibilite

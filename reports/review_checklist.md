@@ -53,7 +53,7 @@ Confirm the inventory is complete:
 - Snapshot hash registry: `datasets/hashes.json`
 
 Hard rule for production training:
-- No training dataset may remain with license status `TBD`
+- No **core training** dataset may remain with license status `TBD` (optional/demo datasets must stay disabled until verified)
 - Snapshot hashes must be filled for the exact data snapshots used
 
 ## 5) Reproducibility

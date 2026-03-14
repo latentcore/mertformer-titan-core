@@ -15,7 +15,7 @@
 | 3 | foundation | full gate matrix | ✅ | ✅ | ✅ | ✅ | — |
 | 4 | foundation | reproducible metadata | ✅ | ✅ | ✅ | ✅ | — |
 | 5 | data | licensed data inventory | ✅ | ✅ | ✅ | ✅ | — |
-| 6 | data | dedup + quality filtering | ✅ | ❌ | ✅ | ✅ | — |
+| 6 | data | dedup + quality filtering | ✅ | ✅ | ✅ | ✅ | — |
 | 7 | data | curriculum automation | ✅ | ✅ | ✅ | ✅ | — |
 | 8 | train | multi-stage scale-up protocol | ✅ | ✅ | ✅ | ✅ | out-of-scope |
 | 9 | train | ddp/fsdp safety | ✅ | ✅ | ✅ | ✅ | out-of-scope |

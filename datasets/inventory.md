@@ -12,7 +12,7 @@ For license/provenance work, see `datasets/SOURCES*.md` and `datasets/LICENSES*.
 | `TFLai/Turkish-Alpaca` | Apache-2.0 | https://huggingface.co/datasets/TFLai/Turkish-Alpaca | 1 |
 | `TIGER-Lab/MathInstruct` | MIT | https://huggingface.co/datasets/TIGER-Lab/MathInstruct | 3 |
 | `bigcode/the-stack-v2` | Other (mixed upstream licenses; gated Terms of Use) | https://huggingface.co/datasets/bigcode/the-stack-v2 | 3 |
-| `codeparrot/github-code` | Unknown | https://huggingface.co/datasets/codeparrot/github-code | 2 |
+| `codeparrot/github-code` | TBD (demo-only) | https://huggingface.co/datasets/codeparrot/github-code | 2 |
 | `glaiveai/glaive-function-calling-v2` | Apache-2.0 | https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2 | 1 |
 | `gorilla-llm/gorilla-openfunctions-v2` | TBD | https://huggingface.co/datasets/gorilla-llm/gorilla-openfunctions-v2 | 1 |
 | `mbpp` | CC-BY-4.0 | https://huggingface.co/datasets/mbpp | 1 |

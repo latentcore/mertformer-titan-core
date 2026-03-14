@@ -1,4 +1,4 @@
-[run] start_utc=2026-03-14T05:19:46Z
+[run] start_utc=2026-03-14T05:57:43Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
@@ -25,7 +25,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-111 passed, 3 skipped, 6 warnings in 20.37s
+111 passed, 3 skipped, 6 warnings in 19.79s
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -64,7 +64,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <REPO_ROOT>/temp_preflight_data
 ✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 3.55s
+✈️ Preflight Duration: 3.61s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
@@ -76,7 +76,7 @@ Overfit step 0: loss=121.5519
 Overfit step 12: loss=117.8494
 Overfit step 24: loss=113.7169
 Overfit step 36: loss=97.5475
-Overfit step 48: loss=50.8516
+Overfit step 48: loss=50.8537
 Overfit gate: PASS
 Golden samples: 50
 - algorithms: 13
@@ -109,7 +109,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 7.804585218429565,
+  "elapsed_sec": 7.534351825714111,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -135,9 +135,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-03-14T05:20:22Z",
-        "cpu_percent": 15.8,
-        "ram_used_gb": 7.666351318359375,
+        "timestamp_utc": "2026-03-14T05:58:18Z",
+        "cpu_percent": 20.0,
+        "ram_used_gb": 8.156158447265625,
         "ram_total_gb": 16.0
       }
     },
@@ -205,7 +205,7 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
-release_sha256=f1143b81335187de2ffaa177bb433bd935ed485e19caf389c980cd4ef16d5500
+release_sha256=a89aa56f512ffabe2a09667228d7c2b857a0a5cc0f160bb079d1f83f502410c3
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=artifact_release_zip
@@ -244,7 +244,7 @@ locked_sha256=
   adding: README_SUMMARY_TR.pdf (deflated 18%)
   adding: WHITE_PAPER_LIQUIDROUTER.md (deflated 49%)
   adding: CHANGELOG.md (deflated 51%)
-  adding: CHANGELOG_TR.md (deflated 48%)
+  adding: CHANGELOG_TR.md (deflated 49%)
   adding: TECHNICAL_REPORT_TR.md (deflated 51%)
   adding: TROUBLESHOOTING.md (deflated 47%)
   adding: config/ (stored 0%)
@@ -297,14 +297,14 @@ locked_sha256=
   adding: ablations/results.md (deflated 50%)
   adding: pyproject.toml (deflated 48%)
   adding: datasets/ (stored 0%)
-  adding: datasets/INTERNAL_POLICY_TR.md (deflated 45%)
+  adding: datasets/INTERNAL_POLICY_TR.md (deflated 44%)
   adding: datasets/logits/ (stored 0%)
-  adding: datasets/SOURCES.md (deflated 76%)
+  adding: datasets/SOURCES.md (deflated 75%)
   adding: datasets/inventory.md (deflated 77%)
-  adding: datasets/SOURCES_TR.md (deflated 74%)
+  adding: datasets/SOURCES_TR.md (deflated 73%)
   adding: datasets/golden_assertions.jsonl (deflated 75%)
   adding: datasets/hashes.json (deflated 77%)
-  adding: datasets/LICENSES.md (deflated 64%)
+  adding: datasets/LICENSES.md (deflated 65%)
   adding: datasets/README.md (deflated 41%)
   adding: datasets/inventory_TR.md (deflated 77%)
   adding: datasets/validation.jsonl (deflated 62%)
@@ -313,7 +313,7 @@ locked_sha256=
   adding: datasets/golden_samples.jsonl (deflated 65%)
   adding: datasets/INTERNAL_POLICY.md (deflated 47%)
   adding: datasets/inventory.json (deflated 89%)
-  adding: datasets/LICENSES_TR.md (deflated 62%)
+  adding: datasets/LICENSES_TR.md (deflated 63%)
   adding: tests/ (stored 0%)
   adding: tests/test_model.py (deflated 62%)
   adding: tests/test_kaggle_compare_script.py (deflated 63%)
@@ -358,7 +358,7 @@ locked_sha256=
   adding: utils/safety.py (deflated 58%)
   adding: PITCH.md (deflated 37%)
   adding: TECHNICAL_REPORT.md (deflated 52%)
-  adding: TRAINING_PLAN.md (deflated 51%)
+  adding: TRAINING_PLAN.md (deflated 52%)
   adding: docs/ (stored 0%)
   adding: docs/PROJECT_STRUCTURE.md (deflated 85%)
   adding: docs/CHAIN_MAP.md (deflated 43%)
@@ -621,7 +621,7 @@ locked_sha256=
   adding: train/__init__.py (stored 0%)
   adding: train/train.py (deflated 75%)
   adding: README_CHECKLIST.md (deflated 44%)
-  adding: TRAINING_PLAN_TR.md (deflated 48%)
+  adding: TRAINING_PLAN_TR.md (deflated 49%)
   adding: registry/ (stored 0%)
   adding: registry/mertformer_v0.1.json (deflated 31%)
   adding: prompts/ (stored 0%)
@@ -727,13 +727,13 @@ locked_sha256=
   adding: reports/docs_packages_hash_manifest.json (deflated 33%)
   adding: reports/report_truth_matrix.md (deflated 57%)
   adding: reports/cfc_moe_tolerance_report.json (deflated 68%)
-  adding: reports/release_snapshot_TR.md (deflated 51%)
+  adding: reports/release_snapshot_TR.md (deflated 50%)
   adding: reports/sales_funnel_90d.md (deflated 38%)
   adding: reports/pilot_readiness_kit.md (deflated 44%)
   adding: reports/kpi_contract_build30.md (deflated 51%)
   adding: reports/proje_zip_rebuild_manifest_v2.json (deflated 81%)
   adding: reports/efficiency_convergence_analysis.md (deflated 51%)
-  adding: reports/dataset_health_TR.md (deflated 53%)
+  adding: reports/dataset_health_TR.md (deflated 63%)
   adding: reports/execution_trace.json (deflated 24%)
   adding: reports/strategic_value.md (deflated 43%)
   adding: reports/training_readiness_manifest.json (deflated 33%)
@@ -760,7 +760,7 @@ locked_sha256=
   adding: reports/pilot_acceptance_signoff_TR.md (deflated 46%)
   adding: reports/ownership_proof_bundle.json (deflated 56%)
   adding: reports/differential_backend_report.json (deflated 6%)
-  adding: reports/policy_sync_report.json (deflated 21%)
+  adding: reports/policy_sync_report.json (deflated 22%)
   adding: reports/snapshot_manifest_main.json (deflated 45%)
   adding: reports/go_nogo_signoff_onepager.md (deflated 42%)
   adding: reports/strategic_value_TR.md (deflated 39%)
@@ -788,7 +788,7 @@ locked_sha256=
   adding: reports/kpi_report_v1.json (deflated 68%)
   adding: reports/md_lint_report.json (deflated 91%)
   adding: reports/model_health_TR.md (deflated 24%)
-  adding: reports/one_command_full_sop_summary.md (deflated 41%)
+  adding: reports/one_command_full_sop_summary.md (deflated 40%)
   adding: reports/drone_sitl_demo.md (deflated 45%)
   adding: reports/thermal_baseline.json (deflated 2%)
   adding: reports/kpi_pack_v1.md (deflated 41%)
@@ -819,7 +819,7 @@ locked_sha256=
   adding: reports/cleanroom_verification.md (deflated 51%)
   adding: reports/go_status_matrix_TR.md (deflated 53%)
   adding: reports/poc_protocol_TR.md (deflated 44%)
-  adding: reports/review_checklist_TR.md (deflated 47%)
+  adding: reports/review_checklist_TR.md (deflated 48%)
   adding: reports/bench_vulkan_report.json (deflated 9%)
   adding: reports/system_stats.jsonl (deflated 78%)
   adding: reports/release_closure_note.md (deflated 15%)
@@ -851,10 +851,10 @@ locked_sha256=
   adding: reports/commercial_handover/contract_terms_checklist.md (deflated 48%)
   adding: reports/bench_zero_copy_report.json (deflated 39%)
   adding: reports/bench_cpp_report.json (deflated 11%)
-  adding: reports/dataset_health.md (deflated 53%)
+  adding: reports/dataset_health.md (deflated 61%)
   adding: reports/snapshot_manifest_dealroom.json (deflated 49%)
   adding: reports/energy_baseline.json (deflated 22%)
-  adding: reports/linkcheck_report.json (deflated 25%)
+  adding: reports/linkcheck_report.json (deflated 24%)
   adding: reports/closure_57_matrix.md (deflated 71%)
   adding: reports/license_gate_report.json (deflated 16%)
   adding: reports/pilot_offer_packages_TR.md (deflated 41%)
@@ -883,4 +883,4 @@ locked_sha256=
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-03-14T05:20:40Z
+[run] end_utc=2026-03-14T05:58:36Z

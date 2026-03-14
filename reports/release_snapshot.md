@@ -50,13 +50,13 @@ TITAN_OFFLINE=1 bash run.sh --test
 - `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
 - Locked artifact status: `skipped (expected: AGE_RECIPIENT_FILE missing)`
 - SHA-256:
-  - `f1143b81335187de2ffaa177bb433bd935ed485e19caf389c980cd4ef16d5500` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
+  - `a89aa56f512ffabe2a09667228d7c2b857a0a5cc0f160bb079d1f83f502410c3` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)
   - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)
 
 ## Known Gates / Blockers
 
 - Dataset compliance gate:
-  - ✅ Licenses verified (no `TBD` in `datasets/LICENSES*.md`)
+  - 🟡 Licenses verified for core training datasets; optional/demo entries in `datasets/LICENSES*.md` remain `TBD` until explicitly enabled
   - ✅ Snapshot registry recorded in `datasets/hashes.json` (pinned revisions + manifest fingerprints)
 - Remaining work is operational and post-training:
   - Run production training on target hardware

@@ -1,6 +1,6 @@
 # MertFormer Titan Onyx Storm Mimarisinin Teknik Analizi ve Stratejik Değerlemesi
 
-**Tarih:** 2026-02-01
+**Tarih:** 2026-03-13
 **Versiyon:** v1.0 (Build 30 V2)
 **Yazar:** MertFormer AI Team
 
