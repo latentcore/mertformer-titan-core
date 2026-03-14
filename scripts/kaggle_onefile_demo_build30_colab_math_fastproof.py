@@ -15,13 +15,15 @@ Notes:
 """
 from __future__ import annotations
 
+import os
+os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+
 import csv
 import argparse
 import io
 import json
 import hashlib
 import math
-import os
 import multiprocessing as mp
 import platform
 import random
