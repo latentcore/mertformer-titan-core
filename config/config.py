@@ -280,6 +280,10 @@ class MertFormerConfig:
 
     # V25.1 SAFEGUARD: Liquid Warmup Steps (Freeze for first N steps)
     liquid_warmup_steps: int = 10000
+    # V26.11 SAFEGUARD: Liquid spike tracking (3-strike rule)
+    liquid_spike_threshold: float = 5.0
+    liquid_spike_patience: int = 3
+    liquid_spike_cooldown_steps: int = 200
 
     # -------------------------------------------------------------------------
     # 6. GÜVENLİK SİGORTASI (QINN)

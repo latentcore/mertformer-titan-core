@@ -70,6 +70,7 @@ try:
     from config.config import cfg
     from model.transformers import MertFormer
     from utils.logger import RunLogger
+    from utils.liquid_safeguard import update_liquid_spike_state
 except ImportError as e:
     print(f"❌ KRİTİK IMPORT HATASI: {e}")
     sys.exit(1)
@@ -1380,6 +1381,9 @@ def train():
     # V26.1 SAFEGUARD: Liquid Auto-Freeze State
     liquid_frozen_until = 0 # Step count until Liquid is unfrozen
     liquid_spike_counter = 0 # V26.11 SAFEGUARD: 3-Strike Rule
+    liquid_spike_threshold = float(getattr(cfg, "liquid_spike_threshold", 5.0))
+    liquid_spike_patience = int(getattr(cfg, "liquid_spike_patience", 3))
+    liquid_spike_cooldown_steps = int(getattr(cfg, "liquid_spike_cooldown_steps", 200))
 
     # Curriculum Stage Tracking (single source from config ratios)
     stage_boundaries = build_stage_boundaries(cfg.max_steps, curriculum_stage_ratios)
@@ -1673,6 +1677,23 @@ def train():
                             continual_state = continual_adapter.update(
                                 loss=float(total_loss.detach().item()),
                                 sample=replay_sample,
+                            )
+
+                        # V26.11 SAFEGUARD: Liquid spike tracking (3-strike rule)
+                        liquid_spike_counter, liquid_frozen_until, spike_triggered = update_liquid_spike_state(
+                            loss_value=float(total_loss.detach().item()),
+                            threshold=liquid_spike_threshold,
+                            counter=liquid_spike_counter,
+                            patience=liquid_spike_patience,
+                            frozen_until=liquid_frozen_until,
+                            global_step=global_step,
+                            cooldown_steps=liquid_spike_cooldown_steps,
+                            enabled=bool(getattr(cfg, "use_liquid", False)) and global_step >= int(getattr(cfg, "liquid_warmup_steps", 0)),
+                        )
+                        if spike_triggered and accelerator.is_main_process:
+                            print(
+                                f"🧊 LIQUID SPIKE: loss>{liquid_spike_threshold:.2f} "
+                                f"({liquid_spike_patience} strikes). Freezing until step {liquid_frozen_until}."
                             )
 
                     # Update Stats

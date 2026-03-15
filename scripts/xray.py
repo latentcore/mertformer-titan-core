@@ -18,6 +18,7 @@ import os
 import sys
 import time
 import stat
+import argparse
 from pathlib import Path
 from datetime import datetime
 
@@ -69,6 +70,12 @@ FORCE_INCLUDE_RELATIVE_PATHS = {
     "reports/one_command_full_sop.log",
     "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
 }
+
+MATH_FASTPROOF_PREFIXES = {
+    "reports/benchmarks/math_fastproof",
+}
+
+INCLUDE_MATH_FASTPROOF_LOGS = os.environ.get("XRAY_INCLUDE_MATH_FASTPROOF_LOGS", "0") == "1"
 
 # Bu uzantılar varsayılan olarak binary/sistem kabul edilir.
 BINARY_SYSTEM_EXTENSIONS = {
@@ -157,6 +164,19 @@ def has_force_include_descendant(path: Path) -> bool:
     dotted = prefix + "/"
     return any(rel.startswith(dotted) for rel in FORCE_INCLUDE_RELATIVE_PATHS)
 
+
+def is_math_fastproof_path(path: Path) -> bool:
+    rel = to_root_relative_posix(path)
+    return any(rel.startswith(prefix) for prefix in MATH_FASTPROOF_PREFIXES)
+
+
+def has_math_fastproof_descendant(path: Path) -> bool:
+    prefix = to_root_relative_posix(path).strip("/")
+    if not prefix:
+        return bool(MATH_FASTPROOF_PREFIXES)
+    dotted = prefix + "/"
+    return any(p.startswith(dotted) for p in MATH_FASTPROOF_PREFIXES)
+
 def timed_input(prompt, timeout):
     print(prompt, end='', flush=True)
     if os.name == "nt":
@@ -208,6 +228,8 @@ def is_text_file(path: Path) -> bool:
     """Dosyanın metin mi binary mi olduğunu kontrol eder."""
     if is_force_include(path):
         return True
+    if INCLUDE_MATH_FASTPROOF_LOGS and is_math_fastproof_path(path):
+        return True
 
     # 1. Uzantı kontrolü (Hızlı eleme)
     if path.suffix.lower() in BINARY_SYSTEM_EXTENSIONS:
@@ -222,6 +244,8 @@ def is_text_file(path: Path) -> bool:
 
 def should_skip_content(path: Path) -> bool:
     if is_force_include(path):
+        return False
+    if INCLUDE_MATH_FASTPROOF_LOGS and is_math_fastproof_path(path):
         return False
 
     name = path.name.lower()
@@ -251,6 +275,8 @@ def should_skip_content(path: Path) -> bool:
 
 def should_skip_dir(path: Path) -> bool:
     if has_force_include_descendant(path):
+        return False
+    if INCLUDE_MATH_FASTPROOF_LOGS and has_math_fastproof_descendant(path):
         return False
 
     # Virtualenv / backup venv klasörlerini direkt atla (adil ve hızlı)
@@ -350,6 +376,12 @@ def write_tree(path: Path, file_handle, prefix: str = ""):
 # -------------------------------------------------------------------------
 
 def main():
+    ap = argparse.ArgumentParser(add_help=False)
+    ap.add_argument("--include-math-fastproof-logs", action="store_true")
+    args, _ = ap.parse_known_args()
+    global INCLUDE_MATH_FASTPROOF_LOGS
+    if bool(args.include_math_fastproof_logs):
+        INCLUDE_MATH_FASTPROOF_LOGS = True
     print("\n" + "=" * 60)
     print("🧠 MERTFORMER SMART AUDITOR (Build 30)")
     print("-" * 60)

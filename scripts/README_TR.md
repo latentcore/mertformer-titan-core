@@ -13,6 +13,7 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 ## Kanonik One-File Path
 - Resmi/kanonik one-file script: `scripts/kaggle_onefile_demo_build30.py`
 - Colab fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
+- Text-understanding PoC one-file script: `scripts/kaggle_onefile_demo_build30_text_understanding.py`
 - Repo dışı one-file kopyaları desteklenmez ve drift kaynağı sayılır.
 
 ## Çekirdek Akışlar
@@ -76,6 +77,8 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - `logbook_build.py` — Birleşik logbook üreticisi (çıktı `logs/` altında gitignored artifact).
 - `version_checker.py` — Sürüm tutarlılık kontrolü (deprecated marker bulursa hata verir).
 - `resume_compat_check.py` — Resume uyumunu doğrular ve `reports/resume_compat_report.json` yazar.
+- `tools/claim_number_audit.py` — `*.md` içindeki parametre formatlarını denetler (`reports/claim_number_audit.json`).
+- `tools/denylist_scan_zip.py` — Release zip denylist ön kontrolü (`reports/artifacts_zip_denylist_audit.json`).
 
 ## Varlıklar
 - `build_investor_deck.py` — PPTX yatırımcı deck üretimi.

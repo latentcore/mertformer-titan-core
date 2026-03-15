@@ -9,6 +9,9 @@ cd "$ROOT_DIR"
 
 export TITAN_OFFLINE="${TITAN_OFFLINE:-1}"
 export TITAN_WANDB="${TITAN_WANDB:-0}"
+if [[ "${TITAN_OFFLINE}" == "1" ]]; then
+  export TITAN_PREFLIGHT_ALLOW_MISSING_STAGE_JSONL="${TITAN_PREFLIGHT_ALLOW_MISSING_STAGE_JSONL:-1}"
+fi
 
 if [[ -n "${TITAN_PYTHON:-}" ]]; then
   if [[ -x "${TITAN_PYTHON}" ]]; then

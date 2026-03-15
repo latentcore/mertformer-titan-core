@@ -12,6 +12,10 @@ buradaki dosyalar **eğitim öncesi** kabul edilir ve tam eğitim sonrası yenid
   Üreten: `python scripts/smoke_train_benchmark.py` (dokümantasyon için smoke; sentetik token)
 - `summary.json`
   Üreten: `python eval/report_builder.py`
+- `math_fastproof/`
+  Canonical math-fastproof artifactları (README’ye bakın).
+- `text_understanding/`
+  Text-understanding PoC artifactları (README’ye bakın).
 
 ## Notlar
 - Hızlı smoke kontrol için `--samples` kullanın.

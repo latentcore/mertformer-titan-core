@@ -13,6 +13,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 ## Canonical One-File Path
 - Official/canonical one-file script: `scripts/kaggle_onefile_demo_build30.py`
 - Colab fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
+- Text-understanding PoC one-file script: `scripts/kaggle_onefile_demo_build30_text_understanding.py`
 - Repo-external copies are unsupported and treated as drift sources.
 
 ## Core Pipelines
@@ -78,6 +79,8 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - `logbook_build.py` — Unified logbook builder (writes under `logs/` as a gitignored artifact).
 - `version_checker.py` — Version consistency checker (fails on deprecated markers).
 - `resume_compat_check.py` — Verifies resume compatibility and writes `reports/resume_compat_report.json`.
+- `tools/claim_number_audit.py` — Audits `*.md` parameter-size formats (writes `reports/claim_number_audit.json`).
+- `tools/denylist_scan_zip.py` — Pre-checks release zip against denylist (writes `reports/artifacts_zip_denylist_audit.json`).
 
 ## Assets
 - `build_investor_deck.py` — Generates the PPTX investor deck.
