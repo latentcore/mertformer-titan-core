@@ -1,4 +1,4 @@
-[run] start_utc=2026-03-14T05:57:43Z
+[run] start_utc=2026-03-15T01:13:45Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
@@ -25,7 +25,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-111 passed, 3 skipped, 6 warnings in 19.79s
+111 passed, 3 skipped, 6 warnings in 87.03s (0:01:27)
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -64,7 +64,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <REPO_ROOT>/temp_preflight_data
 ✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 3.61s
+✈️ Preflight Duration: 6.83s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
@@ -75,8 +75,8 @@ Failure budget drill: PASS
 Overfit step 0: loss=121.5519
 Overfit step 12: loss=117.8494
 Overfit step 24: loss=113.7169
-Overfit step 36: loss=97.5475
-Overfit step 48: loss=50.8537
+Overfit step 36: loss=97.5476
+Overfit step 48: loss=50.8441
 Overfit gate: PASS
 Golden samples: 50
 - algorithms: 13
@@ -109,7 +109,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 7.534351825714111,
+  "elapsed_sec": 14.578114748001099,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -135,9 +135,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-03-14T05:58:18Z",
-        "cpu_percent": 20.0,
-        "ram_used_gb": 8.156158447265625,
+        "timestamp_utc": "2026-03-15T01:15:42Z",
+        "cpu_percent": 19.4,
+        "ram_used_gb": 7.5609893798828125,
         "ram_total_gb": 16.0
       }
     },
@@ -186,7 +186,7 @@ OK: duplicate zip guard; groups=0
 [runner] cmd=bash -lc true
 [runner] cleanup_root=<REPO_ROOT>
 [runner] include_tool_caches=True full_clean=True include_venv_caches=True dry_run=False
-[cleanup] dirs_found=578 files_found=0 dirs_removed=578 files_removed=0
+[cleanup] dirs_found=578 files_found=1 dirs_removed=578 files_removed=1
 [run] step=clean_runtime_artifacts_check
 OK: runtime artifacts and caches are clean
 [run] step=release_build30
@@ -205,7 +205,7 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip
-release_sha256=a89aa56f512ffabe2a09667228d7c2b857a0a5cc0f160bb079d1f83f502410c3
+release_sha256=48e9a75351a1b12f30ca3296e0880ec66ec6e2360dd692dd700ecb08d78908d2
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=artifact_release_zip
@@ -760,7 +760,7 @@ locked_sha256=
   adding: reports/pilot_acceptance_signoff_TR.md (deflated 46%)
   adding: reports/ownership_proof_bundle.json (deflated 56%)
   adding: reports/differential_backend_report.json (deflated 6%)
-  adding: reports/policy_sync_report.json (deflated 22%)
+  adding: reports/policy_sync_report.json (deflated 21%)
   adding: reports/snapshot_manifest_main.json (deflated 45%)
   adding: reports/go_nogo_signoff_onepager.md (deflated 42%)
   adding: reports/strategic_value_TR.md (deflated 39%)
@@ -794,7 +794,7 @@ locked_sha256=
   adding: reports/kpi_pack_v1.md (deflated 41%)
   adding: reports/resume_compat_report.json (deflated 41%)
   adding: reports/unicode_path_guard_report.json (deflated 20%)
-  adding: reports/release_manifest.json (deflated 72%)
+  adding: reports/release_manifest.json (deflated 73%)
   adding: reports/project_structure_sync_report.json (deflated 48%)
   adding: reports/verified_matrix_TR.md (deflated 52%)
   adding: reports/hardening_bundle_summary.json (deflated 47%)
@@ -854,7 +854,7 @@ locked_sha256=
   adding: reports/dataset_health.md (deflated 61%)
   adding: reports/snapshot_manifest_dealroom.json (deflated 49%)
   adding: reports/energy_baseline.json (deflated 22%)
-  adding: reports/linkcheck_report.json (deflated 24%)
+  adding: reports/linkcheck_report.json (deflated 25%)
   adding: reports/closure_57_matrix.md (deflated 71%)
   adding: reports/license_gate_report.json (deflated 16%)
   adding: reports/pilot_offer_packages_TR.md (deflated 41%)
@@ -883,4 +883,4 @@ locked_sha256=
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-03-14T05:58:36Z
+[run] end_utc=2026-03-15T01:16:16Z

@@ -210,6 +210,11 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         "benchmark_steps": 120,
         "benchmark_eval_batches": 16,
         "step_log_interval": 5,
+        "step_print_interval": 20,
+        "eval_progress_interval": 50,
+        "eval_progress_seconds": 20,
+        "mathfp_checkpoint_on_train_end": True,
+        "gpu_auto_tune": False,
         # Keep all architecture components ON by default.
         "mert_enable_all_extensions": True,
         "mert_use_moe": True,
@@ -364,6 +369,10 @@ RUN_CONFIG: Dict[str, Any] = {
     # Logger memory safety
     "logger_mode": "jsonl_ring",  # in_memory|jsonl_ring
     "step_log_interval": 1,
+    "step_print_interval": 20,
+    "eval_progress_interval": 50,
+    "eval_progress_seconds": 20,
+    "mathfp_checkpoint_on_train_end": True,
     "logger_ring_size": 5000,
     "logger_jsonl_path": "",
     "logger_basename": "colab_math_fastproof_run_log.jsonl",
@@ -1498,6 +1507,9 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
     profile_env = os.environ.get("MERTFORMER_ONEFILE_PROFILE", "").strip().lower()
     if profile_env in RUN_PROFILES:
         cfg["profile"] = profile_env
+    profile_raw = str(cfg.get("profile", "colab_math_fastproof")).strip().lower()
+    if profile_raw == "colab_math_fastproof":
+        cfg["auto_profile_picker"] = False
     if bool(cfg.get("auto_profile_picker", True)):
         cfg["profile"] = pick_auto_profile(str(cfg.get("profile", "colab_math_fastproof")), str(cfg.get("device", "auto")))
     profile = str(cfg.get("profile", "deep8h"))
@@ -2271,12 +2283,16 @@ class InMemoryRunLogger:
         mode: str = "jsonl_ring",
         ring_size: int = 5000,
         step_log_interval: int = 1,
+        flush_every: int = 10,
+        fsync_every: int = 200,
         jsonl_path: str = "",
     ) -> None:
         self.run_name = run_name
         self.created_at_utc = _utc_now()
         self.mode = str(mode)
         self.step_log_interval = max(1, int(step_log_interval))
+        self.flush_every = max(1, int(flush_every))
+        self.fsync_every = max(1, int(fsync_every))
         self.ring_size = max(100, int(ring_size))
         self.records_ring: deque[Dict[str, Any]] = deque(maxlen=self.ring_size)
         self.step_rows_ring: deque[Dict[str, Any]] = deque(maxlen=self.ring_size)
@@ -2310,12 +2326,18 @@ class InMemoryRunLogger:
         h.update(payload.encode("utf-8"))
         return h.hexdigest()
 
-    def log_event(self, kind: str, data: Dict[str, Any]) -> None:
-        rec = {
-            "type": kind,
-            "timestamp_utc": _utc_now(),
-            "data": safe_jsonable(data),
-        }
+    def _maybe_flush(self) -> None:
+        if self._jsonl_fp is None:
+            return
+        try:
+            if self.line_count_total % self.flush_every == 0:
+                self._jsonl_fp.flush()
+            if self.line_count_total % self.fsync_every == 0:
+                os.fsync(self._jsonl_fp.fileno())
+        except Exception:
+            pass
+
+    def _append_record(self, rec: Dict[str, Any]) -> None:
         payload = json.dumps(rec, ensure_ascii=False, sort_keys=True)
         chain_hash = self._line_hash(self._prev_hash, payload)
         rec["_chain"] = {"prev": self._prev_hash, "hash": chain_hash, "n": self.line_count_total + 1}
@@ -2327,13 +2349,30 @@ class InMemoryRunLogger:
                 self._jsonl_fp.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + "\n")
             except Exception:
                 pass
+        self._maybe_flush()
+
+    def log_event(self, kind: str, data: Dict[str, Any]) -> None:
+        rec = {
+            "type": "event",
+            "name": str(kind),
+            "event_type": str(kind),
+            "timestamp_utc": _utc_now(),
+            "data": safe_jsonable(data),
+        }
+        self._append_record(rec)
 
     def log_step(self, row: Dict[str, Any]) -> None:
-        step = int(row.get("step", 0))
+        step = int(row.get("global_step", row.get("step", 0)))
         if step > 0 and (step % self.step_log_interval) != 0:
             return
-        self.step_rows_ring.append(dict(row))
-        self.log_event("step", row)
+        rec = dict(row)
+        rec.setdefault("type", "step")
+        rec.setdefault("timestamp_utc", _utc_now())
+        rec["step"] = step
+        if "global_step" in rec:
+            rec["global_step"] = step
+        self.step_rows_ring.append(dict(rec))
+        self._append_record(rec)
 
     def finalize(self) -> Dict[str, Any]:
         if self._jsonl_fp is not None:
@@ -7171,12 +7210,32 @@ def mathfp_eval_exact_match(
     records: Sequence[Dict[str, Any]],
     device: str,
     max_new_tokens: int = 12,
+    logger: Optional[InMemoryRunLogger] = None,
+    stage: str = "eval",
+    progress_every: int = 50,
+    progress_seconds: float = 20.0,
 ) -> Dict[str, Any]:
+    total_records = int(len(records))
+    if total_records <= 0:
+        return {
+            "exact_match_percent": 0.0,
+            "correct": 0,
+            "total": 0,
+            "invalid_output_ratio": 1.0,
+            "operation_accuracy": {"+": 0.0, "-": 0.0, "*": 0.0, "/": 0.0},
+        }
+    progress_every = max(1, int(progress_every))
+    progress_seconds = max(1.0, float(progress_seconds))
     total = 0
     correct = 0
     invalid = 0
     per_op_total: Dict[str, int] = {"+": 0, "-": 0, "*": 0, "/": 0}
     per_op_ok: Dict[str, int] = {"+": 0, "-": 0, "*": 0, "/": 0}
+    last_report_t = time.time()
+    last_report_n = 0
+    if logger is not None:
+        logger.log_event("eval_start", {"stage": stage, "total": total_records})
+    print(f"[mathfp:{stage}] starting eval ({total_records} records)", flush=True)
     for row in records:
         total += 1
         op = str(row.get("op", "+"))
@@ -7195,17 +7254,42 @@ def mathfp_eval_exact_match(
         if pred is not None and gold is not None and int(pred) == int(gold):
             correct += 1
             per_op_ok[op] = per_op_ok.get(op, 0) + 1
+        now = time.time()
+        if (
+            total == total_records
+            or (total % progress_every == 0)
+            or (now - last_report_t) >= progress_seconds
+        ):
+            if total != last_report_n:
+                pct = _safe_div(float(total) * 100.0, float(max(1, total_records)), default=0.0)
+                msg = f"[mathfp:{stage}] {total}/{total_records} ({pct:.1f}%)"
+                print(msg, flush=True)
+                if logger is not None:
+                    logger.log_event(
+                        "eval_progress",
+                        {
+                            "stage": stage,
+                            "count": int(total),
+                            "total": int(total_records),
+                            "percent": float(pct),
+                        },
+                    )
+                last_report_t = now
+                last_report_n = total
     exact = _safe_div(float(correct) * 100.0, float(max(1, total)), default=0.0)
     op_acc: Dict[str, float] = {}
     for k, v in per_op_total.items():
         op_acc[k] = _safe_div(float(per_op_ok.get(k, 0)) * 100.0, float(max(1, v)), default=0.0)
-    return {
+    out = {
         "exact_match_percent": float(exact),
         "correct": int(correct),
         "total": int(total),
         "invalid_output_ratio": _safe_div(float(invalid), float(max(1, total)), default=0.0),
         "operation_accuracy": op_acc,
     }
+    if logger is not None:
+        logger.log_event("eval_done", {"stage": stage, **out})
+    return out
 
 
 def mathfp_select_small_mert_shape(cfg: Dict[str, Any]) -> Dict[str, int]:
@@ -7356,6 +7440,54 @@ def mathfp_allocate_steps(cfg: Dict[str, Any], variants: Sequence[str]) -> Dict[
     return out
 
 
+def mathfp_save_checkpoint(
+    model: nn.Module,
+    tokenizer: SimpleTokenizer,
+    cfg: Dict[str, Any],
+    variant: str,
+    step: int,
+    logger: Optional[InMemoryRunLogger] = None,
+    reason: str = "train_end_pre_eval",
+) -> str:
+    ckpt_raw = str(cfg.get("checkpoint_dir", "")).strip()
+    if not ckpt_raw:
+        return ""
+    ckpt_dir = Path(ckpt_raw).expanduser()
+    try:
+        ensure_writable_dir(ckpt_dir, "mathfp_ckpt")
+    except Exception:
+        pass
+    tag = f"mathfp_{variant}_step_{int(step):06d}"
+    ckpt_path = ckpt_dir / f"{tag}.pt"
+    latest_path = ckpt_dir / f"mathfp_{variant}_latest.pt"
+    payload = {
+        "schema": "build30_colab_math_fastproof_checkpoint_v1",
+        "saved_at_utc": _utc_now(),
+        "variant": str(variant),
+        "step": int(step),
+        "reason": str(reason),
+        "model": model.state_dict(),
+        "tokenizer_state": tokenizer.state_dict(),
+        "config": cfg,
+    }
+    try:
+        atomic_torch_save(ckpt_path, payload)
+        atomic_torch_save(latest_path, payload)
+        if logger is not None:
+            logger.log_event(
+                "mathfp_checkpoint_saved",
+                {"variant": variant, "step": int(step), "path": str(ckpt_path), "reason": str(reason)},
+            )
+        return str(ckpt_path)
+    except Exception as e:
+        if logger is not None:
+            logger.log_event(
+                "mathfp_checkpoint_failed",
+                {"variant": variant, "step": int(step), "error": f"{type(e).__name__}:{e}", "reason": str(reason)},
+            )
+        return ""
+
+
 def mathfp_train_variant(
     variant: str,
     model: nn.Module,
@@ -7381,6 +7513,9 @@ def mathfp_train_variant(
     answer_tokens_total = 0
     train_iter = iter(train_loader)
     eval_interval = max(1, int(cfg.get("eval_interval_steps", 100)))
+    print_interval = max(1, int(cfg.get("step_print_interval", eval_interval)))
+    eval_progress_every = max(1, int(cfg.get("eval_progress_interval", 50)))
+    eval_progress_seconds = max(1.0, float(cfg.get("eval_progress_seconds", 20)))
 
     for step in range(1, int(steps) + 1):
         try:
@@ -7440,7 +7575,11 @@ def mathfp_train_variant(
             ],
             row=row,
         )
+        if step == 1 or (step % print_interval == 0 and (step % eval_interval) != 0):
+            print(f"[mathfp:{variant}] step={step}/{steps} loss={lval:.4f}", flush=True)
+            logger.log_event("mathfp_train_progress", {"variant": variant, "step": step, "loss": lval})
         if step == 1 or step % max(1, eval_interval) == 0:
+            logger.log_event("mathfp_eval_start", {"variant": variant, "step": step, "phase": "val_loss"})
             vloss = mathfp_eval_masked_loss(
                 model=model,
                 loader=val_loader,
@@ -7450,7 +7589,21 @@ def mathfp_train_variant(
                 max_batches=max(4, int(cfg.get("benchmark_eval_batches", 8))),
             )
             logger.log_event("mathfp_eval", {"variant": variant, "step": step, "val_loss": vloss})
-            print(f"[mathfp:{variant}] step={step}/{steps} loss={lval:.4f} val_loss={vloss:.4f}")
+            print(f"[mathfp:{variant}] step={step}/{steps} loss={lval:.4f} val_loss={vloss:.4f}", flush=True)
+
+    pre_eval_ckpt = ""
+    if bool(cfg.get("mathfp_checkpoint_on_train_end", True)):
+        pre_eval_ckpt = mathfp_save_checkpoint(
+            model=model,
+            tokenizer=tokenizer,
+            cfg=cfg,
+            variant=variant,
+            step=int(steps),
+            logger=logger,
+            reason="train_end_pre_eval",
+        )
+        if pre_eval_ckpt:
+            print(f"[mathfp:{variant}] checkpoint_saved pre-eval path={pre_eval_ckpt}", flush=True)
 
     final_loss = losses[-1] if losses else float("inf")
     val_loss = mathfp_eval_masked_loss(
@@ -7461,8 +7614,28 @@ def mathfp_train_variant(
         aux_coeff=float(cfg.get("aux_loss_coeff", 0.0)),
         max_batches=max(4, int(cfg.get("benchmark_eval_batches", 8))),
     )
-    exact_val = mathfp_eval_exact_match(model, tokenizer, val_records, device=device, max_new_tokens=12)
-    exact_test = mathfp_eval_exact_match(model, tokenizer, test_records, device=device, max_new_tokens=12)
+    exact_val = mathfp_eval_exact_match(
+        model,
+        tokenizer,
+        val_records,
+        device=device,
+        max_new_tokens=12,
+        logger=logger,
+        stage=f"{variant}:val",
+        progress_every=eval_progress_every,
+        progress_seconds=eval_progress_seconds,
+    )
+    exact_test = mathfp_eval_exact_match(
+        model,
+        tokenizer,
+        test_records,
+        device=device,
+        max_new_tokens=12,
+        logger=logger,
+        stage=f"{variant}:test",
+        progress_every=eval_progress_every,
+        progress_seconds=eval_progress_seconds,
+    )
     t_total = float(sum(step_times))
     return {
         "variant": variant,
@@ -7476,6 +7649,7 @@ def mathfp_train_variant(
         "exact_match_test": float(exact_test.get("exact_match_percent", 0.0)),
         "invalid_output_ratio_test": float(exact_test.get("invalid_output_ratio", 1.0)),
         "operation_accuracy_test": safe_jsonable(exact_test.get("operation_accuracy", {})),
+        "pre_eval_checkpoint_path": str(pre_eval_ckpt),
         "layer_grad_norm_samples": safe_jsonable(layer_grad_norm_samples[:48]),
         "tokens_per_sec": _safe_div(float(answer_tokens_total), float(max(t_total, 1e-9)), default=0.0),
         "avg_step_time_sec": _safe_div(float(t_total), float(max(1, len(step_times))), default=0.0),
@@ -7603,6 +7777,8 @@ def run_math_fastproof(
 ) -> Dict[str, Any]:
     cfg = mathfp_prompt_architecture(cfg)
     cfg = mathfp_prompt_experimental_toggles(cfg)
+    eval_progress_every = max(1, int(cfg.get("eval_progress_interval", 50)))
+    eval_progress_seconds = max(1.0, float(cfg.get("eval_progress_seconds", 20)))
 
     run_id = layout.run_id
     run_dir = layout.run_dir
@@ -7687,6 +7863,10 @@ def run_math_fastproof(
                 records=unseen_records,
                 device=device,
                 max_new_tokens=12,
+                logger=logger,
+                stage=f"{variant}:unseen",
+                progress_every=eval_progress_every,
+                progress_seconds=eval_progress_seconds,
             )
             res["exact_match_unseen"] = float(unseen_eval.get("exact_match_percent", 0.0))
             res["invalid_output_ratio_unseen"] = float(unseen_eval.get("invalid_output_ratio", 1.0))

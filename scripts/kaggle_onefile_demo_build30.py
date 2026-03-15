@@ -1668,12 +1668,16 @@ class InMemoryRunLogger:
         mode: str = "jsonl_ring",
         ring_size: int = 5000,
         step_log_interval: int = 1,
+        flush_every: int = 10,
+        fsync_every: int = 200,
         jsonl_path: str = "",
     ) -> None:
         self.run_name = run_name
         self.created_at_utc = _utc_now()
         self.mode = str(mode)
         self.step_log_interval = max(1, int(step_log_interval))
+        self.flush_every = max(1, int(flush_every))
+        self.fsync_every = max(1, int(fsync_every))
         self.ring_size = max(100, int(ring_size))
         self.records_ring: deque[Dict[str, Any]] = deque(maxlen=self.ring_size)
         self.step_rows_ring: deque[Dict[str, Any]] = deque(maxlen=self.ring_size)
@@ -1707,12 +1711,18 @@ class InMemoryRunLogger:
         h.update(payload.encode("utf-8"))
         return h.hexdigest()
 
-    def log_event(self, kind: str, data: Dict[str, Any]) -> None:
-        rec = {
-            "type": kind,
-            "timestamp_utc": _utc_now(),
-            "data": safe_jsonable(data),
-        }
+    def _maybe_flush(self) -> None:
+        if self._jsonl_fp is None:
+            return
+        try:
+            if self.line_count_total % self.flush_every == 0:
+                self._jsonl_fp.flush()
+            if self.line_count_total % self.fsync_every == 0:
+                os.fsync(self._jsonl_fp.fileno())
+        except Exception:
+            pass
+
+    def _append_record(self, rec: Dict[str, Any]) -> None:
         payload = json.dumps(rec, ensure_ascii=False, sort_keys=True)
         chain_hash = self._line_hash(self._prev_hash, payload)
         rec["_chain"] = {"prev": self._prev_hash, "hash": chain_hash, "n": self.line_count_total + 1}
@@ -1724,13 +1734,30 @@ class InMemoryRunLogger:
                 self._jsonl_fp.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + "\n")
             except Exception:
                 pass
+        self._maybe_flush()
+
+    def log_event(self, kind: str, data: Dict[str, Any]) -> None:
+        rec = {
+            "type": "event",
+            "name": str(kind),
+            "event_type": str(kind),
+            "timestamp_utc": _utc_now(),
+            "data": safe_jsonable(data),
+        }
+        self._append_record(rec)
 
     def log_step(self, row: Dict[str, Any]) -> None:
-        step = int(row.get("step", 0))
+        step = int(row.get("global_step", row.get("step", 0)))
         if step > 0 and (step % self.step_log_interval) != 0:
             return
-        self.step_rows_ring.append(dict(row))
-        self.log_event("step", row)
+        rec = dict(row)
+        rec.setdefault("type", "step")
+        rec.setdefault("timestamp_utc", _utc_now())
+        rec["step"] = step
+        if "global_step" in rec:
+            rec["global_step"] = step
+        self.step_rows_ring.append(dict(rec))
+        self._append_record(rec)
 
     def finalize(self) -> Dict[str, Any]:
         if self._jsonl_fp is not None:
