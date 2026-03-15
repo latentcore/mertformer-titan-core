@@ -1,245 +1,245 @@
 {
   "schema": "claim_number_audit_v1",
-  "root": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core",
+  "root": "<REPO_ROOT>",
   "b_format_expected": "~X.XXB",
   "issue_count": 40,
   "issues": [
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/TECHNICAL_REPORT_TR.md",
+      "file": "TECHNICAL_REPORT_TR.md",
       "line": "87",
       "token": "70B",
       "context": "2.64B modelin, 70B zekasına yaklaşması için \"Öğretmen-Öğrenci\" yapısı kurulmuştur."
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/TECHNICAL_REPORT_TR.md",
+      "file": "TECHNICAL_REPORT_TR.md",
       "line": "90",
       "token": "70B",
       "context": "`distillation_manager.py` ile Llama-3.3-70B modelinin çıktıları (logits) önceden diske kaydedilir."
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/PITCH.md",
+      "file": "PITCH.md",
       "line": "17",
       "token": "3B",
       "context": "To establish the industry standard for the **Fastest On-Device Coding Model under 3B parameters**, transitioning from a deep-tech prototype to a venture-scale production layer."
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/TECHNICAL_REPORT.md",
+      "file": "TECHNICAL_REPORT.md",
       "line": "88",
       "token": "70B",
       "context": "To bring the 2.64B model closer to the intelligence of a 70B model, a \"Teacher-Student\" structure was established."
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/TECHNICAL_REPORT.md",
+      "file": "TECHNICAL_REPORT.md",
       "line": "91",
       "token": "70B",
       "context": "With `distillation_manager.py`, the outputs (logits) of the Llama-3.3-70B model are pre-recorded to disk."
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "132",
       "token": "23.6B",
       "context": "- Token budget (V2): default `TITAN_TOKEN_BUDGET_MODE=fixed_steps`, `TITAN_MAX_STEPS=45000`, `TITAN_TARGET_TOKENS_MIN=23.6B`."
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "565",
       "token": "70B",
       "context": "- **Knowledge Distillation**: Llama-3.3-70B → 2.64B design target (80% alpha)"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "593",
       "token": "70B",
       "context": "- **Offline Knowledge Distillation**: Pre-computed Llama-3-70B logits for zero-overhead teacher training (requires precomputed shards; falls back to online teacher if missing)."
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "1156",
       "token": "70B",
       "context": "teacher_model = \"meta-llama/Llama-3.3-70B-Instruct\""
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "1318",
       "token": "3B",
       "context": "| Llama-3.2-3B | 3.0B | BF16 | ❌ | ❌ | Partial |"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "1318",
       "token": "3.0B",
       "context": "| Llama-3.2-3B | 3.0B | BF16 | ❌ | ❌ | Partial |"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "1319",
       "token": "3.8B",
       "context": "| Phi-3-mini | 3.8B | FP16 | ❌ | ❌ | ❌ |"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "1320",
       "token": "2B",
       "context": "| Gemma-2B | 2.0B | BF16 | ❌ | ❌ | ❌ |"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "1320",
       "token": "2.0B",
       "context": "| Gemma-2B | 2.0B | BF16 | ❌ | ❌ | ❌ |"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "1324",
       "token": "3B",
       "context": "| Task | MertFormer Titan | Llama-3.2-3B | Phi-3-mini |"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "1382",
       "token": "7B",
       "context": "- Larger models (7B+) are typically slower on mobile"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "1388",
       "token": "70B",
       "context": "- Learns from a Llama-3.3-70B teacher"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "2053",
       "token": "70B",
       "context": "- **Meta AI**: Llama-3.3-70B teacher model & tokenizer"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "2131",
       "token": "13B",
       "context": "Future **13B / 70B / 256B** exploration is treated as a conditional research track and is evaluated only after:"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "2131",
       "token": "70B",
       "context": "Future **13B / 70B / 256B** exploration is treated as a conditional research track and is evaluated only after:"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README.md",
+      "file": "README.md",
       "line": "2131",
       "token": "256B",
       "context": "Future **13B / 70B / 256B** exploration is treated as a conditional research track and is evaluated only after:"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_SUMMARY_TR.md",
+      "file": "README_SUMMARY_TR.md",
       "line": "15",
       "token": "23.6B",
       "context": "- **Token bütçesi (V2)**: `TITAN_TOKEN_BUDGET_MODE=fixed_steps`, `TITAN_MAX_STEPS=45000`, `TITAN_TARGET_TOKENS_MIN=23.6B`."
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "557",
       "token": "70B",
       "context": "- **Bilgi Damıtma (Knowledge Distillation)**: Llama-3.3-70B → 2.64B tasarım hedefi (%80 alpha)"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "585",
       "token": "70B",
       "context": "- **Çevrimdışı Bilgi Damıtma (Offline KD)**: Sıfır yüklü öğretmen eğitimi için önceden hesaplanmış Llama-3-70B logitleri (precomputed shard gerektirir; yoksa online öğretmene düşer)."
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "1151",
       "token": "70B",
       "context": "teacher_model = \"meta-llama/Llama-3.3-70B-Instruct\""
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "1307",
       "token": "3B",
       "context": "| Llama-3.2-3B | 3.0B | BF16 | ❌ | ❌ | Kısmi |"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "1307",
       "token": "3.0B",
       "context": "| Llama-3.2-3B | 3.0B | BF16 | ❌ | ❌ | Kısmi |"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "1308",
       "token": "3.8B",
       "context": "| Phi-3-mini | 3.8B | FP16 | ❌ | ❌ | ❌ |"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "1309",
       "token": "2B",
       "context": "| Gemma-2B | 2.0B | BF16 | ❌ | ❌ | ❌ |"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "1309",
       "token": "2.0B",
       "context": "| Gemma-2B | 2.0B | BF16 | ❌ | ❌ | ❌ |"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "1313",
       "token": "3B",
       "context": "| Görev | MertFormer Titan | Llama-3.2-3B | Phi-3-mini |"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "1370",
       "token": "7B",
       "context": "- Daha büyük modeller (7B+) mobilde yavaş"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "1376",
       "token": "70B",
       "context": "- Llama-3.3-70B teacher'dan öğrenir"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "2042",
       "token": "70B",
       "context": "- **Meta AI**: Llama-3.3-70B teacher modeli & tokenleştirici"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "2121",
       "token": "13B",
       "context": "Gelecekteki **13B / 70B / 256B** araştırmaları koşullu bir hat olarak ele alınır ve yalnızca şu şartlardan sonra değerlendirilir:"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "2121",
       "token": "70B",
       "context": "Gelecekteki **13B / 70B / 256B** araştırmaları koşullu bir hat olarak ele alınır ve yalnızca şu şartlardan sonra değerlendirilir:"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_TR.md",
+      "file": "README_TR.md",
       "line": "2121",
       "token": "256B",
       "context": "Gelecekteki **13B / 70B / 256B** araştırmaları koşullu bir hat olarak ele alınır ve yalnızca şu şartlardan sonra değerlendirilir:"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/README_SUMMARY.md",
+      "file": "README_SUMMARY.md",
       "line": "15",
       "token": "23.6B",
       "context": "- **Token budget (V2)**: `TITAN_TOKEN_BUDGET_MODE=fixed_steps`, `TITAN_MAX_STEPS=45000`, `TITAN_TARGET_TOKENS_MIN=23.6B`."
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/interfaces/inference_contract.md",
+      "file": "interfaces/inference_contract.md",
       "line": "5",
       "token": "70B",
       "context": "- **Tokenizer**: loaded at runtime from `meta-llama/Llama-3.3-70B-Instruct`"
     },
     {
-      "file": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/interfaces/inference_contract_TR.md",
+      "file": "interfaces/inference_contract_TR.md",
       "line": "5",
       "token": "70B",
       "context": "- **Tokenizer**: çalışma zamanında `meta-llama/Llama-3.3-70B-Instruct` üzerinden yüklenir"

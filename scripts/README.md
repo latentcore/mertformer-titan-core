@@ -72,6 +72,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 
 ## Utilities
 - `chat.py` — Interactive chat interface.
+- `mathfp_interactive_chat.py` — Math-fastproof interactive Q/A loop (type `q` to quit).
 - `xray.py` — Project auditor (structure dump).
 - `mac_simulation.py` — Mac simulation run (CPU/MPS).
 - `train_tpu_turbo.py` — TPU training launcher (experimental).

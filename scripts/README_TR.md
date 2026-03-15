@@ -70,6 +70,7 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 
 ## Yardımcılar
 - `chat.py` — Etkileşimli chat arayüzü.
+- `mathfp_interactive_chat.py` — Math-fastproof interaktif soru/cevap (çıkış için `q`).
 - `xray.py` — Proje denetleyici (yapı dump).
 - `mac_simulation.py` — Mac simülasyon koşusu (CPU/MPS).
 - `train_tpu_turbo.py` — TPU eğitim başlatıcı (experimental).

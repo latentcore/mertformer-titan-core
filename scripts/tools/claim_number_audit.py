@@ -17,6 +17,7 @@ def _iter_md_files(root: Path) -> List[Path]:
 
 
 def audit_numbers(root: Path) -> Dict[str, object]:
+    root_label = "<REPO_ROOT>"
     # Parameter-size claims in B format (e.g., 3.70B)
     b_any = re.compile(r"\b~?\d+(?:[.,]\d+)?B\b")
     b_ok = re.compile(r"\b~?\d+\.\d{2}B\b")
@@ -24,13 +25,14 @@ def audit_numbers(root: Path) -> Dict[str, object]:
 
     for path in _iter_md_files(root):
         text = path.read_text(encoding="utf-8", errors="replace")
+        rel_path = str(path.relative_to(root))
         for idx, line in enumerate(text.splitlines(), start=1):
             for match in b_any.finditer(line):
                 token = match.group(0)
                 if not b_ok.fullmatch(token):
                     findings.append(
                         {
-                            "file": str(path),
+                            "file": rel_path,
                             "line": str(idx),
                             "token": token,
                             "context": line.strip()[:200],
@@ -39,7 +41,7 @@ def audit_numbers(root: Path) -> Dict[str, object]:
 
     return {
         "schema": "claim_number_audit_v1",
-        "root": str(root),
+        "root": root_label,
         "b_format_expected": "~X.XXB",
         "issue_count": len(findings),
         "issues": findings,

@@ -12,6 +12,7 @@ from scripts.zip_denylist_audit import audit_zip, load_policy  # noqa: E402
 
 def main() -> int:
     root = ROOT
+    root_label = "<REPO_ROOT>"
     zip_path = root / "artifacts" / "mertformer_release.zip"
     policy_path = root / "policy" / "allow_deny_policy.yaml"
     report_path = root / "reports" / "artifacts_zip_denylist_audit.json"
@@ -28,6 +29,7 @@ def main() -> int:
 
     deny_patterns, secret_patterns = load_policy(policy_path)
     report = audit_zip(zip_path, deny_patterns=deny_patterns, secret_patterns=secret_patterns)
+    report["zip_path"] = f"{root_label}/artifacts/mertformer_release.zip"
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0 if bool(report.get("ok", False)) else 1

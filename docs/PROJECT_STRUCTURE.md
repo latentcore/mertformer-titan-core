@@ -188,6 +188,28 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── mertformer_v0.1.json  # JSON data artifact
 ├── reports/  # directory
 │   ├── benchmarks/  # directory
+│   │   ├── math_fastproof/  # directory
+│   │   │   ├── README.md  # primary documentation (EN)
+│   │   │   ├── README_TR.md  # Turkish document counterpart
+│   │   │   ├── run_20260315_050133_artifact_index.json  # JSON data artifact
+│   │   │   ├── run_20260315_050133_compare.csv  # CSV data artifact
+│   │   │   ├── run_20260315_050133_compare.json  # JSON data artifact
+│   │   │   ├── run_20260315_050133_compare.md  # documentation/report file
+│   │   │   ├── run_20260315_050133_health.txt  # text artifact
+│   │   │   ├── run_20260315_050133_run_log.jsonl  # JSONL data/log artifact
+│   │   │   ├── run_20260315_050133_step_metrics.csv  # CSV data artifact
+│   │   │   ├── run_20260315_050133_summary.json  # JSON data artifact
+│   │   │   └── zip_manifest.json  # JSON data artifact
+│   │   ├── text_understanding/  # directory
+│   │   │   ├── README.md  # primary documentation (EN)
+│   │   │   ├── README_TR.md  # Turkish document counterpart
+│   │   │   ├── run_20260315_180151_artifact_index.json  # JSON data artifact
+│   │   │   ├── run_20260315_180151_compare.csv  # CSV data artifact
+│   │   │   ├── run_20260315_180151_compare.json  # JSON data artifact
+│   │   │   ├── run_20260315_180151_compare.md  # documentation/report file
+│   │   │   ├── run_20260315_180151_health.txt  # text artifact
+│   │   │   ├── run_20260315_180151_run_log.jsonl  # JSONL data/log artifact
+│   │   │   └── run_20260315_180151_summary.json  # JSON data artifact
 │   │   ├── README.md  # primary documentation (EN)
 │   │   ├── README_TR.md  # Turkish document counterpart
 │   │   ├── agentic_suite_build30.json  # JSON data artifact
@@ -226,6 +248,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── bench_vulkan_report.json  # JSON data artifact
 │   ├── bench_zero_copy_report.json  # JSON data artifact
 │   ├── cfc_moe_tolerance_report.json  # JSON data artifact
+│   ├── claim_number_audit.json  # JSON data artifact
 │   ├── cleanroom_verification.md  # documentation/report file
 │   ├── cleanroom_verification_TR.md  # Turkish document counterpart
 │   ├── cli_smoke_log.md  # documentation/report file
@@ -233,6 +256,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── closure_57_matrix.json  # JSON data artifact
 │   ├── closure_57_matrix.md  # documentation/report file
 │   ├── closure_57_matrix_TR.md  # Turkish document counterpart
+│   ├── closure_report_build30_v2.md  # documentation/report file
 │   ├── codex_deep_audit_DE.md  # documentation/report file
 │   ├── codex_deep_audit_DE_TR.md  # Turkish document counterpart
 │   ├── codex_deep_audit_EN.md  # documentation/report file
@@ -354,6 +378,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── runs/  # directory
 │   │   └── preflight/  # directory
 │   │       └── config_snapshot.json  # JSON data artifact
+│   ├── tools/  # directory
+│   │   ├── claim_number_audit.py  # Python module/script (automation script for claim number audit)
+│   │   └── denylist_scan_zip.py  # Python module/script (automation script for denylist scan zip)
 │   ├── README.md  # primary documentation (EN)
 │   ├── README_TR.md  # Turkish document counterpart
 │   ├── __init__.py  # Python module/script (scripts package initializer and exports)
@@ -393,10 +420,12 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── hash_manifest_to_json.py  # Python module/script (automation script for hash manifest to json)
 │   ├── kaggle_onefile_demo_build30.py  # Python module/script (automation script for kaggle onefile demo build30)
 │   ├── kaggle_onefile_demo_build30_colab_math_fastproof.py  # Python module/script (automation script for kaggle onefile demo build30 colab math fastproof)
+│   ├── kaggle_onefile_demo_build30_text_understanding.py  # Python module/script (automation script for kaggle onefile demo build30 text understanding)
 │   ├── kaggle_train_compare_build30.py  # Python module/script (automation script for kaggle train compare build30)
 │   ├── linkcheck_gate.py  # Python module/script (automation script for linkcheck gate)
 │   ├── logbook_build.py  # Python module/script (automation script for logbook build)
 │   ├── mac_simulation.py  # Python module/script (automation script for mac simulation)
+│   ├── mathfp_interactive_chat.py  # Python module/script (automation script for mathfp interactive chat)
 │   ├── md_build30_sweep.py  # Python module/script (automation script for md build30 sweep)
 │   ├── md_integrity_check.py  # Python module/script (automation script for md integrity check)
 │   ├── md_quality_gate.py  # Python module/script (automation script for md quality gate)
@@ -459,6 +488,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_kernel_equivalence.py  # Python module/script (automated test module for kernel equivalence)
 │   ├── test_kpi_report_cli.py  # Python module/script (automated test module for kpi report cli)
 │   ├── test_lifelong_safety.py  # Python module/script (automated test module for lifelong safety)
+│   ├── test_liquid_safeguard.py  # Python module/script (automated test module for liquid safeguard)
 │   ├── test_mla_regressions.py  # Python module/script (automated test module for mla regressions)
 │   ├── test_model.py  # Python module/script (automated test module for model)
 │   ├── test_onnx_custom_op_contract.py  # Python module/script (automated test module for onnx custom op contract)
@@ -498,6 +528,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── utils/  # directory
 │   ├── __init__.py  # Python module/script (utils package initializer and exports)
 │   ├── dataset_registry.py  # Python module/script (module for dataset registry)
+│   ├── liquid_safeguard.py  # Python module/script (module for liquid safeguard)
 │   ├── logger.py  # Python module/script (module for logger)
 │   └── safety.py  # Python module/script (module for safety)
 ├── .gitignore  # git ignore policy
