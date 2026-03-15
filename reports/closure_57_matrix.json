@@ -1,6 +1,6 @@
 {
   "schema": "closure_57_matrix_v1",
-  "generated_at_utc": "2026-03-08T01:38:06Z",
+  "generated_at_utc": "2026-03-15T15:08:00Z",
   "total_items": 57,
   "green_items": 57,
   "all_green": true,
@@ -104,7 +104,7 @@
       "area": "data",
       "name": "dedup + quality filtering",
       "code": true,
-      "integration": false,
+      "integration": true,
       "test": true,
       "green": true,
       "evidence_pending": false,

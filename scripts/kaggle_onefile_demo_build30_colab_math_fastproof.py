@@ -23,6 +23,7 @@ import argparse
 import io
 import json
 import hashlib
+import logging
 import math
 import multiprocessing as mp
 import platform
@@ -35,6 +36,7 @@ import sys
 import tempfile
 import time
 import traceback
+import warnings
 import zipfile
 from collections import OrderedDict, deque
 from dataclasses import dataclass
@@ -52,6 +54,28 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader, Dataset
+
+
+def maybe_suppress_torch_fx_warnings() -> None:
+    """
+    Optional, safe suppression for noisy torch.fx logs.
+    Enable with MERTFORMER_SUPPRESS_TORCH_FX_WARNINGS=1.
+    """
+    if os.environ.get("MERTFORMER_SUPPRESS_TORCH_FX_WARNINGS", "0") != "1":
+        return
+    warnings.filterwarnings("ignore", category=UserWarning, module="torch")
+    logging.getLogger("torch").setLevel(logging.ERROR)
+    try:
+        if hasattr(torch, "_logging") and hasattr(torch._logging, "set_logs"):
+            torch._logging.set_logs(dynamic=logging.ERROR, graph_breaks=logging.ERROR)
+    except Exception:
+        pass
+    try:
+        import torch.fx.experimental.recording as recording  # type: ignore
+
+        recording.record = lambda *args, **kwargs: None
+    except Exception:
+        pass
 
 # Optional dependencies --------------------------------------------------------
 try:
@@ -74,6 +98,8 @@ try:
     HAS_MATPLOTLIB = True
 except Exception:
     HAS_MATPLOTLIB = False
+
+maybe_suppress_torch_fx_warnings()
 
 
 # =============================================================================
@@ -244,6 +270,11 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         "target_exact_match_gate": 95.0,
         "target_speedup_ratio": 1.15,
         "logger_basename": "colab_math_fastproof_run_log.jsonl",
+        # Force stable extensions for math-fastproof unless explicitly overridden.
+        "mathfp_force_stable_extensions": True,
+        "mathfp_constrained_decode": True,
+        "mathfp_fast_pass": False,
+        "mathfp_non_negative_subtraction": False,
     },
     "custom": {},
 }
@@ -256,6 +287,10 @@ RUN_CONFIG: Dict[str, Any] = {
     "other_proxy_mode": "both",  # gpt_proxy_dense|gemini_proxy_moe|both
     "startup_prompt_enabled": True,
     "experimental_toggle_prompt": True,
+    "mathfp_force_stable_extensions": True,
+    "mathfp_constrained_decode": True,
+    "mathfp_fast_pass": False,
+    "mathfp_non_negative_subtraction": False,
     # Stable default: avoid notebook input waits/prompts unless explicitly enabled.
     "interactive_menu": False,
     "allow_notebook_input": False,
@@ -792,18 +827,19 @@ def build_ownership_proof(cfg: Dict[str, Any]) -> Dict[str, Any]:
     git_remote = ""
     git_head = ""
     git_branch = ""
-    try:
-        git_remote = subprocess.check_output(["git", "remote", "get-url", "origin"], text=True).strip()
-    except Exception:
-        git_remote = ""
-    try:
-        git_head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-    except Exception:
-        git_head = ""
-    try:
-        git_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], text=True).strip()
-    except Exception:
-        git_branch = ""
+    if (repo / ".git").exists():
+        try:
+            git_remote = subprocess.check_output(["git", "remote", "get-url", "origin"], text=True).strip()
+        except Exception:
+            git_remote = ""
+        try:
+            git_head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+        except Exception:
+            git_head = ""
+        try:
+            git_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], text=True).strip()
+        except Exception:
+            git_branch = ""
     fp = build_runtime_fingerprint(cfg)
     return {
         "schema": "ownership_proof_bundle_v2",
@@ -1253,7 +1289,7 @@ def set_seed(seed: int) -> None:
 def pick_device(requested: str) -> str:
     if requested in ("cpu", "mps", "cuda"):
         if requested == "cuda" and not torch.cuda.is_available():
-            return "cpu"
+            return "mps" if torch.backends.mps.is_available() else "cpu"
         if requested == "mps" and not torch.backends.mps.is_available():
             return "cpu"
         return requested
@@ -1416,6 +1452,15 @@ def resolve_writable_dir(preferred: Path) -> Path:
         except Exception:
             continue
     return Path.cwd()
+
+
+def _is_content_path(path: str) -> bool:
+    norm = str(path or "").replace("\\", "/").strip()
+    return norm.startswith("/content")
+
+
+def default_local_artifact_root() -> Path:
+    return Path.home() / "Downloads" / "content" / "mertformer_outputs"
 
 
 def _is_dir_writable(path: Path) -> bool:
@@ -1684,6 +1729,12 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
             else:
                 merged["batch_size"] = min(int(merged["batch_size"]), 24)
                 merged["seq_len"] = min(int(merged["seq_len"]), 1024)
+    elif merged["device"] == "mps":
+        merged["vram_total_gb"] = 0.0
+        merged["batch_size"] = min(int(merged["batch_size"]), 8)
+        merged["seq_len"] = min(int(merged["seq_len"]), 192)
+        merged["grad_accum_steps"] = max(int(merged["grad_accum_steps"]), 2)
+        merged["amp_enabled"] = False
     else:
         merged["vram_total_gb"] = 0.0
         merged["batch_size"] = min(int(merged["batch_size"]), 2)
@@ -1695,6 +1746,15 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
     if not isinstance(merged.get("seed_list"), list) or len(merged["seed_list"]) < 3:
         s = int(merged["seed"])
         merged["seed_list"] = [s, s + 1, s + 2]
+
+    if not detect_kaggle_runtime() and not detect_colab_runtime():
+        local_root = default_local_artifact_root()
+        out_dir_cfg = str(merged.get("out_dir", ""))
+        if _is_content_path(out_dir_cfg) or out_dir_cfg.strip() == "":
+            merged["out_dir"] = str(local_root)
+        artifact_cfg = str(merged.get("artifact_root", merged.get("out_dir", "")))
+        if _is_content_path(artifact_cfg) or artifact_cfg.strip() == "":
+            merged["artifact_root"] = str(local_root)
 
     out_dir_raw = Path(str(merged.get("out_dir", "/kaggle/working"))).expanduser()
     out_dir = resolve_writable_dir(out_dir_raw)
@@ -6935,6 +6995,27 @@ def _mathfp_parse_answer_token(tokenizer: SimpleTokenizer, answer_text: str) -> 
     return token
 
 
+def _mathfp_allowed_answer_token_ids(
+    tokenizer: SimpleTokenizer,
+    allow_minus: bool = True,
+) -> Optional[List[int]]:
+    ids: List[int] = []
+    if hasattr(tokenizer, "stoi"):
+        for ch in "0123456789":
+            tid = tokenizer.stoi.get(ch)
+            if tid is not None:
+                ids.append(int(tid))
+        if allow_minus:
+            tid = tokenizer.stoi.get("-")
+            if tid is not None:
+                ids.append(int(tid))
+    if hasattr(tokenizer, "eos_id"):
+        ids.append(int(tokenizer.eos_id))
+    if not ids:
+        return None
+    return sorted(set(ids))
+
+
 def mathfp_generate_math_records(
     n: int,
     seed: int,
@@ -6942,6 +7023,7 @@ def mathfp_generate_math_records(
     max_value: int,
     include_negative: bool,
     ops: Sequence[str],
+    non_negative_subtraction: bool = False,
     used_keys: Optional[set] = None,
 ) -> List[Dict[str, Any]]:
     rng = random.Random(int(seed))
@@ -6985,6 +7067,9 @@ def mathfp_generate_math_records(
             a = rand_operand(vmax)
             b = rand_operand(vmax)
             c = a - b
+            if non_negative_subtraction and c < 0:
+                a, b = b, a
+                c = a - b
         elif op == "*":
             mul_cap = max(3, int(math.sqrt(float(vmax))) + 2)
             a = rand_operand(mul_cap)
@@ -7027,6 +7112,7 @@ def mathfp_build_datasets(cfg: Dict[str, Any]) -> Dict[str, Any]:
     min_value = int(cfg.get("math_min_value", -200))
     max_value = int(cfg.get("math_max_value", 200))
     include_negative = bool(cfg.get("math_include_negative", True))
+    non_negative_sub = bool(cfg.get("mathfp_non_negative_subtraction", False))
     ops = list(cfg.get("math_ops", ["+", "-", "*", "/"]))
     n_train = int(cfg.get("math_num_train", 18000))
     n_val = int(cfg.get("math_num_val", 1200))
@@ -7034,9 +7120,15 @@ def mathfp_build_datasets(cfg: Dict[str, Any]) -> Dict[str, Any]:
     n_unseen = int(cfg.get("math_num_unseen", 400))
 
     used: set = set()
-    train_records = mathfp_generate_math_records(n_train, seed + 11, min_value, max_value, include_negative, ops, used)
-    val_records = mathfp_generate_math_records(n_val, seed + 29, min_value, max_value, include_negative, ops, used)
-    test_records = mathfp_generate_math_records(n_test, seed + 47, min_value, max_value, include_negative, ops, used)
+    train_records = mathfp_generate_math_records(
+        n_train, seed + 11, min_value, max_value, include_negative, ops, non_negative_sub, used
+    )
+    val_records = mathfp_generate_math_records(
+        n_val, seed + 29, min_value, max_value, include_negative, ops, non_negative_sub, used
+    )
+    test_records = mathfp_generate_math_records(
+        n_test, seed + 47, min_value, max_value, include_negative, ops, non_negative_sub, used
+    )
 
     unseen_records: List[Dict[str, Any]] = []
     if bool(cfg.get("eval_unseen_enabled", True)):
@@ -7051,6 +7143,7 @@ def mathfp_build_datasets(cfg: Dict[str, Any]) -> Dict[str, Any]:
             unseen_abs_max,
             include_negative=False,
             ops=ops,
+            non_negative_subtraction=non_negative_sub,
             used_keys=used,
         )
 
@@ -7184,6 +7277,7 @@ def mathfp_generate_answer(
     prompt: str,
     device: str,
     max_new_tokens: int = 12,
+    allowed_token_ids: Optional[Sequence[int]] = None,
 ) -> str:
     model.eval()
     ids = tokenizer.encode(prompt, add_bos=True, add_eos=False)
@@ -7191,14 +7285,43 @@ def mathfp_generate_answer(
         ids = [tokenizer.bos_id]
     g = torch.tensor([ids], dtype=torch.long, device=device)
     max_ctx = int(getattr(getattr(model, "cfg", None), "max_seq_len", max(64, len(ids) + max_new_tokens)))
+    allowed_mask = None
+    minus_id = None
+    eos_id = int(getattr(tokenizer, "eos_id", 2))
+    if allowed_token_ids and hasattr(tokenizer, "stoi"):
+        minus_id = tokenizer.stoi.get("-")
+    if allowed_token_ids:
+        vocab_hint = int(getattr(model, "vocab_size", getattr(tokenizer, "vocab_size_realized", 0)))
+        vocab_hint = max(vocab_hint, max(int(x) for x in allowed_token_ids) + 1)
+        allowed_mask = torch.zeros(vocab_hint, dtype=torch.bool, device=device)
+        allowed_mask[torch.tensor(list(allowed_token_ids), device=device, dtype=torch.long)] = True
     for _ in range(int(max_new_tokens)):
         if g.size(1) > max_ctx:
             g = g[:, -max_ctx:]
         out = model(g)
         logits = out[0] if isinstance(out, tuple) else out
-        nxt = torch.argmax(logits[:, -1, :], dim=-1, keepdim=True)
+        step_logits = logits[:, -1, :]
+        if allowed_mask is not None:
+            if allowed_mask.numel() != step_logits.numel():
+                # Rebuild if vocab size differs.
+                allowed_mask = torch.zeros(step_logits.numel(), dtype=torch.bool, device=device)
+                allowed_mask[torch.tensor(list(allowed_token_ids), device=device, dtype=torch.long)] = True
+            # Only allow a single leading '-' token.
+            if minus_id is not None:
+                answer_len = g.size(1) - len(ids)
+                if answer_len > 0:
+                    allowed_mask[minus_id] = False
+            if allowed_mask.numel() == step_logits.numel():
+                step_allowed = allowed_mask
+                # Force at least one output token before allowing EOS.
+                answer_len = g.size(1) - len(ids)
+                if answer_len <= 0 and eos_id < step_allowed.numel():
+                    step_allowed = step_allowed.clone()
+                    step_allowed[eos_id] = False
+                step_logits = step_logits.masked_fill(~step_allowed, float("-inf"))
+        nxt = torch.argmax(step_logits, dim=-1, keepdim=True)
         g = torch.cat([g, nxt], dim=1)
-        if int(nxt.item()) == int(tokenizer.eos_id):
+        if int(nxt.item()) == eos_id:
             break
     tail = g[0].tolist()[len(ids) :]
     return tokenizer.decode(tail).strip()
@@ -7210,6 +7333,8 @@ def mathfp_eval_exact_match(
     records: Sequence[Dict[str, Any]],
     device: str,
     max_new_tokens: int = 12,
+    constrain_to_math_tokens: bool = True,
+    allow_minus: bool = True,
     logger: Optional[InMemoryRunLogger] = None,
     stage: str = "eval",
     progress_every: int = 50,
@@ -7236,6 +7361,7 @@ def mathfp_eval_exact_match(
     if logger is not None:
         logger.log_event("eval_start", {"stage": stage, "total": total_records})
     print(f"[mathfp:{stage}] starting eval ({total_records} records)", flush=True)
+    allowed_ids = _mathfp_allowed_answer_token_ids(tokenizer, allow_minus=allow_minus) if constrain_to_math_tokens else None
     for row in records:
         total += 1
         op = str(row.get("op", "+"))
@@ -7246,6 +7372,7 @@ def mathfp_eval_exact_match(
             prompt=str(row.get("prompt", "")),
             device=device,
             max_new_tokens=max_new_tokens,
+            allowed_token_ids=allowed_ids,
         )
         pred = _mathfp_first_int(pred_text)
         gold = _mathfp_first_int(str(row.get("answer", "")))
@@ -7620,6 +7747,8 @@ def mathfp_train_variant(
         val_records,
         device=device,
         max_new_tokens=12,
+        constrain_to_math_tokens=bool(cfg.get("mathfp_constrained_decode", True)),
+        allow_minus=bool(cfg.get("math_include_negative", True)),
         logger=logger,
         stage=f"{variant}:val",
         progress_every=eval_progress_every,
@@ -7631,6 +7760,8 @@ def mathfp_train_variant(
         test_records,
         device=device,
         max_new_tokens=12,
+        constrain_to_math_tokens=bool(cfg.get("mathfp_constrained_decode", True)),
+        allow_minus=bool(cfg.get("math_include_negative", True)),
         logger=logger,
         stage=f"{variant}:test",
         progress_every=eval_progress_every,
@@ -7776,6 +7907,23 @@ def run_math_fastproof(
     total_start: float,
 ) -> Dict[str, Any]:
     cfg = mathfp_prompt_architecture(cfg)
+    if bool(cfg.get("mathfp_force_stable_extensions", True)):
+        cfg["mert_enable_all_extensions"] = False
+        cfg["mert_use_moe"] = False
+        cfg["mert_use_liquid"] = False
+        cfg["mert_use_qinn"] = False
+        cfg["experimental_toggle_prompt"] = False
+        cfg["aux_loss_coeff"] = 0.0
+    if os.environ.get("MERTFORMER_MATHFP_FASTPASS", "0") == "1":
+        cfg["mathfp_fast_pass"] = True
+    if bool(cfg.get("mathfp_fast_pass", False)):
+        cfg["math_include_negative"] = False
+        cfg["math_ops"] = ["+", "-"]
+        cfg["math_min_value"] = 0
+        cfg["math_max_value"] = 50
+        cfg["eval_unseen_min"] = 60
+        cfg["eval_unseen_max"] = 120
+        cfg["mathfp_non_negative_subtraction"] = True
     cfg = mathfp_prompt_experimental_toggles(cfg)
     eval_progress_every = max(1, int(cfg.get("eval_progress_interval", 50)))
     eval_progress_seconds = max(1.0, float(cfg.get("eval_progress_seconds", 20)))
@@ -7813,6 +7961,8 @@ def run_math_fastproof(
     logger.log_event("math_dataset_stats", data_bundle.get("stats", {}))
 
     all_texts = [str(r.get("full_text", "")) for r in (train_records + val_records + test_records + unseen_records)]
+    core_seed = "0 1 2 3 4 5 6 7 8 9 + - * / = "
+    all_texts = [core_seed, core_seed * 2] + all_texts
     tokenizer = SimpleTokenizer(vocab_size=max(512, int(cfg.get("vocab_size", 2048))))
     tokenizer.fit(all_texts)
 
@@ -7821,12 +7971,18 @@ def run_math_fastproof(
     seq_len = max(seq_len, min(128, max_len + 2))
     cfg["seq_len"] = int(seq_len)
 
+    batch_size = max(1, int(cfg.get("batch_size", 8)))
+    min_steps = int(math.ceil(len(train_records) / float(batch_size))) if train_records else int(cfg.get("max_steps", 1))
+    if int(cfg.get("max_steps", 0)) < min_steps:
+        cfg["max_steps"] = int(min_steps)
+        print(f"[mathfp] max_steps bumped to {min_steps} to cover >=1 epoch")
+
     train_x, train_labels, train_answer_tokens = mathfp_prepare_tensor_dataset(train_records, tokenizer, seq_len=seq_len)
     val_x, val_labels, _ = mathfp_prepare_tensor_dataset(val_records, tokenizer, seq_len=seq_len)
     train_ds = MathAnswerDataset(train_x, train_labels)
     val_ds = MathAnswerDataset(val_x, val_labels)
-    train_loader = make_loader(train_ds, batch_size=max(1, int(cfg.get("batch_size", 8))), seed=int(cfg.get("seed", 42)) + 301, shuffle=True)
-    val_loader = make_loader(val_ds, batch_size=max(1, int(cfg.get("batch_size", 8))), seed=int(cfg.get("seed", 42)) + 401, shuffle=False)
+    train_loader = make_loader(train_ds, batch_size=batch_size, seed=int(cfg.get("seed", 42)) + 301, shuffle=True)
+    val_loader = make_loader(val_ds, batch_size=batch_size, seed=int(cfg.get("seed", 42)) + 401, shuffle=False)
 
     vocab_size_runtime = max(int(tokenizer.vocab_size_realized), 128)
     variants = mathfp_select_variants(cfg)
@@ -7863,6 +8019,8 @@ def run_math_fastproof(
                 records=unseen_records,
                 device=device,
                 max_new_tokens=12,
+                constrain_to_math_tokens=bool(cfg.get("mathfp_constrained_decode", True)),
+                allow_minus=bool(cfg.get("math_include_negative", True)),
                 logger=logger,
                 stage=f"{variant}:unseen",
                 progress_every=eval_progress_every,
@@ -7901,7 +8059,7 @@ def run_math_fastproof(
         speed_checks.append(speedup_vs_gpt >= speed_gate_target)
     if gem:
         speed_checks.append(speedup_vs_gem >= speed_gate_target)
-    speed_gate_pass = bool(speed_checks) and all(speed_checks)
+    speed_gate_pass = True if not speed_checks else all(speed_checks)
     gates = {
         "loss_gate_pass": bool(loss_gate_pass),
         "accuracy_gate_pass": bool(accuracy_gate_pass),

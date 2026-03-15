@@ -1,0 +1,61 @@
+{
+  "generated_at_utc": "2026-03-15T03:23:47Z",
+  "zip_path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_evidence.zip",
+  "added": [
+    {
+      "name": "run_log_jsonl",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_run_log.jsonl",
+      "arcname": "run_20260315_050133_run_log.jsonl",
+      "size": 422416
+    },
+    {
+      "name": "step_metrics_csv",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_step_metrics.csv",
+      "arcname": "run_20260315_050133_step_metrics.csv",
+      "size": 253128
+    },
+    {
+      "name": "summary_json",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_summary.json",
+      "arcname": "run_20260315_050133_summary.json",
+      "size": 1167
+    },
+    {
+      "name": "compare_json",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_compare.json",
+      "arcname": "run_20260315_050133_compare.json",
+      "size": 107250
+    },
+    {
+      "name": "compare_csv",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_compare.csv",
+      "arcname": "run_20260315_050133_compare.csv",
+      "size": 225
+    },
+    {
+      "name": "compare_md",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_compare.md",
+      "arcname": "run_20260315_050133_compare.md",
+      "size": 490
+    },
+    {
+      "name": "health_txt",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_health.txt",
+      "arcname": "run_20260315_050133_health.txt",
+      "size": 230
+    },
+    {
+      "name": "model_final",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_model_final.pt",
+      "arcname": "run_20260315_050133_model_final.pt",
+      "size": 97657655
+    },
+    {
+      "name": "artifact_index",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_artifact_index.json",
+      "arcname": "run_20260315_050133_artifact_index.json",
+      "size": 2341
+    }
+  ],
+  "errors": []
+}

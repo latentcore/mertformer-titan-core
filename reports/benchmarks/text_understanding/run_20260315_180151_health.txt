@@ -1,0 +1,5 @@
+RUN_ID=run_20260315_180151
+FINAL_STATUS=gate_pass
+accuracy_gate_pass=True
+exact_match_test=100.00
+exact_match_unseen=100.00

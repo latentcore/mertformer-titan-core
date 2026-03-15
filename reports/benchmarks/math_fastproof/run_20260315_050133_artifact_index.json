@@ -1,0 +1,61 @@
+{
+  "generated_at_utc": "2026-03-15T03:23:43Z",
+  "files": [
+    {
+      "name": "run_log_jsonl",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_run_log.jsonl",
+      "exists": true,
+      "size": 422416,
+      "sha256": "a030ad4df52e79af05e3451bcc84daa28ba0645844d5304d780160c43293bb5f"
+    },
+    {
+      "name": "step_metrics_csv",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_step_metrics.csv",
+      "exists": true,
+      "size": 253128,
+      "sha256": "e17545829d20bf66de57ffd21db13d0883f6cda96e217f47c0a6db40d6e07222"
+    },
+    {
+      "name": "summary_json",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_summary.json",
+      "exists": true,
+      "size": 1167,
+      "sha256": "3af89b36c1ff4456b24e6485920014ae68cf1405a06b837f7ad6931b887854c3"
+    },
+    {
+      "name": "compare_json",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_compare.json",
+      "exists": true,
+      "size": 107250,
+      "sha256": "3887addc3948ccb52fc509ed118166f3a4d22cbe99f4d657dcb643f6d957bcd2"
+    },
+    {
+      "name": "compare_csv",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_compare.csv",
+      "exists": true,
+      "size": 225,
+      "sha256": "8ccbc796812d42f3d7395c25df465517019d6bdbafb294c3b008da5e44a1faca"
+    },
+    {
+      "name": "compare_md",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_compare.md",
+      "exists": true,
+      "size": 490,
+      "sha256": "8ea2571434ff52d70e2fe8164efc74d30fd0247303f64673b46e446aba3f34b5"
+    },
+    {
+      "name": "health_txt",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_health.txt",
+      "exists": true,
+      "size": 230,
+      "sha256": "15f8e1b129839f64d7a42e6ecbc1c7d77d5476fb2cd762258f1cd1d3465230e6"
+    },
+    {
+      "name": "model_final",
+      "path": "\\content\\mertformer_outputs\\runs\\run_20260315_050133\\run_20260315_050133_model_final.pt",
+      "exists": true,
+      "size": 97657655,
+      "sha256": "e39819c37b78900118667172bc94669d5c6548d46d29b9cae177cf457860d797"
+    }
+  ]
+}

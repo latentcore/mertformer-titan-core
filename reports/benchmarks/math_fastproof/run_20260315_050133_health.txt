@@ -1,0 +1,8 @@
+time_utc=2026-03-15T03:23:43Z
+run_id=run_20260315_050133
+final_status=gate_fail
+loss_gate_pass=True
+accuracy_gate_pass=False
+speed_gate_pass=False
+speedup_ratio_vs_gpt_proxy=0.000000
+speedup_ratio_vs_gemini_proxy=0.000000

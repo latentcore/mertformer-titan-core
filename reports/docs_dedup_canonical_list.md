@@ -154,12 +154,19 @@ Generated automatically.
 - `reports/benchmarks/README.md`
 - `reports/benchmarks/README_TR.md`
 - `reports/benchmarks/kaggle_compare_build30.md`
+- `reports/benchmarks/math_fastproof/README.md`
+- `reports/benchmarks/math_fastproof/README_TR.md`
+- `reports/benchmarks/math_fastproof/run_20260315_050133_compare.md`
+- `reports/benchmarks/text_understanding/README.md`
+- `reports/benchmarks/text_understanding/README_TR.md`
+- `reports/benchmarks/text_understanding/run_20260315_180151_compare.md`
 - `reports/cleanroom_verification.md`
 - `reports/cleanroom_verification_TR.md`
 - `reports/cli_smoke_log.md`
 - `reports/cli_smoke_log_TR.md`
 - `reports/closure_57_matrix.md`
 - `reports/closure_57_matrix_TR.md`
+- `reports/closure_report_build30_v2.md`
 - `reports/codex_deep_audit_DE.md`
 - `reports/codex_deep_audit_DE_TR.md`
 - `reports/codex_deep_audit_EN.md`
@@ -312,6 +319,8 @@ Generated automatically.
   - `logs/README.md`
   - `postmortems/README.md`
   - `reports/benchmarks/README.md`
+  - `reports/benchmarks/math_fastproof/README.md`
+  - `reports/benchmarks/text_understanding/README.md`
   - `reports/pilots/README.md`
   - `scripts/README.md`
   - `tokenizer/tr/README.md`
@@ -328,6 +337,8 @@ Generated automatically.
   - `logs/README_TR.md`
   - `postmortems/README_TR.md`
   - `reports/benchmarks/README_TR.md`
+  - `reports/benchmarks/math_fastproof/README_TR.md`
+  - `reports/benchmarks/text_understanding/README_TR.md`
   - `reports/pilots/README_TR.md`
   - `scripts/README_TR.md`
   - `tokenizer/tr/README_TR.md`

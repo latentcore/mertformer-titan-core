@@ -1,0 +1,21 @@
+{
+  "schema": "text_understanding_compare_v1",
+  "generated_at_utc": "2026-03-15T15:01:52Z",
+  "run_id": "run_20260315_180151",
+  "variant_results": [
+    {
+      "variant": "rule_based_baseline",
+      "exact_match_val": 100.0,
+      "exact_match_test": 100.0,
+      "exact_match_unseen": 100.0,
+      "invalid_output_ratio_val": 0.0,
+      "invalid_output_ratio_test": 0.0,
+      "invalid_output_ratio_unseen": 0.0,
+      "note": "Deterministic extraction; no model training performed."
+    }
+  ],
+  "gates": {
+    "accuracy_gate_pass": true
+  },
+  "final_status": "gate_pass"
+}

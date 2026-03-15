@@ -3,7 +3,7 @@
   "specVersion": "1.5",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-03-08T01:38:41.135578+00:00",
+    "timestamp": "2026-03-15T15:08:53.793906+00:00",
     "component": {
       "type": "application",
       "name": "mertformer-titan-core"
@@ -186,6 +186,12 @@
     },
     {
       "type": "library",
+      "name": "lxml",
+      "version": "6.0.2",
+      "purl": "pkg:pypi/lxml@6.0.2"
+    },
+    {
+      "type": "library",
       "name": "markdown-it-py",
       "version": "4.0.0",
       "purl": "pkg:pypi/markdown-it-py@4.0.0"
@@ -204,15 +210,9 @@
     },
     {
       "type": "library",
-      "name": "# Editable install with no version control (mertformer-sdk",
-      "version": "0.1.0)",
-      "purl": "pkg:pypi/# Editable install with no version control (mertformer-sdk@0.1.0)"
-    },
-    {
-      "type": "library",
-      "name": "editable-core",
+      "name": "editable-mertformer_sdk",
       "version": "editable",
-      "purl": "pkg:pypi/editable-core@editable"
+      "purl": "pkg:pypi/editable-mertformer_sdk@editable"
     },
     {
       "type": "library",
@@ -300,6 +300,12 @@
     },
     {
       "type": "library",
+      "name": "pillow",
+      "version": "12.1.1",
+      "purl": "pkg:pypi/pillow@12.1.1"
+    },
+    {
+      "type": "library",
       "name": "platformdirs",
       "version": "4.9.4",
       "purl": "pkg:pypi/platformdirs@4.9.4"
@@ -369,6 +375,12 @@
       "name": "python-dateutil",
       "version": "2.9.0.post0",
       "purl": "pkg:pypi/python-dateutil@2.9.0.post0"
+    },
+    {
+      "type": "library",
+      "name": "python-pptx",
+      "version": "1.0.2",
+      "purl": "pkg:pypi/python-pptx@1.0.2"
     },
     {
       "type": "library",
@@ -501,6 +513,12 @@
       "name": "wandb",
       "version": "0.25.0",
       "purl": "pkg:pypi/wandb@0.25.0"
+    },
+    {
+      "type": "library",
+      "name": "xlsxwriter",
+      "version": "3.2.9",
+      "purl": "pkg:pypi/xlsxwriter@3.2.9"
     },
     {
       "type": "library",
