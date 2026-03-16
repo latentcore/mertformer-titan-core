@@ -49,8 +49,8 @@ Rule: every tracked `X.md` has `X_TR.md` pair where applicable.
 ## 6) Release Identifiers
 
 - Final git SHA (main): `git rev-parse --short HEAD`
-- Release zip: `MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`
-- Locked secure package: `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
+- Release zip: `MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`
+- Locked secure package: `MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`
 - SHA-256 registry: see `reports/release_snapshot.md` (Release Artifacts section).
 
 ## 7) Portable Training Readiness (Build30)

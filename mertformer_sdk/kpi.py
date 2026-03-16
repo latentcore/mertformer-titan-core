@@ -68,8 +68,8 @@ def collect_kpis(
     kaggle_metrics = _load_json(project_root / "reports" / "benchmarks" / "kaggle_compare_build30.json")
 
     release_files = [
-        project_root / "packages" / "MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip",
-        project_root / "packages" / "MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age",
+        project_root / "packages" / "MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip",
+        project_root / "packages" / "MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age",
     ]
     release_total = float(len(release_files))
 

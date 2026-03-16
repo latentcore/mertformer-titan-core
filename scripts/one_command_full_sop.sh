@@ -19,7 +19,7 @@ RAW_LOG="$(mktemp "$ROOT_DIR/reports/.one_command_full_sop_raw.XXXXXX.log")"
 
 mkdir -p "$ROOT_DIR/reports" "$ROOT_DIR/packages" "$ROOT_DIR/artifacts"
 
-REL_ZIP="packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip"
+REL_ZIP="packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip"
 
 run_step() {
   local name="$1"; shift

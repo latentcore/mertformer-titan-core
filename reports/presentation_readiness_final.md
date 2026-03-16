@@ -29,7 +29,7 @@
 ## Package + Audit Evidence
 
 - Package zip:
-  - `packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`
+  - `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`
   - SHA256: `877db0b26881c516e3ea58d9813636b2a118e8b85ec6e8f1c1c3c99c8ba688ce`
 - Secondary artifact zip:
   - `artifacts/mertformer_release.zip`

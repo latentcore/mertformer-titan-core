@@ -8,12 +8,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import time
 from pathlib import Path
 from typing import Dict, List
 
 import torch
 import torch.nn as nn
+
+# Ensure repo root is on sys.path when run from automation scripts.
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from config.config import cfg
 from model.transformers import MertFormer

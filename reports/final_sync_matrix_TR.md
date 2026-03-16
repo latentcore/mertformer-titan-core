@@ -49,8 +49,8 @@ Kural: uygun olan her tracked `X.md` dosyasının `X_TR.md` karşılığı olmal
 ## 6) Release Kimlikleri
 
 - Final git SHA (main): `git rev-parse --short HEAD`
-- Release zip: `MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`
-- Kilitli güvenli paket: `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`
+- Release zip: `MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`
+- Kilitli güvenli paket: `MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`
 - SHA-256 kayıtları: `reports/release_snapshot_TR.md` (Release Artefaktları bölümü).
 
 ## 7) Taşınabilir Eğitim Hazırlığı (Build30)

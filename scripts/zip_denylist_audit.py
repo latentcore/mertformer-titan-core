@@ -12,7 +12,7 @@ try:
 except Exception:
     yaml = None
 
-DEFAULT_ZIP = "packages/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip"
+DEFAULT_ZIP = "packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip"
 DEFAULT_POLICY = "policy/allow_deny_policy.yaml"
 
 TEXT_EXTS = {".py", ".md", ".txt", ".json", ".yaml", ".yml", ".toml", ".ini", ".cfg", ".csv", ".jsonl", ".sh"}

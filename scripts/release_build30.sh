@@ -7,8 +7,8 @@ REPORT_EN="$ROOT_DIR/reports/release_snapshot.md"
 REPORT_TR="$ROOT_DIR/reports/release_snapshot_TR.md"
 PY="$ROOT_DIR/.titan-venv/bin/python"
 
-REL_ZIP="$PKG_DIR/MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip"
-LOCKED_AGE="$PKG_DIR/MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age"
+REL_ZIP="$PKG_DIR/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip"
+LOCKED_AGE="$PKG_DIR/MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age"
 
 mkdir -p "$PKG_DIR"
 
@@ -89,9 +89,9 @@ def update_release_section(path: Path, is_tr: bool) -> None:
         sha_label = "SHA-256"
         status_line = f"- Locked artefakt durumu: `{lock_status}`"
         locked_sha_line = (
-            f"  - `{locked_sha}` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)"
+            f"  - `{locked_sha}` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`)"
             if locked_sha
-            else "  - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)"
+            else "  - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`)"
         )
     else:
         h1 = "## Release Artifacts (Desktop)"
@@ -99,18 +99,18 @@ def update_release_section(path: Path, is_tr: bool) -> None:
         sha_label = "SHA-256"
         status_line = f"- Locked artifact status: `{lock_status}`"
         locked_sha_line = (
-            f"  - `{locked_sha}` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)"
+            f"  - `{locked_sha}` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`)"
             if locked_sha
-            else "  - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`)"
+            else "  - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`)"
         )
 
     block = (
         f"{h1}\n\n"
-        "- `MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`\n"
-        "- `MertFormer_Titan_OnyxStorm_v1.0_B30_Locked.secure.age`\n"
+        "- `MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`\n"
+        "- `MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`\n"
         f"{status_line}\n"
         f"- {sha_label}:\n"
-        f"  - `{rel_sha}` (`MertFormer_Titan_OnyxStorm_v1.0_B30_Release.zip`)\n"
+        f"  - `{rel_sha}` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`)\n"
         f"{locked_sha_line}\n"
     )
 
