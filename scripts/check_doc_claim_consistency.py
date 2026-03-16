@@ -50,7 +50,7 @@ def iter_public_markdown() -> list[Path]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check documentation claim/evidence consistency.")
-    parser.add_argument("--expected-test-stat", default="111 passed, 3 skipped")
+    parser.add_argument("--expected-test-stat", default="114 passed, 3 skipped")
     args = parser.parse_args()
 
     errors: list[str] = []
