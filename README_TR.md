@@ -391,7 +391,6 @@ Tam video: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
 - [reports/cli_smoke_log.md](reports/cli_smoke_log.md) — CLI smoke log (EN).
 - [reports/cli_smoke_log_TR.md](reports/cli_smoke_log_TR.md) — CLI smoke log (TR).
 
-*Not: Bu adımda PPTX dosyalarına dokunulmadı (plan gereği). Gerekirse sonra tek satır ekleriz.*
 
 **Operasyon & Yönetişim**
 Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
