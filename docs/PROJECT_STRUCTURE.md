@@ -222,10 +222,15 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   └── summary.json  # JSON data artifact
 │   ├── commercial_handover/  # directory
 │   │   ├── contract_terms_checklist.md  # documentation/report file
+│   │   ├── contract_terms_checklist_TR.md  # Turkish document counterpart
 │   │   ├── handover_scope.md  # documentation/report file
+│   │   ├── handover_scope_TR.md  # Turkish document counterpart
 │   │   ├── known_issues.md  # documentation/report file
+│   │   ├── known_issues_TR.md  # Turkish document counterpart
 │   │   ├── ownership_and_role.md  # documentation/report file
-│   │   └── sla_kpi_90_180.md  # documentation/report file
+│   │   ├── ownership_and_role_TR.md  # Turkish document counterpart
+│   │   ├── sla_kpi_90_180.md  # documentation/report file
+│   │   └── sla_kpi_90_180_TR.md  # Turkish document counterpart
 │   ├── pilots/  # directory
 │   │   ├── README.md  # primary documentation (EN)
 │   │   └── README_TR.md  # Turkish document counterpart

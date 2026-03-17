@@ -1,4 +1,4 @@
-[run] start_utc=2026-03-17T07:29:57Z
+[run] start_utc=2026-03-17T07:40:52Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
@@ -25,7 +25,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-114 passed, 3 skipped, 6 warnings in 86.57s (0:01:26)
+114 passed, 3 skipped, 6 warnings in 35.28s
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -64,7 +64,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <REPO_ROOT>/temp_preflight_data
 ✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 6.35s
+✈️ Preflight Duration: 6.68s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
@@ -75,8 +75,8 @@ Failure budget drill: PASS
 Overfit step 0: loss=121.5519
 Overfit step 12: loss=117.8494
 Overfit step 24: loss=113.7169
-Overfit step 36: loss=97.5476
-Overfit step 48: loss=50.8442
+Overfit step 36: loss=97.5475
+Overfit step 48: loss=50.8416
 Overfit gate: PASS
 Golden samples: 50
 - algorithms: 13
@@ -109,7 +109,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 15.395625829696655,
+  "elapsed_sec": 14.269958972930908,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -135,9 +135,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-03-17T07:31:53Z",
+        "timestamp_utc": "2026-03-17T07:41:56Z",
         "cpu_percent": 19.4,
-        "ram_used_gb": 7.5220184326171875,
+        "ram_used_gb": 7.495452880859375,
         "ram_total_gb": 16.0
       }
     },
@@ -164,7 +164,7 @@ OK: unicode path guard; hits=0
 [verify] Duplicate zip guard gate ...
 OK: duplicate zip guard; groups=0
 [verify] Manifest sync gate ...
-{"manifest_entries": 518, "ok": true}
+{"manifest_entries": 523, "ok": true}
 [verify] OK
 [run] step=cfc_moe_tolerance_check
 [tolerance] PASS (max_diff_moe=0.000000 max_diff_cfc=0.000014)
@@ -175,7 +175,7 @@ linkcheck: scope=all files=267 missing=0
 [run] step=docs_inventory
 {"ok": true, "md_files": 269, "dup_groups": 21}
 [run] step=sync_manifest
-{"manifest_entries": 518, "ok": true}
+{"manifest_entries": 523, "ok": true}
 [run] step=dealroom_sync
 {"ok": true}
 [run] step=unicode_path_guard
@@ -205,7 +205,7 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip
-release_sha256=b29081e9351aa3cf524a97047d2c20625830a858532a2dcb244e36cf47064220
+release_sha256=7aa2cc682e3e27b4de4dda0f45611ee77a699a5284255cae2f818058538a55e4
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=artifact_release_zip
@@ -756,7 +756,7 @@ locked_sha256=
   adding: reports/snapshots/2026-02-24/evidence_snapshot_2026-02-24.json (deflated 60%)
   adding: reports/snapshots/2026-02-24/commercial_scenarios_v1_2026-02-24.json (deflated 55%)
   adding: reports/snapshots/2026-02-24/report_interface_schema_v1.json (deflated 54%)
-  adding: reports/start_gate_report.json (deflated 64%)
+  adding: reports/start_gate_report.json (deflated 63%)
   adding: reports/zip_audit_artifacts.json (deflated 32%)
   adding: reports/fallback_policy_report.json (deflated 11%)
   adding: reports/closure_57_matrix_TR.md (deflated 71%)
@@ -796,7 +796,7 @@ locked_sha256=
   adding: reports/kpi_report_v1.json (deflated 68%)
   adding: reports/md_lint_report.json (deflated 91%)
   adding: reports/model_health_TR.md (deflated 24%)
-  adding: reports/one_command_full_sop_summary.md (deflated 41%)
+  adding: reports/one_command_full_sop_summary.md (deflated 40%)
   adding: reports/drone_sitl_demo.md (deflated 45%)
   adding: reports/thermal_baseline.json (deflated 2%)
   adding: reports/kpi_pack_v1.md (deflated 41%)
@@ -853,7 +853,7 @@ locked_sha256=
   adding: reports/bench_vulkan_report.json (deflated 9%)
   adding: reports/system_stats.jsonl (deflated 80%)
   adding: reports/release_closure_note.md (deflated 15%)
-  adding: reports/runbook_validation_report.json (deflated 9%)
+  adding: reports/runbook_validation_report.json (deflated 10%)
   adding: reports/investor_deck_TR.pptx (deflated 32%)
   adding: reports/presentation_readiness_final.md (deflated 51%)
   adding: reports/report_accuracy_audit_TR.md (deflated 47%)
@@ -869,7 +869,7 @@ locked_sha256=
   adding: reports/review_checklist.md (deflated 50%)
   adding: reports/bench_metal_report.json (deflated 8%)
   adding: reports/closure_report_build30_v2.md (deflated 51%)
-  adding: reports/repro_build_report.json (deflated 52%)
+  adding: reports/repro_build_report.json (deflated 53%)
   adding: reports/ip_licensing_split.md (deflated 51%)
   adding: reports/codex_deep_audit_DE_TR.md (deflated 36%)
   adding: reports/duplicate_zip_guard_report.json (deflated 28%)
@@ -886,13 +886,13 @@ locked_sha256=
   adding: reports/commercial_handover/contract_terms_checklist_TR.md (deflated 49%)
   adding: reports/commercial_handover/known_issues_TR.md (deflated 47%)
   adding: reports/bench_zero_copy_report.json (deflated 40%)
-  adding: reports/bench_cpp_report.json (deflated 12%)
+  adding: reports/bench_cpp_report.json (deflated 11%)
   adding: reports/dataset_health.md (deflated 61%)
   adding: reports/snapshot_manifest_dealroom.json (deflated 49%)
-  adding: reports/energy_baseline.json (deflated 22%)
+  adding: reports/energy_baseline.json (deflated 21%)
   adding: reports/linkcheck_report.json (deflated 25%)
   adding: reports/closure_57_matrix.md (deflated 71%)
-  adding: reports/license_gate_report.json (deflated 14%)
+  adding: reports/license_gate_report.json (deflated 16%)
   adding: reports/pilot_offer_packages_TR.md (deflated 41%)
   adding: reports/closure_57_matrix.json (deflated 88%)
   adding: reports/docs_dedup_canonical_list.md (deflated 83%)
@@ -919,4 +919,4 @@ locked_sha256=
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-03-17T07:32:29Z
+[run] end_utc=2026-03-17T07:42:30Z

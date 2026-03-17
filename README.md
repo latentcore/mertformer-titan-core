@@ -281,10 +281,15 @@ Primary entry docs and checklists.
 - [docs/CHAIN_MAP.md](docs/CHAIN_MAP.md) — Connected vs independent chain map (EN).
 - [docs/CHAIN_MAP_TR.md](docs/CHAIN_MAP_TR.md) — Connected vs independent chain map (TR).
 - [reports/commercial_handover/known_issues.md](reports/commercial_handover/known_issues.md) — Known issues register for transfer risk visibility.
+- [reports/commercial_handover/known_issues_TR.md](reports/commercial_handover/known_issues_TR.md) — Known issues register (TR).
 - [reports/commercial_handover/handover_scope.md](reports/commercial_handover/handover_scope.md) — Transfer scope and explicit out-of-scope boundaries.
+- [reports/commercial_handover/handover_scope_TR.md](reports/commercial_handover/handover_scope_TR.md) — Transfer scope and out-of-scope boundaries (TR).
 - [reports/commercial_handover/ownership_and_role.md](reports/commercial_handover/ownership_and_role.md) — Ownership model and decision rights after transfer.
+- [reports/commercial_handover/ownership_and_role_TR.md](reports/commercial_handover/ownership_and_role_TR.md) — Ownership model and decision rights (TR).
 - [reports/commercial_handover/sla_kpi_90_180.md](reports/commercial_handover/sla_kpi_90_180.md) — 90/180 day SLA and KPI operating plan.
+- [reports/commercial_handover/sla_kpi_90_180_TR.md](reports/commercial_handover/sla_kpi_90_180_TR.md) — 90/180 day SLA and KPI plan (TR).
 - [reports/commercial_handover/contract_terms_checklist.md](reports/commercial_handover/contract_terms_checklist.md) — Contract checklist for IP, liability, operations and exit.
+- [reports/commercial_handover/contract_terms_checklist_TR.md](reports/commercial_handover/contract_terms_checklist_TR.md) — Contract checklist for IP, liability, operations and exit (TR).
 
 **SDK**
 Package + CLI for edge deployments.
@@ -1692,10 +1697,15 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   └── summary.json  # JSON data artifact
 │   ├── commercial_handover/  # directory
 │   │   ├── contract_terms_checklist.md  # documentation/report file
+│   │   ├── contract_terms_checklist_TR.md  # Turkish document counterpart
 │   │   ├── handover_scope.md  # documentation/report file
+│   │   ├── handover_scope_TR.md  # Turkish document counterpart
 │   │   ├── known_issues.md  # documentation/report file
+│   │   ├── known_issues_TR.md  # Turkish document counterpart
 │   │   ├── ownership_and_role.md  # documentation/report file
-│   │   └── sla_kpi_90_180.md  # documentation/report file
+│   │   ├── ownership_and_role_TR.md  # Turkish document counterpart
+│   │   ├── sla_kpi_90_180.md  # documentation/report file
+│   │   └── sla_kpi_90_180_TR.md  # Turkish document counterpart
 │   ├── pilots/  # directory
 │   │   ├── README.md  # primary documentation (EN)
 │   │   └── README_TR.md  # Turkish document counterpart

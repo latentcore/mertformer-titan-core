@@ -272,10 +272,15 @@ Ana giriş dokümanları ve checklistler.
 - [docs/CHAIN_MAP.md](docs/CHAIN_MAP.md) — Bağlı vs bağımsız zincir haritası (EN).
 - [docs/CHAIN_MAP_TR.md](docs/CHAIN_MAP_TR.md) — Bağlı vs bağımsız zincir haritası (TR).
 - [reports/commercial_handover/known_issues.md](reports/commercial_handover/known_issues.md) — Devir risk görünürlüğü için bilinen sorunlar kaydı.
+- [reports/commercial_handover/known_issues_TR.md](reports/commercial_handover/known_issues_TR.md) — Devir risk görünürlüğü için bilinen sorunlar kaydı (TR).
 - [reports/commercial_handover/handover_scope.md](reports/commercial_handover/handover_scope.md) — Devir kapsamı ve kapsam dışı sınırlar.
+- [reports/commercial_handover/handover_scope_TR.md](reports/commercial_handover/handover_scope_TR.md) — Devir kapsamı ve kapsam dışı sınırlar (TR).
 - [reports/commercial_handover/ownership_and_role.md](reports/commercial_handover/ownership_and_role.md) — Devir sonrası sahiplik modeli ve karar hakları.
+- [reports/commercial_handover/ownership_and_role_TR.md](reports/commercial_handover/ownership_and_role_TR.md) — Devir sonrası sahiplik modeli ve karar hakları (TR).
 - [reports/commercial_handover/sla_kpi_90_180.md](reports/commercial_handover/sla_kpi_90_180.md) — 90/180 gün SLA ve KPI işletim planı.
+- [reports/commercial_handover/sla_kpi_90_180_TR.md](reports/commercial_handover/sla_kpi_90_180_TR.md) — 90/180 gün SLA ve KPI işletim planı (TR).
 - [reports/commercial_handover/contract_terms_checklist.md](reports/commercial_handover/contract_terms_checklist.md) — IP, sorumluluk, operasyon ve çıkış için sözleşme checklisti.
+- [reports/commercial_handover/contract_terms_checklist_TR.md](reports/commercial_handover/contract_terms_checklist_TR.md) — IP, sorumluluk, operasyon ve çıkış için sözleşme checklisti (TR).
 
 **SDK**
 Edge dağıtım için paket + CLI.
@@ -1680,10 +1685,15 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   │   └── summary.json  # JSON veri artefaktı
 │   ├── commercial_handover/  # dizin
 │   │   ├── contract_terms_checklist.md  # dokümantasyon/rapor dosyası
+│   │   ├── contract_terms_checklist_TR.md  # Türkçe doküman karşılığı
 │   │   ├── handover_scope.md  # dokümantasyon/rapor dosyası
+│   │   ├── handover_scope_TR.md  # Türkçe doküman karşılığı
 │   │   ├── known_issues.md  # dokümantasyon/rapor dosyası
+│   │   ├── known_issues_TR.md  # Türkçe doküman karşılığı
 │   │   ├── ownership_and_role.md  # dokümantasyon/rapor dosyası
-│   │   └── sla_kpi_90_180.md  # dokümantasyon/rapor dosyası
+│   │   ├── ownership_and_role_TR.md  # Türkçe doküman karşılığı
+│   │   ├── sla_kpi_90_180.md  # dokümantasyon/rapor dosyası
+│   │   └── sla_kpi_90_180_TR.md  # Türkçe doküman karşılığı
 │   ├── pilots/  # dizin
 │   │   ├── README.md  # ana dokümantasyon (EN)
 │   │   └── README_TR.md  # Türkçe doküman karşılığı
