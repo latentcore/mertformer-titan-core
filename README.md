@@ -342,6 +342,12 @@ Report accuracy audit and strategic value summary.
 - [reports/go_status_matrix_TR.md](reports/go_status_matrix_TR.md) — GO/NO-GO status matrix (TR).
 - [reports/go_nogo_signoff_onepager.md](reports/go_nogo_signoff_onepager.md) — Technical GO/NO-GO one-pager (EN).
 - [reports/go_nogo_signoff_onepager_TR.md](reports/go_nogo_signoff_onepager_TR.md) — Technical GO/NO-GO one-pager (TR).
+- [reports/closure_57_matrix.md](reports/closure_57_matrix.md) — Closure 57 matrix (EN).
+- [reports/closure_57_matrix_TR.md](reports/closure_57_matrix_TR.md) — Closure 57 matrix (TR).
+- [reports/report_truth_matrix.md](reports/report_truth_matrix.md) — Report truth matrix (EN).
+- [reports/release_closure_note.md](reports/release_closure_note.md) — Release closure note (EN).
+- [reports/kpi_pack_v1.md](reports/kpi_pack_v1.md) — KPI pack (EN).
+- [reports/kpi_pack_v1_TR.md](reports/kpi_pack_v1_TR.md) — KPI pack (TR).
 - [reports/cleanroom_verification.md](reports/cleanroom_verification.md) — Fresh-clone reproducibility evidence (EN).
 - [reports/cleanroom_verification_TR.md](reports/cleanroom_verification_TR.md) — Fresh-clone reproducibility evidence (TR).
 - [reports/legal_cleanroom_signoff_internal.md](reports/legal_cleanroom_signoff_internal.md) — Internal cleanroom legal sign-off record (EN).

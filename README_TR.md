@@ -333,6 +333,12 @@ Rapor doğruluk denetimi ve stratejik değer özeti.
 - [reports/go_status_matrix_TR.md](reports/go_status_matrix_TR.md) — GO/NO-GO durum matrisi (TR).
 - [reports/go_nogo_signoff_onepager.md](reports/go_nogo_signoff_onepager.md) — Teknik GO/NO-GO tek sayfa imza özeti (EN).
 - [reports/go_nogo_signoff_onepager_TR.md](reports/go_nogo_signoff_onepager_TR.md) — Teknik GO/NO-GO tek sayfa imza özeti (TR).
+- [reports/closure_57_matrix.md](reports/closure_57_matrix.md) — Closure 57 matrisi (EN).
+- [reports/closure_57_matrix_TR.md](reports/closure_57_matrix_TR.md) — Closure 57 matrisi (TR).
+- [reports/report_truth_matrix.md](reports/report_truth_matrix.md) — Rapor doğruluk matrisi (EN).
+- [reports/release_closure_note.md](reports/release_closure_note.md) — Release kapanış notu (EN).
+- [reports/kpi_pack_v1.md](reports/kpi_pack_v1.md) — KPI paketi (EN).
+- [reports/kpi_pack_v1_TR.md](reports/kpi_pack_v1_TR.md) — KPI paketi (TR).
 - [reports/cleanroom_verification.md](reports/cleanroom_verification.md) — Temiz clone tekrar üretim kanıtı (EN).
 - [reports/cleanroom_verification_TR.md](reports/cleanroom_verification_TR.md) — Temiz clone tekrar üretim kanıtı (TR).
 - [reports/legal_cleanroom_signoff_internal.md](reports/legal_cleanroom_signoff_internal.md) — Dahili cleanroom hukuki imza kaydı (EN).
