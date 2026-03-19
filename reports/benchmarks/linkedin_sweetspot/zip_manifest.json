@@ -1,0 +1,61 @@
+{
+  "generated_at_utc": "2026-03-18T17:56:02Z",
+  "zip_path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_evidence.zip",
+  "added": [
+    {
+      "name": "run_log_jsonl",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_run_log.jsonl",
+      "arcname": "run_20260318_144125_run_log.jsonl",
+      "size": 2453076
+    },
+    {
+      "name": "step_metrics_csv",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_step_metrics.csv",
+      "arcname": "run_20260318_144125_step_metrics.csv",
+      "size": 3720853
+    },
+    {
+      "name": "summary_json",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_summary.json",
+      "arcname": "run_20260318_144125_summary.json",
+      "size": 1190
+    },
+    {
+      "name": "compare_json",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_compare.json",
+      "arcname": "run_20260318_144125_compare.json",
+      "size": 106504
+    },
+    {
+      "name": "compare_csv",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_compare.csv",
+      "arcname": "run_20260318_144125_compare.csv",
+      "size": 225
+    },
+    {
+      "name": "compare_md",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_compare.md",
+      "arcname": "run_20260318_144125_compare.md",
+      "size": 488
+    },
+    {
+      "name": "health_txt",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_health.txt",
+      "arcname": "run_20260318_144125_health.txt",
+      "size": 229
+    },
+    {
+      "name": "model_final",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_model_final.pt",
+      "arcname": "run_20260318_144125_model_final.pt",
+      "size": 132434957
+    },
+    {
+      "name": "artifact_index",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_artifact_index.json",
+      "arcname": "run_20260318_144125_artifact_index.json",
+      "size": 2552
+    }
+  ],
+  "errors": []
+}

@@ -1,4 +1,4 @@
-[run] start_utc=2026-03-18T09:54:43Z
+[run] start_utc=2026-03-19T17:13:02Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
@@ -25,7 +25,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-114 passed, 3 skipped, 6 warnings in 94.28s (0:01:34)
+114 passed, 3 skipped, 6 warnings in 94.69s (0:01:34)
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -64,7 +64,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <REPO_ROOT>/temp_preflight_data
 ✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 6.04s
+✈️ Preflight Duration: 6.62s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
@@ -109,7 +109,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 14.162774801254272,
+  "elapsed_sec": 14.524025917053223,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -135,9 +135,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-03-18T09:56:45Z",
-        "cpu_percent": 14.4,
-        "ram_used_gb": 5.9712066650390625,
+        "timestamp_utc": "2026-03-19T17:15:06Z",
+        "cpu_percent": 20.9,
+        "ram_used_gb": 7.1143646240234375,
         "ram_total_gb": 16.0
       }
     },
@@ -169,11 +169,11 @@ OK: duplicate zip guard; groups=0
 [run] step=cfc_moe_tolerance_check
 [tolerance] PASS (max_diff_moe=0.000000 max_diff_cfc=0.000014)
 [run] step=md_quality_all
-md_quality: scope=all files=267 errors=0 warnings=0
+md_quality: scope=all files=270 errors=0 warnings=0
 [run] step=linkcheck_all
-linkcheck: scope=all files=267 missing=0
+linkcheck: scope=all files=270 missing=0
 [run] step=docs_inventory
-{"ok": true, "md_files": 269, "dup_groups": 21}
+{"ok": true, "md_files": 272, "dup_groups": 21}
 [run] step=sync_manifest
 {"manifest_entries": 523, "ok": true}
 [run] step=dealroom_sync
@@ -186,7 +186,7 @@ OK: duplicate zip guard; groups=0
 [runner] cmd=bash -lc true
 [runner] cleanup_root=<REPO_ROOT>
 [runner] include_tool_caches=True full_clean=True include_venv_caches=True dry_run=False
-[cleanup] dirs_found=578 files_found=13 dirs_removed=578 files_removed=13
+[cleanup] dirs_found=578 files_found=1 dirs_removed=578 files_removed=1
 [run] step=clean_runtime_artifacts_check
 OK: runtime artifacts and caches are clean
 [run] step=release_build30
@@ -205,7 +205,7 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip
-release_sha256=863d313d61d5d56541fbb61e4e509ed73cccb8d9cfa62e457a259004529cd0ab
+release_sha256=49ce27f8cefa6b8573c729d99c17cecd8f9fb6222ddab771a66dcb88524ed72a
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=artifact_release_zip
@@ -766,13 +766,13 @@ locked_sha256=
   adding: reports/claim_number_audit.json (deflated 78%)
   adding: reports/go_status_matrix.md (deflated 56%)
   adding: reports/pilot_acceptance_signoff_TR.md (deflated 46%)
-  adding: reports/ownership_proof_bundle.json (deflated 56%)
+  adding: reports/ownership_proof_bundle.json (deflated 57%)
   adding: reports/differential_backend_report.json (deflated 6%)
   adding: reports/policy_sync_report.json (deflated 21%)
   adding: reports/snapshot_manifest_main.json (deflated 45%)
   adding: reports/go_nogo_signoff_onepager.md (deflated 42%)
   adding: reports/strategic_value_TR.md (deflated 39%)
-  adding: reports/file_sync_matrix.json (deflated 33%)
+  adding: reports/file_sync_matrix.json (deflated 32%)
   adding: reports/go_nogo_signoff_onepager_TR.md (deflated 38%)
   adding: reports/asset_stack.md (deflated 66%)
   adding: reports/cli_smoke_log.md (deflated 27%)
@@ -780,7 +780,7 @@ locked_sha256=
   adding: reports/system_hardware.md (deflated 30%)
   adding: reports/ip_licensing_split_TR.md (deflated 50%)
   adding: reports/technical_snapshot_TR.md (deflated 39%)
-  adding: reports/static_analysis_report.json (deflated 23%)
+  adding: reports/static_analysis_report.json (deflated 24%)
   adding: reports/pilots/ (stored 0%)
   adding: reports/pilots/README.md (deflated 45%)
   adding: reports/pilots/README_TR.md (deflated 44%)
@@ -796,7 +796,7 @@ locked_sha256=
   adding: reports/kpi_report_v1.json (deflated 68%)
   adding: reports/md_lint_report.json (deflated 91%)
   adding: reports/model_health_TR.md (deflated 24%)
-  adding: reports/one_command_full_sop_summary.md (deflated 41%)
+  adding: reports/one_command_full_sop_summary.md (deflated 40%)
   adding: reports/drone_sitl_demo.md (deflated 45%)
   adding: reports/thermal_baseline.json (deflated 2%)
   adding: reports/kpi_pack_v1.md (deflated 41%)
@@ -833,6 +833,18 @@ locked_sha256=
   adding: reports/benchmarks/README_TR.md (deflated 47%)
   adding: reports/benchmarks/kaggle_compare_build30.csv (deflated 38%)
   adding: reports/benchmarks/kaggle_compare_build30.md (deflated 31%)
+  adding: reports/benchmarks/linkedin_sweetspot/ (stored 0%)
+  adding: reports/benchmarks/linkedin_sweetspot/run_20260318_144125_compare.csv (deflated 28%)
+  adding: reports/benchmarks/linkedin_sweetspot/run_20260318_144125_summary.json (deflated 54%)
+  adding: reports/benchmarks/linkedin_sweetspot/run_20260318_144125_run_log.jsonl (deflated 79%)
+  adding: reports/benchmarks/linkedin_sweetspot/run_20260318_144125_health.txt (deflated 36%)
+  adding: reports/benchmarks/linkedin_sweetspot/run_20260318_144125_step_metrics.csv (deflated 63%)
+  adding: reports/benchmarks/linkedin_sweetspot/run_20260318_144125_compare.md (deflated 37%)
+  adding: reports/benchmarks/linkedin_sweetspot/README.md (deflated 34%)
+  adding: reports/benchmarks/linkedin_sweetspot/README_TR.md (deflated 29%)
+  adding: reports/benchmarks/linkedin_sweetspot/zip_manifest.json (deflated 83%)
+  adding: reports/benchmarks/linkedin_sweetspot/run_20260318_144125_compare.json (deflated 69%)
+  adding: reports/benchmarks/linkedin_sweetspot/run_20260318_144125_artifact_index.json (deflated 73%)
   adding: reports/benchmarks/agentic_suite_build30.json (deflated 73%)
   adding: reports/benchmarks/text_understanding/ (stored 0%)
   adding: reports/benchmarks/text_understanding/run_20260315_180151_compare.json (deflated 50%)
@@ -869,7 +881,7 @@ locked_sha256=
   adding: reports/review_checklist.md (deflated 50%)
   adding: reports/bench_metal_report.json (deflated 8%)
   adding: reports/closure_report_build30_v2.md (deflated 51%)
-  adding: reports/repro_build_report.json (deflated 52%)
+  adding: reports/repro_build_report.json (deflated 53%)
   adding: reports/ip_licensing_split.md (deflated 51%)
   adding: reports/codex_deep_audit_DE_TR.md (deflated 36%)
   adding: reports/duplicate_zip_guard_report.json (deflated 28%)
@@ -889,10 +901,10 @@ locked_sha256=
   adding: reports/bench_cpp_report.json (deflated 11%)
   adding: reports/dataset_health.md (deflated 61%)
   adding: reports/snapshot_manifest_dealroom.json (deflated 49%)
-  adding: reports/energy_baseline.json (deflated 21%)
-  adding: reports/linkcheck_report.json (deflated 24%)
+  adding: reports/energy_baseline.json (deflated 22%)
+  adding: reports/linkcheck_report.json (deflated 25%)
   adding: reports/closure_57_matrix.md (deflated 71%)
-  adding: reports/license_gate_report.json (deflated 14%)
+  adding: reports/license_gate_report.json (deflated 13%)
   adding: reports/pilot_offer_packages_TR.md (deflated 41%)
   adding: reports/closure_57_matrix.json (deflated 88%)
   adding: reports/docs_dedup_canonical_list.md (deflated 83%)
@@ -919,4 +931,4 @@ locked_sha256=
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-03-18T09:57:19Z
+[run] end_utc=2026-03-19T17:15:40Z

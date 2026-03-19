@@ -154,6 +154,9 @@ Generated automatically.
 - `reports/benchmarks/README.md`
 - `reports/benchmarks/README_TR.md`
 - `reports/benchmarks/kaggle_compare_build30.md`
+- `reports/benchmarks/linkedin_sweetspot/README.md`
+- `reports/benchmarks/linkedin_sweetspot/README_TR.md`
+- `reports/benchmarks/linkedin_sweetspot/run_20260318_144125_compare.md`
 - `reports/benchmarks/math_fastproof/README.md`
 - `reports/benchmarks/math_fastproof/README_TR.md`
 - `reports/benchmarks/math_fastproof/run_20260315_050133_compare.md`
@@ -324,6 +327,7 @@ Generated automatically.
   - `logs/README.md`
   - `postmortems/README.md`
   - `reports/benchmarks/README.md`
+  - `reports/benchmarks/linkedin_sweetspot/README.md`
   - `reports/benchmarks/math_fastproof/README.md`
   - `reports/benchmarks/text_understanding/README.md`
   - `reports/pilots/README.md`
@@ -342,6 +346,7 @@ Generated automatically.
   - `logs/README_TR.md`
   - `postmortems/README_TR.md`
   - `reports/benchmarks/README_TR.md`
+  - `reports/benchmarks/linkedin_sweetspot/README_TR.md`
   - `reports/benchmarks/math_fastproof/README_TR.md`
   - `reports/benchmarks/text_understanding/README_TR.md`
   - `reports/pilots/README_TR.md`

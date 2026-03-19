@@ -1,0 +1,2 @@
+variant,params,steps,final_loss,val_loss,exact_match_test,exact_match_unseen,tokens_per_sec,avg_step_time_sec
+our_mertformer,33075856,35000,0.8368198871612549,0.9214964389801026,2.5,0.0,67.93708693420888,0.6002355853489467

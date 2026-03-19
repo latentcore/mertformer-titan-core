@@ -1,0 +1,61 @@
+{
+  "generated_at_utc": "2026-03-18T17:55:58Z",
+  "files": [
+    {
+      "name": "run_log_jsonl",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_run_log.jsonl",
+      "exists": true,
+      "size": 2453076,
+      "sha256": "73971b7d0b9f943308228cde777be2c0ee0582f8baf281a2785870b10bd92055"
+    },
+    {
+      "name": "step_metrics_csv",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_step_metrics.csv",
+      "exists": true,
+      "size": 3720853,
+      "sha256": "46c2fbec4ba84a4602fdf67af168f865af03eeb5cd119c3eb3bf1f2e539b566b"
+    },
+    {
+      "name": "summary_json",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_summary.json",
+      "exists": true,
+      "size": 1190,
+      "sha256": "436e9db355864a6550595666dcf0a74d2942ac0de2c9e8e21cb1819836eb9c75"
+    },
+    {
+      "name": "compare_json",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_compare.json",
+      "exists": true,
+      "size": 106504,
+      "sha256": "6b5e53b8f3e859bb7011b2e7d0fe741ad6da8f985d5c0ac2d1972454fad6386e"
+    },
+    {
+      "name": "compare_csv",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_compare.csv",
+      "exists": true,
+      "size": 225,
+      "sha256": "473d9c1ef8910d4221c5ac769cbcb6e019445ef86b0080915385b50f09e63f5d"
+    },
+    {
+      "name": "compare_md",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_compare.md",
+      "exists": true,
+      "size": 488,
+      "sha256": "411ddf6b366d572790277c3887304d1f42e7527d26fdd0e02358e4f269119dcb"
+    },
+    {
+      "name": "health_txt",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_health.txt",
+      "exists": true,
+      "size": 229,
+      "sha256": "f11546fe238da7e2da4ea77aac919f303475809d45406e1716666d1f7716659e"
+    },
+    {
+      "name": "model_final",
+      "path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_model_final.pt",
+      "exists": true,
+      "size": 132434957,
+      "sha256": "14fc46731901bc49649581ff79f93b9b33bb53dda59e3d1490ef4401dd798e44"
+    }
+  ]
+}

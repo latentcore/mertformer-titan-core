@@ -1,0 +1,38 @@
+{
+  "schema": "build30_colab_math_fastproof_summary_v2",
+  "generated_at_utc": "2026-03-18T17:55:58Z",
+  "run_id": "run_20260318_144125",
+  "profile": "linkedin_sweetspot",
+  "device": "cuda",
+  "architecture_mode": "our",
+  "other_proxy_mode": "both",
+  "final_status": "gate_fail",
+  "gates": {
+    "loss_gate_pass": true,
+    "accuracy_gate_pass": false,
+    "speed_gate_pass": true
+  },
+  "speedup_ratio_vs_gpt_proxy": 0.0,
+  "speedup_ratio_vs_gemini_proxy": 0.0,
+  "quality_delta_exact_match": 2.5,
+  "selected_model_final_path": "C:\\Users\\ASUS\\Downloads\\content\\mertformer_outputs\\runs\\run_20260318_144125\\run_20260318_144125_model_final.pt",
+  "elapsed_total_sec": 22472.46183037758,
+  "determinism_policy": {
+    "strict": true,
+    "warned": false,
+    "algorithms_forced": true,
+    "warn_only": false
+  },
+  "runtime_accel_policy": {
+    "enabled": false,
+    "policy": "off",
+    "attempted": false,
+    "compiled": false,
+    "fallback_reason": "",
+    "compile_elapsed_sec": 0.0,
+    "compile_timeout_sec": 25.0,
+    "cudagraph_enabled": false,
+    "cudagraph_static_shapes_only": true,
+    "startup_stall_alarm_sec": 120.0
+  }
+}

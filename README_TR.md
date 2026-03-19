@@ -1309,6 +1309,12 @@ Bu bölüm, gerçekçi entegrasyon yollarını güncel durumlarıyla birlikte li
 **Durum: Eğitim Öncesi Projeksiyon (İddia İçin Uygun Değil)**
 *Not: Aşağıdaki metrikler hedef/tahmin değerleridir; gerçek benchmark iddiası için tam eğitim koşusu ve gerçek checkpoint ile ampirik doğrulama gerekir.*
 
+### Benchmark Ön-Kanıt (Proof-of-Learning)
+| Benchmark | Durum | Notlar |
+| :--- | :---: | :--- |
+| linkedin_sweetspot (35K adım) | loss: 0.8368, exact_match: 2.5%, division: 27.3% | run_20260318_144125 — loss gate ✅ speed gate ✅ |
+| HumanEval | TBD | Tam eğitimli checkpoint sonrası raporlanacak. |
+
 ### Benzer Modellerle Karşılaştırma
 
 | Model | Parametreler | Kuantizasyon | Mobil-Hazır | Cihaz-İçi | Türkçe Desteği |

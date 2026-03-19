@@ -1318,7 +1318,7 @@ This section lists realistic integration paths with explicit current status.
 ### Benchmark Placeholders (To Be Measured)
 | Benchmark | Status | Notes |
 | :--- | :---: | :--- |
-| GSM8K | TBD | Will be reported after a trained checkpoint. |
+| linkedin_sweetspot (35K steps) | loss: 0.8368, exact_match: 2.5%, division: 27.3% | run_20260318_144125 — loss gate ✅ speed gate ✅ |
 | HumanEval | TBD | Will be reported after a trained checkpoint. |
 
 ### Comparison with Similar Models
