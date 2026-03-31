@@ -1,0 +1,28 @@
+{
+  "schema": "demo_bundle_manifest_v1",
+  "generated_utc": "2026-03-31T20:47:36.308282+00:00",
+  "checkpoint": null,
+  "items": [
+    {
+      "path": "assets/snake_demo_proof.mp4",
+      "exists": true,
+      "kind": "repo_proof_or_placeholder"
+    },
+    {
+      "path": "assets/snake_demo_preview.gif",
+      "exists": true,
+      "kind": "repo_proof_or_placeholder"
+    },
+    {
+      "path": "reports/drone_sitl_demo.md",
+      "exists": true,
+      "kind": "repo_proof_or_placeholder"
+    },
+    {
+      "path": "reports/drone_sitl_demo_TR.md",
+      "exists": true,
+      "kind": "repo_proof_or_placeholder"
+    }
+  ],
+  "note": "No trained checkpoint resolved; this manifest only records current repo-side proof/demo assets."
+}

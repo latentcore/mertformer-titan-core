@@ -56,18 +56,39 @@ python3 scripts/record_dataset_hashes.py
 
 Required:
 - Training hardware (e.g., multi-GPU Linux host) and a stable CUDA toolchain
-- `HF_TOKEN` available (online mode)
+- `HF_TOKEN` available only if the online teacher lane is intentionally selected
 - Optional: `WANDB_API_KEY` if experiment tracking is enabled
+- Current repo-side lane is already green:
+  - `TRAIN_ALLOWED`
+  - `READY_OFFLINE_CLEAN`
+- Remaining optional blocker:
+  - `online_teacher:MISSING_HF_TOKEN`
 
-Recommended execution (explicit online):
+Canonical readiness gate:
 
 ```bash
-TITAN_OFFLINE=0 TITAN_WANDB=1 TITAN_INSTALL=1 bash run.sh
+bash zero_touch_start.sh --check-only
+```
+
+This 45K run is the first serious architecture validation run, not the final capability ceiling.
+
+Recommended execution (canonical offline-clean lane on target hardware):
+
+```bash
+TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
+```
+
+Optional online teacher execution:
+
+```bash
+HF_TOKEN=... TITAN_OFFLINE=0 TITAN_WANDB=1 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
 
 Notes:
 - `TITAN_INSTALL=1` is opt-in. For deterministic installs, prefer `scripts/bootstrap_venv.sh` beforehand.
 - Logs are written under `logs/` and are **gitignored artifacts**. Treat them as evidence attachments, not commits.
+- `zero_touch_start.sh` is the canonical 45K launcher. `run.sh` remains available for legacy helper flows such as `--test`, `--sitl-demo`, and `--cleanroom-verify`.
+- Use `bash zero_touch_start.sh --plan-only` or `--dry-run` before a handoff if you want the exact orchestrator contract without starting training.
 
 ## Phase 2: Agent Integration (Optional / Post-Foundation)
 

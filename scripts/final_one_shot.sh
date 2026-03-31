@@ -17,6 +17,24 @@ run_step() {
   "$@"
 }
 
+run_zip_with_tolerance() {
+  local zip_path="$1"
+  shift
+  set +e
+  zip -rq "$zip_path" "$@"
+  local rc=$?
+  set -e
+  if [[ "$rc" -eq 0 ]]; then
+    return 0
+  fi
+  if [[ "$rc" -eq 1 && -f "$zip_path" ]] && unzip -tqq "$zip_path" >/dev/null 2>&1; then
+    echo "[final] WARN: zip exited with code 1 but integrity check passed for $zip_path; continuing." >&2
+    return 0
+  fi
+  return "$rc"
+}
+
+run_step "one_command_full_sop" bash scripts/one_command_full_sop.sh
 run_step "start_gate" .titan-venv/bin/python scripts/start_gate.py
 run_step "unicode_path_guard" .titan-venv/bin/python scripts/unicode_path_guard.py --root . --out reports/unicode_path_guard_report.json --fail-on-hit
 run_step "sbom" .titan-venv/bin/python scripts/generate_sbom.py
@@ -50,6 +68,11 @@ find "$DOCS_DIR" -maxdepth 1 -type f -name "*.zip" -print0 2>/dev/null | xargs -
 
 # Dealroom reference/provenance
 run_step "dealroom_sync" .titan-venv/bin/python scripts/dealroom_sync.py
+run_step "master_closure_matrix" .titan-venv/bin/python scripts/build_master_closure_matrix.py
+run_step "train_readiness_contract" .titan-venv/bin/python scripts/build_train_readiness_contract.py --allow-not-ready
+run_step "final_orchestrator_plan" .titan-venv/bin/python scripts/final_orchestrator.py --plan-only
+run_step "closure_governance_pack" .titan-venv/bin/python scripts/build_closure_governance_pack.py
+run_step "max_closure_handoff" .titan-venv/bin/python scripts/build_max_closure_handoff.py
 
 # Ensure writable artifacts before regeneration
 chflags nouchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 2>/dev/null || true
@@ -57,7 +80,7 @@ chmod u+w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha2
 
 # Release artifact
 rm -f artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256
-zip -r artifacts/mertformer_release.zip . -x ".git/*" "*/.git/*" "*.pyc" "*__pycache__*" ".titan-venv/*" ".lint-venv/*" ".venv/*" ".idea/*" ".pytest_cache/*" ".ruff_cache/*" ".mypy_cache/*" ".env" ".env.*" "logs/*" "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256"
+run_zip_with_tolerance artifacts/mertformer_release.zip . -x ".git/*" "*/.git/*" "*.pyc" "*__pycache__*" ".titan-venv/*" ".lint-venv/*" ".venv/*" ".idea/*" ".pytest_cache/*" ".ruff_cache/*" ".mypy_cache/*" ".env" ".env.*" "logs/*" "checkpoints/*" "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256"
 shasum -a 256 artifacts/mertformer_release.zip > artifacts/mertformer_release.zip.sha256
 run_step "zip_denylist_audit_artifact" bash -lc '.titan-venv/bin/python scripts/zip_denylist_audit.py --zip artifacts/mertformer_release.zip > reports/artifacts_zip_denylist_audit.json'
 
@@ -70,12 +93,13 @@ chflags uchg "$IMMUTABLE_ZIP" "$IMMUTABLE_ZIP.sha256" 2>/dev/null || true
 # GitHub policy and closure lock (best effort, does not fail one-shot)
 bash scripts/apply_github_policy.sh || true
 bash scripts/release_closure_lock.sh v1.0.0 || true
+run_step "offline_closure_pack" .titan-venv/bin/python scripts/build_offline_closure_pack.py
 
 cat > reports/execution_trace.json <<'JSON'
 {
   "status": "completed",
   "flow": "final_one_shot",
-  "notes": "All closure phases executed with fail-fast for critical gates and best-effort for external governance APIs."
+  "notes": "Canonical Max Closure flow executed: one_command_full_sop core, hardening/release extras, master closure matrix, dual-path readiness contract, and repo-external handoff."
 }
 JSON
 

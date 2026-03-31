@@ -108,6 +108,8 @@
   "dedup_hash_bytes": 8,
   "dedup_max_entries": 2000000,
   "dedup_normalize": true,
+  "allow_optional_sources": false,
+  "token_probe_samples": 64,
   "require_gated_teacher": true,
   "teacher_model_id": "meta-llama/Llama-3.3-70B-Instruct",
   "distill_alpha": 0.8,

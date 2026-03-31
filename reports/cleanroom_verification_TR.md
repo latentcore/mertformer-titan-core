@@ -26,7 +26,7 @@ TITAN_PYTHON="$PWD/.cleanroom-venv/bin/python" TITAN_OFFLINE=1 bash scripts/veri
 ```
 
 ## Sonuçlar
-- `pytest`: `114 passed, 3 skipped`
+- `pytest`: `122 passed, 3 skipped`
 - `ruff`: `All checks passed!`
 - `verify_all`: `[verify] OK`
 

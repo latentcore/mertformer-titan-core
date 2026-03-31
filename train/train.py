@@ -844,9 +844,12 @@ class TeacherBundle:
 
         print(f"👨‍🏫 Teacher Hazırlanıyor: {cfg.teacher_model_id}")
         try:
-            self.tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token)
-            if self.tokenizer.pad_token is None:
-                self.tokenizer.pad_token = self.tokenizer.eos_token
+            prefer_local_tokenizer = (
+                bool(getattr(cfg, "use_tr_tokenizer", False))
+                or not self.require_gated_teacher
+                or os.environ.get("TITAN_OFFLINE", "1") == "1"
+            )
+            self.tokenizer = load_teacher_tokenizer(prefer_local=prefer_local_tokenizer)
 
             if cfg.distill_alpha > 0.0:
                 print(f"🔄 Teacher ({cfg.teacher_model_id}) Loading...")
@@ -889,6 +892,8 @@ class TeacherBundle:
                 print("⚠️  Gated teacher unavailable; continuing without teacher distillation.")
                 self.model = None
                 cfg.distill_alpha = 0.0
+                if self.tokenizer is None:
+                    self.tokenizer = load_teacher_tokenizer(prefer_local=True)
             else:
                 print(f"⚠️ Teacher Init Error: {e}")
                 sys.exit(1)
@@ -906,28 +911,103 @@ class TeacherBundle:
         return self.model(input_ids).logits
 
 
-def load_teacher_tokenizer():
+def _tokenizer_candidates() -> list[Path]:
+    candidates: list[Path] = []
+
+    env_override = os.environ.get("TITAN_LOCAL_TOKENIZER_PATH", "").strip()
+    if env_override:
+        p = Path(env_override).expanduser()
+        candidates.append(p if p.is_absolute() else project_root / p)
+
+    configured = str(getattr(cfg, "tr_tokenizer_id", "") or "").strip()
+    if configured:
+        p = Path(configured).expanduser()
+        candidates.append(p if p.is_absolute() else project_root / p)
+
+    candidates.extend(
+        [
+            project_root / "data" / "tokenizer" / "tr",
+            project_root / "tokenizer" / "tr",
+        ]
+    )
+
+    unique: list[Path] = []
+    seen: set[str] = set()
+    for path in candidates:
+        key = str(path.resolve()) if path.exists() else str(path)
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(path)
+    return unique
+
+
+def _ensure_pad_token(tokenizer):
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    return tokenizer
+
+
+def _load_local_runtime_tokenizer():
+    last_error: Exception | None = None
+    for path in _tokenizer_candidates():
+        if not path.exists():
+            continue
+        if not (path / "tokenizer.json").exists():
+            continue
+        try:
+            print(f"🔤 Using local runtime tokenizer: {path}")
+            tok = AutoTokenizer.from_pretrained(str(path), local_files_only=True)
+            return _ensure_pad_token(tok)
+        except Exception as exc:
+            last_error = exc
+            print(f"⚠️ Local tokenizer load failed for {path}: {exc}")
+    if last_error is not None:
+        raise RuntimeError(f"local tokenizer candidates failed: {last_error}") from last_error
+    raise FileNotFoundError("no local tokenizer artifact found")
+
+
+def load_teacher_tokenizer(prefer_local: bool = False):
     """
     TR: Öğretmen tokenizer'ını güvenli şekilde yükle.
     EN: Safely load the teacher tokenizer (without loading the teacher model).
     """
     hf_token = os.environ.get("HF_TOKEN")
+    require_gated_teacher = bool(getattr(cfg, "require_gated_teacher", False))
+    prefer_local = (
+        prefer_local
+        or bool(getattr(cfg, "use_tr_tokenizer", False))
+        or (os.environ.get("TITAN_OFFLINE", "1") == "1" and not hf_token)
+        or not require_gated_teacher
+    )
+
+    if prefer_local:
+        try:
+            return _load_local_runtime_tokenizer()
+        except Exception as local_exc:
+            if require_gated_teacher and not hf_token:
+                raise RuntimeError("Local tokenizer missing and gated teacher access unavailable.") from local_exc
+            print(f"⚠️ Local tokenizer unavailable: {local_exc}")
+
     try:
         tok = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token)
-        if tok.pad_token is None:
-            tok.pad_token = tok.eos_token
-        return tok
+        return _ensure_pad_token(tok)
     except Exception as e:
-        if bool(getattr(cfg, "require_gated_teacher", False)):
+        if require_gated_teacher:
             raise RuntimeError(
                 "Teacher tokenizer access failed under require_gated_teacher=true. "
                 "Provide valid HF_TOKEN and gated access."
             ) from e
-        print(f"⚠️ Teacher tokenizer load failed: {e}. Falling back to gpt2.")
-        tok = AutoTokenizer.from_pretrained("gpt2")
-        if tok.pad_token is None:
-            tok.pad_token = tok.eos_token
-        return tok
+        try:
+            return _load_local_runtime_tokenizer()
+        except Exception as local_exc:
+            if os.environ.get("TITAN_OFFLINE", "1") == "1":
+                raise RuntimeError(
+                    "Teacher tokenizer load failed and no local tokenizer is available for offline teacherless mode."
+                ) from local_exc
+            print(f"⚠️ Teacher tokenizer load failed: {e}. Falling back to gpt2.")
+            tok = AutoTokenizer.from_pretrained("gpt2")
+            return _ensure_pad_token(tok)
 
 
 # -----------------------------------------------------------------------------
@@ -1167,21 +1247,33 @@ def train():
     if use_offline_logits:
         stage_names = [name for name, _ in stage_info]
         if not distill_manager.has_precomputed_logits(stage_names):
+            teacherless_allowed = not bool(getattr(cfg, "require_gated_teacher", False))
             if offline_mode:
-                raise RuntimeError(
-                    "Precomputed logits are missing while TITAN_OFFLINE=1. "
-                    "Offline mode cannot fall back to online teacher."
-                )
-            if bool(getattr(cfg, "require_gated_teacher", False)):
-                print(
-                    "⚠️ Precomputed logits missing. Hard teacher policy active: "
-                    "switching to ONLINE gated teacher generation."
-                )
+                if teacherless_allowed:
+                    print(
+                        "⚠️ Precomputed logits missing while TITAN_OFFLINE=1. "
+                        "Continuing teacher-free because require_gated_teacher=false."
+                    )
+                    cfg.distill_alpha = 0.0
+                    use_offline_logits = False
+                    distill_manager = None
+                    teacher = None
+                else:
+                    raise RuntimeError(
+                        "Precomputed logits are missing while TITAN_OFFLINE=1. "
+                            "Offline mode cannot fall back to online teacher."
+                    )
             else:
-                print("⚠️ Precomputed logits not found for all stages. Falling back to ONLINE teacher.")
-            teacher = TeacherBundle()
-            teacher_tokenizer = teacher.tokenizer
-            use_offline_logits = False
+                if bool(getattr(cfg, "require_gated_teacher", False)):
+                    print(
+                        "⚠️ Precomputed logits missing. Hard teacher policy active: "
+                        "switching to ONLINE gated teacher generation."
+                    )
+                else:
+                    print("⚠️ Precomputed logits not found for all stages. Falling back to ONLINE teacher.")
+                teacher = TeacherBundle()
+                teacher_tokenizer = teacher.tokenizer
+                use_offline_logits = False
         else:
             # TR: Logit'lerle senkron dataset (num_workers=0 zorunlu)
             # EN: Logit-synced dataset (requires num_workers=0)

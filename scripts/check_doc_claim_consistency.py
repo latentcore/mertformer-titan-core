@@ -12,6 +12,15 @@ README_EN = ROOT / "README.md"
 README_TR = ROOT / "README_TR.md"
 SNAP_EN = ROOT / "reports/release_snapshot.md"
 SNAP_TR = ROOT / "reports/release_snapshot_TR.md"
+MISSION_EN = ROOT / "MISSION.md"
+MISSION_TR = ROOT / "MISSION_TR.md"
+USE_POLICY_EN = ROOT / "USE_POLICY.md"
+USE_POLICY_TR = ROOT / "USE_POLICY_TR.md"
+SECURITY_EN = ROOT / "SECURITY.md"
+SECURITY_TR = ROOT / "SECURITY_TR.md"
+MODEL_CARD_EN = ROOT / "MODEL_CARD.md"
+MODEL_CARD_TR = ROOT / "MODEL_CARD_TR.md"
+SYSTEM_PROMPT = ROOT / "prompts/system_v1.txt"
 
 TEST_STAT_RE = re.compile(r"(\d+\s+passed,\s*\d+\s+skipped)")
 
@@ -50,7 +59,7 @@ def iter_public_markdown() -> list[Path]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check documentation claim/evidence consistency.")
-    parser.add_argument("--expected-test-stat", default="114 passed, 3 skipped")
+    parser.add_argument("--expected-test-stat", default="122 passed, 3 skipped")
     args = parser.parse_args()
 
     errors: list[str] = []
@@ -59,6 +68,15 @@ def main() -> int:
     tr = read_text(README_TR)
     snap_en = read_text(SNAP_EN)
     snap_tr = read_text(SNAP_TR)
+    mission_en = read_text(MISSION_EN)
+    mission_tr = read_text(MISSION_TR)
+    use_policy_en = read_text(USE_POLICY_EN)
+    use_policy_tr = read_text(USE_POLICY_TR)
+    security_en = read_text(SECURITY_EN)
+    security_tr = read_text(SECURITY_TR)
+    model_card_en = read_text(MODEL_CARD_EN)
+    model_card_tr = read_text(MODEL_CARD_TR)
+    system_prompt = read_text(SYSTEM_PROMPT)
 
     required_pairs = [
         ("README.md", en, "NOT ELIGIBLE FOR CLAIM"),
@@ -72,6 +90,18 @@ def main() -> int:
         ("README_TR.md", tr, "Yönlendirme politikası: token-choice top-k."),
         ("README.md", en, "out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]"),
         ("README_TR.md", tr, "out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]"),
+        ("README.md", en, "Default mode is `verified`."),
+        ("README_TR.md", tr, "Varsayılan mod `verified`"),
+        ("MISSION.md", mission_en, "No claim without evidence."),
+        ("MISSION_TR.md", mission_tr, "Kanıt yoksa claim yoktur."),
+        ("USE_POLICY.md", use_policy_en, "creative_or_folklore"),
+        ("USE_POLICY_TR.md", use_policy_tr, "creative_or_folklore"),
+        ("SECURITY.md", security_en, "45K readiness is the primary ship gate for this pass."),
+        ("SECURITY_TR.md", security_tr, "ana ship gate 45K readiness"),
+        ("MODEL_CARD.md", model_card_en, "first serious architecture validation run"),
+        ("MODEL_CARD_TR.md", model_card_tr, "ilk ciddi mimari doğrulama koşusu"),
+        ("prompts/system_v1.txt", system_prompt, "Default output mode is verified mode."),
+        ("prompts/system_v1.txt", system_prompt, "No claim may remain in final docs unless backed by evidence"),
     ]
     for name, text, needle in required_pairs:
         if needle not in text:

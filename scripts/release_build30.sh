@@ -12,6 +12,23 @@ LOCKED_AGE="$PKG_DIR/MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age"
 
 mkdir -p "$PKG_DIR"
 
+run_zip_with_tolerance() {
+  local zip_path="$1"
+  shift
+  set +e
+  zip -rq "$zip_path" "$@"
+  local rc=$?
+  set -e
+  if [[ "$rc" -eq 0 ]]; then
+    return 0
+  fi
+  if [[ "$rc" -eq 1 && -f "$zip_path" ]] && unzip -tqq "$zip_path" >/dev/null 2>&1; then
+    echo "WARN: zip exited with code 1 but integrity check passed for $zip_path; continuing." >&2
+    return 0
+  fi
+  return "$rc"
+}
+
 if [[ ! -x "$PY" ]]; then
   PY="python3"
 fi
@@ -22,7 +39,7 @@ rm -f "$REL_ZIP" "$LOCKED_AGE"
 
 (
   cd "$ROOT_DIR"
-  zip -rq "$REL_ZIP" . \
+  run_zip_with_tolerance "$REL_ZIP" . \
     -x '.git/*' '*/.git/*' 'mertformer-titan-dealroom-private/.git/*' \
        '.titan-venv/*' '.titan-venv.bak_*/*' '.lint-venv/*' '.venv/*' \
        '__pycache__/*' '*/__pycache__/*' '*.pyc' '.pytest_cache/*' '*/.pytest_cache/*' '.ruff_cache/*' '*/.ruff_cache/*' '.mypy_cache/*' '*/.mypy_cache/*' \

@@ -370,9 +370,11 @@ class MertFormerConfig:
     dedup_hash_bytes: int = int(os.environ.get("TITAN_DEDUP_HASH_BYTES", 8))
     dedup_max_entries: int = int(os.environ.get("TITAN_DEDUP_MAX", 2_000_000))
     dedup_normalize: bool = os.environ.get("TITAN_DEDUP_NORMALIZE", "1") == "1"
+    allow_optional_sources: bool = os.environ.get("TITAN_ALLOW_OPTIONAL_SOURCES", "0") == "1"
+    token_probe_samples: int = int(os.environ.get("TITAN_TOKEN_PROBE_SAMPLES", 64))
 
     # Distillation policy: teacher access must be valid on gated model.
-    require_gated_teacher: bool = True
+    require_gated_teacher: bool = os.environ.get("TITAN_REQUIRE_GATED_TEACHER", "1") == "1"
 
     # -------------------------------------------------------------------------
     # [USER OVERRIDE] Teacher Model configuration
@@ -386,8 +388,8 @@ class MertFormerConfig:
     # -------------------------------------------------------------------------
     # TR: Varsayilan ogretmen tokenizer kullanilir. Turkce tokenizer sadece opt-in.
     # EN: Default is teacher tokenizer. Turkish tokenizer is opt-in only.
-    use_tr_tokenizer: bool = False
-    tr_tokenizer_id: str = "tokenizer/tr"
+    use_tr_tokenizer: bool = os.environ.get("TITAN_USE_TR_TOKENIZER", "0") == "1"
+    tr_tokenizer_id: str = os.environ.get("TITAN_TR_TOKENIZER_ID", "tokenizer/tr")
 
     # [KRİTİK DÜZELTME]
     # [RAPOR DÜZELTME] 1.3 -> 1.0 (BitNet için keskin öğretmen gerekir)
@@ -635,6 +637,8 @@ def _validate_training_contract(cfg: MertFormerConfig) -> None:
         raise ValueError("❌ target_tokens_min must be >= 0.")
     if int(getattr(cfg, "estimated_tokens_per_sample", 0)) <= 0:
         raise ValueError("❌ estimated_tokens_per_sample must be > 0.")
+    if int(getattr(cfg, "token_probe_samples", 0)) <= 0:
+        raise ValueError("❌ token_probe_samples must be > 0.")
 
     if bool(getattr(cfg, "require_gated_teacher", False)) and not str(
         getattr(cfg, "teacher_model_id", "")

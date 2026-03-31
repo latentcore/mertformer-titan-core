@@ -1,0 +1,169 @@
+# Closure Risk Register
+
+## High
+
+- `txt:11551` EN: Manager that pre-computes teacher model (Llama-3-70B) logits and writes to disk. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:11613` Loads the Teacher Model (Llama-3-70B) in 8-bit/4-bit if possible. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:11962` 70B teacher’ı eğitim sırasında bellekte tutmamak mantıklı. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:12429` Llama-3.3-70B offline distillation kurgusu -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:12430` teacher_model_id = "meta-llama/Llama-3.3-70B-Instruct" ve use_precomputed_logits = True var. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:12646` 5. Distillation pipeline (70B teacher) -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:13806` Atomic checkpoint/evidence/log outputs for release-grade packaging -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:23210` ✅ Knowledge distillation (Llama-3.3-70B teacher, dynamic alpha) -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:27797` Knowledge distillation from Llama-3.3-70B (4-bit quantized teacher, dynamic alpha) -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:28322` “distillation 70B teacher” -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:29912` # === PHASE 2: ABLATION MATRIX === -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:29914` print(" PHASE 2: MERTFORMER ABLATION MATRIX") -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:29998` Ama “ultimate pre-training readiness / 3.70B GO-NO-GO” iddiasını şu haliyle tam taşımıyor. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:30039` Bu script, 3.70B readiness hakkında çok büyük konuşuyor ama bunu: -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:30146` Bu, 3.70B readiness için anlamlı değil. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:30259` “3.70B readiness verdict” güvenilirliği -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:30284` “Ultimate pre-training readiness script for 3.70B GO/NO-GO” -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:30574` Bu script 3.70B readiness kanıtlamaz -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:30605` 3.70B readiness → kanıtlanmadı -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:33765` "scope_note": "Proxy-scale readiness evidence only; not final 3.70B proof.", -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:34644` Bu yeni script, MertFormer için ciddi ve faydalı bir proxy-scale readiness harness olmuş; fakat hâlâ full pipeline, full 3.70B training ve production readiness kanıtı değildir. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:34667` 3.70B full train readiness’ı kesin kanıtlamaz -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:34711` Tek net sınır şudur: bu script iyi sonuç verse bile bu full 3.70B eğitimin kesin garantisi olmaz; ama RTX 4060 üzerinde proxy/internal readiness doğrulaması için güçlü kanıt olur. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:36965` önce ana eğitim ve temel benchmark, sonra baseline inference, sonra TurboQuant-benzeri KV cache modu. Çünkü bu teknik training-time temel doğrulama yerine geçmez; esas olarak inference optimization sağlar. Eğitim başlamadan önce bunu ana akışa zorla sokarsan, sana yeni bir belirsizlik ve debug yüzeyi açar. Paper da ... -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:37155` Olmuyor siktir et ama biz kendimiz eğitirsek ortaya çıkan benchmark + model dosyası + 45100 satırlık hatta belki daha bile fazla satırlık tüm 45 bin adımlık eğitimin her adımının 10 larca metriklik logu + Samsung galaxy s25 de canlı, basit uygulamada demo bile devrim olup olmadığını anlamak ve de kaç milyon dolar ol... -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:37736` Yoksa 70B teacher + student birlikte işi gereksiz ağırlaştırır. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:37844` 70B teacher’ı, 23.6B token boyunca full-vocab logits dökerek kullanamayız. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:43191` Evet, şimdiden kodunu yazmana gerek yok kankam. TurboQuant/PolarQuant tarafı KV cache’i inference sırasında sıkıştırmaya yönelik; yani ana pretraining’i başlatmak için zorunlu bir parça değil. Önce modeli eğitip baseline’ı, benchmark’ı ve normal inference’ı ayağa kaldırmak daha doğru sıra. research.google+1 -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:49172` İlk run için 23.6B gayet mantıklı ve güçlü; 70B ile başlamak fazla pahalı olur. Önce 45K civarı run çok daha akıllıca. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:49193` TurboQuant ise senin stack’inde henüz uygulanmış, benchmark’lanmış, entegrasyonu doğrulanmış bir parça değil. Bu yüzden şimdi yazarsan README biraz “gelecek vaadi kataloğu”na döner. Tom's Hardware+1 -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:51549` C. 45K SIRASINDA OTOMATİK ÜRETİLECEKLER -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:51633` D. 45K BİTER BİTMEZ ELİNDE OLMASI GEREKENLER -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:52376` FACT: MertFormer Titan (Build 30 V2) is a 3.70B parameter, offline-first, edge-native Large Language Model architecture developed by a solo researcher based in Turkey. The repository features a fusion of BitNet 1.58-bit ternary quantization, Closed-form Continuous-time (CfC) liquid neural networks, and Sparse Mixtur... -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:52455` Training a 3.70B model on a mere 23.6B tokens (a ratio of 6.3:1) will yield a model that successfully memorizes structural formatting and syntax but fails completely on reasoning, logic, and factual recall benchmarks. The developer must transition the token_budget_mode from fixed_steps to open_ended and procure a da... -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:52653` Keep Closed: Keep the proprietary train.py curriculum logic, the LiquidRouter mathematical implementation, and the final 3.70B parameter weights strictly closed. These are the commercial assets required for B2B defense licensing. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:52832` 45K sonrası Phase-2 veri büyütme planı -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:52851` teacher’sız / basit smoke yolunu koru -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:53371` 5) Phase-2 scale-up planı yazıldı -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:53383` * Phase-2 veri büyütme gerekiyor mu -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:53449` sonra gerekiyorsa Phase-2 büyütme -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:55239` phase-2 kalite artışı: istersen sonra distillation/SFT katmanı eklenebilir -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:56624` ARC-AGI → eğitim verisi değil, eval/benchmark tarafına yakışır -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:56642` The Pile → çok sonra, phase-2 veri büyütmede düşün -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:56748` belki phase-2 veri büyütme -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:57460` “Biz AGI satmıyoruz. Biz, constrained devices ve sovereign/offline deployment için yüksek verimli bir zeka altyapısı inşa ediyoruz. İlk aşamada bunu eğitilmiş model, benchmark, demo ve maliyet/performans kanıtıyla göstereceğiz. Büyük vizyonumuz, bu çekirdek mimariyi zamanla daha genel ajan sistemlerine ölçeklemek.” -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:58279` “Multimodal yok, TurboQuant yok, scraping teacher yok, büyük refactor yok, speculative algorithm change yok.” -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:58573` Phase-2 70B/100B+ token yol haritası ayrı belge olarak kilitlenmiş değil -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:58651` ARC-AGI / The Pile / LAION / Ego4D gibi veri setleri şu aşamada closure dışı olmasına rağmen zihinsel yük oluşturuyor olabilir -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:59171` 45K koşusunun amacı ile uzun vadeli AGI/scale-up vizyonu ayrıştırılmış değil -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:59822` main_45k_default taban profil olsun, main_70b_scaleup onun üstüne override alsın. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:64080` Yatırımcıya ana cümle olarak “birlikte AGI yapalım” deme. Daha güçlü ve daha inandırıcı çerçeve şu: önce mimarinin gerçekten çalıştığını, ölçülebilir biçimde öğrendiğini, benchmark ve deployment tarafında avantaj verdiğini kanıtlayın; AGI ise en fazla uzun vadeli vizyon olsun. Çünkü ARC-AGI gibi benchmarklar bile “y... -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:64086` Ek veri setleri konusunda net kararım şu: şimdi eklemeyin. ARC-AGI eğitim verisi olarak değil, post-train eval olarak değerlidir; ARC-AGI’nin amacı zaten akıl yürütme ve yeni görevlere genelleme ölçmektir. LAION-5B, 5.85 milyar image-text pair içeren büyük bir multimodal veri seti; Ego4D de 3,600+ saatlik birinci şa... -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:64092` Şu anda odak da net: closure automation + dry run + smoke run + 45K. Yani şimdi yapılacak şey yeni fikir, yeni algoritma, TurboQuant, multimodal ya da veri genişletme değil; tek komutla çalışan, benchmarkı ve raporu otomatik kapatan eğitim zinciri kurmaktır. Bunu Codex yapınca, masaüstüne ayrıca dışarıdan okunabilir... -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:64098` Yatırımcıya AGI vaat etme, kanıtlanmış verimli edge-native intelligence stack anlat. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:64190` Bitir, kanıtla, kapat; sonra phase-2’de istersen ekle. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:64239` Yeni algoritma keşfi (TurboQuant, Multimodal vb.) kapılarının kapatıldığı "Feature Freeze" resmen ilan edilmiş değil. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:65509` sadece closure, automation, verification, packaging yap -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:66528` “Mükemmel biterse ne olur?” sorusunun en iyi cevabı şu: bir anda “köşeyi döndük” değil, ama çok hızlı biçimde şu seviyeye çıkarsın: yatırımcıyla ciddi konuşulabilir, kuruma demo gösterilebilir, grant/compute desteği istenebilir, bir üst koşu için 70B+ token veya daha büyük compute talebi meşrulaşır. Özellikle senin ... -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:66941` phase-2 yön: multimodal perception / physical grounding / world model -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:66954` Şimdi bunu en fazla phase-2 plan maddesi olarak tutuyoruz. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:66973` demek. Bu da 45K closure hedefini bozar. Embodied AI literatürü de zaten bu alanın asıl darboğazının sadece model değil, multimodal fiziksel veri ve güvenilir world modeling olduğunu söylüyor. Frontiers+2Abaka AI+2 -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:67002` Multimodal fizik katmanı iyi bir phase-2 vizyonudur, ama 45K öncesi feature değil; plan seviyesinde tutulmalıdır. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:67114` 45K sonrası, gerçek weight + export doğrulaması + benchmarktan sonra Android demo = evet, phase-2 -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:67264` Bunu “şimdi ne koyacağız, eğitimden önce ne test edeceğiz, savunma/kamu seviyesine çıkmak için neyi phase-2 yapacağız” diye ayıracağım. Resmi çerçevelere yaslayıp net bir güvenlik planı çıkarıyorum. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:67675` Python kalsın: eğitim döngüsü, orchestrator, preflight, packaging, benchmark, demo, README/report update, release gates. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:67986` Senin proje için şu anda “daha da geliştirelim mi?” sorusunun cevabı 45K öncesi hayır. Şu an ihtiyaç olan şey yeni feature değil, closure. Çünkü senin asıl eksik tarafın fikir değil, kanıt. 45K’den sonra, eğer sonuç iyi gelirse, o zaman deneysel flag’ler, multimodal fizik katmanı, defense-compatible phase-2 ve ablat... -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:68101` İstersen bir sonraki mesajda sana bunun için “mini test → 45K → savunma-grade phase-2” şeklinde 3 aşamalı net planı çıkarırım. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:68801` gibi başlıkları phase-2 vizyonunda düşünmen mantıklı. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:69470` phase-2 için 70B+ token veya daha büyük compute planı açılır -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:69676` Bu yüzden senin yaptığın şey başarılı olursa, Türkiye için cidden değerli olabilir. Ama “tek başına yeter mi?” sorusunda cevap: belirli bir kullanım alanı için evet, AGI/ASI seviyesi için hayır. Eğer elinde trained weights, benchmarklar, demo, offline/edge deployment ve tekrar üretilebilir paket olursa; bu, Türkiye’... -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:69887` Phi-2 en güçlü açık örneklerden biri. Microsoft, Phi-2’nin 2.7B parametreyle bazı benchmark gruplarında 7B ve 13B Llama-2 / Mistral modellerini geçtiğini, hatta coding ve math gibi çok adımlı reasoning görevlerinde Llama-2-70B’ye karşı daha iyi sonuçlar verdiğini söylüyor. Bu, küçük modelin büyük modeli bazı alanlar... -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:71835` Evet, AI çok hızlı ilerliyor; ama iyi closure, iyi veri hatları, iyi release disiplini ve iyi entegrasyon katmanı “daha yavaş eskiyen” şeylerdir. METR’nin 2025 ölçümleri, ajanların görev ufkunun hızla uzadığını gösteriyor, ama bu “iki yılda kesin AGI” demek değil. OpenAI -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:72689` Uzun vadeli 70B/100B+ phase-2 veri yol haritasını ayırmak -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:72763` Distillation’ı phase-2 opsiyon olarak belgelemek -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:73051` Qualcomm/QNN/LiteRT compile zincirini phase-2 plana koymak -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:74184` Cahit Sıtkı Tarancı ve Ahmet Arif'in Şiirlerindeki Kriptolar: Diyarbakır'ın çıkardığı büyük şairlerin eserlerinin sadece edebi değil, bölgenin ezilmişliğini, devletle olan karmaşık/kanlı ilişkisini ve beklenen "sosyalist/Kürt" uyanışının koordinatlarını içeren şifreli siyasi manifestolar olarak okunduğu edebiyat ist... -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:74418` Hz. Hızır Makamı (Samandağ) ve Ölümsüzlük Suyunun (Mecma-ul Bahreyn) Birleştiği Yer: Kur'an'da Kehf Suresi'nde Hz. Musa ve Hz. Hızır'ın buluştuğu "İki denizin birleştiği yerin" (Mecma-ul Bahreyn) Samandağ'da Asi Nehri ile Akdeniz'in buluştuğu nokta olduğu; burada balığın canlanıp suya atlamasının, bölgedeki "Ölümsüz... -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:74754` Defense / security / public-good söylemi, saldırı kapasitesi değil koruyucu, denetlenebilir, insan kontrollü kullanım üzerinden yazılacak. -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:75167` Phase 2: ms-level latency paketi -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `txt:9951` teacher_model_id: str = "meta-llama/Llama-3.3-70B-Instruct" -> Guardrail: risks 45K readiness or exceeds Medium Refine ceiling.
+- `repo:012` Reject harmful autonomy and covert surveillance framing -> Conflicts with public-good / high-risk guardrail.
+- `txt:74947` High-risk or harmful autonomy must not be expanded; human oversight, uncertainty marking, and safe-use framing are mandatory. -> Conflicts with public-good / high-risk guardrail.
+
+## Medium
+
+- `repo:004` Unify run.sh, one_command_full_sop.sh, and final_one_shot.sh into one canonical closure flow -> Directly affects the canonical closure flow.
+- `txt:52509` A startup possessing a sophisticated codebase but lacking trained model weights is fundamentally un-fundable at a premium valuation. Venture capitalists view the model weights and the resulting benchmark scores as the core asset. A "pre-training baseline" proves system engineering competence, but it does not prove a... -> Directly affects the canonical closure flow.
+- `txt:52538` Lack of Weights: A sophisticated codebase is useless without the trained .pt or .safetensors files that encode the model's intelligence. -> Directly affects the canonical closure flow.
+- `txt:65529` Turn this repository into a zero-touch, company-grade, end-to-end training closure system for the 45K architecture validation run. -> Directly affects the canonical closure flow.
+- `txt:71896` train/train.py, scripts/final_one_shot.sh, scripts/one_command_full_sop.sh, scripts/start_gate.py, scripts/titan_preflight.py, scripts/train_smoke.py, scripts/smoke_train_benchmark.py, scripts/verify_all.sh, scripts/release_build30.sh, scripts/smart_runner.py -> Directly affects the canonical closure flow.
+- `txt:72273` closure bitmeden ve trained sonuçlar olmadan acele “her şeyi patentleyelim” moduna girme -> Directly affects the canonical closure flow.
+- `txt:12424` curriculum_stage_names ve curriculum_stage_ratios var, train loop’ta uygulanıyor. -> Directly affects the training data contract.
+- `txt:13402` print(f" ⚠️ Optional source unavailable: {src['dataset']} ({e})") -> Directly affects the training data contract.
+- `txt:14412` "outlier_filter", "provenance_tags", "dataset_fingerprint", "license_manifest", -> Directly affects the training data contract.
+- `txt:20732` # Use curriculum order for training order -> Directly affects the training data contract.
+- `txt:2353` EN: 2. DATASETS (CURRICULUM + VALIDATION) -> Directly affects the training data contract.
+- `txt:2393` TR: Curriculum-aware dataset (RAM dostu Streaming + Worker Safe). -> Directly affects the training data contract.
+- `txt:2394` EN: Curriculum-aware dataset (RAM-friendly Streaming + Worker Safe). -> Directly affects the training data contract.
+- `txt:2431` # Fallback dataset or missing stages: disable curriculum -> Directly affects the training data contract.
+- `txt:27871` 🔎 Verified (Code): CI pipeline, demo, dataset licenses, benchmarks -> Directly affects the training data contract.
+- `txt:2974` # CURRICULUM: Find stage datasets -> Directly affects the training data contract.
+- `txt:2976` (curriculum_stage_names[0], project_root / "datasets" / "stage1" / "stage1_data.jsonl"), -> Directly affects the training data contract.
+- `txt:2977` (curriculum_stage_names[1], project_root / "datasets" / "stage2" / "stage2_data.jsonl"), -> Directly affects the training data contract.
+- `txt:2978` (curriculum_stage_names[2], project_root / "datasets" / "stage3" / "stage3_data.jsonl"), -> Directly affects the training data contract.
+- `txt:2979` (curriculum_stage_names[3], project_root / "datasets" / "stage4_soul" / "stage4_data.jsonl"), -> Directly affects the training data contract.
+- `txt:2980` (curriculum_stage_names[4], project_root / "datasets" / "stage5_tools" / "stage5_data.jsonl"), -> Directly affects the training data contract.
+- `txt:33107` ("distillation_smoke", lambda: run_distillation_smoke_test(model, train_dataset, device=device, batch_size=batch_size)), -> Directly affects the training data contract.
+- `txt:35920` datasets/ içinden gerçekten training’de kullanılan manifest/hash/license/config dosyaları -> Directly affects the training data contract.
+- `txt:35922` scripts/ içinden sadece eğitim için gerekenler: örneğin preflight, dataset verify, smoke, checkpoint restore, eval/benchmark entrypoint -> Directly affects the training data contract.
+- `txt:40409` PrecomputedCurriculumDataset -> Directly affects the training data contract.
+- `txt:40472` 4. CurriculumDataset random byte seek yaklaşımı -> Directly affects the training data contract.
+- `txt:44790` LLM mimarisi + pretraining + distillation + MoE + BitNet/quantization + curriculum + edge/mobile/NPU + export/inference. -> Directly affects the training data contract.
+- `txt:50257` training/data pipeline repo -> Directly affects the training data contract.
+- `txt:67290` NATO’nun savunmada sorumlu AI ilkeleri lawfulness, responsibility and accountability, explainability and traceability, reliability, governability ve bias mitigation diye geçiyor. Senin projede bunun pratik karşılığı şu: hangi checkpoint, hangi config, hangi dataset, hangi benchmark, hangi demo çıktısı üretti; hepsi ... -> Directly affects the training data contract.
+- `txt:70834` yani iyi bir curriculum pretraining pipeline -> Directly affects the training data contract.
+- `txt:71926` dataset provenance’i daha iyi loglamak -> Directly affects the training data contract.
+- `txt:71932` dataset revision, hash, inventory, license ve contamination zincirini final manifest’e bağlamak -> Directly affects the training data contract.
+- `txt:72705` Dataset provenance log üretmek -> Directly affects the training data contract.
+- `txt:72715` Dataset manifest, inventory, hashes ve licenses’ı final run’a bağlamak -> Directly affects the training data contract.
+- `repo:005` Produce one final TRAIN_ALLOWED or NOT_ALLOWED verdict with reason codes -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:19908` m_train = benchmark_train_short( -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:19917` v_train = benchmark_train_short( -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:19957` short = benchmark_train_short( -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:20081` m_loss = float(payload.get("benchmark_suite", {}).get("mertformer", {}).get("train", {}).get("final_loss", float("inf"))) -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:20082` v_loss = float(payload.get("benchmark_suite", {}).get("vanilla", {}).get("train", {}).get("final_loss", float("inf"))) -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:22258` stop_reason = str(preflight.get("reason_codes", ["preflight_failed"])[0] if preflight.get("reason_codes") else "preflight_failed") -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:22292` "benchmark_tradeoff_notes": ["benchmark_not_run_due_to_preflight_fail"], -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:22311` "degraded_conditions": [f"preflight:{x}" for x in preflight.get("reason_codes", [])], -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:23280` Eksik olan tek şey: gerçek training donanımı üzerinde eğitim çalıştırılması ve benchmark sonuçları. -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:23300` “Eksik olan tek şey gerçek training ve benchmark” demesi önemli; bu kısmı metni daha inandırıcı yapıyor. -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:23312` “Eğitime hazır” ifadesi teknik olarak biraz iddialı; çünkü gerçek büyük ölçekli pretraining ve benchmark sonucu olmadan bu cümle bazı insanlara fazla kesin gelebilir. -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:23334` “Kod tabanı ciddi, mimari gerçek, test/disiplin var, eğitim altyapısı hazırlanmış; ancak büyük ölçekli gerçek pretraining ve benchmark sonuçları tamamlanmadan tam performans iddiaları nihai sayılmaz.” -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:24373` verified_matrix.md:44: "Performance numbers remain targets until a full training run and benchmark report exist." -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:24533` 3 tanesi donanım beklenen meşru hedef (benchmark, full training, ablation) — bunlar proje tarafından zaten dürüstçe belirtilmiş -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:26409` 👉 kanıt (training + benchmark) -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:26845` I am reaching out not to ask for a job, but because your work around open LLMs, training workflows, and deployment makes your perspective especially valuable to me. If you are open to it, I would be very grateful to send you a short technical brief and get even a few lines of candid feedback on the architecture, tra... -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:26854` the project is technically prepared for larger-scale training, pending compute and benchmark execution -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:27763` CI/CD: GitHub Actions, 11-step pipeline (pytest, ruff, secret scan, preflight, hardening, linkcheck, sync manifest) -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:27814` Benchmark Infrastructure (code exists, awaiting trained checkpoint): -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:27843` Total token budget: 23.6B tokens, 45K training steps -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:28089` b) For each, document: parameter count, training tokens, training cost, benchmark scores (MMLU, GSM8K, HumanEval, HellaSwag, ARC) -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:33766` "coverage_note": "Includes training, held-out eval, cache, checkpoint, distillation, local DDP smoke and local arithmetic benchmarks.", -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:34811` Onu zaten full training + gerçek eval + gerçek benchmark + gerçek inference testleri kanıtlar. -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:35878` full training / gerçek training logları / checkpointler / benchmark sonucu olmalı. -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:37272` Son 1 gün daha üzerinde çalışıp full trainingi başlatmaya ne dersin + tüm bunlar eğitimden sonra 5'er dakikalık işler merak etme demi ama bugün şuanda saat 20.54 yani bugün dinlesemde yarın bu işi tek seferde halletsek olur mu : Tek cümlelik son karar: Eğitilmiş model + benchmark + tam log + S25 canlı demo = teknik ... -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:37347` Full training bitmeden, benchmarklar çıkmadan, cihaz demosu görülmeden ve dışarıdan gerçek talep oluşmadan “bu Türkiye’nin yapay zekâsı olacak” ya da “hızlıca dev para kazanacağız” demek dürüst olmaz. -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:4004` “Ciddi derecede gelişmiş, gerçek çalışan, birçok profesyonel unsuru olan bir pretraining-distillation pipeline.” -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:4175` pretraining / distillation altyapısı -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:4334` Ama bunların gerçekten train loop ile tam entegre benchmark üretip üretmediği burada görünmüyor. -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:4389` “Pretraining + distillation + validation + resume + export + safety pipeline olmuş.” -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:44756` kendi kulvarında bakarsak, yani “LLM + training + MoE + quantization + distillation + edge deployment + inference + tooling” alt kümesinde: yaklaşık %60–75 -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:46791` label_smoothing=0.1 pretraining + distillation kombinasyonunda tartışmalı. -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:51052` training run manifest içinde: -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:52378` Despite these flaws, the developer has recently secured a highly coveted Google TPU Research Cloud (TRC) grant. The immediate, overriding priority must be adapting the codebase for XLA compilation to utilize this free supercomputing allocation. Until a trained checkpoint yields verifiable benchmark data against fron... -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:52541` Edge-Native DNA: The uncompromising focus on VRAM reduction (BitNet) and thermal management (Sparse MoE) makes this a premier architecture for hardware-constrained environments. -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:52626` For defense contractors or venture capitalists to view MertFormer as a legitimate technological breakthrough rather than just a neat coding project, the trained weights must achieve an absolute minimum of 45.0% on MMLU and 30.0% on HumanEval. Anything lower indicates that the quantization or routing mechanics severe... -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:52628` Yes, but strictly on the axis of Size, Weight, Power, and Cost (SWaP-C). Standard dense architectures can achieve higher absolute benchmark scores with less training complexity. However, standard dense models melt smartphone batteries and choke NPUs. The BitNet + MoE + Liquid combination is a differentiator because ... -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:52655` Do not publish or publicize the architecture until the TRC training run is complete and verified benchmark graphs are generated. In the modern AI research community, theoretical architectures without empirical benchmark validation are ignored. -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:52684` Use the TRC grant to train the model, extract empirical benchmark data, and follow up with a 1-page PDF showing actual GSM8K/HumanEval performance graphs. -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:55108` - after training, automatically run benchmark suite -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:55148` - Post-training benchmark/report/demo automation exists. -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:57208` “Offline-first, edge-native, efficient Turkish/English LLM stack for constrained devices and sovereign deployments.” -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:58000` Örnek en iyi form: “Offline-first, edge-native, efficient Turkish/English LLM stack for constrained devices and sovereign deployments.” -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:58668` Başka eksik yok demi ve de her ama hepsini yazdıysan bile her ama her detayı ile(de) yazdın mı ki yani her ama herşey olup her ama herşeyi ile en en ileri seviye olup bir baytlık/gram bile dosya eksiği olmaması ve de şirket seviyesi olması için ki gereken : Trained final weights yok Best checkpoint’in gerçekten üret... -> Relevant to this pass and does not exceed the risk ceiling.
+- `txt:58692` benchmark ve post-train zincirinin fiilen dönmesi -> Relevant to this pass and does not exceed the risk ceiling.

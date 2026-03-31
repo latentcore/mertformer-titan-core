@@ -96,9 +96,17 @@ def cleanup():
     log("CLEANUP: Done.", "success")
 
 
-def write_train_ready_report(payload: Dict[str, Any]) -> None:
-    report_path = LOG_DIR / "train_ready_status.json"
+def write_train_ready_report(payload: Dict[str, Any], report_name: str | None = None) -> None:
+    suffix = f".{report_name}" if report_name else ""
+    report_path = LOG_DIR / f"train_ready_status{suffix}.json"
     report_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
+def _display_path(path: Path) -> str:
+    try:
+        return str(path.relative_to(PROJECT_ROOT))
+    except ValueError:
+        return str(path)
 
 
 def _serialize_cfg() -> Dict[str, Any]:
@@ -128,6 +136,40 @@ def _stage_jsonl_paths() -> Dict[str, Path]:
         "stage4": PROJECT_ROOT / "datasets" / "stage4_soul" / "stage4_data.jsonl",
         "stage5": PROJECT_ROOT / "datasets" / "stage5_tools" / "stage5_data.jsonl",
     }
+
+
+def _count_jsonl_rows(path: Path) -> int:
+    if not path.exists():
+        return 0
+    count = 0
+    with path.open("r", encoding="utf-8", errors="ignore") as handle:
+        for line in handle:
+            if line.strip():
+                count += 1
+    return count
+
+
+def _local_tokenizer_ready() -> tuple[bool, str]:
+    tokenizer_meta = PROJECT_ROOT / "tokenizer" / "tokenizer.json"
+    if not tokenizer_meta.exists():
+        return False, "tokenizer/tokenizer.json missing"
+    try:
+        meta = json.loads(tokenizer_meta.read_text(encoding="utf-8"))
+    except Exception as exc:
+        return False, f"tokenizer metadata unreadable: {exc}"
+
+    note = str(meta.get("note", "")).lower()
+    if "loaded at runtime" in note:
+        artifact_roots = [
+            PROJECT_ROOT / "data" / "tokenizer" / "tr",
+            PROJECT_ROOT / "tokenizer" / "tr",
+        ]
+        required_names = ("tokenizer.json", "tokenizer_config.json", "special_tokens_map.json")
+        for root in artifact_roots:
+            if all((root / name).exists() for name in required_names):
+                return True, f"ok (local tokenizer cache: {_display_path(root)})"
+        return False, "tokenizer metadata is runtime-only; offline clean path lacks a real local tokenizer artifact"
+    return True, "ok"
 
 
 def check_stage_jsonl(offline: bool) -> bool:
@@ -353,8 +395,122 @@ def strict_training_readiness_profile() -> int:
             "checks": checks,
             "elapsed_s": round(time.time() - started_at, 3),
         }
-        write_train_ready_report(payload)
-        log(f"Train-ready report: {LOG_DIR / 'train_ready_status.json'}", "info")
+        write_train_ready_report(payload, report_name=profile)
+        log(f"Train-ready report: {_display_path(LOG_DIR / 'train_ready_status.json')}", "info")
+
+    return return_code
+
+
+def strict_offline_training_readiness_profile() -> int:
+    """
+    Strict offline-clean readiness profile.
+    This path must prove that the repository can launch a no-network 45K pass
+    without relying on gated teacher access.
+    """
+    started_at = time.time()
+    checks: Dict[str, Any] = {}
+    profile = "strict_offline_training_readiness"
+    status = "FAIL"
+    reason_code = "UNKNOWN_ERROR"
+
+    try:
+        load_env()
+
+        missing_stage = [name for name, path in _stage_jsonl_paths().items() if not path.exists()]
+        checks["stage_jsonl"] = {
+            "status": "PASS" if not missing_stage else "FAIL",
+            "missing": missing_stage,
+        }
+        if missing_stage:
+            reason_code = "STAGE_JSONL_MISSING"
+            raise RuntimeError(f"offline stage JSONL missing: {missing_stage}")
+
+        validation_path = PROJECT_ROOT / "datasets" / "validation.jsonl"
+        val_rows = _count_jsonl_rows(validation_path)
+        min_rows = int(getattr(cfg, "validation_min_samples_claim", 1000))
+        checks["validation_jsonl"] = {
+            "status": "PASS" if val_rows >= min_rows else "FAIL",
+            "path": str(validation_path),
+            "rows": val_rows,
+            "required_rows": min_rows,
+        }
+        if val_rows < min_rows:
+            reason_code = "VALIDATION_SET_TOO_SMALL"
+            raise RuntimeError(f"validation rows too low: {val_rows} < {min_rows}")
+
+        hashes_path = PROJECT_ROOT / "datasets" / "hashes.json"
+        checks["dataset_hashes"] = {
+            "status": "PASS" if hashes_path.exists() else "FAIL",
+            "path": str(hashes_path),
+        }
+        if not hashes_path.exists():
+            reason_code = "DATASET_HASHES_MISSING"
+            raise RuntimeError("datasets/hashes.json missing")
+
+        tokenizer_ok, tokenizer_detail = _local_tokenizer_ready()
+        checks["local_tokenizer"] = {
+            "status": "PASS" if tokenizer_ok else "FAIL",
+            "detail": tokenizer_detail,
+        }
+        if not tokenizer_ok:
+            reason_code = "LOCAL_TOKENIZER_UNAVAILABLE"
+            raise RuntimeError(tokenizer_detail)
+
+        required_paths = [
+            PROJECT_ROOT / "datasets",
+            PROJECT_ROOT / cfg.save_dir,
+            Path(cfg.precomputed_logits_path),
+        ]
+        write_results: Dict[str, Any] = {}
+        for p in required_paths:
+            ok, detail = _check_writable_dir(p)
+            write_results[str(p)] = {"status": "PASS" if ok else "FAIL", "detail": detail}
+        failing_paths = [k for k, v in write_results.items() if v["status"] == "FAIL"]
+        checks["write_permissions"] = {
+            "status": "PASS" if not failing_paths else "FAIL",
+            "paths": write_results,
+        }
+        if failing_paths:
+            reason_code = "WRITE_PERMISSION_DENIED"
+            raise RuntimeError(f"offline write permission checks failed: {failing_paths}")
+
+        logits_root = Path(cfg.precomputed_logits_path)
+        shard_count = len(list(logits_root.glob("stage*_train_part_*.pt")))
+        checks["distillation_paths"] = {
+            "status": "PASS" if shard_count > 0 else "WARN",
+            "logits_dir": str(logits_root),
+            "existing_shards": shard_count,
+            "policy": "offline clean path can proceed only if training mode is explicitly teacherless or precomputed logits are available",
+        }
+
+        strict_cuda_lock = os.environ.get("TITAN_PREFLIGHT_STRICT_CUDA_LOCK", "0") == "1"
+        cuda_ok = check_cuda_lock(strict=strict_cuda_lock)
+        checks["cuda_lock"] = {
+            "status": "PASS" if cuda_ok else "WARN",
+            "strict": strict_cuda_lock,
+            "path": str(PROJECT_ROOT / "repro" / "cuda.lock"),
+        }
+
+        status = "PASS"
+        reason_code = "READY"
+        print("TRAIN_READY:PASS reason_code=READY")
+        return_code = 0
+    except Exception as exc:
+        if reason_code == "UNKNOWN_ERROR":
+            reason_code = "STRICT_OFFLINE_PREFLIGHT_EXCEPTION"
+        log(f"STRICT OFFLINE TRAIN-READINESS FAIL [{reason_code}]: {exc}", "error")
+        print(f"TRAIN_READY:FAIL reason_code={reason_code}")
+        return_code = 1
+    finally:
+        payload = {
+            "profile": profile,
+            "status": status,
+            "reason_code": reason_code,
+            "checks": checks,
+            "elapsed_s": round(time.time() - started_at, 3),
+        }
+        write_train_ready_report(payload, report_name=profile)
+        log(f"Train-ready report: {_display_path(LOG_DIR / f'train_ready_status.{profile}.json')}", "info")
 
     return return_code
 
@@ -655,13 +811,15 @@ def main():
         "--profile",
         type=str,
         default="default",
-        choices=["default", "strict_online_training_readiness"],
+        choices=["default", "strict_online_training_readiness", "strict_offline_training_readiness"],
         help="Preflight profile to run.",
     )
     args = parser.parse_args()
 
     if args.profile == "strict_online_training_readiness":
         code = strict_training_readiness_profile()
+    elif args.profile == "strict_offline_training_readiness":
+        code = strict_offline_training_readiness_profile()
     else:
         code = run_default_profile()
     if code != 0:

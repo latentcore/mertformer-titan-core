@@ -17,3 +17,8 @@
 {"timestamp_utc": "2026-03-17T07:33:48.711874+00:00", "stage": "baseline", "cpu_percent": 11.1, "ram_total_gb": 16.0, "ram_used_gb": 9.36553955078125}
 {"timestamp_utc": "2026-03-17T07:43:51.022841+00:00", "stage": "baseline", "cpu_percent": 12.2, "ram_total_gb": 16.0, "ram_used_gb": 9.406494140625}
 {"timestamp_utc": "2026-03-18T09:58:36.084932+00:00", "stage": "baseline", "cpu_percent": 12.2, "ram_total_gb": 16.0, "ram_used_gb": 8.59063720703125}
+{"timestamp_utc": "2026-03-30T17:55:05.459088+00:00", "stage": "baseline", "cpu_percent": 10.4, "ram_total_gb": 16.0, "ram_used_gb": 11.138671875}
+{"timestamp_utc": "2026-03-30T18:43:20.696815+00:00", "stage": "baseline", "cpu_percent": 13.9, "ram_total_gb": 16.0, "ram_used_gb": 11.2052001953125}
+{"timestamp_utc": "2026-03-31T18:46:07.958257+00:00", "stage": "baseline", "cpu_percent": 6.4, "ram_total_gb": 16.0, "ram_used_gb": 10.233779907226562}
+{"timestamp_utc": "2026-03-31T19:20:20Z", "stage": "start", "cpu_percent": 5.0, "ram_total_gb": 16.0, "ram_used_gb": 10.719924926757812, "device": "mps", "mixed_precision": "no"}
+{"timestamp_utc": "2026-03-31T20:25:29.405174+00:00", "stage": "baseline", "cpu_percent": 4.9, "ram_total_gb": 16.0, "ram_used_gb": 9.98748779296875}

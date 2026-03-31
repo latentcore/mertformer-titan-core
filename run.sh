@@ -390,14 +390,22 @@ fi
 echo "🔍 Performing Ultimate Pre-Flight Check..."
 
 PREFLIGHT_PROFILE="${TITAN_PREFLIGHT_PROFILE:-default}"
-if [[ "$RUN_TRAIN_READY" == true ]]; then
-    PREFLIGHT_PROFILE="strict_online_training_readiness"
-elif [[ "$RUN_TEST" != true && "${TITAN_OFFLINE}" == "0" ]]; then
+if [[ "$RUN_TRAIN_READY" != true && "$RUN_TEST" != true && "${TITAN_OFFLINE}" == "0" ]]; then
     PREFLIGHT_PROFILE="strict_online_training_readiness"
 fi
 
 # Her durumda (test modu olsa da olmasa da) preflight çalışır. 
 # Sadece --test modunda ise test bitince durur, normal modda ise başarılıysa eğitime geçer.
+if [ "$RUN_TRAIN_READY" = true ]; then
+    "$PYTHON_BIN" scripts/build_train_readiness_contract.py
+    if [ $? -ne 0 ]; then
+        echo "❌ TRAIN-READY CONTRACT FAILED. Check reports/train_readiness_decision.json"
+        exit 1
+    fi
+    echo "✅ TRAIN-READY CHECK PASSED. Exiting without training launch by design."
+    exit 0
+fi
+
 "$PYTHON_BIN" scripts/titan_preflight.py --profile "$PREFLIGHT_PROFILE"
 if [ $? -ne 0 ]; then
     echo "❌ ULTIMATE PREFLIGHT FAILED! Check logs at logs/preflight/titan_preflight.log"
@@ -409,11 +417,6 @@ READINESS_OK=1
 
 if [ "$RUN_TEST" = true ]; then
     exit 0 # Sadece test istenmişse burada dur.
-fi
-
-if [ "$RUN_TRAIN_READY" = true ]; then
-    echo "✅ TRAIN-READY CHECK PASSED. Exiting without training launch by design."
-    exit 0
 fi
 
 # Offline-first safety: do not start network-heavy training pipeline by accident.
@@ -447,6 +450,8 @@ fi
 # 🚀 6. ATEŞLEME
 # ------------------------------------------------------------------------------
 echo "🚀 TITAN LAUNCHING..."
+echo "ℹ️  Canonical 45K train-end launcher is: bash zero_touch_start.sh"
+echo "ℹ️  run.sh remains valid for legacy helper/test/demo flows and compatibility."
 mkdir -p logs
 
 # Port 29501 çakışmayı önler, logları hem ekrana hem dosyaya yazar.

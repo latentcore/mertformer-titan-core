@@ -1,46 +1,33 @@
 # Final Repo Audit
 
-Generated UTC: 2026-03-04T01:49:00Z
+- generated_utc: `2026-03-31T20:47:36Z`
+- git_branch: `main`
+- git_commit_short: `26fde4a`
+- readiness_final_status: `TRAIN_ALLOWED`
+- readiness_reason_code: `READY_OFFLINE_CLEAN`
+- recommended_path: `offline_clean`
 
-## Scope
-- One-shot closure workflow executed via `scripts/final_one_shot.sh`.
-- Main repo release branch: `codex/release-v1-final`.
-- Dealroom repo release branch: `codex/release-v1-final-dealroom`.
+## Working Tree
 
-## Gates
-- `scripts/secret_scan.py`: pass
-- `scripts/check_57_matrix.py`: pass (`all_green=true`, no in-scope pending)
-- `scripts/verify_all.sh`: pass
-- Unicode path guard: pass
-- Duplicate zip guard: pass
-- Manifest sync guard: pass
+- tracked_files: `636`
+- modified_entries: `178`
+- untracked_entries: `0`
 
-## Security / Hardening Outputs
-- `reports/sbom.cdx.json`
-- `reports/static_analysis_report.json`
-- `reports/sanitizer_report.json`
-- `reports/kernel_fuzz_report.json`
-- `reports/determinism_report.json`
-- `reports/differential_backend_report.json`
-- `reports/license_gate_report.json`
+## Canonical Gates
 
-## Release Artifacts
-- `artifacts/mertformer_release.zip`
-- `artifacts/mertformer_release.zip.sha256`
-- `reports/release_manifest.json`
+- `bash scripts/verify_all.sh`
+- `bash zero_touch_start.sh --check-only`
+- `bash scripts/one_command_full_sop.sh`
+- `bash scripts/final_one_shot.sh`
 
-## Provenance
-- Main signed commit/tag: `v1.0.0`
-- Main PR merges: `#6`, `#7`, `#8`, `#9`, `#10`, `#11`, `#12`
-- Dealroom signed commit/tag: `v1.0.0-dealroom`
-- Dealroom PR merge: `#2`
-- Ownership bundle: `reports/ownership_proof_bundle.json`
+## Current Closure Boundary
 
-## Post-Closure CI Hotfix (2026-03-04)
-- Root cause: CI `verify_all` stage re-bootstrapped `.titan-venv` when `TITAN_PYTHON` was set to a command name, triggering duplicate dependency install and disk exhaustion.
-- Fix 1: `scripts/verify_all.sh` now accepts both executable paths and PATH-resolvable command names for `TITAN_PYTHON`.
-- Fix 2: `.github/workflows/ci.yml` sets `TITAN_PYTHON=python3` in `Verify all` to reuse the existing setup-python environment.
+- Zero-touch orchestration is implemented.
+- Offline-clean readiness is green.
+- Online teacher remains an alternate lane with external credential dependency when explicitly requested.
+- Real 45K outputs remain post-run evidence, not current fact.
 
-## Notes
-- GitHub branch-protection API update returned HTTP 403 on account plan limit; see `reports/github_policy_report.json`.
-- Real 2.64B training was not started in this closure pass.
+## Artifacts
+
+- `artifacts/mertformer_release.zip` (104932465 bytes)
+- `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip` (51681257 bytes)

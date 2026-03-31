@@ -9,6 +9,20 @@ Current maturity: **pilot-ready pre-training baseline** (training/benchmark clai
 - English summary: [README_SUMMARY.md](README_SUMMARY.md)
 - Turkish summary: [README_SUMMARY_TR.md](README_SUMMARY_TR.md)
 - Turkish full doc: [README_TR.md](README_TR.md)
+- Mission: [MISSION.md](MISSION.md)
+- Use policy: [USE_POLICY.md](USE_POLICY.md)
+- Security: [SECURITY.md](SECURITY.md)
+
+### Official Positioning
+- Product sentence: `Turkey-serving, offline-first, edge-native, locally integrable intelligence infrastructure.`
+- 45K positioning: first serious architecture validation run, not the final capability ceiling.
+- Ship gate: 45K readiness remains the primary gate for this pass.
+
+### Truth and Output Modes
+- `measured` / `target` / `vision` are distinct claim labels.
+- `verified` / `hypothesis` / `creative_or_folklore` are distinct output modes.
+- Default mode is `verified`.
+- No claim without evidence.
 
 ### Claims Boundary
 - This repository is **pre-training / unverified** for production-scale quality claims.
@@ -23,12 +37,17 @@ This repository includes a decision-complete, single-pass closure flow for engin
 
 ### Single Entry Point
 - `bash scripts/final_one_shot.sh`
+- `bash scripts/one_command_full_sop.sh` is the core validation subflow used by the canonical closure wrapper above.
 
 ### Outputs
 - `reports/start_gate_report.json`
 - `reports/release_manifest.json`
 - `reports/project_structure_sync_report.json`
 - `reports/hardening_bundle_summary.json`
+- `reports/master_closure_matrix.md`
+- `reports/train_readiness_decision.md`
+- `reports/final_freeze_manifest.md`
+- `reports/repo_external_handoff.md`
 - `artifacts/mertformer_release.zip`
 - `artifacts/mertformer_release.zip.sha256`
 
@@ -102,20 +121,20 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `114 passed, 3 skipped` |
+| `python3 -m pytest -q` | `122 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
 ## 🚀 Training Readiness (Operational)
-**Status:** `READY TO START TRAINING PIPELINE (GATED)`
+**Status:** `TRAIN_ALLOWED`
 
-**Feature highlight:** Build30 V2 now includes a strict `run.sh --train-ready` gate with machine-readable reason codes for portable multi-GPU handoff.
+**Feature highlight:** the canonical 45K path is now `bash zero_touch_start.sh`, which owns the exact readiness verdict, run lock, resume policy, and post-train autorun contract.
 
-This repository is no longer in idea/prototype-only state. Core validation gates are green and the training pipeline can be launched as soon as the final data/hardware prerequisites are satisfied.
+This repository is no longer in idea/prototype-only state. The current working tree is repo-side 45K-ready on the canonical `offline_clean` lane; trained outputs are still absent because the real long run has not been executed on the target hardware yet.
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`114 passed, 3 skipped`)
+   - `pytest` passed (`122 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -124,60 +143,77 @@ This repository is no longer in idea/prototype-only state. Core validation gates
 3. **Traceable artifacts generated**
    - `logs/preflight/titan_preflight.log`
    - `logs/operator_mode/*.manifest.json`
+   - `reports/run_contract.md`
+   - `reports/post_train_automation_contract.md`
+   - `reports/final_truth_matrix.md`
+
+### Current Exact Boundary
+- Canonical repo-side lane: `offline_clean`
+- Exact readiness verdict: `TRAIN_ALLOWED` / `READY_OFFLINE_CLEAN`
+- Remaining exact blocker: `online_teacher:MISSING_HF_TOKEN` (only for the optional gated teacher lane)
 
 ### Final prerequisites before long-run training
-- Dataset license/hash workflow must remain compliant.
 - Target hardware allocation (GPU/edge) must be reserved.
+- Transfer the repo/package artifacts to the real training machine and rerun the canonical start gate there.
+- `HF_TOKEN` is required only if you intentionally choose the online teacher/gated-access path.
+- Dataset license/hash workflow must remain compliant.
 - Full training run and benchmark outputs will be recorded only after those prerequisites.
 - Token budget (V2): default `TITAN_TOKEN_BUDGET_MODE=fixed_steps`, `TITAN_MAX_STEPS=45000`, `TITAN_TARGET_TOKENS_MIN=23.6B`.
 - Precomputed logits path: `TITAN_LOGITS_PATH` (default `./datasets/logits/`).
 - Default token budget now uses `fixed_steps` (45K). Use `TITAN_TOKEN_BUDGET_MODE=open_ended` only with an explicit target override.
-- Offline runs require pre-generated stage JSONL (`python scripts/data_pipeline.py`).
 - Accelerate config must match GPU count (set `TITAN_FORCE_ACCELERATE_RECONF=1` to regenerate).
 - `cuda.lock` must be created on the target training hardware.
-- `HF_TOKEN` required for gated teacher/datasets in online mode.
 
 ### Minimum Training Hardware (Claim-Safe)
 - Dev smoke/preflight: CPU/MPS, 16 GB RAM, 50 GB free disk.
 - Master training target: 8x A100 80GB (or equivalent), 1 TB fast SSD, NVLink recommended.
 
-### Start command (when prerequisites are satisfied)
+### Canonical readiness gate
 ```bash
-TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash run.sh
+bash zero_touch_start.sh --check-only
+```
+
+### Start command on the target training hardware
+```bash
+TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
 
 ### Portable Train-Ready Checklist (Zip/Transfer Workflow)
-1. Select profile contract:
+1. Inspect the canonical runtime plan:
 ```bash
-#- Stable baseline (default)
-bash run.sh --train-ready
-
-#- Max architecture overlay (all advanced flags in one switch)
-TITAN_PROFILE=max_arch bash run.sh --train-ready
+bash zero_touch_start.sh --plan-only
 ```
 2. Validate strict readiness without starting training:
 ```bash
-bash run.sh --train-ready
+bash zero_touch_start.sh --check-only
 ```
 3. Required environment variables:
-- `HF_TOKEN` (required, gated teacher + online datasets)
+- `HF_TOKEN` (required only for the optional gated teacher + online datasets lane)
 - `WANDB_API_KEY` (optional)
 - See `.env.example` for the full list.
 4. One-command training start after transfer/unzip:
 ```bash
-bash run.sh
+TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
-5. Strict readiness report:
-- `logs/preflight/train_ready_status.json` (`status`, `reason_code`, check details)
+Optional online teacher lane:
+```bash
+HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
+```
+5. Exact readiness and start-gate reports:
+- `reports/train_readiness_decision.json`
+- `reports/train_readiness_decision.md`
+- `reports/start_gate_report.json`
 6. Dataset manifest policy:
 - Build30 Final Convergence keeps the current dataset manifest pinned (no major dataset expansion in this lock pass).
+7. Legacy helper flows:
+- `run.sh` remains available for `--test`, `--sitl-demo`, and `--cleanroom-verify`, but it is no longer the canonical 45K train-end launcher.
 
 | Engineering Status | `Pilot-ready pre-training baseline` |
 | :--- | :--- |
-| **Training Start Readiness** | ✅ APPROVED (`gates green, start command ready`) |
+| **Training Start Readiness** | ✅ TRAIN_ALLOWED (`READY_OFFLINE_CLEAN`; optional online teacher lane remains blocked without `HF_TOKEN`) |
 | **Codebase** | ✅ Implemented (tests + offline preflight passing) |
 | **Offline Verification** | ✅ PASS (`bash scripts/verify_all.sh`) |
-| **Dataset Compliance** | ✅ Training-start compliant (`license/hash workflow active; continuous refresh`) |
+| **Dataset Compliance** | ✅ Ready for offline-clean (`license/hash workflow active; stage JSONL files exist in the current working tree`) |
 | **Full Training Run** | ▶️ Not started yet (`starts with first long-run on allocated hardware`) |
 | **Benchmarks** | ⛔ Not eligible for claim without a trained checkpoint (`NOT ELIGIBLE FOR CLAIM`) |
 
@@ -345,6 +381,10 @@ Report accuracy audit and strategic value summary.
 - [reports/closure_57_matrix.md](reports/closure_57_matrix.md) — Closure 57 matrix (EN).
 - [reports/closure_57_matrix_TR.md](reports/closure_57_matrix_TR.md) — Closure 57 matrix (TR).
 - [reports/report_truth_matrix.md](reports/report_truth_matrix.md) — Report truth matrix (EN).
+- [AGENTS.md](AGENTS.md) — Closure constitution for contributors and coding agents.
+- [reports/source_of_truth_map.md](reports/source_of_truth_map.md) — Current source-of-truth authority map.
+- [reports/final_backlog_classification.md](reports/final_backlog_classification.md) — Current grouped backlog status accounting.
+- [reports/final_truth_matrix.md](reports/final_truth_matrix.md) — Current claim-to-evidence truth matrix.
 - [reports/release_closure_note.md](reports/release_closure_note.md) — Release closure note (EN).
 - [reports/kpi_pack_v1.md](reports/kpi_pack_v1.md) — KPI pack (EN).
 - [reports/kpi_pack_v1_TR.md](reports/kpi_pack_v1_TR.md) — KPI pack (TR).
@@ -663,7 +703,7 @@ bash run.sh
 TITAN_PROFILE=max_arch bash run.sh
 
 #- Readiness-only gate
-bash run.sh --train-ready
+bash zero_touch_start.sh --check-only
 ```
 
 ```text
@@ -1572,6 +1612,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── inference_contract_TR.md  # Turkish document counterpart
 │   ├── kpi_report_v1.schema.json  # JSON schema artifact
 │   ├── pilot_report_v1.schema.json  # JSON schema artifact
+│   ├── run_manifest_v1.schema.json  # JSON schema artifact
 │   └── tokenizer_spec.json  # JSON data artifact
 ├── layers/  # directory
 │   ├── __init__.py  # Python module/script (layers package initializer and exports)
@@ -1669,6 +1710,18 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── mertformer_v0.1.json  # JSON data artifact
 ├── reports/  # directory
 │   ├── benchmarks/  # directory
+│   │   ├── linkedin_sweetspot/  # directory
+│   │   │   ├── README.md  # primary documentation (EN)
+│   │   │   ├── README_TR.md  # Turkish document counterpart
+│   │   │   ├── run_20260318_144125_artifact_index.json  # JSON data artifact
+│   │   │   ├── run_20260318_144125_compare.csv  # CSV data artifact
+│   │   │   ├── run_20260318_144125_compare.json  # JSON data artifact
+│   │   │   ├── run_20260318_144125_compare.md  # documentation/report file
+│   │   │   ├── run_20260318_144125_health.txt  # text artifact
+│   │   │   ├── run_20260318_144125_run_log.jsonl  # JSONL data/log artifact
+│   │   │   ├── run_20260318_144125_step_metrics.csv  # CSV data artifact
+│   │   │   ├── run_20260318_144125_summary.json  # JSON data artifact
+│   │   │   └── zip_manifest.json  # JSON data artifact
 │   │   ├── math_fastproof/  # directory
 │   │   │   ├── README.md  # primary documentation (EN)
 │   │   │   ├── README_TR.md  # Turkish document counterpart
@@ -1700,7 +1753,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   ├── kaggle_compare_build30.json  # JSON data artifact
 │   │   ├── kaggle_compare_build30.md  # documentation/report file
 │   │   ├── smoke_train_metrics.json  # JSON data artifact
-│   │   └── summary.json  # JSON data artifact
+│   │   ├── summary.json  # JSON data artifact
+│   │   └── summary.md  # documentation/report file
 │   ├── commercial_handover/  # directory
 │   │   ├── contract_terms_checklist.md  # documentation/report file
 │   │   ├── contract_terms_checklist_TR.md  # Turkish document counterpart
@@ -1724,6 +1778,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │       ├── readiness_scorecard_v1_2026-02-24.json  # JSON data artifact
 │   │       ├── report_interface_schema_v1.json  # JSON schema artifact
 │   │       └── web_validation_sources_2026-02-24.md  # documentation/report file
+│   ├── architecture_honesty_audit.md  # documentation/report file
 │   ├── artifacts_zip_denylist_audit.json  # JSON data artifact
 │   ├── asset_stack.md  # documentation/report file
 │   ├── asset_stack_TR.md  # Turkish document counterpart
@@ -1733,8 +1788,16 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── bench_npu_report.json  # JSON data artifact
 │   ├── bench_vulkan_report.json  # JSON data artifact
 │   ├── bench_zero_copy_report.json  # JSON data artifact
+│   ├── benchmark_compare_report.json  # JSON data artifact
+│   ├── benchmark_compare_report.md  # documentation/report file
+│   ├── benchmark_contract.md  # documentation/report file
+│   ├── canonical_entrypoint.md  # documentation/report file
 │   ├── cfc_moe_tolerance_report.json  # JSON data artifact
+│   ├── checkpoint_contract.md  # documentation/report file
+│   ├── checkpoint_hash_manifest.json  # JSON data artifact
+│   ├── checkpoint_restore_report.json  # JSON data artifact
 │   ├── claim_number_audit.json  # JSON data artifact
+│   ├── claim_registry.json  # JSON data artifact
 │   ├── cleanroom_verification.md  # documentation/report file
 │   ├── cleanroom_verification_TR.md  # Turkish document counterpart
 │   ├── cli_smoke_log.md  # documentation/report file
@@ -1743,30 +1806,69 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── closure_57_matrix.md  # documentation/report file
 │   ├── closure_57_matrix_TR.md  # Turkish document counterpart
 │   ├── closure_report_build30_v2.md  # documentation/report file
+│   ├── closure_risk_register.md  # documentation/report file
+│   ├── cloud_readiness_report.md  # documentation/report file
 │   ├── codex_deep_audit_DE.md  # documentation/report file
 │   ├── codex_deep_audit_DE_TR.md  # Turkish document counterpart
 │   ├── codex_deep_audit_EN.md  # documentation/report file
 │   ├── codex_deep_audit_EN_TR.md  # Turkish document counterpart
 │   ├── codex_deep_audit_TR.md  # Turkish document counterpart
+│   ├── commercial_handover_pack.md  # documentation/report file
 │   ├── contamination_report_build30.md  # documentation/report file
+│   ├── customer_ready_definition.md  # documentation/report file
+│   ├── data_pipeline_contract.md  # documentation/report file
+│   ├── data_pipeline_provenance.json  # JSON data artifact
+│   ├── data_pipeline_token_probe.json  # JSON data artifact
 │   ├── dataset_health.md  # documentation/report file
 │   ├── dataset_health_TR.md  # Turkish document counterpart
+│   ├── dataset_health_final.md  # documentation/report file
+│   ├── dataset_lineage_final.json  # JSON data artifact
 │   ├── dealroom_reference.json  # JSON data artifact
+│   ├── demo_bundle.md  # documentation/report file
+│   ├── demo_bundle_manifest.json  # JSON data artifact
+│   ├── deprecated_surface_report.md  # documentation/report file
 │   ├── determinism_report.json  # JSON data artifact
 │   ├── differential_backend_report.json  # JSON data artifact
+│   ├── doc_alignment_report.json  # JSON data artifact
+│   ├── doc_alignment_report.md  # documentation/report file
+│   ├── doc_ownership_matrix.md  # documentation/report file
 │   ├── docs_dedup_canonical_list.md  # documentation/report file
 │   ├── docs_packages_hash_manifest.json  # JSON data artifact
 │   ├── drone_sitl_demo.md  # documentation/report file
 │   ├── drone_sitl_demo_TR.md  # Turkish document counterpart
+│   ├── dry_run_report.json  # JSON data artifact
+│   ├── dry_run_report.md  # documentation/report file
+│   ├── duplicate_source_of_truth_report.md  # documentation/report file
 │   ├── duplicate_zip_guard_report.json  # JSON data artifact
+│   ├── edge_readiness_plan.md  # documentation/report file
 │   ├── efficiency_convergence_analysis.md  # documentation/report file
 │   ├── efficiency_convergence_analysis_TR.md  # Turkish document counterpart
 │   ├── energy_baseline.json  # JSON data artifact
+│   ├── entrypoint_deprecation_map.md  # documentation/report file
 │   ├── execution_trace.json  # JSON data artifact
+│   ├── exit_code_standard.md  # documentation/report file
+│   ├── expected_artifacts_list.md  # documentation/report file
+│   ├── export_validation_report.json  # JSON data artifact
 │   ├── fallback_policy_report.json  # JSON data artifact
+│   ├── feature_flag_governance.md  # documentation/report file
+│   ├── file_state_inventory.json  # JSON data artifact
+│   ├── final_artifact_manifest.json  # JSON data artifact
+│   ├── final_backlog_classification.json  # JSON data artifact
+│   ├── final_backlog_classification.md  # documentation/report file
+│   ├── final_backlog_coverage_diff.md  # documentation/report file
+│   ├── final_backlog_missing_items.md  # documentation/report file
+│   ├── final_checksum_manifest.json  # JSON data artifact
+│   ├── final_commands.md  # documentation/report file
+│   ├── final_evidence_pack.md  # documentation/report file
+│   ├── final_freeze_manifest.json  # JSON data artifact
+│   ├── final_freeze_manifest.md  # documentation/report file
+│   ├── final_orchestrator_status.json  # JSON data artifact
+│   ├── final_orchestrator_status.md  # documentation/report file
 │   ├── final_repo_audit.md  # documentation/report file
 │   ├── final_sync_matrix.md  # documentation/report file
 │   ├── final_sync_matrix_TR.md  # Turkish document counterpart
+│   ├── final_truth_constitution.md  # documentation/report file
+│   ├── final_truth_matrix.md  # documentation/report file
 │   ├── folder_drift_report.json  # JSON data artifact
 │   ├── folder_structure_policy.md  # documentation/report file
 │   ├── founders_hub_application.md  # documentation/report file
@@ -1776,7 +1878,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── go_nogo_signoff_onepager_TR.md  # Turkish document counterpart
 │   ├── go_status_matrix.md  # documentation/report file
 │   ├── go_status_matrix_TR.md  # Turkish document counterpart
+│   ├── gtm_master_plan.md  # documentation/report file
 │   ├── hardening_bundle_summary.json  # JSON data artifact
+│   ├── investable_definition.md  # documentation/report file
 │   ├── investor_deck.pptx  # artifact
 │   ├── investor_deck_TR.pptx  # artifact
 │   ├── ip_licensing_split.md  # documentation/report file
@@ -1788,24 +1892,43 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── kpi_report_v1.json  # JSON data artifact
 │   ├── latency_baseline.json  # JSON data artifact
 │   ├── legal_cleanroom_signoff_internal.md  # documentation/report file
+│   ├── legal_ip_pack.md  # documentation/report file
 │   ├── license_gate_report.json  # JSON data artifact
 │   ├── linkcheck_report.json  # JSON data artifact
+│   ├── local_50step_proof_report.json  # JSON data artifact
+│   ├── logger_contract.md  # documentation/report file
+│   ├── logits_integrity_report.md  # documentation/report file
+│   ├── master_closure_matrix.json  # JSON data artifact
+│   ├── master_closure_matrix.md  # documentation/report file
+│   ├── master_operating_plan.md  # documentation/report file
 │   ├── md_lint_report.json  # JSON data artifact
 │   ├── model_health.md  # documentation/report file
 │   ├── model_health_TR.md  # Turkish document counterpart
+│   ├── model_health_final.md  # documentation/report file
 │   ├── one_command_full_sop.log  # text/log artifact (single-command end-to-end SOP raw log; overwritten each run)
 │   ├── one_command_full_sop_summary.md  # documentation/report file (single-command end-to-end SOP summary; overwritten each run)
 │   ├── one_pager.md  # documentation/report file
 │   ├── one_pager_TR.md  # Turkish document counterpart
+│   ├── owner_matrix.md  # documentation/report file
 │   ├── ownership_proof_bundle.json  # JSON data artifact
+│   ├── package_smoke_report.json  # JSON data artifact
+│   ├── package_validation_report.md  # documentation/report file
+│   ├── param_accounting_report.md  # documentation/report file
+│   ├── phase2_carryover.md  # documentation/report file
 │   ├── pilot_acceptance_signoff.md  # documentation/report file
 │   ├── pilot_acceptance_signoff_TR.md  # Turkish document counterpart
 │   ├── pilot_offer_packages.md  # documentation/report file
 │   ├── pilot_offer_packages_TR.md  # Turkish document counterpart
 │   ├── pilot_readiness_kit.md  # documentation/report file
 │   ├── pilot_readiness_kit_TR.md  # Turkish document counterpart
+│   ├── plot_contract.md  # documentation/report file
 │   ├── poc_protocol.md  # documentation/report file
 │   ├── poc_protocol_TR.md  # Turkish document counterpart
+│   ├── post_45k_decision_tree.md  # documentation/report file
+│   ├── post_train_automation_contract.md  # documentation/report file
+│   ├── post_train_autorun_status.json  # JSON data artifact
+│   ├── post_train_autorun_status.md  # documentation/report file
+│   ├── post_train_state_machine.md  # documentation/report file
 │   ├── presentation_readiness_final.md  # documentation/report file
 │   ├── proje_zip_rebuild_manifest_v2.json  # JSON data artifact
 │   ├── proje_zip_rebuild_manifest_v2.md  # documentation/report file
@@ -1814,6 +1937,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── release_closure_note.md  # documentation/report file
 │   ├── release_snapshot.md  # documentation/report file
 │   ├── release_snapshot_TR.md  # Turkish document counterpart
+│   ├── rented_machine_bringup.md  # documentation/report file
+│   ├── repo_external_handoff.md  # documentation/report file
 │   ├── report_accuracy_audit.md  # documentation/report file
 │   ├── report_accuracy_audit_TR.md  # Turkish document counterpart
 │   ├── report_truth_matrix.md  # documentation/report file
@@ -1821,6 +1946,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── resume_compat_report.json  # JSON data artifact
 │   ├── review_checklist.md  # documentation/report file
 │   ├── review_checklist_TR.md  # Turkish document counterpart
+│   ├── run_contract.md  # documentation/report file
 │   ├── runbook_validation_report.json  # JSON data artifact
 │   ├── sales_funnel_90d.md  # documentation/report file
 │   ├── sales_funnel_90d_TR.md  # Turkish document counterpart
@@ -1828,8 +1954,11 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── sbom.cdx.json  # JSON data artifact
 │   ├── security_compliance.md  # documentation/report file
 │   ├── security_compliance_TR.md  # Turkish document counterpart
+│   ├── smoke_run_report.json  # JSON data artifact
 │   ├── snapshot_manifest_dealroom.json  # JSON data artifact
 │   ├── snapshot_manifest_main.json  # JSON data artifact
+│   ├── source_of_truth_map.md  # documentation/report file
+│   ├── stale_script_report.md  # documentation/report file
 │   ├── start_gate_report.json  # JSON data artifact
 │   ├── startup_selfcheck_report.json  # JSON data artifact
 │   ├── static_analysis_report.json  # JSON data artifact
@@ -1838,14 +1967,19 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── system_hardware.md  # documentation/report file
 │   ├── system_hardware_TR.md  # Turkish document counterpart
 │   ├── system_stats.jsonl  # JSONL data/log artifact
+│   ├── teacher_decision_record.md  # documentation/report file
 │   ├── teacher_output_license_assessment.md  # documentation/report file
 │   ├── technical_snapshot.md  # documentation/report file
 │   ├── technical_snapshot_TR.md  # Turkish document counterpart
 │   ├── thermal_baseline.json  # JSON data artifact
+│   ├── tokenizer_sync_final_report.md  # documentation/report file
+│   ├── train_readiness_decision.json  # JSON data artifact
+│   ├── train_readiness_decision.md  # documentation/report file
 │   ├── training_readiness_manifest.json  # JSON data artifact
 │   ├── unicode_path_guard_report.json  # JSON data artifact
 │   ├── verified_matrix.md  # documentation/report file
 │   ├── verified_matrix_TR.md  # Turkish document counterpart
+│   ├── xla_smoke_report.json  # JSON data artifact
 │   ├── zip_audit_artifacts.json  # JSON data artifact
 │   └── zip_audit_packages.json  # JSON data artifact
 ├── repro/  # directory
@@ -1875,8 +2009,13 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── bitnet_kernel_benchmark_standalone.py  # Python module/script (automation script for bitnet kernel benchmark standalone)
 │   ├── bootstrap_venv.sh  # shell automation script
 │   ├── build_artifacts_release_zip.sh  # shell automation script
+│   ├── build_closure_governance_pack.py  # Python module/script (automation script for build closure governance pack)
 │   ├── build_investor_deck.py  # Python module/script (automation script for build investor deck)
+│   ├── build_master_closure_matrix.py  # Python module/script (automation script for build master closure matrix)
+│   ├── build_max_closure_handoff.py  # Python module/script (automation script for build max closure handoff)
+│   ├── build_offline_closure_pack.py  # Python module/script (automation script for build offline closure pack)
 │   ├── build_summary_pdf.py  # Python module/script (automation script for build summary pdf)
+│   ├── build_train_readiness_contract.py  # Python module/script (automation script for build train readiness contract)
 │   ├── build_validation_set.py  # Python module/script (automation script for build validation set)
 │   ├── cfc_moe_tolerance_check.py  # Python module/script (automation script for cfc moe tolerance check)
 │   ├── chat.py  # Python module/script (automation script for chat)
@@ -1897,6 +2036,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── extract_dataset_refs.py  # Python module/script (automation script for extract dataset refs)
 │   ├── failure_budget_drill.py  # Python module/script (automation script for failure budget drill)
 │   ├── final_one_shot.sh  # shell automation script
+│   ├── final_orchestrator.py  # Python module/script (automation script for final orchestrator)
 │   ├── generate_bench_reports.py  # Python module/script (automation script for generate bench reports)
 │   ├── generate_energy_baselines.py  # Python module/script (automation script for generate energy baselines)
 │   ├── generate_sbom.py  # Python module/script (automation script for generate sbom)
@@ -1922,6 +2062,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── operator_mode_gate.py  # Python module/script (automation script for operator mode gate)
 │   ├── overfit_gate.py  # Python module/script (automation script for overfit gate)
 │   ├── plot_training_log.py  # Python module/script (automation script for plot training log)
+│   ├── post_train_autorun.py  # Python module/script (automation script for post train autorun)
 │   ├── ram_guard.py  # Python module/script (automation script for ram guard)
 │   ├── record_dataset_hashes.py  # Python module/script (automation script for record dataset hashes)
 │   ├── release_build30.sh  # shell automation script
@@ -1964,6 +2105,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_drone_sitl_demo.py  # Python module/script (automated test module for drone sitl demo)
 │   ├── test_eval_suites.py  # Python module/script (automated test module for eval suites)
 │   ├── test_export_metadata.py  # Python module/script (automated test module for export metadata)
+│   ├── test_final_orchestrator_cli.py  # Python module/script (automated test module for final orchestrator cli)
 │   ├── test_kaggle_compare_script.py  # Python module/script (automated test module for kaggle compare script)
 │   ├── test_kaggle_onefile_colab_math_fastproof.py  # Python module/script (automated test module for kaggle onefile colab math fastproof)
 │   ├── test_kaggle_onefile_compile_guard.py  # Python module/script (automated test module for kaggle onefile compile guard)
@@ -1981,8 +2123,10 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_onnx_export_path.py  # Python module/script (automated test module for onnx export path)
 │   ├── test_onnx_metadata_hook.py  # Python module/script (automated test module for onnx metadata hook)
 │   ├── test_orchestrator_swarm_runtime.py  # Python module/script (automated test module for orchestrator swarm runtime)
+│   ├── test_post_train_autorun_cli.py  # Python module/script (automated test module for post train autorun cli)
 │   ├── test_sdk_api.py  # Python module/script (automated test module for sdk api)
 │   ├── test_sdk_pilot_cli.py  # Python module/script (automated test module for sdk pilot cli)
+│   ├── test_titan_preflight_contract.py  # Python module/script (automated test module for titan preflight contract)
 │   ├── test_train_loop_sanity.py  # Python module/script (automated test module for train loop sanity)
 │   ├── test_triad_omega_api.py  # Python module/script (automated test module for triad omega api)
 │   └── test_world_model_head.py  # Python module/script (automated test module for world model head)
@@ -2018,6 +2162,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── logger.py  # Python module/script (module for logger)
 │   └── safety.py  # Python module/script (module for safety)
 ├── .gitignore  # git ignore policy
+├── AGENTS.md  # documentation/report file
 ├── CHANGELOG.md  # documentation/report file
 ├── CHANGELOG_TR.md  # Turkish document counterpart
 ├── CITATION.cff  # citation metadata
@@ -2032,6 +2177,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── INTERNAL_AGI_GAP_TR.md  # Turkish document counterpart
 ├── LICENSE  # license terms (EN)
 ├── LICENSE_TR  # license terms (TR)
+├── MISSION.md  # documentation/report file
+├── MISSION_TR.md  # Turkish document counterpart
 ├── MODEL_CARD.md  # documentation/report file
 ├── MODEL_CARD_TR.md  # Turkish document counterpart
 ├── MODEL_LICENSE.md  # documentation/report file
@@ -2068,7 +2215,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── pyproject.toml  # project metadata
 ├── requirements.txt  # text artifact
 ├── run.sh  # shell automation script
-└── snake_demo.py  # Python module/script (module for snake demo)
+├── snake_demo.py  # Python module/script (module for snake demo)
+└── zero_touch_start.sh  # shell automation script
 ```
 
 ### Clickable Path Map

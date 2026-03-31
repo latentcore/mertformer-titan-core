@@ -1,41 +1,36 @@
-# Model Card — MertFormer Titan (v1.0 (Build 30 V2))
+# Model Card — MertFormer Titan (Build 30 V2)
 
 ## Overview
-MertFormer Titan is a 2.64B-parameter, mobile-first language model built around
-BitNet 1.58-bit layers, LiquidRouter MoE, and MLA-labeled GQA attention (current implementation). This card reflects the
-**pre-training** stage and documents intended use, constraints, and known gaps.
+MertFormer Titan is a pre-training-stage, offline-first, edge-native language model stack built around BitNet-style low-bit layers, Liquid routing dynamics, and sparse MoE execution.
 
-## V2 Updates
-- Cross-dataset deduplication enabled in data pipeline.
-- MoE dispatch supports parallel gather/scatter mode.
-- LiquidMixer fast path available behind `liquid_fast_path`.
+## Official Positioning
+Turkey-serving, offline-first, edge-native, locally integrable intelligence infrastructure.
+
+## Truth Labels
+- `measured`: backed by a concrete artifact, benchmark, manifest, or log
+- `target`: intended or planned behavior not yet validated
+- `vision`: long-horizon direction outside current claim scope
+- `verified`, `hypothesis`, and `creative_or_folklore` are separate output modes
+
+## Current State
+- Repository state: pre-training / claim-unverified
+- Runtime total: measured in repo artifacts
+- Benchmark eligibility: `NOT ELIGIBLE FOR CLAIM` without a trained checkpoint
+- 45K run: first serious architecture validation run, not the final capability ceiling
+- Readiness posture: repo-side start gate is green on `offline_clean` (`TRAIN_ALLOWED` / `READY_OFFLINE_CLEAN`)
 
 ## Intended Use
-- On-device/edge inference research and prototyping
-- Mobile/embedded deployment experiments
-- Research on efficient routing and low-bit inference
+- Offline-first and edge-native experimentation
+- Auditable local deployment research
+- Human-supervised decision-support systems
 
-## Out of Scope / Non-Goals
-- Safety-critical deployment without independent validation
-- Medical, legal, or defense decisions without human review
-- Any use that violates dataset licenses or privacy regulations
+## Out of Scope
+- Production or certified safety claims without training evidence
+- High-risk operation without human review
+- Covert surveillance or harmful autonomy framing
 
-## Training Data (Current Inventory)
-Training datasets are referenced in `datasets/SOURCES.md`. Final snapshots,
-hashes, and license verification are required **before** production training.
-
-## Evaluation Status
-- Benchmarks: **Not yet completed** (pre-training).
-- Planned: HumanEval / MBPP / GSM8K after a stable baseline run.
-
-## Limitations
-- Performance metrics are currently **targets/estimates**.
-- Low-bit kernel path is **experimental** and opt-in.
-- No certified safety evaluation yet; use with caution.
+## Training and Data
+Training data, licenses, hashes, and stage composition are governed by `datasets/` source-of-truth files and the closure-generated provenance reports.
 
 ## Responsible Use
-Use is governed by `USE_POLICY.md`. Always follow local laws, privacy rules,
-and internal governance requirements.
-
-## Contact
-For research inquiries or collaboration: see README Contact section.
+Use is governed by `USE_POLICY.md` and `SECURITY.md`.

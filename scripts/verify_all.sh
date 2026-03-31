@@ -62,6 +62,21 @@ echo "[verify] Translation pointer policy gate ..."
 echo "[verify] Documentation claim consistency gate ..."
 "$PY" scripts/check_doc_claim_consistency.py
 
+echo "[verify] Master closure matrix refresh ..."
+"$PY" scripts/build_master_closure_matrix.py
+
+echo "[verify] Train readiness contract refresh ..."
+"$PY" scripts/build_train_readiness_contract.py --allow-not-ready
+
+echo "[verify] Final orchestrator contract refresh ..."
+"$PY" scripts/final_orchestrator.py --plan-only
+
+echo "[verify] Closure governance pack refresh ..."
+"$PY" scripts/build_closure_governance_pack.py
+
+echo "[verify] Max closure handoff refresh ..."
+"$PY" scripts/build_max_closure_handoff.py
+
 
 
 echo "[verify] Unicode path guard gate ..."

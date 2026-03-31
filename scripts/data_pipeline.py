@@ -262,6 +262,89 @@ def write_token_estimate_report(
     print(f"🧮 Token estimate report written: {out_path}")
 
 
+def write_stage_provenance_report(
+    target_samples: int,
+    stage_reports: Dict[str, dict],
+    *,
+    dedup_enabled: bool,
+    dedup_scope: str,
+    allow_optional_sources: bool,
+) -> None:
+    reports_dir = PROJECT_ROOT / "reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    out_path = reports_dir / "data_pipeline_provenance.json"
+    payload = {
+        "status": "ok",
+        "target_samples": int(target_samples),
+        "dedup_enabled": bool(dedup_enabled),
+        "dedup_scope": str(dedup_scope),
+        "allow_optional_sources": bool(allow_optional_sources),
+        "stages": stage_reports,
+    }
+    out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    print(f"🧾 Data pipeline provenance written: {out_path}")
+
+
+def write_token_probe_report(stage_reports: Dict[str, dict]) -> None:
+    reports_dir = PROJECT_ROOT / "reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    out_path = reports_dir / "data_pipeline_token_probe.json"
+
+    sample_limit = int(getattr(cfg, "token_probe_samples", 64))
+    tokenizer_mode = "whitespace_proxy"
+    tokenizer = None
+    hf_token = os.environ.get("HF_TOKEN", "").strip()
+
+    try:
+        from transformers import AutoTokenizer
+
+        tokenizer = AutoTokenizer.from_pretrained(
+            cfg.teacher_model_id,
+            token=hf_token or None,
+            local_files_only=not bool(hf_token),
+        )
+        tokenizer_mode = f"teacher_tokenizer:{cfg.teacher_model_id}"
+    except Exception:
+        tokenizer = None
+
+    payload = {
+        "status": "ok",
+        "probe_method": tokenizer_mode,
+        "sample_limit_per_stage": sample_limit,
+        "stages": {},
+    }
+    for stage_name, report in stage_reports.items():
+        stage_file = Path(report["stage_output"])
+        total_samples = 0
+        total_tokens = 0
+        if stage_file.exists():
+            with stage_file.open("r", encoding="utf-8", errors="ignore") as handle:
+                for line in handle:
+                    if total_samples >= sample_limit:
+                        break
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        text = str(json.loads(line).get("text", ""))
+                    except Exception:
+                        continue
+                    if not text:
+                        continue
+                    if tokenizer is not None:
+                        total_tokens += len(tokenizer.encode(text, add_special_tokens=False))
+                    else:
+                        total_tokens += max(1, len(text.split()))
+                    total_samples += 1
+        payload["stages"][stage_name] = {
+            "sampled_rows": total_samples,
+            "average_tokens": round(total_tokens / total_samples, 2) if total_samples else 0.0,
+            "stage_output": str(stage_file),
+        }
+    out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    print(f"🔎 Token probe report written: {out_path}")
+
+
 # =============================================================================
 # TR: YARDIMCI FONİKSİYONLAR / EN: HELPER FUNCTIONS
 # =============================================================================
@@ -349,6 +432,15 @@ def _extract_text(sample: Dict[str, object], field: object) -> str:
     return ""
 
 
+def _deduper_clone(deduper: RollingDeduper) -> RollingDeduper:
+    return RollingDeduper(
+        enabled=deduper.enabled,
+        max_entries=deduper.max_entries,
+        hash_bytes=deduper.hash_bytes,
+        normalize=deduper.normalize,
+    )
+
+
 def download_stage(stage_num, sources, target_samples_per_source, deduper: Optional[RollingDeduper] = None):
     """TR: Verimli kalıcı streaming iterator'lar kullanarak belirli bir stage için veri indir. / EN: Download data for a specific stage using efficient persistent streaming iterators."""
     stage_dir = STAGE_DIRS[stage_num]
@@ -371,10 +463,25 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
     # loading dataset once and iterating is O(1), vs reloading every sample O(N)
     iterators: Dict[int, object] = {}
     active_sources: List[int] = []
+    source_status: Dict[int, dict] = {}
+    allow_optional_sources = bool(getattr(cfg, "allow_optional_sources", False))
     for i, src in enumerate(sources):
+        source_status[i] = {
+            "dataset": str(src["dataset"]),
+            "subset": src.get("subset"),
+            "optional": bool(src.get("optional", False)),
+            "ratio": float(src["ratio"]),
+            "status": "pending",
+        }
+        if bool(src.get("optional", False)) and not allow_optional_sources:
+            print(f"   ⏭️  Optional source skipped by policy: {src['dataset']}")
+            source_status[i]["status"] = "skipped_optional_policy"
+            iterators[i] = None
+            continue
         print(f"   🔌 Connecting to stream: {src['dataset']}...")
         try:
             revision = get_hf_revision(src["dataset"])
+            source_status[i]["revision"] = revision
             if revision:
                 print(f"      📌 Pinned revision: {revision}")
             # [FIX] Pass subset/config name if it exists (Crucial for Wikipedia)
@@ -387,16 +494,27 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
             ).shuffle(seed=42, buffer_size=10_000) # Use shuffle buffer instead of expensive skip
             iterators[i] = iter(ds)
             active_sources.append(i)
+            source_status[i]["status"] = "active"
         except Exception as e:
             if bool(src.get("optional", False)):
                 print(f"   ⚠️ Optional source unavailable: {src['dataset']} ({e})")
+                source_status[i]["status"] = "optional_unavailable"
             else:
                 print(f"   ❌ Failed to connect {src['dataset']}: {e}")
+                source_status[i]["status"] = "connect_failed"
+            source_status[i]["detail"] = str(e)
             iterators[i] = None
 
     if not active_sources:
         print("❌ No active data sources available for this stage.")
-        return 0
+        return {
+            "stage_num": stage_num,
+            "stage_output": str(stage_output),
+            "collected": 0,
+            "source_collected": {},
+            "samples_per_source": {},
+            "sources": list(source_status.values()),
+        }
 
     collected = 0
     source_collected = {i: 0 for i in range(len(sources))}
@@ -482,9 +600,12 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
         except StopIteration:
             print(f"\n⚠️  Source exhausted: {source['dataset']}")
             iterators[source_idx] = None # Mark as dead
+            source_status[source_idx]["status"] = "exhausted"
         except Exception as e:
             # Occasional network blip
             consecutive_failures += 1
+            source_status[source_idx]["status"] = "runtime_warning"
+            source_status[source_idx]["detail"] = str(e)
             if consecutive_failures > 50:
                 print(f"\n❌ Too many consecutive failures. Aborting stage.")
                 break
@@ -500,14 +621,23 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
     # Print breakdown
     for i, src in enumerate(sources):
         print(f"   - {src['dataset']}: {source_collected[i]} samples")
-    
+        source_status[i]["collected"] = int(source_collected[i])
+        source_status[i]["target_samples"] = int(samples_per_source.get(i, 0))
+
     # Create Signal File for Smart Runner
     signal_file = stage_dir / f"stage{stage_num}_done.signal"
     with open(signal_file, "w") as f:
         f.write("DONE")
     print(f"✅ Signal created: {signal_file}")
 
-    return collected
+    return {
+        "stage_num": stage_num,
+        "stage_output": str(stage_output),
+        "collected": int(collected),
+        "source_collected": {str(i): int(v) for i, v in source_collected.items()},
+        "samples_per_source": {str(i): int(v) for i, v in samples_per_source.items()},
+        "sources": list(source_status.values()),
+    }
 
 
 # =============================================================================
@@ -552,9 +682,11 @@ def main(target_samples: int = 12_000_000, login_hf: bool = False) -> None:
     stage_ratios = _get_stage_ratios()
     stage_names = list(getattr(cfg, "curriculum_stage_names", []))
     stage_counts: Dict[str, int] = {}
+    stage_reports: Dict[str, dict] = {}
     
     dedup_enabled = bool(getattr(cfg, "dedup_enabled", True))
     dedup_scope = str(getattr(cfg, "dedup_scope", "global"))
+    allow_optional_sources = bool(getattr(cfg, "allow_optional_sources", False))
     dedup = RollingDeduper(
         enabled=dedup_enabled,
         max_entries=int(getattr(cfg, "dedup_max_entries", 2_000_000)),
@@ -564,33 +696,43 @@ def main(target_samples: int = 12_000_000, login_hf: bool = False) -> None:
 
     # Stage 1
     stage1_target = int(TARGET_SAMPLES * stage_ratios[0])
-    stage_counts[stage_names[0]] = download_stage(
-        1, STAGE1_SOURCES, stage1_target, deduper=dedup if dedup_scope == "global" else RollingDeduper(**dedup.__dict__)
+    stage1_report = download_stage(
+        1, STAGE1_SOURCES, stage1_target, deduper=dedup if dedup_scope == "global" else _deduper_clone(dedup)
     )
+    stage_counts[stage_names[0]] = int(stage1_report["collected"])
+    stage_reports[stage_names[0]] = stage1_report
     
     # Stage 2
     stage2_target = int(TARGET_SAMPLES * stage_ratios[1])
-    stage_counts[stage_names[1]] = download_stage(
-        2, STAGE2_SOURCES, stage2_target, deduper=dedup if dedup_scope == "global" else RollingDeduper(**dedup.__dict__)
+    stage2_report = download_stage(
+        2, STAGE2_SOURCES, stage2_target, deduper=dedup if dedup_scope == "global" else _deduper_clone(dedup)
     )
+    stage_counts[stage_names[1]] = int(stage2_report["collected"])
+    stage_reports[stage_names[1]] = stage2_report
     
     # Stage 3
     stage3_target = int(TARGET_SAMPLES * stage_ratios[2])
-    stage_counts[stage_names[2]] = download_stage(
-        3, STAGE3_SOURCES, stage3_target, deduper=dedup if dedup_scope == "global" else RollingDeduper(**dedup.__dict__)
+    stage3_report = download_stage(
+        3, STAGE3_SOURCES, stage3_target, deduper=dedup if dedup_scope == "global" else _deduper_clone(dedup)
     )
+    stage_counts[stage_names[2]] = int(stage3_report["collected"])
+    stage_reports[stage_names[2]] = stage3_report
     
     # Stage 4
     stage4_target = int(TARGET_SAMPLES * stage_ratios[3])
-    stage_counts[stage_names[3]] = download_stage(
-        4, STAGE4_SOURCES, stage4_target, deduper=dedup if dedup_scope == "global" else RollingDeduper(**dedup.__dict__)
+    stage4_report = download_stage(
+        4, STAGE4_SOURCES, stage4_target, deduper=dedup if dedup_scope == "global" else _deduper_clone(dedup)
     )
+    stage_counts[stage_names[3]] = int(stage4_report["collected"])
+    stage_reports[stage_names[3]] = stage4_report
 
     # Stage 5
     stage5_target = int(TARGET_SAMPLES * stage_ratios[4])
-    stage_counts[stage_names[4]] = download_stage(
-        5, STAGE5_SOURCES, stage5_target, deduper=dedup if dedup_scope == "global" else RollingDeduper(**dedup.__dict__)
+    stage5_report = download_stage(
+        5, STAGE5_SOURCES, stage5_target, deduper=dedup if dedup_scope == "global" else _deduper_clone(dedup)
     )
+    stage_counts[stage_names[4]] = int(stage5_report["collected"])
+    stage_reports[stage_names[4]] = stage5_report
     
     print(f"\n{'='*60}")
     print("✅ TITAN DATA PIPELINE COMPLETE")
@@ -601,6 +743,14 @@ def main(target_samples: int = 12_000_000, login_hf: bool = False) -> None:
     print(f"Stage 4 (Soul):      {STAGE_DIRS[4]}")
     print(f"Stage 5 (Tools):     {STAGE_DIRS[5]}")
     write_token_estimate_report(TARGET_SAMPLES, stage_counts)
+    write_stage_provenance_report(
+        TARGET_SAMPLES,
+        stage_reports,
+        dedup_enabled=dedup_enabled,
+        dedup_scope=dedup_scope,
+        allow_optional_sources=allow_optional_sources,
+    )
+    write_token_probe_report(stage_reports)
     print(f"{'='*60}")
 
 

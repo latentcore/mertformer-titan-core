@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-03-18T09:58:35.994534+00:00",
-  "git_commit": "6763e8b143468b1fdd9a98977dec3ae77a12dac6",
+  "generated_utc": "2026-03-31T20:25:29.312658+00:00",
+  "git_commit": "26fde4af4251b2342e6275f926e664da37dac352",
   "python": "Python 3.11.14",
   "targets": [
     {
@@ -15,13 +15,13 @@
     },
     {
       "path": "config/config.py",
-      "sha256": "27c96faaeb9b3987fcbf3aa31bf2dac5ff2b5e9b3e4ff785421df79d5bc1cb7d",
-      "size_bytes": 29567
+      "sha256": "1176d63c02960a65977a7273cd8724e31e82d6c07b543a349b937c472d152927",
+      "size_bytes": 30008
     },
     {
       "path": "train/train.py",
-      "sha256": "08a8e2683b4f88dfd26e07e030b0b308d9c1ce617002c649683bfcce1567a4d5",
-      "size_bytes": 99547
+      "sha256": "abf343fa3ec60df07b7686d4df4e5582e961a92486f171928e9d9ace5665a356",
+      "size_bytes": 103121
     },
     {
       "path": "layers/bitlinear.py",

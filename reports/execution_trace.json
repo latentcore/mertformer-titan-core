@@ -1,5 +1,5 @@
 {
   "status": "completed",
   "flow": "final_one_shot",
-  "notes": "All closure phases executed with fail-fast for critical gates and best-effort for external governance APIs."
+  "notes": "Canonical Max Closure flow executed: one_command_full_sop core, hardening/release extras, master closure matrix, dual-path readiness contract, and repo-external handoff."
 }

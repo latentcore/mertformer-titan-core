@@ -9,6 +9,20 @@ Mevcut olgunluk: **pilota hazır eğitim öncesi baseline** (eğitim/benchmark i
 - Türkçe özet: [README_SUMMARY_TR.md](README_SUMMARY_TR.md)
 - English summary: [README_SUMMARY.md](README_SUMMARY.md)
 - English full doc: [README.md](README.md)
+- Misyon: [MISSION_TR.md](MISSION_TR.md)
+- Kullanım politikası: [USE_POLICY_TR.md](USE_POLICY_TR.md)
+- Güvenlik: [SECURITY_TR.md](SECURITY_TR.md)
+
+### Resmi Konumlandırma
+- Ürün cümlesi: `Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre edilebilir zeka altyapısı.`
+- 45K konumu: ilk ciddi mimari doğrulama koşusu, nihai kabiliyet tavanı değildir.
+- Bu geçişin ana ship gate’i 45K readiness’tir.
+
+### Doğruluk ve Çıktı Modları
+- `measured` / `target` / `vision` ayrı claim etiketleridir.
+- `verified` / `hypothesis` / `creative_or_folklore` ayrı çıktı modlarıdır.
+- Varsayılan mod `verified`’dır.
+- Kanıt yoksa claim yoktur.
 
 ### İddia Sınırı
 - Bu depo, üretim kalite iddiası için **pre-training / doğrulanmamış** durumdadır.
@@ -23,12 +37,17 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 
 ### Tek Giriş Noktası
 - `bash scripts/final_one_shot.sh`
+- `bash scripts/one_command_full_sop.sh`, yukarıdaki kanonik closure wrapper’ının kullandığı çekirdek doğrulama alt akışıdır.
 
 ### Çıktılar
 - `reports/start_gate_report.json`
 - `reports/release_manifest.json`
 - `reports/project_structure_sync_report.json`
 - `reports/hardening_bundle_summary.json`
+- `reports/master_closure_matrix.md`
+- `reports/train_readiness_decision.md`
+- `reports/final_freeze_manifest.md`
+- `reports/repo_external_handoff.md`
 - `artifacts/mertformer_release.zip`
 - `artifacts/mertformer_release.zip.sha256`
 
@@ -103,20 +122,20 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `114 passed, 3 skipped` |
+| `python3 -m pytest -q` | `122 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
 ## 🚀 Eğitim Hazırlık Durumu (Operasyonel)
-**Durum:** `EĞİTİM PIPELINE'I BAŞLATMAYA HAZIR (KAPILI/GATED)`
+**Durum:** `TRAIN_ALLOWED`
 
-**Öne çıkan özellik:** Build30 V2 ile `run.sh --train-ready` strict kapısı eklendi; taşınabilir multi-GPU handoff için makine-okur reason-code üretir.
+**Öne çıkan özellik:** kanonik 45K yolu artık `bash zero_touch_start.sh`; exact readiness verdict, run lock, resume policy ve post-train autorun sözleşmesi bu katmanda toplanır.
 
-Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama kapıları yeşildir ve veri/donanım önkoşulları tamamlandığında eğitim akışı doğrudan başlatılabilir.
+Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree, kanonik `offline_clean` yolu üzerinde repo-side 45K-ready durumundadır; fakat gerçek uzun koşu hedef donanımda henüz çalışmadığı için trained çıktılar henüz yoktur.
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`114 passed, 3 skipped`)
+   - `pytest` geçti (`122 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -125,50 +144,69 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Çekirdek doğrulama
 3. **İzlenebilir artefaktlar üretildi**
    - `logs/preflight/titan_preflight.log`
    - `logs/operator_mode/*.manifest.json`
+   - `reports/run_contract.md`
+   - `reports/post_train_automation_contract.md`
+   - `reports/final_truth_matrix.md`
+
+### Güncel Exact Boundary
+- Kanonik repo-side yol: `offline_clean`
+- Exact readiness verdict: `TRAIN_ALLOWED` / `READY_OFFLINE_CLEAN`
+- Kalan exact blocker: `online_teacher:MISSING_HF_TOKEN` (yalnızca opsiyonel gated teacher yolu için)
 
 ### Uzun eğitim koşusundan önce son önkoşullar
-- Dataset lisans/hash iş akışı uyumlu kalmalıdır.
 - Hedef donanım (GPU/edge) kaynağı ayrılmış olmalıdır.
+- Repo/package artefaktları gerçek eğitim makinesine taşınmalı ve kanonik start gate orada yeniden koşturulmalıdır.
+- `HF_TOKEN`, yalnızca online teacher/gated access yolu özellikle seçilecekse gereklidir.
+- Dataset lisans/hash iş akışı uyumlu kalmalıdır.
 - Tam eğitim koşusu ve benchmark çıktıları bu önkoşullardan sonra kayda alınır.
 - Varsayılan token bütçesi artık `fixed_steps` (45K). `open_ended` yalnızca açık hedef override ile kullanılmalıdır.
-- Offline koşularda stage JSONL önceden üretilmelidir (`python scripts/data_pipeline.py`).
+- `cuda.lock` hedef eğitim makinesinde üretilmelidir.
 
-### Başlatma komutu (önkoşullar tamamlandığında)
+### Kanonik readiness kapısı
 ```bash
-TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash run.sh
+bash zero_touch_start.sh --check-only
+```
+
+### Hedef eğitim donanımında başlatma komutu
+```bash
+TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
 
 ### Taşınabilir Eğitim Hazırlık Checklist'i (Zip/Taşı/Çalıştır)
-1. Profil sözleşmesini seç:
+1. Kanonik runtime planını incele:
 ```bash
-#- Stabil baseline (varsayılan)
-bash run.sh --train-ready
-
-#- Max mimari overlay (ileri bayraklar tek anahtar)
-TITAN_PROFILE=max_arch bash run.sh --train-ready
+bash zero_touch_start.sh --plan-only
 ```
 2. Eğitimi başlatmadan strict readiness doğrulaması:
 ```bash
-bash run.sh --train-ready
+bash zero_touch_start.sh --check-only
 ```
 3. Gerekli ortam değişkenleri:
-- `HF_TOKEN` (zorunlu, gated teacher + online dataset erişimi)
+- `HF_TOKEN` (yalnızca opsiyonel gated teacher + online dataset yolu için zorunlu)
 - `WANDB_API_KEY` (opsiyonel)
 4. Transfer/unzip sonrası tek-komut eğitim başlatma:
 ```bash
-bash run.sh
+TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
-5. Strict readiness raporu:
-- `logs/preflight/train_ready_status.json` (`status`, `reason_code`, kontrol detayları)
+Opsiyonel online teacher yolu:
+```bash
+HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
+```
+5. Exact readiness ve start-gate raporları:
+- `reports/train_readiness_decision.json`
+- `reports/train_readiness_decision.md`
+- `reports/start_gate_report.json`
 6. Dataset manifest politikası:
 - Build30 Final Convergence turunda mevcut dataset manifesti sabit tutulur (major genişleme yok).
+7. Legacy yardımcı akışlar:
+- `run.sh`, `--test`, `--sitl-demo` ve `--cleanroom-verify` için kullanılmaya devam eder; fakat kanonik 45K train-end launcher artık değildir.
 
 | Mühendislik Durumu | `Pilota hazır eğitim öncesi baseline` |
 | :--- | :--- |
-| **Eğitim Başlatma Hazırlığı** | ✅ ONAYLI (`kapılar yeşil, başlatma komutu hazır`) |
+| **Eğitim Başlatma Hazırlığı** | ✅ TRAIN_ALLOWED (`READY_OFFLINE_CLEAN`; opsiyonel online teacher yolu `HF_TOKEN` olmadan bloklu kalır) |
 | **Kod Tabanı** | ✅ Uygulandı (testler + offline preflight geçiyor) |
 | **Offline Doğrulama** | ✅ PASS (`bash scripts/verify_all.sh`) |
-| **Dataset Uyumu** | ✅ Eğitim başlangıcı uyumlu (`lisans/hash iş akışı aktif; sürekli güncellenir`) |
+| **Dataset Uyumu** | ✅ Offline-clean için hazır (`lisans/hash iş akışı aktif; stage JSONL dosyaları mevcut working tree’de mevcut`) |
 | **Tam Eğitim Koşusu** | ▶️ Henüz başlatılmadı (`ayrılmış donanımda ilk uzun koşu ile başlar`) |
 | **Benchmarklar** | ⛔ Eğitimli checkpoint olmadan iddia için uygun değil (`NOT ELIGIBLE FOR CLAIM`) |
 
@@ -336,6 +374,10 @@ Rapor doğruluk denetimi ve stratejik değer özeti.
 - [reports/closure_57_matrix.md](reports/closure_57_matrix.md) — Closure 57 matrisi (EN).
 - [reports/closure_57_matrix_TR.md](reports/closure_57_matrix_TR.md) — Closure 57 matrisi (TR).
 - [reports/report_truth_matrix.md](reports/report_truth_matrix.md) — Rapor doğruluk matrisi (EN).
+- [AGENTS.md](AGENTS.md) — Katkıcılar ve coding agent'lar için closure anayasası.
+- [reports/source_of_truth_map.md](reports/source_of_truth_map.md) — Güncel source-of-truth yetki haritası.
+- [reports/final_backlog_classification.md](reports/final_backlog_classification.md) — Güncel gruplanmış backlog durum muhasebesi.
+- [reports/final_truth_matrix.md](reports/final_truth_matrix.md) — Güncel claim-to-evidence doğruluk matrisi.
 - [reports/release_closure_note.md](reports/release_closure_note.md) — Release kapanış notu (EN).
 - [reports/kpi_pack_v1.md](reports/kpi_pack_v1.md) — KPI paketi (EN).
 - [reports/kpi_pack_v1_TR.md](reports/kpi_pack_v1_TR.md) — KPI paketi (TR).
@@ -654,7 +696,7 @@ bash run.sh
 TITAN_PROFILE=max_arch bash run.sh
 
 #- Sadece readiness kapısı
-bash run.sh --train-ready
+bash zero_touch_start.sh --check-only
 ```
 
 ```text
@@ -1566,6 +1608,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── inference_contract_TR.md  # Türkçe doküman karşılığı
 │   ├── kpi_report_v1.schema.json  # JSON şema artefaktı
 │   ├── pilot_report_v1.schema.json  # JSON şema artefaktı
+│   ├── run_manifest_v1.schema.json  # JSON şema artefaktı
 │   └── tokenizer_spec.json  # JSON veri artefaktı
 ├── layers/  # dizin
 │   ├── __init__.py  # Python modülü/scripti (layers paket başlatıcısı ve dışa aktarmalar)
@@ -1663,6 +1706,18 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   └── mertformer_v0.1.json  # JSON veri artefaktı
 ├── reports/  # dizin
 │   ├── benchmarks/  # dizin
+│   │   ├── linkedin_sweetspot/  # dizin
+│   │   │   ├── README.md  # ana dokümantasyon (EN)
+│   │   │   ├── README_TR.md  # Türkçe doküman karşılığı
+│   │   │   ├── run_20260318_144125_artifact_index.json  # JSON veri artefaktı
+│   │   │   ├── run_20260318_144125_compare.csv  # CSV veri artefaktı
+│   │   │   ├── run_20260318_144125_compare.json  # JSON veri artefaktı
+│   │   │   ├── run_20260318_144125_compare.md  # dokümantasyon/rapor dosyası
+│   │   │   ├── run_20260318_144125_health.txt  # metin artefaktı
+│   │   │   ├── run_20260318_144125_run_log.jsonl  # JSONL veri/log artefaktı
+│   │   │   ├── run_20260318_144125_step_metrics.csv  # CSV veri artefaktı
+│   │   │   ├── run_20260318_144125_summary.json  # JSON veri artefaktı
+│   │   │   └── zip_manifest.json  # JSON veri artefaktı
 │   │   ├── math_fastproof/  # dizin
 │   │   │   ├── README.md  # ana dokümantasyon (EN)
 │   │   │   ├── README_TR.md  # Türkçe doküman karşılığı
@@ -1694,7 +1749,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   │   ├── kaggle_compare_build30.json  # JSON veri artefaktı
 │   │   ├── kaggle_compare_build30.md  # dokümantasyon/rapor dosyası
 │   │   ├── smoke_train_metrics.json  # JSON veri artefaktı
-│   │   └── summary.json  # JSON veri artefaktı
+│   │   ├── summary.json  # JSON veri artefaktı
+│   │   └── summary.md  # dokümantasyon/rapor dosyası
 │   ├── commercial_handover/  # dizin
 │   │   ├── contract_terms_checklist.md  # dokümantasyon/rapor dosyası
 │   │   ├── contract_terms_checklist_TR.md  # Türkçe doküman karşılığı
@@ -1718,6 +1774,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   │       ├── readiness_scorecard_v1_2026-02-24.json  # JSON veri artefaktı
 │   │       ├── report_interface_schema_v1.json  # JSON şema artefaktı
 │   │       └── web_validation_sources_2026-02-24.md  # dokümantasyon/rapor dosyası
+│   ├── architecture_honesty_audit.md  # dokümantasyon/rapor dosyası
 │   ├── artifacts_zip_denylist_audit.json  # JSON veri artefaktı
 │   ├── asset_stack.md  # dokümantasyon/rapor dosyası
 │   ├── asset_stack_TR.md  # Türkçe doküman karşılığı
@@ -1727,8 +1784,16 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── bench_npu_report.json  # JSON veri artefaktı
 │   ├── bench_vulkan_report.json  # JSON veri artefaktı
 │   ├── bench_zero_copy_report.json  # JSON veri artefaktı
+│   ├── benchmark_compare_report.json  # JSON veri artefaktı
+│   ├── benchmark_compare_report.md  # dokümantasyon/rapor dosyası
+│   ├── benchmark_contract.md  # dokümantasyon/rapor dosyası
+│   ├── canonical_entrypoint.md  # dokümantasyon/rapor dosyası
 │   ├── cfc_moe_tolerance_report.json  # JSON veri artefaktı
+│   ├── checkpoint_contract.md  # dokümantasyon/rapor dosyası
+│   ├── checkpoint_hash_manifest.json  # JSON veri artefaktı
+│   ├── checkpoint_restore_report.json  # JSON veri artefaktı
 │   ├── claim_number_audit.json  # JSON veri artefaktı
+│   ├── claim_registry.json  # JSON veri artefaktı
 │   ├── cleanroom_verification.md  # dokümantasyon/rapor dosyası
 │   ├── cleanroom_verification_TR.md  # Türkçe doküman karşılığı
 │   ├── cli_smoke_log.md  # dokümantasyon/rapor dosyası
@@ -1737,30 +1802,69 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── closure_57_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── closure_57_matrix_TR.md  # Türkçe doküman karşılığı
 │   ├── closure_report_build30_v2.md  # dokümantasyon/rapor dosyası
+│   ├── closure_risk_register.md  # dokümantasyon/rapor dosyası
+│   ├── cloud_readiness_report.md  # dokümantasyon/rapor dosyası
 │   ├── codex_deep_audit_DE.md  # dokümantasyon/rapor dosyası
 │   ├── codex_deep_audit_DE_TR.md  # Türkçe doküman karşılığı
 │   ├── codex_deep_audit_EN.md  # dokümantasyon/rapor dosyası
 │   ├── codex_deep_audit_EN_TR.md  # Türkçe doküman karşılığı
 │   ├── codex_deep_audit_TR.md  # Türkçe doküman karşılığı
+│   ├── commercial_handover_pack.md  # dokümantasyon/rapor dosyası
 │   ├── contamination_report_build30.md  # dokümantasyon/rapor dosyası
+│   ├── customer_ready_definition.md  # dokümantasyon/rapor dosyası
+│   ├── data_pipeline_contract.md  # dokümantasyon/rapor dosyası
+│   ├── data_pipeline_provenance.json  # JSON veri artefaktı
+│   ├── data_pipeline_token_probe.json  # JSON veri artefaktı
 │   ├── dataset_health.md  # dokümantasyon/rapor dosyası
 │   ├── dataset_health_TR.md  # Türkçe doküman karşılığı
+│   ├── dataset_health_final.md  # dokümantasyon/rapor dosyası
+│   ├── dataset_lineage_final.json  # JSON veri artefaktı
 │   ├── dealroom_reference.json  # JSON veri artefaktı
+│   ├── demo_bundle.md  # dokümantasyon/rapor dosyası
+│   ├── demo_bundle_manifest.json  # JSON veri artefaktı
+│   ├── deprecated_surface_report.md  # dokümantasyon/rapor dosyası
 │   ├── determinism_report.json  # JSON veri artefaktı
 │   ├── differential_backend_report.json  # JSON veri artefaktı
+│   ├── doc_alignment_report.json  # JSON veri artefaktı
+│   ├── doc_alignment_report.md  # dokümantasyon/rapor dosyası
+│   ├── doc_ownership_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── docs_dedup_canonical_list.md  # dokümantasyon/rapor dosyası
 │   ├── docs_packages_hash_manifest.json  # JSON veri artefaktı
 │   ├── drone_sitl_demo.md  # dokümantasyon/rapor dosyası
 │   ├── drone_sitl_demo_TR.md  # Türkçe doküman karşılığı
+│   ├── dry_run_report.json  # JSON veri artefaktı
+│   ├── dry_run_report.md  # dokümantasyon/rapor dosyası
+│   ├── duplicate_source_of_truth_report.md  # dokümantasyon/rapor dosyası
 │   ├── duplicate_zip_guard_report.json  # JSON veri artefaktı
+│   ├── edge_readiness_plan.md  # dokümantasyon/rapor dosyası
 │   ├── efficiency_convergence_analysis.md  # dokümantasyon/rapor dosyası
 │   ├── efficiency_convergence_analysis_TR.md  # Türkçe doküman karşılığı
 │   ├── energy_baseline.json  # JSON veri artefaktı
+│   ├── entrypoint_deprecation_map.md  # dokümantasyon/rapor dosyası
 │   ├── execution_trace.json  # JSON veri artefaktı
+│   ├── exit_code_standard.md  # dokümantasyon/rapor dosyası
+│   ├── expected_artifacts_list.md  # dokümantasyon/rapor dosyası
+│   ├── export_validation_report.json  # JSON veri artefaktı
 │   ├── fallback_policy_report.json  # JSON veri artefaktı
+│   ├── feature_flag_governance.md  # dokümantasyon/rapor dosyası
+│   ├── file_state_inventory.json  # JSON veri artefaktı
+│   ├── final_artifact_manifest.json  # JSON veri artefaktı
+│   ├── final_backlog_classification.json  # JSON veri artefaktı
+│   ├── final_backlog_classification.md  # dokümantasyon/rapor dosyası
+│   ├── final_backlog_coverage_diff.md  # dokümantasyon/rapor dosyası
+│   ├── final_backlog_missing_items.md  # dokümantasyon/rapor dosyası
+│   ├── final_checksum_manifest.json  # JSON veri artefaktı
+│   ├── final_commands.md  # dokümantasyon/rapor dosyası
+│   ├── final_evidence_pack.md  # dokümantasyon/rapor dosyası
+│   ├── final_freeze_manifest.json  # JSON veri artefaktı
+│   ├── final_freeze_manifest.md  # dokümantasyon/rapor dosyası
+│   ├── final_orchestrator_status.json  # JSON veri artefaktı
+│   ├── final_orchestrator_status.md  # dokümantasyon/rapor dosyası
 │   ├── final_repo_audit.md  # dokümantasyon/rapor dosyası
 │   ├── final_sync_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── final_sync_matrix_TR.md  # Türkçe doküman karşılığı
+│   ├── final_truth_constitution.md  # dokümantasyon/rapor dosyası
+│   ├── final_truth_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── folder_drift_report.json  # JSON veri artefaktı
 │   ├── folder_structure_policy.md  # dokümantasyon/rapor dosyası
 │   ├── founders_hub_application.md  # dokümantasyon/rapor dosyası
@@ -1770,7 +1874,9 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── go_nogo_signoff_onepager_TR.md  # Türkçe doküman karşılığı
 │   ├── go_status_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── go_status_matrix_TR.md  # Türkçe doküman karşılığı
+│   ├── gtm_master_plan.md  # dokümantasyon/rapor dosyası
 │   ├── hardening_bundle_summary.json  # JSON veri artefaktı
+│   ├── investable_definition.md  # dokümantasyon/rapor dosyası
 │   ├── investor_deck.pptx  # artefakt
 │   ├── investor_deck_TR.pptx  # artefakt
 │   ├── ip_licensing_split.md  # dokümantasyon/rapor dosyası
@@ -1782,24 +1888,43 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── kpi_report_v1.json  # JSON veri artefaktı
 │   ├── latency_baseline.json  # JSON veri artefaktı
 │   ├── legal_cleanroom_signoff_internal.md  # dokümantasyon/rapor dosyası
+│   ├── legal_ip_pack.md  # dokümantasyon/rapor dosyası
 │   ├── license_gate_report.json  # JSON veri artefaktı
 │   ├── linkcheck_report.json  # JSON veri artefaktı
+│   ├── local_50step_proof_report.json  # JSON veri artefaktı
+│   ├── logger_contract.md  # dokümantasyon/rapor dosyası
+│   ├── logits_integrity_report.md  # dokümantasyon/rapor dosyası
+│   ├── master_closure_matrix.json  # JSON veri artefaktı
+│   ├── master_closure_matrix.md  # dokümantasyon/rapor dosyası
+│   ├── master_operating_plan.md  # dokümantasyon/rapor dosyası
 │   ├── md_lint_report.json  # JSON veri artefaktı
 │   ├── model_health.md  # dokümantasyon/rapor dosyası
 │   ├── model_health_TR.md  # Türkçe doküman karşılığı
+│   ├── model_health_final.md  # dokümantasyon/rapor dosyası
 │   ├── one_command_full_sop.log  # metin/log artefaktı (tek komut uçtan uca SOP ham logu; her çalıştırmada üzerine yazılır)
 │   ├── one_command_full_sop_summary.md  # dokümantasyon/rapor dosyası (tek komut uçtan uca SOP özeti; her çalıştırmada üzerine yazılır)
 │   ├── one_pager.md  # dokümantasyon/rapor dosyası
 │   ├── one_pager_TR.md  # Türkçe doküman karşılığı
+│   ├── owner_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── ownership_proof_bundle.json  # JSON veri artefaktı
+│   ├── package_smoke_report.json  # JSON veri artefaktı
+│   ├── package_validation_report.md  # dokümantasyon/rapor dosyası
+│   ├── param_accounting_report.md  # dokümantasyon/rapor dosyası
+│   ├── phase2_carryover.md  # dokümantasyon/rapor dosyası
 │   ├── pilot_acceptance_signoff.md  # dokümantasyon/rapor dosyası
 │   ├── pilot_acceptance_signoff_TR.md  # Türkçe doküman karşılığı
 │   ├── pilot_offer_packages.md  # dokümantasyon/rapor dosyası
 │   ├── pilot_offer_packages_TR.md  # Türkçe doküman karşılığı
 │   ├── pilot_readiness_kit.md  # dokümantasyon/rapor dosyası
 │   ├── pilot_readiness_kit_TR.md  # Türkçe doküman karşılığı
+│   ├── plot_contract.md  # dokümantasyon/rapor dosyası
 │   ├── poc_protocol.md  # dokümantasyon/rapor dosyası
 │   ├── poc_protocol_TR.md  # Türkçe doküman karşılığı
+│   ├── post_45k_decision_tree.md  # dokümantasyon/rapor dosyası
+│   ├── post_train_automation_contract.md  # dokümantasyon/rapor dosyası
+│   ├── post_train_autorun_status.json  # JSON veri artefaktı
+│   ├── post_train_autorun_status.md  # dokümantasyon/rapor dosyası
+│   ├── post_train_state_machine.md  # dokümantasyon/rapor dosyası
 │   ├── presentation_readiness_final.md  # dokümantasyon/rapor dosyası
 │   ├── proje_zip_rebuild_manifest_v2.json  # JSON veri artefaktı
 │   ├── proje_zip_rebuild_manifest_v2.md  # dokümantasyon/rapor dosyası
@@ -1808,6 +1933,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── release_closure_note.md  # dokümantasyon/rapor dosyası
 │   ├── release_snapshot.md  # dokümantasyon/rapor dosyası
 │   ├── release_snapshot_TR.md  # Türkçe doküman karşılığı
+│   ├── rented_machine_bringup.md  # dokümantasyon/rapor dosyası
+│   ├── repo_external_handoff.md  # dokümantasyon/rapor dosyası
 │   ├── report_accuracy_audit.md  # dokümantasyon/rapor dosyası
 │   ├── report_accuracy_audit_TR.md  # Türkçe doküman karşılığı
 │   ├── report_truth_matrix.md  # dokümantasyon/rapor dosyası
@@ -1815,6 +1942,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── resume_compat_report.json  # JSON veri artefaktı
 │   ├── review_checklist.md  # dokümantasyon/rapor dosyası
 │   ├── review_checklist_TR.md  # Türkçe doküman karşılığı
+│   ├── run_contract.md  # dokümantasyon/rapor dosyası
 │   ├── runbook_validation_report.json  # JSON veri artefaktı
 │   ├── sales_funnel_90d.md  # dokümantasyon/rapor dosyası
 │   ├── sales_funnel_90d_TR.md  # Türkçe doküman karşılığı
@@ -1822,8 +1950,11 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── sbom.cdx.json  # JSON veri artefaktı
 │   ├── security_compliance.md  # dokümantasyon/rapor dosyası
 │   ├── security_compliance_TR.md  # Türkçe doküman karşılığı
+│   ├── smoke_run_report.json  # JSON veri artefaktı
 │   ├── snapshot_manifest_dealroom.json  # JSON veri artefaktı
 │   ├── snapshot_manifest_main.json  # JSON veri artefaktı
+│   ├── source_of_truth_map.md  # dokümantasyon/rapor dosyası
+│   ├── stale_script_report.md  # dokümantasyon/rapor dosyası
 │   ├── start_gate_report.json  # JSON veri artefaktı
 │   ├── startup_selfcheck_report.json  # JSON veri artefaktı
 │   ├── static_analysis_report.json  # JSON veri artefaktı
@@ -1832,14 +1963,19 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── system_hardware.md  # dokümantasyon/rapor dosyası
 │   ├── system_hardware_TR.md  # Türkçe doküman karşılığı
 │   ├── system_stats.jsonl  # JSONL veri/log artefaktı
+│   ├── teacher_decision_record.md  # dokümantasyon/rapor dosyası
 │   ├── teacher_output_license_assessment.md  # dokümantasyon/rapor dosyası
 │   ├── technical_snapshot.md  # dokümantasyon/rapor dosyası
 │   ├── technical_snapshot_TR.md  # Türkçe doküman karşılığı
 │   ├── thermal_baseline.json  # JSON veri artefaktı
+│   ├── tokenizer_sync_final_report.md  # dokümantasyon/rapor dosyası
+│   ├── train_readiness_decision.json  # JSON veri artefaktı
+│   ├── train_readiness_decision.md  # dokümantasyon/rapor dosyası
 │   ├── training_readiness_manifest.json  # JSON veri artefaktı
 │   ├── unicode_path_guard_report.json  # JSON veri artefaktı
 │   ├── verified_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── verified_matrix_TR.md  # Türkçe doküman karşılığı
+│   ├── xla_smoke_report.json  # JSON veri artefaktı
 │   ├── zip_audit_artifacts.json  # JSON veri artefaktı
 │   └── zip_audit_packages.json  # JSON veri artefaktı
 ├── repro/  # dizin
@@ -1869,8 +2005,13 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── bitnet_kernel_benchmark_standalone.py  # Python modülü/scripti (bitnet kernel benchmark standalone için otomasyon scripti)
 │   ├── bootstrap_venv.sh  # kabuk otomasyon scripti
 │   ├── build_artifacts_release_zip.sh  # kabuk otomasyon scripti
+│   ├── build_closure_governance_pack.py  # Python modülü/scripti (build closure governance pack için otomasyon scripti)
 │   ├── build_investor_deck.py  # Python modülü/scripti (build investor deck için otomasyon scripti)
+│   ├── build_master_closure_matrix.py  # Python modülü/scripti (build master closure matrix için otomasyon scripti)
+│   ├── build_max_closure_handoff.py  # Python modülü/scripti (build max closure handoff için otomasyon scripti)
+│   ├── build_offline_closure_pack.py  # Python modülü/scripti (build offline closure pack için otomasyon scripti)
 │   ├── build_summary_pdf.py  # Python modülü/scripti (build summary pdf için otomasyon scripti)
+│   ├── build_train_readiness_contract.py  # Python modülü/scripti (build train readiness contract için otomasyon scripti)
 │   ├── build_validation_set.py  # Python modülü/scripti (build validation set için otomasyon scripti)
 │   ├── cfc_moe_tolerance_check.py  # Python modülü/scripti (cfc moe tolerance check için otomasyon scripti)
 │   ├── chat.py  # Python modülü/scripti (chat için otomasyon scripti)
@@ -1891,6 +2032,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── extract_dataset_refs.py  # Python modülü/scripti (extract dataset refs için otomasyon scripti)
 │   ├── failure_budget_drill.py  # Python modülü/scripti (failure budget drill için otomasyon scripti)
 │   ├── final_one_shot.sh  # kabuk otomasyon scripti
+│   ├── final_orchestrator.py  # Python modülü/scripti (final orchestrator için otomasyon scripti)
 │   ├── generate_bench_reports.py  # Python modülü/scripti (generate bench reports için otomasyon scripti)
 │   ├── generate_energy_baselines.py  # Python modülü/scripti (generate energy baselines için otomasyon scripti)
 │   ├── generate_sbom.py  # Python modülü/scripti (generate sbom için otomasyon scripti)
@@ -1916,6 +2058,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── operator_mode_gate.py  # Python modülü/scripti (operator mode gate için otomasyon scripti)
 │   ├── overfit_gate.py  # Python modülü/scripti (overfit gate için otomasyon scripti)
 │   ├── plot_training_log.py  # Python modülü/scripti (plot training log için otomasyon scripti)
+│   ├── post_train_autorun.py  # Python modülü/scripti (post train autorun için otomasyon scripti)
 │   ├── ram_guard.py  # Python modülü/scripti (ram guard için otomasyon scripti)
 │   ├── record_dataset_hashes.py  # Python modülü/scripti (record dataset hashes için otomasyon scripti)
 │   ├── release_build30.sh  # kabuk otomasyon scripti
@@ -1958,6 +2101,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_drone_sitl_demo.py  # Python modülü/scripti (drone sitl demo için otomatik test modülü)
 │   ├── test_eval_suites.py  # Python modülü/scripti (eval suites için otomatik test modülü)
 │   ├── test_export_metadata.py  # Python modülü/scripti (export metadata için otomatik test modülü)
+│   ├── test_final_orchestrator_cli.py  # Python modülü/scripti (final orchestrator cli için otomatik test modülü)
 │   ├── test_kaggle_compare_script.py  # Python modülü/scripti (kaggle compare script için otomatik test modülü)
 │   ├── test_kaggle_onefile_colab_math_fastproof.py  # Python modülü/scripti (kaggle onefile colab math fastproof için otomatik test modülü)
 │   ├── test_kaggle_onefile_compile_guard.py  # Python modülü/scripti (kaggle onefile compile guard için otomatik test modülü)
@@ -1975,8 +2119,10 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_onnx_export_path.py  # Python modülü/scripti (onnx export path için otomatik test modülü)
 │   ├── test_onnx_metadata_hook.py  # Python modülü/scripti (onnx metadata hook için otomatik test modülü)
 │   ├── test_orchestrator_swarm_runtime.py  # Python modülü/scripti (orchestrator swarm runtime için otomatik test modülü)
+│   ├── test_post_train_autorun_cli.py  # Python modülü/scripti (post train autorun cli için otomatik test modülü)
 │   ├── test_sdk_api.py  # Python modülü/scripti (sdk api için otomatik test modülü)
 │   ├── test_sdk_pilot_cli.py  # Python modülü/scripti (sdk pilot cli için otomatik test modülü)
+│   ├── test_titan_preflight_contract.py  # Python modülü/scripti (titan preflight contract için otomatik test modülü)
 │   ├── test_train_loop_sanity.py  # Python modülü/scripti (train loop sanity için otomatik test modülü)
 │   ├── test_triad_omega_api.py  # Python modülü/scripti (triad omega api için otomatik test modülü)
 │   └── test_world_model_head.py  # Python modülü/scripti (world model head için otomatik test modülü)
@@ -2012,6 +2158,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── logger.py  # Python modülü/scripti (logger için modül)
 │   └── safety.py  # Python modülü/scripti (safety için modül)
 ├── .gitignore  # git ignore politikası
+├── AGENTS.md  # dokümantasyon/rapor dosyası
 ├── CHANGELOG.md  # dokümantasyon/rapor dosyası
 ├── CHANGELOG_TR.md  # Türkçe doküman karşılığı
 ├── CITATION.cff  # atıf metaverisi
@@ -2026,6 +2173,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── INTERNAL_AGI_GAP_TR.md  # Türkçe doküman karşılığı
 ├── LICENSE  # lisans koşulları (EN)
 ├── LICENSE_TR  # lisans koşulları (TR)
+├── MISSION.md  # dokümantasyon/rapor dosyası
+├── MISSION_TR.md  # Türkçe doküman karşılığı
 ├── MODEL_CARD.md  # dokümantasyon/rapor dosyası
 ├── MODEL_CARD_TR.md  # Türkçe doküman karşılığı
 ├── MODEL_LICENSE.md  # dokümantasyon/rapor dosyası
@@ -2062,7 +2211,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── pyproject.toml  # proje metaverisi
 ├── requirements.txt  # metin artefaktı
 ├── run.sh  # kabuk otomasyon scripti
-└── snake_demo.py  # Python modülü/scripti (snake demo için modül)
+├── snake_demo.py  # Python modülü/scripti (snake demo için modül)
+└── zero_touch_start.sh  # kabuk otomasyon scripti
 ```
 
 ### Tıklanabilir Yol Haritası

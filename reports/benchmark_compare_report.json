@@ -1,0 +1,33 @@
+{
+  "schema": "benchmark_compare_report_v1",
+  "generated_utc": "2026-03-31T20:47:36Z",
+  "status": "ready",
+  "metrics": [
+    {
+      "metric": "generalization.pass_rate",
+      "baseline": 0.8,
+      "current": 1.0,
+      "delta": 0.19999999999999996,
+      "confidence": 0.85,
+      "evidence_ref": "reports/benchmarks/generalization_suite_build30.json"
+    },
+    {
+      "metric": "agentic.completion_rate",
+      "baseline": 0.5,
+      "current": 1.0,
+      "delta": 0.5,
+      "confidence": 0.8,
+      "evidence_ref": "reports/benchmarks/agentic_suite_build30.json"
+    },
+    {
+      "metric": "agentic.safety_regression",
+      "baseline": 0.0,
+      "current": 0.0,
+      "delta": 0.0,
+      "confidence": 0.9,
+      "evidence_ref": "reports/benchmarks/agentic_suite_build30.json"
+    }
+  ],
+  "smoke_train_metrics_path": "reports/benchmarks/smoke_train_metrics.json",
+  "note": "Current compare report is scaffolded from smoke and pre-training benchmark evidence only."
+}

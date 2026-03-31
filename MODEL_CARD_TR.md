@@ -1,41 +1,35 @@
-# Model Kartı — MertFormer Titan (v1.0 (Build 30 V2))
+# Model Card — MertFormer Titan (Build 30 V2)
 
 ## Genel Bakış
-MertFormer Titan, BitNet 1.58-bit katmanları, LiquidRouter MoE ve MLA etiketli GQA attention (mevcut implementasyon) temelli,
-mobil-odaklı 2.64B parametreli bir dil modelidir. Bu kart **eğitim öncesi**
-durumu yansıtır ve kullanım amacı, sınırlar ve bilinen boşlukları belgeler.
+MertFormer Titan; BitNet tarzı düşük bit katmanlar, Liquid yönlendirme dinamikleri ve sparse MoE yürütmesi etrafında kurulan, pre-training aşamasındaki offline-first ve edge-native bir dil modeli yığınıdır.
 
-## V2 Güncellemeleri
-- Cross-dataset deduplication veri pipeline'ında aktif.
-- MoE dispatch paralel gather/scatter modu destekler.
-- LiquidMixer fast path `liquid_fast_path` ile açılabilir.
+## Resmi Konumlandırma
+Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre edilebilir zeka altyapısı.
+
+## Doğruluk Etiketleri
+- `measured`: somut artefakt, benchmark, manifest veya log ile destekli
+- `target`: henüz doğrulanmamış planlanan davranış
+- `vision`: mevcut claim kapsamı dışındaki uzun vadeli yön
+- `verified`, `hypothesis` ve `creative_or_folklore` ayrı çıktı modlarıdır
+
+## Mevcut Durum
+- Repo durumu: pre-training / claim-unverified
+- Runtime toplamı: repo artefaktlarında ölçülmüş durumda
+- Benchmark uygunluğu: eğitimli checkpoint olmadan `NOT ELIGIBLE FOR CLAIM`
+- 45K koşusu: ilk ciddi mimari doğrulama koşusu, nihai kapasite tavanı değil
 
 ## Amaçlanan Kullanım
-- Cihaz içi/edge çıkarım araştırması ve prototipleme
-- Mobil/embedded dağıtım denemeleri
-- Verimli yönlendirme ve low-bit inference çalışmaları
+- Offline-first ve edge-native deneyler
+- Denetlenebilir yerel deployment araştırması
+- İnsan denetimli karar destek sistemleri
 
-## Kapsam Dışı / Hedeflenmeyen Kullanım
-- Bağımsız doğrulama olmadan güvenlik-kritik kullanım
-- Tıbbi, hukuki veya savunma kararları (insan denetimi olmadan)
-- Veri lisanslarına ve gizlilik kurallarına aykırı kullanım
+## Kapsam Dışı
+- Eğitim kanıtı olmadan production veya certified safety claim’i
+- İnsan incelemesi olmadan high-risk kullanım
+- Gizli gözetim veya zararlı otonomi çerçevesi
 
-## Eğitim Verisi (Güncel Envanter)
-Eğitim veri setleri `datasets/SOURCES.md` dosyasında listelenmiştir.
-Üretim eğitiminden önce **snapshot, hash ve lisans doğrulaması** zorunludur.
-
-## Değerlendirme Durumu
-- Benchmarklar: **Henüz tamamlanmadı** (eğitim öncesi).
-- Planlanan: HumanEval / MBPP / GSM8K (stabil baseline sonrası).
-
-## Sınırlamalar
-- Performans metrikleri şu an **hedef/tahmin** seviyesindedir.
-- Low-bit kernel yolu **deneysel** ve opt-in’dir.
-- Sertifikalı güvenlik değerlendirmesi yoktur; dikkatli kullanım gerekir.
+## Eğitim ve Veri
+Eğitim verisi, lisanslar, hash’ler ve stage bileşimi `datasets/` kaynak dosyaları ile closure sırasında üretilen provenance raporları tarafından yönetilir.
 
 ## Sorumlu Kullanım
-Kullanım `USE_POLICY.md` ile sınırlandırılır. Yerel yasalar, gizlilik
-düzenlemeleri ve kurumsal kurallar gözetilmelidir.
-
-## İletişim
-Araştırma ve işbirliği için README Contact bölümüne bakın.
+Kullanım `USE_POLICY.md` ve `SECURITY.md` tarafından yönetilir.
