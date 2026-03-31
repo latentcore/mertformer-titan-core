@@ -99,7 +99,7 @@ cat > reports/execution_trace.json <<'JSON'
 {
   "status": "completed",
   "flow": "final_one_shot",
-  "notes": "Canonical Max Closure flow executed: one_command_full_sop core, hardening/release extras, master closure matrix, dual-path readiness contract, and repo-external handoff."
+  "notes": "Canonical Max Closure flow executed: one_command_full_sop core, hardening/release extras, master closure matrix, dual-path readiness contract, and canonical handoff surfaces."
 }
 JSON
 

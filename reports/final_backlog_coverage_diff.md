@@ -5,11 +5,11 @@ This report shows how the raw matrix categories map into the grouped backlog cla
 | Raw Category | Raw Items | Group Mapping |
 | --- | --- | --- |
 | `closure_flow` | `2` | `governance_backlog`, `closure_entrypoints` |
-| `external` | `2` | `real_run_outputs` |
+| `external` | `1` | `real_run_outputs` |
 | `handoff` | `3` | `closure_entrypoints`, `handoff_and_freeze` |
 | `policy` | `1` | `source_of_truth_regime` |
 | `training_readiness` | `2` | `readiness_gate`, `data_contract` |
-| `truth_claim` | `4` | `governance_backlog`, `source_of_truth_regime`, `claim_registry_truth_matrix` |
+| `truth_claim` | `5` | `governance_backlog`, `source_of_truth_regime`, `claim_registry_truth_matrix` |
 
 ## Manual-only Groups
 - `zero_touch_train_end`

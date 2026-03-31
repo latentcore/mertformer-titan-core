@@ -1,18 +1,21 @@
 # MertFormer Build 30 Max Closure Handoff
 
-- generated_utc: `2026-03-31T20:59:01Z`
+- generated_utc: `2026-03-31T22:32:49Z`
 - product_sentence: Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre edilebilir zeka altyapısı.
 - canonical_closure_entrypoint: `bash scripts/final_one_shot.sh`
 - train_readiness_status: `TRAIN_ALLOWED`
 - train_readiness_reason: `READY_OFFLINE_CLEAN`
 - recommended_path: `offline_clean`
+- desktop_copy_status: `skipped`
+- desktop_copy_path: `<DESKTOP_PATH>/MertFormer_Build30_Max_Closure_Handoff.md`
+- desktop_copy_reason: `desktop directory unavailable`
 
 ## Closure Matrix Summary
 
 - total_items: `14`
-- this_pass: `11`
+- this_pass: `12`
 - phase_2: `0`
-- external: `2`
+- external: `1`
 - rejected_with_reason: `1`
 
 ## Key Evidence Files
@@ -29,6 +32,7 @@
 
 ## Notes
 
+- The repo-internal handoff is canonical; the desktop copy is best-effort and optional.
 - Txt backlog is captured, classified, and never silently dropped.
 - 45K readiness remains the primary ship gate for this pass.
 - Any item that threatens 45K readiness is intentionally carried to phase-2.

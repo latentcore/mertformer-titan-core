@@ -4,9 +4,9 @@ This matrix combines repo closure obligations with actionable items mined from t
 
 - txt_source: `missing`
 - total_items: `14`
-- this_pass: `11`
+- this_pass: `12`
 - phase-2: `0`
-- external: `2`
+- external: `1`
 - rejected-with-reason: `1`
 
 | ID | Source | Phase | Risk | Category | Text | Reason | Acceptance |
@@ -22,6 +22,6 @@ This matrix combines repo closure obligations with actionable items mined from t
 | `repo:007` | `implementation-plan` | `this-pass` | `low` | `truth_claim` | Enforce no claim without evidence across final docs and reports | Directly improves closure confidence and documentation truth. | `.titan-venv/bin/python scripts/check_doc_claim_consistency.py` |
 | `repo:008` | `implementation-plan` | `this-pass` | `medium` | `truth_claim` | Declare feature freeze, config freeze, dataset freeze, tokenizer freeze, and teacher/logits decision | Directly improves closure confidence and documentation truth. | `.titan-venv/bin/python scripts/check_doc_claim_consistency.py` |
 | `repo:010` | `implementation-plan` | `this-pass` | `low` | `truth_claim` | Harden data pipeline provenance, optional source policy, token probe, and revision/hash lineage | Directly improves closure confidence and documentation truth. | `.titan-venv/bin/python scripts/check_doc_claim_consistency.py` |
+| `repo:013` | `implementation-plan` | `this-pass` | `low` | `truth_claim` | Generate canonical repo handoff, final commands, risk list, and carryover list | Directly improves closure confidence and documentation truth. | `.titan-venv/bin/python scripts/check_doc_claim_consistency.py` |
 | `repo:002` | `implementation-plan` | `external` | `low` | `external` | Classify every TXT and repo backlog item into this-pass, phase-2, external, or rejected-with-reason | Requires outside sign-off, commercial action, or external dependency. | `External sign-off / pilot evidence bundle` |
-| `repo:013` | `implementation-plan` | `external` | `low` | `external` | Generate repo-external handoff, final commands, risk list, and phase-2 carryover list | Requires outside sign-off, commercial action, or external dependency. | `External sign-off / pilot evidence bundle` |
 | `repo:012` | `implementation-plan` | `rejected-with-reason` | `high` | `policy` | Reject harmful autonomy and covert surveillance framing | Conflicts with public-good / high-risk guardrail. | `.titan-venv/bin/python scripts/check_doc_claim_consistency.py` |

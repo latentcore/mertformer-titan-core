@@ -141,12 +141,12 @@
   },
   {
     "claim_id": "claim.repo_external_handoff",
-    "claim": "Closure leaves a repo-external desktop handoff bundle.",
+    "claim": "Closure leaves a canonical repo handoff and may refresh an optional Desktop copy.",
     "mode": "measured",
     "status": "verified",
     "evidence": [
       "reports/repo_external_handoff.md"
     ],
-    "still_missing": "Desktop handoff content still depends on the latest closure flow run."
+    "still_missing": "Real 45K outputs still remain external to the current working tree."
   }
 ]

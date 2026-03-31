@@ -332,11 +332,11 @@ SOURCE_DOCS = [
     },
     {
         "path": "reports/repo_external_handoff.md",
-        "role": "repo-internal pointer to the external handoff bundle",
+        "role": "canonical repo-internal handoff summary with optional desktop copy status",
         "audience": "operators",
         "update_mode": "generated",
         "authority": "supporting",
-        "notes": "Desktop handoff remains repo-external by design.",
+        "notes": "The repo copy is canonical; a Desktop copy is best-effort when available.",
     },
     {
         "path": "reports/final_repo_audit.md",
@@ -509,13 +509,13 @@ CLAIMS = [
     },
     {
         "claim_id": "claim.repo_external_handoff",
-        "claim": "Closure leaves a repo-external desktop handoff bundle.",
+        "claim": "Closure leaves a canonical repo handoff and may refresh an optional Desktop copy.",
         "mode": "measured",
         "status": "verified",
         "evidence": [
             "reports/repo_external_handoff.md",
         ],
-        "still_missing": "Desktop handoff content still depends on the latest closure flow run.",
+        "still_missing": "Real 45K outputs still remain external to the current working tree.",
     },
 ]
 
@@ -630,7 +630,7 @@ BACKLOG_GROUPS = [
     },
     {
         "group_id": "handoff_and_freeze",
-        "title": "Freeze manifests and repo-external handoff",
+        "title": "Freeze manifests and canonical handoff surfaces",
         "status": "DONE_NOW",
         "timing_bucket": "required before 45K",
         "plan_covered": True,

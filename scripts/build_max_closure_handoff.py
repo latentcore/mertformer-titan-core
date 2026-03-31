@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -13,6 +14,14 @@ FREEZE_MD = REPORTS / 'final_freeze_manifest.md'
 COMMANDS_MD = REPORTS / 'final_commands.md'
 HANDOFF_MD = REPORTS / 'repo_external_handoff.md'
 DESKTOP_HANDOFF = DESKTOP / 'MertFormer_Build30_Max_Closure_Handoff.md'
+
+
+def desktop_handoff_mode() -> str:
+    return os.environ.get('TITAN_DESKTOP_HANDOFF_MODE', 'auto').strip().lower() or 'auto'
+
+
+def desktop_handoff_display_path() -> str:
+    return f"<DESKTOP_PATH>/{DESKTOP_HANDOFF.name}"
 
 
 def load_json(path: Path) -> dict:
@@ -102,7 +111,32 @@ def write_commands(readiness: dict) -> None:
     COMMANDS_MD.write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
 
-def write_handoff(readiness: dict, matrix: dict, freeze: dict) -> None:
+def write_desktop_copy(body: str) -> dict:
+    mode = desktop_handoff_mode()
+    payload = {
+        'mode': mode,
+        'path': str(DESKTOP_HANDOFF),
+        'display_path': desktop_handoff_display_path(),
+        'status': 'skipped',
+        'reason': '',
+    }
+    if mode in {'0', 'off', 'false', 'disabled', 'skip'}:
+        payload['reason'] = 'disabled by TITAN_DESKTOP_HANDOFF_MODE'
+        return payload
+
+    should_force = mode in {'1', 'on', 'true', 'force'}
+    if not DESKTOP.is_dir() and not should_force:
+        payload['reason'] = 'desktop directory unavailable'
+        return payload
+
+    DESKTOP.mkdir(parents=True, exist_ok=True)
+    DESKTOP_HANDOFF.write_text(body, encoding='utf-8')
+    payload['status'] = 'written'
+    payload['reason'] = 'desktop copy refreshed'
+    return payload
+
+
+def build_handoff_body(readiness: dict, matrix: dict, freeze: dict, desktop_copy: dict) -> str:
     summary = matrix.get('summary', {})
     lines = [
         '# MertFormer Build 30 Max Closure Handoff',
@@ -113,6 +147,9 @@ def write_handoff(readiness: dict, matrix: dict, freeze: dict) -> None:
         f"- train_readiness_status: `{readiness.get('final_status', 'UNKNOWN')}`",
         f"- train_readiness_reason: `{readiness.get('decision_reason_code', 'UNKNOWN')}`",
         f"- recommended_path: `{readiness.get('recommended_path') or 'none'}`",
+        f"- desktop_copy_status: `{desktop_copy['status']}`",
+        f"- desktop_copy_path: `{desktop_copy['display_path']}`",
+        f"- desktop_copy_reason: `{desktop_copy['reason'] or 'none'}`",
         '',
         '## Closure Matrix Summary',
         '',
@@ -136,13 +173,16 @@ def write_handoff(readiness: dict, matrix: dict, freeze: dict) -> None:
         '',
         '## Notes',
         '',
+        '- The repo-internal handoff is canonical; the desktop copy is best-effort and optional.',
         '- Txt backlog is captured, classified, and never silently dropped.',
         '- 45K readiness remains the primary ship gate for this pass.',
         '- Any item that threatens 45K readiness is intentionally carried to phase-2.',
     ]
-    body = '\n'.join(lines) + '\n'
+    return '\n'.join(lines) + '\n'
+
+
+def write_handoff(body: str) -> None:
     HANDOFF_MD.write_text(body, encoding='utf-8')
-    DESKTOP_HANDOFF.write_text(body, encoding='utf-8')
 
 
 def main() -> int:
@@ -152,8 +192,20 @@ def main() -> int:
     freeze = build_freeze_manifest(readiness)
     write_freeze_docs(freeze)
     write_commands(readiness)
-    write_handoff(readiness, matrix, freeze)
-    print(str(DESKTOP_HANDOFF))
+    desktop_copy = {
+        'mode': desktop_handoff_mode(),
+        'path': str(DESKTOP_HANDOFF),
+        'display_path': desktop_handoff_display_path(),
+        'status': 'pending',
+        'reason': 'desktop copy not attempted yet',
+    }
+    body = build_handoff_body(readiness, matrix, freeze, desktop_copy)
+    desktop_copy = write_desktop_copy(body)
+    body = build_handoff_body(readiness, matrix, freeze, desktop_copy)
+    write_handoff(body)
+    if desktop_copy['status'] == 'written':
+        DESKTOP_HANDOFF.write_text(body, encoding='utf-8')
+    print(json.dumps({'repo_handoff': str(HANDOFF_MD), 'desktop_copy': desktop_copy}, ensure_ascii=False))
     return 0
 
 
