@@ -3,9 +3,9 @@
   "txt_source": null,
   "summary": {
     "total_items": 14,
-    "this_pass": 11,
+    "this_pass": 12,
     "phase_2": 0,
-    "external": 2,
+    "external": 1,
     "rejected_with_reason": 1
   },
   "guardrail": "If any task increases risk to 45K readiness, reproducibility, or closure confidence, demote it to phase-2.",
@@ -44,7 +44,7 @@
       "phase": "this-pass",
       "risk": "medium",
       "category": "handoff",
-      "dependency": "closure artifacts -> reports -> desktop handoff",
+      "dependency": "closure artifacts -> reports -> optional desktop handoff",
       "evidence": "Plan item mapped to repo closure surfaces.",
       "acceptance": ".titan-venv/bin/python scripts/build_max_closure_handoff.py",
       "reason": "Relevant to this pass and does not exceed the risk ceiling."
@@ -57,7 +57,7 @@
       "phase": "this-pass",
       "risk": "low",
       "category": "handoff",
-      "dependency": "closure artifacts -> reports -> desktop handoff",
+      "dependency": "closure artifacts -> reports -> optional desktop handoff",
       "evidence": "Plan item mapped to repo closure surfaces.",
       "acceptance": ".titan-venv/bin/python scripts/build_max_closure_handoff.py",
       "reason": "Relevant to this pass and does not exceed the risk ceiling."
@@ -70,7 +70,7 @@
       "phase": "this-pass",
       "risk": "low",
       "category": "handoff",
-      "dependency": "closure artifacts -> reports -> desktop handoff",
+      "dependency": "closure artifacts -> reports -> optional desktop handoff",
       "evidence": "Plan item mapped to repo closure surfaces.",
       "acceptance": ".titan-venv/bin/python scripts/build_max_closure_handoff.py",
       "reason": "Relevant to this pass and does not exceed the risk ceiling."
@@ -154,23 +154,23 @@
       "reason": "Directly improves closure confidence and documentation truth."
     },
     {
+      "item_id": "repo:013",
+      "source": "repo",
+      "source_ref": "implementation-plan",
+      "text": "Generate canonical repo handoff, final commands, risk list, and carryover list",
+      "phase": "this-pass",
+      "risk": "low",
+      "category": "truth_claim",
+      "dependency": "claim gates -> docs/policy/prompt surfaces",
+      "evidence": "Plan item mapped to repo closure surfaces.",
+      "acceptance": ".titan-venv/bin/python scripts/check_doc_claim_consistency.py",
+      "reason": "Directly improves closure confidence and documentation truth."
+    },
+    {
       "item_id": "repo:002",
       "source": "repo",
       "source_ref": "implementation-plan",
       "text": "Classify every TXT and repo backlog item into this-pass, phase-2, external, or rejected-with-reason",
-      "phase": "external",
-      "risk": "low",
-      "category": "external",
-      "dependency": "repo artifacts -> external sign-off / pilot / legal",
-      "evidence": "Plan item mapped to repo closure surfaces.",
-      "acceptance": "External sign-off / pilot evidence bundle",
-      "reason": "Requires outside sign-off, commercial action, or external dependency."
-    },
-    {
-      "item_id": "repo:013",
-      "source": "repo",
-      "source_ref": "implementation-plan",
-      "text": "Generate repo-external handoff, final commands, risk list, and phase-2 carryover list",
       "phase": "external",
       "risk": "low",
       "category": "external",

@@ -69,5 +69,5 @@ Historical snapshots, archived reports, and legacy audits are supporting context
 
 ## Handoff Rules
 - Keep repo-internal closure evidence under `reports/`.
-- Keep repo-external operator handoff on the Desktop when the closure flow generates it.
+- Treat `reports/repo_external_handoff.md` as canonical; refresh the Desktop copy only when the closure flow can write it safely.
 - If blockers remain, list the exact blocker codes and the next safe continuation boundary.

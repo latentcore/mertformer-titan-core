@@ -47,7 +47,7 @@ DEPENDENCY_BY_CATEGORY = {
     'training_readiness': 'titan_preflight -> readiness contract -> train-ready verdict',
     'data_contract': 'data_pipeline -> datasets/* -> training contract',
     'policy': 'USE_POLICY/SECURITY/MODEL_CARD/prompt surfaces',
-    'handoff': 'closure artifacts -> reports -> desktop handoff',
+    'handoff': 'closure artifacts -> reports -> optional desktop handoff',
     'external': 'repo artifacts -> external sign-off / pilot / legal',
     'phase2': 'phase-2 carryover after 45K gate'
 }
@@ -76,7 +76,7 @@ REPO_ITEMS = [
     'Harden data pipeline provenance, optional source policy, token probe, and revision/hash lineage',
     'Make public-good, auditable, human-benefiting deployment the official framing',
     'Reject harmful autonomy and covert surveillance framing',
-    'Generate repo-external handoff, final commands, risk list, and phase-2 carryover list',
+    'Generate canonical repo handoff, final commands, risk list, and carryover list',
     'Use atomic thematic commits instead of a single mega-commit',
 ]
 
@@ -244,21 +244,21 @@ def write_phase2(path: Path, items: list[Item]) -> None:
     ]
     if phase2:
         for item in phase2:
-            lines.append(f'- `{item.item_id}` {item.text}  ')
+            lines.append(f'- `{item.item_id}` {item.text}')
             lines.append(f'  reason: {item.reason}')
     else:
         lines.append('- none')
     lines.extend(['', '## External', ''])
     if external:
         for item in external:
-            lines.append(f'- `{item.item_id}` {item.text}  ')
+            lines.append(f'- `{item.item_id}` {item.text}')
             lines.append(f'  reason: {item.reason}')
     else:
         lines.append('- none')
     lines.extend(['', '## Rejected with Reason', ''])
     if rejected:
         for item in rejected:
-            lines.append(f'- `{item.item_id}` {item.text}  ')
+            lines.append(f'- `{item.item_id}` {item.text}')
             lines.append(f'  reason: {item.reason}')
     else:
         lines.append('- none')

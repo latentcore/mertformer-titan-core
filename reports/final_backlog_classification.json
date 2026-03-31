@@ -2,22 +2,22 @@
   "schema": "final_backlog_classification_v1",
   "raw_matrix_summary": {
     "total_items": 14,
-    "this_pass": 11,
+    "this_pass": 12,
     "phase_2": 0,
-    "external": 2,
+    "external": 1,
     "rejected_with_reason": 1
   },
   "raw_category_counts": {
     "closure_flow": 2,
     "handoff": 3,
     "training_readiness": 2,
-    "truth_claim": 4,
-    "external": 2,
+    "truth_claim": 5,
+    "external": 1,
     "policy": 1
   },
   "raw_phase_counts": {
-    "this-pass": 11,
-    "external": 2,
+    "this-pass": 12,
+    "external": 1,
     "rejected-with-reason": 1
   },
   "current_readiness_status": "TRAIN_ALLOWED",
@@ -45,7 +45,7 @@
       ],
       "what_is_done": "The working tree now has a canonical grouped backlog view instead of relying only on the raw 2140-item matrix.",
       "still_missing": "This grouped truth layer does not replace the raw matrix or the future real-run evidence.",
-      "raw_item_count": 6
+      "raw_item_count": 7
     },
     {
       "group_id": "source_of_truth_regime",
@@ -68,7 +68,7 @@
       ],
       "what_is_done": "Current authoritative docs, generated reports, and historical snapshots are separated.",
       "still_missing": "Future release snapshots must continue to honor this authority order.",
-      "raw_item_count": 5
+      "raw_item_count": 6
     },
     {
       "group_id": "claim_registry_truth_matrix",
@@ -87,7 +87,7 @@
       ],
       "what_is_done": "Closure-critical claims now map to evidence, mode, and missing proof instead of living only as prose.",
       "still_missing": "Real-run claims remain pending until the 45K run produces their artifacts.",
-      "raw_item_count": 4
+      "raw_item_count": 5
     },
     {
       "group_id": "closure_entrypoints",
@@ -159,7 +159,7 @@
     },
     {
       "group_id": "handoff_and_freeze",
-      "title": "Freeze manifests and repo-external handoff",
+      "title": "Freeze manifests and canonical handoff surfaces",
       "status": "DONE_NOW",
       "timing_bucket": "required before 45K",
       "plan_covered": true,
@@ -216,7 +216,7 @@
       ],
       "what_is_done": "The repo now names these artifacts explicitly as post-run evidence rather than pretending they already exist.",
       "still_missing": "Trained final weights, best and latest checkpoints, benchmark summaries, demo bundle, evidence pack, and trained release package.",
-      "raw_item_count": 2
+      "raw_item_count": 1
     },
     {
       "group_id": "phase2_compute_and_scaleup",
