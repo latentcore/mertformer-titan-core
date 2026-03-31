@@ -52,6 +52,16 @@ def sanitize_text(text: str, root: Path) -> str:
     return cleaned
 
 
+def sanitize_value(value, root: Path):
+    if isinstance(value, str):
+        return sanitize_text(value, root)
+    if isinstance(value, list):
+        return [sanitize_value(item, root) for item in value]
+    if isinstance(value, dict):
+        return {key: sanitize_value(item, root) for key, item in value.items()}
+    return value
+
+
 def detect_python(root: Path, *, bootstrap: bool) -> str:
     env_py = os.environ.get("TITAN_PYTHON", "").strip()
     if env_py:
@@ -78,7 +88,7 @@ def run_command(root: Path, cmd: list[str], env: dict[str, str] | None = None) -
     started = time.time()
     proc = subprocess.run(cmd, cwd=root, capture_output=True, text=True, env=env, check=False)
     return {
-        "cmd": " ".join(cmd),
+        "cmd": sanitize_text(" ".join(cmd), root),
         "return_code": proc.returncode,
         "ok": proc.returncode == 0,
         "elapsed_sec": round(time.time() - started, 3),
@@ -513,8 +523,9 @@ def main() -> int:
                 "return_code": 0,
                 "note": step.description,
             })
-        write_json(report_out, payload)
-        write_text(report_out.with_suffix(".md"), summarize_md(payload))
+        sanitized = sanitize_value(payload, root)
+        write_json(report_out, sanitized)
+        write_text(report_out.with_suffix(".md"), summarize_md(sanitized))
         print(json.dumps({"status": payload["status"], "mode": payload["mode"]}, ensure_ascii=False))
         return EXIT_OK
 
@@ -536,8 +547,9 @@ def main() -> int:
             "return_code": EXIT_LOCKED,
             "note": f"Existing lock: {existing or {'path': str(lock_path)}}",
         })
-        write_json(report_out, payload)
-        write_text(report_out.with_suffix(".md"), summarize_md(payload))
+        sanitized = sanitize_value(payload, root)
+        write_json(report_out, sanitized)
+        write_text(report_out.with_suffix(".md"), summarize_md(sanitized))
         print(json.dumps({"status": payload["status"], "reason": "lock_exists"}, ensure_ascii=False))
         return EXIT_LOCKED
 
@@ -623,8 +635,9 @@ def main() -> int:
         return exit_code
     finally:
         release_lock(lock_path)
-        write_json(report_out, payload)
-        write_text(report_out.with_suffix(".md"), summarize_md(payload))
+        sanitized = sanitize_value(payload, root)
+        write_json(report_out, sanitized)
+        write_text(report_out.with_suffix(".md"), summarize_md(sanitized))
         print(json.dumps({
             "status": payload["status"],
             "mode": payload["mode"],

@@ -1,6 +1,6 @@
 # Model Health Final
 
-- generated_utc: `2026-03-31T20:47:36Z`
+- generated_utc: `2026-03-31T20:59:49Z`
 - smoke_metrics_present: `true`
 - readiness_status: `TRAIN_ALLOWED`
 
@@ -8,7 +8,7 @@
 
 - resume_compat: `PASS`
 - checkpoint_restore: `PASS`
-- smoke_train_metrics: `/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/reports/benchmarks/smoke_train_metrics.json`
+- smoke_train_metrics: `<REPO_ROOT>/reports/benchmarks/smoke_train_metrics.json`
 
 ## Boundary
 

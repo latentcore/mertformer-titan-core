@@ -12,6 +12,10 @@ from typing import Iterable
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_DESKTOP = Path.home() / 'Desktop'
 
+
+def sanitize_path_text(text: str) -> str:
+    return text.replace(str(DEFAULT_DESKTOP), '<DESKTOP_PATH>')
+
 ACTION_KEYWORDS = {
     '45k', 'closure', 'sop', 'truth', 'claim', 'evidence', 'readiness', 'train allowed', 'train-ready',
     'benchmark', 'regression', 'freeze', 'feature freeze', 'config freeze', 'dataset freeze',
@@ -207,7 +211,7 @@ def write_markdown(path: Path, items: list[Item], summary: Counter, txt_path: Pa
         '',
         'This matrix combines repo closure obligations with actionable items mined from the desktop TXT export.',
         '',
-        f'- txt_source: `{txt_path}`' if txt_path else '- txt_source: `missing`',
+        f"- txt_source: `{sanitize_path_text(str(txt_path))}`" if txt_path else '- txt_source: `missing`',
         f"- total_items: `{sum(summary.values())}`",
         f"- this_pass: `{summary['this-pass']}`",
         f"- phase-2: `{summary['phase-2']}`",
@@ -297,7 +301,7 @@ def main() -> int:
     summary = Counter(item.phase for item in items)
     payload = {
         'schema': 'master_closure_matrix_v1',
-        'txt_source': str(txt_path) if txt_path else None,
+        'txt_source': sanitize_path_text(str(txt_path)) if txt_path else None,
         'summary': {
             'total_items': len(items),
             'this_pass': summary['this-pass'],

@@ -1,14 +1,14 @@
 {
   "schema": "final_checksum_manifest_v1",
-  "generated_utc": "2026-03-31T20:47:36Z",
+  "generated_utc": "2026-03-31T20:59:49Z",
   "entries": [
     {
       "path": "artifacts/mertformer_release.zip",
-      "sha256": "2b8241091dc2aeca88a930472a27f5a0544eab5dc4e6b044b45a29dbc963c1d6"
+      "sha256": "fcb0482357496aee153d59fea4b871dc2ea02ca27eeb3c38084d75b238f217c9"
     },
     {
       "path": "packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip",
-      "sha256": "d62a7a537014cdc8a06d457ea4d2bd73dba6fd51c6eb8f41665991c40b096f6d"
+      "sha256": "6ecde64efd1ac0b51a2ab7eb1d23b078b1005db4c1f4337c4f25cc67b70060c7"
     }
   ]
 }

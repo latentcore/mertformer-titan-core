@@ -63,7 +63,7 @@ def detect_python() -> str:
 def run(cmd: list[str], *, allow_failure: bool = False) -> dict:
     proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, check=False)
     payload = {
-        'cmd': ' '.join(cmd),
+        'cmd': sanitize_text(' '.join(cmd)),
         'return_code': proc.returncode,
         'ok': proc.returncode == 0,
         'stdout_tail': sanitize_text(proc.stdout[-4000:]),
@@ -596,7 +596,7 @@ def build_runtime_reports(summary: dict) -> None:
             '',
             f"- resume_compat: `{summary['resume_compat'].get('status', 'UNKNOWN')}`",
             f"- checkpoint_restore: `{read_json(REPORTS / 'checkpoint_restore_report.json').get('status', 'UNKNOWN')}`",
-            f"- smoke_train_metrics: `{BENCH / 'smoke_train_metrics.json'}`",
+            f"- smoke_train_metrics: `{sanitize_text(str(BENCH / 'smoke_train_metrics.json'))}`",
             '',
             '## Boundary',
             '',

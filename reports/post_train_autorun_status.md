@@ -3,7 +3,7 @@
 - schema: `post_train_autorun_status_v1`
 - mode: `demo-only`
 - status: `completed`
-- generated_utc: `2026-03-31T20:47:36.307892+00:00`
+- generated_utc: `2026-03-31T20:59:48.917441+00:00`
 - checkpoint: `none`
 
 ## Steps

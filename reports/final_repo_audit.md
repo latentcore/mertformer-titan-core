@@ -1,8 +1,8 @@
 # Final Repo Audit
 
-- generated_utc: `2026-03-31T20:47:36Z`
+- generated_utc: `2026-03-31T20:59:49Z`
 - git_branch: `main`
-- git_commit_short: `26fde4a`
+- git_commit_short: `a6223ef`
 - readiness_final_status: `TRAIN_ALLOWED`
 - readiness_reason_code: `READY_OFFLINE_CLEAN`
 - recommended_path: `offline_clean`
@@ -10,7 +10,7 @@
 ## Working Tree
 
 - tracked_files: `636`
-- modified_entries: `178`
+- modified_entries: `96`
 - untracked_entries: `0`
 
 ## Canonical Gates
@@ -29,5 +29,5 @@
 
 ## Artifacts
 
-- `artifacts/mertformer_release.zip` (104932465 bytes)
-- `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip` (51681257 bytes)
+- `artifacts/mertformer_release.zip` (104528470 bytes)
+- `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip` (51475286 bytes)

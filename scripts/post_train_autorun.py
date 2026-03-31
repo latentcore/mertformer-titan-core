@@ -71,6 +71,16 @@ def sanitize_text(text: str, root: Path) -> str:
     return cleaned
 
 
+def sanitize_value(value, root: Path):
+    if isinstance(value, str):
+        return sanitize_text(value, root)
+    if isinstance(value, list):
+        return [sanitize_value(item, root) for item in value]
+    if isinstance(value, dict):
+        return {key: sanitize_value(item, root) for key, item in value.items()}
+    return value
+
+
 def detect_python(root: Path) -> str:
     env_py = os.environ.get("TITAN_PYTHON", "").strip()
     if env_py:
@@ -105,7 +115,7 @@ def run_command(root: Path, cmd: list[str], env: dict[str, str] | None = None) -
         check=False,
     )
     return {
-        "cmd": " ".join(cmd),
+        "cmd": sanitize_text(" ".join(cmd), root),
         "return_code": proc.returncode,
         "ok": proc.returncode == 0,
         "elapsed_sec": round(time.time() - started, 3),
@@ -226,7 +236,7 @@ def build_demo_bundle(root: Path, reports_dir: Path, checkpoint: Path | None) ->
     manifest = {
         "schema": "demo_bundle_manifest_v1",
         "generated_utc": utc_now(),
-        "checkpoint": str(checkpoint) if checkpoint else None,
+        "checkpoint": sanitize_text(str(checkpoint), root) if checkpoint else None,
         "items": [
             {
                 "path": str(path.relative_to(root)),
@@ -277,7 +287,7 @@ def build_evidence_pack(root: Path, reports_dir: Path, checkpoint: Path | None, 
         "",
         f"- generated_utc: `{utc_now()}`",
         f"- mode: `{mode}`",
-        f"- checkpoint: `{checkpoint or 'none'}`",
+        f"- checkpoint: `{sanitize_text(str(checkpoint), root) if checkpoint else 'none'}`",
         "",
         "## Included Evidence",
         "",
@@ -499,8 +509,9 @@ def main() -> int:
     md_out = report_out.with_suffix(".md")
 
     ensure_parent(report_out)
-    report_out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-    write_text(md_out, summarize_md(payload))
+    sanitized = sanitize_value(payload, root)
+    report_out.write_text(json.dumps(sanitized, indent=2), encoding="utf-8")
+    write_text(md_out, summarize_md(sanitized))
     print(json.dumps({"status": payload["status"], "mode": payload["mode"], "checkpoint": payload.get("checkpoint")}, ensure_ascii=False))
     return 0 if payload["status"] in {"planned", "dry-run", "completed"} else 1
 

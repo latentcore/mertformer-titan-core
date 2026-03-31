@@ -1,27 +1,24 @@
 {
   "schema": "final_backlog_classification_v1",
   "raw_matrix_summary": {
-    "total_items": 2140,
-    "this_pass": 2028,
-    "phase_2": 80,
-    "external": 30,
-    "rejected_with_reason": 2
+    "total_items": 14,
+    "this_pass": 11,
+    "phase_2": 0,
+    "external": 2,
+    "rejected_with_reason": 1
   },
   "raw_category_counts": {
-    "closure_flow": 94,
-    "data_contract": 145,
-    "handoff": 736,
-    "training_readiness": 711,
-    "truth_claim": 342,
-    "external": 30,
-    "phase2": 80,
-    "policy": 2
+    "closure_flow": 2,
+    "handoff": 3,
+    "training_readiness": 2,
+    "truth_claim": 4,
+    "external": 2,
+    "policy": 1
   },
   "raw_phase_counts": {
-    "this-pass": 2028,
-    "external": 30,
-    "phase-2": 80,
-    "rejected-with-reason": 2
+    "this-pass": 11,
+    "external": 2,
+    "rejected-with-reason": 1
   },
   "current_readiness_status": "TRAIN_ALLOWED",
   "current_readiness_blockers": [
@@ -48,7 +45,7 @@
       ],
       "what_is_done": "The working tree now has a canonical grouped backlog view instead of relying only on the raw 2140-item matrix.",
       "still_missing": "This grouped truth layer does not replace the raw matrix or the future real-run evidence.",
-      "raw_item_count": 436
+      "raw_item_count": 6
     },
     {
       "group_id": "source_of_truth_regime",
@@ -71,7 +68,7 @@
       ],
       "what_is_done": "Current authoritative docs, generated reports, and historical snapshots are separated.",
       "still_missing": "Future release snapshots must continue to honor this authority order.",
-      "raw_item_count": 344
+      "raw_item_count": 5
     },
     {
       "group_id": "claim_registry_truth_matrix",
@@ -90,7 +87,7 @@
       ],
       "what_is_done": "Closure-critical claims now map to evidence, mode, and missing proof instead of living only as prose.",
       "still_missing": "Real-run claims remain pending until the 45K run produces their artifacts.",
-      "raw_item_count": 342
+      "raw_item_count": 4
     },
     {
       "group_id": "closure_entrypoints",
@@ -117,7 +114,7 @@
       ],
       "what_is_done": "The repo now has a canonical zero-touch 45K launcher plus the existing verification and release ladders.",
       "still_missing": "Real-run evidence remains separate from the command ladder and will appear only after the actual 45K run.",
-      "raw_item_count": 830
+      "raw_item_count": 5
     },
     {
       "group_id": "readiness_gate",
@@ -138,7 +135,7 @@
       ],
       "what_is_done": "The repo emits a deterministic TRAIN_ALLOWED or NOT_ALLOWED decision with exact reason codes.",
       "still_missing": "Repo-side readiness is green via offline_clean. The remaining exact blocker is the optional online_teacher lane without HF_TOKEN.",
-      "raw_item_count": 711
+      "raw_item_count": 2
     },
     {
       "group_id": "data_contract",
@@ -158,7 +155,7 @@
       ],
       "what_is_done": "The stage1..stage5 JSONL files exist, the offline tokenizer cache is accepted, and the offline-clean data path is green.",
       "still_missing": "Claim-grade corpus lineage, large-scale provenance, and the real 45K consumption journal remain post-run evidence.",
-      "raw_item_count": 856
+      "raw_item_count": 2
     },
     {
       "group_id": "handoff_and_freeze",
@@ -178,7 +175,7 @@
       ],
       "what_is_done": "Freeze and handoff surfaces exist and refresh with the closure flow.",
       "still_missing": "They still need the real 45K outputs to become final release evidence.",
-      "raw_item_count": 736
+      "raw_item_count": 3
     },
     {
       "group_id": "zero_touch_train_end",
@@ -219,7 +216,7 @@
       ],
       "what_is_done": "The repo now names these artifacts explicitly as post-run evidence rather than pretending they already exist.",
       "still_missing": "Trained final weights, best and latest checkpoints, benchmark summaries, demo bundle, evidence pack, and trained release package.",
-      "raw_item_count": 30
+      "raw_item_count": 2
     },
     {
       "group_id": "phase2_compute_and_scaleup",
@@ -236,7 +233,7 @@
       ],
       "what_is_done": "The raw backlog already distinguishes deferred scale-up work from the closure-critical path.",
       "still_missing": "Actual implementation and proof remain future work.",
-      "raw_item_count": 80
+      "raw_item_count": 0
     },
     {
       "group_id": "commercial_legal_gtm_band",
