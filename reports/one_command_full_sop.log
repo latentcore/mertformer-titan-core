@@ -1,12 +1,12 @@
-[run] start_utc=2026-03-31T22:29:20Z
+[run] start_utc=2026-04-04T20:23:16Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
 [verify] Secret scan ...
 OK: no secret patterns detected in tracked files.
 [verify] Pytest ...
-.................................s...................................... [ 57%]
-.....s...............................................                    [100%]
+......................................s................................. [ 53%]
+............s.................................................           [100%]
 =============================== warnings summary ===============================
 .titan-venv/lib/python3.11/site-packages/torch/jit/_script.py:1480
 .titan-venv/lib/python3.11/site-packages/torch/jit/_script.py:1480
@@ -25,7 +25,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-123 passed, 3 skipped, 6 warnings in 41.71s
+132 passed, 3 skipped, 6 warnings in 70.64s (0:01:10)
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -64,7 +64,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <REPO_ROOT>/temp_preflight_data
 ✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 6.98s
+✈️ Preflight Duration: 10.45s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
@@ -76,7 +76,7 @@ Overfit step 0: loss=121.5519
 Overfit step 12: loss=117.8494
 Overfit step 24: loss=113.7169
 Overfit step 36: loss=97.5475
-Overfit step 48: loss=50.8537
+Overfit step 48: loss=50.8516
 Overfit gate: PASS
 Golden samples: 50
 - algorithms: 13
@@ -109,7 +109,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 18.22189688682556,
+  "elapsed_sec": 23.479536056518555,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -135,9 +135,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-03-31T22:30:34Z",
-        "cpu_percent": 18.5,
-        "ram_used_gb": 7.797698974609375,
+        "timestamp_utc": "2026-04-04T20:25:12Z",
+        "cpu_percent": 22.3,
+        "ram_used_gb": 6.6445465087890625,
         "ram_total_gb": 16.0
       }
     },
@@ -185,29 +185,41 @@ OK: unicode path guard; hits=0
 [verify] Duplicate zip guard gate ...
 OK: duplicate zip guard; groups=0
 [verify] Manifest sync gate ...
-{"manifest_entries": 630, "ok": true}
+{"manifest_entries": 631, "ok": true}
 [verify] OK
 [run] step=cfc_moe_tolerance_check
 [tolerance] PASS (max_diff_moe=0.000000 max_diff_cfc=0.000014)
 [run] step=md_quality_all
-md_quality: scope=all files=330 errors=0 warnings=0
+md_quality: scope=all files=335 errors=0 warnings=0
 [run] step=linkcheck_all
-linkcheck: scope=all files=330 missing=0
+linkcheck: scope=all files=335 missing=0
 [run] step=docs_inventory
-{"ok": true, "md_files": 332, "dup_groups": 21}
+{"ok": true, "md_files": 337, "dup_groups": 21}
 [run] step=sync_manifest
-{"manifest_entries": 630, "ok": true}
+{"manifest_entries": 631, "ok": true}
 [run] step=dealroom_sync
 {"ok": true}
 [run] step=unicode_path_guard
 OK: unicode path guard; hits=0
 [run] step=duplicate_zip_guard
 OK: duplicate zip guard; groups=0
+[run] step=scoped_external_intake_matrix
+{
+  "json": "<DESKTOP_PATH>",
+  "md": "<DESKTOP_PATH>",
+  "entries": 12
+}
+[run] step=scoped_cleanup_apply
+{
+  "report": "<DESKTOP_PATH>",
+  "found": 590,
+  "removed": 590
+}
 [run] step=intermediate_cache_cleanup
 [runner] cmd=bash -lc true
 [runner] cleanup_root=<REPO_ROOT>
 [runner] include_tool_caches=True full_clean=True include_venv_caches=True dry_run=False
-[cleanup] dirs_found=578 files_found=0 dirs_removed=578 files_removed=0
+[cleanup] dirs_found=2 files_found=0 dirs_removed=2 files_removed=0
 [run] step=clean_runtime_artifacts_check
 OK: runtime artifacts and caches are clean
 [run] step=release_build30
@@ -226,7 +238,7 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip
-release_sha256=73062ef7c367fb43c097950c6c3b332146a84b89b20a7638a89eada210935a1a
+release_sha256=521b5221574a16eab952424f7d18928dc122ee75d20bd40c6db3a89e88f38f24
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=artifact_release_zip
@@ -241,4 +253,4 @@ locked_sha256=
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-03-31T22:31:19Z
+[run] end_utc=2026-04-04T20:26:27Z

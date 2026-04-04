@@ -8,6 +8,8 @@ Generated automatically.
 - `AGENTS.md`
 - `CHANGELOG.md`
 - `CHANGELOG_TR.md`
+- `CHESS_5080_POC_INTERNAL.md`
+- `CHESS_5080_POC_INTERNAL_TR.md`
 - `CONTRIBUTING.md`
 - `CONTRIBUTING_TR.md`
 - `DECISIONS.md`
@@ -22,6 +24,7 @@ Generated automatically.
 - `MODEL_CARD_TR.md`
 - `MODEL_LICENSE.md`
 - `MODEL_LICENSE_TR.md`
+- `OFFLINE_4060_DEMO.md`
 - `PITCH.md`
 - `PITCH_TR.md`
 - `README.md`
@@ -71,6 +74,7 @@ Generated automatically.
 - `datasets/SOURCES_TR.md`
 - `datasets/inventory.md`
 - `datasets/inventory_TR.md`
+- `datasets/offline_demo/README.md`
 - `docs/CHAIN_MAP.md`
 - `docs/CHAIN_MAP_TR.md`
 - `docs/PROJECT_STRUCTURE.md`
@@ -293,6 +297,7 @@ Generated automatically.
 - `reports/run_contract.md`
 - `reports/sales_funnel_90d.md`
 - `reports/sales_funnel_90d_TR.md`
+- `reports/scoped_external_intake_matrix.md`
 - `reports/security_compliance.md`
 - `reports/security_compliance_TR.md`
 - `reports/snapshots/2026-02-24/mertformer_master_decision_report_TR_2026-02-24.md`
@@ -384,6 +389,7 @@ Generated automatically.
   - `ablations/no_moe/README.md`
   - `assets/sources/README.md`
   - `datasets/README.md`
+  - `datasets/offline_demo/README.md`
   - `logs/README.md`
   - `postmortems/README.md`
   - `reports/benchmarks/README.md`

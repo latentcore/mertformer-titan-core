@@ -3,7 +3,7 @@
   "specVersion": "1.5",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-03-31T22:23:01.712801+00:00",
+    "timestamp": "2026-04-04T20:29:00.051029+00:00",
     "component": {
       "type": "application",
       "name": "mertformer-titan-core"
@@ -78,15 +78,33 @@
     },
     {
       "type": "library",
+      "name": "chess",
+      "version": "1.11.2",
+      "purl": "pkg:pypi/chess@1.11.2"
+    },
+    {
+      "type": "library",
       "name": "click",
       "version": "8.3.1",
       "purl": "pkg:pypi/click@8.3.1"
     },
     {
       "type": "library",
+      "name": "contourpy",
+      "version": "1.3.3",
+      "purl": "pkg:pypi/contourpy@1.3.3"
+    },
+    {
+      "type": "library",
       "name": "coverage",
       "version": "7.13.4",
       "purl": "pkg:pypi/coverage@7.13.4"
+    },
+    {
+      "type": "library",
+      "name": "cycler",
+      "version": "0.12.1",
+      "purl": "pkg:pypi/cycler@0.12.1"
     },
     {
       "type": "library",
@@ -105,6 +123,12 @@
       "name": "filelock",
       "version": "3.25.0",
       "purl": "pkg:pypi/filelock@3.25.0"
+    },
+    {
+      "type": "library",
+      "name": "fonttools",
+      "version": "4.62.1",
+      "purl": "pkg:pypi/fonttools@4.62.1"
     },
     {
       "type": "library",
@@ -186,6 +210,12 @@
     },
     {
       "type": "library",
+      "name": "kiwisolver",
+      "version": "1.5.0",
+      "purl": "pkg:pypi/kiwisolver@1.5.0"
+    },
+    {
+      "type": "library",
       "name": "lxml",
       "version": "6.0.2",
       "purl": "pkg:pypi/lxml@6.0.2"
@@ -201,6 +231,12 @@
       "name": "MarkupSafe",
       "version": "3.0.3",
       "purl": "pkg:pypi/MarkupSafe@3.0.3"
+    },
+    {
+      "type": "library",
+      "name": "matplotlib",
+      "version": "3.10.8",
+      "purl": "pkg:pypi/matplotlib@3.10.8"
     },
     {
       "type": "library",
@@ -363,6 +399,12 @@
       "name": "Pygments",
       "version": "2.19.2",
       "purl": "pkg:pypi/Pygments@2.19.2"
+    },
+    {
+      "type": "library",
+      "name": "pyparsing",
+      "version": "3.3.2",
+      "purl": "pkg:pypi/pyparsing@3.3.2"
     },
     {
       "type": "library",

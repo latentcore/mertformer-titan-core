@@ -1,14 +1,14 @@
 # Final Orchestrator Status
 
-- run_id: `zero_touch_20260331T223248Z`
+- run_id: `zero_touch_20260404T203010Z`
 - mode: `plan-only`
 - status: `planned`
-- generated_utc: `2026-03-31T22:32:48.092627+00:00`
+- generated_utc: `2026-04-04T20:30:10.444414+00:00`
 - train_readiness_status: `none`
 - decision_reason_code: `none`
 - training_lane: `none`
 - resume_policy: `auto`
-- train_command: `.titan-venv/bin/python -m accelerate.commands.launch --num_processes 1 --num_machines 1 --mixed_precision bf16 --main_process_port 29501 train/train.py`
+- train_command: `<REPO_ROOT>/.titan-venv/bin/python -m accelerate.commands.launch --num_processes 1 --num_machines 1 --mixed_precision bf16 --main_process_port 29501 train/train.py`
 - post_mode: `full`
 
 ## Steps

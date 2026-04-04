@@ -14,6 +14,8 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Official/canonical one-file script: `scripts/kaggle_onefile_demo_build30.py`
 - Colab fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
 - Text-understanding PoC one-file script: `scripts/kaggle_onefile_demo_build30_text_understanding.py`
+- Windows RTX 5080 chess PoC one-file script: `scripts/chess_5080_onefile.py`
+- Windows RTX 5080 share/export builder: `scripts/export_chess_5080_share.py`
 - Repo-external copies are unsupported and treated as drift sources.
 
 ## Core Pipelines
@@ -35,6 +37,8 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - `clean_runtime_artifacts.sh` — Cleans runtime artifacts (including root `kaggle_onefile_build30_*.jsonl`).
 - `run_and_clean_pycache.py` — Runs any command and then guarantees post-run cache cleanup (`--full-clean` includes `.DS_Store`, `.cache`, `.ipynb_checkpoints`, `.tox`, `.nox`, `.hypothesis`, `.vs`; add `--include-venv-caches` to also clean venv caches).
 - `zip_denylist_audit.py` — Audits release zip against denylisted paths and secret patterns.
+- `build_scoped_external_intake_matrix.py` — Hashes and classifies scoped Desktop/Documents/Downloads/Applications project artifacts into a closure intake matrix.
+- `cleanup_scoped_closure_junk.py` — Removes scoped closure junk (`__pycache__`, `.pyc`, duplicate stale zips) from repo + scoped external directories.
 
 ## SOP Outputs
 - `reports/one_command_full_sop_summary.md` — Consolidated single-document summary for the full one-command SOP run.

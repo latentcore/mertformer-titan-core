@@ -1,6 +1,6 @@
 # Data Pipeline Contract
 
-- generated_utc: `2026-03-31T22:24:15Z`
+- generated_utc: `2026-04-04T20:31:15Z`
 - current_training_lane: `offline_clean`
 - stage_contract: `stage1..stage5 JSONL must exist before claim-grade training`
 - validation_contract: `datasets/validation.jsonl` must remain parseable and above the minimum sample gate

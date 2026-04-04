@@ -69,6 +69,8 @@ fi
   run_step "dealroom_sync" "$PY_BIN" scripts/dealroom_sync.py
   run_step "unicode_path_guard" "$PY_BIN" scripts/unicode_path_guard.py --root . --out reports/unicode_path_guard_report.json --fail-on-hit
   run_step "duplicate_zip_guard" "$PY_BIN" scripts/duplicate_zip_guard.py --root packages --root artifacts --out reports/duplicate_zip_guard_report.json
+  run_step "scoped_external_intake_matrix" "$PY_BIN" scripts/build_scoped_external_intake_matrix.py
+  run_step "scoped_cleanup_apply" "$PY_BIN" scripts/cleanup_scoped_closure_junk.py --apply --delete-stale-zips
   run_step "intermediate_cache_cleanup" "$PY_BIN" scripts/run_and_clean_pycache.py --root . --include-tool-caches --full-clean --include-venv-caches -- bash -lc true
   run_step "clean_runtime_artifacts_check" bash scripts/clean_runtime_artifacts.sh --check
   run_step "release_build30" bash scripts/release_build30.sh

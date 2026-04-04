@@ -16,6 +16,8 @@ RUN_TEST=false
 RUN_SITL=false
 RUN_CLEANROOM=false
 RUN_TRAIN_READY=false
+RUN_OFFLINE_4060_DEMO=false
+RUN_CHESS_5080_POC=false
 
 case "${1:-}" in
     --test|--verify)
@@ -33,6 +35,14 @@ case "${1:-}" in
     --train-ready)
         RUN_TRAIN_READY=true
         echo "✅ TRAIN-READY MODE ACTIVE (Readiness only, no training start)"
+        ;;
+    --offline-4060-demo)
+        RUN_OFFLINE_4060_DEMO=true
+        echo "💻 OFFLINE RTX 4060 DEMO MODE ACTIVE"
+        ;;
+    --chess-5080-poc)
+        RUN_CHESS_5080_POC=true
+        echo "♟️ RTX 5080 CHESS POC MODE ACTIVE"
         ;;
 esac
 
@@ -54,12 +64,35 @@ case "${TITAN_PROFILE}" in
     max_arch)
         export MERTFORMER_MODEL_CONFIG="mertformer_max_arch.yaml"
         ;;
+    offline_4060_demo)
+        export TITAN_OFFLINE=1
+        export TITAN_WANDB=0
+        export TITAN_INSTALL=0
+        export TITAN_BOOTSTRAP=0
+        export TITAN_REQUIRE_GATED_TEACHER=0
+        export TITAN_DEMO_OFFLINE_TRAINING=1
+        export BENCHMARK_SKIP=1
+        export GOLDEN_EVAL_SKIP=1
+        export OPERATOR_GATE_SKIP=1
+        ;;
     *)
         echo "❌ ERROR [INVALID_TITAN_PROFILE]: '${TITAN_PROFILE}'"
-        echo "   Allowed values: stable | fixed_steps | max_arch"
+        echo "   Allowed values: stable | fixed_steps | max_arch | offline_4060_demo"
         exit 1
         ;;
 esac
+if [[ "$RUN_OFFLINE_4060_DEMO" == true ]]; then
+    export TITAN_PROFILE="offline_4060_demo"
+    export TITAN_OFFLINE=1
+    export TITAN_WANDB=0
+    export TITAN_INSTALL=0
+    export TITAN_BOOTSTRAP=0
+    export TITAN_REQUIRE_GATED_TEACHER=0
+    export TITAN_DEMO_OFFLINE_TRAINING=1
+    export BENCHMARK_SKIP=1
+    export GOLDEN_EVAL_SKIP=1
+    export OPERATOR_GATE_SKIP=1
+fi
 echo "🧭 TITAN_PROFILE=${TITAN_PROFILE}"
 if [[ -n "${MERTFORMER_MODEL_CONFIG:-}" ]]; then
     echo "🧩 Model config overlay: ${MERTFORMER_MODEL_CONFIG}"
@@ -119,6 +152,20 @@ if [[ -z "${PYTHON_BIN}" ]]; then
             PYTHON_BIN="python3"
         fi
     fi
+fi
+
+# Dedicated offline demo lane: no network, no teacher, no smart runner.
+if [[ "$RUN_OFFLINE_4060_DEMO" == true || "${TITAN_PROFILE}" == "offline_4060_demo" ]]; then
+    echo "🧪 Launching repo-local offline demo trainer (no internet required by design)..."
+    mkdir -p logs
+    exec "$PYTHON_BIN" scripts/offline_4060_demo_train.py
+fi
+
+# Dedicated chess proof lane: standalone onefile optimized for Windows RTX 5080 flow.
+if [[ "$RUN_CHESS_5080_POC" == true ]]; then
+    echo "♟️ Launching standalone RTX 5080 chess proof lane..."
+    mkdir -p logs
+    exec "$PYTHON_BIN" scripts/chess_5080_onefile.py
 fi
 
 # Fast path: deterministic SITL proof flow (offline, no training start).

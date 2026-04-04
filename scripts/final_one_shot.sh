@@ -58,6 +58,8 @@ if [ -f "$LINKEDIN_ZIP" ]; then
 fi
 
 run_step "duplicate_zip_guard" .titan-venv/bin/python scripts/duplicate_zip_guard.py --out reports/duplicate_zip_guard_report.json
+run_step "scoped_external_intake_matrix" .titan-venv/bin/python scripts/build_scoped_external_intake_matrix.py
+run_step "scoped_cleanup_apply" .titan-venv/bin/python scripts/cleanup_scoped_closure_junk.py --apply --delete-stale-zips
 
 # Sync manifest/structure/policy
 run_step "sync_manifest" .titan-venv/bin/python scripts/sync_manifest.py --root . --manifest reports/release_manifest.json --structure docs/PROJECT_STRUCTURE.md --matrix reports/file_sync_matrix.json --sync-report reports/project_structure_sync_report.json --policy-report reports/policy_sync_report.json
@@ -73,6 +75,7 @@ run_step "train_readiness_contract" .titan-venv/bin/python scripts/build_train_r
 run_step "final_orchestrator_plan" .titan-venv/bin/python scripts/final_orchestrator.py --plan-only
 run_step "closure_governance_pack" .titan-venv/bin/python scripts/build_closure_governance_pack.py
 run_step "max_closure_handoff" .titan-venv/bin/python scripts/build_max_closure_handoff.py
+run_step "chess_5080_share_export" .titan-venv/bin/python scripts/export_chess_5080_share.py
 
 # Ensure writable artifacts before regeneration
 chflags nouchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 2>/dev/null || true

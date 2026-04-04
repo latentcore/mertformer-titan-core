@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-03-31T22:31:05.134092+00:00",
-  "md_file_count": 332,
+  "generated_utc": "2026-04-04T20:29:05.676937+00:00",
+  "md_file_count": 337,
   "duplicate_name_group_count": 21,
   "duplicate_name_groups": {
     "license.md": [
@@ -16,6 +16,7 @@
       "ablations/no_moe/README.md",
       "assets/sources/README.md",
       "datasets/README.md",
+      "datasets/offline_demo/README.md",
       "logs/README.md",
       "postmortems/README.md",
       "reports/benchmarks/README.md",

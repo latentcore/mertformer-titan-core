@@ -22,6 +22,7 @@ tqdm>=4.65
 zstandard>=0.21  # For streaming datasets
 pyyaml>=6.0      # YAML config overlays
 matplotlib>=3.7  # Training log dashboards
+chess>=1.11      # Chess move legality, PGN parsing, and engine interfaces
 
 # Testing
 pytest>=7.3
@@ -50,4 +51,3 @@ onnx-simplifier>=0.4.33; python_version < "3.13"  # Mobile Optimization (Critica
 wandb>=0.15.0            # Experiment Tracking
 galore-torch>=0.0.1      # GaLore Optimizer (VRAM Saver)
 python-pptx>=0.6.23  # Investor deck updater
-

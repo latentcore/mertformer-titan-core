@@ -1,76 +1,31 @@
 {
   "schema": "post_train_autorun_status_v1",
-  "generated_utc": "2026-03-31T22:32:49.016593+00:00",
-  "mode": "plan-only",
-  "status": "planned",
+  "generated_utc": "2026-04-04T20:31:15.466500+00:00",
+  "mode": "demo-only",
+  "status": "completed",
   "checkpoint": null,
   "reports_dir": "<REPO_ROOT>/reports",
   "steps": [
     {
       "name": "checkpoint_resolution",
-      "status": "planned",
-      "note": "Resolve best/latest checkpoint for post-train tasks.",
-      "checkpoint_required": true
-    },
-    {
-      "name": "benchmarks_internal",
-      "status": "planned",
-      "note": "Run internal benchmark suite on the resolved checkpoint.",
-      "checkpoint_required": true
-    },
-    {
-      "name": "golden_eval",
-      "status": "planned",
-      "note": "Run golden sample evaluation on the resolved checkpoint.",
-      "checkpoint_required": true
+      "checkpoint_required": true,
+      "status": "warning",
+      "return_code": 0,
+      "note": "Checkpoint missing; continuing only because allow_missing_checkpoint or non-benchmark mode applies."
     },
     {
       "name": "demo_bundle_manifest",
-      "status": "planned",
-      "note": "Build demo bundle manifest and summary.",
-      "checkpoint_required": false
-    },
-    {
-      "name": "mobile_export",
-      "status": "planned",
-      "note": "Refresh ONNX/mobile export artifacts.",
-      "checkpoint_required": false
-    },
-    {
-      "name": "logbook_build",
-      "status": "planned",
-      "note": "Append run information to the unified logbook.",
-      "checkpoint_required": false
-    },
-    {
-      "name": "readme_sync",
-      "status": "planned",
-      "note": "Refresh manifest/doc sync and claim alignment.",
-      "checkpoint_required": false
-    },
-    {
-      "name": "closure_governance_pack",
-      "status": "planned",
-      "note": "Refresh grouped closure and truth reports.",
-      "checkpoint_required": false
-    },
-    {
-      "name": "release_build30",
-      "status": "planned",
-      "note": "Refresh release zip package and release snapshot.",
-      "checkpoint_required": false
-    },
-    {
-      "name": "artifact_release_zip",
-      "status": "planned",
-      "note": "Refresh tracked artifact release zip.",
-      "checkpoint_required": false
+      "checkpoint_required": false,
+      "status": "completed",
+      "return_code": 0,
+      "note": "No trained checkpoint resolved; this manifest only records current repo-side proof/demo assets."
     },
     {
       "name": "evidence_pack",
-      "status": "planned",
-      "note": "Write the current evidence pack summary.",
-      "checkpoint_required": false
+      "checkpoint_required": false,
+      "status": "completed",
+      "return_code": 0,
+      "note": "reports/final_evidence_pack.md refreshed."
     }
   ]
 }

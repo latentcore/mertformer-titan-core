@@ -14,6 +14,8 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - Resmi/kanonik one-file script: `scripts/kaggle_onefile_demo_build30.py`
 - Colab fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
 - Text-understanding PoC one-file script: `scripts/kaggle_onefile_demo_build30_text_understanding.py`
+- Windows RTX 5080 satranç PoC one-file script: `scripts/chess_5080_onefile.py`
+- Windows RTX 5080 share/export builder: `scripts/export_chess_5080_share.py`
 - Repo dışı one-file kopyaları desteklenmez ve drift kaynağı sayılır.
 
 ## Çekirdek Akışlar
@@ -34,6 +36,8 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - `clean_runtime_artifacts.sh` — Runtime artefaktlarını temizler (kök `kaggle_onefile_build30_*.jsonl` dahil).
 - `run_and_clean_pycache.py` — Herhangi bir komutu çalıştırır ve koşu sonunda cache temizliğini garanti eder (`--full-clean` ile `.DS_Store`, `.cache`, `.ipynb_checkpoints`, `.tox`, `.nox`, `.hypothesis`, `.vs`; venv cache icin `--include-venv-caches`).
 - `zip_denylist_audit.py` — Release zip'i denylist yol/secret pattern kontrolünden geçirir.
+- `build_scoped_external_intake_matrix.py` — Scoped Desktop/Documents/Downloads/Applications proje artefaktlarını hash'leyip closure intake matrix'ine sınıflandırır.
+- `cleanup_scoped_closure_junk.py` — Repo + scoped external dizinlerde closure artığı çöpü (`__pycache__`, `.pyc`, stale duplicate zip) temizler.
 
 ## SOP Çıktıları
 - `reports/one_command_full_sop_summary.md` — Full tek-komut SOP koşusunun tek belgede konsolide özeti.

@@ -1,6 +1,6 @@
 # Document Alignment Report
 
-- generated_utc: `2026-03-31T22:24:15Z`
+- generated_utc: `2026-04-04T20:31:16Z`
 
 | Path | Canonical Launcher | First Serious Run | Final Ceiling Boundary | Offline-Clean Mention |
 | --- | --- | --- | --- | --- |
