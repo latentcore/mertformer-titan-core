@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT_DIR"
 
-if [[ "${1:-}" == "--offline-4060-demo" || "${1:-}" == "--chess-5080-poc" ]]; then
+if [[ "${1:-}" == "--offline-4060-demo" || "${1:-}" == "--chess-5080-poc" || "${1:-}" == "--chess-5080-delivery-export" ]]; then
   exec bash "$ROOT_DIR/run.sh" "$@"
 fi
 

@@ -1,10 +1,10 @@
 {
   "scope": "Desktop/Documents/Downloads/Applications project-related artifacts only",
-  "repo_root": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core",
+  "repo_root": "<REPO_ROOT>",
   "entry_count": 12,
   "entries": [
     {
-      "path": "/Users/mertyunlu/Desktop/MertFormer_45K_Launch_Bundle_20260401_2130",
+      "path": "<HOME>/Desktop/MertFormer_45K_Launch_Bundle_20260401_2130",
       "kind": "dir",
       "exists": true,
       "size_bytes": null,
@@ -13,7 +13,7 @@
       "disposition": "archive_into_closure_pack"
     },
     {
-      "path": "/Users/mertyunlu/Desktop/MertFormer_45K_Launch_Bundle_20260401_2130.zip",
+      "path": "<HOME>/Desktop/MertFormer_45K_Launch_Bundle_20260401_2130.zip",
       "kind": "file",
       "exists": true,
       "size_bytes": 210165595,
@@ -22,7 +22,7 @@
       "disposition": "archive_into_closure_pack"
     },
     {
-      "path": "/Users/mertyunlu/Desktop/MertFormer_45K_Launch_Bundle_20260401_2130.zip.sha256",
+      "path": "<HOME>/Desktop/MertFormer_45K_Launch_Bundle_20260401_2130.zip.sha256",
       "kind": "file",
       "exists": true,
       "size_bytes": 113,
@@ -31,7 +31,7 @@
       "disposition": "archive_into_closure_pack"
     },
     {
-      "path": "/Users/mertyunlu/Desktop/MertFormerStream",
+      "path": "<HOME>/Desktop/MertFormerStream",
       "kind": "dir",
       "exists": true,
       "size_bytes": null,
@@ -40,7 +40,7 @@
       "disposition": "keep_as_external_artifact"
     },
     {
-      "path": "/Users/mertyunlu/Documents/mertformer_outputs_LINKEDIN_run_20260220_175540.zip",
+      "path": "<HOME>/Documents/mertformer_outputs_LINKEDIN_run_20260220_175540.zip",
       "kind": "file",
       "exists": true,
       "size_bytes": 2300480517,
@@ -49,7 +49,7 @@
       "disposition": "keep_as_external_artifact"
     },
     {
-      "path": "/Users/mertyunlu/Documents/mertformer_outputs_LINKEDIN_run_20260220_175540.zip.sha256",
+      "path": "<HOME>/Documents/mertformer_outputs_LINKEDIN_run_20260220_175540.zip.sha256",
       "kind": "file",
       "exists": true,
       "size_bytes": 145,
@@ -58,7 +58,7 @@
       "disposition": "archive_into_closure_pack"
     },
     {
-      "path": "/Users/mertyunlu/Documents/mertformer-titan-core.zip",
+      "path": "<HOME>/Documents/mertformer-titan-core.zip",
       "kind": "file",
       "exists": true,
       "size_bytes": 523980718,
@@ -67,7 +67,7 @@
       "disposition": "keep_as_external_artifact"
     },
     {
-      "path": "/Users/mertyunlu/Documents/mertformer_outputs",
+      "path": "<HOME>/Documents/mertformer_outputs",
       "kind": "dir",
       "exists": true,
       "size_bytes": null,
@@ -76,7 +76,7 @@
       "disposition": "keep_as_external_artifact"
     },
     {
-      "path": "/Users/mertyunlu/Downloads/MertOS_Core/mertformer_cleanup_20260110_015202.log",
+      "path": "<HOME>/Downloads/MertOS_Core/mertformer_cleanup_20260110_015202.log",
       "kind": "file",
       "exists": true,
       "size_bytes": 110634,
@@ -85,7 +85,7 @@
       "disposition": "archive_into_closure_pack"
     },
     {
-      "path": "/Users/mertyunlu/Downloads/MertOS_Core/mertformer_cleanup_20260110_015332.log",
+      "path": "<HOME>/Downloads/MertOS_Core/mertformer_cleanup_20260110_015332.log",
       "kind": "file",
       "exists": true,
       "size_bytes": 362,
@@ -94,7 +94,7 @@
       "disposition": "archive_into_closure_pack"
     },
     {
-      "path": "/Users/mertyunlu/Downloads/content/mertformer_outputs",
+      "path": "<HOME>/Downloads/content/mertformer_outputs",
       "kind": "dir",
       "exists": true,
       "size_bytes": null,

@@ -10,21 +10,29 @@ sys.path.insert(0, str(ROOT))
 import scripts.export_chess_5080_share as export_share
 
 
-def test_build_obfuscated_wrapper_contains_share_mode_flag() -> None:
-    wrapper = export_share.build_obfuscated_wrapper("print('ok')\n", "demo.py")
-    assert "MERTFORMER_CHESS_SHARE_MODE" in wrapper
-    assert "marshal.loads" in wrapper
+def test_render_build_scripts_reference_password_env() -> None:
+    bat = export_share.render_build_bat('builder.py')
+    ps1 = export_share.render_build_ps1('builder.py')
+    assert 'MERTFORMER_CHESS_ARCHIVE_PASSWORD' in bat
+    assert 'builder.py' in bat
+    assert 'MERTFORMER_CHESS_ARCHIVE_PASSWORD' in ps1
+    assert 'builder.py' in ps1
 
 
 def test_export_main_creates_bundle(monkeypatch, tmp_path: Path) -> None:
-    source = tmp_path / "source.py"
-    source.write_text("print('hello')\n", encoding="utf-8")
-    monkeypatch.setattr(export_share, "SOURCE", source)
-    monkeypatch.setattr(export_share, "DESKTOP", tmp_path)
-    target = tmp_path / "bundle"
-    monkeypatch.setattr(sys, "argv", ["export", "--out-dir", str(target)])
+    source = tmp_path / 'source.py'
+    source.write_text("print('hello')\n", encoding='utf-8')
+    builder = tmp_path / 'build.py'
+    builder.write_text("print('build')\n", encoding='utf-8')
+    monkeypatch.setattr(export_share, 'SOURCE', source)
+    monkeypatch.setattr(export_share, 'WINDOWS_BUILDER', builder)
+    monkeypatch.setattr(export_share, 'DESKTOP', tmp_path)
+    target = tmp_path / 'bundle'
+    monkeypatch.setattr(sys, 'argv', ['export', '--out-dir', str(target)])
     export_share.main()
-    manifest = json.loads((target / "share_manifest.json").read_text(encoding="utf-8"))
-    assert (target / "mertformer_chess_5080_share.py").exists()
-    assert (target / "source.py").exists()
-    assert manifest["files"]
+    manifest = json.loads((target / 'delivery_manifest.json').read_text(encoding='utf-8'))
+    assert (target / 'source.py').exists()
+    assert (target / 'build.py').exists()
+    assert (target / 'build_windows_delivery.bat').exists()
+    assert (target / 'build_windows_delivery.ps1').exists()
+    assert manifest['files']

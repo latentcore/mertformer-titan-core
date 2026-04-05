@@ -1796,6 +1796,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── claim_registry.json  # JSON veri artefaktı
 │   ├── cleanroom_verification.md  # dokümantasyon/rapor dosyası
 │   ├── cleanroom_verification_TR.md  # Türkçe doküman karşılığı
+│   ├── cleanup_scoped_closure_junk_report.json  # JSON veri artefaktı
 │   ├── cli_smoke_log.md  # dokümantasyon/rapor dosyası
 │   ├── cli_smoke_log_TR.md  # Türkçe doküman karşılığı
 │   ├── closure_57_matrix.json  # JSON veri artefaktı
@@ -1948,6 +1949,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── sales_funnel_90d_TR.md  # Türkçe doküman karşılığı
 │   ├── sanitizer_report.json  # JSON veri artefaktı
 │   ├── sbom.cdx.json  # JSON veri artefaktı
+│   ├── scoped_external_intake_matrix.json  # JSON veri artefaktı
+│   ├── scoped_external_intake_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── security_compliance.md  # dokümantasyon/rapor dosyası
 │   ├── security_compliance_TR.md  # Türkçe doküman karşılığı
 │   ├── smoke_run_report.json  # JSON veri artefaktı
@@ -2010,6 +2013,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── build_master_closure_matrix.py  # Python modülü/scripti (build master closure matrix için otomasyon scripti)
 │   ├── build_max_closure_handoff.py  # Python modülü/scripti (build max closure handoff için otomasyon scripti)
 │   ├── build_offline_closure_pack.py  # Python modülü/scripti (build offline closure pack için otomasyon scripti)
+│   ├── build_scoped_external_intake_matrix.py  # Python modülü/scripti (build scoped external intake matrix için otomasyon scripti)
 │   ├── build_summary_pdf.py  # Python modülü/scripti (build summary pdf için otomasyon scripti)
 │   ├── build_train_readiness_contract.py  # Python modülü/scripti (build train readiness contract için otomasyon scripti)
 │   ├── build_validation_set.py  # Python modülü/scripti (build validation set için otomasyon scripti)
@@ -2020,8 +2024,10 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── check_tokenizer_sync.py  # Python modülü/scripti (check tokenizer sync için otomasyon scripti)
 │   ├── check_translation_pointer_policy.py  # Python modülü/scripti (check translation pointer policy için otomasyon scripti)
 │   ├── checkpoint_restore_drill.py  # Python modülü/scripti (checkpoint restore drill için otomasyon scripti)
+│   ├── chess_5080_onefile.py  # Python modülü/scripti (chess 5080 onefile için otomasyon scripti)
 │   ├── clean_runtime_artifacts.sh  # kabuk otomasyon scripti
 │   ├── cleanroom_verify.sh  # kabuk otomasyon scripti
+│   ├── cleanup_scoped_closure_junk.py  # Python modülü/scripti (cleanup scoped closure junk için otomasyon scripti)
 │   ├── data_pipeline.py  # Python modülü/scripti (data pipeline için otomasyon scripti)
 │   ├── dealroom_sync.py  # Python modülü/scripti (dealroom sync için otomasyon scripti)
 │   ├── docs_inventory.py  # Python modülü/scripti (markdown envanteri ve klasör politika raporlayıcısı)
@@ -2029,6 +2035,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── drone_sitl_demo.py  # Python modülü/scripti (drone sitl demo için otomasyon scripti)
 │   ├── duplicate_zip_guard.py  # Python modülü/scripti (duplicate zip guard için otomasyon scripti)
 │   ├── eval.py  # Python modülü/scripti (eval için otomasyon scripti)
+│   ├── export_chess_5080_share.py  # Python modülü/scripti (export chess 5080 share için otomasyon scripti)
 │   ├── extract_dataset_refs.py  # Python modülü/scripti (extract dataset refs için otomasyon scripti)
 │   ├── failure_budget_drill.py  # Python modülü/scripti (failure budget drill için otomasyon scripti)
 │   ├── final_one_shot.sh  # kabuk otomasyon scripti
@@ -2054,6 +2061,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── mini_titan_poc.py  # Python modülü/scripti (mini titan poc için otomasyon scripti)
 │   ├── mobile_export.py  # Python modülü/scripti (mobile export için otomasyon scripti)
 │   ├── nan_kill_test.py  # Python modülü/scripti (nan kill test için otomasyon scripti)
+│   ├── offline_4060_demo_train.py  # Python modülü/scripti (offline 4060 demo train için otomasyon scripti)
 │   ├── one_command_full_sop.sh  # kabuk otomasyon scripti
 │   ├── operator_mode_gate.py  # Python modülü/scripti (operator mode gate için otomasyon scripti)
 │   ├── overfit_gate.py  # Python modülü/scripti (overfit gate için otomasyon scripti)
@@ -2094,6 +2102,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_agi_cognitive.py  # Python modülü/scripti (agi cognitive için otomatik test modülü)
 │   ├── test_architecture_integrity.py  # Python modülü/scripti (architecture integrity için otomatik test modülü)
 │   ├── test_build_max_closure_handoff.py  # Python modülü/scripti (build max closure handoff için otomatik test modülü)
+│   ├── test_chess_5080_onefile.py  # Python modülü/scripti (chess 5080 onefile için otomatik test modülü)
 │   ├── test_cognitive_extensions.py  # Python modülü/scripti (cognitive extensions için otomatik test modülü)
 │   ├── test_comprehensive.py  # Python modülü/scripti (comprehensive için otomatik test modülü)
 │   ├── test_continual_adapter.py  # Python modülü/scripti (continual adapter için otomatik test modülü)
@@ -2101,6 +2110,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_dispatcher_extended.py  # Python modülü/scripti (dispatcher extended için otomatik test modülü)
 │   ├── test_drone_sitl_demo.py  # Python modülü/scripti (drone sitl demo için otomatik test modülü)
 │   ├── test_eval_suites.py  # Python modülü/scripti (eval suites için otomatik test modülü)
+│   ├── test_export_chess_5080_share.py  # Python modülü/scripti (export chess 5080 share için otomatik test modülü)
 │   ├── test_export_metadata.py  # Python modülü/scripti (export metadata için otomatik test modülü)
 │   ├── test_final_orchestrator_cli.py  # Python modülü/scripti (final orchestrator cli için otomatik test modülü)
 │   ├── test_kaggle_compare_script.py  # Python modülü/scripti (kaggle compare script için otomatik test modülü)
@@ -2121,6 +2131,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_onnx_metadata_hook.py  # Python modülü/scripti (onnx metadata hook için otomatik test modülü)
 │   ├── test_orchestrator_swarm_runtime.py  # Python modülü/scripti (orchestrator swarm runtime için otomatik test modülü)
 │   ├── test_post_train_autorun_cli.py  # Python modülü/scripti (post train autorun cli için otomatik test modülü)
+│   ├── test_scoped_external_tools.py  # Python modülü/scripti (scoped external tools için otomatik test modülü)
 │   ├── test_sdk_api.py  # Python modülü/scripti (sdk api için otomatik test modülü)
 │   ├── test_sdk_pilot_cli.py  # Python modülü/scripti (sdk pilot cli için otomatik test modülü)
 │   ├── test_titan_preflight_contract.py  # Python modülü/scripti (titan preflight contract için otomatik test modülü)
@@ -2162,6 +2173,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── AGENTS.md  # dokümantasyon/rapor dosyası
 ├── CHANGELOG.md  # dokümantasyon/rapor dosyası
 ├── CHANGELOG_TR.md  # Türkçe doküman karşılığı
+├── CHESS_5080_POC_INTERNAL.md  # dokümantasyon/rapor dosyası
+├── CHESS_5080_POC_INTERNAL_TR.md  # Türkçe doküman karşılığı
 ├── CITATION.cff  # atıf metaverisi
 ├── CONTRIBUTING.md  # dokümantasyon/rapor dosyası
 ├── CONTRIBUTING_TR.md  # Türkçe doküman karşılığı
@@ -2180,6 +2193,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── MODEL_CARD_TR.md  # Türkçe doküman karşılığı
 ├── MODEL_LICENSE.md  # dokümantasyon/rapor dosyası
 ├── MODEL_LICENSE_TR.md  # Türkçe doküman karşılığı
+├── OFFLINE_4060_DEMO.md  # dokümantasyon/rapor dosyası
 ├── PITCH.md  # dokümantasyon/rapor dosyası
 ├── PITCH_TR.md  # Türkçe doküman karşılığı
 ├── README.md  # ana dokümantasyon (EN)

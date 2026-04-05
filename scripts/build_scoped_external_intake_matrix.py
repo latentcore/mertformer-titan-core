@@ -40,6 +40,24 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def sanitize_path(path: Path) -> str:
+    resolved = path.resolve()
+    root_resolved = ROOT.resolve()
+    home_resolved = HOME.resolve()
+    resolved_str = str(resolved)
+    root_str = str(root_resolved)
+    home_str = str(home_resolved)
+    if resolved_str == root_str:
+        return "<REPO_ROOT>"
+    if resolved_str.startswith(root_str + "/"):
+        return resolved_str.replace(root_str, "<REPO_ROOT>", 1)
+    if resolved_str == home_str:
+        return "<HOME>"
+    if resolved_str.startswith(home_str + "/"):
+        return resolved_str.replace(home_str, "<HOME>", 1)
+    return resolved_str
+
+
 def classify(path: Path, duplicate_rank: int) -> str:
     name = path.name.lower()
     if path.is_dir():
@@ -80,7 +98,7 @@ def collect_entries() -> List[Dict[str, object]]:
                 duplicate_rank = len(zip_hash_groups[sha])
         entries.append(
             {
-                "path": str(path),
+                "path": sanitize_path(path),
                 "kind": "dir" if path.is_dir() else "file",
                 "exists": True,
                 "size_bytes": size,
@@ -106,7 +124,7 @@ def main() -> int:
     entries = collect_entries()
     payload = {
         "scope": "Desktop/Documents/Downloads/Applications project-related artifacts only",
-        "repo_root": str(ROOT),
+        "repo_root": sanitize_path(ROOT),
         "entry_count": len(entries),
         "entries": entries,
     }

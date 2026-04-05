@@ -7,6 +7,7 @@ import shutil
 from pathlib import Path
 from typing import Dict, List
 
+HOME = Path.home()
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_REPORT = ROOT / "reports" / "cleanup_scoped_closure_junk_report.json"
 DEFAULT_INTAKE = ROOT / "reports" / "scoped_external_intake_matrix.json"
@@ -23,12 +24,42 @@ def delete_path(path: Path) -> None:
         path.unlink(missing_ok=True)
 
 
+def sanitize_path(path: Path) -> str:
+    resolved = path.resolve()
+    root_resolved = ROOT.resolve()
+    home_resolved = HOME.resolve()
+    resolved_str = str(resolved)
+    root_str = str(root_resolved)
+    home_str = str(home_resolved)
+    if resolved_str == root_str:
+        return "<REPO_ROOT>"
+    if resolved_str.startswith(root_str + "/"):
+        return resolved_str.replace(root_str, "<REPO_ROOT>", 1)
+    if resolved_str == home_str:
+        return "<HOME>"
+    if resolved_str.startswith(home_str + "/"):
+        return resolved_str.replace(home_str, "<HOME>", 1)
+    return resolved_str
+
+
+def resolve_sanitized_path(path_str: str) -> Path:
+    if path_str == "<REPO_ROOT>":
+        return ROOT
+    if path_str.startswith("<REPO_ROOT>/"):
+        return ROOT / path_str.removeprefix("<REPO_ROOT>/")
+    if path_str == "<HOME>":
+        return HOME
+    if path_str.startswith("<HOME>/"):
+        return HOME / path_str.removeprefix("<HOME>/")
+    return Path(path_str)
+
+
 def collect_roots(intake_path: Path) -> List[Path]:
     roots = [ROOT]
     if intake_path.exists():
         payload = json.loads(intake_path.read_text(encoding="utf-8"))
         for entry in payload.get("entries", []):
-            path = Path(str(entry.get("path", "")))
+            path = resolve_sanitized_path(str(entry.get("path", "")))
             if path.exists() and path.is_dir():
                 roots.append(path)
     deduped = []
@@ -72,7 +103,7 @@ def main() -> int:
         for entry in payload.get("entries", []):
             if entry.get("disposition") != "delete_as_stale_generated":
                 continue
-            path = Path(str(entry.get("path", "")))
+            path = resolve_sanitized_path(str(entry.get("path", "")))
             if path.exists() and path.is_file():
                 found.append(str(path))
                 if args.apply:
@@ -81,13 +112,13 @@ def main() -> int:
                     stale_deleted.append(str(path))
 
     report = {
-        "roots": [str(path) for path in roots],
+        "roots": [sanitize_path(path) for path in roots],
         "found_count": len(found),
         "removed_count": len(removed),
         "stale_deleted_count": len(stale_deleted),
-        "found": found,
-        "removed": removed,
-        "stale_deleted": stale_deleted,
+        "found": [sanitize_path(Path(path)) for path in found],
+        "removed": [sanitize_path(Path(path)) for path in removed],
+        "stale_deleted": [sanitize_path(Path(path)) for path in stale_deleted],
     }
     report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps({"report": str(report_path), "found": len(found), "removed": len(removed)}, indent=2))

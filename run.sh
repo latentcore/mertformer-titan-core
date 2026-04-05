@@ -18,6 +18,7 @@ RUN_CLEANROOM=false
 RUN_TRAIN_READY=false
 RUN_OFFLINE_4060_DEMO=false
 RUN_CHESS_5080_POC=false
+RUN_CHESS_5080_DELIVERY_EXPORT=false
 
 case "${1:-}" in
     --test|--verify)
@@ -43,6 +44,10 @@ case "${1:-}" in
     --chess-5080-poc)
         RUN_CHESS_5080_POC=true
         echo "♟️ RTX 5080 CHESS POC MODE ACTIVE"
+        ;;
+    --chess-5080-delivery-export)
+        RUN_CHESS_5080_DELIVERY_EXPORT=true
+        echo "📦 RTX 5080 CHESS DELIVERY EXPORT MODE ACTIVE"
         ;;
 esac
 
@@ -166,6 +171,12 @@ if [[ "$RUN_CHESS_5080_POC" == true ]]; then
     echo "♟️ Launching standalone RTX 5080 chess proof lane..."
     mkdir -p logs
     exec "$PYTHON_BIN" scripts/chess_5080_onefile.py
+fi
+
+if [[ "$RUN_CHESS_5080_DELIVERY_EXPORT" == true ]]; then
+    echo "📦 Exporting Windows RTX 5080 delivery build workspace..."
+    mkdir -p logs
+    exec "$PYTHON_BIN" scripts/export_chess_5080_share.py
 fi
 
 # Fast path: deterministic SITL proof flow (offline, no training start).
