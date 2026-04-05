@@ -5,7 +5,7 @@ MertFormer Chess RTX 5080 Onefile
 Single-file Windows-friendly chess proof lane for a single RTX 5080 desktop.
 
 Goals:
-- one-click PyCharm execution after dependencies are present
+- single-command PyCharm execution once dependencies are installed
 - optional first-run dependency bootstrap with explicit operator opt-in
 - deterministic multi-archive Lichess partial ingestion on the target machine
 - legal-move-safe chess model training and evidence packaging
@@ -57,6 +57,7 @@ DEFAULT_ALLOW_INSTALL_ENV = "MERTFORMER_CHESS_ALLOW_INSTALL"
 DEFAULT_SKIP_BOOTSTRAP_ENV = "MERTFORMER_CHESS_SKIP_BOOTSTRAP"
 DEFAULT_SHARE_MODE_ENV = "MERTFORMER_CHESS_SHARE_MODE"
 DEFAULT_SELF_DELETE_ENV = "MERTFORMER_CHESS_SELF_DELETE"
+DEFAULT_SELF_DELETE_TARGET_ENV = "MERTFORMER_CHESS_SELF_DELETE_TARGET"
 DEFAULT_TEST_MODE_ENV = "MERTFORMER_CHESS_TEST_MODE"
 DEFAULT_TORCH_INDEX_ENV = "MERTFORMER_CHESS_TORCH_INDEX_URL"
 DEFAULT_ARCHIVE_PASSWORD_ENV = "MERTFORMER_CHESS_ARCHIVE_PASSWORD"
@@ -142,6 +143,7 @@ RUN_CONFIG: Dict[str, Any] = {
     "allow_install": False,
     "share_mode": False,
     "enable_self_delete": False,
+    "self_delete_target": "",
     "determinism_strict": True,
     "auto_download_enabled": True,
     "offline_seed_only": False,
@@ -682,6 +684,7 @@ def env_snapshot(cfg: Dict[str, Any]) -> Dict[str, Any]:
         "driver_version": get_nvidia_driver_version(),
         "share_mode": bool(cfg.get("share_mode", False)),
         "allow_install": bool(cfg.get("allow_install", False)),
+        "self_delete_target_configured": bool(str(cfg.get("self_delete_target", "")).strip()),
         "determinism_strict": bool(cfg.get("determinism_strict", True)),
         "cudnn_deterministic": bool(getattr(torch.backends.cudnn, "deterministic", False)) if hasattr(torch.backends, "cudnn") else False,
         "cudnn_benchmark": bool(getattr(torch.backends.cudnn, "benchmark", False)) if hasattr(torch.backends, "cudnn") else False,
@@ -763,6 +766,8 @@ def resolve_runtime_config(args: argparse.Namespace, base_cfg: Optional[Dict[str
         cfg["stockfish_path"] = args.stockfish_path
     if getattr(args, "resume_from", None):
         cfg["resume_from"] = args.resume_from
+    if getattr(args, "self_delete_target", None):
+        cfg["self_delete_target"] = args.self_delete_target
     if getattr(args, "max_steps", None) is not None:
         cfg["max_steps"] = int(args.max_steps)
     if getattr(args, "max_wall_hours", None) is not None:
@@ -788,6 +793,9 @@ def resolve_runtime_config(args: argparse.Namespace, base_cfg: Optional[Dict[str
         cfg["share_mode"] = True
     if getattr(args, "enable_self_delete", False) or os.environ.get(DEFAULT_SELF_DELETE_ENV, "0") == "1":
         cfg["enable_self_delete"] = True
+    env_self_delete_target = os.environ.get(DEFAULT_SELF_DELETE_TARGET_ENV, "").strip()
+    if env_self_delete_target:
+        cfg["self_delete_target"] = env_self_delete_target
     if os.environ.get(DEFAULT_ENCRYPT_OUTPUT_ENV, "0") == "1":
         cfg["encrypt_output"] = True
     if os.environ.get(DEFAULT_ENCRYPTION_REQUIRED_ENV, "0") == "1":
@@ -800,6 +808,7 @@ def resolve_runtime_config(args: argparse.Namespace, base_cfg: Optional[Dict[str
     cfg["artifact_root"] = str(Path(str(cfg["artifact_root"])).expanduser())
     cfg["cache_root"] = str(Path(str(cfg["cache_root"])).expanduser())
     cfg["resume_from"] = str(Path(str(cfg.get("resume_from", ""))).expanduser()) if str(cfg.get("resume_from", "")) else ""
+    cfg["self_delete_target"] = str(Path(str(cfg.get("self_delete_target", ""))).expanduser()) if str(cfg.get("self_delete_target", "")) else ""
 
     if str(cfg.get("device", "auto")) == "auto":
         if torch.cuda.is_available():
@@ -867,6 +876,13 @@ def validate_runtime_config(cfg: Dict[str, Any]) -> None:
         raise ConfigValidationError("learning_rate must be > 0")
     if bool(cfg.get("enable_self_delete", False)) and not bool(cfg.get("share_mode", False)):
         raise ConfigValidationError("enable_self_delete requires share_mode")
+    if bool(cfg.get("enable_self_delete", False)):
+        target_value = str(cfg.get("self_delete_target", "")).strip()
+        if not target_value:
+            raise ConfigValidationError("enable_self_delete requires self_delete_target")
+        target_path = Path(target_value).expanduser().resolve()
+        if target_path == Path(__file__).resolve():
+            raise ConfigValidationError("self_delete_target must not point to the canonical repo script")
     if bool(cfg.get("cleanup_after_bundle", False)) and not bool(cfg.get("zip_outputs", True)):
         raise ConfigValidationError("cleanup_after_bundle requires zip_outputs=True")
     if str(cfg["mode"]) in {"resume", "benchmark", "package"} and not str(cfg.get("resume_from", "")).strip():
@@ -1946,6 +1962,15 @@ def compute_loss(
     batch: Dict[str, torch.Tensor],
     cfg: Dict[str, Any],
 ) -> Tuple[torch.Tensor, Dict[str, Any], Dict[str, Any]]:
+    loss, metrics, router_reports, _, _ = forward_batch_metrics(model, batch, cfg)
+    return loss, metrics, router_reports
+
+
+def forward_batch_metrics(
+    model: ChessPolicyValueNet,
+    batch: Dict[str, torch.Tensor],
+    cfg: Dict[str, Any],
+) -> Tuple[torch.Tensor, Dict[str, Any], Dict[str, Any], torch.Tensor, torch.Tensor]:
     logits, value_pred, aux_loss, router_reports = model(batch["piece_ids"], batch["meta_ids"])
     masked_logits = logits.masked_fill(~batch["legal_mask"], -1e9)
     policy_loss = F.cross_entropy(masked_logits, batch["move_targets"])
@@ -1960,12 +1985,19 @@ def compute_loss(
         "aux_loss": float(aux_loss.detach().item()),
         **compute_prediction_metrics(logits.detach(), masked_logits.detach(), batch["legal_mask"], batch["move_targets"]),
     }
-    return loss, metrics, router_reports
+    return loss, metrics, router_reports, logits, masked_logits
 
 
 def merge_metric_sums(sums: Dict[str, float], metrics: Dict[str, float]) -> None:
     for key, value in metrics.items():
         sums[key] = sums.get(key, 0.0) + float(value)
+
+
+def merge_metric_sums_weighted(sums: Dict[str, float], metrics: Dict[str, float], weight: int) -> None:
+    if weight <= 0:
+        return
+    for key, value in metrics.items():
+        sums[key] = sums.get(key, 0.0) + float(value) * float(weight)
 
 
 def summarize_metric_sums(sums: Dict[str, float], count: int) -> Dict[str, float]:
@@ -1993,29 +2025,29 @@ def evaluate_model(
         if max_batches > 0 and batch_idx >= max_batches:
             break
         batch = batch_to_device(batch, device)
-        _, metrics, router_reports = compute_loss(model, batch, cfg)
-        merge_metric_sums(sums, metrics)
+        _, metrics, router_reports, logits, masked_logits = forward_batch_metrics(model, batch, cfg)
+        batch_examples = int(batch["piece_ids"].size(0))
+        merge_metric_sums_weighted(sums, metrics, batch_examples)
         batch_count += 1
-        example_count += int(batch["piece_ids"].size(0))
+        example_count += batch_examples
         for router_stats in router_reports.values():
             if "router_entropy" in router_stats:
                 router_entropy_values.append(float(router_stats["router_entropy"]))
-        logits, value_pred, aux_loss, _ = model(batch["piece_ids"], batch["meta_ids"])
-        masked_logits = logits.masked_fill(~batch["legal_mask"], -1e9)
         for phase_value in (0, 1, 2):
             phase_mask = batch["phases"] == phase_value
             if not bool(phase_mask.any()):
                 continue
             phase_name = PHASE_NAMES[int(phase_value)]
-            phase_counts[phase_name] += int(phase_mask.sum().item())
+            phase_examples = int(phase_mask.sum().item())
+            phase_counts[phase_name] += phase_examples
             phase_logits = logits[phase_mask]
             phase_masked = masked_logits[phase_mask]
             phase_legal = batch["legal_mask"][phase_mask]
             phase_targets = batch["move_targets"][phase_mask]
             phase_metrics = compute_prediction_metrics(phase_logits, phase_masked, phase_legal, phase_targets)
-            merge_metric_sums(phase_sums[phase_name], phase_metrics)
+            merge_metric_sums_weighted(phase_sums[phase_name], phase_metrics, phase_examples)
     model.train()
-    overall = summarize_metric_sums(sums, batch_count)
+    overall = summarize_metric_sums(sums, example_count)
     per_phase = {phase_name: summarize_metric_sums(metrics, max(1, phase_counts[phase_name])) for phase_name, metrics in phase_sums.items()}
     return {
         "batches_evaluated": batch_count,
@@ -2845,6 +2877,8 @@ def generate_demo_replay(model: ChessPolicyValueNet, cfg: Dict[str, Any], device
 def determine_statuses(cfg: Dict[str, Any], benchmark_report: Dict[str, Any]) -> Tuple[ExecutionStatus, EvaluationStatus, RatingClaimStatus]:
     execution_status = ExecutionStatus.RAN
     evaluation_status = EvaluationStatus.INTERNALLY_MEASURED
+    if str(cfg.get("mode", "")) == "verify":
+        return execution_status, EvaluationStatus.UNEVALUATED, RatingClaimStatus.NO_CLAIM
     if bool(cfg.get("test_mode", False)) or bool(cfg.get("offline_seed_only", False)):
         return execution_status, evaluation_status, RatingClaimStatus.NO_CLAIM
     if benchmark_report.get("status") != "completed":
@@ -2906,6 +2940,7 @@ def build_eval_card(
 
 
 def render_run_summary_md(payload: Dict[str, Any]) -> str:
+    verify_mode = str(payload["config"].get("mode", "")) == "verify"
     lines = [
         "# MertFormer Chess Run Summary",
         "",
@@ -2919,22 +2954,39 @@ def render_run_summary_md(payload: Dict[str, Any]) -> str:
         f"- Proxy threshold target: `{payload['rating_target_proxy_threshold']}`",
         "",
         "## What This Proves",
-        "- The onefile can ingest bounded Lichess data, build a legal-move-safe supervised chess dataset, train a policy/value model, and package measurable artifacts.",
-        "- Holdout metrics, legality metrics, and optional internal Stockfish gauntlet results were generated from this run.",
+        "- The onefile can ingest bounded Lichess data, build a legal-move-safe supervised chess dataset, and package measurable artifacts.",
         "",
         "## What This Does Not Prove",
         "- This run does not prove frontier general-purpose LLM capability.",
         "- Replay/demo output is not strength proof.",
         "- Any `elo_proxy_internal` value is a proxy, not an externally verified rating.",
-        "",
-        "## Key Metrics",
-        f"- Validation masked policy accuracy: `{payload['holdout_validation']['metrics'].get('masked_policy_accuracy', 0.0):.4f}`",
-        f"- Locked test masked policy accuracy: `{payload['locked_test']['metrics'].get('masked_policy_accuracy', 0.0):.4f}`",
-        f"- Raw top-1 legality: `{payload['legality_report'].get('raw_top1_is_legal_rate', 0.0):.4f}`",
-        f"- Raw top-k contains legal: `{payload['legality_report'].get('raw_topk_contains_legal_rate', 0.0):.4f}`",
     ]
+    if verify_mode:
+        lines.extend(
+            [
+                "",
+                "## Verify Scope",
+                "- Verify mode is runtime-only: holdout evaluation, legality scoring, replay, and Stockfish benchmarking are intentionally skipped.",
+                f"- Forward verify status: `{payload['forward_verify'].get('status', 'unknown')}`",
+                f"- Forward verify batch size checked: `{payload['forward_verify'].get('checked', 0)}`",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                "- Holdout metrics, legality metrics, and optional internal Stockfish gauntlet results were generated from this run.",
+                "",
+                "## Key Metrics",
+                f"- Validation masked policy accuracy: `{payload['holdout_validation']['metrics'].get('masked_policy_accuracy', 0.0):.4f}`",
+                f"- Locked test masked policy accuracy: `{payload['locked_test']['metrics'].get('masked_policy_accuracy', 0.0):.4f}`",
+                f"- Raw top-1 legality: `{payload['legality_report'].get('raw_top1_is_legal_rate', 0.0):.4f}`",
+                f"- Raw top-k contains legal: `{payload['legality_report'].get('raw_topk_contains_legal_rate', 0.0):.4f}`",
+            ]
+        )
     benchmark = payload.get("stockfish", {})
-    if benchmark.get("status") == "completed":
+    if verify_mode:
+        lines.append("- Internal gauntlet: `not_run (verify mode)`")
+    elif benchmark.get("status") == "completed":
         lines.extend(
             [
                 f"- Internal gauntlet games: `{benchmark.get('games_total', 0)}`",
@@ -2983,6 +3035,8 @@ def render_repro_md(cfg: Dict[str, Any], layout: ArtifactLayout) -> str:
         cmd.append("--share-mode")
     if bool(cfg.get("enable_self_delete", False)):
         cmd.append("--enable-self-delete")
+    if str(cfg.get("self_delete_target", "")).strip():
+        cmd.extend(["--self-delete-target", str(cfg["self_delete_target"])])
     return textwrap.dedent(
         f"""
         # Repro Instructions
@@ -2997,7 +3051,7 @@ def render_repro_md(cfg: Dict[str, Any], layout: ArtifactLayout) -> str:
         - `{layout.run_dir}`
 
         Notes:
-        - This onefile defaults to proof-safe behavior: no self-delete unless explicitly enabled.
+        - This onefile defaults to proof-safe behavior: no self-delete unless explicitly enabled and bound to an explicit shared-copy target.
         - Rating outputs are internal proxies unless externally verified.
         """
     ).strip() + "\n"
@@ -3155,6 +3209,42 @@ def cleanup_after_bundle_if_needed(cfg: Dict[str, Any], layout: ArtifactLayout, 
             logger.write("bundle_cleanup", {"status": "failed", "path": str(layout.run_dir), "error": str(exc)})
 
 
+def not_run_evaluation(reason: str) -> Dict[str, Any]:
+    return {
+        "status": "not_run",
+        "reason": reason,
+        "batches_evaluated": 0,
+        "examples_evaluated": 0,
+        "metrics": {},
+        "per_phase": {},
+        "router_entropy_mean": 0.0,
+    }
+
+
+def not_run_legality_report(reason: str) -> Dict[str, Any]:
+    return {
+        "status": "not_run",
+        "reason": reason,
+        "checked_examples": 0,
+        "raw_top1_is_legal_rate": 0.0,
+        "raw_topk_contains_legal_rate": 0.0,
+        "masked_policy_accuracy": 0.0,
+        "per_phase": {},
+        "example_rows": [],
+        "note": "Legality scoring is skipped in verify mode because verify is runtime-only.",
+    }
+
+
+def not_run_demo_replay(reason: str) -> Dict[str, Any]:
+    return {
+        "status": "not_run",
+        "reason": reason,
+        "demonstration_only": True,
+        "note": "Replay is skipped in verify mode because verify is runtime-only.",
+        "games": [],
+    }
+
+
 def schedule_self_delete_if_needed(cfg: Dict[str, Any], success: bool, final_zip: Optional[Path]) -> None:
     if not success:
         return
@@ -3162,16 +3252,24 @@ def schedule_self_delete_if_needed(cfg: Dict[str, Any], success: bool, final_zip
     enable_self_delete = bool(cfg.get("enable_self_delete", False)) or os.environ.get(DEFAULT_SELF_DELETE_ENV, "0") == "1"
     if not share_mode or not enable_self_delete:
         return
+    target_value = str(cfg.get("self_delete_target", "")).strip() or os.environ.get(DEFAULT_SELF_DELETE_TARGET_ENV, "").strip()
+    if not target_value:
+        return
     script_path = Path(__file__).resolve()
-    if script_path.suffix.lower() not in {".py", ".pyw"}:
+    target_path = Path(target_value).expanduser().resolve()
+    if target_path == script_path:
+        return
+    if target_path.suffix.lower() not in {".py", ".pyw"}:
+        return
+    if not target_path.exists():
         return
     if platform.system() == "Windows":
-        cmd_path = script_path.with_suffix(".cleanup.cmd")
+        cmd_path = target_path.with_suffix(".cleanup.cmd")
         cmd_path.write_text(
             "@echo off\n"
             "setlocal\n"
             "ping 127.0.0.1 -n 3 > nul\n"
-            f"del /f /q \"{script_path}\" > nul 2>&1\n"
+            f"del /f /q \"{target_path}\" > nul 2>&1\n"
             f"del /f /q \"{cmd_path}\" > nul 2>&1\n",
             encoding="utf-8",
         )
@@ -3179,7 +3277,7 @@ def schedule_self_delete_if_needed(cfg: Dict[str, Any], success: bool, final_zip
     else:  # pragma: no cover - share mode primarily targets Windows
         zip_label = final_zip.name if final_zip is not None else "artifact.zip"
         subprocess.Popen(
-            ["bash", "-lc", f"sleep 2; rm -f '{script_path}' >/dev/null 2>&1 # {zip_label}"],
+            ["bash", "-lc", f"sleep 2; rm -f '{target_path}' >/dev/null 2>&1 # {zip_label}"],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
@@ -3317,7 +3415,7 @@ def run_pipeline(
 
     if not train_examples:
         raise DatasetEmptyError("Training split is empty after game-level split")
-    if not val_examples:
+    if cfg["mode"] != "verify" and not val_examples:
         raise DatasetEmptyError("Validation split is empty after game-level split")
 
     forward_verify = verify_forward_pass(model, train_examples, device)
@@ -3352,25 +3450,47 @@ def run_pipeline(
         best_ckpt = resume_path
         logger.write("benchmark_checkpoint_loaded", {"checkpoint": str(resume_path), "step": resume_state.step})
     elif cfg["mode"] == "verify":
-        training_summary = {"steps_completed": 0, "best_val_loss": None, "verify_only": True}
+        verify_checkpoint = ""
+        if str(cfg.get("resume_from", "")).strip():
+            resume_path = Path(str(cfg["resume_from"]))
+            resume_state = load_checkpoint(resume_path, model, optimizer=None, restore_optimizer=False)
+            latest_ckpt = resume_path
+            best_ckpt = resume_path
+            verify_checkpoint = str(resume_path)
+            logger.write("verify_checkpoint_loaded", {"checkpoint": str(resume_path), "step": resume_state.step})
+        training_summary = {
+            "steps_completed": 0,
+            "best_val_loss": None,
+            "verify_only": True,
+            "verify_scope": "runtime_pipeline_only",
+            "verify_checkpoint": verify_checkpoint,
+        }
     else:
         raise ConfigValidationError(f"Unhandled mode: {cfg['mode']}")
 
-    if best_ckpt.exists():
+    if cfg["mode"] != "verify" and best_ckpt.exists():
         load_checkpoint(best_ckpt, model, optimizer=None, restore_optimizer=False)
         logger.write("best_checkpoint_reloaded", {"checkpoint": str(best_ckpt)})
 
-    val_loader = make_loader(val_examples, batch_size=int(cfg["eval_batch_size"]), shuffle=False, num_workers=0, seed=int(cfg["seed"]) + 123)
-    test_loader = make_loader(test_examples if test_examples else val_examples, batch_size=int(cfg["eval_batch_size"]), shuffle=False, num_workers=0, seed=int(cfg["seed"]) + 124)
-    holdout_validation = evaluate_model(model, val_loader, device, cfg, max_batches=0)
-    locked_test = evaluate_model(model, test_loader, device, cfg, max_batches=0)
-    legality_report = run_legality_report(model, val_examples, device, cfg)
-    demo_replay = generate_demo_replay(model, cfg, device)
+    if cfg["mode"] == "verify":
+        holdout_validation = not_run_evaluation("verify_mode_runtime_only")
+        locked_test = not_run_evaluation("verify_mode_runtime_only")
+        legality_report = not_run_legality_report("verify_mode_runtime_only")
+        demo_replay = not_run_demo_replay("verify_mode_runtime_only")
+    else:
+        val_loader = make_loader(val_examples, batch_size=int(cfg["eval_batch_size"]), shuffle=False, num_workers=0, seed=int(cfg["seed"]) + 123)
+        test_loader = make_loader(test_examples if test_examples else val_examples, batch_size=int(cfg["eval_batch_size"]), shuffle=False, num_workers=0, seed=int(cfg["seed"]) + 124)
+        holdout_validation = evaluate_model(model, val_loader, device, cfg, max_batches=0)
+        locked_test = evaluate_model(model, test_loader, device, cfg, max_batches=0)
+        legality_report = run_legality_report(model, val_examples, device, cfg)
+        demo_replay = generate_demo_replay(model, cfg, device)
     atomic_json(layout.reports_dir / "model_replay.json", demo_replay)
 
     benchmark_protocol = build_benchmark_protocol(cfg, detect_stockfish_path(cfg))
     stockfish_report = {"status": "not_run", "reason": "mode_disabled"}
-    if cfg["mode"] in {"train", "resume", "benchmark"}:
+    if cfg["mode"] == "verify":
+        stockfish_report = {"status": "not_run", "reason": "verify_mode_runtime_only"}
+    elif cfg["mode"] in {"train", "resume", "benchmark"}:
         stockfish_report = play_stockfish_gauntlet(model, cfg, device, layout, logger)
     atomic_json(layout.reports_dir / "stockfish_match_report.json", stockfish_report)
 
@@ -3413,8 +3533,16 @@ def run_pipeline(
         "notes": {
             "replay_is_demo_only": True,
             "internal_proxy_only": True,
-            "what_this_proves": "Single-machine bounded chess data ingestion, supervised training, legality-safe inference, and artifact packaging.",
-            "what_this_does_not_prove": "External rating verification or frontier general-purpose LLM capability.",
+            "what_this_proves": (
+                "Verify mode proves runtime/data-pipeline integrity and artifact packaging."
+                if cfg["mode"] == "verify"
+                else "Single-machine bounded chess data ingestion, supervised training, legality-safe inference, and artifact packaging."
+            ),
+            "what_this_does_not_prove": (
+                "Verify mode does not provide holdout strength metrics, legality scoring, replay evidence, or rating evidence."
+                if cfg["mode"] == "verify"
+                else "External rating verification or frontier general-purpose LLM capability."
+            ),
         },
     }
 
@@ -3445,13 +3573,14 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--mode", default=RUN_CONFIG["mode"], choices=["train", "verify", "benchmark", "package", "resume"])
     parser.add_argument("--profile", default=RUN_CONFIG["profile"], choices=list(RUN_PROFILES.keys()))
     parser.add_argument("--baseline", default=RUN_CONFIG["baseline"], choices=["dense", "moe", "moe_adapter"])
-    parser.add_argument("--resume-from", help="Load a checkpoint for resume/benchmark/package modes.")
+    parser.add_argument("--resume-from", help="Load a checkpoint for resume/benchmark/package modes. Verify mode can optionally load one for runtime-only verification.")
     parser.add_argument("--artifact-root", help="Override artifact root.")
     parser.add_argument("--stockfish-path", help="Optional Stockfish executable override.")
     parser.add_argument("--no-download", action="store_true", help="Do not attempt network download; use cache or fail.")
     parser.add_argument("--allow-install", action="store_true", help="Allow runtime dependency installation if packages are missing.")
     parser.add_argument("--share-mode", action="store_true", help="Enable share-facing behavior. Self-delete remains opt-in.")
-    parser.add_argument("--enable-self-delete", action="store_true", help="Delete only the shared script copy after success. Requires share mode.")
+    parser.add_argument("--enable-self-delete", action="store_true", help="Delete only an explicit shared script copy after success. Requires share mode and --self-delete-target.")
+    parser.add_argument("--self-delete-target", help="Explicit shared script-copy path eligible for opt-in self-delete.")
     parser.add_argument("--offline-seed-only", action="store_true", help="Skip network and use embedded seed PGN only.")
     parser.add_argument("--test-mode", action="store_true", help="Force tiny embedded-seed smoke mode.")
     parser.add_argument("--max-steps", type=int)

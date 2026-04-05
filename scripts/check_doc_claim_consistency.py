@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import argparse
+import json
+import os
 import re
 from pathlib import Path
 
@@ -21,6 +23,8 @@ SECURITY_TR = ROOT / "SECURITY_TR.md"
 MODEL_CARD_EN = ROOT / "MODEL_CARD.md"
 MODEL_CARD_TR = ROOT / "MODEL_CARD_TR.md"
 SYSTEM_PROMPT = ROOT / "prompts/system_v1.txt"
+SOP_SUMMARY = ROOT / "reports" / "one_command_full_sop_summary.md"
+START_GATE_REPORT = ROOT / "reports" / "start_gate_report.json"
 
 TEST_STAT_RE = re.compile(r"(\d+\s+passed,\s*\d+\s+skipped)")
 
@@ -57,10 +61,34 @@ def iter_public_markdown() -> list[Path]:
     return sorted(files)
 
 
+def detect_expected_test_stat() -> str:
+    env_override = os.environ.get("MERTFORMER_EXPECTED_TEST_STAT", "").strip()
+    if env_override:
+        return env_override
+    for path in (SOP_SUMMARY,):
+        if not path.exists():
+            continue
+        match = TEST_STAT_RE.search(read_text(path))
+        if match:
+            return match.group(1)
+    if START_GATE_REPORT.exists():
+        try:
+            payload = json.loads(read_text(START_GATE_REPORT))
+            for step in payload.get("steps", []):
+                tail = str(step.get("stdout_tail", ""))
+                match = TEST_STAT_RE.search(tail)
+                if match:
+                    return match.group(1)
+        except Exception:
+            pass
+    raise RuntimeError("Could not detect the expected pytest pass/skipped stat from current closure artifacts.")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check documentation claim/evidence consistency.")
-    parser.add_argument("--expected-test-stat", default="122 passed, 3 skipped")
+    parser.add_argument("--expected-test-stat", default="auto")
     args = parser.parse_args()
+    expected_test_stat = detect_expected_test_stat() if args.expected_test_stat == "auto" else args.expected_test_stat
 
     errors: list[str] = []
 
@@ -124,9 +152,9 @@ def main() -> int:
 
     if len(found_stats) > 1:
         errors.append(f"inconsistent test stats across docs: {sorted(found_stats)}")
-    if args.expected_test_stat not in found_stats:
+    if expected_test_stat not in found_stats:
         errors.append(
-            f"expected stat '{args.expected_test_stat}' not found in docs (found: {sorted(found_stats)})"
+            f"expected stat '{expected_test_stat}' not found in docs (found: {sorted(found_stats)})"
         )
 
     pointer_marker_en = "Turkish counterparts for audits are pointer files"

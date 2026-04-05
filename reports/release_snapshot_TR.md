@@ -4,8 +4,8 @@ Bu dosya, repo'nun inceleme anındaki durumunu (point-in-time) insan-okur bir fo
 
 ## Snapshot
 
-- Tarih (yerel): 2026-03-04
-- Base Git SHA (kısa): `6f41827`
+- Snapshot tazeliği: en güncel closure koşu aralığı için `reports/one_command_full_sop_summary.md` dosyasına bakın.
+- Güncel Git SHA (lokal): bu çalışma ağacında `git rev-parse --short HEAD` çalıştırın.
 - Baseline Python: 3.11 (bkz: `repro/python_TR.md`)
 - Varsayılan mod: offline-first (`TITAN_OFFLINE=1`)
 
@@ -20,7 +20,7 @@ bash scripts/verify_all.sh
 
 Beklenen:
 - Secret scan: PASS
-- Pytest: PASS (`122 passed, 3 skipped`)
+- Pytest: PASS (`139 passed, 3 skipped`)
 - Preflight (offline): PASS
 - Operator gate (safe, offline): PASS
 
@@ -50,7 +50,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 - `MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`
 - Locked artefakt durumu: `skipped (expected: AGE_RECIPIENT_FILE missing)`
 - SHA-256:
-  - `8bd48cd9443f150971b65bda22d1e9cdc3fc6af0ecde9770dd5ff6bf49c66064` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`)
+  - `088ffc8f62436d7b90088d217066abf381051a8666eb303a95c9e0424f088299` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`)
   - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`)
 
 ## Bilinen Gate / Blokerler

@@ -122,7 +122,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `122 passed, 3 skipped` |
+| `python3 -m pytest -q` | `139 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -135,7 +135,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`122 passed, 3 skipped`)
+   - `pytest` geçti (`139 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -2008,6 +2008,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── bitnet_kernel_benchmark_standalone.py  # Python modülü/scripti (bitnet kernel benchmark standalone için otomasyon scripti)
 │   ├── bootstrap_venv.sh  # kabuk otomasyon scripti
 │   ├── build_artifacts_release_zip.sh  # kabuk otomasyon scripti
+│   ├── build_chess_5080_windows_delivery.py  # Python modülü/scripti (build chess 5080 windows delivery için otomasyon scripti)
 │   ├── build_closure_governance_pack.py  # Python modülü/scripti (build closure governance pack için otomasyon scripti)
 │   ├── build_investor_deck.py  # Python modülü/scripti (build investor deck için otomasyon scripti)
 │   ├── build_master_closure_matrix.py  # Python modülü/scripti (build master closure matrix için otomasyon scripti)
@@ -2101,6 +2102,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_57_matrix_gate.py  # Python modülü/scripti (57 matrix gate için otomatik test modülü)
 │   ├── test_agi_cognitive.py  # Python modülü/scripti (agi cognitive için otomatik test modülü)
 │   ├── test_architecture_integrity.py  # Python modülü/scripti (architecture integrity için otomatik test modülü)
+│   ├── test_build_chess_5080_windows_delivery.py  # Python modülü/scripti (build chess 5080 windows delivery için otomatik test modülü)
 │   ├── test_build_max_closure_handoff.py  # Python modülü/scripti (build max closure handoff için otomatik test modülü)
 │   ├── test_chess_5080_onefile.py  # Python modülü/scripti (chess 5080 onefile için otomatik test modülü)
 │   ├── test_cognitive_extensions.py  # Python modülü/scripti (cognitive extensions için otomatik test modülü)

@@ -1,7 +1,7 @@
 {
-  "timestamp_utc": "2026-04-05T10:00:35.308042+00:00",
+  "timestamp_utc": "2026-04-05T12:49:05.877582+00:00",
   "stage": "baseline",
-  "cpu_percent": 16.1,
+  "cpu_percent": 11.7,
   "ram_total_gb": 16.0,
-  "ram_used_gb": 9.1407470703125
+  "ram_used_gb": 9.369888305664062
 }

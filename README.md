@@ -121,7 +121,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `122 passed, 3 skipped` |
+| `python3 -m pytest -q` | `139 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -134,7 +134,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`122 passed, 3 skipped`)
+   - `pytest` passed (`139 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -2012,6 +2012,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── bitnet_kernel_benchmark_standalone.py  # Python module/script (automation script for bitnet kernel benchmark standalone)
 │   ├── bootstrap_venv.sh  # shell automation script
 │   ├── build_artifacts_release_zip.sh  # shell automation script
+│   ├── build_chess_5080_windows_delivery.py  # Python module/script (automation script for build chess 5080 windows delivery)
 │   ├── build_closure_governance_pack.py  # Python module/script (automation script for build closure governance pack)
 │   ├── build_investor_deck.py  # Python module/script (automation script for build investor deck)
 │   ├── build_master_closure_matrix.py  # Python module/script (automation script for build master closure matrix)
@@ -2105,6 +2106,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_57_matrix_gate.py  # Python module/script (automated test module for 57 matrix gate)
 │   ├── test_agi_cognitive.py  # Python module/script (automated test module for agi cognitive)
 │   ├── test_architecture_integrity.py  # Python module/script (automated test module for architecture integrity)
+│   ├── test_build_chess_5080_windows_delivery.py  # Python module/script (automated test module for build chess 5080 windows delivery)
 │   ├── test_build_max_closure_handoff.py  # Python module/script (automated test module for build max closure handoff)
 │   ├── test_chess_5080_onefile.py  # Python module/script (automated test module for chess 5080 onefile)
 │   ├── test_cognitive_extensions.py  # Python module/script (automated test module for cognitive extensions)
