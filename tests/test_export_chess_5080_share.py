@@ -10,13 +10,13 @@ sys.path.insert(0, str(ROOT))
 import scripts.export_chess_5080_share as export_share
 
 
-def test_render_build_scripts_reference_password_env() -> None:
+def test_render_build_scripts_keep_builder_entrypoints_and_runtime_contract() -> None:
     bat = export_share.render_build_bat('builder.py')
     ps1 = export_share.render_build_ps1('builder.py')
-    assert 'MERTFORMER_CHESS_ARCHIVE_PASSWORD' in bat
     assert 'builder.py' in bat
-    assert 'MERTFORMER_CHESS_ARCHIVE_PASSWORD' in ps1
     assert 'builder.py' in ps1
+    assert 'MERTFORMER_CHESS_ARCHIVE_PASSWORD' not in bat
+    assert 'MERTFORMER_CHESS_ARCHIVE_PASSWORD' not in ps1
 
 
 def test_export_main_creates_bundle(monkeypatch, tmp_path: Path) -> None:
@@ -35,4 +35,12 @@ def test_export_main_creates_bundle(monkeypatch, tmp_path: Path) -> None:
     assert (target / 'build.py').exists()
     assert (target / 'build_windows_delivery.bat').exists()
     assert (target / 'build_windows_delivery.ps1').exists()
+    assert (target / 'RUN_FINAL_BUILD.ps1').exists()
+    assert (target / 'RUN_FINAL_BUILD.bat').exists()
+    assert 'RUN_FINAL_BUILD.ps1' in (target / 'README_BUILD.md').read_text(encoding='utf-8')
+    assert '--mode arena' in (target / 'README_BUILD.md').read_text(encoding='utf-8')
+    assert 'does not embed `MERTFORMER_CHESS_ARCHIVE_PASSWORD` into the compiled launcher' in (target / 'README_BUILD.md').read_text(encoding='utf-8')
+    assert 'logs/run_log.jsonl' in (target / 'README_BUILD.md').read_text(encoding='utf-8')
     assert manifest['files']
+    assert manifest['contract']['recommended_entrypoint'] == 'RUN_FINAL_BUILD.ps1'
+    assert manifest['contract']['observability']['main_run_log'] == 'logs/run_log.jsonl'

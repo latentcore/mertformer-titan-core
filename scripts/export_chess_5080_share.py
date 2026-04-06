@@ -34,10 +34,6 @@ def render_build_bat(builder_name: str) -> str:
         @echo off
         setlocal
         set ROOT=%~dp0
-        if "%MERTFORMER_CHESS_ARCHIVE_PASSWORD%"=="" (
-          echo [delivery] ERROR: set MERTFORMER_CHESS_ARCHIVE_PASSWORD before building.
-          exit /b 2
-        )
         if not exist "%ROOT%\\.delivery-build-venv\\Scripts\\python.exe" (
           py -3 -m venv "%ROOT%\\.delivery-build-venv" || exit /b 1
         )
@@ -52,9 +48,6 @@ def render_build_ps1(builder_name: str) -> str:
         f'''\
         $ErrorActionPreference = 'Stop'
         $root = Split-Path -Parent $MyInvocation.MyCommand.Path
-        if (-not $env:MERTFORMER_CHESS_ARCHIVE_PASSWORD) {{
-            throw 'Set MERTFORMER_CHESS_ARCHIVE_PASSWORD before building.'
-        }}
         $venvPython = Join-Path $root '.delivery-build-venv\\Scripts\\python.exe'
         if (-not (Test-Path $venvPython)) {{
             py -3 -m venv (Join-Path $root '.delivery-build-venv')
@@ -65,31 +58,139 @@ def render_build_ps1(builder_name: str) -> str:
     )
 
 
-def render_readme(source_name: str, builder_name: str) -> str:
+def render_run_final_ps1() -> str:
+    return textwrap.dedent(
+        """\
+        $ErrorActionPreference = 'Stop'
+        $ProgressPreference = 'Continue'
+
+        $deliveryRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+        Set-Location $deliveryRoot
+
+        $required = @(
+            'chess_5080_onefile.py',
+            'build_chess_5080_windows_delivery.py',
+            'build_windows_delivery.ps1',
+            'README_BUILD.md',
+            'delivery_manifest.json'
+        )
+
+        foreach ($item in $required) {
+            if (-not (Test-Path (Join-Path $deliveryRoot $item))) {
+                throw "Eksik dosya: $item"
+            }
+        }
+
+        Write-Host ''
+        Write-Host '=== MertFormer Chess 5080 Windows Delivery Build ===' -ForegroundColor Cyan
+        Write-Host "Workspace: $deliveryRoot" -ForegroundColor DarkGray
+        Write-Host 'Build basliyor...' -ForegroundColor Green
+        Write-Host ''
+
+        & (Join-Path $deliveryRoot 'build_windows_delivery.ps1')
+
+        $exePath = Join-Path $deliveryRoot 'external_delivery\\mertformer_chess_5080.exe'
+        if (-not (Test-Path $exePath)) {
+            throw 'EXE uretilmedi. internal_build altindaki build report dosyasini kontrol et.'
+        }
+
+        $exeInfo = Get-Item $exePath
+        $exeSizeMb = [math]::Round($exeInfo.Length / 1MB, 2)
+        $exeHash = (Get-FileHash $exePath -Algorithm SHA256).Hash
+
+        Write-Host ''
+        Write-Host '=== BUILD TAMAMLANDI ===' -ForegroundColor Green
+        Write-Host "EXE   : $exePath" -ForegroundColor White
+        Write-Host "BOYUT : $exeSizeMb MB" -ForegroundColor White
+        Write-Host "SHA256: $exeHash" -ForegroundColor Yellow
+        Write-Host ''
+        Write-Host 'Windows operatora gidecek final dosya budur:' -ForegroundColor Cyan
+        Write-Host "  $exePath" -ForegroundColor White
+        Write-Host ''
+        Write-Host 'Notlar:' -ForegroundColor Magenta
+        Write-Host '- Bu build compiled Windows executable uretir; kaynak .py dosyasi final teslim değildir.'
+        Write-Host '- Derlenen EXE pratikte kaynak koda göre daha korumalıdır, ama tersine mühendislik teorik olarak tamamen imkansiz değildir.'
+        Write-Host '- Arena modu source/runtime yuzeyinde desteklenir; anlamli oyun icin egitilmis checkpoint kullan.'
+        Write-Host '- Runtime sonucu sifreli archive uretecekse EXE yi calistirmadan once MERTFORMER_CHESS_ARCHIVE_PASSWORD ortam degiskenini hedef makinede ayarla.'
+        """
+    )
+
+
+def render_run_final_bat() -> str:
+    return textwrap.dedent(
+        """\
+        @echo off
+        setlocal
+        set ROOT=%~dp0
+        powershell -ExecutionPolicy Bypass -File "%ROOT%RUN_FINAL_BUILD.ps1"
+        """
+    )
+
+
+def render_readme(source_name: str, builder_name: str, bundle_name: str) -> str:
     return textwrap.dedent(
         f'''\
         # RTX 5080 Windows Delivery Build Workspace
 
-        This bundle is an internal build workspace. The public-facing artifact is the final compiled Windows executable, not these source files.
+        This bundle is the Windows-side build input. The public-facing artifact is the final compiled Windows executable, not these source files.
 
-        Included files:
+        ## Included Files
         - `{source_name}`: canonical readable source-of-truth chess onefile
         - `{builder_name}`: Windows build orchestrator
-        - `build_windows_delivery.bat`: simplest Windows entrypoint
-        - `build_windows_delivery.ps1`: PowerShell entrypoint
-        - `delivery_manifest.json`: source and builder hashes
+        - `build_windows_delivery.bat`: minimal Windows entrypoint
+        - `build_windows_delivery.ps1`: PowerShell entrypoint used by the orchestrator
+        - `RUN_FINAL_BUILD.ps1`: guided PowerShell wrapper with checks, final EXE verification, and SHA256 display
+        - `RUN_FINAL_BUILD.bat`: one-click BAT wrapper that launches the guided PowerShell wrapper
+        - `delivery_manifest.json`: bundle file hashes
 
-        Windows build contract:
-        1. Copy this folder to a Windows 10/11 machine.
-        2. Set `MERTFORMER_CHESS_ARCHIVE_PASSWORD` in that Windows session.
-        3. Run `build_windows_delivery.bat`.
-        4. The builder will create an external delivery folder that contains only the final `.exe`.
+        ## Correct Build Model
+        - Transport/share artifact: this folder zipped as `{bundle_name}.zip`
+        - Windows build input: the extracted folder
+        - Final public artifact: `external_delivery/mertformer_chess_5080.exe`
 
-        Safety and trust model:
+        ## Recommended Windows Build Steps
+        1. Copy or extract this folder onto a Windows 10/11 machine.
+        2. Open PowerShell in this folder.
+        3. Run `RUN_FINAL_BUILD.ps1`.
+
+        Exact command:
+
+        ```powershell
+        cd "$env:USERPROFILE\\Desktop\\{bundle_name}"
+        .\\RUN_FINAL_BUILD.ps1
+        ```
+
+        ## What The Build Does
+        - creates `.delivery-build-venv`
+        - installs/updates build dependencies
+        - installs CUDA 12.8 Windows `torch` if needed
+        - compiles a standalone Windows EXE with Nuitka
+        - writes the final EXE under `external_delivery/`
+        - writes a machine-readable build report under `internal_build/`
+
+        ## Internet Usage (Clean First Build)
+        For a clean Windows build with no existing builder venv and no cached wheels, the dependency payload currently requested by the build is about:
+
+        - base dependencies: `21.59 MB`
+        - CUDA 12.8 Windows `torch` wheel: `2625.61 MB`
+        - combined dependency payload: `2647.20 MB`
+
+        Practical note: small extra overhead beyond this can still happen because of pip metadata traffic and any helper downloads triggered by the compiler toolchain. So treat `2647.20 MB` as the package-download floor for a clean first build, not a universal guaranteed total on every machine.
+
+        ## Security / Trust Model
         - The repo copy stays open and auditable.
-        - The external build uses a compiled standalone executable for practical hardening.
-        - No anti-forensic self-delete behavior is used.
-        - The final runtime artifact is designed to emit an encrypted archive when the build-time password is embedded.
+        - The external build produces a compiled Windows EXE, which is materially harder to inspect than a raw `.py` file.
+        - This is practical protection, not a mathematical impossibility proof against reverse engineering.
+        - Optional Authenticode signing support already exists through the builder if you provide `signtool` plus signing certificate environment variables.
+
+        ## Runtime Contract
+        - The final runtime artifact is designed to emit a single encrypted result archive.
+        - The runtime archive password must be supplied on the target machine via `MERTFORMER_CHESS_ARCHIVE_PASSWORD` before launching the final EXE when encrypted output is required.
+        - The Windows builder does not embed `MERTFORMER_CHESS_ARCHIVE_PASSWORD` into the compiled launcher.
+        - The runtime writes the main structured log to `logs/run_log.jsonl`.
+        - The runtime writes operator-facing logging reports to `reports/logging_contract.json` and `reports/observability_report.json`.
+        - Fatal failures are expected to appear in both `logs/run_log.jsonl` and a Desktop-side `*_FAILED_*.json` artifact.
+        - The chess script now includes an interactive human-vs-AI CLI through `--mode arena`; meaningful play expects a trained checkpoint via `--resume-from`.
         '''
     )
 
@@ -112,19 +213,24 @@ def main() -> int:
     builder_copy = bundle_dir / WINDOWS_BUILDER.name
     build_bat = bundle_dir / 'build_windows_delivery.bat'
     build_ps1 = bundle_dir / 'build_windows_delivery.ps1'
+    run_final_ps1 = bundle_dir / 'RUN_FINAL_BUILD.ps1'
+    run_final_bat = bundle_dir / 'RUN_FINAL_BUILD.bat'
     readme = bundle_dir / 'README_BUILD.md'
     manifest = bundle_dir / 'delivery_manifest.json'
-    zip_path = DESKTOP / f'{PREFIX}_{stamp}.zip'
-    sha_path = DESKTOP / f'{PREFIX}_{stamp}.zip.sha256'
+    bundle_basename = bundle_dir.name if args.out_dir else f'{PREFIX}_{stamp}'
+    zip_path = DESKTOP / f'{bundle_basename}.zip'
+    sha_path = DESKTOP / f'{bundle_basename}.zip.sha256'
 
     shutil.copy2(SOURCE, source_copy)
     shutil.copy2(WINDOWS_BUILDER, builder_copy)
     build_bat.write_text(render_build_bat(builder_copy.name), encoding='utf-8')
     build_ps1.write_text(render_build_ps1(builder_copy.name), encoding='utf-8')
-    readme.write_text(render_readme(source_copy.name, builder_copy.name), encoding='utf-8')
+    run_final_ps1.write_text(render_run_final_ps1(), encoding='utf-8')
+    run_final_bat.write_text(render_run_final_bat(), encoding='utf-8')
+    readme.write_text(render_readme(source_copy.name, builder_copy.name, bundle_basename), encoding='utf-8')
 
     file_rows = []
-    for path in (source_copy, builder_copy, build_bat, build_ps1, readme):
+    for path in (source_copy, builder_copy, build_bat, build_ps1, run_final_ps1, run_final_bat, readme):
         file_rows.append(
             {
                 'path': path.name,
@@ -138,8 +244,15 @@ def main() -> int:
         'files': file_rows,
         'contract': {
             'final_external_artifact': 'single Windows executable',
-            'password_storage': 'builder requires MERTFORMER_CHESS_ARCHIVE_PASSWORD and does not persist it to tracked files',
+            'password_storage': 'runtime password is provided via MERTFORMER_CHESS_ARCHIVE_PASSWORD on the target machine and is not embedded into the compiled launcher',
             'repo_source_of_truth': str(SOURCE),
+            'recommended_entrypoint': 'RUN_FINAL_BUILD.ps1',
+            'observability': {
+                'main_run_log': 'logs/run_log.jsonl',
+                'logging_contract_report': 'reports/logging_contract.json',
+                'observability_report': 'reports/observability_report.json',
+                'failure_artifact': 'desktop FAILED json + fatal_exception event in run_log.jsonl',
+            },
         },
     }
     manifest.write_text(json.dumps(manifest_payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')

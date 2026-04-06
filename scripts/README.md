@@ -15,6 +15,13 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Colab fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
 - Text-understanding PoC one-file script: `scripts/kaggle_onefile_demo_build30_text_understanding.py`
 - Windows RTX 5080 chess PoC one-file script: `scripts/chess_5080_onefile.py`
+- Chess onefile supported modes: `train`, `verify`, `benchmark`, `package`, `resume`, `arena`
+- `--mode arena` provides an interactive human-vs-model terminal surface; use `--resume-from <checkpoint>` for meaningful play.
+- The chess onefile now mirrors the canonical Build30 trunk families in one file: BitLinear, MLA, CfC Liquid, MoE/LiquidRouter, QINN, cognitive extensions, and world-model hooks.
+- Mirror anti-drift evidence is written to `reports/mirror_parity_report.json` during chess runs.
+- Chess runtime observability is contract-backed: `logs/run_log.jsonl`, `reports/logging_contract.json`, and `reports/observability_report.json`.
+- Fatal runtime failures are expected to appear both in `logs/run_log.jsonl` (`fatal_exception`) and in the Desktop-side `*_FAILED_*.json` artifact.
+- The Windows builder/export flow no longer embeds `MERTFORMER_CHESS_ARCHIVE_PASSWORD` into the compiled launcher; provide it on the target machine before running the final EXE when encrypted output is required.
 - Windows RTX 5080 share/export builder: `scripts/export_chess_5080_share.py`
 - Repo-external copies are unsupported and treated as drift sources.
 

@@ -18,29 +18,36 @@ proof lane here remains open and auditable.
 from __future__ import annotations
 
 import argparse
+import atexit
 import contextlib
 import csv
 import ctypes
 import enum
 import hashlib
+import importlib
 import importlib.metadata
 import importlib.util
 import io
 import json
+import logging
+import logging.handlers
 import math
 import os
 import platform
 import random
 import re
 import shutil
+import socket
 import struct
 import subprocess
 import sys
 import textwrap
+import threading
 import time
 import traceback
 import urllib.error
 import urllib.request
+import warnings
 import zipfile
 import zlib
 from collections import Counter, defaultdict
@@ -53,6 +60,7 @@ SCRIPT_VERSION = "mertformer_chess_5080_onefile_v2"
 SCRIPT_BASENAME = "mertformer_chess_5080_onefile"
 RESULT_ZIP_PREFIX = "MertFormer_Chess_5080_Result"
 DELIVERY_PREFIX = "MertFormer_Chess_5080_Delivery"
+REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_ALLOW_INSTALL_ENV = "MERTFORMER_CHESS_ALLOW_INSTALL"
 DEFAULT_SKIP_BOOTSTRAP_ENV = "MERTFORMER_CHESS_SKIP_BOOTSTRAP"
 DEFAULT_SHARE_MODE_ENV = "MERTFORMER_CHESS_SHARE_MODE"
@@ -65,6 +73,11 @@ DEFAULT_ENCRYPT_OUTPUT_ENV = "MERTFORMER_CHESS_ENCRYPT_OUTPUT"
 DEFAULT_ENCRYPTION_REQUIRED_ENV = "MERTFORMER_CHESS_ENCRYPTION_REQUIRED"
 DEFAULT_CLEANUP_AFTER_BUNDLE_ENV = "MERTFORMER_CHESS_CLEANUP_AFTER_BUNDLE"
 DEFAULT_SINGLE_OUTPUT_ENV = "MERTFORMER_CHESS_SINGLE_OUTPUT"
+LOG_SCHEMA_VERSION = "2.0"
+DEFAULT_LOG_MAX_BYTES = 2 * 1024 * 1024
+DEFAULT_LOG_BACKUP_COUNT = 3
+DEFAULT_LOG_PAYLOAD_PREVIEW_CHARS = 4000
+DEFAULT_LOG_CONSOLE_LEVEL = "INFO"
 
 EMBEDDED_SEED_PGN = textwrap.dedent(
     """
@@ -187,14 +200,77 @@ RUN_CONFIG: Dict[str, Any] = {
     "grad_clip": 1.0,
     "grad_accum_steps": 1,
     "hidden_size": 384,
+    "intermediate_size": 1536,
     "num_layers": 8,
     "num_heads": 8,
+    "num_kv_heads": 4,
+    "head_dim": 48,
+    "max_seq_len": 80,
     "dropout": 0.10,
+    "attention_dropout": 0.0,
+    "ffn_dropout": 0.0,
+    "rms_norm_eps": 1e-6,
     "use_moe": False,
     "moe_top_k": 2,
     "num_experts": 4,
+    "moe_every_n_layers": 3,
+    "moe_intermediate": 1536,
+    "router_temperature": 1.0,
+    "router_jitter": 0.02,
+    "router_jitter_boost": 0.10,
+    "router_alarm_threshold": 0.40,
+    "shared_expert_gate": 0.0,
+    "z_loss_coef": 1e-4,
+    "use_switch_loss": True,
+    "moe_capacity_enforce": True,
+    "moe_capacity_factor": 1.25,
+    "moe_dispatch_mode": "sequential",
+    "use_expert_paging": False,
+    "expert_paging_inference_only": True,
+    "expert_paging_lazy_init": True,
+    "expert_paging_cache_size": 2,
+    "expert_paging_offload_device": "cpu",
+    "expert_paging_verbose": False,
     "use_bitlinear": False,
+    "use_liquid": False,
     "use_liquid_adapter": False,
+    "liquid_layers_idx": [],
+    "liquid_every_n_layers": 0,
+    "liquid_fast_path": True,
+    "use_qinn": False,
+    "qinn_every_n_layers": 1,
+    "rope_theta": 100000.0,
+    "rope_base": 100000.0,
+    "rope_dim": None,
+    "use_flash_attn_inference": False,
+    "use_hierarchical_kv_cache": False,
+    "hkv_short_window": 512,
+    "hkv_long_stride": 8,
+    "hkv_max_long_blocks": 128,
+    "use_global_workspace_broadcast": False,
+    "workspace_blend": 0.7,
+    "use_neuromodulatory_gain": False,
+    "use_latent_ode_state_channel": False,
+    "latent_ode_dt": 1.0,
+    "use_cross_expert_sync_bus": False,
+    "cross_expert_sync_gain": 0.05,
+    "use_structural_plasticity": False,
+    "structural_ema_decay": 0.98,
+    "structural_prune_threshold": 0.02,
+    "structural_grow_threshold": 0.60,
+    "structural_update_interval": 100,
+    "use_hebbian_plasticity": False,
+    "hebbian_eta": 0.01,
+    "hebbian_decay": 0.99,
+    "use_neuro_symbolic_layer": False,
+    "neuro_symbolic_rules": 8,
+    "use_world_model_head": False,
+    "world_model_horizon": 1,
+    "use_lifelong_safety_layer": False,
+    "lifelong_ema_decay": 0.99,
+    "lifelong_max_adaptation_gain": 0.05,
+    "lifelong_drift_threshold": 0.35,
+    "use_gradient_checkpointing": False,
     "compile_policy": "off",
     "use_bf16": True,
     "num_workers": 0,
@@ -271,11 +347,15 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         "batch_size": 8,
         "eval_batch_size": 8,
         "hidden_size": 128,
+        "intermediate_size": 512,
         "num_layers": 2,
         "num_heads": 4,
+        "num_kv_heads": 2,
+        "head_dim": 32,
         "num_experts": 2,
         "use_moe": False,
         "use_bitlinear": False,
+        "use_liquid": False,
         "use_liquid_adapter": False,
         "compile_policy": "off",
         "use_bf16": False,
@@ -414,14 +494,326 @@ class ResumeState:
 
 
 class JSONLLogger:
-    def __init__(self, path: Path):
+    _LEVEL_MAP = {
+        "DEBUG": logging.DEBUG,
+        "INFO": logging.INFO,
+        "WARNING": logging.WARNING,
+        "ERROR": logging.ERROR,
+        "CRITICAL": logging.CRITICAL,
+    }
+    _EVENT_LEVELS = {
+        "archive_read_error": "ERROR",
+        "bundle_cleanup": "INFO",
+        "compile_fallback": "WARNING",
+        "download_error": "ERROR",
+        "fatal_exception": "CRITICAL",
+        "logger_finalize": "INFO",
+        "oom_event": "ERROR",
+        "package_only_complete": "INFO",
+        "pgn_parse_error": "WARNING",
+        "power_guard": "INFO",
+        "run_complete": "INFO",
+        "run_start": "INFO",
+        "training_stop": "WARNING",
+    }
+
+    def __init__(
+        self,
+        path: Path,
+        *,
+        run_id: str = "",
+        mode: str = "",
+        profile: str = "",
+        artifact_root: str = "",
+        component: str = "chess_onefile",
+        max_bytes: int = DEFAULT_LOG_MAX_BYTES,
+        backup_count: int = DEFAULT_LOG_BACKUP_COUNT,
+        console_level: str = DEFAULT_LOG_CONSOLE_LEVEL,
+    ):
         self.path = path
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        self.run_id = str(run_id)
+        self.mode = str(mode)
+        self.profile = str(profile)
+        self.artifact_root = str(artifact_root)
+        self.component = str(component)
+        self.max_bytes = int(max(1024, max_bytes))
+        self.backup_count = int(max(1, backup_count))
+        self.console_level = str(console_level or DEFAULT_LOG_CONSOLE_LEVEL).upper()
+        self.hostname = socket.gethostname()
+        self.pid = os.getpid()
+        self._finalized = False
+        self._event_count = 0
+        self._events = Counter()
+        self._levels = Counter()
+        self._lock = threading.RLock()
+        self._logger = logging.getLogger(f"mertformer.chess.{sha256_bytes(str(self.path).encode('utf-8'))[:12]}")
+        self._logger.setLevel(logging.DEBUG)
+        self._logger.propagate = False
+        self._logger.handlers.clear()
+        self._file_handler = logging.handlers.RotatingFileHandler(
+            self.path,
+            maxBytes=self.max_bytes,
+            backupCount=self.backup_count,
+            encoding="utf-8",
+        )
+        self._file_handler.setLevel(logging.DEBUG)
+        self._file_handler.setFormatter(_JSONLLogFormatter())
+        self._logger.addHandler(self._file_handler)
+        self._console_handler = logging.StreamHandler(sys.stdout)
+        self._console_handler.setLevel(self._LEVEL_MAP.get(self.console_level, logging.INFO))
+        self._console_handler.setFormatter(_ConsoleLogFormatter())
+        self._logger.addHandler(self._console_handler)
+        atexit.register(self._atexit_finalize)
 
-    def write(self, kind: str, payload: Dict[str, Any]) -> None:
-        row = {"ts_utc": utc_now(), "kind": kind, **payload}
-        with self.path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(row, ensure_ascii=False) + "\n")
+    def bind_context(
+        self,
+        *,
+        run_id: Optional[str] = None,
+        mode: Optional[str] = None,
+        profile: Optional[str] = None,
+        artifact_root: Optional[str] = None,
+        component: Optional[str] = None,
+    ) -> None:
+        with self._lock:
+            if run_id is not None:
+                self.run_id = str(run_id)
+            if mode is not None:
+                self.mode = str(mode)
+            if profile is not None:
+                self.profile = str(profile)
+            if artifact_root is not None:
+                self.artifact_root = str(artifact_root)
+            if component is not None:
+                self.component = str(component)
+
+    def _infer_level(self, kind: str, payload: Dict[str, Any], explicit_level: Optional[str]) -> str:
+        if explicit_level:
+            return str(explicit_level).upper()
+        if kind in self._EVENT_LEVELS:
+            level = self._EVENT_LEVELS[kind]
+            if kind == "bundle_cleanup":
+                status = str(payload.get("status", "")).lower()
+                if status == "failed":
+                    return "ERROR"
+                return "INFO"
+            if kind == "power_guard":
+                status = str(payload.get("status", "")).lower()
+                if status.startswith("failed"):
+                    return "WARNING"
+                return level
+            return level
+        if "error" in payload and payload.get("error"):
+            return "ERROR"
+        return "INFO"
+
+    def _sanitize_payload(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        safe_payload = _log_safe_json(payload)
+        redacted = _redact_log_object(safe_payload)
+        serialized = json.dumps(redacted, ensure_ascii=False, sort_keys=True)
+        if len(serialized) <= self.max_bytes:
+            return redacted
+        return {
+            "_truncated": True,
+            "approx_chars": len(serialized),
+            "sha256": sha256_bytes(serialized.encode("utf-8")),
+            "preview": serialized[:DEFAULT_LOG_PAYLOAD_PREVIEW_CHARS],
+        }
+
+    def _emit(self, row: Dict[str, Any], level: str) -> None:
+        numeric_level = self._LEVEL_MAP.get(level, logging.INFO)
+        self._logger.log(numeric_level, row["event"], extra={"row": row})
+        for handler in self._logger.handlers:
+            with contextlib.suppress(Exception):
+                handler.flush()
+
+    def write(
+        self,
+        kind: str,
+        payload: Dict[str, Any],
+        *,
+        level: Optional[str] = None,
+        component: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        safe_payload = self._sanitize_payload(payload)
+        resolved_level = self._infer_level(kind, safe_payload, level)
+        row = {
+            "ts_utc": utc_now(),
+            "schema_version": LOG_SCHEMA_VERSION,
+            "level": resolved_level,
+            "component": str(component or self.component),
+            "event": kind,
+            "kind": kind,
+            "run_id": self.run_id,
+            "mode": self.mode,
+            "profile": self.profile,
+            "pid": self.pid,
+            "host": self.hostname,
+            "artifact_root": self.artifact_root,
+            "payload": safe_payload,
+        }
+        with self._lock:
+            self._event_count += 1
+            self._events[kind] += 1
+            self._levels[resolved_level] += 1
+            self._emit(row, resolved_level)
+        return row
+
+    def write_exception(
+        self,
+        kind: str,
+        exc: BaseException,
+        *,
+        component: Optional[str] = None,
+        extra_payload: Optional[Dict[str, Any]] = None,
+        level: str = "CRITICAL",
+    ) -> Dict[str, Any]:
+        payload = dict(extra_payload or {})
+        payload.update(
+            {
+                "error_type": type(exc).__name__,
+                "error": str(exc),
+                "traceback": traceback.format_exc(),
+            }
+        )
+        return self.write(kind, payload, level=level, component=component)
+
+    def contract(self) -> Dict[str, Any]:
+        return {
+            "schema_version": LOG_SCHEMA_VERSION,
+            "log_path": str(self.path),
+            "console_level": self.console_level,
+            "rotation": {
+                "enabled": True,
+                "max_bytes": self.max_bytes,
+                "backup_count": self.backup_count,
+            },
+            "redaction_policy": {
+                "enabled": True,
+                "patterns": [
+                    "hf_[REDACTED]",
+                    "wandb_[REDACTED]",
+                    "sk-[REDACTED]",
+                    "archive_password",
+                ],
+            },
+            "required_fields": [
+                "ts_utc",
+                "schema_version",
+                "level",
+                "component",
+                "event",
+                "run_id",
+                "mode",
+                "profile",
+                "pid",
+                "host",
+                "artifact_root",
+                "payload",
+            ],
+        }
+
+    def observability_report(self) -> Dict[str, Any]:
+        log_files = []
+        for path in sorted(self.path.parent.glob(f"{self.path.name}*")):
+            if not path.is_file():
+                continue
+            log_files.append(
+                {
+                    "path": str(path),
+                    "size_bytes": path.stat().st_size,
+                    "sha256": path_sha256(path),
+                }
+            )
+        return {
+            "status": "ok",
+            "schema_version": LOG_SCHEMA_VERSION,
+            "run_id": self.run_id,
+            "mode": self.mode,
+            "profile": self.profile,
+            "artifact_root": self.artifact_root,
+            "event_count": self._event_count,
+            "events": dict(sorted(self._events.items())),
+            "levels": dict(sorted(self._levels.items())),
+            "retention": {
+                "max_bytes": self.max_bytes,
+                "backup_count": self.backup_count,
+            },
+            "log_files": log_files,
+        }
+
+    def finalize(self, status: str, extra: Optional[Dict[str, Any]] = None) -> None:
+        with self._lock:
+            if self._finalized:
+                return
+            self.write(
+                "logger_finalize",
+                {
+                    "status": status,
+                    "event_count": self._event_count,
+                    "events": dict(sorted(self._events.items())),
+                    "levels": dict(sorted(self._levels.items())),
+                    **(extra or {}),
+                },
+                level="INFO" if status == "completed" else "WARNING",
+            )
+            self._finalized = True
+            for handler in list(self._logger.handlers):
+                with contextlib.suppress(Exception):
+                    handler.flush()
+                with contextlib.suppress(Exception):
+                    handler.close()
+                with contextlib.suppress(Exception):
+                    self._logger.removeHandler(handler)
+
+    def _atexit_finalize(self) -> None:
+        with contextlib.suppress(Exception):
+            if not self._finalized:
+                if self._console_handler in self._logger.handlers:
+                    self._logger.removeHandler(self._console_handler)
+                self.finalize("abrupt_exit")
+
+
+class _JSONLLogFormatter(logging.Formatter):
+    def format(self, record: logging.LogRecord) -> str:
+        row = getattr(record, "row", None)
+        if not isinstance(row, dict):
+            row = {
+                "ts_utc": utc_now(),
+                "schema_version": LOG_SCHEMA_VERSION,
+                "level": record.levelname,
+                "component": "chess_onefile",
+                "event": record.getMessage(),
+                "kind": record.getMessage(),
+                "run_id": "",
+                "mode": "",
+                "profile": "",
+                "pid": os.getpid(),
+                "host": socket.gethostname(),
+                "artifact_root": "",
+                "payload": {"message": record.getMessage()},
+            }
+        return json.dumps(row, ensure_ascii=False, sort_keys=True)
+
+
+class _ConsoleLogFormatter(logging.Formatter):
+    def format(self, record: logging.LogRecord) -> str:
+        row = getattr(record, "row", None)
+        if not isinstance(row, dict):
+            return super().format(record)
+        payload = row.get("payload", {})
+        summary = ""
+        if isinstance(payload, dict):
+            if "status" in payload:
+                summary = f" status={payload['status']}"
+            elif "error_type" in payload:
+                summary = f" error_type={payload['error_type']}"
+            elif "step" in payload:
+                summary = f" step={payload['step']}"
+        return (
+            f"[chess-log] {row.get('ts_utc', '')} "
+            f"{row.get('level', 'INFO')} {row.get('component', 'chess_onefile')}:{row.get('event', '')}{summary}"
+        )
 
 
 class WindowsExecutionGuard:
@@ -533,25 +925,41 @@ def _bootstrap_if_needed() -> None:
 
 _bootstrap_if_needed()
 
-import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import zstandard as zstd
-try:
-    import chess
-    import chess.engine
-    import chess.pgn
-except Exception:  # pragma: no cover - import guarded by bootstrap in __main__
-    chess = None  # type: ignore
-try:
-    import psutil
-except Exception:  # pragma: no cover
-    psutil = None  # type: ignore
-try:
-    import pyzipper
-except Exception:  # pragma: no cover - optional runtime dependency
-    pyzipper = None  # type: ignore
+np: Any = None
+torch: Any = None
+nn: Any = None
+F: Any = None
+zstd: Any = None
+chess: Any = None
+psutil: Any = None
+pyzipper: Any = None
+
+
+def _import_runtime_dependencies() -> None:
+    globals_ns = globals()
+    globals_ns["np"] = importlib.import_module("numpy")
+    globals_ns["torch"] = importlib.import_module("torch")
+    globals_ns["nn"] = importlib.import_module("torch.nn")
+    globals_ns["F"] = importlib.import_module("torch.nn.functional")
+    globals_ns["zstd"] = importlib.import_module("zstandard")
+    try:
+        chess_mod = importlib.import_module("chess")
+        importlib.import_module("chess.engine")
+        importlib.import_module("chess.pgn")
+        globals_ns["chess"] = chess_mod
+    except Exception:  # pragma: no cover - import guarded by bootstrap in __main__
+        globals_ns["chess"] = None
+    try:
+        globals_ns["psutil"] = importlib.import_module("psutil")
+    except Exception:  # pragma: no cover
+        globals_ns["psutil"] = None
+    try:
+        globals_ns["pyzipper"] = importlib.import_module("pyzipper")
+    except Exception:  # pragma: no cover - optional runtime dependency
+        globals_ns["pyzipper"] = None
+
+
+_import_runtime_dependencies()
 
 
 if chess is None:  # pragma: no cover
@@ -617,6 +1025,62 @@ def atomic_write_text(path: Path, text: str) -> None:
 
 def atomic_json(path: Path, payload: Dict[str, Any]) -> None:
     atomic_write_text(path, json.dumps(payload, indent=2, ensure_ascii=False) + "\n")
+
+
+def _log_safe_json(value: Any) -> Any:
+    if value is None or isinstance(value, (bool, int, float, str)):
+        return value
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, dict):
+        return {str(k): _log_safe_json(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_log_safe_json(v) for v in value]
+    if isinstance(value, bytes):
+        return {
+            "__bytes__": True,
+            "len": len(value),
+            "sha256": sha256_bytes(value),
+        }
+    shape = getattr(value, "shape", None)
+    dtype = getattr(value, "dtype", None)
+    device = getattr(value, "device", None)
+    if shape is not None and dtype is not None:
+        with contextlib.suppress(Exception):
+            return {
+                "__tensor__": True,
+                "shape": [int(x) for x in shape],
+                "dtype": str(dtype),
+                "device": str(device) if device is not None else "",
+            }
+    return repr(value)
+
+
+def _redact_log_text(text: str) -> str:
+    redacted = text
+    redacted = re.sub(r"sk-[A-Za-z0-9_-]+", "sk-[REDACTED]", redacted)
+    redacted = re.sub(r"hf_[A-Za-z0-9_-]+", "hf_[REDACTED]", redacted)
+    redacted = re.sub(r"wandb_[A-Za-z0-9_-]+", "wandb_[REDACTED]", redacted)
+    return redacted
+
+
+def _redact_log_object(value: Any) -> Any:
+    if value is None or isinstance(value, (bool, int, float)):
+        return value
+    if isinstance(value, str):
+        return _redact_log_text(value)
+    if isinstance(value, list):
+        return [_redact_log_object(item) for item in value]
+    if isinstance(value, dict):
+        redacted: Dict[str, Any] = {}
+        for key, item in value.items():
+            key_str = str(key)
+            if any(token in key_str.lower() for token in ("password", "secret", "token", "api_key", "apikey")):
+                redacted[key_str] = "[REDACTED]"
+            else:
+                redacted[key_str] = _redact_log_object(item)
+        return redacted
+    return _redact_log_text(str(value))
 
 
 def safe_name(value: str) -> str:
@@ -739,14 +1203,21 @@ def apply_baseline(cfg: Dict[str, Any], baseline: str) -> Dict[str, Any]:
     merged["baseline"] = baseline
     if baseline == "dense":
         merged["use_moe"] = False
+        merged["use_liquid"] = False
         merged["use_liquid_adapter"] = False
         merged["use_bitlinear"] = False
     elif baseline == "moe":
         merged["use_moe"] = True
+        merged["use_liquid"] = False
         merged["use_liquid_adapter"] = False
     elif baseline == "moe_adapter":
         merged["use_moe"] = True
+        merged["use_liquid"] = True
         merged["use_liquid_adapter"] = True
+    else:
+        merged["use_liquid"] = bool(merged.get("use_liquid", False))
+    if "use_liquid" not in merged:
+        merged["use_liquid"] = bool(merged.get("use_liquid_adapter", False))
     return merged
 
 
@@ -758,7 +1229,7 @@ def resolve_runtime_config(args: argparse.Namespace, base_cfg: Optional[Dict[str
     cfg = apply_baseline(cfg, baseline)
 
     cfg["mode"] = str(getattr(args, "mode", cfg["mode"]))
-    validate_enum_choice(cfg["mode"], ["train", "verify", "benchmark", "package", "resume"], "mode")
+    validate_enum_choice(cfg["mode"], ["train", "verify", "benchmark", "package", "resume", "arena"], "mode")
 
     if getattr(args, "artifact_root", None):
         cfg["artifact_root"] = args.artifact_root
@@ -809,6 +1280,8 @@ def resolve_runtime_config(args: argparse.Namespace, base_cfg: Optional[Dict[str
     cfg["cache_root"] = str(Path(str(cfg["cache_root"])).expanduser())
     cfg["resume_from"] = str(Path(str(cfg.get("resume_from", ""))).expanduser()) if str(cfg.get("resume_from", "")) else ""
     cfg["self_delete_target"] = str(Path(str(cfg.get("self_delete_target", ""))).expanduser()) if str(cfg.get("self_delete_target", "")) else ""
+    cfg["use_liquid"] = bool(cfg.get("use_liquid", cfg.get("use_liquid_adapter", False)))
+    cfg["use_liquid_adapter"] = bool(cfg.get("use_liquid_adapter", cfg.get("use_liquid", False)))
 
     if str(cfg.get("device", "auto")) == "auto":
         if torch.cuda.is_available():
@@ -834,7 +1307,7 @@ def resolve_runtime_config(args: argparse.Namespace, base_cfg: Optional[Dict[str
 
 
 def validate_runtime_config(cfg: Dict[str, Any]) -> None:
-    validate_enum_choice(str(cfg["mode"]), ["train", "verify", "benchmark", "package", "resume"], "mode")
+    validate_enum_choice(str(cfg["mode"]), ["train", "verify", "benchmark", "package", "resume", "arena"], "mode")
     validate_enum_choice(str(cfg["profile"]), list(RUN_PROFILES.keys()), "profile")
     validate_enum_choice(str(cfg["baseline"]), ["dense", "moe", "moe_adapter"], "baseline")
     if float(cfg["val_fraction"]) < 0 or float(cfg["test_fraction"]) < 0:
@@ -866,6 +1339,9 @@ def validate_runtime_config(cfg: Dict[str, Any]) -> None:
             raise ConfigValidationError(f"{field_name} must be >= 0")
     if int(cfg["hidden_size"]) % max(1, int(cfg["num_heads"])) != 0:
         raise ConfigValidationError("hidden_size must be divisible by num_heads")
+    num_kv_heads = max(1, int(cfg.get("num_kv_heads", cfg["num_heads"])))
+    if num_kv_heads > int(cfg["num_heads"]) or int(cfg["num_heads"]) % num_kv_heads != 0:
+        raise ConfigValidationError("num_kv_heads must be <= num_heads and divide num_heads evenly")
     if int(cfg["batch_size"]) < 1 or int(cfg["eval_batch_size"]) < 1:
         raise ConfigValidationError("batch sizes must be >= 1")
     if int(cfg["grad_accum_steps"]) < 1:
@@ -891,195 +1367,1631 @@ def validate_runtime_config(cfg: Dict[str, Any]) -> None:
         return
 
 
-class BitLinear(nn.Module):
-    def __init__(self, in_features: int, out_features: int, bias: bool = True, enabled: bool = False):
-        super().__init__()
-        self.weight = nn.Parameter(torch.empty(out_features, in_features))
-        self.bias = nn.Parameter(torch.zeros(out_features)) if bias else None
-        self.enabled = enabled
-        nn.init.kaiming_uniform_(self.weight, a=math.sqrt(5))
-        if self.bias is not None:
-            bound = 1 / math.sqrt(in_features)
-            nn.init.uniform_(self.bias, -bound, bound)
+@dataclass(frozen=True)
+class MirrorModelConfig:
+    hidden_size: int
+    intermediate_size: int
+    num_layers: int
+    num_hidden_layers: int
+    num_heads: int
+    num_attention_heads: int
+    num_kv_heads: int
+    head_dim: int
+    max_seq_len: int
+    dropout: float
+    attention_dropout: float
+    ffn_dropout: float
+    rms_norm_eps: float
+    use_bitnet: bool
+    use_moe: bool
+    num_experts: int
+    num_experts_per_tok: int
+    active_experts: int
+    moe_every_n_layers: int
+    moe_intermediate: int
+    router_temperature: float
+    router_jitter: float
+    router_jitter_boost: float
+    router_alarm_threshold: float
+    shared_expert_gate: float
+    z_loss_coef: float
+    use_switch_loss: bool
+    moe_capacity_enforce: bool
+    moe_capacity_factor: float
+    moe_dispatch_mode: str
+    use_expert_paging: bool
+    expert_paging_inference_only: bool
+    expert_paging_lazy_init: bool
+    expert_paging_cache_size: int
+    expert_paging_offload_device: str
+    expert_paging_verbose: bool
+    use_liquid: bool
+    liquid_layers_idx: Tuple[int, ...]
+    liquid_every_n_layers: int
+    liquid_fast_path: bool
+    use_qinn: bool
+    qinn_every_n_layers: int
+    rope_theta: float
+    rope_base: float
+    rope_dim: Optional[int]
+    use_flash_attn_inference: bool
+    use_hierarchical_kv_cache: bool
+    hkv_short_window: int
+    hkv_long_stride: int
+    hkv_max_long_blocks: int
+    use_global_workspace_broadcast: bool
+    workspace_blend: float
+    use_neuromodulatory_gain: bool
+    use_latent_ode_state_channel: bool
+    latent_ode_dt: float
+    use_cross_expert_sync_bus: bool
+    cross_expert_sync_gain: float
+    use_structural_plasticity: bool
+    structural_ema_decay: float
+    structural_prune_threshold: float
+    structural_grow_threshold: float
+    structural_update_interval: int
+    use_hebbian_plasticity: bool
+    hebbian_eta: float
+    hebbian_decay: float
+    use_neuro_symbolic_layer: bool
+    neuro_symbolic_rules: int
+    use_world_model_head: bool
+    world_model_horizon: int
+    use_lifelong_safety_layer: bool
+    lifelong_ema_decay: float
+    lifelong_max_adaptation_gain: float
+    lifelong_drift_threshold: float
+    use_gradient_checkpointing: bool
 
-    def _quantize(self, weight: torch.Tensor) -> torch.Tensor:
-        scale = torch.sqrt((weight ** 2).mean(dim=1, keepdim=True)).clamp(min=1e-5)
-        normalized = weight / scale
-        quantized = torch.round(normalized).clamp(-1.0, 1.0) * scale
-        return weight + (quantized - weight).detach()
+
+def _normalize_liquid_layers_idx(indices: Sequence[int], num_layers: int) -> Tuple[int, ...]:
+    if num_layers <= 0:
+        return tuple()
+    cleaned = sorted({idx for idx in (int(item) for item in indices) if 0 <= idx < num_layers})
+    return tuple(cleaned)
+
+
+def default_liquid_layers_idx(num_layers: int) -> Tuple[int, ...]:
+    if num_layers <= 0:
+        return tuple()
+    template = (4.0 / 18.0, 10.0 / 18.0, 16.0 / 18.0)
+    derived = [int(round((num_layers - 1) * ratio)) for ratio in template]
+    return _normalize_liquid_layers_idx(derived, num_layers)
+
+
+def build_mirror_model_config(run_cfg: Dict[str, Any]) -> MirrorModelConfig:
+    hidden_size = max(1, int(run_cfg["hidden_size"]))
+    num_layers = max(1, int(run_cfg["num_layers"]))
+    num_heads = max(1, int(run_cfg["num_heads"]))
+    derived_head_dim = max(1, hidden_size // num_heads)
+    head_dim = int(run_cfg.get("head_dim", derived_head_dim) or derived_head_dim)
+    if head_dim * num_heads != hidden_size:
+        head_dim = derived_head_dim
+    num_kv_heads = int(run_cfg.get("num_kv_heads", num_heads) or num_heads)
+    if num_kv_heads <= 0 or num_kv_heads > num_heads or num_heads % num_kv_heads != 0:
+        num_kv_heads = num_heads
+    intermediate_size = max(1, int(run_cfg.get("intermediate_size", hidden_size * 4)))
+    moe_intermediate = max(1, int(run_cfg.get("moe_intermediate", intermediate_size)))
+    num_experts = max(1, int(run_cfg.get("num_experts", 4)))
+    active_experts = max(1, min(num_experts, int(run_cfg.get("moe_top_k", 2))))
+    use_liquid = bool(run_cfg.get("use_liquid", run_cfg.get("use_liquid_adapter", False)))
+    raw_liquid_layers = run_cfg.get("liquid_layers_idx", [])
+    if raw_liquid_layers:
+        liquid_layers_idx = _normalize_liquid_layers_idx(raw_liquid_layers, num_layers)
+    elif use_liquid:
+        liquid_layers_idx = default_liquid_layers_idx(num_layers)
+    else:
+        liquid_layers_idx = tuple()
+    return MirrorModelConfig(
+        hidden_size=hidden_size,
+        intermediate_size=intermediate_size,
+        num_layers=num_layers,
+        num_hidden_layers=num_layers,
+        num_heads=num_heads,
+        num_attention_heads=num_heads,
+        num_kv_heads=num_kv_heads,
+        head_dim=head_dim,
+        max_seq_len=max(80, int(run_cfg.get("max_seq_len", 80))),
+        dropout=float(run_cfg.get("dropout", 0.0)),
+        attention_dropout=float(run_cfg.get("attention_dropout", 0.0)),
+        ffn_dropout=float(run_cfg.get("ffn_dropout", 0.0)),
+        rms_norm_eps=float(run_cfg.get("rms_norm_eps", 1e-6)),
+        use_bitnet=bool(run_cfg.get("use_bitlinear", False)),
+        use_moe=bool(run_cfg.get("use_moe", False)),
+        num_experts=num_experts,
+        num_experts_per_tok=active_experts,
+        active_experts=active_experts,
+        moe_every_n_layers=max(0, int(run_cfg.get("moe_every_n_layers", 3))),
+        moe_intermediate=moe_intermediate,
+        router_temperature=float(run_cfg.get("router_temperature", 1.0)),
+        router_jitter=float(run_cfg.get("router_jitter", 0.02)),
+        router_jitter_boost=float(run_cfg.get("router_jitter_boost", 0.10)),
+        router_alarm_threshold=float(run_cfg.get("router_alarm_threshold", 0.40)),
+        shared_expert_gate=float(run_cfg.get("shared_expert_gate", 0.0)),
+        z_loss_coef=float(run_cfg.get("z_loss_coef", 1e-4)),
+        use_switch_loss=bool(run_cfg.get("use_switch_loss", True)),
+        moe_capacity_enforce=bool(run_cfg.get("moe_capacity_enforce", True)),
+        moe_capacity_factor=float(run_cfg.get("moe_capacity_factor", 1.25)),
+        moe_dispatch_mode=str(run_cfg.get("moe_dispatch_mode", "sequential")).lower(),
+        use_expert_paging=bool(run_cfg.get("use_expert_paging", False)),
+        expert_paging_inference_only=bool(run_cfg.get("expert_paging_inference_only", True)),
+        expert_paging_lazy_init=bool(run_cfg.get("expert_paging_lazy_init", True)),
+        expert_paging_cache_size=max(1, int(run_cfg.get("expert_paging_cache_size", active_experts))),
+        expert_paging_offload_device=str(run_cfg.get("expert_paging_offload_device", "cpu")),
+        expert_paging_verbose=bool(run_cfg.get("expert_paging_verbose", False)),
+        use_liquid=use_liquid,
+        liquid_layers_idx=liquid_layers_idx,
+        liquid_every_n_layers=max(0, int(run_cfg.get("liquid_every_n_layers", 0))),
+        liquid_fast_path=bool(run_cfg.get("liquid_fast_path", True)),
+        use_qinn=bool(run_cfg.get("use_qinn", False)),
+        qinn_every_n_layers=max(1, int(run_cfg.get("qinn_every_n_layers", 1))),
+        rope_theta=float(run_cfg.get("rope_theta", 100000.0)),
+        rope_base=float(run_cfg.get("rope_base", 100000.0)),
+        rope_dim=run_cfg.get("rope_dim", None),
+        use_flash_attn_inference=bool(run_cfg.get("use_flash_attn_inference", False)),
+        use_hierarchical_kv_cache=bool(run_cfg.get("use_hierarchical_kv_cache", False)),
+        hkv_short_window=max(1, int(run_cfg.get("hkv_short_window", 512))),
+        hkv_long_stride=max(1, int(run_cfg.get("hkv_long_stride", 8))),
+        hkv_max_long_blocks=max(1, int(run_cfg.get("hkv_max_long_blocks", 128))),
+        use_global_workspace_broadcast=bool(run_cfg.get("use_global_workspace_broadcast", False)),
+        workspace_blend=float(run_cfg.get("workspace_blend", 0.7)),
+        use_neuromodulatory_gain=bool(run_cfg.get("use_neuromodulatory_gain", False)),
+        use_latent_ode_state_channel=bool(run_cfg.get("use_latent_ode_state_channel", False)),
+        latent_ode_dt=float(run_cfg.get("latent_ode_dt", 1.0)),
+        use_cross_expert_sync_bus=bool(run_cfg.get("use_cross_expert_sync_bus", False)),
+        cross_expert_sync_gain=float(run_cfg.get("cross_expert_sync_gain", 0.05)),
+        use_structural_plasticity=bool(run_cfg.get("use_structural_plasticity", False)),
+        structural_ema_decay=float(run_cfg.get("structural_ema_decay", 0.98)),
+        structural_prune_threshold=float(run_cfg.get("structural_prune_threshold", 0.02)),
+        structural_grow_threshold=float(run_cfg.get("structural_grow_threshold", 0.60)),
+        structural_update_interval=max(1, int(run_cfg.get("structural_update_interval", 100))),
+        use_hebbian_plasticity=bool(run_cfg.get("use_hebbian_plasticity", False)),
+        hebbian_eta=float(run_cfg.get("hebbian_eta", 0.01)),
+        hebbian_decay=float(run_cfg.get("hebbian_decay", 0.99)),
+        use_neuro_symbolic_layer=bool(run_cfg.get("use_neuro_symbolic_layer", False)),
+        neuro_symbolic_rules=max(1, int(run_cfg.get("neuro_symbolic_rules", 8))),
+        use_world_model_head=bool(run_cfg.get("use_world_model_head", False)),
+        world_model_horizon=max(1, int(run_cfg.get("world_model_horizon", 1))),
+        use_lifelong_safety_layer=bool(run_cfg.get("use_lifelong_safety_layer", False)),
+        lifelong_ema_decay=float(run_cfg.get("lifelong_ema_decay", 0.99)),
+        lifelong_max_adaptation_gain=float(run_cfg.get("lifelong_max_adaptation_gain", 0.05)),
+        lifelong_drift_threshold=float(run_cfg.get("lifelong_drift_threshold", 0.35)),
+        use_gradient_checkpointing=bool(run_cfg.get("use_gradient_checkpointing", False)),
+    )
+
+
+_LOWBIT_KERNEL_ENABLED = os.getenv("MERTFORMER_LOWBIT_KERNEL", "0") == "1"
+_TENSORCORE_ENABLED = os.getenv("MERTFORMER_TENSORCORE", "0") == "1"
+
+
+def set_lowbit_kernel_enabled(enabled: bool) -> None:
+    global _LOWBIT_KERNEL_ENABLED
+    _LOWBIT_KERNEL_ENABLED = bool(enabled)
+
+
+def _import_optional_sdk_module(module_name: str) -> Optional[Any]:
+    if str(REPO_ROOT) not in sys.path and (REPO_ROOT / "mertformer_sdk").is_dir():
+        sys.path.insert(0, str(REPO_ROOT))
+    try:
+        return importlib.import_module(module_name)
+    except Exception:
+        return None
+
+
+def _try_lowbit_kernel(x: torch.Tensor, w: torch.Tensor, bias: Optional[torch.Tensor]) -> Optional[torch.Tensor]:
+    if not _LOWBIT_KERNEL_ENABLED:
+        return None
+    dispatcher_mod = _import_optional_sdk_module("mertformer_sdk.kernels.dispatcher")
+    select_backend = getattr(dispatcher_mod, "select_backend", None) if dispatcher_mod is not None else None
+    if select_backend is None:
+        return None
+    try:
+        backend = select_backend(x, w)
+        if backend == "triton_cuda":
+            triton_mod = _import_optional_sdk_module("mertformer_sdk.kernels.triton_ternary")
+            is_triton_available = getattr(triton_mod, "is_triton_available", None) if triton_mod is not None else None
+            triton_ternary_linear = getattr(triton_mod, "triton_ternary_linear", None) if triton_mod is not None else None
+            if is_triton_available is None or triton_ternary_linear is None or not is_triton_available():
+                return None
+            return triton_ternary_linear(x, w, bias, use_tensorcore=_TENSORCORE_ENABLED)
+        if backend == "cpp_cpu":
+            cpp_mod = _import_optional_sdk_module("mertformer_sdk.kernels.cpp.loader")
+            bitnet_cpu_linear = getattr(cpp_mod, "bitnet_cpu_linear", None) if cpp_mod is not None else None
+            if bitnet_cpu_linear is None:
+                return None
+            return bitnet_cpu_linear(x, w, bias)
+        if backend == "metal_fallback":
+            metal_mod = _import_optional_sdk_module("mertformer_sdk.kernels.metal.engine")
+            metal_linear = getattr(metal_mod, "metal_linear", None) if metal_mod is not None else None
+            if metal_linear is None:
+                return None
+            return metal_linear(activation_quant(x), weight_quant(w), bias)
+        if backend == "vulkan_fallback":
+            vulkan_mod = _import_optional_sdk_module("mertformer_sdk.kernels.vulkan.engine")
+            vulkan_linear = getattr(vulkan_mod, "vulkan_linear", None) if vulkan_mod is not None else None
+            if vulkan_linear is None:
+                return None
+            return vulkan_linear(activation_quant(x), weight_quant(w), bias)
+        if backend == "npu_fallback":
+            npu_mod = _import_optional_sdk_module("mertformer_sdk.kernels.npu.engine")
+            npu_linear = getattr(npu_mod, "npu_linear", None) if npu_mod is not None else None
+            if npu_linear is None:
+                return None
+            return npu_linear(activation_quant(x), weight_quant(w), bias)
+        if backend == "mps_optimized":
+            return F.linear(activation_quant(x), weight_quant(w), bias)
+    except Exception:
+        return None
+    return None
+
+
+def activation_quant(x: torch.Tensor) -> torch.Tensor:
+    max_abs = x.detach().abs().amax(dim=-1, keepdim=True).clamp(min=1e-5)
+    scale = 127.0 / max_abs
+    x_q = torch.round(x * scale).clamp(-127, 127) / scale
+    return x + (x_q - x).detach()
+
+
+def weight_quant(w: torch.Tensor) -> torch.Tensor:
+    scale = torch.sqrt((w ** 2).mean(dim=1, keepdim=True)).clamp(min=1e-5)
+    w_norm = w / scale
+    w_q = torch.round(w_norm).clamp(-1.0, 1.0)
+    w_q_real = w_q * scale
+    return w + (w_q_real - w).detach()
+
+
+def make_linear(use_bitnet: bool, in_features: int, out_features: int, bias: bool = True) -> nn.Module:
+    if use_bitnet:
+        return BitLinear(in_features, out_features, bias=bias, enabled=True)
+    return nn.Linear(in_features, out_features, bias=bias)
+
+
+class BitLinear(nn.Linear):
+    def __init__(self, in_features: int, out_features: int, bias: bool = True, enabled: bool = True):
+        super().__init__(in_features, out_features, bias=bias)
+        self.enabled = bool(enabled)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        weight = self._quantize(self.weight) if self.enabled else self.weight
-        return F.linear(x, weight, self.bias)
+        if not self.enabled:
+            return F.linear(x, self.weight, self.bias)
+        lowbit_out = _try_lowbit_kernel(x, self.weight, self.bias)
+        if lowbit_out is not None:
+            return lowbit_out
+        return F.linear(activation_quant(x), weight_quant(self.weight), self.bias)
 
 
 class RMSNorm(nn.Module):
-    def __init__(self, hidden_size: int, eps: float = 1e-6):
+    def __init__(self, dim: int, eps: float = 1e-6) -> None:
         super().__init__()
-        self.weight = nn.Parameter(torch.ones(hidden_size))
         self.eps = eps
+        self.weight = nn.Parameter(torch.ones(dim))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        rms = torch.rsqrt(x.pow(2).mean(dim=-1, keepdim=True) + self.eps)
-        return x * rms * self.weight
+        norm = x.pow(2).mean(dim=-1, keepdim=True)
+        return x * torch.rsqrt(norm + self.eps) * self.weight
 
 
-class MultiHeadSelfAttention(nn.Module):
-    def __init__(self, hidden_size: int, num_heads: int, dropout: float, use_bitlinear: bool = False):
+class _QKRMSNorm(nn.Module):
+    def __init__(self, dim: int, eps: float = 1e-6) -> None:
         super().__init__()
-        if hidden_size % num_heads != 0:
-            raise ValueError("hidden_size must be divisible by num_heads")
-        self.num_heads = num_heads
-        self.head_dim = hidden_size // num_heads
-        linear = BitLinear if use_bitlinear else nn.Linear
-        kwargs = {"enabled": True} if use_bitlinear else {}
-        self.q_proj = linear(hidden_size, hidden_size, bias=False, **kwargs)  # type: ignore[arg-type]
-        self.k_proj = linear(hidden_size, hidden_size, bias=False, **kwargs)  # type: ignore[arg-type]
-        self.v_proj = linear(hidden_size, hidden_size, bias=False, **kwargs)  # type: ignore[arg-type]
-        self.o_proj = linear(hidden_size, hidden_size, bias=False, **kwargs)  # type: ignore[arg-type]
-        self.dropout = nn.Dropout(dropout)
+        self.eps = eps
+        self.weight = nn.Parameter(torch.ones(dim))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        bsz, seq_len, hidden = x.shape
-        q = self.q_proj(x).view(bsz, seq_len, self.num_heads, self.head_dim).transpose(1, 2)
-        k = self.k_proj(x).view(bsz, seq_len, self.num_heads, self.head_dim).transpose(1, 2)
-        v = self.v_proj(x).view(bsz, seq_len, self.num_heads, self.head_dim).transpose(1, 2)
-        attn = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.head_dim)
-        probs = F.softmax(attn, dim=-1)
-        probs = self.dropout(probs)
-        out = torch.matmul(probs, v).transpose(1, 2).contiguous().view(bsz, seq_len, hidden)
-        return self.o_proj(out)
+        rms = x.float().pow(2).mean(dim=-1, keepdim=True).add(self.eps).rsqrt()
+        return x * rms.to(x.dtype) * self.weight.to(x.dtype)
 
 
-class DenseFeedForward(nn.Module):
-    def __init__(self, hidden_size: int, dropout: float, use_bitlinear: bool = False):
+try:
+    from flash_attn import flash_attn_func
+
+    FLASH_ATTN_AVAILABLE = True
+except ImportError:
+    FLASH_ATTN_AVAILABLE = False
+
+
+def _is_onnx_export() -> bool:
+    onnx_mod = getattr(torch, "onnx", None)
+    if onnx_mod is None:
+        return False
+    check_fn = getattr(onnx_mod, "is_in_onnx_export", None)
+    if check_fn is None:
+        return False
+    try:
+        return bool(check_fn())
+    except Exception:
+        return False
+
+
+class RotaryEmbedding(nn.Module):
+    def __init__(self, dim: int, max_seq_len: int = 4096, base: float = 100000.0, device: Optional[torch.device] = None):
         super().__init__()
-        inner = hidden_size * 4
-        linear = BitLinear if use_bitlinear else nn.Linear
-        kwargs = {"enabled": True} if use_bitlinear else {}
-        self.fc1 = linear(hidden_size, inner, **kwargs)  # type: ignore[arg-type]
-        self.fc2 = linear(inner, hidden_size, **kwargs)  # type: ignore[arg-type]
-        self.dropout = nn.Dropout(dropout)
+        if dim % 2 != 0:
+            raise ValueError(f"RoPE dim must be even, got {dim}")
+        self.dim = dim
+        self.max_seq_len = max_seq_len
+        self.base = base
+        inv_freq = 1.0 / (base ** (torch.arange(0, dim, 2, device=device).float() / dim))
+        self.register_buffer("inv_freq", inv_freq, persistent=False)
+        self.register_buffer("cos_cached", torch.empty(0), persistent=False)
+        self.register_buffer("sin_cached", torch.empty(0), persistent=False)
+        self._update_cache(max_seq_len, device if device is not None else inv_freq.device)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = self.fc1(x)
-        x = F.gelu(x)
-        x = self.dropout(x)
-        x = self.fc2(x)
-        return self.dropout(x)
+    @torch.no_grad()
+    def _update_cache(self, seq_len: int, device: Optional[torch.device]) -> None:
+        seq_len = int(seq_len)
+        if device is None:
+            device = self.inv_freq.device
+        self.max_seq_len = max(seq_len, self.max_seq_len)
+        t = torch.arange(self.max_seq_len, device=device, dtype=self.inv_freq.dtype)
+        freqs = torch.outer(t, self.inv_freq.to(device))
+        emb = torch.cat((freqs, freqs), dim=-1)
+        cos = emb.cos()[None, None, :, :]
+        sin = emb.sin()[None, None, :, :]
+        self._buffers["cos_cached"] = cos
+        self._buffers["sin_cached"] = sin
 
-
-class SparseMoE(nn.Module):
-    def __init__(self, hidden_size: int, num_experts: int, top_k: int, dropout: float, use_bitlinear: bool = False):
-        super().__init__()
-        self.num_experts = num_experts
-        self.top_k = max(1, min(top_k, num_experts))
-        self.router = nn.Linear(hidden_size, num_experts, bias=False)
-        self.experts = nn.ModuleList(
-            DenseFeedForward(hidden_size, dropout, use_bitlinear=use_bitlinear) for _ in range(num_experts)
+    def forward(self, x: torch.Tensor, seq_len: Optional[int] = None, offset: int = 0) -> Tuple[torch.Tensor, torch.Tensor]:
+        if seq_len is None:
+            seq_len = x.shape[2]
+        total_len = int(seq_len) + int(offset)
+        if (
+            self.cos_cached.numel() == 0
+            or total_len > self.cos_cached.shape[2]
+            or self.cos_cached.device != x.device
+            or self.cos_cached.dtype != self.inv_freq.dtype
+        ):
+            self._update_cache(total_len, x.device)
+        return (
+            self.cos_cached[..., offset:total_len, :].to(dtype=x.dtype),
+            self.sin_cached[..., offset:total_len, :].to(dtype=x.dtype),
         )
-        self.last_router_stats: Dict[str, Any] = {}
-
-    def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, Dict[str, Any]]:
-        router_logits = self.router(x)
-        weights = F.softmax(router_logits, dim=-1)
-        top_weights, top_indices = torch.topk(weights, k=self.top_k, dim=-1)
-        normalized_top_weights = top_weights / top_weights.sum(dim=-1, keepdim=True).clamp_min(1e-9)
-
-        flat_x = x.reshape(-1, x.size(-1))
-        flat_indices = top_indices.reshape(-1, self.top_k)
-        flat_weights = normalized_top_weights.reshape(-1, self.top_k)
-        out = torch.zeros_like(flat_x)
-        usage = torch.zeros(self.num_experts, dtype=torch.float32, device=x.device)
-
-        for expert_idx, expert in enumerate(self.experts):
-            contrib = flat_indices == expert_idx
-            if not bool(contrib.any()):
-                continue
-            token_mask = contrib.any(dim=-1)
-            token_positions = token_mask.nonzero(as_tuple=False).squeeze(-1)
-            expert_in = flat_x[token_positions]
-            expert_out = expert(expert_in)
-            weight_rows = flat_weights[token_positions] * contrib[token_positions].float()
-            token_weights = weight_rows.sum(dim=-1, keepdim=True)
-            out[token_positions] += expert_out * token_weights
-            usage[expert_idx] = float(token_mask.float().sum().item())
-
-        load = weights.mean(dim=(0, 1))
-        aux = ((load - (1.0 / self.num_experts)) ** 2).mean()
-        entropy = -(weights * weights.clamp_min(1e-9).log()).sum(dim=-1).mean()
-        usage_total = float(usage.sum().item())
-        usage_pct = (usage / usage.sum().clamp_min(1.0)).tolist()
-        dead_experts = [idx for idx, value in enumerate(usage_pct) if value < 1e-4]
-        self.last_router_stats = {
-            "router_entropy": float(entropy.detach().item()),
-            "tokens_per_expert": [int(round(v)) for v in usage.tolist()],
-            "tokens_per_expert_fraction": [float(v) for v in usage_pct],
-            "dead_experts": dead_experts,
-            "active_tokens": int(usage_total),
-            "top_k": int(self.top_k),
-        }
-        return out.reshape_as(x), aux, self.last_router_stats
 
 
-class GatedResidualAdapter(nn.Module):
-    def __init__(self, hidden_size: int):
+def rotate_half(x: torch.Tensor) -> torch.Tensor:
+    x1 = x[..., : x.shape[-1] // 2]
+    x2 = x[..., x.shape[-1] // 2 :]
+    return torch.cat((-x2, x1), dim=-1)
+
+
+def apply_rope_optimized(
+    q: torch.Tensor,
+    k: torch.Tensor,
+    cos: torch.Tensor,
+    sin: torch.Tensor,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    q_embed = (q * cos) + (rotate_half(q) * sin)
+    k_embed = (k * cos) + (rotate_half(k) * sin)
+    return q_embed, k_embed
+
+
+class MLA(nn.Module):
+    def __init__(self, arch_cfg: MirrorModelConfig) -> None:
         super().__init__()
-        self.proj = nn.Linear(hidden_size, hidden_size)
-        self.gate = nn.Linear(hidden_size, hidden_size)
+        self.hidden_size = arch_cfg.hidden_size
+        self.num_heads = arch_cfg.num_heads
+        self.head_dim = arch_cfg.head_dim
+        self.num_kv_heads = arch_cfg.num_kv_heads
+        self.rope_theta = arch_cfg.rope_theta
+        if self.num_kv_heads <= 0:
+            raise ValueError(f"num_kv_heads must be >= 1, got {self.num_kv_heads}")
+        if self.num_kv_heads > self.num_heads:
+            raise ValueError(
+                f"num_kv_heads ({self.num_kv_heads}) must be <= num_heads ({self.num_heads}) for GQA."
+            )
+        if self.num_heads % self.num_kv_heads != 0:
+            raise ValueError(
+                f"num_heads ({self.num_heads}) must be divisible by num_kv_heads ({self.num_kv_heads}) for GQA."
+            )
+        self.rope_dim = arch_cfg.rope_dim
+        self.rope_base = arch_cfg.rope_base
+        rope_dim_eff = self.head_dim if self.rope_dim is None else int(self.rope_dim)
+        if rope_dim_eff <= 0 or rope_dim_eff > self.head_dim:
+            raise ValueError(
+                f"rope_dim must be in (0, head_dim], got rope_dim={rope_dim_eff}, head_dim={self.head_dim}"
+            )
+        if rope_dim_eff % 2 != 0:
+            raise ValueError(f"rope_dim must be even, got {rope_dim_eff}")
+        self._rope_dim_eff = rope_dim_eff
+        self.rotary_emb = RotaryEmbedding(
+            dim=self._rope_dim_eff,
+            max_seq_len=arch_cfg.max_seq_len,
+            base=self.rope_base,
+        )
+        self.q_proj = make_linear(arch_cfg.use_bitnet, self.hidden_size, self.num_heads * self.head_dim, bias=False)
+        self.k_proj = make_linear(arch_cfg.use_bitnet, self.hidden_size, self.num_kv_heads * self.head_dim, bias=False)
+        self.v_proj = make_linear(arch_cfg.use_bitnet, self.hidden_size, self.num_kv_heads * self.head_dim, bias=False)
+        self.o_proj = make_linear(arch_cfg.use_bitnet, self.num_heads * self.head_dim, self.hidden_size, bias=False)
+        self.q_norm = _QKRMSNorm(self.head_dim)
+        self.k_norm = _QKRMSNorm(self.head_dim)
+        self.attn_dropout = nn.Dropout(arch_cfg.attention_dropout)
+        self.use_flash_attn_inference = bool(arch_cfg.use_flash_attn_inference)
+        self.max_seq = int(arch_cfg.max_seq_len)
+        self.use_hierarchical_kv_cache = bool(arch_cfg.use_hierarchical_kv_cache)
+        self.hkv_short_window = int(arch_cfg.hkv_short_window)
+        self.hkv_long_stride = int(arch_cfg.hkv_long_stride)
+        self.hkv_max_long_blocks = int(arch_cfg.hkv_max_long_blocks)
 
-    def forward(self, x: torch.Tensor, residual: torch.Tensor) -> torch.Tensor:
-        gate = torch.sigmoid(self.gate(x))
-        delta = torch.tanh(self.proj(x))
-        return residual + gate * delta
+    def _pool_long_kv(self, tensor: torch.Tensor, stride: int, max_blocks: int) -> torch.Tensor:
+        bsz, hk, slen, dim = tensor.shape
+        if slen == 0:
+            return tensor.new_zeros((bsz, hk, 0, dim))
+        stride = max(1, int(stride))
+        blocks = slen // stride
+        pooled = tensor.new_zeros((bsz, hk, 0, dim))
+        if blocks > 0:
+            trimmed = tensor[:, :, : blocks * stride, :]
+            pooled = trimmed.reshape(bsz, hk, blocks, stride, dim).mean(dim=3)
+        rem = slen - blocks * stride
+        if rem > 0:
+            rem_chunk = tensor[:, :, blocks * stride :, :].mean(dim=2, keepdim=True)
+            pooled = torch.cat([pooled, rem_chunk], dim=2)
+        if max_blocks > 0 and pooled.size(2) > max_blocks:
+            pooled = pooled[:, :, -max_blocks:, :]
+        return pooled
+
+    def _build_hierarchical_kv(self, k_full: torch.Tensor, v_full: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        total_len = k_full.size(2)
+        short_window = max(1, min(self.hkv_short_window, total_len))
+        long_len = total_len - short_window
+        if long_len <= 0:
+            return k_full, v_full
+        k_long = k_full[:, :, :long_len, :]
+        v_long = v_full[:, :, :long_len, :]
+        k_short = k_full[:, :, long_len:, :]
+        v_short = v_full[:, :, long_len:, :]
+        k_long_pooled = self._pool_long_kv(k_long, self.hkv_long_stride, self.hkv_max_long_blocks)
+        v_long_pooled = self._pool_long_kv(v_long, self.hkv_long_stride, self.hkv_max_long_blocks)
+        return torch.cat([k_long_pooled, k_short], dim=2), torch.cat([v_long_pooled, v_short], dim=2)
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        decoupled_rope: bool = False,
+        past_key_value: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
+        use_cache: bool = False,
+    ) -> Tuple[torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]:
+        batch, seq_len, hidden = x.shape
+        q = self.q_proj(x).view(batch, seq_len, self.num_heads, self.head_dim).transpose(1, 2)
+        k = self.k_proj(x).view(batch, seq_len, self.num_kv_heads, self.head_dim).transpose(1, 2)
+        v = self.v_proj(x).view(batch, seq_len, self.num_kv_heads, self.head_dim).transpose(1, 2)
+        q = self.q_norm(q)
+        k = self.k_norm(k)
+        kv_seq_len = seq_len
+        if past_key_value is not None:
+            past_k, past_v = past_key_value
+            kv_seq_len = past_k.shape[2] + seq_len
+        if kv_seq_len > self.max_seq:
+            raise ValueError(
+                f"kv_seq_len ({kv_seq_len}) exceeds max_seq ({self.max_seq}). Increase cfg.max_seq_len."
+            )
+        cos, sin = self.rotary_emb(q, seq_len=seq_len, offset=kv_seq_len - seq_len)
+        rope_dim = self._rope_dim_eff
+        if decoupled_rope:
+            q_rope = q[..., -rope_dim:]
+            k_rope = k[..., -rope_dim:]
+            q_rope, k_rope = apply_rope_optimized(q_rope, k_rope, cos, sin)
+            if rope_dim < self.head_dim:
+                q = torch.cat([q[..., :-rope_dim], q_rope], dim=-1)
+                k = torch.cat([k[..., :-rope_dim], k_rope], dim=-1)
+            else:
+                q, k = q_rope, k_rope
+        else:
+            if rope_dim < self.head_dim:
+                q_rope = q[..., :rope_dim]
+                k_rope = k[..., :rope_dim]
+                q_rope, k_rope = apply_rope_optimized(q_rope, k_rope, cos, sin)
+                q = torch.cat([q_rope, q[..., rope_dim:]], dim=-1)
+                k = torch.cat([k_rope, k[..., rope_dim:]], dim=-1)
+            else:
+                q, k = apply_rope_optimized(q, k, cos, sin)
+        k_full, v_full = k, v
+        if past_key_value is not None:
+            k_full = torch.cat([past_k, k], dim=2)
+            v_full = torch.cat([past_v, v], dim=2)
+        present_key_value = (k_full, v_full) if use_cache else None
+        if self.use_hierarchical_kv_cache and past_key_value is not None and seq_len == 1:
+            k, v = self._build_hierarchical_kv(k_full, v_full)
+        else:
+            k, v = k_full, v_full
+        if self.num_kv_heads != self.num_heads:
+            n_rep = self.num_heads // self.num_kv_heads
+            k = k.repeat_interleave(n_rep, dim=1)
+            v = v.repeat_interleave(n_rep, dim=1)
+        use_flash = (
+            FLASH_ATTN_AVAILABLE
+            and q.is_cuda
+            and past_key_value is None
+            and (self.training or self.use_flash_attn_inference)
+            and not _is_onnx_export()
+        )
+        if use_flash:
+            q_flash = q.transpose(1, 2).contiguous()
+            k_flash = k.transpose(1, 2).contiguous()
+            v_flash = v.transpose(1, 2).contiguous()
+            out = flash_attn_func(
+                q_flash,
+                k_flash,
+                v_flash,
+                dropout_p=self.attn_dropout.p if self.training else 0.0,
+                causal=True,
+                softmax_scale=1.0 / math.sqrt(self.head_dim),
+            ).transpose(1, 2)
+        elif hasattr(F, "scaled_dot_product_attention") and not _is_onnx_export():
+            dropout_p = self.attn_dropout.p if self.training else 0.0
+            if past_key_value is None:
+                out = F.scaled_dot_product_attention(q, k, v, attn_mask=None, dropout_p=dropout_p, is_causal=True)
+            elif seq_len == 1:
+                out = F.scaled_dot_product_attention(q, k, v, attn_mask=None, dropout_p=dropout_p, is_causal=False)
+            else:
+                q_pos = torch.arange(kv_seq_len - seq_len, kv_seq_len, device=x.device)
+                k_pos = torch.arange(kv_seq_len, device=x.device)
+                causal_mask = q_pos[:, None] >= k_pos[None, :]
+                out = F.scaled_dot_product_attention(q, k, v, attn_mask=causal_mask, dropout_p=dropout_p, is_causal=False)
+        else:
+            q_pos = torch.arange(kv_seq_len - seq_len, kv_seq_len, device=x.device)
+            k_pos = torch.arange(kv_seq_len, device=x.device)
+            causal_mask = q_pos[:, None] >= k_pos[None, :]
+            scores = torch.matmul(q, k.transpose(-1, -2)) / math.sqrt(self.head_dim)
+            scores = scores.float()
+            scores.masked_fill_(~causal_mask, float("-inf"))
+            attn_weights = self.attn_dropout(F.softmax(scores, dim=-1).to(x.dtype))
+            out = torch.matmul(attn_weights, v)
+        out = out.transpose(1, 2).contiguous().view(batch, seq_len, hidden)
+        return self.o_proj(out), present_key_value
 
 
-class TransformerBlock(nn.Module):
+class MertFormerFFN(nn.Module):
+    def __init__(self, arch_cfg: MirrorModelConfig) -> None:
+        super().__init__()
+        hidden_size = arch_cfg.hidden_size
+        intermediate_size = arch_cfg.intermediate_size
+        self.gate_proj = make_linear(arch_cfg.use_bitnet, hidden_size, intermediate_size, bias=False)
+        self.up_proj = make_linear(arch_cfg.use_bitnet, hidden_size, intermediate_size, bias=False)
+        self.down_proj = make_linear(arch_cfg.use_bitnet, intermediate_size, hidden_size, bias=False)
+        self.dropout = nn.Dropout(arch_cfg.ffn_dropout)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x_inter = F.silu(self.gate_proj(x)) * self.up_proj(x)
+        x_inter = self.dropout(x_inter)
+        return self.down_proj(x_inter)
+
+
+def _jit_script_if_supported(fn):
+    if sys.version_info >= (3, 14):
+        return fn
+    try:
+        return torch.jit.script(fn)
+    except Exception as exc:
+        warnings.warn(f"TorchScript disabled for liquid kernel due to: {exc}", RuntimeWarning)
+        return fn
+
+
+class LiquidCell(nn.Module):
+    def __init__(self, h: int, use_bitnet: bool) -> None:
+        super().__init__()
+        self.input_w = make_linear(use_bitnet, h, h, bias=False)
+        self.hidden_w = make_linear(use_bitnet, h, h, bias=False)
+        self.tau_input_w = make_linear(use_bitnet, h, h, bias=False)
+        self.tau_hidden_w = make_linear(use_bitnet, h, h, bias=False)
+        self.tau_bias = nn.Parameter(torch.ones(1, h) * 0.5)
+
+    def forward(self, x: torch.Tensor, h_prev: torch.Tensor, dt: float = 1.0) -> torch.Tensor:
+        val_in = self.input_w(x)
+        val_rec = self.hidden_w(h_prev)
+        state_target = torch.tanh(val_in + val_rec)
+        tau_in = self.tau_input_w(x)
+        tau_rec = self.tau_hidden_w(h_prev)
+        time_decay = F.softplus(tau_in + tau_rec + self.tau_bias)
+        decay = torch.exp(torch.clamp(-time_decay * dt, min=-20.0, max=20.0))
+        return state_target + (h_prev - state_target) * decay
+
+
+@_jit_script_if_supported
+def jit_quant(w: torch.Tensor) -> torch.Tensor:
+    w_f = w.float()
+    scale = torch.sqrt((w_f * w_f).mean(dim=1, keepdim=True)).clamp(min=1e-5)
+    w_q = torch.round(w_f / scale).clamp(-1.0, 1.0)
+    return (w_q * scale).to(dtype=w.dtype)
+
+
+@_jit_script_if_supported
+def jit_liquid_loop_cached(
+    input_seq: torch.Tensor,
+    h_init: torch.Tensor,
+    dt: float,
+    input_w_q_t: torch.Tensor,
+    hidden_w_q_t: torch.Tensor,
+    tau_input_w_q_t: torch.Tensor,
+    tau_hidden_w_q_t: torch.Tensor,
+    tau_bias: torch.Tensor,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    batch, seq_len, hidden = input_seq.shape
+    h = h_init
+    out_seq = torch.zeros(batch, seq_len, hidden, device=input_seq.device, dtype=input_seq.dtype)
+    for t in range(seq_len):
+        x_t = input_seq[:, t, :]
+        val_in = torch.matmul(x_t, input_w_q_t)
+        val_rec = torch.matmul(h, hidden_w_q_t)
+        state_target = torch.tanh(val_in + val_rec)
+        tau_in = torch.matmul(x_t, tau_input_w_q_t)
+        tau_rec = torch.matmul(h, tau_hidden_w_q_t)
+        raw_tau = torch.nn.functional.softplus(tau_in + tau_rec + tau_bias)
+        time_decay = torch.clamp(raw_tau, min=1e-4, max=5.0)
+        decay = torch.exp(torch.clamp(-time_decay * dt, min=-20.0, max=20.0))
+        h = state_target + (h - state_target) * decay
+        out_seq[:, t, :] = h
+    return out_seq, h
+
+
+@_jit_script_if_supported
+def jit_liquid_loop(
+    input_seq: torch.Tensor,
+    h_init: torch.Tensor,
+    dt: float,
+    input_w_weight: torch.Tensor,
+    hidden_w_weight: torch.Tensor,
+    tau_input_w_weight: torch.Tensor,
+    tau_hidden_w_weight: torch.Tensor,
+    tau_bias: torch.Tensor,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    return jit_liquid_loop_cached(
+        input_seq,
+        h_init,
+        dt,
+        jit_quant(input_w_weight).t().contiguous(),
+        jit_quant(hidden_w_weight).t().contiguous(),
+        jit_quant(tau_input_w_weight).t().contiguous(),
+        jit_quant(tau_hidden_w_weight).t().contiguous(),
+        tau_bias.to(device=input_seq.device, dtype=input_seq.dtype),
+    )
+
+
+class LiquidMixer(nn.Module):
+    def __init__(self, h: int, use_bitnet: bool, fast_path: bool = True) -> None:
+        super().__init__()
+        self.cell = LiquidCell(h, use_bitnet=use_bitnet)
+        self.norm = nn.LayerNorm(h)
+        self.fast_path = bool(fast_path)
+        self._compiled_train_loop = None
+        self.register_buffer("_q_input_w_t", torch.empty(0), persistent=False)
+        self.register_buffer("_q_hidden_w_t", torch.empty(0), persistent=False)
+        self.register_buffer("_q_tau_input_w_t", torch.empty(0), persistent=False)
+        self.register_buffer("_q_tau_hidden_w_t", torch.empty(0), persistent=False)
+        self.register_buffer("_q_tau_bias", torch.empty(0), persistent=False)
+        self.register_buffer("_weight_version", torch.zeros((), dtype=torch.int64), persistent=False)
+        self.register_buffer("_cached_weight_version", torch.full((), -1, dtype=torch.int64), persistent=False)
+        self._cache_ready = False
+
+    def _set_cache(self, name: str, value: torch.Tensor) -> None:
+        self._buffers[name] = value.detach().contiguous()
+
+    def _compute_weight_version(self) -> int:
+        return int(
+            self.cell.input_w.weight._version
+            + self.cell.hidden_w.weight._version
+            + self.cell.tau_input_w.weight._version
+            + self.cell.tau_hidden_w.weight._version
+            + self.cell.tau_bias._version
+        )
+
+    def reset_stream_state(self) -> None:
+        for name in ("_q_input_w_t", "_q_hidden_w_t", "_q_tau_input_w_t", "_q_tau_hidden_w_t", "_q_tau_bias"):
+            self._buffers[name] = self._buffers[name].new_empty((0,))
+        self._cached_weight_version.fill_(-1)
+        self._cache_ready = False
+
+    def mark_weights_updated(self) -> None:
+        self._weight_version += 1
+        self._cache_ready = False
+
+    def train(self, mode: bool = True):
+        super().train(mode)
+        self.reset_stream_state()
+        if not mode:
+            self._weight_version.fill_(self._compute_weight_version())
+        return self
+
+    def _ensure_qcache(self, device: torch.device, dtype: torch.dtype) -> None:
+        if self.training:
+            return
+        current_weight_version = self._compute_weight_version()
+        if int(self._weight_version.item()) != current_weight_version:
+            self._weight_version.fill_(current_weight_version)
+            self._cache_ready = False
+        if (
+            self._cache_ready
+            and self._q_input_w_t.numel() > 0
+            and self._q_input_w_t.device == device
+            and self._q_input_w_t.dtype == dtype
+            and int(self._cached_weight_version.item()) == int(self._weight_version.item())
+        ):
+            return
+        with torch.no_grad():
+            self._set_cache("_q_input_w_t", jit_quant(self.cell.input_w.weight).to(device=device, dtype=dtype).t().contiguous())
+            self._set_cache("_q_hidden_w_t", jit_quant(self.cell.hidden_w.weight).to(device=device, dtype=dtype).t().contiguous())
+            self._set_cache("_q_tau_input_w_t", jit_quant(self.cell.tau_input_w.weight).to(device=device, dtype=dtype).t().contiguous())
+            self._set_cache("_q_tau_hidden_w_t", jit_quant(self.cell.tau_hidden_w.weight).to(device=device, dtype=dtype).t().contiguous())
+            self._set_cache("_q_tau_bias", self.cell.tau_bias.to(device=device, dtype=dtype).contiguous())
+            self._cached_weight_version.copy_(self._weight_version)
+            self._cache_ready = True
+
+    def _train_loop(self, x: torch.Tensor, h: torch.Tensor, dt: float) -> Tuple[torch.Tensor, torch.Tensor]:
+        batch, seq_len, hidden = x.shape
+        out_seq = torch.empty(batch, seq_len, hidden, device=x.device, dtype=x.dtype).contiguous()
+        for t in range(seq_len):
+            h = self.cell(x[:, t, :], h, dt)
+            out_seq[:, t, :] = h
+        return out_seq, h
+
+    def _train_loop_compiled(self, x: torch.Tensor, h: torch.Tensor, dt: float) -> Tuple[torch.Tensor, torch.Tensor]:
+        if self._compiled_train_loop is None:
+            try:
+                self._compiled_train_loop = torch.compile(self._train_loop, mode="reduce-overhead")
+            except Exception as exc:
+                warnings.warn(f"Liquid fast path compile disabled: {exc}", RuntimeWarning)
+                self._compiled_train_loop = self._train_loop
+        return self._compiled_train_loop(x, h, dt)
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        dt: float = 1.0,
+        h_init: Optional[torch.Tensor] = None,
+        return_state: bool = False,
+    ):
+        batch, _, hidden = x.shape
+        if h_init is None:
+            h = torch.zeros(batch, hidden, device=x.device, dtype=x.dtype)
+        else:
+            if h_init.dim() != 2 or h_init.shape != (batch, hidden):
+                raise ValueError(f"h_init must be [B,H] = [{batch},{hidden}], got {tuple(h_init.shape)}")
+            if h_init.device != x.device or h_init.dtype != x.dtype:
+                raise RuntimeError(
+                    "h_init device/dtype mismatch with x. "
+                    f"h_init={h_init.device}/{h_init.dtype}, x={x.device}/{x.dtype}."
+                )
+            h = h_init
+        if self.training:
+            if self.fast_path and x.device.type != "mps":
+                try:
+                    out_seq, h = self._train_loop_compiled(x, h, dt)
+                except Exception as exc:
+                    warnings.warn(f"Liquid fast path failed; falling back to eager: {exc}", RuntimeWarning)
+                    out_seq, h = self._train_loop(x, h, dt)
+            else:
+                out_seq, h = self._train_loop(x, h, dt)
+        else:
+            self._ensure_qcache(device=x.device, dtype=x.dtype)
+            out_seq, h = jit_liquid_loop_cached(
+                x,
+                h,
+                dt,
+                self._q_input_w_t,
+                self._q_hidden_w_t,
+                self._q_tau_input_w_t,
+                self._q_tau_hidden_w_t,
+                self._q_tau_bias,
+            )
+        y = self.norm(out_seq + x)
+        if return_state:
+            return y, h
+        return y
+
+    def load_state_dict(self, *args, **kwargs):
+        out = super().load_state_dict(*args, **kwargs)
+        self.reset_stream_state()
+        self._weight_version.fill_(self._compute_weight_version())
+        return out
+
+
+class BitSwiGLU(nn.Module):
+    def __init__(self, hidden_size: int, intermediate_size: int, use_bitnet: bool) -> None:
+        super().__init__()
+        self.gate_proj = make_linear(use_bitnet, hidden_size, intermediate_size, bias=False)
+        self.up_proj = make_linear(use_bitnet, hidden_size, intermediate_size, bias=False)
+        self.down_proj = make_linear(use_bitnet, intermediate_size, hidden_size, bias=False)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self.down_proj(F.silu(self.gate_proj(x)) * self.up_proj(x))
+
+
+class LiquidRouter(nn.Module):
+    def __init__(self, hidden_size: int, num_experts: int, use_bitnet: bool):
+        super().__init__()
+        self.hidden_size = hidden_size
+        self.num_experts = num_experts
+        self.main_proj = make_linear(use_bitnet, hidden_size, num_experts, bias=False)
+        self.history_window = 4
+        self.fluid_mixer = nn.Conv1d(
+            in_channels=hidden_size,
+            out_channels=hidden_size,
+            kernel_size=self.history_window,
+            groups=hidden_size,
+            padding=0,
+            bias=False,
+        )
+        self.fluid_gate = make_linear(use_bitnet, hidden_size, num_experts, bias=False)
+        nn.init.zeros_(self.fluid_gate.weight)
+        self.register_buffer(
+            "inference_state",
+            torch.zeros(1, hidden_size, self.history_window - 1),
+            persistent=False,
+        )
+
+    def _update_inference_state(self, state: torch.Tensor) -> None:
+        self._buffers["inference_state"] = state.detach().clone()
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        is_flat = False
+        if x.dim() == 2:
+            is_flat = True
+            x = x.unsqueeze(1)
+        batch, seq_len, hidden = x.shape
+        logits_main = self.main_proj(x)
+        if self.training or seq_len > 1:
+            x_t = x.transpose(1, 2)
+            x_t_padded = F.pad(x_t, (self.history_window - 1, 0))
+            fluid_mem = self.fluid_mixer(x_t_padded).transpose(1, 2)
+            logits_fluid = self.fluid_gate(F.silu(fluid_mem))
+            if not self.training:
+                last_tokens = x_t[..., -(self.history_window - 1) :]
+                if last_tokens.size(2) < (self.history_window - 1):
+                    pad = torch.zeros(
+                        batch,
+                        hidden,
+                        (self.history_window - 1) - last_tokens.size(2),
+                        device=x.device,
+                        dtype=x.dtype,
+                    )
+                    last_tokens = torch.cat([pad, last_tokens], dim=2)
+                self._update_inference_state(last_tokens)
+            out = logits_main + logits_fluid
+        else:
+            if self.inference_state.size(0) != batch:
+                if self.inference_state.size(0) == 1:
+                    self._update_inference_state(self.inference_state.expand(batch, -1, -1).contiguous())
+                else:
+                    self._update_inference_state(
+                        torch.zeros(batch, hidden, self.history_window - 1, device=x.device, dtype=x.dtype)
+                    )
+            current_token = x.transpose(1, 2)
+            context = torch.cat([self.inference_state.to(device=x.device, dtype=x.dtype), current_token], dim=2)
+            context_padded = F.pad(context, (self.history_window - 1, 0))
+            fluid_mem = self.fluid_mixer(context_padded)[..., -1:].transpose(1, 2)
+            logits_fluid = self.fluid_gate(F.silu(fluid_mem))
+            self._update_inference_state(context[..., 1:])
+            out = logits_main + logits_fluid
+        if is_flat:
+            out = out.reshape(-1, self.num_experts)
+        return out
+
+    def get_state(self) -> torch.Tensor:
+        return self.inference_state.clone()
+
+    def set_state(self, state: torch.Tensor) -> None:
+        if state.dim() != 3:
+            raise ValueError(f"State must be 3D [Batch, Hidden, Window-1], got {state.shape}")
+        if state.size(2) != self.history_window - 1:
+            raise ValueError(f"State window size mismatch. Expected {self.history_window - 1}, got {state.size(2)}")
+        self._update_inference_state(state)
+
+
+class MoE(nn.Module):
+    def __init__(self, arch_cfg: MirrorModelConfig) -> None:
+        super().__init__()
+        self.hidden_size = arch_cfg.hidden_size
+        self.num_experts = arch_cfg.num_experts
+        self.active_experts = arch_cfg.active_experts
+        self.router = LiquidRouter(self.hidden_size, self.num_experts, use_bitnet=arch_cfg.use_bitnet)
+        self.experts = nn.ModuleList(
+            BitSwiGLU(self.hidden_size, arch_cfg.moe_intermediate, use_bitnet=arch_cfg.use_bitnet)
+            for _ in range(self.num_experts)
+        )
+        self.shared_expert = BitSwiGLU(self.hidden_size, arch_cfg.moe_intermediate, use_bitnet=arch_cfg.use_bitnet)
+        self.shared_gate = nn.Parameter(torch.tensor([arch_cfg.shared_expert_gate], dtype=torch.float32))
+        self.router_temperature = float(arch_cfg.router_temperature)
+        self.router_jitter = float(arch_cfg.router_jitter)
+        self.router_z_loss_coef = float(arch_cfg.z_loss_coef)
+        self.router_alarm_threshold = float(arch_cfg.router_alarm_threshold)
+        self.use_cross_expert_sync_bus = bool(arch_cfg.use_cross_expert_sync_bus)
+        self.cross_expert_sync_gain = float(arch_cfg.cross_expert_sync_gain)
+        self.use_structural_plasticity = bool(arch_cfg.use_structural_plasticity)
+        self.structural_ema_decay = float(arch_cfg.structural_ema_decay)
+        self.structural_prune_threshold = float(arch_cfg.structural_prune_threshold)
+        self.structural_grow_threshold = float(arch_cfg.structural_grow_threshold)
+        self.structural_update_interval = int(arch_cfg.structural_update_interval)
+        self.use_expert_paging = bool(arch_cfg.use_expert_paging)
+        self.expert_paging_inference_only = bool(arch_cfg.expert_paging_inference_only)
+        self.expert_paging_lazy_init = bool(arch_cfg.expert_paging_lazy_init)
+        self.expert_paging_cache_size = max(1, int(arch_cfg.expert_paging_cache_size))
+        self.expert_paging_offload_device = str(arch_cfg.expert_paging_offload_device)
+        self.expert_paging_verbose = bool(arch_cfg.expert_paging_verbose)
+        self._expert_lru: List[int] = []
+        self._expert_resident: set[int] = set()
+        self._paging_bootstrapped = False
+        self.use_switch_loss = bool(arch_cfg.use_switch_loss)
+        self.router_jitter_boost = float(arch_cfg.router_jitter_boost)
+        self.collapse_threshold = 0.85
+        self.moe_capacity_enforce = bool(arch_cfg.moe_capacity_enforce)
+        self.moe_capacity_factor = float(arch_cfg.moe_capacity_factor)
+        self.dispatch_mode = str(arch_cfg.moe_dispatch_mode).lower()
+        self.register_buffer("last_expert_load", torch.zeros(self.num_experts))
+        self.register_buffer("last_router_entropy", torch.tensor(0.0))
+        self.register_buffer("last_router_max_load", torch.tensor(0.0))
+        self.register_buffer("last_capacity_overflow_ratio", torch.tensor(0.0))
+        self.register_buffer("collapse_detected", torch.tensor(False))
+        self.register_buffer("expert_activity_mask", torch.ones(self.num_experts, dtype=torch.bool))
+        self.register_buffer("expert_usage_ema", torch.zeros(self.num_experts))
+        self.register_buffer("plasticity_step", torch.zeros((), dtype=torch.int64))
+        self.register_buffer("expert_paging_swaps_in", torch.zeros((), dtype=torch.int64), persistent=False)
+        self.register_buffer("expert_paging_swaps_out", torch.zeros((), dtype=torch.int64), persistent=False)
+        self.sync_proj = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
+        self.sync_load_proj = nn.Linear(self.num_experts, self.hidden_size, bias=False)
+        self.sync_gate = nn.Parameter(torch.tensor(0.0, dtype=torch.float32))
+
+    def _should_skip_expert_apply(self) -> bool:
+        return bool(self.use_expert_paging and self.expert_paging_lazy_init)
+
+    def _offload_device(self) -> torch.device:
+        try:
+            return torch.device(self.expert_paging_offload_device)
+        except Exception:
+            return torch.device("cpu")
+
+    def _offload_all_experts(self, target_device: torch.device, target_dtype: Optional[torch.dtype] = None) -> None:
+        with torch.no_grad():
+            for expert in self.experts:
+                if target_dtype is None:
+                    expert.to(device=target_device)
+                else:
+                    expert.to(device=target_device, dtype=target_dtype)
+        self._expert_resident.clear()
+        self._expert_lru.clear()
+        self._paging_bootstrapped = True
+
+    def _apply(self, fn):
+        if not self._should_skip_expert_apply():
+            return super()._apply(fn)
+        experts = self._modules.pop("experts")
+        try:
+            out = super()._apply(fn)
+        finally:
+            self._modules["experts"] = experts
+        offload_device = self._offload_device()
+        ref_param = next(self.shared_expert.parameters(), None)
+        target_dtype = ref_param.dtype if ref_param is not None and torch.is_floating_point(ref_param) else None
+        self._offload_all_experts(offload_device, target_dtype=target_dtype)
+        return out
+
+    def train(self, mode: bool = True):
+        out = super().train(mode)
+        if not self.use_expert_paging:
+            return out
+        ref_param = next(self.shared_expert.parameters(), None)
+        if ref_param is None:
+            return out
+        ref_device = ref_param.device
+        ref_dtype = ref_param.dtype if torch.is_floating_point(ref_param) else None
+        if mode:
+            with torch.no_grad():
+                for expert in self.experts:
+                    if ref_dtype is None:
+                        expert.to(device=ref_device)
+                    else:
+                        expert.to(device=ref_device, dtype=ref_dtype)
+            self._expert_resident = set(range(self.num_experts))
+            self._expert_lru = list(range(self.num_experts))
+            self._paging_bootstrapped = False
+            return out
+        if self.expert_paging_lazy_init:
+            offload_device = self._offload_device()
+            if offload_device != ref_device:
+                self._offload_all_experts(offload_device, target_dtype=ref_dtype)
+        return out
+
+    def get_router_state(self) -> torch.Tensor:
+        return self.router.get_state()
+
+    def set_router_state(self, state: torch.Tensor) -> None:
+        self.router.set_state(state)
+
+    def get_expert_load(self) -> torch.Tensor:
+        return self.last_expert_load
+
+    def get_router_entropy(self) -> torch.Tensor:
+        return self.last_router_entropy
+
+    def get_router_max_load(self) -> torch.Tensor:
+        return self.last_router_max_load
+
+    def get_expert_paging_stats(self) -> Dict[str, Any]:
+        return {
+            "enabled": bool(self.use_expert_paging),
+            "inference_only": bool(self.expert_paging_inference_only),
+            "lazy_init": bool(self.expert_paging_lazy_init),
+            "cache_size": int(self.expert_paging_cache_size),
+            "offload_device": str(self.expert_paging_offload_device),
+            "bootstrapped": bool(self._paging_bootstrapped),
+            "swaps_in": int(self.expert_paging_swaps_in.item()),
+            "swaps_out": int(self.expert_paging_swaps_out.item()),
+            "resident_count": int(len(self._expert_resident)),
+        }
+
+    def _paging_active_for_step(self) -> bool:
+        if not self.use_expert_paging:
+            return False
+        if self.training and self.expert_paging_inference_only:
+            return False
+        return not self.training
+
+    def _expert_device(self, expert_id: int) -> torch.device:
+        param = next(self.experts[expert_id].parameters(), None)
+        return param.device if param is not None else torch.device("cpu")
+
+    def _touch_lru(self, expert_id: int) -> None:
+        if expert_id in self._expert_lru:
+            self._expert_lru.remove(expert_id)
+        self._expert_lru.append(expert_id)
+
+    def _refresh_resident(self, compute_device: torch.device) -> None:
+        self._expert_resident = {
+            idx for idx in range(self.num_experts) if self._expert_device(idx) == compute_device
+        }
+        self._expert_lru = [idx for idx in self._expert_lru if idx in self._expert_resident]
+
+    def _bootstrap_expert_paging(self, compute_device: torch.device) -> None:
+        if self._paging_bootstrapped:
+            return
+        if compute_device.type == "cpu":
+            self._paging_bootstrapped = True
+            return
+        offload_device = self._offload_device()
+        if offload_device == compute_device:
+            self._paging_bootstrapped = True
+            return
+        ref_param = next(self.shared_expert.parameters(), None)
+        target_dtype = ref_param.dtype if ref_param is not None and torch.is_floating_point(ref_param) else None
+        self._offload_all_experts(offload_device, target_dtype=target_dtype)
+
+    def _page_in_active_experts(
+        self,
+        active_expert_ids: List[int],
+        compute_device: torch.device,
+        compute_dtype: torch.dtype,
+    ) -> None:
+        if not active_expert_ids:
+            return
+        self._bootstrap_expert_paging(compute_device)
+        if compute_device.type == "cpu":
+            return
+        offload_device = self._offload_device()
+        if offload_device == compute_device:
+            return
+        self._refresh_resident(compute_device)
+        with torch.no_grad():
+            for expert_id in active_expert_ids:
+                if expert_id not in self._expert_resident:
+                    self.experts[expert_id].to(device=compute_device, dtype=compute_dtype)
+                    self._expert_resident.add(expert_id)
+                    self.expert_paging_swaps_in.add_(1)
+                self._touch_lru(expert_id)
+            keep = set(active_expert_ids)
+            max_resident = max(self.expert_paging_cache_size, len(keep))
+            while len(self._expert_resident) > max_resident:
+                evict_id = None
+                for candidate in self._expert_lru:
+                    if candidate not in keep:
+                        evict_id = candidate
+                        break
+                if evict_id is None:
+                    break
+                self.experts[evict_id].to(device=offload_device, dtype=compute_dtype)
+                self._expert_resident.discard(evict_id)
+                self.expert_paging_swaps_out.add_(1)
+                self._expert_lru = [idx for idx in self._expert_lru if idx != evict_id]
+
+    def _apply_structural_plasticity(self, load: torch.Tensor) -> None:
+        if not self.use_structural_plasticity or not self.training:
+            return
+        with torch.no_grad():
+            self.expert_usage_ema.mul_(self.structural_ema_decay).add_(load.detach() * (1.0 - self.structural_ema_decay))
+            self.plasticity_step.add_(1)
+            if int(self.plasticity_step.item()) % max(1, self.structural_update_interval) != 0:
+                return
+            active_count = int(self.expert_activity_mask.sum().item())
+            min_active = max(1, self.active_experts)
+            if active_count > min_active:
+                active_idx = torch.where(self.expert_activity_mask)[0]
+                active_ema = self.expert_usage_ema[active_idx]
+                prune_pos = torch.argmin(active_ema)
+                prune_idx = active_idx[prune_pos]
+                if active_ema[prune_pos].item() < self.structural_prune_threshold:
+                    self.expert_activity_mask[prune_idx] = False
+                    active_count -= 1
+            inactive_idx = torch.where(~self.expert_activity_mask)[0]
+            if inactive_idx.numel() > 0 and self.last_router_max_load.item() > self.structural_grow_threshold:
+                self.expert_activity_mask[inactive_idx[0]] = True
+
+    def _dispatch_sequential(self, x_flat: torch.Tensor, topk_idx: torch.Tensor, topk_vals: torch.Tensor) -> torch.Tensor:
+        num_tokens, hidden = x_flat.shape
+        out_flat = x_flat.new_zeros((num_tokens, hidden))
+        for expert_id_int, expert in enumerate(self.experts):
+            expert_mask = topk_idx == expert_id_int
+            token_mask = expert_mask.any(dim=-1)
+            if not token_mask.any():
+                continue
+            selected_x = x_flat[token_mask]
+            expert_param = next(expert.parameters(), None)
+            if expert_param is not None and selected_x.dtype != expert_param.dtype:
+                selected_x = selected_x.to(dtype=expert_param.dtype)
+            expert_out = expert(selected_x)
+            if expert_out.dtype != out_flat.dtype:
+                expert_out = expert_out.to(dtype=out_flat.dtype)
+            weights = (topk_vals[token_mask] * expert_mask[token_mask].float()).sum(dim=-1, keepdim=True)
+            out_flat[token_mask] += expert_out * weights
+        return out_flat
+
+    def _dispatch_parallel(
+        self,
+        x_flat: torch.Tensor,
+        topk_idx: torch.Tensor,
+        topk_vals: torch.Tensor,
+        capacity_mask: torch.Tensor,
+    ) -> torch.Tensor:
+        num_tokens, hidden = x_flat.shape
+        k = topk_idx.size(-1)
+        out_flat = x_flat.new_zeros((num_tokens, hidden))
+        token_idx = torch.arange(num_tokens, device=topk_idx.device).repeat_interleave(k)
+        expert_idx = topk_idx.reshape(-1)
+        weights = topk_vals.reshape(-1)
+        mask = capacity_mask.reshape(-1)
+        if mask.numel() > 0:
+            token_idx = token_idx[mask]
+            expert_idx = expert_idx[mask]
+            weights = weights[mask]
+        if expert_idx.numel() == 0:
+            return out_flat
+        order = torch.argsort(expert_idx)
+        expert_sorted = expert_idx[order]
+        token_sorted = token_idx[order]
+        weight_sorted = weights[order]
+        counts = torch.bincount(expert_sorted, minlength=self.num_experts)
+        start = 0
+        for expert_id_int, expert in enumerate(self.experts):
+            cnt = int(counts[expert_id_int].item())
+            if cnt == 0:
+                continue
+            end = start + cnt
+            idx = token_sorted[start:end]
+            weight = weight_sorted[start:end].unsqueeze(-1)
+            selected_x = x_flat.index_select(0, idx)
+            expert_param = next(expert.parameters(), None)
+            if expert_param is not None and selected_x.dtype != expert_param.dtype:
+                selected_x = selected_x.to(dtype=expert_param.dtype)
+            expert_out = expert(selected_x)
+            if expert_out.dtype != out_flat.dtype:
+                expert_out = expert_out.to(dtype=out_flat.dtype)
+            out_flat.index_add_(0, idx, expert_out * weight)
+            start = end
+        return out_flat
+
+    def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        batch, seq_len, hidden = x.shape
+        logits = self.router(x).reshape(-1, self.num_experts)
+        x_flat = x.reshape(-1, hidden)
+        num_tokens = x_flat.size(0)
+        num_experts = self.num_experts
+        logits_f = logits.float()
+        active_mask = self.expert_activity_mask.to(device=logits_f.device)
+        if active_mask.any():
+            logits_f = logits_f.masked_fill(~active_mask.unsqueeze(0), float("-inf"))
+        if self.router_temperature != 1.0:
+            logits_f = logits_f / self.router_temperature
+        applied_jitter = self.router_jitter_boost if self.training and self.collapse_detected.item() else self.router_jitter
+        if self.training and applied_jitter > 0.0:
+            logits_f = logits_f + torch.randn_like(logits_f) * applied_jitter
+        k = min(self.active_experts, num_experts)
+        topk_logits, topk_idx = torch.topk(logits_f, k=k, dim=-1)
+        topk_vals = F.softmax(topk_logits, dim=-1)
+        capacity_mask = torch.ones_like(topk_idx, dtype=torch.bool)
+        overflow_ratio = torch.tensor(0.0, device=x.device, dtype=torch.float32)
+        if self.moe_capacity_enforce and self.moe_capacity_factor > 0.0:
+            capacity = max(1, int(math.ceil(self.moe_capacity_factor * (num_tokens * k) / max(1, num_experts))))
+            dropped = 0
+            for expert_id_int in range(num_experts):
+                hits = (topk_idx == expert_id_int).nonzero(as_tuple=False)
+                if hits.size(0) > capacity:
+                    overflow = hits[capacity:]
+                    capacity_mask[overflow[:, 0], overflow[:, 1]] = False
+                    dropped += int(overflow.size(0))
+            topk_vals = topk_vals * capacity_mask.float()
+            empty_rows = topk_vals.sum(dim=-1) <= 0
+            if empty_rows.any():
+                topk_vals[empty_rows, 0] = 1.0
+                capacity_mask[empty_rows, 0] = True
+            topk_vals = topk_vals / topk_vals.sum(dim=-1, keepdim=True).clamp(min=1e-6)
+            overflow_ratio = torch.tensor(
+                float(dropped) / float(max(1, num_tokens * k)),
+                device=x.device,
+                dtype=torch.float32,
+            )
+        flat_idx = topk_idx[capacity_mask].reshape(-1)
+        counts = torch.zeros(num_experts, device=flat_idx.device, dtype=torch.float32)
+        if flat_idx.numel() > 0:
+            counts.scatter_add_(0, flat_idx, torch.ones_like(flat_idx, dtype=torch.float32))
+        denom = float(max(1, int(flat_idx.numel())))
+        load = counts / denom
+        self.last_expert_load.copy_(load.detach())
+        self.last_router_max_load.copy_(load.max().detach())
+        norm = math.log(float(num_experts)) if num_experts > 1 else 1.0
+        entropy = -(load.clamp(min=1e-8) * load.clamp(min=1e-8).log()).sum() / norm
+        self.last_router_entropy.copy_(entropy.detach())
+        self.last_capacity_overflow_ratio.copy_(overflow_ratio.detach())
+        self._apply_structural_plasticity(load)
+        if self._paging_active_for_step():
+            active_expert_ids = torch.nonzero(counts > 0.0, as_tuple=False).flatten().tolist()
+            self._page_in_active_experts([int(idx) for idx in active_expert_ids], x.device, x.dtype)
+        if self.training:
+            gates_full = F.softmax(logits_f, dim=-1)
+            importance = gates_full.mean(dim=0)
+            if self.use_switch_loss:
+                load_balancing_loss = (importance * load).sum() * float(num_experts)
+            else:
+                load_balancing_loss = ((importance - load) ** 2).mean() * float(num_experts)
+            max_load = load.max().item()
+            if max_load > self.collapse_threshold:
+                self.collapse_detected.fill_(True)
+            elif self.collapse_detected.item() and max_load < 0.5:
+                self.collapse_detected.fill_(False)
+        else:
+            load_balancing_loss = torch.tensor(0.0, device=x.device, dtype=logits_f.dtype)
+        aux_loss = load_balancing_loss
+        if self.router_z_loss_coef > 0.0:
+            z = torch.logsumexp(logits_f, dim=-1)
+            aux_loss = aux_loss + (z * z).mean() * self.router_z_loss_coef
+        if self.dispatch_mode == "parallel":
+            out_flat = self._dispatch_parallel(x_flat, topk_idx, topk_vals, capacity_mask)
+        else:
+            out_flat = self._dispatch_sequential(x_flat, topk_idx, topk_vals)
+        shared_out = self.shared_expert(x_flat)
+        gate_scale = torch.sigmoid(self.shared_gate).to(dtype=shared_out.dtype, device=shared_out.device)
+        out_flat = out_flat + shared_out * gate_scale
+        if self.use_cross_expert_sync_bus:
+            token_sync = self.sync_proj(out_flat.mean(dim=0, keepdim=True))
+            load_sync = self.sync_load_proj(load.unsqueeze(0).to(dtype=out_flat.dtype))
+            sync = torch.tanh(token_sync + load_sync).expand_as(out_flat)
+            out_flat = out_flat + sync * (torch.sigmoid(self.sync_gate) * self.cross_expert_sync_gain)
+        return out_flat.reshape(batch, seq_len, hidden), aux_loss
+
+
+def newton_schulz_inverse(mat: torch.Tensor, num_iters: int = 6) -> torch.Tensor:
+    orig_dtype = mat.dtype
+    mat = mat.float()
+    *batch, n, m = mat.shape
+    assert n == m, "newton_schulz_inverse expects square matrices."
+    eye = torch.eye(n, device=mat.device, dtype=mat.dtype)
+    if batch:
+        eye = eye.expand(*batch, n, n)
+    norm_inf = mat.abs().sum(dim=-1).max(dim=-1, keepdim=True)[0].unsqueeze(-1).clamp(min=1e-6)
+    mat_scaled = mat / norm_inf
+    x = mat_scaled.transpose(-1, -2)
+    for _ in range(num_iters):
+        ax = torch.matmul(mat_scaled, x)
+        x = torch.matmul(x, (2.0 * eye - ax))
+    return (x / norm_inf).to(orig_dtype)
+
+
+class UnitaryQINN(nn.Module):
+    def __init__(self, dim: int, num_iters: int = 6, enabled: bool = True) -> None:
+        super().__init__()
+        self.dim = dim
+        self.num_iters = num_iters
+        self.enabled = bool(enabled)
+        self.A = nn.Parameter(torch.randn(dim, dim) * 1e-4)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if not self.enabled:
+            return x
+        orig_dtype = x.dtype
+        x = x.float()
+        skew = self.A - self.A.t()
+        eye = torch.eye(self.dim, device=skew.device, dtype=skew.dtype)
+        m_inv = newton_schulz_inverse(eye - skew, num_iters=self.num_iters)
+        unitary = torch.matmul(m_inv, eye + skew)
+        if not torch.isfinite(unitary).all():
+            unitary = torch.where(torch.isfinite(unitary), unitary, eye)
+        return torch.matmul(x, unitary.t()).to(orig_dtype)
+
+
+class GlobalWorkspaceBroadcast(nn.Module):
+    def __init__(self, hidden_size: int) -> None:
+        super().__init__()
+        self.proj = nn.Linear(hidden_size, hidden_size, bias=False)
+        self.gate = nn.Parameter(torch.tensor(0.0))
+
+    def forward(self, x: torch.Tensor, workspace: Optional[torch.Tensor]) -> torch.Tensor:
+        if workspace is None:
+            return x
+        workspace = workspace.to(device=x.device, dtype=x.dtype)
+        signal = torch.tanh(self.proj(workspace)).unsqueeze(1)
+        return x + signal * torch.sigmoid(self.gate)
+
+
+class ContinuousLatentODEStateChannel(nn.Module):
+    def __init__(self, hidden_size: int) -> None:
+        super().__init__()
+        self.hidden_size = hidden_size
+        self.state_proj = nn.Linear(hidden_size, hidden_size, bias=False)
+        self.input_proj = nn.Linear(hidden_size, hidden_size, bias=False)
+        self.out_proj = nn.Linear(hidden_size, hidden_size, bias=False)
+        self.register_buffer("latent_state", torch.zeros(1, hidden_size), persistent=False)
+
+    def reset_state(self, batch_size: int, device: torch.device, dtype: torch.dtype) -> None:
+        self._buffers["latent_state"] = torch.zeros(batch_size, self.hidden_size, device=device, dtype=dtype)
+
+    def _ensure_state(self, batch_size: int, device: torch.device, dtype: torch.dtype) -> None:
+        if (
+            self.latent_state.numel() == 0
+            or self.latent_state.shape[0] != batch_size
+            or self.latent_state.device != device
+            or self.latent_state.dtype != dtype
+        ):
+            self.reset_state(batch_size, device, dtype)
+
+    def forward(self, x: torch.Tensor, dt: float = 1.0) -> torch.Tensor:
+        batch_size = x.size(0)
+        self._ensure_state(batch_size, x.device, x.dtype)
+        summary = x.mean(dim=1)
+        z = self.latent_state.detach().clone()
+        dz = torch.tanh(self.state_proj(z) + self.input_proj(summary))
+        z_next = z + float(dt) * dz
+        with torch.no_grad():
+            self.latent_state.copy_(z_next.detach())
+        return x + self.out_proj(z_next).unsqueeze(1).to(dtype=x.dtype)
+
+
+class NeuromodulatoryGainLayer(nn.Module):
+    def __init__(self, hidden_size: int) -> None:
+        super().__init__()
+        self.gain_proj = nn.Linear(hidden_size, hidden_size, bias=True)
+        self.bias_proj = nn.Linear(hidden_size, hidden_size, bias=True)
+        self.gain_scale = nn.Parameter(torch.tensor(0.1))
+
+    def forward(self, x: torch.Tensor, workspace: Optional[torch.Tensor]) -> torch.Tensor:
+        if workspace is None:
+            return x
+        workspace = workspace.to(device=x.device, dtype=x.dtype)
+        gain = torch.sigmoid(self.gain_proj(workspace)).unsqueeze(1)
+        bias = torch.tanh(self.bias_proj(workspace)).unsqueeze(1)
+        return x * (1.0 + gain * self.gain_scale) + bias * self.gain_scale
+
+
+class HebbianPlasticityLayer(nn.Module):
+    def __init__(self, hidden_size: int, eta: float = 0.01, decay: float = 0.99) -> None:
+        super().__init__()
+        self.eta = float(eta)
+        self.decay = float(decay)
+        self.register_buffer("trace", torch.zeros(hidden_size), persistent=False)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if self.training:
+            with torch.no_grad():
+                activity = x.detach().pow(2).mean(dim=(0, 1)).to(self.trace.dtype)
+                self.trace.mul_(self.decay).add_(activity * (1.0 - self.decay))
+        gain = 1.0 + self.eta * torch.tanh(self.trace.to(device=x.device, dtype=x.dtype))
+        return x * gain.view(1, 1, -1)
+
+
+class NeuroSymbolicLayer(nn.Module):
+    def __init__(self, hidden_size: int, num_rules: int = 8) -> None:
+        super().__init__()
+        self.num_rules = int(max(1, num_rules))
+        self.rule_keys = nn.Parameter(torch.randn(self.num_rules, hidden_size) * 0.02)
+        self.rule_values = nn.Parameter(torch.randn(self.num_rules, hidden_size) * 0.02)
+        self.out_proj = nn.Linear(hidden_size, hidden_size, bias=False)
+        self.rule_gain = nn.Parameter(torch.tensor(0.0))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        summary = x.mean(dim=1)
+        logits = torch.matmul(summary, self.rule_keys.t())
+        weights = F.softmax(logits, dim=-1)
+        rule_context = torch.matmul(weights, self.rule_values)
+        residual = torch.tanh(self.out_proj(rule_context)).unsqueeze(1)
+        return x + residual * torch.sigmoid(self.rule_gain)
+
+
+class LifelongSafetyLayer(nn.Module):
     def __init__(
         self,
         hidden_size: int,
-        num_heads: int,
-        dropout: float,
-        num_layers: int,
-        use_moe: bool,
-        num_experts: int,
-        moe_top_k: int,
-        use_bitlinear: bool,
-        use_gated_adapter: bool,
-    ):
+        ema_decay: float = 0.99,
+        max_adaptation_gain: float = 0.05,
+        drift_threshold: float = 0.35,
+    ) -> None:
         super().__init__()
-        self.norm1 = RMSNorm(hidden_size)
-        self.norm2 = RMSNorm(hidden_size)
-        self.attn = MultiHeadSelfAttention(hidden_size, num_heads, dropout, use_bitlinear=use_bitlinear)
-        self.use_moe = use_moe
-        if use_moe:
-            self.ff = SparseMoE(hidden_size, num_experts, moe_top_k, dropout, use_bitlinear=use_bitlinear)
+        self.hidden_size = int(hidden_size)
+        self.ema_decay = float(ema_decay)
+        self.max_adaptation_gain = float(max_adaptation_gain)
+        self.drift_threshold = float(drift_threshold)
+        self.register_buffer("running_mean", torch.zeros(self.hidden_size), persistent=False)
+        self.register_buffer("running_var", torch.ones(self.hidden_size), persistent=False)
+        self.register_buffer("last_drift", torch.zeros(()), persistent=False)
+        self.gain = nn.Parameter(torch.zeros(self.hidden_size))
+
+    def _update_stats(self, x: torch.Tensor) -> None:
+        with torch.no_grad():
+            mean = x.detach().mean(dim=(0, 1))
+            var = x.detach().var(dim=(0, 1), unbiased=False)
+            self.running_mean.mul_(self.ema_decay).add_(mean * (1.0 - self.ema_decay))
+            self.running_var.mul_(self.ema_decay).add_(var * (1.0 - self.ema_decay))
+            self.last_drift.copy_((mean - self.running_mean).abs().mean().detach())
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() != 3:
+            raise ValueError(f"LifelongSafetyLayer expects [B,T,H], got {tuple(x.shape)}")
+        self._update_stats(x)
+        bounded = torch.tanh(self.gain).to(device=x.device, dtype=x.dtype)
+        scale = torch.clamp(torch.tensor(self.max_adaptation_gain, device=x.device, dtype=x.dtype), min=0.0)
+        if float(self.last_drift.item()) > self.drift_threshold:
+            scale = scale * 0.5
+        return x * (1.0 + bounded.view(1, 1, -1) * scale)
+
+    def safety_metrics(self) -> Dict[str, float]:
+        return {
+            "last_drift": float(self.last_drift.item()),
+            "ema_decay": self.ema_decay,
+            "max_adaptation_gain": self.max_adaptation_gain,
+            "drift_threshold": self.drift_threshold,
+        }
+
+
+@dataclass
+class WorldModelOutput:
+    dynamics_logits: torch.Tensor
+    latent_state: torch.Tensor
+    uncertainty: torch.Tensor
+    counterfactual_logits: torch.Tensor
+    risk_score: torch.Tensor
+
+    def to_dict(self) -> Dict[str, torch.Tensor]:
+        return {
+            "world_dynamics_logits": self.dynamics_logits,
+            "world_latent_state": self.latent_state,
+            "world_uncertainty": self.uncertainty,
+            "world_counterfactual_logits": self.counterfactual_logits,
+            "world_risk_score": self.risk_score,
+        }
+
+
+class CausalWorldModelHead(nn.Module):
+    def __init__(self, hidden_size: int, horizon: int = 1) -> None:
+        super().__init__()
+        self.hidden_size = int(hidden_size)
+        self.horizon = int(max(1, horizon))
+        self.pre = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
+        self.dynamics = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
+        self.counterfactual = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
+        self.uncertainty = nn.Linear(self.hidden_size, 1, bias=True)
+        self.risk = nn.Linear(self.hidden_size, 1, bias=True)
+
+    def forward(self, x: torch.Tensor) -> WorldModelOutput:
+        summary = x.mean(dim=1)
+        latent = torch.tanh(self.pre(summary))
+        dyn_steps = []
+        state = latent
+        for _ in range(self.horizon):
+            state = torch.tanh(self.dynamics(state))
+            dyn_steps.append(state)
+        cf_steps = []
+        cf_state = torch.tanh(self.counterfactual(-latent))
+        for _ in range(self.horizon):
+            cf_state = torch.tanh(self.dynamics(cf_state))
+            cf_steps.append(cf_state)
+        return WorldModelOutput(
+            dynamics_logits=torch.stack(dyn_steps, dim=1),
+            latent_state=latent,
+            uncertainty=torch.sigmoid(self.uncertainty(latent)).squeeze(-1),
+            counterfactual_logits=torch.stack(cf_steps, dim=1),
+            risk_score=torch.sigmoid(self.risk(latent - cf_state)).squeeze(-1),
+        )
+
+
+class MertFormerBlock(nn.Module):
+    def __init__(self, layer_id: int, arch_cfg: MirrorModelConfig) -> None:
+        super().__init__()
+        self.layer_id = int(layer_id)
+        self.arch_cfg = arch_cfg
+        hidden_size = arch_cfg.hidden_size
+        self.norm1 = RMSNorm(hidden_size, eps=arch_cfg.rms_norm_eps)
+        self.norm2 = RMSNorm(hidden_size, eps=arch_cfg.rms_norm_eps)
+        self.residual_scale = (2 * arch_cfg.num_layers) ** -0.5
+        self.attn = MLA(arch_cfg)
+        self.use_moe = bool(arch_cfg.use_moe)
+        every_n = int(arch_cfg.moe_every_n_layers)
+        if self.use_moe and every_n > 0 and ((self.layer_id + 1) % every_n == 0):
+            self.is_moe_layer = True
+            self.ff = MoE(arch_cfg)
         else:
-            self.ff = DenseFeedForward(hidden_size, dropout, use_bitlinear=use_bitlinear)
-        self.use_gated_adapter = use_gated_adapter
-        self.adapter = GatedResidualAdapter(hidden_size) if use_gated_adapter else None
-        self.dropout = nn.Dropout(dropout)
-        self.residual_scale = (2 * num_layers) ** -0.5
-        self.last_aux = 0.0
+            self.is_moe_layer = False
+            self.ff = MertFormerFFN(arch_cfg)
+        self.qinn = None
+        if arch_cfg.use_qinn and ((self.layer_id + 1) % max(1, arch_cfg.qinn_every_n_layers) == 0):
+            self.qinn = UnitaryQINN(hidden_size, enabled=True)
+        self.liquid = None
+        if arch_cfg.use_liquid:
+            if arch_cfg.liquid_layers_idx and self.layer_id in arch_cfg.liquid_layers_idx:
+                self.liquid = LiquidMixer(hidden_size, use_bitnet=arch_cfg.use_bitnet, fast_path=arch_cfg.liquid_fast_path)
+            elif arch_cfg.liquid_every_n_layers > 0 and ((self.layer_id + 1) % arch_cfg.liquid_every_n_layers == 0):
+                self.liquid = LiquidMixer(hidden_size, use_bitnet=arch_cfg.use_bitnet, fast_path=arch_cfg.liquid_fast_path)
+        self.workspace_layer = GlobalWorkspaceBroadcast(hidden_size) if arch_cfg.use_global_workspace_broadcast else None
+        self.hebbian_layer = (
+            HebbianPlasticityLayer(hidden_size, eta=arch_cfg.hebbian_eta, decay=arch_cfg.hebbian_decay)
+            if arch_cfg.use_hebbian_plasticity
+            else None
+        )
+        self.neuro_symbolic_layer = (
+            NeuroSymbolicLayer(hidden_size, num_rules=arch_cfg.neuro_symbolic_rules)
+            if arch_cfg.use_neuro_symbolic_layer
+            else None
+        )
+        self.lifelong_safety_layer = (
+            LifelongSafetyLayer(
+                hidden_size,
+                ema_decay=arch_cfg.lifelong_ema_decay,
+                max_adaptation_gain=arch_cfg.lifelong_max_adaptation_gain,
+                drift_threshold=arch_cfg.lifelong_drift_threshold,
+            )
+            if arch_cfg.use_lifelong_safety_layer
+            else None
+        )
         self.last_router_stats: Dict[str, Any] = {}
 
-    def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, Dict[str, Any]]:
-        residual = x
-        x = residual + self.dropout(self.attn(self.norm1(x))) * self.residual_scale
-        aux = x.new_tensor(0.0)
-        router_stats: Dict[str, Any] = {}
-        ff_in = self.norm2(x)
-        if self.use_moe:
-            ff_out, aux, router_stats = self.ff(ff_in)
+    def forward(
+        self,
+        x: torch.Tensor,
+        past_key_value: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
+        use_cache: bool = False,
+        workspace: Optional[torch.Tensor] = None,
+    ) -> Tuple[torch.Tensor, torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]:
+        h = self.norm1(x)
+        attn_out, present_key_value = self.attn(h, past_key_value=past_key_value, use_cache=use_cache)
+        x = x + attn_out * self.residual_scale
+        if self.liquid is not None:
+            x = self.liquid(x)
+        if self.workspace_layer is not None:
+            x = self.workspace_layer(x, workspace)
+        h = self.norm2(x)
+        if self.is_moe_layer:
+            ff_out, aux_loss = self.ff(h)
+            self.last_router_stats = {
+                "router_entropy": float(self.ff.get_router_entropy().item()),
+                "router_max_load": float(self.ff.get_router_max_load().item()),
+                "expert_load": [float(item) for item in self.ff.get_expert_load().tolist()],
+                "capacity_overflow_ratio": float(self.ff.last_capacity_overflow_ratio.item()),
+                "collapse_detected": bool(self.ff.collapse_detected.item()),
+                "expert_paging": self.ff.get_expert_paging_stats(),
+            }
         else:
-            ff_out = self.ff(ff_in)
-        if self.use_gated_adapter and self.adapter is not None:
-            x = self.adapter(ff_out, x)
-        else:
-            x = x + self.dropout(ff_out) * self.residual_scale
-        self.last_aux = float(aux.detach().item())
-        self.last_router_stats = router_stats
-        return x, aux, router_stats
+            ff_out = self.ff(h)
+            aux_loss = h.new_zeros(())
+            self.last_router_stats = {}
+        x = x + ff_out * self.residual_scale
+        if self.hebbian_layer is not None:
+            x = self.hebbian_layer(x)
+        if self.neuro_symbolic_layer is not None:
+            x = self.neuro_symbolic_layer(x)
+        if self.lifelong_safety_layer is not None:
+            x = self.lifelong_safety_layer(x)
+        if self.qinn is not None:
+            x = self.qinn(x)
+        if aux_loss.ndim > 0:
+            aux_loss = aux_loss.sum()
+        return x, aux_loss, present_key_value
+
+
+TransformerBlock = MertFormerBlock
 
 
 class ChessPolicyValueNet(nn.Module):
@@ -1100,39 +3012,39 @@ class ChessPolicyValueNet(nn.Module):
 
     def __init__(self, cfg: Dict[str, Any], vocab_size: int):
         super().__init__()
-        hidden = int(cfg["hidden_size"])
-        layers = int(cfg["num_layers"])
-        heads = int(cfg["num_heads"])
-        dropout = float(cfg["dropout"])
-        use_bitlinear = bool(cfg.get("use_bitlinear", False))
-        use_moe = bool(cfg.get("use_moe", False))
-        num_experts = int(cfg.get("num_experts", 4))
-        moe_top_k = int(cfg.get("moe_top_k", 2))
-        use_gated_adapter = bool(cfg.get("use_liquid_adapter", False))
-
+        self.arch_cfg = build_mirror_model_config(cfg)
+        hidden = self.arch_cfg.hidden_size
+        dropout = self.arch_cfg.dropout
         self.piece_embed = nn.Embedding(13, hidden)
         self.square_embed = nn.Embedding(64, hidden)
         self.meta_type_embed = nn.Embedding(len(self.META_CARDINALITIES), hidden)
         self.meta_value_embeds = nn.ModuleList(nn.Embedding(card, hidden) for card in self.META_CARDINALITIES)
         self.blocks = nn.ModuleList(
-            TransformerBlock(
-                hidden_size=hidden,
-                num_heads=heads,
-                dropout=dropout,
-                num_layers=layers,
-                use_moe=use_moe and (layer_idx % 2 == 1),
-                num_experts=num_experts,
-                moe_top_k=moe_top_k,
-                use_bitlinear=use_bitlinear,
-                use_gated_adapter=use_gated_adapter,
-            )
-            for layer_idx in range(layers)
+            MertFormerBlock(layer_id=layer_idx, arch_cfg=self.arch_cfg)
+            for layer_idx in range(self.arch_cfg.num_layers)
         )
-        self.norm = RMSNorm(hidden)
-        linear = BitLinear if use_bitlinear else nn.Linear
-        kwargs = {"enabled": True} if use_bitlinear else {}
-        self.policy_head = linear(hidden, vocab_size, **kwargs)  # type: ignore[arg-type]
-        self.value_head = linear(hidden, 1, **kwargs)  # type: ignore[arg-type]
+        self.final_norm = RMSNorm(hidden, eps=self.arch_cfg.rms_norm_eps)
+        self.drop = nn.Dropout(dropout)
+        self.use_global_workspace_broadcast = bool(self.arch_cfg.use_global_workspace_broadcast)
+        self.workspace_blend = float(self.arch_cfg.workspace_blend)
+        self.latent_ode_channel = (
+            ContinuousLatentODEStateChannel(hidden)
+            if self.arch_cfg.use_latent_ode_state_channel
+            else None
+        )
+        self.neuromod_gain_layer = (
+            NeuromodulatoryGainLayer(hidden)
+            if self.arch_cfg.use_neuromodulatory_gain
+            else None
+        )
+        self.world_model_head = (
+            CausalWorldModelHead(hidden, horizon=self.arch_cfg.world_model_horizon)
+            if self.arch_cfg.use_world_model_head
+            else None
+        )
+        self._last_world_model_outputs: Optional[Dict[str, torch.Tensor]] = None
+        self.policy_head = make_linear(self.arch_cfg.use_bitnet, hidden, vocab_size, bias=True)
+        self.value_head = make_linear(self.arch_cfg.use_bitnet, hidden, 1, bias=True)
         self.dropout = nn.Dropout(dropout)
         self.vocab_size = vocab_size
 
@@ -1147,14 +3059,29 @@ class ChessPolicyValueNet(nn.Module):
             meta_tokens.append(embed(meta_val) + type_tok)
         meta = torch.stack(meta_tokens, dim=1)
         x = torch.cat([meta, board], dim=1)
+        x = x * (self.arch_cfg.hidden_size ** 0.5)
+        x = self.drop(x)
+        workspace_state = x.mean(dim=1) if self.use_global_workspace_broadcast else None
         aux_loss = x.new_tensor(0.0)
         router_reports: Dict[str, Any] = {}
         for block_idx, block in enumerate(self.blocks):
-            x, aux, router_stats = block(x)
+            if self.latent_ode_channel is not None:
+                x = self.latent_ode_channel(x, dt=self.arch_cfg.latent_ode_dt)
+            x, aux, _ = block(x, workspace=workspace_state)
             aux_loss = aux_loss + aux
-            if router_stats:
-                router_reports[f"block_{block_idx}"] = router_stats
-        x = self.norm(x)
+            if workspace_state is not None:
+                token_summary = x.mean(dim=1)
+                blend = min(max(self.workspace_blend, 0.0), 1.0)
+                workspace_state = workspace_state * blend + token_summary * (1.0 - blend)
+            if self.neuromod_gain_layer is not None:
+                x = self.neuromod_gain_layer(x, workspace_state)
+            if block.last_router_stats:
+                router_reports[f"block_{block_idx}"] = dict(block.last_router_stats)
+        x = self.final_norm(x)
+        if self.world_model_head is not None:
+            self._last_world_model_outputs = self.world_model_head(x).to_dict()
+        else:
+            self._last_world_model_outputs = None
         pooled = self.dropout(x.mean(dim=1))
         policy_logits = self.policy_head(pooled)
         value = torch.tanh(self.value_head(pooled)).squeeze(-1)
@@ -1168,6 +3095,30 @@ class ChessPolicyValueNet(nn.Module):
             "trainable_parameters": int(trainable),
             "policy_head_type": "pooled_global_move_classifier",
         }
+
+    def get_last_world_model_outputs(self) -> Optional[Dict[str, torch.Tensor]]:
+        return self._last_world_model_outputs
+
+    def reset_router_state(self, batch_size: int = 1) -> None:
+        if self.latent_ode_channel is not None:
+            self.latent_ode_channel.reset_state(
+                batch_size=batch_size,
+                device=self.piece_embed.weight.device,
+                dtype=self.piece_embed.weight.dtype,
+            )
+        for block in self.blocks:
+            if getattr(block, "is_moe_layer", False):
+                router = getattr(getattr(block, "ff", None), "router", None)
+                if router is None:
+                    continue
+                state = torch.zeros(
+                    batch_size,
+                    router.hidden_size,
+                    router.history_window - 1,
+                    device=router.inference_state.device,
+                    dtype=router.inference_state.dtype,
+                )
+                router.set_state(state)
 
 
 class ChessExampleDataset(torch.utils.data.Dataset):
@@ -1487,8 +3438,15 @@ def download_archive_slices(
                     with target.open("wb") as handle:
                         bytes_written = 0
                         while True:
+                            room = per_archive_budget - bytes_written
+                            if room <= 0:
+                                break
                             chunk = response.read(1024 * 1024)
                             if not chunk:
+                                break
+                            if len(chunk) > room:
+                                handle.write(chunk[:room])
+                                bytes_written += room
                                 break
                             handle.write(chunk)
                             bytes_written += len(chunk)
@@ -2259,6 +4217,7 @@ def training_loop(
     last_checkpoint_at = start_step
     active_stage_index = -1
     active_stage_name = ""
+    current_stage_examples: Sequence[ChessExample] = train_examples
     stage_loader: Optional[torch.utils.data.DataLoader] = None
     stage_iterator: Optional[Iterator[Dict[str, torch.Tensor]]] = None
     stage_epoch = 0
@@ -2298,7 +4257,7 @@ def training_loop(
         except StopIteration:
             stage_epoch += 1
             stage_loader = make_loader(
-                stage_data[stage_idx][1],
+                current_stage_examples,
                 batch_size=int(cfg["batch_size"]),
                 shuffle=True,
                 num_workers=int(cfg.get("num_workers", 0)),
@@ -2421,6 +4380,7 @@ def detect_stockfish_path(cfg: Dict[str, Any]) -> Optional[str]:
     return None
 
 
+@torch.no_grad()
 def choose_move_trace(model: ChessPolicyValueNet, board: chess.Board, device: torch.device, topk: int = 5) -> Dict[str, Any]:
     legal_ids = legal_move_ids(board)
     if not legal_ids:
@@ -2453,7 +4413,10 @@ def choose_move_trace(model: ChessPolicyValueNet, board: chess.Board, device: to
     }
 
 
+@torch.no_grad()
 def run_legality_report(model: ChessPolicyValueNet, examples: Sequence[ChessExample], device: torch.device, cfg: Dict[str, Any]) -> Dict[str, Any]:
+    was_training = model.training
+    model.eval()
     sample_limit = int(cfg.get("legal_move_sample_checks", 0))
     picks = list(examples)
     if sample_limit > 0 and len(picks) > sample_limit:
@@ -2502,26 +4465,158 @@ def run_legality_report(model: ChessPolicyValueNet, examples: Sequence[ChessExam
                     "raw_top1_is_legal": raw_top1 in example.legal_move_ids,
                 }
             )
-    report = {
-        "checked_examples": checked,
-        "raw_top1_is_legal_rate": round(raw_top1_legal / max(1, checked), 6),
-        "raw_topk_contains_legal_rate": round(raw_topk_contains_legal / max(1, checked), 6),
-        "masked_policy_accuracy": round(masked_correct / max(1, checked), 6),
-        "per_phase": {},
-        "example_rows": examples_out,
-        "note": "Replay/demo output is demonstration material only. Raw legality and masked accuracy are intentionally separated.",
-    }
-    for phase_name in PHASE_NAMES.values():
-        count = phase_checked[phase_name]
-        if count <= 0:
-            continue
-        report["per_phase"][phase_name] = {
-            "checked": count,
-            "raw_top1_is_legal_rate": round(phase_raw_top1_legal[phase_name] / count, 6),
-            "raw_topk_contains_legal_rate": round(phase_raw_topk_contains_legal[phase_name] / count, 6),
-            "masked_policy_accuracy": round(phase_masked_correct[phase_name] / count, 6),
+    try:
+        report = {
+            "checked_examples": checked,
+            "raw_top1_is_legal_rate": round(raw_top1_legal / max(1, checked), 6),
+            "raw_topk_contains_legal_rate": round(raw_topk_contains_legal / max(1, checked), 6),
+            "masked_policy_accuracy": round(masked_correct / max(1, checked), 6),
+            "per_phase": {},
+            "example_rows": examples_out,
+            "note": "Replay/demo output is demonstration material only. Raw legality and masked accuracy are intentionally separated.",
         }
-    return report
+        for phase_name in PHASE_NAMES.values():
+            count = phase_checked[phase_name]
+            if count <= 0:
+                continue
+            report["per_phase"][phase_name] = {
+                "checked": count,
+                "raw_top1_is_legal_rate": round(phase_raw_top1_legal[phase_name] / count, 6),
+                "raw_topk_contains_legal_rate": round(phase_raw_topk_contains_legal[phase_name] / count, 6),
+                "masked_policy_accuracy": round(phase_masked_correct[phase_name] / count, 6),
+            }
+        return report
+    finally:
+        model.train(was_training)
+
+
+def ensure_interactive_console() -> None:
+    if platform.system() != "Windows":
+        return
+    try:
+        import ctypes
+
+        kernel32 = ctypes.windll.kernel32
+        if kernel32.GetConsoleWindow():
+            return
+        if kernel32.AllocConsole() == 0:
+            return
+        sys.stdin = open("CONIN$", "r", encoding="utf-8", buffering=1)
+        sys.stdout = open("CONOUT$", "w", encoding="utf-8", buffering=1)
+        sys.stderr = open("CONOUT$", "w", encoding="utf-8", buffering=1)
+    except Exception:
+        return
+
+
+def play_human_vs_model_arena(
+    model: ChessPolicyValueNet,
+    cfg: Dict[str, Any],
+    device: torch.device,
+    logger: Optional[JSONLLogger] = None,
+) -> Dict[str, Any]:
+    del cfg
+    ensure_interactive_console()
+    was_training = model.training
+    model.eval()
+    board = chess.Board()
+    transcript: List[Dict[str, Any]] = []
+    human_color = chess.WHITE
+    help_text = "Enter UCI moves such as e2e4. Commands: help, board, fen, quit."
+    try:
+        try:
+            side_raw = input("Play as white or black? [w/b, Enter=white]: ").strip().lower()
+        except EOFError:
+            side_raw = ""
+        if side_raw in {"b", "black"}:
+            human_color = chess.BLACK
+        print(help_text)
+        print(board)
+        if logger is not None:
+            logger.write("arena_start", {"human_color": "white" if human_color == chess.WHITE else "black"})
+        while not board.is_game_over():
+            if board.turn == human_color:
+                while True:
+                    try:
+                        move_raw = input("Your move> ").strip()
+                    except EOFError:
+                        move_raw = "quit"
+                    lowered = move_raw.lower()
+                    if lowered in {"quit", "exit"}:
+                        report = {
+                            "status": "aborted_by_user",
+                            "interactive_only": True,
+                            "human_color": "white" if human_color == chess.WHITE else "black",
+                            "result": "*",
+                            "plies_played": len(transcript),
+                            "final_fen": board.fen(),
+                            "transcript": transcript,
+                            "note": "Arena session stopped by the user before game termination.",
+                        }
+                        if logger is not None:
+                            logger.write("arena_stop", {"reason": "aborted_by_user", "plies_played": len(transcript)})
+                        return report
+                    if lowered == "help":
+                        print(help_text)
+                        continue
+                    if lowered == "board":
+                        print(board)
+                        continue
+                    if lowered == "fen":
+                        print(board.fen())
+                        continue
+                    try:
+                        move = chess.Move.from_uci(move_raw)
+                    except ValueError:
+                        print("Invalid move format. Use UCI like e2e4.")
+                        continue
+                    if move not in board.legal_moves:
+                        print("Illegal move. Try again.")
+                        continue
+                    board.push(move)
+                    transcript.append({"ply": len(transcript) + 1, "actor": "human", "move": move.uci(), "fen": board.fen()})
+                    print(board)
+                    break
+            else:
+                trace = choose_move_trace(model, board, device)
+                move = chess.Move.from_uci(trace["move"])
+                board.push(move)
+                transcript.append(
+                    {
+                        "ply": len(transcript) + 1,
+                        "actor": "model",
+                        "move": move.uci(),
+                        "fen": board.fen(),
+                        "value": trace["value"],
+                        "latency_ms": trace["latency_ms"],
+                        "raw_top1_is_legal": trace["raw_top1_is_legal"],
+                    }
+                )
+                print(f"Model move: {move.uci()} | value={trace['value']:.3f} | latency_ms={trace['latency_ms']:.2f}")
+                print(board)
+        outcome = board.outcome()
+        report = {
+            "status": "completed",
+            "interactive_only": True,
+            "human_color": "white" if human_color == chess.WHITE else "black",
+            "result": outcome.result() if outcome is not None else "*",
+            "termination": str(outcome.termination) if outcome is not None else "unknown",
+            "winner": (
+                "white"
+                if outcome is not None and outcome.winner is chess.WHITE
+                else "black"
+                if outcome is not None and outcome.winner is chess.BLACK
+                else "draw"
+            ),
+            "plies_played": len(transcript),
+            "final_fen": board.fen(),
+            "transcript": transcript,
+            "note": "Arena mode is interactive and intended for human-vs-model inspection, not strength proof.",
+        }
+        if logger is not None:
+            logger.write("arena_complete", {"result": report["result"], "plies_played": len(transcript)})
+        return report
+    finally:
+        model.train(was_training)
 
 
 def write_curve_csv(path: Path, rows: Sequence[Dict[str, Any]]) -> None:
@@ -2601,6 +4696,18 @@ def write_curve_png(path: Path, rows: Sequence[Dict[str, Any]]) -> None:
 
     train_points = [(float(row.get("step", 0)), float(row.get("loss", 0.0))) for row in rows if row.get("split") == "train" and row.get("loss") is not None]
     val_points = [(float(row.get("step", 0)), float(row.get("loss", 0.0))) for row in rows if row.get("split") == "val" and row.get("loss") is not None]
+
+    def downsample_points(points: List[Tuple[float, float]]) -> List[Tuple[float, float]]:
+        if len(points) <= plot_w:
+            return points
+        step = max(1, len(points) // plot_w)
+        sampled = points[::step]
+        if sampled[-1] != points[-1]:
+            sampled.append(points[-1])
+        return sampled
+
+    train_points = downsample_points(train_points)
+    val_points = downsample_points(val_points)
     all_points = train_points + val_points
     if not all_points:
         _write_simple_png(path, width, height, canvas)
@@ -2647,9 +4754,14 @@ def write_curve_png(path: Path, rows: Sequence[Dict[str, Any]]) -> None:
 def compute_score_rate_ci(score_rate: float, games: int) -> Dict[str, float]:
     if games <= 0:
         return {"low": 0.0, "high": 0.0}
-    stderr = math.sqrt(max(score_rate * (1.0 - score_rate), 0.0) / games)
-    low = max(0.0, score_rate - 1.96 * stderr)
-    high = min(1.0, score_rate + 1.96 * stderr)
+    z = 1.96
+    n = float(games)
+    p = min(max(float(score_rate), 0.0), 1.0)
+    denom = 1.0 + (z * z) / n
+    center = (p + (z * z) / (2.0 * n)) / denom
+    margin = z * math.sqrt((p * (1.0 - p) / n) + ((z * z) / (4.0 * n * n))) / denom
+    low = max(0.0, center - margin)
+    high = min(1.0, center + margin)
     return {"low": round(low, 6), "high": round(high, 6)}
 
 
@@ -2673,6 +4785,7 @@ def build_benchmark_protocol(cfg: Dict[str, Any], engine_path: Optional[str]) ->
         "openings": OPENING_SEEDS,
         "ladder": cfg.get("stockfish_ladder", []),
         "rating_note": "This protocol emits elo_proxy_internal only. It does not emit a plain ELO claim.",
+        "anchor_elo_proxy_note": "Anchor ELO values are internal approximations for Stockfish skill levels and are not calibrated against an external rating pool.",
     }
 
 
@@ -2736,8 +4849,11 @@ def play_stockfish_gauntlet(
         "losses": 0,
         "elo_proxy_internal": None,
         "rating_note": "Internal gauntlet only. Any rating output is a proxy, not a verified external rating.",
+        "anchor_elo_proxy_note": "Anchor ELO values are internal approximations for Stockfish skill levels and are not calibrated against an external rating pool.",
     }
 
+    was_training = model.training
+    model.eval()
     try:
         for level_idx, level in enumerate(cfg.get("stockfish_ladder", [])):
             games_requested = int(level.get("games", 0))
@@ -2757,6 +4873,7 @@ def play_stockfish_gauntlet(
                 "score_rate": 0.0,
                 "score_rate_ci": {"low": 0.0, "high": 0.0},
                 "anchor_elo_proxy": int(level.get("anchor_elo_proxy", 1400)),
+                "anchor_elo_proxy_note": "Internal approximation only; not externally calibrated.",
                 "elo_proxy_internal": None,
                 "opening_seed_hash": sha256_bytes(json.dumps(openings).encode("utf-8")),
                 "games": [],
@@ -2836,48 +4953,56 @@ def play_stockfish_gauntlet(
         atomic_json(layout.reports_dir / "stockfish_match_report.json", report)
         return report
     finally:
+        model.train(was_training)
         with contextlib.suppress(Exception):
             engine.quit()
 
 
 def generate_demo_replay(model: ChessPolicyValueNet, cfg: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
+    was_training = model.training
+    model.eval()
     games: List[Dict[str, Any]] = []
     max_games = int(cfg.get("sample_replay_games", 3))
     max_plies = int(cfg.get("sample_replay_max_plies", 24))
-    for game_idx in range(max_games):
-        board = chess.Board()
-        opening = OPENING_SEEDS[game_idx % len(OPENING_SEEDS)]
-        for move_uci in opening[: min(2, len(opening))]:
-            board.push(chess.Move.from_uci(move_uci))
-        moves: List[Dict[str, Any]] = []
-        while not board.is_game_over() and len(moves) < max_plies:
-            trace = choose_move_trace(model, board, device)
-            move = chess.Move.from_uci(trace["move"])
-            if move not in board.legal_moves:
-                break
-            board.push(move)
-            moves.append({"ply": len(moves) + 1, **trace, "fen": board.fen()})
-        games.append(
-            {
-                "game_index": game_idx,
-                "opening_prefix": opening,
-                "moves": moves,
-                "final_fen": board.fen(),
-                "demonstration_only": True,
-            }
-        )
-    return {
-        "status": "completed",
-        "demonstration_only": True,
-        "note": "Replay output is demonstration material only and is not a strength proof.",
-        "games": games,
-    }
+    try:
+        for game_idx in range(max_games):
+            board = chess.Board()
+            opening = OPENING_SEEDS[game_idx % len(OPENING_SEEDS)]
+            for move_uci in opening[: min(2, len(opening))]:
+                board.push(chess.Move.from_uci(move_uci))
+            moves: List[Dict[str, Any]] = []
+            while not board.is_game_over() and len(moves) < max_plies:
+                trace = choose_move_trace(model, board, device)
+                move = chess.Move.from_uci(trace["move"])
+                if move not in board.legal_moves:
+                    break
+                board.push(move)
+                moves.append({"ply": len(moves) + 1, **trace, "fen": board.fen()})
+            games.append(
+                {
+                    "game_index": game_idx,
+                    "opening_prefix": opening,
+                    "moves": moves,
+                    "final_fen": board.fen(),
+                    "demonstration_only": True,
+                }
+            )
+        return {
+            "status": "completed",
+            "demonstration_only": True,
+            "note": "Replay output is demonstration material only and is not a strength proof.",
+            "games": games,
+        }
+    finally:
+        model.train(was_training)
 
 
 def determine_statuses(cfg: Dict[str, Any], benchmark_report: Dict[str, Any]) -> Tuple[ExecutionStatus, EvaluationStatus, RatingClaimStatus]:
     execution_status = ExecutionStatus.RAN
     evaluation_status = EvaluationStatus.INTERNALLY_MEASURED
     if str(cfg.get("mode", "")) == "verify":
+        return execution_status, EvaluationStatus.UNEVALUATED, RatingClaimStatus.NO_CLAIM
+    if str(cfg.get("mode", "")) == "arena":
         return execution_status, EvaluationStatus.UNEVALUATED, RatingClaimStatus.NO_CLAIM
     if bool(cfg.get("test_mode", False)) or bool(cfg.get("offline_seed_only", False)):
         return execution_status, evaluation_status, RatingClaimStatus.NO_CLAIM
@@ -2894,9 +5019,100 @@ def determine_statuses(cfg: Dict[str, Any], benchmark_report: Dict[str, Any]) ->
     return execution_status, evaluation_status, RatingClaimStatus.TARGET_NOT_MET
 
 
+MIRROR_REQUIRED_FAMILIES: Dict[str, Tuple[str, ...]] = {
+    "bitlinear": ("BitLinear", "activation_quant", "weight_quant", "set_lowbit_kernel_enabled"),
+    "mla": ("MLA", "RotaryEmbedding", "apply_rope_optimized"),
+    "liquid_cfc": ("LiquidCell", "LiquidMixer", "jit_liquid_loop_cached"),
+    "moe_liquid_router": ("BitSwiGLU", "LiquidRouter", "MoE"),
+    "qinn": ("UnitaryQINN", "newton_schulz_inverse"),
+    "cognitive_extensions": (
+        "GlobalWorkspaceBroadcast",
+        "ContinuousLatentODEStateChannel",
+        "NeuromodulatoryGainLayer",
+        "HebbianPlasticityLayer",
+        "NeuroSymbolicLayer",
+        "LifelongSafetyLayer",
+    ),
+    "world_model": ("WorldModelOutput", "CausalWorldModelHead"),
+    "transformer_assembly": ("MertFormerBlock", "ChessPolicyValueNet"),
+}
+
+
+def build_mirror_enabled_flags(cfg: Dict[str, Any]) -> Dict[str, bool]:
+    return {
+        "use_bitnet": bool(cfg.get("use_bitlinear", False)),
+        "use_moe": bool(cfg.get("use_moe", False)),
+        "use_liquid": bool(cfg.get("use_liquid", cfg.get("use_liquid_adapter", False))),
+        "use_qinn": bool(cfg.get("use_qinn", False)),
+        "use_global_workspace_broadcast": bool(cfg.get("use_global_workspace_broadcast", False)),
+        "use_neuromodulatory_gain": bool(cfg.get("use_neuromodulatory_gain", False)),
+        "use_latent_ode_state_channel": bool(cfg.get("use_latent_ode_state_channel", False)),
+        "use_cross_expert_sync_bus": bool(cfg.get("use_cross_expert_sync_bus", False)),
+        "use_structural_plasticity": bool(cfg.get("use_structural_plasticity", False)),
+        "use_hebbian_plasticity": bool(cfg.get("use_hebbian_plasticity", False)),
+        "use_neuro_symbolic_layer": bool(cfg.get("use_neuro_symbolic_layer", False)),
+        "use_world_model_head": bool(cfg.get("use_world_model_head", False)),
+        "use_lifelong_safety_layer": bool(cfg.get("use_lifelong_safety_layer", False)),
+        "use_hierarchical_kv_cache": bool(cfg.get("use_hierarchical_kv_cache", False)),
+    }
+
+
+def build_mirror_parity_report(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    missing_families = [
+        family_name
+        for family_name, symbols in MIRROR_REQUIRED_FAMILIES.items()
+        if not all(symbol in globals() for symbol in symbols)
+    ]
+    enabled_flags = build_mirror_enabled_flags(cfg)
+    return {
+        "script_version": SCRIPT_VERSION,
+        "parity_mode": "strict_onefile_mirror",
+        "embedding_strategy": "onefile_only",
+        "canonical_reference": {
+            "layers_root": "layers/",
+            "model_root": "model/transformers.py",
+        },
+        "required_families": sorted(MIRROR_REQUIRED_FAMILIES.keys()),
+        "required_symbols": {family_name: list(symbols) for family_name, symbols in MIRROR_REQUIRED_FAMILIES.items()},
+        "audit_status": "ok" if not missing_families else "failed",
+        "missing_families": missing_families,
+        "enabled_flags": enabled_flags,
+        "available_but_disabled": sorted(flag for flag, enabled in enabled_flags.items() if not enabled),
+        "exact_mirror_scope": [
+            "BitLinear quantization surface",
+            "MLA/GQA/RoPE attention surface",
+            "CfC LiquidCell/LiquidMixer surface",
+            "MoE/LiquidRouter routing surface",
+            "QINN surface",
+            "cognitive extension surfaces",
+            "world-model head surface",
+            "transformer block assembly order",
+        ],
+        "chess_specific_surface": [
+            "board piece embeddings",
+            "meta-token embeddings",
+            "pooled policy/value heads",
+            "legal move masking",
+            "arena/train/package/report operators",
+        ],
+        "hardening_scope": {
+            "stable_compiler_safe_only": True,
+            "anti_debug_or_vm_protector": False,
+        },
+    }
+
+
+def assert_mirror_surface_integrity(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    report = build_mirror_parity_report(cfg)
+    if report["audit_status"] != "ok":
+        raise ChessOnefileError(f"Strict mirror audit failed: missing families={report['missing_families']}")
+    return report
+
+
 def build_model_card(model: ChessPolicyValueNet, cfg: Dict[str, Any], checkpoint_path: Optional[Path]) -> Dict[str, Any]:
     report = model.parameter_report()
     checkpoint_size = checkpoint_path.stat().st_size if checkpoint_path and checkpoint_path.exists() else 0
+    parity_report = build_mirror_parity_report(cfg)
     report.update(
         {
             "script_version": SCRIPT_VERSION,
@@ -2906,15 +5122,18 @@ def build_model_card(model: ChessPolicyValueNet, cfg: Dict[str, Any], checkpoint
             "num_heads": int(cfg["num_heads"]),
             "use_moe": bool(cfg.get("use_moe", False)),
             "use_bitlinear": bool(cfg.get("use_bitlinear", False)),
-            "use_gated_residual_adapter": bool(cfg.get("use_liquid_adapter", False)),
+            "use_liquid": bool(cfg.get("use_liquid", cfg.get("use_liquid_adapter", False))),
+            "use_qinn": bool(cfg.get("use_qinn", False)),
             "moe_top_k": int(cfg.get("moe_top_k", 2)),
             "checkpoint_size_bytes": int(checkpoint_size),
             "move_vocab_size": len(MOVE_VOCAB),
             "move_vocab_hash": MOVE_VOCAB_HASH,
+            "mirror_parity": parity_report,
             "architecture_notes": [
                 "Board attention is intentionally non-causal: the model sees the whole board state at once.",
-                "Policy head is a pooled global move-classifier over a fixed UCI vocabulary.",
-                "GatedResidualAdapter is a gated residual adapter, not a full CfC liquid cell.",
+                "The chess trunk is a strict onefile mirror of the canonical Build30 attention, CfC liquid, MoE, QINN, and extension families.",
+                "Policy head remains a pooled global move-classifier over a fixed UCI vocabulary on top of the mirrored trunk.",
+                "Chess-specific behavior is limited to board/meta tokenization, legality masking, and policy/value operator surfaces.",
             ],
         }
     )
@@ -2930,17 +5149,21 @@ def build_eval_card(
 ) -> Dict[str, Any]:
     return {
         "script_version": SCRIPT_VERSION,
+        "mirror_parity": build_mirror_parity_report(cfg),
         "holdout_validation": val_eval,
         "locked_test": test_eval,
         "raw_vs_masked_policy_metrics": legality_report,
         "benchmark_protocol": "internal_stockfish_gauntlet_v2",
         "benchmark_result": benchmark_report,
         "rating_note": "Strength outputs are internal-only unless externally verified.",
+        "parity_scope_note": "Exact mirror parity covers the canonical trunk families; chess-specific heads and legality surfaces remain domain-specific.",
     }
 
 
 def render_run_summary_md(payload: Dict[str, Any]) -> str:
     verify_mode = str(payload["config"].get("mode", "")) == "verify"
+    arena_mode = str(payload["config"].get("mode", "")) == "arena"
+    logging_report = payload.get("logging", {})
     lines = [
         "# MertFormer Chess Run Summary",
         "",
@@ -2948,10 +5171,13 @@ def render_run_summary_md(payload: Dict[str, Any]) -> str:
         f"- Mode: `{payload['config']['mode']}`",
         f"- Profile: `{payload['config']['profile']}`",
         f"- Baseline: `{payload['config']['baseline']}`",
+        f"- Mirror parity: `{payload.get('mirror_parity', {}).get('parity_mode', 'unknown')}`",
         f"- Execution status: `{payload['execution_status']}`",
         f"- Evaluation status: `{payload['evaluation_status']}`",
         f"- Rating claim status: `{payload['rating_claim_status']}`",
         f"- Proxy threshold target: `{payload['rating_target_proxy_threshold']}`",
+        f"- Logging schema version: `{logging_report.get('schema_version', LOG_SCHEMA_VERSION)}`",
+        f"- Logged events: `{logging_report.get('event_count', 0)}`",
         "",
         "## What This Proves",
         "- The onefile can ingest bounded Lichess data, build a legal-move-safe supervised chess dataset, and package measurable artifacts.",
@@ -2971,6 +5197,18 @@ def render_run_summary_md(payload: Dict[str, Any]) -> str:
                 f"- Forward verify batch size checked: `{payload['forward_verify'].get('checked', 0)}`",
             ]
         )
+    elif arena_mode:
+        arena_session = payload.get("arena_session", {})
+        lines.extend(
+            [
+                "",
+                "## Arena Scope",
+                "- Arena mode skips dataset ingestion, training, holdout metrics, and Stockfish benchmarking.",
+                f"- Arena status: `{arena_session.get('status', 'unknown')}`",
+                f"- Arena result: `{arena_session.get('result', '*')}`",
+                f"- Arena plies played: `{arena_session.get('plies_played', 0)}`",
+            ]
+        )
     else:
         lines.extend(
             [
@@ -2986,6 +5224,8 @@ def render_run_summary_md(payload: Dict[str, Any]) -> str:
     benchmark = payload.get("stockfish", {})
     if verify_mode:
         lines.append("- Internal gauntlet: `not_run (verify mode)`")
+    elif arena_mode:
+        lines.append("- Internal gauntlet: `not_run (arena mode)`")
     elif benchmark.get("status") == "completed":
         lines.extend(
             [
@@ -3004,6 +5244,12 @@ def render_run_summary_md(payload: Dict[str, Any]) -> str:
             f"- Final zip: `{bundle.get('zip_path', '')}`",
             f"- Final sha256: `{bundle.get('sha256', '')}`",
             "",
+            "## Observability",
+            f"- Main log: `{payload['output_root']}/logs/run_log.jsonl`",
+            f"- Contract: `{payload['output_root']}/reports/logging_contract.json`",
+            f"- Report: `{payload['output_root']}/reports/observability_report.json`",
+            "- Fatal exceptions are recorded in both the run log and the desktop FAILED artifact.",
+            "",
         ]
     )
     return "\n".join(lines) + "\n"
@@ -3015,7 +5261,7 @@ def render_proof_scope_md() -> str:
         # Proof Scope
 
         ## What This Run Proves
-        - A consumer-class single-machine pipeline can ingest bounded chess data, build a legality-safe dataset, train a supervised policy/value network, and emit reproducible artifact packs.
+        - A consumer-class single-machine pipeline can ingest bounded chess data, build a legality-safe dataset, train a supervised policy/value network, emit reproducible artifact packs, and run an interactive human-vs-model arena session.
         - The run records data provenance, split manifests, legality metrics, holdout metrics, and optional internal benchmark outputs.
 
         ## What This Run Does Not Prove
@@ -3029,6 +5275,8 @@ def render_proof_scope_md() -> str:
 
 def render_repro_md(cfg: Dict[str, Any], layout: ArtifactLayout) -> str:
     cmd = [sys.executable, str(Path(__file__).resolve()), "--mode", str(cfg["mode"]), "--profile", str(cfg["profile"]), "--baseline", str(cfg["baseline"])]
+    if str(cfg.get("resume_from", "")).strip():
+        cmd.extend(["--resume-from", str(cfg["resume_from"])])
     if bool(cfg.get("offline_seed_only", False)):
         cmd.append("--offline-seed-only")
     if bool(cfg.get("share_mode", False)):
@@ -3085,13 +5333,18 @@ def write_cards_and_reports(
     dependency_lock: Dict[str, Any],
     env_info: Dict[str, Any],
     curve_rows: Sequence[Dict[str, Any]],
+    logger: Optional[JSONLLogger] = None,
 ) -> None:
     reports = layout.reports_dir
+    payload["mirror_parity"] = payload.get("mirror_parity", build_mirror_parity_report(cfg))
+    if logger is not None:
+        payload["logging"] = logger.observability_report()
     atomic_json(reports / "run_summary.json", payload)
     atomic_write_text(reports / "run_summary.md", render_run_summary_md(payload))
     atomic_json(reports / "data_card.json", data_card)
     atomic_json(reports / "model_card.json", model_card)
     atomic_json(reports / "eval_card.json", eval_card)
+    atomic_json(reports / "mirror_parity_report.json", payload["mirror_parity"])
     atomic_json(reports / "benchmark_protocol.json", benchmark_protocol)
     atomic_json(reports / "dependency_lock.json", dependency_lock)
     atomic_json(reports / "environment_snapshot.json", env_info)
@@ -3103,11 +5356,16 @@ def write_cards_and_reports(
     atomic_json(reports / "opening_distribution.json", payload["dataset_provenance"]["data_stats"].get("opening_distribution_top20", {}))
     atomic_json(reports / "phase_distribution.json", payload["dataset_provenance"]["data_stats"].get("phase_distribution", {}))
     atomic_json(reports / "drop_reason_counts.json", payload["dataset_provenance"]["data_stats"].get("drop_reason_counts", {}))
+    if "arena_session" in payload:
+        atomic_json(reports / "arena_session.json", payload["arena_session"])
     atomic_write_text(reports / "PROOF_SCOPE.md", render_proof_scope_md())
     atomic_write_text(reports / "REPRO.md", render_repro_md(cfg, layout))
     atomic_write_text(reports / "THIRD_PARTY_DATA_LICENSES.txt", render_third_party_licenses())
     write_curve_csv(reports / "training_curve.csv", curve_rows)
     write_curve_png(reports / "training_curve.png", curve_rows)
+    if logger is not None:
+        atomic_json(reports / "logging_contract.json", logger.contract())
+        atomic_json(reports / "observability_report.json", logger.observability_report())
 
 
 def build_artifact_manifest(layout: ArtifactLayout) -> Dict[str, Any]:
@@ -3245,6 +5503,18 @@ def not_run_demo_replay(reason: str) -> Dict[str, Any]:
     }
 
 
+def not_run_arena_session(reason: str) -> Dict[str, Any]:
+    return {
+        "status": "not_run",
+        "reason": reason,
+        "interactive_only": True,
+        "result": "*",
+        "plies_played": 0,
+        "transcript": [],
+        "note": "Arena mode was not executed in this run.",
+    }
+
+
 def schedule_self_delete_if_needed(cfg: Dict[str, Any], success: bool, final_zip: Optional[Path]) -> None:
     if not success:
         return
@@ -3305,6 +5575,8 @@ def verify_forward_pass(
 
 def prepare_model_and_optimizer(cfg: Dict[str, Any], layout: ArtifactLayout, logger: JSONLLogger) -> Tuple[ChessPolicyValueNet, torch.optim.Optimizer, Dict[str, Any]]:
     device = pick_device(cfg)
+    parity_report = assert_mirror_surface_integrity(cfg)
+    atomic_json(layout.reports_dir / "mirror_parity_report.json", parity_report)
     model = ChessPolicyValueNet(cfg, len(MOVE_VOCAB)).to(device)
     optimizer = build_optimizer(model, cfg)
     model, compile_report = maybe_enable_compile(model, cfg, logger)
@@ -3370,12 +5642,16 @@ def package_existing_run(
     payload["config"]["mode"] = "package"
     payload["repackaged_at_utc"] = utc_now()
     payload["repackaged_from_checkpoint"] = str(cfg["resume_from"])
+    payload["mirror_parity"] = build_mirror_parity_report(payload["config"])
+    payload["logging"] = logger.observability_report()
     manifest = build_artifact_manifest(layout)
     payload["artifact_manifest"] = manifest
     bundle = create_result_bundle(layout, payload)
     payload["bundle"] = bundle
     atomic_json(summary_path, payload)
     atomic_write_text(layout.reports_dir / "run_summary.md", render_run_summary_md(payload))
+    atomic_json(layout.reports_dir / "logging_contract.json", logger.contract())
+    atomic_json(layout.reports_dir / "observability_report.json", logger.observability_report())
     logger.write("package_only_complete", {"checkpoint": str(cfg["resume_from"]), **bundle})
     cleanup_after_bundle_if_needed(cfg, layout, logger)
     return payload
@@ -3389,6 +5665,13 @@ def run_pipeline(
     deterministic_seed(int(cfg["seed"]), strict=bool(cfg.get("determinism_strict", True)))
     layout = layout or prepare_layout(cfg)
     logger = logger or JSONLLogger(layout.logs_dir / "run_log.jsonl")
+    logger.bind_context(
+        run_id=layout.run_id,
+        mode=str(cfg["mode"]),
+        profile=str(cfg["profile"]),
+        artifact_root=str(layout.run_dir),
+    )
+    logger.write("config_resolved", {"config": cfg, "layout": {"run_dir": str(layout.run_dir), "logs_dir": str(layout.logs_dir)}})
     logger.write("run_start", {"script_version": SCRIPT_VERSION, "config": cfg})
 
     env_info = env_snapshot(cfg)
@@ -3399,6 +5682,91 @@ def run_pipeline(
 
     if cfg["mode"] == "package":
         return package_existing_run(cfg, layout, logger)
+    if cfg["mode"] == "arena":
+        model, optimizer, compile_report = prepare_model_and_optimizer(cfg, layout, logger)
+        del optimizer
+        device = pick_device(cfg)
+        checkpoint_path: Optional[Path] = None
+        if str(cfg.get("resume_from", "")).strip():
+            checkpoint_path = Path(str(cfg["resume_from"]))
+            resume_state = load_checkpoint(checkpoint_path, model, optimizer=None, restore_optimizer=False)
+            logger.write("arena_checkpoint_loaded", {"checkpoint": str(checkpoint_path), "step": resume_state.step})
+        arena_session = play_human_vs_model_arena(model, cfg, device, logger)
+        benchmark_protocol = build_benchmark_protocol(cfg, detect_stockfish_path(cfg))
+        holdout_validation = not_run_evaluation("arena_mode_interactive_only")
+        locked_test = not_run_evaluation("arena_mode_interactive_only")
+        legality_report = not_run_legality_report("arena_mode_interactive_only")
+        demo_replay = not_run_demo_replay("arena_mode_interactive_only")
+        stockfish_report = {"status": "not_run", "reason": "arena_mode_interactive_only"}
+        atomic_json(layout.reports_dir / "model_replay.json", demo_replay)
+        atomic_json(layout.reports_dir / "stockfish_match_report.json", stockfish_report)
+        model_card = build_model_card(model, cfg, checkpoint_path)
+        data_card = {
+            "script_version": SCRIPT_VERSION,
+            "dataset_provenance": {"mode": "arena_only", "data_stats": {}, "sampling_strategy": "not_used"},
+            "split_manifest": {"status": "not_run", "reason": "arena_mode_interactive_only"},
+            "notes": {
+                "train_val_test_split": "Arena mode does not build train/val/test splits.",
+                "eval_signal": "Arena mode is interactive and uses the current in-memory model state.",
+                "sampling_strategy": "not_used",
+            },
+        }
+        eval_card = build_eval_card(cfg, holdout_validation, locked_test, legality_report, stockfish_report)
+        payload = {
+            "script_version": SCRIPT_VERSION,
+            "run_id": layout.run_id,
+            "config": cfg,
+            "execution_status": ExecutionStatus.RAN.value,
+            "evaluation_status": EvaluationStatus.UNEVALUATED.value,
+            "rating_claim_status": RatingClaimStatus.NO_CLAIM.value,
+            "claim_status": RatingClaimStatus.NO_CLAIM.value,
+            "rating_target_proxy_threshold": int(cfg["rating_target_proxy_threshold"]),
+            "dataset_provenance": data_card["dataset_provenance"],
+            "holdout_validation": holdout_validation,
+            "locked_test": locked_test,
+            "legality_report": legality_report,
+            "stockfish": stockfish_report,
+            "training_summary": {
+                "steps_completed": 0,
+                "best_val_loss": None,
+                "arena_only": True,
+                "checkpoint_loaded": checkpoint_path is not None,
+            },
+            "compile_report": compile_report,
+            "forward_verify": {"status": "not_run", "reason": "arena_mode_interactive_only"},
+            "best_checkpoint": str(checkpoint_path) if checkpoint_path is not None else "",
+            "latest_checkpoint": str(checkpoint_path) if checkpoint_path is not None else "",
+            "output_root": str(layout.run_dir),
+            "arena_session": arena_session,
+            "notes": {
+                "replay_is_demo_only": True,
+                "internal_proxy_only": True,
+                "what_this_proves": "Interactive human-vs-model arena execution with legal move masking and artifact packaging.",
+                "what_this_does_not_prove": "Training quality, holdout metrics, or externally verified strength.",
+            },
+        }
+        write_cards_and_reports(
+            layout=layout,
+            cfg=cfg,
+            payload=payload,
+            data_card=data_card,
+            model_card=model_card,
+            eval_card=eval_card,
+            benchmark_protocol=benchmark_protocol,
+            dependency_lock=dependency_lock,
+            env_info=env_info,
+            curve_rows=[],
+            logger=logger,
+        )
+        build_artifact_manifest(layout)
+        bundle = create_result_bundle(layout, payload)
+        payload["bundle"] = bundle
+        payload["logging"] = logger.observability_report()
+        atomic_json(layout.reports_dir / "run_summary.json", payload)
+        atomic_write_text(layout.reports_dir / "run_summary.md", render_run_summary_md(payload))
+        logger.write("run_complete", {"execution_status": payload["execution_status"], "rating_claim_status": payload["rating_claim_status"], **bundle})
+        cleanup_after_bundle_if_needed(cfg, layout, logger)
+        return payload
 
     if cfg["mode"] == "verify":
         examples, provenance = collect_verify_examples(cfg, layout, logger)
@@ -3482,6 +5850,7 @@ def run_pipeline(
         test_loader = make_loader(test_examples if test_examples else val_examples, batch_size=int(cfg["eval_batch_size"]), shuffle=False, num_workers=0, seed=int(cfg["seed"]) + 124)
         holdout_validation = evaluate_model(model, val_loader, device, cfg, max_batches=0)
         locked_test = evaluate_model(model, test_loader, device, cfg, max_batches=0)
+        model.eval()
         legality_report = run_legality_report(model, val_examples, device, cfg)
         demo_replay = generate_demo_replay(model, cfg, device)
     atomic_json(layout.reports_dir / "model_replay.json", demo_replay)
@@ -3491,6 +5860,7 @@ def run_pipeline(
     if cfg["mode"] == "verify":
         stockfish_report = {"status": "not_run", "reason": "verify_mode_runtime_only"}
     elif cfg["mode"] in {"train", "resume", "benchmark"}:
+        model.eval()
         stockfish_report = play_stockfish_gauntlet(model, cfg, device, layout, logger)
     atomic_json(layout.reports_dir / "stockfish_match_report.json", stockfish_report)
 
@@ -3557,10 +5927,12 @@ def run_pipeline(
         dependency_lock=dependency_lock,
         env_info=env_info,
         curve_rows=curve_rows,
+        logger=logger,
     )
     build_artifact_manifest(layout)
     bundle = create_result_bundle(layout, payload)
     payload["bundle"] = bundle
+    payload["logging"] = logger.observability_report()
     atomic_json(layout.reports_dir / "run_summary.json", payload)
     atomic_write_text(layout.reports_dir / "run_summary.md", render_run_summary_md(payload))
     logger.write("run_complete", {"execution_status": payload["execution_status"], "rating_claim_status": payload["rating_claim_status"], **bundle})
@@ -3570,10 +5942,10 @@ def run_pipeline(
 
 def build_argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="MertFormer Chess RTX 5080 onefile")
-    parser.add_argument("--mode", default=RUN_CONFIG["mode"], choices=["train", "verify", "benchmark", "package", "resume"])
+    parser.add_argument("--mode", default=RUN_CONFIG["mode"], choices=["train", "verify", "benchmark", "package", "resume", "arena"])
     parser.add_argument("--profile", default=RUN_CONFIG["profile"], choices=list(RUN_PROFILES.keys()))
     parser.add_argument("--baseline", default=RUN_CONFIG["baseline"], choices=["dense", "moe", "moe_adapter"])
-    parser.add_argument("--resume-from", help="Load a checkpoint for resume/benchmark/package modes. Verify mode can optionally load one for runtime-only verification.")
+    parser.add_argument("--resume-from", help="Load a checkpoint for resume/benchmark/package modes. Verify and arena modes can optionally load one without retraining.")
     parser.add_argument("--artifact-root", help="Override artifact root.")
     parser.add_argument("--stockfish-path", help="Optional Stockfish executable override.")
     parser.add_argument("--no-download", action="store_true", help="Do not attempt network download; use cache or fail.")
@@ -3596,16 +5968,32 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     LAST_FINAL_ZIP = None
     LAST_RUNTIME_CFG = None
     LAST_RUN_SUCCESS = False
+    logger_for_guard: Optional[JSONLLogger] = None
+    layout: Optional[ArtifactLayout] = None
     try:
         cfg = resolve_runtime_config(args, RUN_CONFIG)
         LAST_RUNTIME_CFG = cfg
         layout = prepare_layout(cfg)
-        logger_for_guard: Optional[JSONLLogger] = JSONLLogger(layout.logs_dir / "run_log.jsonl")
+        logger_for_guard = JSONLLogger(
+            layout.logs_dir / "run_log.jsonl",
+            run_id=layout.run_id,
+            mode=str(cfg["mode"]),
+            profile=str(cfg["profile"]),
+            artifact_root=str(layout.run_dir),
+        )
         with WindowsExecutionGuard(logger_for_guard, enabled=True):
             payload = run_pipeline(cfg, layout=layout, logger=logger_for_guard)
         LAST_RUN_SUCCESS = True
         if payload.get("bundle", {}).get("zip_path"):
             LAST_FINAL_ZIP = Path(str(payload["bundle"]["zip_path"]))
+        logger_for_guard.finalize(
+            "completed",
+            extra={
+                "execution_status": payload["execution_status"],
+                "rating_claim_status": payload["rating_claim_status"],
+                "bundle_path": payload.get("bundle", {}).get("zip_path", ""),
+            },
+        )
         print(
             json.dumps(
                 {
@@ -3621,6 +6009,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         )
         return 0
     except ChessOnefileError as exc:
+        if logger_for_guard is not None:
+            logger_for_guard.write_exception(
+                "fatal_exception",
+                exc,
+                extra_payload={"scope": "controlled_failure", "layout_ready": layout is not None},
+            )
         err = {
             "status": "failed",
             "error_type": type(exc).__name__,
@@ -3628,12 +6022,23 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "traceback": traceback.format_exc(),
         }
     except Exception as exc:  # pragma: no cover - last-resort crash boundary
+        if logger_for_guard is not None:
+            logger_for_guard.write_exception(
+                "fatal_exception",
+                exc,
+                extra_payload={"scope": "unhandled_exception", "layout_ready": layout is not None},
+            )
         err = {
             "status": "failed",
             "error_type": type(exc).__name__,
             "error": str(exc),
             "traceback": traceback.format_exc(),
         }
+    if logger_for_guard is not None:
+        logger_for_guard.finalize(
+            "failed",
+            extra={"error_type": err["error_type"], "error": err["error"]},
+        )
     desktop = detect_desktop_dir()
     err_path = desktop / f"{RESULT_ZIP_PREFIX}_FAILED_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     atomic_write_text(err_path, json.dumps(err, indent=2, ensure_ascii=False) + "\n")

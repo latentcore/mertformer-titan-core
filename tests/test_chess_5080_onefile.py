@@ -1,15 +1,26 @@
 from __future__ import annotations
 
 import argparse
+import builtins
 import json
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
+import torch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from config.config import cfg as canonical_cfg
+from layers.bitlinear import BitLinear as CanonicalBitLinear
+from layers.lifelong_safety import LifelongSafetyLayer as CanonicalLifelongSafetyLayer
+from layers.liquid import LiquidMixer as CanonicalLiquidMixer
+from layers.mla import MLA as CanonicalMLA
+from layers.moe import MoE as CanonicalMoE
+from layers.qinn import UnitaryQINN as CanonicalUnitaryQINN
+from layers.world_model_head import CausalWorldModelHead as CanonicalWorldModelHead
 import scripts.chess_5080_onefile as onefile
 
 
@@ -34,6 +45,62 @@ def make_args(**overrides: object) -> argparse.Namespace:
     }
     defaults.update(overrides)
     return argparse.Namespace(**defaults)
+
+
+@contextmanager
+def patched_canonical_cfg(**updates: object):
+    missing = object()
+    originals = {name: getattr(canonical_cfg, name, missing) for name in updates}
+    try:
+        for name, value in updates.items():
+            setattr(canonical_cfg, name, value)
+        yield
+    finally:
+        for name, value in originals.items():
+            if value is missing:
+                delattr(canonical_cfg, name)
+            else:
+                setattr(canonical_cfg, name, value)
+
+
+def make_mirror_cfg(**overrides: object) -> dict[str, object]:
+    cfg = {
+        **onefile.RUN_CONFIG,
+        'device': 'cpu',
+        'hidden_size': 32,
+        'intermediate_size': 64,
+        'num_layers': 4,
+        'num_heads': 4,
+        'num_kv_heads': 2,
+        'head_dim': 8,
+        'max_seq_len': 32,
+        'dropout': 0.0,
+        'attention_dropout': 0.0,
+        'ffn_dropout': 0.0,
+        'use_bitlinear': True,
+        'use_moe': True,
+        'moe_top_k': 2,
+        'num_experts': 4,
+        'moe_every_n_layers': 2,
+        'moe_intermediate': 64,
+        'use_liquid': True,
+        'use_liquid_adapter': True,
+        'liquid_layers_idx': [1, 3],
+        'liquid_fast_path': False,
+        'use_qinn': True,
+        'use_hierarchical_kv_cache': False,
+        'use_global_workspace_broadcast': True,
+        'use_neuromodulatory_gain': True,
+        'use_latent_ode_state_channel': True,
+        'use_world_model_head': True,
+        'use_lifelong_safety_layer': True,
+        'use_hebbian_plasticity': True,
+        'use_neuro_symbolic_layer': True,
+        'use_cross_expert_sync_bus': True,
+        'use_structural_plasticity': True,
+    }
+    cfg.update(overrides)
+    return cfg
 
 
 def test_move_vocab_contains_common_uci_moves() -> None:
@@ -189,6 +256,89 @@ def test_evaluate_model_uses_single_forward_per_batch_and_example_weighting() ->
     assert evaluation['per_phase']['opening']['masked_policy_accuracy'] == pytest.approx(2 / 3, abs=1e-6)
 
 
+def test_download_archive_slices_enforces_byte_budget_when_range_is_ignored(monkeypatch, tmp_path: Path) -> None:
+    payload = b'a' * (2 * 1024 * 1024)
+
+    class FakeResponse:
+        status = 200
+
+        def __init__(self, blob: bytes) -> None:
+            self._blob = blob
+            self._offset = 0
+
+        def info(self) -> dict[str, str]:
+            return {'Content-Type': 'application/octet-stream'}
+
+        def read(self, size: int) -> bytes:
+            if self._offset >= len(self._blob):
+                return b''
+            chunk = self._blob[self._offset:self._offset + size]
+            self._offset += len(chunk)
+            return chunk
+
+        def __enter__(self) -> 'FakeResponse':
+            return self
+
+        def __exit__(self, exc_type, exc, tb) -> bool:
+            return False
+
+    monkeypatch.setattr(onefile.urllib.request, 'urlopen', lambda req, timeout=60: FakeResponse(payload))
+    logger = onefile.JSONLLogger(tmp_path / 'download_log.jsonl')
+    cfg = {
+        **onefile.RUN_CONFIG,
+        'download_partial_mb': 1,
+        'download_archive_count': 1,
+        'download_retries': 0,
+        'download_timeout_sec': 5,
+    }
+    slices = onefile.download_archive_slices(['https://example.com/demo.pgn.zst'], cfg, logger, tmp_path / 'cache')
+    assert len(slices) == 1
+    assert slices[0].bytes_written == 1024 * 1024
+    assert slices[0].path.stat().st_size == 1024 * 1024
+
+
+def test_compute_score_rate_ci_uses_non_degenerate_bounds_for_small_samples() -> None:
+    ci = onefile.compute_score_rate_ci(0.0, 12)
+    assert ci['low'] == 0.0
+    assert 0.0 < ci['high'] < 0.3
+
+
+def test_play_human_vs_model_arena_accepts_human_moves_and_can_abort(monkeypatch) -> None:
+    responses = iter(['w', 'e2e4', 'quit'])
+
+    class StubModel:
+        def __init__(self) -> None:
+            self.training = False
+
+        def eval(self) -> 'StubModel':
+            self.training = False
+            return self
+
+        def train(self, mode: bool = True) -> 'StubModel':
+            self.training = mode
+            return self
+
+    monkeypatch.setattr(onefile, 'ensure_interactive_console', lambda: None)
+    monkeypatch.setattr(builtins, 'input', lambda prompt='': next(responses))
+    monkeypatch.setattr(
+        onefile,
+        'choose_move_trace',
+        lambda model, board, device: {
+            'move': 'e7e5',
+            'value': 0.12,
+            'latency_ms': 1.5,
+            'raw_top1_is_legal': True,
+            'raw_topk': ['e7e5'],
+            'masked_topk': ['e7e5'],
+        },
+    )
+    report = onefile.play_human_vs_model_arena(StubModel(), onefile.RUN_CONFIG, onefile.torch.device('cpu'))
+    assert report['status'] == 'aborted_by_user'
+    assert report['human_color'] == 'white'
+    assert report['plies_played'] == 2
+    assert [item['move'] for item in report['transcript']] == ['e2e4', 'e7e5']
+
+
 def test_run_pipeline_verify_mode_skips_strength_surfaces(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr(onefile, 'detect_desktop_dir', lambda: tmp_path)
 
@@ -217,3 +367,358 @@ def test_run_pipeline_verify_mode_skips_strength_surfaces(monkeypatch, tmp_path:
     assert payload['holdout_validation']['status'] == 'not_run'
     assert payload['legality_report']['status'] == 'not_run'
     assert payload['stockfish']['reason'] == 'verify_mode_runtime_only'
+    assert (layout.reports_dir / 'logging_contract.json').exists()
+    assert (layout.reports_dir / 'observability_report.json').exists()
+
+
+def test_run_pipeline_arena_mode_skips_dataset_and_strength_surfaces(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(onefile, 'detect_desktop_dir', lambda: tmp_path)
+
+    def fail(*args: object, **kwargs: object) -> object:
+        raise AssertionError('arena mode must skip dataset and strength surfaces')
+
+    monkeypatch.setattr(onefile, 'maybe_collect_dataset', fail)
+    monkeypatch.setattr(onefile, 'collect_verify_examples', fail)
+    monkeypatch.setattr(onefile, 'evaluate_model', fail)
+    monkeypatch.setattr(onefile, 'run_legality_report', fail)
+    monkeypatch.setattr(onefile, 'generate_demo_replay', fail)
+    monkeypatch.setattr(onefile, 'play_stockfish_gauntlet', fail)
+    monkeypatch.setattr(
+        onefile,
+        'play_human_vs_model_arena',
+        lambda *args, **kwargs: {
+            'status': 'completed',
+            'interactive_only': True,
+            'human_color': 'white',
+            'result': '1-0',
+            'plies_played': 5,
+            'final_fen': onefile.chess.Board().fen(),
+            'transcript': [],
+            'note': 'test arena',
+        },
+    )
+
+    cfg = onefile.apply_profile(onefile.RUN_CONFIG, 'smoke')
+    cfg['mode'] = 'arena'
+    cfg['artifact_root'] = str(tmp_path / 'artifacts')
+    cfg['cache_root'] = str(tmp_path / 'cache')
+    cfg['device'] = 'cpu'
+    cfg['zip_outputs'] = False
+    onefile.validate_runtime_config(cfg)
+
+    layout = onefile.prepare_layout(cfg)
+    logger = onefile.JSONLLogger(tmp_path / 'arena_log.jsonl')
+    payload = onefile.run_pipeline(cfg, layout=layout, logger=logger)
+
+    assert payload['evaluation_status'] == onefile.EvaluationStatus.UNEVALUATED.value
+    assert payload['holdout_validation']['status'] == 'not_run'
+    assert payload['stockfish']['reason'] == 'arena_mode_interactive_only'
+    assert payload['arena_session']['status'] == 'completed'
+
+
+def test_jsonl_logger_writes_structured_schema_and_redacts(tmp_path: Path) -> None:
+    log_path = tmp_path / 'run_log.jsonl'
+    logger = onefile.JSONLLogger(
+        log_path,
+        run_id='run-1',
+        mode='verify',
+        profile='smoke',
+        artifact_root='/tmp/artifacts',
+    )
+    logger.write(
+        'test_event',
+        {
+            'status': 'ok',
+            'api_key': 'raw-secret',
+            'nested': {'token': 'opaque-token-value'},
+            'message': 'sk-abc123',
+        },
+    )
+    logger.finalize('completed')
+
+    rows = [json.loads(line) for line in log_path.read_text(encoding='utf-8').splitlines()]
+    assert rows[0]['event'] == 'test_event'
+    assert rows[0]['kind'] == 'test_event'
+    assert rows[0]['schema_version'] == onefile.LOG_SCHEMA_VERSION
+    assert rows[0]['run_id'] == 'run-1'
+    assert rows[0]['mode'] == 'verify'
+    assert rows[0]['profile'] == 'smoke'
+    assert rows[0]['component'] == 'chess_onefile'
+    assert rows[0]['artifact_root'] == '/tmp/artifacts'
+    assert rows[0]['payload']['api_key'] == '[REDACTED]'
+    assert rows[0]['payload']['nested']['token'] == '[REDACTED]'
+    assert rows[0]['payload']['message'] == 'sk-[REDACTED]'
+    assert rows[-1]['event'] == 'logger_finalize'
+    assert rows[-1]['payload']['status'] == 'completed'
+
+
+def test_jsonl_logger_rotates_when_size_limit_is_hit(tmp_path: Path) -> None:
+    log_path = tmp_path / 'rotate.jsonl'
+    logger = onefile.JSONLLogger(
+        log_path,
+        run_id='run-rotate',
+        mode='verify',
+        profile='smoke',
+        artifact_root=str(tmp_path),
+        max_bytes=512,
+        backup_count=2,
+    )
+    for idx in range(16):
+        logger.write('rotation_probe', {'idx': idx, 'blob': 'x' * 180})
+    logger.finalize('completed')
+    rotated = sorted(tmp_path.glob('rotate.jsonl*'))
+    assert len(rotated) >= 2
+
+
+def test_main_logs_fatal_exception_to_run_log(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(onefile, 'detect_desktop_dir', lambda: tmp_path)
+
+    class DummyGuard:
+        def __init__(self, logger, enabled=True):
+            self.logger = logger
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+    def blow_up(*args: object, **kwargs: object) -> object:
+        raise onefile.ConfigValidationError('boom')
+
+    monkeypatch.setattr(onefile, 'WindowsExecutionGuard', DummyGuard)
+    monkeypatch.setattr(onefile, 'run_pipeline', blow_up)
+
+    exit_code = onefile.main(
+        [
+            '--mode',
+            'verify',
+            '--profile',
+            'smoke',
+            '--artifact-root',
+            str(tmp_path / 'artifacts'),
+            '--offline-seed-only',
+        ]
+    )
+
+    assert exit_code == 1
+    run_logs = list((tmp_path / 'artifacts').rglob('run_log.jsonl'))
+    assert len(run_logs) == 1
+    rows = [json.loads(line) for line in run_logs[0].read_text(encoding='utf-8').splitlines()]
+    assert any(row['event'] == 'fatal_exception' for row in rows)
+    assert any(row['event'] == 'logger_finalize' and row['payload']['status'] == 'failed' for row in rows)
+    failed_artifacts = list(tmp_path.glob('MertFormer_Chess_5080_Result_FAILED_*.json'))
+    assert failed_artifacts
+
+
+def test_mirror_parity_report_declares_required_families() -> None:
+    report = onefile.build_mirror_parity_report(make_mirror_cfg())
+    assert report['audit_status'] == 'ok'
+    assert 'mla' in report['required_families']
+    assert 'moe_liquid_router' in report['required_families']
+    assert report['embedding_strategy'] == 'onefile_only'
+
+
+def test_bitlinear_matches_canonical_forward() -> None:
+    torch.manual_seed(7)
+    mirrored = onefile.BitLinear(16, 16, bias=True, enabled=True)
+    canonical = CanonicalBitLinear(16, 16, bias=True)
+    canonical.load_state_dict(mirrored.state_dict())
+    x = torch.randn(2, 5, 16)
+    out_mirror = mirrored(x)
+    out_canonical = canonical(x)
+    assert torch.allclose(out_mirror, out_canonical, atol=1e-6, rtol=1e-5)
+
+
+def test_import_optional_sdk_module_returns_none_when_unavailable(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setattr(onefile, "REPO_ROOT", tmp_path)
+
+    def fake_import_module(name: str):
+        raise ModuleNotFoundError(name)
+
+    monkeypatch.setattr(onefile.importlib, "import_module", fake_import_module)
+    assert onefile._import_optional_sdk_module("mertformer_sdk.kernels.dispatcher") is None
+
+
+def test_try_lowbit_kernel_uses_dynamic_sdk_loader(monkeypatch) -> None:
+    class DispatcherModule:
+        @staticmethod
+        def select_backend(x: object, w: object) -> str:
+            del x, w
+            return "mps_optimized"
+
+    monkeypatch.setattr(onefile, "_LOWBIT_KERNEL_ENABLED", True)
+    monkeypatch.setattr(
+        onefile,
+        "_import_optional_sdk_module",
+        lambda name: DispatcherModule if name == "mertformer_sdk.kernels.dispatcher" else None,
+    )
+    x = torch.randn(2, 3, 8)
+    w = torch.randn(8, 8)
+    out = onefile._try_lowbit_kernel(x, w, None)
+    expected = onefile.F.linear(onefile.activation_quant(x), onefile.weight_quant(w), None)
+    assert out is not None
+    assert torch.allclose(out, expected, atol=1e-6, rtol=1e-5)
+
+
+def test_world_model_head_matches_canonical() -> None:
+    torch.manual_seed(11)
+    mirrored = onefile.CausalWorldModelHead(32, horizon=2)
+    canonical = CanonicalWorldModelHead(32, horizon=2)
+    canonical.load_state_dict(mirrored.state_dict())
+    x = torch.randn(3, 6, 32)
+    mirror_out = mirrored(x).to_dict()
+    canonical_out = canonical(x).to_dict()
+    for key in mirror_out:
+        assert torch.allclose(mirror_out[key], canonical_out[key], atol=1e-6, rtol=1e-5)
+
+
+def test_lifelong_safety_matches_canonical() -> None:
+    torch.manual_seed(13)
+    mirrored = onefile.LifelongSafetyLayer(24, ema_decay=0.97, max_adaptation_gain=0.04, drift_threshold=0.3)
+    canonical = CanonicalLifelongSafetyLayer(24, ema_decay=0.97, max_adaptation_gain=0.04, drift_threshold=0.3)
+    canonical.load_state_dict(mirrored.state_dict())
+    x = torch.randn(2, 4, 24)
+    out_mirror = mirrored(x)
+    out_canonical = canonical(x)
+    assert torch.allclose(out_mirror, out_canonical, atol=1e-6, rtol=1e-5)
+    assert mirrored.safety_metrics() == canonical.safety_metrics()
+
+
+def test_unitary_qinn_matches_canonical_when_enabled() -> None:
+    torch.manual_seed(17)
+    mirrored = onefile.UnitaryQINN(16, enabled=True)
+    with patched_canonical_cfg(use_qinn=True):
+        canonical = CanonicalUnitaryQINN(16)
+        canonical.load_state_dict(mirrored.state_dict())
+        x = torch.randn(2, 3, 16)
+        out_mirror = mirrored(x)
+        out_canonical = canonical(x)
+    assert torch.allclose(out_mirror, out_canonical, atol=1e-6, rtol=1e-5)
+
+
+def test_mla_matches_canonical_forward_and_cache() -> None:
+    torch.manual_seed(19)
+    run_cfg = make_mirror_cfg(
+        hidden_size=32,
+        intermediate_size=64,
+        num_layers=2,
+        num_heads=4,
+        num_kv_heads=2,
+        head_dim=8,
+        max_seq_len=24,
+        use_moe=False,
+        use_liquid=False,
+        use_liquid_adapter=False,
+        use_qinn=False,
+        use_global_workspace_broadcast=False,
+        use_neuromodulatory_gain=False,
+        use_latent_ode_state_channel=False,
+        use_world_model_head=False,
+        use_lifelong_safety_layer=False,
+        use_hebbian_plasticity=False,
+        use_neuro_symbolic_layer=False,
+        use_cross_expert_sync_bus=False,
+        use_structural_plasticity=False,
+    )
+    mirrored = onefile.MLA(onefile.build_mirror_model_config(run_cfg))
+    with patched_canonical_cfg(
+        hidden_size=32,
+        num_heads=4,
+        num_attention_heads=4,
+        num_kv_heads=2,
+        head_dim=8,
+        max_seq_len=24,
+        rope_theta=100000.0,
+        rope_base=100000.0,
+        attention_dropout=0.0,
+        use_flash_attn_inference=False,
+        use_hierarchical_kv_cache=False,
+    ):
+        canonical = CanonicalMLA()
+        canonical.load_state_dict(mirrored.state_dict())
+        x = torch.randn(2, 5, 32)
+        out_mirror, kv_mirror = mirrored(x, use_cache=True)
+        out_canonical, kv_canonical = canonical(x, use_cache=True)
+        step = torch.randn(2, 1, 32)
+        step_mirror, _ = mirrored(step, past_key_value=kv_mirror, use_cache=True)
+        step_canonical, _ = canonical(step, past_key_value=kv_canonical, use_cache=True)
+    assert torch.allclose(out_mirror, out_canonical, atol=1e-5, rtol=1e-5)
+    assert torch.allclose(step_mirror, step_canonical, atol=1e-5, rtol=1e-5)
+
+
+def test_liquid_mixer_matches_canonical_eval_path() -> None:
+    torch.manual_seed(23)
+    mirrored = onefile.LiquidMixer(16, use_bitnet=True, fast_path=False).eval()
+    canonical = CanonicalLiquidMixer(16, fast_path=False).eval()
+    canonical.load_state_dict(mirrored.state_dict())
+    x = torch.randn(2, 4, 16)
+    out_mirror = mirrored(x)
+    out_canonical = canonical(x)
+    assert torch.allclose(out_mirror, out_canonical, atol=1e-5, rtol=1e-5)
+
+
+def test_moe_matches_canonical_eval_path() -> None:
+    torch.manual_seed(29)
+    run_cfg = make_mirror_cfg(
+        hidden_size=16,
+        intermediate_size=32,
+        moe_intermediate=32,
+        num_heads=4,
+        num_kv_heads=2,
+        head_dim=4,
+        num_experts=4,
+        moe_top_k=2,
+        use_switch_loss=True,
+        router_jitter=0.02,
+        router_jitter_boost=0.1,
+        z_loss_coef=1e-4,
+        use_moe=True,
+        use_liquid=False,
+        use_liquid_adapter=False,
+        use_qinn=False,
+        use_global_workspace_broadcast=False,
+        use_neuromodulatory_gain=False,
+        use_latent_ode_state_channel=False,
+        use_world_model_head=False,
+        use_lifelong_safety_layer=False,
+        use_hebbian_plasticity=False,
+        use_neuro_symbolic_layer=False,
+        use_cross_expert_sync_bus=False,
+        use_structural_plasticity=False,
+        use_expert_paging=False,
+    )
+    mirrored = onefile.MoE(onefile.build_mirror_model_config(run_cfg)).eval()
+    with patched_canonical_cfg(
+        hidden_size=16,
+        intermediate_size=32,
+        moe_intermediate=32,
+        num_experts=4,
+        num_experts_per_tok=2,
+        active_experts=2,
+        router_temperature=1.0,
+        router_jitter=0.02,
+        router_jitter_boost=0.1,
+        z_loss_coef=1e-4,
+        shared_expert_gate=0.0,
+        use_switch_loss=True,
+        moe_capacity_enforce=True,
+        moe_capacity_factor=1.25,
+        moe_dispatch_mode='sequential',
+        use_cross_expert_sync_bus=False,
+        cross_expert_sync_gain=0.05,
+        use_structural_plasticity=False,
+        use_expert_paging=False,
+        expert_paging_inference_only=True,
+        expert_paging_lazy_init=True,
+        expert_paging_cache_size=2,
+        expert_paging_offload_device='cpu',
+        expert_paging_verbose=False,
+    ):
+        canonical = CanonicalMoE().eval()
+        canonical.load_state_dict(mirrored.state_dict())
+        x = torch.randn(2, 3, 16)
+        out_mirror, aux_mirror = mirrored(x)
+        out_canonical, aux_canonical = canonical(x)
+    assert torch.allclose(out_mirror, out_canonical, atol=1e-5, rtol=1e-5)
+    assert torch.allclose(aux_mirror, aux_canonical, atol=1e-6, rtol=1e-5)

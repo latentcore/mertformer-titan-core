@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -52,6 +53,50 @@ def ensure_python_package(package: str) -> bool:
     return subprocess.run([sys.executable, '-c', code], check=False).returncode == 0
 
 
+def parse_major_minor(version: str) -> tuple[int, int]:
+    match = re.match(r"^\s*(\d+)\.(\d+)", version)
+    if not match:
+        return (0, 0)
+    return (int(match.group(1)), int(match.group(2)))
+
+
+def inspect_torch_install() -> Dict[str, Any]:
+    code = textwrap.dedent(
+        """
+        import json
+        try:
+            import torch
+            payload = {
+                "found": True,
+                "version": getattr(torch, "__version__", ""),
+                "cuda": getattr(getattr(torch, "version", None), "cuda", None),
+                "cuda_available": bool(torch.cuda.is_available()) if hasattr(torch, "cuda") else False,
+            }
+        except Exception as exc:
+            payload = {
+                "found": False,
+                "error": f"{type(exc).__name__}: {exc}",
+            }
+        print(json.dumps(payload))
+        """
+    ).strip()
+    result = subprocess.run([sys.executable, "-c", code], check=False, capture_output=True, text=True)
+    if result.returncode != 0:
+        return {"found": False, "error": result.stderr.strip() or result.stdout.strip() or "torch_probe_failed"}
+    try:
+        return json.loads(result.stdout.strip() or "{}")
+    except json.JSONDecodeError:
+        return {"found": False, "error": "torch_probe_invalid_json", "raw": result.stdout.strip()}
+
+
+def torch_install_is_acceptable(report: Dict[str, Any]) -> bool:
+    if not bool(report.get("found", False)):
+        return False
+    version = str(report.get("version", "")).split("+", 1)[0]
+    cuda_version = str(report.get("cuda") or "")
+    return parse_major_minor(version) >= (2, 6) and cuda_version == "12.8"
+
+
 def ensure_build_dependencies() -> None:
     base_requirements = [
         'pip>=24',
@@ -65,18 +110,16 @@ def ensure_build_dependencies() -> None:
         'psutil>=5.9,<8',
         'pyzipper>=0.3.6,<1',
     ]
-    torch_args = ['torch>=2.6,<3']
-    if not ensure_python_package('torch'):
-        index_url = os.environ.get(DEFAULT_TORCH_INDEX_ENV, 'https://download.pytorch.org/whl/cu128')
-        torch_args += ['--index-url', index_url]
     run([sys.executable, '-m', 'pip', 'install', '--upgrade', *base_requirements])
-    if not ensure_python_package('torch'):
-        run([sys.executable, '-m', 'pip', 'install', *torch_args])
+    torch_report = inspect_torch_install()
+    if not torch_install_is_acceptable(torch_report):
+        index_url = os.environ.get(DEFAULT_TORCH_INDEX_ENV, 'https://download.pytorch.org/whl/cu128')
+        run([sys.executable, '-m', 'pip', 'install', '--upgrade', '--index-url', index_url, 'torch>=2.6,<3'])
 
 
-def render_launcher(password: str) -> str:
+def render_launcher() -> str:
     return textwrap.dedent(
-        f'''\
+        '''\
         from __future__ import annotations
         import os
 
@@ -87,7 +130,6 @@ def render_launcher(password: str) -> str:
         os.environ.setdefault('MERTFORMER_CHESS_ENCRYPTION_REQUIRED', '1')
         os.environ.setdefault('MERTFORMER_CHESS_SINGLE_OUTPUT', '1')
         os.environ.setdefault('MERTFORMER_CHESS_CLEANUP_AFTER_BUNDLE', '1')
-        os.environ.setdefault('MERTFORMER_CHESS_ARCHIVE_PASSWORD', {password!r})
 
         from chess_5080_onefile import main
 
@@ -105,6 +147,9 @@ def build_nuitka_command(launcher_path: Path, output_dir: Path, output_filename:
         '--assume-yes-for-downloads',
         '--follow-imports',
         '--include-module=pyzipper',
+        '--python-flag=no_docstrings',
+        '--python-flag=no_asserts',
+        '--file-reference-choice=runtime',
         '--windows-console-mode=disable',
         f'--output-dir={output_dir}',
         f'--output-filename={output_filename}',
@@ -158,9 +203,6 @@ def main() -> int:
     args = parser.parse_args()
 
     require_windows()
-    password = os.environ.get(DEFAULT_PASSWORD_ENV, '')
-    if not password:
-        raise SystemExit(f'Set {DEFAULT_PASSWORD_ENV} before building the Windows delivery executable.')
 
     workspace = Path(args.workspace).expanduser().resolve()
     source_path = workspace / SOURCE_NAME
@@ -182,7 +224,7 @@ def main() -> int:
         source_copy = tmp_dir / SOURCE_NAME
         launcher_path = tmp_dir / 'delivery_launcher.py'
         shutil.copy2(source_path, source_copy)
-        launcher_path.write_text(render_launcher(password), encoding='utf-8')
+        launcher_path.write_text(render_launcher(), encoding='utf-8')
 
         nuitka_output = internal_dir / f'nuitka_build_{stamp}'
         nuitka_output.mkdir(parents=True, exist_ok=True)
@@ -208,6 +250,7 @@ def main() -> int:
         'output_sha256': sha256_file(final_exe),
         'nuitka_version': subprocess.check_output([sys.executable, '-m', 'nuitka', '--version'], text=True).strip(),
         'python': sys.version,
+        'torch_runtime': inspect_torch_install(),
         'signing': sign_report,
         'external_delivery_contents': [path.name for path in sorted(external_dir.iterdir())],
         'password_env': DEFAULT_PASSWORD_ENV,
@@ -215,6 +258,14 @@ def main() -> int:
             'final_external_artifact': 'single Windows executable',
             'source_repo_remains_open': True,
             'runtime_output_contract': 'single encrypted archive from the compiled executable',
+            'runtime_password_contract': f'set {DEFAULT_PASSWORD_ENV} before running the final executable when encrypted output is required',
+            'password_embedded_in_launcher': False,
+            'observability_contract': {
+                'main_run_log': 'logs/run_log.jsonl',
+                'logging_contract_report': 'reports/logging_contract.json',
+                'observability_report': 'reports/observability_report.json',
+                'failure_artifact': 'desktop FAILED json + fatal_exception event in run_log.jsonl',
+            },
         },
     }
     report_path = internal_dir / f'build_report_{stamp}.json'
