@@ -25,7 +25,7 @@ Rule: every tracked `X.md` has `X_TR.md` pair where applicable.
 
 | Command | Status |
 | --- | --- |
-| `.titan-venv/bin/python -m pytest -q` | PASS (`157 passed, 3 skipped`) |
+| `.titan-venv/bin/python -m pytest -q` | PASS (`158 passed, 4 skipped`) |
 | `bash scripts/verify_all.sh` | PASS |
 | `TITAN_OFFLINE=1 bash run.sh --test` | PASS |
 | `.titan-venv/bin/python scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl` | PASS |

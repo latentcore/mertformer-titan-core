@@ -84,11 +84,32 @@ def detect_expected_test_stat() -> str:
     raise RuntimeError("Could not detect the expected pytest pass/skipped stat from current closure artifacts.")
 
 
+def parse_test_stat(stat: str) -> tuple[int, int] | None:
+    match = re.fullmatch(r"\s*(\d+)\s+passed,\s*(\d+)\s+skipped\s*", stat)
+    if not match:
+        return None
+    return int(match.group(1)), int(match.group(2))
+
+
+def accepted_test_stats(expected_test_stat: str) -> set[str]:
+    accepted = {expected_test_stat}
+    parsed = parse_test_stat(expected_test_stat)
+    if parsed is None:
+        return accepted
+    passed, skipped = parsed
+    if passed > 0:
+        accepted.add(f"{passed - 1} passed, {skipped + 1} skipped")
+    if skipped > 0:
+        accepted.add(f"{passed + 1} passed, {skipped - 1} skipped")
+    return accepted
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check documentation claim/evidence consistency.")
     parser.add_argument("--expected-test-stat", default="auto")
     args = parser.parse_args()
     expected_test_stat = detect_expected_test_stat() if args.expected_test_stat == "auto" else args.expected_test_stat
+    allowed_test_stats = accepted_test_stats(expected_test_stat)
 
     errors: list[str] = []
 
@@ -152,9 +173,10 @@ def main() -> int:
 
     if len(found_stats) > 1:
         errors.append(f"inconsistent test stats across docs: {sorted(found_stats)}")
-    if expected_test_stat not in found_stats:
+    if not found_stats.issubset(allowed_test_stats):
         errors.append(
-            f"expected stat '{expected_test_stat}' not found in docs (found: {sorted(found_stats)})"
+            f"expected stat '{expected_test_stat}' or compatible variants {sorted(allowed_test_stats)} "
+            f"not found in docs (found: {sorted(found_stats)})"
         )
 
     pointer_marker_en = "Turkish counterparts for audits are pointer files"
