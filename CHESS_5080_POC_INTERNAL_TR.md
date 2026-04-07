@@ -13,6 +13,8 @@ Bu hat private/operator odaklı satranç proof akışıdır.
 - Legal move masking'i zorunlu tutmak.
 - Tek RTX 5080 masaüstünde yaklaşık 1-4 saat içinde bitirmek.
 - Log, config, provenance, checkpoint ve SHA256 içeren zip proof paketi üretmek.
+- Gömülü curated opening/tactical/endgame/blunder-correction suite ile training split'i güçlendirmek.
+- Synthetic Turkish teaching corpus ve curated suite benchmark yüzeylerini aynı onefile çevresinde taşımak.
 
 ## Claim Sınırı
 - `1600+` garanti değil, hedeftir.
@@ -29,3 +31,11 @@ Bu hat private/operator odaklı satranç proof akışıdır.
   - SHA256 dosyası
 - Share wrapper sadece başarılı paketlenmiş koşudan sonra kendini silebilir.
 - Repo içindeki kanonik kopya asla kendini silmez.
+
+## Repo-Side Hazırlık Yüzeyi
+- `reports/chess_training_readiness_report.md`: repo-side training readiness kararı
+- `reports/chess_onefile_extension_report.md`: curated suite + synthetic teaching corpus extension doğrusu
+- `reports/chess_teaching_contract_report.md`: teaching/Türkçe contract smoke raporu
+- `reports/curated_position_manifest.md`: opening/tactical/endgame/blunder-correction bank özeti
+- `reports/curated_position_suite_report.md`: eğitilmiş checkpoint varsa curated suite hit/tag raporu
+- `reports/synthetic_teaching_corpus.md`: seviyeli Turkish teaching corpus özeti

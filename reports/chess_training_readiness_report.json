@@ -1,10 +1,10 @@
 {
   "schema": "chess_training_readiness_report_v1",
-  "generated_utc": "2026-04-07T22:24:42Z",
+  "generated_utc": "2026-04-07T23:06:02Z",
   "final_status": "READY_FOR_TRAINING",
   "summary": {
-    "required_total": 6,
-    "required_green": 6,
+    "required_total": 7,
+    "required_green": 7,
     "all_required_green": true
   },
   "checks": [
@@ -43,6 +43,12 @@
       "status": true,
       "required": true,
       "detail": "true"
+    },
+    {
+      "id": "onefile_extension_report",
+      "status": true,
+      "required": true,
+      "detail": "READY"
     },
     {
       "id": "stockfish_anchor_optional",

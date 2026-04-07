@@ -1,7 +1,7 @@
 # Chess Training Readiness Report
 
 - final_status: `READY_FOR_TRAINING`
-- required_green: `6/6`
+- required_green: `7/7`
 - canonical_train_command: `python3 scripts/chess_5080_onefile.py --mode train`
 - canonical_verify_command: `python3 scripts/chess_5080_onefile.py --mode verify`
 
@@ -15,6 +15,7 @@
 | `gui_app` | `True` | `True` | <REPO_ROOT>/apps/chess_gui/play_mertformer_chess_web.py |
 | `gui_sync_state` | `True` | `True` | canonical_fallback_ready |
 | `teaching_contract_smoke` | `True` | `True` | true |
+| `onefile_extension_report` | `True` | `True` | READY |
 | `stockfish_anchor_optional` | `False` | `True` | Stockfish stays optional for training start and required later for anchor benchmark runs. |
 
 ## Notes

@@ -121,7 +121,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `178 passed, 3 skipped` |
+| `python3 -m pytest -q` | `184 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -134,7 +134,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`178 passed, 3 skipped`)
+   - `pytest` passed (`184 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -1810,8 +1810,12 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── checkpoint_restore_report.json  # JSON data artifact
 │   ├── chess_gui_onefile_sync_report.json  # JSON data artifact
 │   ├── chess_gui_onefile_sync_report.md  # documentation/report file
+│   ├── chess_onefile_extension_report.json  # JSON data artifact
+│   ├── chess_onefile_extension_report.md  # documentation/report file
 │   ├── chess_teaching_contract_report.json  # JSON data artifact
 │   ├── chess_teaching_contract_report.md  # documentation/report file
+│   ├── chess_training_readiness_report.json  # JSON data artifact
+│   ├── chess_training_readiness_report.md  # documentation/report file
 │   ├── claim_number_audit.json  # JSON data artifact
 │   ├── claim_registry.json  # JSON data artifact
 │   ├── cleanroom_verification.md  # documentation/report file
@@ -2039,7 +2043,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── bootstrap_venv.sh  # shell automation script
 │   ├── build_artifacts_release_zip.sh  # shell automation script
 │   ├── build_chess_5080_windows_delivery.py  # Python module/script (automation script for build chess 5080 windows delivery)
+│   ├── build_chess_onefile_extension_report.py  # Python module/script (automation script for build chess onefile extension report)
 │   ├── build_chess_teaching_contract_report.py  # Python module/script (automation script for build chess teaching contract report)
+│   ├── build_chess_training_readiness_report.py  # Python module/script (automation script for build chess training readiness report)
 │   ├── build_closure_governance_pack.py  # Python module/script (automation script for build closure governance pack)
 │   ├── build_code_truth_audit.py  # Python module/script (automation script for build code truth audit)
 │   ├── build_investor_deck.py  # Python module/script (automation script for build investor deck)
@@ -2138,7 +2144,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_agi_cognitive.py  # Python module/script (automated test module for agi cognitive)
 │   ├── test_architecture_integrity.py  # Python module/script (automated test module for architecture integrity)
 │   ├── test_build_chess_5080_windows_delivery.py  # Python module/script (automated test module for build chess 5080 windows delivery)
+│   ├── test_build_chess_onefile_extension_report.py  # Python module/script (automated test module for build chess onefile extension report)
 │   ├── test_build_chess_teaching_contract_report.py  # Python module/script (automated test module for build chess teaching contract report)
+│   ├── test_build_chess_training_readiness_report.py  # Python module/script (automated test module for build chess training readiness report)
 │   ├── test_build_code_truth_audit.py  # Python module/script (automated test module for build code truth audit)
 │   ├── test_build_max_closure_handoff.py  # Python module/script (automated test module for build max closure handoff)
 │   ├── test_build_target_machine_handoff_bundle.py  # Python module/script (automated test module for build target machine handoff bundle)
@@ -2146,6 +2154,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_check_doc_claim_consistency.py  # Python module/script (automated test module for check doc claim consistency)
 │   ├── test_chess_5080_onefile.py  # Python module/script (automated test module for chess 5080 onefile)
 │   ├── test_chess_gui_contract.py  # Python module/script (automated test module for chess gui contract)
+│   ├── test_chess_onefile_curated_suites.py  # Python module/script (automated test module for chess onefile curated suites)
 │   ├── test_cognitive_extensions.py  # Python module/script (automated test module for cognitive extensions)
 │   ├── test_comprehensive.py  # Python module/script (automated test module for comprehensive)
 │   ├── test_continual_adapter.py  # Python module/script (automated test module for continual adapter)

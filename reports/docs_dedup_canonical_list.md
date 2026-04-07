@@ -187,6 +187,7 @@ Generated automatically.
 - `reports/canonical_entrypoint.md`
 - `reports/checkpoint_contract.md`
 - `reports/chess_gui_onefile_sync_report.md`
+- `reports/chess_onefile_extension_report.md`
 - `reports/chess_teaching_contract_report.md`
 - `reports/chess_training_readiness_report.md`
 - `reports/cleanroom_verification.md`

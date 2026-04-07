@@ -42,6 +42,10 @@ def test_build_payload_marks_ready_when_required_surfaces_are_green(tmp_path: Pa
         json.dumps({"summary": {"all_green": True}}),
         encoding="utf-8",
     )
+    (root / "reports" / "chess_onefile_extension_report.json").write_text(
+        json.dumps({"final_status": "READY", "summary": {"all_green": True}}),
+        encoding="utf-8",
+    )
 
     monkeypatch.setattr(module, "ROOT", root)
     monkeypatch.setattr(module, "REPORT_JSON", root / "reports" / "out.json")
@@ -65,6 +69,10 @@ def test_main_returns_nonzero_when_required_surface_missing(tmp_path: Path, monk
     )
     (root / "reports" / "chess_teaching_contract_report.json").write_text(
         json.dumps({"summary": {"all_green": False}}),
+        encoding="utf-8",
+    )
+    (root / "reports" / "chess_onefile_extension_report.json").write_text(
+        json.dumps({"final_status": "NOT_READY", "summary": {"all_green": False}}),
         encoding="utf-8",
     )
 

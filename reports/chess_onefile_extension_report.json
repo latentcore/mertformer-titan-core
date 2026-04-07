@@ -1,0 +1,214 @@
+{
+  "schema": "chess_onefile_extension_report_v1",
+  "generated_utc": "2026-04-07T23:06:01Z",
+  "final_status": "READY",
+  "summary": {
+    "all_green": true,
+    "required_suites": [
+      "blunder_correction",
+      "endgame",
+      "opening",
+      "tactical"
+    ],
+    "missing_suites": [],
+    "curated_position_count": 11,
+    "curated_training_examples": 66,
+    "synthetic_teaching_records": 33
+  },
+  "curated_position_manifest": {
+    "schema": "chess_curated_position_manifest_v1",
+    "script_version": "mertformer_chess_5080_onefile_v2",
+    "enabled": true,
+    "repeat_factor": 6,
+    "position_count": 11,
+    "suite_counts": {
+      "blunder_correction": 1,
+      "endgame": 2,
+      "opening": 4,
+      "tactical": 4
+    },
+    "phase_counts": {
+      "endgame": 2,
+      "middlegame": 4,
+      "opening": 5
+    },
+    "labels": [
+      {
+        "label": "opening_ruy_lopez_development",
+        "suite": "opening",
+        "phase": "opening",
+        "expected_move_uci": "f1b5",
+        "expected_tags": [
+          "development"
+        ],
+        "opening_prefix": "e2e4 e7e5 g1f3 b8c6",
+        "teaching_focus": "Açılışta gelişimi hızlandırıp baskı kurma."
+      },
+      {
+        "label": "opening_king_safety_castle",
+        "suite": "opening",
+        "phase": "opening",
+        "expected_move_uci": "e1g1",
+        "expected_tags": [
+          "castle"
+        ],
+        "opening_prefix": "e2e4 e7e5 g1f3 b8c6",
+        "teaching_focus": "Şah güvenliği ve hızlı kale bağlantısı."
+      },
+      {
+        "label": "opening_center_break",
+        "suite": "opening",
+        "phase": "opening",
+        "expected_move_uci": "d2d4",
+        "expected_tags": [
+          "center_control"
+        ],
+        "opening_prefix": "e2e4 e7e5 g1f3 b8c6",
+        "teaching_focus": "Merkez kırışı ve alan kazanımı."
+      },
+      {
+        "label": "tactical_exchange_on_f5",
+        "suite": "tactical",
+        "phase": "middlegame",
+        "expected_move_uci": "e4f5",
+        "expected_tags": [
+          "capture"
+        ],
+        "opening_prefix": "e2e4 e7e5 g1f3 b8c6",
+        "teaching_focus": "Taktik hesapta doğru alışı seçme."
+      },
+      {
+        "label": "endgame_runner_pawn_push",
+        "suite": "endgame",
+        "phase": "endgame",
+        "expected_move_uci": "b4b5",
+        "expected_tags": [
+          "positional_choice"
+        ],
+        "opening_prefix": "e2e4 e7e5 g1f3 b8c6",
+        "teaching_focus": "Geçer piyon sürüşü ve oyunsonu dönüşümü."
+      },
+      {
+        "label": "blunder_correction_recapture",
+        "suite": "blunder_correction",
+        "phase": "middlegame",
+        "expected_move_uci": "d4e5",
+        "expected_tags": [
+          "capture"
+        ],
+        "opening_prefix": "d2d4 g8f6 c2c4 e7e6",
+        "teaching_focus": "Rakip hatasını sade ve doğru geri alışla cezalandırma."
+      },
+      {
+        "label": "endgame_king_recapture",
+        "suite": "endgame",
+        "phase": "endgame",
+        "expected_move_uci": "e6d5",
+        "expected_tags": [
+          "capture"
+        ],
+        "opening_prefix": "d2d4 g8f6 c2c4 e7e6",
+        "teaching_focus": "Aktif şah kullanımı ve materyal temizliği."
+      },
+      {
+        "label": "opening_fianchetto_setup",
+        "suite": "opening",
+        "phase": "opening",
+        "expected_move_uci": "g2g3",
+        "expected_tags": [
+          "positional_choice"
+        ],
+        "opening_prefix": "c2c4 e7e5 b1c3 g8f6",
+        "teaching_focus": "Fianchetto planı ve güvenli gelişim."
+      },
+      {
+        "label": "center_capture_transition",
+        "suite": "tactical",
+        "phase": "opening",
+        "expected_move_uci": "c4d5",
+        "expected_tags": [
+          "capture"
+        ],
+        "opening_prefix": "c2c4 e7e5 b1c3 g8f6",
+        "teaching_focus": "Merkezde zamanlamalı alış ve yapı değişimi."
+      },
+      {
+        "label": "tactical_check_entry",
+        "suite": "tactical",
+        "phase": "middlegame",
+        "expected_move_uci": "g4c8",
+        "expected_tags": [
+          "check"
+        ],
+        "opening_prefix": "c2c4 e7e5 b1c3 g8f6",
+        "teaching_focus": "Kazanan sekansa şah çekerek giriş."
+      },
+      {
+        "label": "mating_finish_qxf8",
+        "suite": "tactical",
+        "phase": "middlegame",
+        "expected_move_uci": "c8f8",
+        "expected_tags": [
+          "capture",
+          "check",
+          "checkmate"
+        ],
+        "opening_prefix": "c2c4 e7e5 b1c3 g8f6",
+        "teaching_focus": "Net mat bitirişi ve forcing move disiplini."
+      }
+    ],
+    "notes": {
+      "purpose": "High-signal internal augmentation/eval bank for opening, tactical, endgame, and blunder-correction surfaces.",
+      "rating_note": "This bank is for internal augmentation and repeatable smoke/benchmark checks only."
+    }
+  },
+  "training_augmentation_manifest": {
+    "enabled": true,
+    "repeat_factor": 6,
+    "positions_total": 11,
+    "examples_total": 66,
+    "suite_counts": {
+      "blunder_correction": 1,
+      "endgame": 2,
+      "opening": 4,
+      "tactical": 4
+    },
+    "labels": [
+      "opening_ruy_lopez_development",
+      "opening_king_safety_castle",
+      "opening_center_break",
+      "tactical_exchange_on_f5",
+      "endgame_runner_pawn_push",
+      "blunder_correction_recapture",
+      "endgame_king_recapture",
+      "opening_fianchetto_setup",
+      "center_capture_transition",
+      "tactical_check_entry",
+      "mating_finish_qxf8"
+    ],
+    "notes": {
+      "split_policy": "Curated suites are appended to the training split only; holdout and locked-test remain game-split only.",
+      "intentional_repeat": true
+    }
+  },
+  "synthetic_teaching_corpus": {
+    "enabled": true,
+    "record_count": 33,
+    "suite_counts": {
+      "blunder_correction": 3,
+      "endgame": 6,
+      "opening": 12,
+      "tactical": 12
+    },
+    "level_counts": {
+      "advanced": 11,
+      "basic": 11,
+      "club": 11
+    }
+  },
+  "notes": [
+    "This report validates repo-side onefile chess extension surfaces only.",
+    "It does not claim a measured Elo outcome or a completed training run.",
+    "Curated suites are intended for repeatable augmentation and contract-faithfulness checks."
+  ]
+}

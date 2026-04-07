@@ -281,6 +281,10 @@ RUN_CONFIG: Dict[str, Any] = {
     "resume_from": "",
     "sample_replay_games": 3,
     "sample_replay_max_plies": 24,
+    "include_curated_position_suites": True,
+    "curated_position_repeat": 6,
+    "synthetic_teaching_corpus_enabled": True,
+    "curated_suite_eval_enabled": True,
     "stockfish_path": "",
     "stockfish_ladder": [
         {"label": "sf_skill4_nodes20k", "games": 12, "skill": 4, "nodes": 20000, "anchor_elo_proxy": 1100},
@@ -307,6 +311,7 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         "use_moe": False,
         "use_bitlinear": False,
         "use_liquid_adapter": False,
+        "curated_position_repeat": 6,
         "stockfish_ladder": [
             {"label": "sf_skill4_nodes20k", "games": 12, "skill": 4, "nodes": 20000, "anchor_elo_proxy": 1100},
             {"label": "sf_skill8_nodes50k", "games": 12, "skill": 8, "nodes": 50000, "anchor_elo_proxy": 1400},
@@ -327,6 +332,7 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         "use_moe": False,
         "use_bitlinear": False,
         "use_liquid_adapter": False,
+        "curated_position_repeat": 8,
         "stockfish_ladder": [
             {"label": "sf_skill4_nodes20k", "games": 14, "skill": 4, "nodes": 20000, "anchor_elo_proxy": 1100},
             {"label": "sf_skill8_nodes50k", "games": 14, "skill": 8, "nodes": 50000, "anchor_elo_proxy": 1400},
@@ -360,6 +366,7 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         "compile_policy": "off",
         "use_bf16": False,
         "curriculum_enabled": False,
+        "curated_position_repeat": 2,
         "sample_replay_games": 1,
         "sample_replay_max_plies": 8,
         "stockfish_ladder": [],
@@ -457,6 +464,18 @@ class ChessExample:
     source_archive: str
     position_hash: str
     move_uci: str
+
+
+@dataclass(frozen=True)
+class CuratedPositionSpec:
+    label: str
+    suite: str
+    game_index: int
+    ply_index: int
+    expected_move_uci: str
+    expected_tags: Tuple[str, ...]
+    teaching_focus: str
+    commentary_tr: str
 
 
 @dataclass
@@ -3369,6 +3388,281 @@ def embedded_seed_games() -> List[chess.pgn.Game]:
     return list(iter_games_from_pgn_text(EMBEDDED_SEED_PGN))
 
 
+CURATED_POSITION_BLUEPRINTS: Tuple[CuratedPositionSpec, ...] = (
+    CuratedPositionSpec(
+        label="opening_ruy_lopez_development",
+        suite="opening",
+        game_index=1,
+        ply_index=4,
+        expected_move_uci="f1b5",
+        expected_tags=("development",),
+        teaching_focus="Açılışta gelişimi hızlandırıp baskı kurma.",
+        commentary_tr="Bu pozisyon açılış gelişimi ve taş aktivasyonu için kullanılır.",
+    ),
+    CuratedPositionSpec(
+        label="opening_king_safety_castle",
+        suite="opening",
+        game_index=1,
+        ply_index=8,
+        expected_move_uci="e1g1",
+        expected_tags=("castle",),
+        teaching_focus="Şah güvenliği ve hızlı kale bağlantısı.",
+        commentary_tr="Erken rok örneği; öğretme modunda güvenlik vurgusu için kullanılır.",
+    ),
+    CuratedPositionSpec(
+        label="opening_center_break",
+        suite="opening",
+        game_index=1,
+        ply_index=18,
+        expected_move_uci="d2d4",
+        expected_tags=("center_control",),
+        teaching_focus="Merkez kırışı ve alan kazanımı.",
+        commentary_tr="Merkez alanını büyüten klasik piyon kırışı örneği.",
+    ),
+    CuratedPositionSpec(
+        label="tactical_exchange_on_f5",
+        suite="tactical",
+        game_index=1,
+        ply_index=46,
+        expected_move_uci="e4f5",
+        expected_tags=("capture",),
+        teaching_focus="Taktik hesapta doğru alışı seçme.",
+        commentary_tr="Taktik sekans içinde doğru taş alışını vurgulayan konum.",
+    ),
+    CuratedPositionSpec(
+        label="endgame_runner_pawn_push",
+        suite="endgame",
+        game_index=1,
+        ply_index=66,
+        expected_move_uci="b4b5",
+        expected_tags=("positional_choice",),
+        teaching_focus="Geçer piyon sürüşü ve oyunsonu dönüşümü.",
+        commentary_tr="Oyunsonunda piyon sürerek dönüşüm planı kurma örneği.",
+    ),
+    CuratedPositionSpec(
+        label="blunder_correction_recapture",
+        suite="blunder_correction",
+        game_index=2,
+        ply_index=40,
+        expected_move_uci="d4e5",
+        expected_tags=("capture",),
+        teaching_focus="Rakip hatasını sade ve doğru geri alışla cezalandırma.",
+        commentary_tr="Blunder correction seti için temiz geri alış örneği.",
+    ),
+    CuratedPositionSpec(
+        label="endgame_king_recapture",
+        suite="endgame",
+        game_index=2,
+        ply_index=78,
+        expected_move_uci="e6d5",
+        expected_tags=("capture",),
+        teaching_focus="Aktif şah kullanımı ve materyal temizliği.",
+        commentary_tr="Oyunsonunda şah aktivitesi ile materyal toplama örneği.",
+    ),
+    CuratedPositionSpec(
+        label="opening_fianchetto_setup",
+        suite="opening",
+        game_index=3,
+        ply_index=6,
+        expected_move_uci="g2g3",
+        expected_tags=("positional_choice",),
+        teaching_focus="Fianchetto planı ve güvenli gelişim.",
+        commentary_tr="Açılışta fianchetto planını anlatmak için kullanılır.",
+    ),
+    CuratedPositionSpec(
+        label="center_capture_transition",
+        suite="tactical",
+        game_index=3,
+        ply_index=8,
+        expected_move_uci="c4d5",
+        expected_tags=("capture",),
+        teaching_focus="Merkezde zamanlamalı alış ve yapı değişimi.",
+        commentary_tr="Merkezde doğru anda alma kararını örnekler.",
+    ),
+    CuratedPositionSpec(
+        label="tactical_check_entry",
+        suite="tactical",
+        game_index=3,
+        ply_index=66,
+        expected_move_uci="g4c8",
+        expected_tags=("check",),
+        teaching_focus="Kazanan sekansa şah çekerek giriş.",
+        commentary_tr="Taktik bitirişe check ile girilen örnek konum.",
+    ),
+    CuratedPositionSpec(
+        label="mating_finish_qxf8",
+        suite="tactical",
+        game_index=3,
+        ply_index=68,
+        expected_move_uci="c8f8",
+        expected_tags=("capture", "check", "checkmate"),
+        teaching_focus="Net mat bitirişi ve forcing move disiplini.",
+        commentary_tr="Mat bitirişini teaching ve benchmark yüzeyinde sabitler.",
+    ),
+)
+
+
+def mainline_moves(game: chess.pgn.Game) -> List[Tuple[chess.Move, str]]:
+    node = game
+    moves: List[Tuple[chess.Move, str]] = []
+    while node.variations:
+        next_node = node.variation(0)
+        moves.append((next_node.move, next_node.comment or ""))
+        node = next_node
+    return moves
+
+
+def materialize_curated_position_bank() -> List[Dict[str, Any]]:
+    seed_games = embedded_seed_games()
+    bank: List[Dict[str, Any]] = []
+    for blueprint in CURATED_POSITION_BLUEPRINTS:
+        game = seed_games[blueprint.game_index - 1]
+        moves = mainline_moves(game)
+        if blueprint.ply_index >= len(moves):
+            raise ChessOnefileError(f"Curated blueprint out of range: {blueprint.label}")
+        board = game.board()
+        raw_moves = [move for move, _ in moves]
+        for ply_idx in range(blueprint.ply_index):
+            board.push(moves[ply_idx][0])
+        expected_move, comment = moves[blueprint.ply_index]
+        if expected_move.uci() != blueprint.expected_move_uci:
+            raise ChessOnefileError(
+                f"Curated blueprint drift for {blueprint.label}: expected {blueprint.expected_move_uci}, "
+                f"got {expected_move.uci()}"
+            )
+        bank.append(
+            {
+                "label": blueprint.label,
+                "suite": blueprint.suite,
+                "board": board.copy(stack=False),
+                "expected_move_uci": blueprint.expected_move_uci,
+                "expected_tags": list(blueprint.expected_tags),
+                "teaching_focus": blueprint.teaching_focus,
+                "commentary_tr": blueprint.commentary_tr,
+                "phase": infer_phase(board, blueprint.ply_index),
+                "opening_prefix": opening_prefix_from_moves(raw_moves),
+                "source_game_id": normalized_game_hash(game, raw_moves),
+                "source_archive": f"curated_suite::{blueprint.suite}",
+                "position_hash": normalized_position_hash(board),
+                "value_target": result_to_value(game.headers.get("Result", "1/2-1/2"), board.turn, blueprint.ply_index, len(moves)),
+                "source_comment": comment,
+            }
+        )
+    return bank
+
+
+def build_curated_position_manifest(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    bank = materialize_curated_position_bank()
+    suite_counts = Counter(item["suite"] for item in bank)
+    phase_counts = Counter(PHASE_NAMES[int(item["phase"])] for item in bank)
+    return {
+        "schema": "chess_curated_position_manifest_v1",
+        "script_version": SCRIPT_VERSION,
+        "enabled": bool(cfg.get("include_curated_position_suites", True)),
+        "repeat_factor": int(cfg.get("curated_position_repeat", 0)),
+        "position_count": len(bank),
+        "suite_counts": dict(sorted(suite_counts.items())),
+        "phase_counts": dict(sorted(phase_counts.items())),
+        "labels": [
+            {
+                "label": item["label"],
+                "suite": item["suite"],
+                "phase": PHASE_NAMES[int(item["phase"])],
+                "expected_move_uci": item["expected_move_uci"],
+                "expected_tags": item["expected_tags"],
+                "opening_prefix": item["opening_prefix"],
+                "teaching_focus": item["teaching_focus"],
+            }
+            for item in bank
+        ],
+        "notes": {
+            "purpose": "High-signal internal augmentation/eval bank for opening, tactical, endgame, and blunder-correction surfaces.",
+            "rating_note": "This bank is for internal augmentation and repeatable smoke/benchmark checks only.",
+        },
+    }
+
+
+def build_curated_training_examples(cfg: Dict[str, Any]) -> Tuple[List[ChessExample], Dict[str, Any]]:
+    if not bool(cfg.get("include_curated_position_suites", True)):
+        return [], {
+            "enabled": False,
+            "repeat_factor": 0,
+            "positions_total": 0,
+            "examples_total": 0,
+            "suite_counts": {},
+        }
+    repeat_factor = max(1, int(cfg.get("curated_position_repeat", 1)))
+    bank = materialize_curated_position_bank()
+    suite_counts = Counter(item["suite"] for item in bank)
+    examples: List[ChessExample] = []
+    for item in bank:
+        board = item["board"]
+        legal_ids = legal_move_ids(board)
+        target_move_id = MOVE_TO_ID.get(str(item["expected_move_uci"]))
+        if target_move_id is None or target_move_id not in legal_ids:
+            raise ChessOnefileError(f"Curated training target is illegal or OOV: {item['label']}")
+        piece_ids, meta_ids = encode_board_state(board, legal_move_count=len(legal_ids))
+        for _ in range(repeat_factor):
+            examples.append(
+                ChessExample(
+                    piece_ids=list(piece_ids),
+                    meta_ids=list(meta_ids),
+                    legal_move_ids=list(legal_ids),
+                    target_move_id=int(target_move_id),
+                    value_target=float(item["value_target"]),
+                    phase=int(item["phase"]),
+                    source_game_id=f"curated::{item['label']}",
+                    ply=int(item["phase"]) + 1000,
+                    total_plies=1,
+                    turn=int(board.turn),
+                    has_eval=False,
+                    opening_prefix=str(item["opening_prefix"]),
+                    value_source="curated_seed_suite",
+                    source_archive=str(item["source_archive"]),
+                    position_hash=f"{item['position_hash']}::{item['label']}",
+                    move_uci=str(item["expected_move_uci"]),
+                )
+            )
+    manifest = {
+        "enabled": True,
+        "repeat_factor": repeat_factor,
+        "positions_total": len(bank),
+        "examples_total": len(examples),
+        "suite_counts": dict(sorted(suite_counts.items())),
+        "labels": [item["label"] for item in bank],
+        "notes": {
+            "split_policy": "Curated suites are appended to the training split only; holdout and locked-test remain game-split only.",
+            "intentional_repeat": True,
+        },
+    }
+    return examples, manifest
+
+
+def render_curated_position_manifest_md(manifest: Dict[str, Any]) -> str:
+    lines = [
+        "# Curated Chess Position Manifest",
+        "",
+        f"- enabled: `{manifest.get('enabled', False)}`",
+        f"- repeat_factor: `{manifest.get('repeat_factor', 0)}`",
+        f"- position_count: `{manifest.get('position_count', manifest.get('positions_total', 0))}`",
+        f"- examples_total: `{manifest.get('examples_total', 0)}`",
+        "",
+        "## Suite Counts",
+    ]
+    suite_counts = manifest.get("suite_counts", {})
+    for suite_name, count in sorted(suite_counts.items()):
+        lines.append(f"- `{suite_name}`: `{count}`")
+    lines.extend(["", "## Labels"])
+    for item in manifest.get("labels", []):
+        if isinstance(item, dict):
+            lines.append(
+                f"- `{item['label']}` | suite=`{item['suite']}` | phase=`{item['phase']}` | move=`{item['expected_move_uci']}`"
+            )
+        else:
+            lines.append(f"- `{item}`")
+    return "\n".join(lines) + "\n"
+
+
 def choose_archive_urls(urls: Sequence[str], cfg: Dict[str, Any]) -> List[str]:
     count = max(1, min(len(urls), int(cfg.get("download_archive_count", 4))))
     if count >= len(urls):
@@ -4580,6 +4874,90 @@ def build_chess_response_contract(
     }
 
 
+def synthetic_trace_for_curated_position(item: Dict[str, Any], level: str) -> Dict[str, Any]:
+    suite_value_hint = {
+        "opening": 0.18,
+        "tactical": 0.72,
+        "endgame": 0.36,
+        "blunder_correction": 0.48,
+    }
+    move = str(item["expected_move_uci"])
+    confidence_score = {"basic": 0.58, "club": 0.64, "advanced": 0.7}[normalize_teaching_level(level)]
+    return {
+        "move": move,
+        "value": suite_value_hint.get(str(item["suite"]), 0.22),
+        "confidence": {
+            "score": confidence_score,
+            "gap": round(max(0.08, confidence_score - 0.22), 4),
+            "tier": "medium" if confidence_score < 0.68 else "high",
+        },
+        "masked_topk": [move],
+    }
+
+
+def build_synthetic_teaching_corpus(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    if not bool(cfg.get("synthetic_teaching_corpus_enabled", True)):
+        return {
+            "schema": "chess_synthetic_teaching_corpus_v1",
+            "enabled": False,
+            "record_count": 0,
+            "records": [],
+        }
+    bank = materialize_curated_position_bank()
+    level_order = ["basic", "club", "advanced"]
+    records: List[Dict[str, Any]] = []
+    suite_counts: Counter[str] = Counter()
+    level_counts: Counter[str] = Counter()
+    for item in bank:
+        board = item["board"]
+        for level in level_order:
+            trace = synthetic_trace_for_curated_position(item, level)
+            contract = build_chess_response_contract(board, trace, mode="turkish_teach", teaching_level=level)
+            records.append(
+                {
+                    "label": item["label"],
+                    "suite": item["suite"],
+                    "level": level,
+                    "expected_move_uci": item["expected_move_uci"],
+                    "expected_tags": item["expected_tags"],
+                    "teaching_focus": item["teaching_focus"],
+                    "commentary_tr": item["commentary_tr"],
+                    "response_contract": contract,
+                }
+            )
+            suite_counts[item["suite"]] += 1
+            level_counts[level] += 1
+    return {
+        "schema": "chess_synthetic_teaching_corpus_v1",
+        "enabled": True,
+        "record_count": len(records),
+        "suite_counts": dict(sorted(suite_counts.items())),
+        "level_counts": dict(sorted(level_counts.items())),
+        "records": records,
+        "notes": {
+            "purpose": "Internal Turkish teaching/explanation corpus for contract validation and future explanation training lanes.",
+            "claim_note": "This corpus is synthetic and internal. It is not an externally verified explanation benchmark by itself.",
+        },
+    }
+
+
+def render_synthetic_teaching_corpus_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Synthetic Chess Teaching Corpus",
+        "",
+        f"- enabled: `{report.get('enabled', False)}`",
+        f"- record_count: `{report.get('record_count', 0)}`",
+        "",
+        "## Suite Counts",
+    ]
+    for suite_name, count in sorted(report.get("suite_counts", {}).items()):
+        lines.append(f"- `{suite_name}`: `{count}`")
+    lines.extend(["", "## Level Counts"])
+    for level_name, count in sorted(report.get("level_counts", {}).items()):
+        lines.append(f"- `{level_name}`: `{count}`")
+    return "\n".join(lines) + "\n"
+
+
 @torch.no_grad()
 def choose_move_trace(
     model: ChessPolicyValueNet,
@@ -4633,6 +5011,121 @@ def choose_move_trace(
         teaching_level=teaching_level,
     )
     return trace
+
+
+def not_run_curated_position_eval(reason: str) -> Dict[str, Any]:
+    return {
+        "status": "not_run",
+        "reason": reason,
+        "position_count": 0,
+        "exact_hit_rate": 0.0,
+        "top3_hit_rate": 0.0,
+        "expected_tag_coverage_rate": 0.0,
+        "teaching_length_monotonic_rate": 0.0,
+    }
+
+
+@torch.no_grad()
+def evaluate_curated_position_suites(model: ChessPolicyValueNet, cfg: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
+    if not bool(cfg.get("curated_suite_eval_enabled", True)):
+        return not_run_curated_position_eval("disabled_by_config")
+    was_training = model.training
+    model.eval()
+    bank = materialize_curated_position_bank()
+    suite_totals: Counter[str] = Counter()
+    suite_exact: Counter[str] = Counter()
+    suite_top3: Counter[str] = Counter()
+    suite_tags: Counter[str] = Counter()
+    exact_hits = 0
+    top3_hits = 0
+    tag_hits = 0
+    monotonic_hits = 0
+    records: List[Dict[str, Any]] = []
+    try:
+        for item in bank:
+            board = item["board"]
+            trace = choose_move_trace(model, board, device, mode="teach", teaching_level="advanced")
+            expected_move = str(item["expected_move_uci"])
+            response_contract = dict(trace.get("response_contract", {}))
+            observed_tags = set(response_contract.get("teaching_tags", []))
+            expected_tags = list(item.get("expected_tags", []))
+            exact_hit = trace["move"] == expected_move
+            top3_hit = expected_move in trace.get("masked_topk", [])[:3]
+            tag_hit = all(tag in observed_tags for tag in expected_tags)
+            basic_contract = build_chess_response_contract(board, synthetic_trace_for_curated_position(item, "basic"), mode="turkish_teach", teaching_level="basic")
+            advanced_contract = build_chess_response_contract(board, synthetic_trace_for_curated_position(item, "advanced"), mode="turkish_teach", teaching_level="advanced")
+            monotonic_ok = len(advanced_contract["explanation_tr_long"]) >= len(basic_contract["explanation_tr_short"])
+            suite_name = str(item["suite"])
+            suite_totals[suite_name] += 1
+            suite_exact[suite_name] += int(exact_hit)
+            suite_top3[suite_name] += int(top3_hit)
+            suite_tags[suite_name] += int(tag_hit)
+            exact_hits += int(exact_hit)
+            top3_hits += int(top3_hit)
+            tag_hits += int(tag_hit)
+            monotonic_hits += int(monotonic_ok)
+            records.append(
+                {
+                    "label": item["label"],
+                    "suite": suite_name,
+                    "expected_move_uci": expected_move,
+                    "predicted_move_uci": trace["move"],
+                    "exact_hit": exact_hit,
+                    "top3_hit": top3_hit,
+                    "expected_tag_coverage": tag_hit,
+                    "teaching_length_monotonic": monotonic_ok,
+                    "expected_tags": expected_tags,
+                    "predicted_tags": response_contract.get("teaching_tags", []),
+                    "confidence": response_contract.get("confidence", {}),
+                }
+            )
+        per_suite = {}
+        for suite_name, total in sorted(suite_totals.items()):
+            per_suite[suite_name] = {
+                "positions": total,
+                "exact_hit_rate": round(suite_exact[suite_name] / max(1, total), 6),
+                "top3_hit_rate": round(suite_top3[suite_name] / max(1, total), 6),
+                "expected_tag_coverage_rate": round(suite_tags[suite_name] / max(1, total), 6),
+            }
+        total_positions = len(bank)
+        return {
+            "status": "completed",
+            "position_count": total_positions,
+            "exact_hit_rate": round(exact_hits / max(1, total_positions), 6),
+            "top3_hit_rate": round(top3_hits / max(1, total_positions), 6),
+            "expected_tag_coverage_rate": round(tag_hits / max(1, total_positions), 6),
+            "teaching_length_monotonic_rate": round(monotonic_hits / max(1, total_positions), 6),
+            "per_suite": per_suite,
+            "records": records,
+            "notes": {
+                "benchmark_scope": "Internal curated suite only; exact hits are against a small repeatable bank, not an external Elo pool.",
+                "teaching_scope": "Tag coverage and length monotonicity are contract-faithfulness checks, not pedagogy-quality proof.",
+            },
+        }
+    finally:
+        model.train(was_training)
+
+
+def render_curated_position_suite_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Curated Chess Position Suite Report",
+        "",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- position_count: `{report.get('position_count', 0)}`",
+        f"- exact_hit_rate: `{report.get('exact_hit_rate', 0.0)}`",
+        f"- top3_hit_rate: `{report.get('top3_hit_rate', 0.0)}`",
+        f"- expected_tag_coverage_rate: `{report.get('expected_tag_coverage_rate', 0.0)}`",
+        f"- teaching_length_monotonic_rate: `{report.get('teaching_length_monotonic_rate', 0.0)}`",
+        "",
+        "## Per Suite",
+    ]
+    for suite_name, suite_payload in sorted(report.get("per_suite", {}).items()):
+        lines.append(
+            f"- `{suite_name}`: exact=`{suite_payload.get('exact_hit_rate', 0.0)}`, "
+            f"top3=`{suite_payload.get('top3_hit_rate', 0.0)}`, "
+            f"tags=`{suite_payload.get('expected_tag_coverage_rate', 0.0)}`"
+        )
+    return "\n".join(lines) + "\n"
 
 
 @torch.no_grad()
@@ -5368,6 +5861,7 @@ def build_eval_card(
     test_eval: Dict[str, Any],
     legality_report: Dict[str, Any],
     benchmark_report: Dict[str, Any],
+    curated_position_suite_report: Dict[str, Any],
 ) -> Dict[str, Any]:
     return {
         "script_version": SCRIPT_VERSION,
@@ -5377,6 +5871,7 @@ def build_eval_card(
         "raw_vs_masked_policy_metrics": legality_report,
         "benchmark_protocol": "internal_stockfish_gauntlet_v2",
         "benchmark_result": benchmark_report,
+        "curated_position_suite": curated_position_suite_report,
         "rating_note": "Strength outputs are internal-only unless externally verified.",
         "parity_scope_note": "Exact mirror parity covers the canonical trunk families; chess-specific heads and legality surfaces remain domain-specific.",
     }
@@ -5444,6 +5939,8 @@ def render_run_summary_md(payload: Dict[str, Any]) -> str:
             ]
         )
     benchmark = payload.get("stockfish", {})
+    curated_suite = payload.get("curated_position_suite", {})
+    training_augmentation = payload.get("training_augmentation", {})
     if verify_mode:
         lines.append("- Internal gauntlet: `not_run (verify mode)`")
     elif arena_mode:
@@ -5457,6 +5954,18 @@ def render_run_summary_md(payload: Dict[str, Any]) -> str:
         )
     else:
         lines.append(f"- Internal gauntlet: `{benchmark.get('status', 'not_run')}`")
+    if curated_suite.get("status") == "completed":
+        lines.extend(
+            [
+                f"- Curated suite exact-hit rate: `{curated_suite.get('exact_hit_rate', 0.0):.4f}`",
+                f"- Curated suite top-3 hit rate: `{curated_suite.get('top3_hit_rate', 0.0):.4f}`",
+                f"- Curated suite tag coverage: `{curated_suite.get('expected_tag_coverage_rate', 0.0):.4f}`",
+            ]
+        )
+    else:
+        lines.append(f"- Curated suite: `{curated_suite.get('status', 'not_run')}`")
+    if training_augmentation.get("enabled", False):
+        lines.append(f"- Curated training augmentation examples: `{training_augmentation.get('examples_total', 0)}`")
     bundle = payload.get("bundle", {})
     lines.extend(
         [
@@ -5578,6 +6087,12 @@ def write_cards_and_reports(
     atomic_json(reports / "opening_distribution.json", payload["dataset_provenance"]["data_stats"].get("opening_distribution_top20", {}))
     atomic_json(reports / "phase_distribution.json", payload["dataset_provenance"]["data_stats"].get("phase_distribution", {}))
     atomic_json(reports / "drop_reason_counts.json", payload["dataset_provenance"]["data_stats"].get("drop_reason_counts", {}))
+    atomic_json(reports / "curated_position_manifest.json", payload["curated_position_manifest"])
+    atomic_write_text(reports / "curated_position_manifest.md", render_curated_position_manifest_md(payload["curated_position_manifest"]))
+    atomic_json(reports / "synthetic_teaching_corpus.json", payload["synthetic_teaching_corpus"])
+    atomic_write_text(reports / "synthetic_teaching_corpus.md", render_synthetic_teaching_corpus_md(payload["synthetic_teaching_corpus"]))
+    atomic_json(reports / "curated_position_suite_report.json", payload["curated_position_suite"])
+    atomic_write_text(reports / "curated_position_suite_report.md", render_curated_position_suite_report_md(payload["curated_position_suite"]))
     if "arena_session" in payload:
         atomic_json(reports / "arena_session.json", payload["arena_session"])
     atomic_write_text(reports / "PROOF_SCOPE.md", render_proof_scope_md())
@@ -5842,6 +6357,10 @@ def package_existing_run(
             "locked_test": {},
             "legality_report": {},
             "stockfish": {"status": "not_run", "reason": "package_only"},
+            "curated_position_suite": {"status": "not_run", "reason": "package_only"},
+            "curated_position_manifest": build_curated_position_manifest(cfg),
+            "synthetic_teaching_corpus": build_synthetic_teaching_corpus(cfg),
+            "training_augmentation": {"enabled": False, "reason": "package_only"},
             "training_summary": {
                 "steps_completed": int(checkpoint.get("step", 0)),
                 "best_val_loss": checkpoint.get("best_val_loss"),
@@ -5898,9 +6417,15 @@ def run_pipeline(
 
     env_info = env_snapshot(cfg)
     dependency_lock = collect_dependency_lock()
+    curated_position_manifest = build_curated_position_manifest(cfg)
+    synthetic_teaching_corpus = build_synthetic_teaching_corpus(cfg)
     atomic_json(layout.reports_dir / "environment_snapshot.json", env_info)
     atomic_json(layout.reports_dir / "dependency_lock.json", dependency_lock)
     atomic_json(layout.reports_dir / "resolved_config.json", cfg)
+    atomic_json(layout.reports_dir / "curated_position_manifest.json", curated_position_manifest)
+    atomic_write_text(layout.reports_dir / "curated_position_manifest.md", render_curated_position_manifest_md(curated_position_manifest))
+    atomic_json(layout.reports_dir / "synthetic_teaching_corpus.json", synthetic_teaching_corpus)
+    atomic_write_text(layout.reports_dir / "synthetic_teaching_corpus.md", render_synthetic_teaching_corpus_md(synthetic_teaching_corpus))
 
     if cfg["mode"] == "package":
         return package_existing_run(cfg, layout, logger)
@@ -5920,6 +6445,7 @@ def run_pipeline(
         legality_report = not_run_legality_report("arena_mode_interactive_only")
         demo_replay = not_run_demo_replay("arena_mode_interactive_only")
         stockfish_report = {"status": "not_run", "reason": "arena_mode_interactive_only"}
+        curated_position_suite_report = not_run_curated_position_eval("arena_mode_interactive_only")
         atomic_json(layout.reports_dir / "model_replay.json", demo_replay)
         atomic_json(layout.reports_dir / "stockfish_match_report.json", stockfish_report)
         model_card = build_model_card(model, cfg, checkpoint_path)
@@ -5927,13 +6453,14 @@ def run_pipeline(
             "script_version": SCRIPT_VERSION,
             "dataset_provenance": {"mode": "arena_only", "data_stats": {}, "sampling_strategy": "not_used"},
             "split_manifest": {"status": "not_run", "reason": "arena_mode_interactive_only"},
+            "curated_position_manifest": curated_position_manifest,
             "notes": {
                 "train_val_test_split": "Arena mode does not build train/val/test splits.",
                 "eval_signal": "Arena mode is interactive and uses the current in-memory model state.",
                 "sampling_strategy": "not_used",
             },
         }
-        eval_card = build_eval_card(cfg, holdout_validation, locked_test, legality_report, stockfish_report)
+        eval_card = build_eval_card(cfg, holdout_validation, locked_test, legality_report, stockfish_report, curated_position_suite_report)
         payload = {
             "script_version": SCRIPT_VERSION,
             "run_id": layout.run_id,
@@ -5948,6 +6475,10 @@ def run_pipeline(
             "locked_test": locked_test,
             "legality_report": legality_report,
             "stockfish": stockfish_report,
+            "curated_position_suite": curated_position_suite_report,
+            "curated_position_manifest": curated_position_manifest,
+            "synthetic_teaching_corpus": synthetic_teaching_corpus,
+            "training_augmentation": {"enabled": False, "reason": "arena_mode_interactive_only"},
             "training_summary": {
                 "steps_completed": 0,
                 "best_val_loss": None,
@@ -5995,13 +6526,18 @@ def run_pipeline(
     else:
         examples, provenance = maybe_collect_dataset(cfg, layout, logger)
     splits, split_manifest = split_examples_by_game(examples, cfg)
+    train_examples = list(splits["train"])
+    val_examples = splits["val"]
+    test_examples = splits["locked_test"]
+    curated_training_examples, curated_training_manifest = build_curated_training_examples(cfg)
+    train_examples.extend(curated_training_examples)
+    split_manifest["training_augmentation"] = curated_training_manifest
+    split_manifest["counts"]["examples_train_before_augmentation"] = len(splits["train"])
+    split_manifest["counts"]["examples_train_after_augmentation"] = len(train_examples)
     atomic_json(layout.reports_dir / "split_manifest.json", split_manifest)
 
     model, optimizer, compile_report = prepare_model_and_optimizer(cfg, layout, logger)
     device = pick_device(cfg)
-    train_examples = splits["train"]
-    val_examples = splits["val"]
-    test_examples = splits["locked_test"]
 
     if not train_examples:
         raise DatasetEmptyError("Training split is empty after game-level split")
@@ -6085,6 +6621,15 @@ def run_pipeline(
         model.eval()
         stockfish_report = play_stockfish_gauntlet(model, cfg, device, layout, logger)
     atomic_json(layout.reports_dir / "stockfish_match_report.json", stockfish_report)
+    if cfg["mode"] == "verify":
+        curated_position_suite_report = not_run_curated_position_eval("verify_mode_runtime_only")
+    elif cfg["mode"] in {"train", "resume", "benchmark"}:
+        model.eval()
+        curated_position_suite_report = evaluate_curated_position_suites(model, cfg, device)
+    else:
+        curated_position_suite_report = not_run_curated_position_eval("mode_disabled")
+    atomic_json(layout.reports_dir / "curated_position_suite_report.json", curated_position_suite_report)
+    atomic_write_text(layout.reports_dir / "curated_position_suite_report.md", render_curated_position_suite_report_md(curated_position_suite_report))
 
     execution_status, evaluation_status, rating_claim_status = determine_statuses(cfg, stockfish_report)
     claim_status = rating_claim_status.value
@@ -6094,13 +6639,14 @@ def run_pipeline(
         "script_version": SCRIPT_VERSION,
         "dataset_provenance": provenance,
         "split_manifest": split_manifest,
+        "curated_position_manifest": curated_position_manifest,
         "notes": {
             "train_val_test_split": "Game-level split with locked test set.",
             "eval_signal": "Eval-tagged positions are preferred when present; otherwise discounted result targets are used.",
             "sampling_strategy": provenance.get("sampling_strategy", "unknown"),
         },
     }
-    eval_card = build_eval_card(cfg, holdout_validation, locked_test, legality_report, stockfish_report)
+    eval_card = build_eval_card(cfg, holdout_validation, locked_test, legality_report, stockfish_report, curated_position_suite_report)
 
     payload = {
         "script_version": SCRIPT_VERSION,
@@ -6116,6 +6662,10 @@ def run_pipeline(
         "locked_test": locked_test,
         "legality_report": legality_report,
         "stockfish": stockfish_report,
+        "curated_position_suite": curated_position_suite_report,
+        "curated_position_manifest": curated_position_manifest,
+        "synthetic_teaching_corpus": synthetic_teaching_corpus,
+        "training_augmentation": curated_training_manifest,
         "training_summary": training_summary,
         "compile_report": compile_report,
         "forward_verify": forward_verify,

@@ -122,7 +122,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `178 passed, 3 skipped` |
+| `python3 -m pytest -q` | `184 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -135,7 +135,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`178 passed, 3 skipped`)
+   - `pytest` geçti (`184 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -1806,8 +1806,12 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── checkpoint_restore_report.json  # JSON veri artefaktı
 │   ├── chess_gui_onefile_sync_report.json  # JSON veri artefaktı
 │   ├── chess_gui_onefile_sync_report.md  # dokümantasyon/rapor dosyası
+│   ├── chess_onefile_extension_report.json  # JSON veri artefaktı
+│   ├── chess_onefile_extension_report.md  # dokümantasyon/rapor dosyası
 │   ├── chess_teaching_contract_report.json  # JSON veri artefaktı
 │   ├── chess_teaching_contract_report.md  # dokümantasyon/rapor dosyası
+│   ├── chess_training_readiness_report.json  # JSON veri artefaktı
+│   ├── chess_training_readiness_report.md  # dokümantasyon/rapor dosyası
 │   ├── claim_number_audit.json  # JSON veri artefaktı
 │   ├── claim_registry.json  # JSON veri artefaktı
 │   ├── cleanroom_verification.md  # dokümantasyon/rapor dosyası
@@ -2035,7 +2039,9 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── bootstrap_venv.sh  # kabuk otomasyon scripti
 │   ├── build_artifacts_release_zip.sh  # kabuk otomasyon scripti
 │   ├── build_chess_5080_windows_delivery.py  # Python modülü/scripti (build chess 5080 windows delivery için otomasyon scripti)
+│   ├── build_chess_onefile_extension_report.py  # Python modülü/scripti (build chess onefile extension report için otomasyon scripti)
 │   ├── build_chess_teaching_contract_report.py  # Python modülü/scripti (build chess teaching contract report için otomasyon scripti)
+│   ├── build_chess_training_readiness_report.py  # Python modülü/scripti (build chess training readiness report için otomasyon scripti)
 │   ├── build_closure_governance_pack.py  # Python modülü/scripti (build closure governance pack için otomasyon scripti)
 │   ├── build_code_truth_audit.py  # Python modülü/scripti (build code truth audit için otomasyon scripti)
 │   ├── build_investor_deck.py  # Python modülü/scripti (build investor deck için otomasyon scripti)
@@ -2134,7 +2140,9 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_agi_cognitive.py  # Python modülü/scripti (agi cognitive için otomatik test modülü)
 │   ├── test_architecture_integrity.py  # Python modülü/scripti (architecture integrity için otomatik test modülü)
 │   ├── test_build_chess_5080_windows_delivery.py  # Python modülü/scripti (build chess 5080 windows delivery için otomatik test modülü)
+│   ├── test_build_chess_onefile_extension_report.py  # Python modülü/scripti (build chess onefile extension report için otomatik test modülü)
 │   ├── test_build_chess_teaching_contract_report.py  # Python modülü/scripti (build chess teaching contract report için otomatik test modülü)
+│   ├── test_build_chess_training_readiness_report.py  # Python modülü/scripti (build chess training readiness report için otomatik test modülü)
 │   ├── test_build_code_truth_audit.py  # Python modülü/scripti (build code truth audit için otomatik test modülü)
 │   ├── test_build_max_closure_handoff.py  # Python modülü/scripti (build max closure handoff için otomatik test modülü)
 │   ├── test_build_target_machine_handoff_bundle.py  # Python modülü/scripti (build target machine handoff bundle için otomatik test modülü)
@@ -2142,6 +2150,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_check_doc_claim_consistency.py  # Python modülü/scripti (check doc claim consistency için otomatik test modülü)
 │   ├── test_chess_5080_onefile.py  # Python modülü/scripti (chess 5080 onefile için otomatik test modülü)
 │   ├── test_chess_gui_contract.py  # Python modülü/scripti (chess gui contract için otomatik test modülü)
+│   ├── test_chess_onefile_curated_suites.py  # Python modülü/scripti (chess onefile curated suites için otomatik test modülü)
 │   ├── test_cognitive_extensions.py  # Python modülü/scripti (cognitive extensions için otomatik test modülü)
 │   ├── test_comprehensive.py  # Python modülü/scripti (comprehensive için otomatik test modülü)
 │   ├── test_continual_adapter.py  # Python modülü/scripti (continual adapter için otomatik test modülü)

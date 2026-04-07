@@ -38,6 +38,7 @@ def build_payload() -> dict[str, Any]:
     gui_script = ROOT / "apps" / "chess_gui" / "play_mertformer_chess_web.py"
     gui_sync = load_json(ROOT / "reports" / "chess_gui_onefile_sync_report.json")
     teaching = load_json(ROOT / "reports" / "chess_teaching_contract_report.json")
+    extension = load_json(ROOT / "reports" / "chess_onefile_extension_report.json")
 
     checks = [
         {
@@ -75,6 +76,12 @@ def build_payload() -> dict[str, Any]:
             "status": bool(teaching.get("summary", {}).get("all_green")),
             "required": True,
             "detail": str(teaching.get("summary", {}).get("all_green", False)).lower(),
+        },
+        {
+            "id": "onefile_extension_report",
+            "status": bool(extension.get("summary", {}).get("all_green")),
+            "required": True,
+            "detail": extension.get("final_status") or "missing_report",
         },
         {
             "id": "stockfish_anchor_optional",

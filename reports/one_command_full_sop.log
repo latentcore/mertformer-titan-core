@@ -1,13 +1,13 @@
-[run] start_utc=2026-04-07T22:21:00Z
+[run] start_utc=2026-04-07T23:02:18Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
 [verify] Secret scan ...
 OK: no secret patterns detected in tracked files.
 [verify] Pytest ...
-........................................................................ [ 40%]
-......s.............................................s................... [ 80%]
-....................................                                     [100%]
+........................................................................ [ 38%]
+............s.............................................s............. [ 77%]
+..........................................                               [100%]
 =============================== warnings summary ===============================
 .titan-venv/lib/python3.11/site-packages/torch/jit/_script.py:1480
 .titan-venv/lib/python3.11/site-packages/torch/jit/_script.py:1480
@@ -29,7 +29,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-178 passed, 3 skipped, 9 warnings in 35.20s
+184 passed, 3 skipped, 9 warnings in 36.94s
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -68,7 +68,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <REPO_ROOT>/temp_preflight_data
 ✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 5.62s
+✈️ Preflight Duration: 5.84s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
@@ -80,7 +80,7 @@ Overfit step 0: loss=121.5519
 Overfit step 12: loss=117.8494
 Overfit step 24: loss=113.7169
 Overfit step 36: loss=97.5475
-Overfit step 48: loss=50.8516
+Overfit step 48: loss=50.8537
 Overfit gate: PASS
 Golden samples: 50
 - algorithms: 13
@@ -113,7 +113,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 14.461924076080322,
+  "elapsed_sec": 14.183096170425415,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -139,9 +139,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-04-07T22:22:03Z",
-        "cpu_percent": 15.6,
-        "ram_used_gb": 7.5675048828125,
+        "timestamp_utc": "2026-04-07T23:03:23Z",
+        "cpu_percent": 14.9,
+        "ram_used_gb": 7.4491119384765625,
         "ram_total_gb": 16.0
       }
     },
@@ -178,9 +178,11 @@ OK: workspace hygiene manifest refreshed
  - reports/workspace_hygiene_manifest.md
  - reports/workspace_hygiene_manifest.json
 [verify] Chess GUI onefile sync check ...
-{"schema": "chess_gui_onefile_sync_report_v1", "generated_utc": "2026-04-07T22:22:17Z", "canonical_onefile": "<REPO_ROOT>/scripts/chess_5080_onefile.py", "gui_dir": "<REPO_ROOT>/apps/chess_gui", "gui_onefile": "<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py", "status": "canonical_fallback_ready", "reason": "local_copy_missing_repo_canonical_fallback_available", "copied": false, "local_copy_present": false, "canonical_sha256": "c40ad5618b2e6d63c3b9ad0db329c08d61afb543bfb6bb498575f562053f9c05", "gui_sha256": "", "hashes_match": false}
+{"schema": "chess_gui_onefile_sync_report_v1", "generated_utc": "2026-04-07T23:03:36Z", "canonical_onefile": "<REPO_ROOT>/scripts/chess_5080_onefile.py", "gui_dir": "<REPO_ROOT>/apps/chess_gui", "gui_onefile": "<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py", "status": "canonical_fallback_ready", "reason": "local_copy_missing_repo_canonical_fallback_available", "copied": false, "local_copy_present": false, "canonical_sha256": "b588210c4181ece626e8ef91810055ce26df6235959752b20fe1251db32dd16a", "gui_sha256": "", "hashes_match": false}
 [verify] Chess teaching contract smoke report ...
 {"case_total": 5, "case_pass": 5, "mode_total": 5, "mode_pass": 5, "level_monotonic_non_decreasing": true, "all_green": true}
+[verify] Chess onefile extension report ...
+{"final_status": "READY", "all_green": true}
 [verify] Chess training readiness report ...
 {"final_status": "READY_FOR_TRAINING", "all_required_green": true}
 [verify] Closure governance pack refresh ...
@@ -209,18 +211,18 @@ OK: unicode path guard; hits=0
 [verify] Duplicate zip guard gate ...
 OK: duplicate zip guard; groups=0
 [verify] Manifest sync gate ...
-{"manifest_entries": 682, "ok": true}
+{"manifest_entries": 691, "ok": true}
 [verify] OK
 [run] step=cfc_moe_tolerance_check
 [tolerance] PASS (max_diff_moe=0.000000 max_diff_cfc=0.000014)
 [run] step=md_quality_all
-md_quality: scope=all files=354 errors=0 warnings=0
+md_quality: scope=all files=355 errors=0 warnings=0
 [run] step=linkcheck_all
-linkcheck: scope=all files=354 missing=0
+linkcheck: scope=all files=355 missing=0
 [run] step=docs_inventory
-{"ok": true, "md_files": 356, "dup_groups": 21}
+{"ok": true, "md_files": 357, "dup_groups": 21}
 [run] step=sync_manifest
-{"manifest_entries": 682, "ok": true}
+{"manifest_entries": 691, "ok": true}
 [run] step=dealroom_sync
 {"ok": true}
 [run] step=unicode_path_guard
@@ -262,7 +264,7 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip
-release_sha256=a5c67b6bd7b1ca1277cd5bd57d3d03051d98e6abbb2115104f8b0a6f94f4e331
+release_sha256=c3319c59ec06ae07f62fcbbf30a7b8295b31f7067520c0a5ecd3d0cad5e2999f
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=artifact_release_zip
@@ -277,4 +279,4 @@ locked_sha256=
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-04-07T22:23:04Z
+[run] end_utc=2026-04-07T23:04:23Z
