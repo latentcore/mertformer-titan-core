@@ -1,0 +1,61 @@
+{
+  "schema": "chess_training_readiness_report_v1",
+  "generated_utc": "2026-04-07T22:24:42Z",
+  "final_status": "READY_FOR_TRAINING",
+  "summary": {
+    "required_total": 6,
+    "required_green": 6,
+    "all_required_green": true
+  },
+  "checks": [
+    {
+      "id": "canonical_onefile",
+      "status": true,
+      "required": true,
+      "detail": "<REPO_ROOT>/scripts/chess_5080_onefile.py"
+    },
+    {
+      "id": "share_export",
+      "status": true,
+      "required": true,
+      "detail": "<REPO_ROOT>/scripts/export_chess_5080_share.py"
+    },
+    {
+      "id": "windows_builder",
+      "status": true,
+      "required": true,
+      "detail": "<REPO_ROOT>/scripts/build_chess_5080_windows_delivery.py"
+    },
+    {
+      "id": "gui_app",
+      "status": true,
+      "required": true,
+      "detail": "<REPO_ROOT>/apps/chess_gui/play_mertformer_chess_web.py"
+    },
+    {
+      "id": "gui_sync_state",
+      "status": true,
+      "required": true,
+      "detail": "canonical_fallback_ready"
+    },
+    {
+      "id": "teaching_contract_smoke",
+      "status": true,
+      "required": true,
+      "detail": "true"
+    },
+    {
+      "id": "stockfish_anchor_optional",
+      "status": true,
+      "required": false,
+      "detail": "Stockfish stays optional for training start and required later for anchor benchmark runs."
+    }
+  ],
+  "canonical_train_command": "python3 scripts/chess_5080_onefile.py --mode train",
+  "canonical_verify_command": "python3 scripts/chess_5080_onefile.py --mode verify",
+  "notes": [
+    "This report covers repo-side training readiness only.",
+    "Real training, checkpoints, and benchmark outputs remain post-run evidence.",
+    "A missing local GUI onefile copy is acceptable when repo-canonical fallback is available."
+  ]
+}

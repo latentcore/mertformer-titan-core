@@ -88,6 +88,9 @@ echo "[verify] Chess GUI onefile sync check ..."
 echo "[verify] Chess teaching contract smoke report ..."
 "$PY" scripts/build_chess_teaching_contract_report.py
 
+echo "[verify] Chess training readiness report ..."
+"$PY" scripts/build_chess_training_readiness_report.py
+
 echo "[verify] Closure governance pack refresh ..."
 "$PY" scripts/build_closure_governance_pack.py
 

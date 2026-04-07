@@ -188,6 +188,7 @@ Generated automatically.
 - `reports/checkpoint_contract.md`
 - `reports/chess_gui_onefile_sync_report.md`
 - `reports/chess_teaching_contract_report.md`
+- `reports/chess_training_readiness_report.md`
 - `reports/cleanroom_verification.md`
 - `reports/cleanroom_verification_TR.md`
 - `reports/cli_smoke_log.md`

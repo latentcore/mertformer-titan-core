@@ -53,6 +53,7 @@ def build_report(gui_dir: Path, target_file: Path, status: str, reason: str, cop
         "status": status,
         "reason": reason,
         "copied": copied,
+        "local_copy_present": target_exists,
         "canonical_sha256": canonical_sha,
         "gui_sha256": target_sha,
         "hashes_match": bool(canonical_sha and target_sha and canonical_sha == target_sha),
@@ -67,6 +68,7 @@ def build_report_md(report: dict) -> str:
             f"- status: `{report['status']}`",
             f"- reason: `{report['reason']}`",
             f"- copied: `{report['copied']}`",
+            f"- local_copy_present: `{report['local_copy_present']}`",
             f"- hashes_match: `{report['hashes_match']}`",
             f"- canonical_onefile: `{report['canonical_onefile']}`",
             f"- gui_onefile: `{report['gui_onefile']}`",
@@ -74,6 +76,15 @@ def build_report_md(report: dict) -> str:
             f"- gui_sha256: `{report['gui_sha256'] or 'missing'}`",
         ]
     )
+
+
+def supports_repo_canonical_fallback(gui_dir: Path) -> bool:
+    try:
+        if gui_dir.resolve() != DEFAULT_GUI_DIR.resolve():
+            return False
+    except FileNotFoundError:
+        return False
+    return (gui_dir / "play_mertformer_chess_web.py").exists()
 
 
 def sync_onefile(gui_dir: Path, check_only: bool) -> dict:
@@ -85,6 +96,8 @@ def sync_onefile(gui_dir: Path, check_only: bool) -> dict:
     if target_file.exists() and sha256_file(target_file) == sha256_file(CANONICAL_ONEFILE):
         return build_report(gui_dir, target_file, "up_to_date", "hashes_match", copied=False)
     if check_only:
+        if not target_file.exists() and supports_repo_canonical_fallback(gui_dir):
+            return build_report(gui_dir, target_file, "canonical_fallback_ready", "local_copy_missing_repo_canonical_fallback_available", copied=False)
         return build_report(gui_dir, target_file, "drift_detected", "hash_mismatch_or_missing", copied=False)
     target_file.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(CANONICAL_ONEFILE, target_file)
@@ -101,7 +114,7 @@ def main() -> int:
     write_text(REPORT_JSON, json.dumps(report, indent=2, ensure_ascii=False))
     write_text(REPORT_MD, build_report_md(report))
     print(json.dumps(report, ensure_ascii=False))
-    return 0 if report["status"] in {"up_to_date", "synced", "skipped"} else 1
+    return 0 if report["status"] in {"up_to_date", "synced", "skipped", "canonical_fallback_ready"} else 1
 
 
 if __name__ == "__main__":

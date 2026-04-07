@@ -1,6 +1,6 @@
 # Demo Bundle
 
-- generated_utc: `2026-04-07T21:57:20.614516+00:00`
+- generated_utc: `2026-04-07T22:26:21.578884+00:00`
 - checkpoint: `none`
 - note: No trained checkpoint resolved; this manifest only records current repo-side proof/demo assets.
 

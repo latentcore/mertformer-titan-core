@@ -61,3 +61,26 @@ def test_main_check_only_detects_drift(tmp_path: Path, monkeypatch) -> None:
     assert report["status"] == "drift_detected"
     assert report["copied"] is False
 
+
+def test_check_only_accepts_repo_gui_canonical_fallback_when_local_copy_missing(tmp_path: Path, monkeypatch) -> None:
+    module = _load_module()
+    canonical = tmp_path / "repo" / "scripts" / "chess_5080_onefile.py"
+    canonical.parent.mkdir(parents=True, exist_ok=True)
+    canonical.write_text("print('canonical')\n", encoding="utf-8")
+
+    gui_dir = tmp_path / "repo" / "apps" / "chess_gui"
+    gui_dir.mkdir(parents=True, exist_ok=True)
+    (gui_dir / "play_mertformer_chess_web.py").write_text("print('gui')\n", encoding="utf-8")
+
+    monkeypatch.setattr(module, "CANONICAL_ONEFILE", canonical)
+    monkeypatch.setattr(module, "DEFAULT_GUI_DIR", gui_dir)
+    monkeypatch.setattr(module, "REPORT_JSON", tmp_path / "reports" / "sync.json")
+    monkeypatch.setattr(module, "REPORT_MD", tmp_path / "reports" / "sync.md")
+    monkeypatch.setattr(sys, "argv", ["sync_chess_gui_onefile.py", "--gui-dir", str(gui_dir), "--check-only"])
+
+    rc = module.main()
+    report = json.loads(module.REPORT_JSON.read_text(encoding="utf-8"))
+    assert rc == 0
+    assert report["status"] == "canonical_fallback_ready"
+    assert report["copied"] is False
+    assert report["local_copy_present"] is False
