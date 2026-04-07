@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CANONICAL_ONEFILE = ROOT / "scripts" / "chess_5080_onefile.py"
-DEFAULT_GUI_DIR = Path("/Users/mertyunlu/Documents/MertFormer_Chess_GUI")
+DEFAULT_GUI_DIR = ROOT / "apps" / "chess_gui"
 REPORT_JSON = ROOT / "reports" / "chess_gui_onefile_sync_report.json"
 REPORT_MD = ROOT / "reports" / "chess_gui_onefile_sync_report.md"
 
@@ -30,6 +30,16 @@ def write_text(path: Path, text: str) -> None:
     path.write_text(text.rstrip() + "\n", encoding="utf-8")
 
 
+def display_path(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        rel = resolved.relative_to(ROOT)
+        rel_text = rel.as_posix()
+        return "<REPO_ROOT>" if not rel_text else f"<REPO_ROOT>/{rel_text}"
+    except ValueError:
+        return str(resolved)
+
+
 def build_report(gui_dir: Path, target_file: Path, status: str, reason: str, copied: bool) -> dict:
     canonical_sha = sha256_file(CANONICAL_ONEFILE) if CANONICAL_ONEFILE.exists() else ""
     target_exists = target_file.exists()
@@ -37,9 +47,9 @@ def build_report(gui_dir: Path, target_file: Path, status: str, reason: str, cop
     return {
         "schema": "chess_gui_onefile_sync_report_v1",
         "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "canonical_onefile": str(CANONICAL_ONEFILE),
-        "gui_dir": str(gui_dir),
-        "gui_onefile": str(target_file),
+        "canonical_onefile": display_path(CANONICAL_ONEFILE),
+        "gui_dir": display_path(gui_dir),
+        "gui_onefile": display_path(target_file),
         "status": status,
         "reason": reason,
         "copied": copied,

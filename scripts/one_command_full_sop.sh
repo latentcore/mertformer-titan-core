@@ -15,7 +15,8 @@ fi
 
 LOG_PATH="$ROOT_DIR/reports/one_command_full_sop.log"
 SUMMARY_PATH="$ROOT_DIR/reports/one_command_full_sop_summary.md"
-RAW_LOG="$(mktemp "$ROOT_DIR/reports/.one_command_full_sop_raw.XXXXXX.log")"
+rm -f "$ROOT_DIR/reports/.one_command_full_sop_raw.XXXXXX.log" 2>/dev/null || true
+RAW_LOG="$(mktemp -t one_command_full_sop_raw)"
 
 mkdir -p "$ROOT_DIR/reports" "$ROOT_DIR/packages" "$ROOT_DIR/artifacts"
 

@@ -1540,6 +1540,16 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   │   └── README_TR.md  # Türkçe doküman karşılığı
 │   ├── results.md  # dokümantasyon/rapor dosyası
 │   └── results_TR.md  # Türkçe doküman karşılığı
+├── apps/  # dizin
+│   └── chess_gui/  # dizin
+│       ├── checkpoints/  # dizin
+│       │   └── README.md  # ana dokümantasyon (EN)
+│       ├── logs/  # dizin
+│       │   └── README.md  # ana dokümantasyon (EN)
+│       ├── .gitignore  # git ignore politikası
+│       ├── README.md  # ana dokümantasyon (EN)
+│       ├── launch_mertformer_chess_gui.command  # artefakt
+│       └── play_mertformer_chess_web.py  # Python modülü/scripti (play mertformer chess web için modül)
 ├── artifacts/  # dizin
 │   └── mertformer_release.zip.sha256  # artefakt sağlama toplamı
 ├── assets/  # dizin
@@ -1603,13 +1613,15 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │       ├── notes.md  # dokümantasyon/rapor dosyası
 │       └── notes_TR.md  # Türkçe doküman karşılığı
 ├── interfaces/  # dizin
+│   ├── backlog_item_v1.schema.json  # JSON şema artefaktı
 │   ├── closure_57_matrix_v1.schema.json  # JSON şema artefaktı
 │   ├── inference_contract.md  # dokümantasyon/rapor dosyası
 │   ├── inference_contract_TR.md  # Türkçe doküman karşılığı
 │   ├── kpi_report_v1.schema.json  # JSON şema artefaktı
 │   ├── pilot_report_v1.schema.json  # JSON şema artefaktı
 │   ├── run_manifest_v1.schema.json  # JSON şema artefaktı
-│   └── tokenizer_spec.json  # JSON veri artefaktı
+│   ├── tokenizer_spec.json  # JSON veri artefaktı
+│   └── workspace_hygiene_manifest_v1.schema.json  # JSON şema artefaktı
 ├── layers/  # dizin
 │   ├── __init__.py  # Python modülü/scripti (layers paket başlatıcısı ve dışa aktarmalar)
 │   ├── bitlinear.py  # Python modülü/scripti (BitLinear düşük-bit linear katman implementasyonu)
@@ -1792,6 +1804,10 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── checkpoint_contract.md  # dokümantasyon/rapor dosyası
 │   ├── checkpoint_hash_manifest.json  # JSON veri artefaktı
 │   ├── checkpoint_restore_report.json  # JSON veri artefaktı
+│   ├── chess_gui_onefile_sync_report.json  # JSON veri artefaktı
+│   ├── chess_gui_onefile_sync_report.md  # dokümantasyon/rapor dosyası
+│   ├── chess_teaching_contract_report.json  # JSON veri artefaktı
+│   ├── chess_teaching_contract_report.md  # dokümantasyon/rapor dosyası
 │   ├── claim_number_audit.json  # JSON veri artefaktı
 │   ├── claim_registry.json  # JSON veri artefaktı
 │   ├── cleanroom_verification.md  # dokümantasyon/rapor dosyası
@@ -1805,6 +1821,9 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── closure_report_build30_v2.md  # dokümantasyon/rapor dosyası
 │   ├── closure_risk_register.md  # dokümantasyon/rapor dosyası
 │   ├── cloud_readiness_report.md  # dokümantasyon/rapor dosyası
+│   ├── code_truth_contract.md  # dokümantasyon/rapor dosyası
+│   ├── code_truth_delta_audit.json  # JSON veri artefaktı
+│   ├── code_truth_delta_audit.md  # dokümantasyon/rapor dosyası
 │   ├── codex_deep_audit_DE.md  # dokümantasyon/rapor dosyası
 │   ├── codex_deep_audit_DE_TR.md  # Türkçe doküman karşılığı
 │   ├── codex_deep_audit_EN.md  # dokümantasyon/rapor dosyası
@@ -1958,14 +1977,19 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── snapshot_manifest_main.json  # JSON veri artefaktı
 │   ├── source_of_truth_map.md  # dokümantasyon/rapor dosyası
 │   ├── stale_script_report.md  # dokümantasyon/rapor dosyası
+│   ├── start_gate_operator_decision.json  # JSON veri artefaktı
+│   ├── start_gate_operator_decision.md  # dokümantasyon/rapor dosyası
 │   ├── start_gate_report.json  # JSON veri artefaktı
 │   ├── startup_selfcheck_report.json  # JSON veri artefaktı
 │   ├── static_analysis_report.json  # JSON veri artefaktı
 │   ├── strategic_value.md  # dokümantasyon/rapor dosyası
 │   ├── strategic_value_TR.md  # Türkçe doküman karşılığı
+│   ├── surface_lifecycle_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── system_hardware.md  # dokümantasyon/rapor dosyası
 │   ├── system_hardware_TR.md  # Türkçe doküman karşılığı
 │   ├── system_stats.jsonl  # JSONL veri/log artefaktı
+│   ├── target_machine_handoff_manifest.json  # JSON veri artefaktı
+│   ├── target_machine_handoff_manifest.md  # dokümantasyon/rapor dosyası
 │   ├── teacher_decision_record.md  # dokümantasyon/rapor dosyası
 │   ├── teacher_output_license_assessment.md  # dokümantasyon/rapor dosyası
 │   ├── technical_snapshot.md  # dokümantasyon/rapor dosyası
@@ -1978,6 +2002,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── unicode_path_guard_report.json  # JSON veri artefaktı
 │   ├── verified_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── verified_matrix_TR.md  # Türkçe doküman karşılığı
+│   ├── workspace_hygiene_manifest.json  # JSON veri artefaktı
+│   ├── workspace_hygiene_manifest.md  # dokümantasyon/rapor dosyası
 │   ├── xla_smoke_report.json  # JSON veri artefaktı
 │   ├── zip_audit_artifacts.json  # JSON veri artefaktı
 │   └── zip_audit_packages.json  # JSON veri artefaktı
@@ -2009,15 +2035,19 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── bootstrap_venv.sh  # kabuk otomasyon scripti
 │   ├── build_artifacts_release_zip.sh  # kabuk otomasyon scripti
 │   ├── build_chess_5080_windows_delivery.py  # Python modülü/scripti (build chess 5080 windows delivery için otomasyon scripti)
+│   ├── build_chess_teaching_contract_report.py  # Python modülü/scripti (build chess teaching contract report için otomasyon scripti)
 │   ├── build_closure_governance_pack.py  # Python modülü/scripti (build closure governance pack için otomasyon scripti)
+│   ├── build_code_truth_audit.py  # Python modülü/scripti (build code truth audit için otomasyon scripti)
 │   ├── build_investor_deck.py  # Python modülü/scripti (build investor deck için otomasyon scripti)
 │   ├── build_master_closure_matrix.py  # Python modülü/scripti (build master closure matrix için otomasyon scripti)
 │   ├── build_max_closure_handoff.py  # Python modülü/scripti (build max closure handoff için otomasyon scripti)
 │   ├── build_offline_closure_pack.py  # Python modülü/scripti (build offline closure pack için otomasyon scripti)
 │   ├── build_scoped_external_intake_matrix.py  # Python modülü/scripti (build scoped external intake matrix için otomasyon scripti)
 │   ├── build_summary_pdf.py  # Python modülü/scripti (build summary pdf için otomasyon scripti)
+│   ├── build_target_machine_handoff_bundle.py  # Python modülü/scripti (build target machine handoff bundle için otomasyon scripti)
 │   ├── build_train_readiness_contract.py  # Python modülü/scripti (build train readiness contract için otomasyon scripti)
 │   ├── build_validation_set.py  # Python modülü/scripti (build validation set için otomasyon scripti)
+│   ├── build_workspace_hygiene_manifest.py  # Python modülü/scripti (build workspace hygiene manifest için otomasyon scripti)
 │   ├── cfc_moe_tolerance_check.py  # Python modülü/scripti (cfc moe tolerance check için otomasyon scripti)
 │   ├── chat.py  # Python modülü/scripti (chat için otomasyon scripti)
 │   ├── check_57_matrix.py  # Python modülü/scripti (check 57 matrix için otomasyon scripti)
@@ -2080,6 +2110,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── smart_runner.py  # Python modülü/scripti (smart runner için otomasyon scripti)
 │   ├── smoke_train_benchmark.py  # Python modülü/scripti (smoke train benchmark için otomasyon scripti)
 │   ├── start_gate.py  # Python modülü/scripti (start gate için otomasyon scripti)
+│   ├── sync_chess_gui_onefile.py  # Python modülü/scripti (sync chess gui onefile için otomasyon scripti)
 │   ├── sync_manifest.py  # Python modülü/scripti (release manifest ve proje-yapısı senkron üreticisi)
 │   ├── test_onnx_export.py  # Python modülü/scripti (test onnx export için otomasyon scripti)
 │   ├── titan_onnx_stress_test.py  # Python modülü/scripti (titan onnx stress test için otomasyon scripti)
@@ -2103,9 +2134,14 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_agi_cognitive.py  # Python modülü/scripti (agi cognitive için otomatik test modülü)
 │   ├── test_architecture_integrity.py  # Python modülü/scripti (architecture integrity için otomatik test modülü)
 │   ├── test_build_chess_5080_windows_delivery.py  # Python modülü/scripti (build chess 5080 windows delivery için otomatik test modülü)
+│   ├── test_build_chess_teaching_contract_report.py  # Python modülü/scripti (build chess teaching contract report için otomatik test modülü)
+│   ├── test_build_code_truth_audit.py  # Python modülü/scripti (build code truth audit için otomatik test modülü)
 │   ├── test_build_max_closure_handoff.py  # Python modülü/scripti (build max closure handoff için otomatik test modülü)
+│   ├── test_build_target_machine_handoff_bundle.py  # Python modülü/scripti (build target machine handoff bundle için otomatik test modülü)
+│   ├── test_build_workspace_hygiene_manifest.py  # Python modülü/scripti (build workspace hygiene manifest için otomatik test modülü)
 │   ├── test_check_doc_claim_consistency.py  # Python modülü/scripti (check doc claim consistency için otomatik test modülü)
 │   ├── test_chess_5080_onefile.py  # Python modülü/scripti (chess 5080 onefile için otomatik test modülü)
+│   ├── test_chess_gui_contract.py  # Python modülü/scripti (chess gui contract için otomatik test modülü)
 │   ├── test_cognitive_extensions.py  # Python modülü/scripti (cognitive extensions için otomatik test modülü)
 │   ├── test_comprehensive.py  # Python modülü/scripti (comprehensive için otomatik test modülü)
 │   ├── test_continual_adapter.py  # Python modülü/scripti (continual adapter için otomatik test modülü)
@@ -2137,6 +2173,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_scoped_external_tools.py  # Python modülü/scripti (scoped external tools için otomatik test modülü)
 │   ├── test_sdk_api.py  # Python modülü/scripti (sdk api için otomatik test modülü)
 │   ├── test_sdk_pilot_cli.py  # Python modülü/scripti (sdk pilot cli için otomatik test modülü)
+│   ├── test_start_gate.py  # Python modülü/scripti (start gate için otomatik test modülü)
+│   ├── test_sync_chess_gui_onefile.py  # Python modülü/scripti (sync chess gui onefile için otomatik test modülü)
 │   ├── test_titan_preflight_contract.py  # Python modülü/scripti (titan preflight contract için otomatik test modülü)
 │   ├── test_train_loop_sanity.py  # Python modülü/scripti (train loop sanity için otomatik test modülü)
 │   ├── test_triad_omega_api.py  # Python modülü/scripti (triad omega api için otomatik test modülü)

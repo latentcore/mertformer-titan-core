@@ -141,7 +141,16 @@ def main() -> int:
             f"| `{entry['path']}` | `{entry['kind']}` | `{entry['disposition']}` | `{entry.get('size_bytes') or ''}` | `{entry.get('sha256') or ''}` |"
         )
     md_out.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(json.dumps({"json": str(json_out), "md": str(md_out), "entries": len(entries)}, indent=2))
+    print(
+        json.dumps(
+            {
+                "json": sanitize_path(json_out),
+                "md": sanitize_path(md_out),
+                "entries": len(entries),
+            },
+            indent=2,
+        )
+    )
     return 0
 
 

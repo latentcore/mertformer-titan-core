@@ -4,7 +4,7 @@
 - reason: `hashes_match`
 - copied: `False`
 - hashes_match: `True`
-- canonical_onefile: `/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/scripts/chess_5080_onefile.py`
-- gui_onefile: `/Users/mertyunlu/Documents/MertFormer_Chess_GUI/chess_5080_onefile.py`
+- canonical_onefile: `<REPO_ROOT>/scripts/chess_5080_onefile.py`
+- gui_onefile: `<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py`
 - canonical_sha256: `c40ad5618b2e6d63c3b9ad0db329c08d61afb543bfb6bb498575f562053f9c05`
 - gui_sha256: `c40ad5618b2e6d63c3b9ad0db329c08d61afb543bfb6bb498575f562053f9c05`

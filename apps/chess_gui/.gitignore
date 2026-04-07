@@ -1,0 +1,9 @@
+__pycache__/
+.DS_Store
+*.pyc
+chess_5080_onefile.py
+checkpoints/*
+!checkpoints/README.md
+logs/*
+!logs/README.md
+assets/run_summary.json

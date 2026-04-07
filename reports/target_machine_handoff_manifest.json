@@ -1,12 +1,12 @@
 {
   "schema": "target_machine_handoff_manifest_v1",
-  "generated_utc": "2026-04-07T21:27:05Z",
+  "generated_utc": "2026-04-07T22:00:04Z",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "train_allowed": true,
   "decision_reason_code": "READY_OFFLINE_CLEAN",
   "recommended_path": "offline_clean",
-  "bundle_path": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/artifacts/target_machine_handoff_bundle.zip",
-  "bundle_sha256_path": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/artifacts/target_machine_handoff_bundle.zip.sha256",
+  "bundle_path": "<REPO_ROOT>/artifacts/target_machine_handoff_bundle.zip",
+  "bundle_sha256_path": "<REPO_ROOT>/artifacts/target_machine_handoff_bundle.zip.sha256",
   "transfer_files": [
     {
       "path": "zero_touch_start.sh",
@@ -45,13 +45,13 @@
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 4950,
-      "sha256": "176ed533c9a84ad7e9399973da9c5267911df9500d313f36986a9be1cf853d1b"
+      "size_bytes": 5892,
+      "sha256": "709cc7095dad59c18553d528acd52a995cf2c61b4595982f706f05cca351e220"
     },
     {
       "path": "reports/start_gate_operator_decision.json",
       "size_bytes": 1040,
-      "sha256": "f45e7e6e52bae11322dd86b308b9f50be54b456de8750d4a8dcffbb6f869f453"
+      "sha256": "ebb005b94c5d2766a735aba33101a53289db49dd0ed363cfe24a86914f0fc836"
     },
     {
       "path": "reports/start_gate_operator_decision.md",
@@ -61,7 +61,7 @@
     {
       "path": "reports/repo_external_handoff.md",
       "size_bytes": 1468,
-      "sha256": "112300b640539b04bc880c82b1a8b549bd7c8b56ced7afe5cc99f85a44a91522"
+      "sha256": "4c42ac4ea5474a674276b153906c9c1d48062b7f01b2f221251bbc4497d48b9d"
     }
   ],
   "operator_steps": [

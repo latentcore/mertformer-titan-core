@@ -121,7 +121,7 @@ def main() -> int:
         "stale_deleted": [sanitize_path(Path(path)) for path in stale_deleted],
     }
     report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(json.dumps({"report": str(report_path), "found": len(found), "removed": len(removed)}, indent=2))
+    print(json.dumps({"report": sanitize_path(report_path), "found": len(found), "removed": len(removed)}, indent=2))
     return 0
 
 

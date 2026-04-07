@@ -19,6 +19,37 @@ def utc_now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def display_path(path: Path, *, workspace_root: Path, repo_root: Path, quarantine_root: Path) -> str:
+    resolved = path.resolve()
+    repo_resolved = repo_root.resolve()
+    workspace_resolved = workspace_root.resolve()
+    quarantine_resolved = quarantine_root.resolve()
+    if resolved == repo_resolved:
+        return "<REPO_ROOT>"
+    try:
+        rel = resolved.relative_to(repo_resolved)
+        rel_text = rel.as_posix()
+        return f"<REPO_ROOT>/{rel_text}" if rel_text else "<REPO_ROOT>"
+    except ValueError:
+        pass
+    if resolved == quarantine_resolved:
+        return "<QUARANTINE_ROOT>"
+    try:
+        rel = resolved.relative_to(quarantine_resolved)
+        rel_text = rel.as_posix()
+        return f"<QUARANTINE_ROOT>/{rel_text}" if rel_text else "<QUARANTINE_ROOT>"
+    except ValueError:
+        pass
+    if resolved == workspace_resolved:
+        return "<WORKSPACE_ROOT>"
+    try:
+        rel = resolved.relative_to(workspace_resolved)
+        rel_text = rel.as_posix()
+        return f"<WORKSPACE_ROOT>/{rel_text}" if rel_text else "<WORKSPACE_ROOT>"
+    except ValueError:
+        return str(resolved)
+
+
 def tracked_repo_paths(repo_root: Path) -> set[str]:
     try:
         proc = subprocess.run(
@@ -150,6 +181,63 @@ def build_manifest(
     }
 
 
+def sanitize_manifest(payload: dict[str, Any]) -> dict[str, Any]:
+    workspace_root = Path(payload["workspace_root"])
+    repo_root = Path(payload["repo_root"])
+    quarantine_root = Path(payload["quarantine_root"])
+    sanitized_items: list[dict[str, str]] = []
+    for item in payload["items"]:
+        sanitized_items.append(
+            {
+                **item,
+                "path": display_path(
+                    Path(item["path"]),
+                    workspace_root=workspace_root,
+                    repo_root=repo_root,
+                    quarantine_root=quarantine_root,
+                ),
+                "restore_target": display_path(
+                    Path(item["restore_target"]),
+                    workspace_root=workspace_root,
+                    repo_root=repo_root,
+                    quarantine_root=quarantine_root,
+                ),
+            }
+        )
+    sanitized_payload = {
+        **payload,
+        "workspace_root": "<WORKSPACE_ROOT>",
+        "repo_root": "<REPO_ROOT>",
+        "quarantine_root": "<QUARANTINE_ROOT>",
+        "items": sanitized_items,
+    }
+    if "moves" in payload:
+        sanitized_payload["moves"] = [
+            {
+                "source": display_path(
+                    Path(entry["source"]),
+                    workspace_root=workspace_root,
+                    repo_root=repo_root,
+                    quarantine_root=quarantine_root,
+                ),
+                "quarantine_path": display_path(
+                    Path(entry["quarantine_path"]),
+                    workspace_root=workspace_root,
+                    repo_root=repo_root,
+                    quarantine_root=quarantine_root,
+                ),
+                "restore_target": display_path(
+                    Path(entry["restore_target"]),
+                    workspace_root=workspace_root,
+                    repo_root=repo_root,
+                    quarantine_root=quarantine_root,
+                ),
+            }
+            for entry in payload["moves"]
+        ]
+    return sanitized_payload
+
+
 def apply_quarantine(manifest: dict[str, Any], quarantine_root: Path) -> list[dict[str, str]]:
     quarantine_root.mkdir(parents=True, exist_ok=True)
     moved: list[dict[str, str]] = []
@@ -241,12 +329,13 @@ def main() -> int:
     moved = apply_quarantine(payload, quarantine_root) if args.apply_quarantine else []
     if moved:
         payload["moves"] = moved
+    serialized_payload = sanitize_manifest(payload)
 
     out_json = ROOT / args.out_json
     out_md = ROOT / args.out_md
     out_json.parent.mkdir(parents=True, exist_ok=True)
-    out_json.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    out_md.write_text(build_markdown(payload, moved).rstrip() + "\n", encoding="utf-8")
+    out_json.write_text(json.dumps(serialized_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    out_md.write_text(build_markdown(serialized_payload, serialized_payload.get("moves", [])).rstrip() + "\n", encoding="utf-8")
 
     print("OK: workspace hygiene manifest refreshed")
     print(f" - {out_md.relative_to(ROOT)}")

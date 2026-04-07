@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-04-07T21:27:14.817078+00:00",
-  "md_file_count": 345,
+  "generated_utc": "2026-04-07T21:55:59.172043+00:00",
+  "md_file_count": 355,
   "duplicate_name_group_count": 21,
   "duplicate_name_groups": {
     "license.md": [
@@ -14,6 +14,9 @@
       "ablations/dense_only/README.md",
       "ablations/no_liquid/README.md",
       "ablations/no_moe/README.md",
+      "apps/chess_gui/README.md",
+      "apps/chess_gui/checkpoints/README.md",
+      "apps/chess_gui/logs/README.md",
       "assets/sources/README.md",
       "datasets/README.md",
       "datasets/offline_demo/README.md",

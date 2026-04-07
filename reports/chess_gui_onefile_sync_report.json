@@ -1,9 +1,9 @@
 {
   "schema": "chess_gui_onefile_sync_report_v1",
-  "generated_utc": "2026-04-07T21:26:55Z",
-  "canonical_onefile": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/scripts/chess_5080_onefile.py",
-  "gui_dir": "/Users/mertyunlu/Documents/MertFormer_Chess_GUI",
-  "gui_onefile": "/Users/mertyunlu/Documents/MertFormer_Chess_GUI/chess_5080_onefile.py",
+  "generated_utc": "2026-04-07T21:59:55Z",
+  "canonical_onefile": "<REPO_ROOT>/scripts/chess_5080_onefile.py",
+  "gui_dir": "<REPO_ROOT>/apps/chess_gui",
+  "gui_onefile": "<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py",
   "status": "up_to_date",
   "reason": "hashes_match",
   "copied": false,

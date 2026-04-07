@@ -47,6 +47,16 @@ def write_text(path: Path, text: str) -> None:
     path.write_text(text.rstrip() + "\n", encoding="utf-8")
 
 
+def display_path(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        rel = resolved.relative_to(ROOT)
+        rel_text = rel.as_posix()
+        return "<REPO_ROOT>" if not rel_text else f"<REPO_ROOT>/{rel_text}"
+    except ValueError:
+        return str(resolved)
+
+
 def load_json(path: Path) -> dict:
     if not path.exists():
         return {}
@@ -115,8 +125,8 @@ def build_manifest(decision: dict, files: list[str], steps: list[str]) -> dict:
         "train_allowed": bool(decision.get("train_allowed", False)),
         "decision_reason_code": decision.get("decision_reason_code"),
         "recommended_path": decision.get("recommended_path"),
-        "bundle_path": str(BUNDLE_ZIP),
-        "bundle_sha256_path": str(BUNDLE_SHA256),
+        "bundle_path": display_path(BUNDLE_ZIP),
+        "bundle_sha256_path": display_path(BUNDLE_SHA256),
         "transfer_files": entries,
         "operator_steps": steps,
     }
@@ -175,10 +185,10 @@ def main() -> int:
     print(
         json.dumps(
             {
-                "bundle": str(BUNDLE_ZIP),
-                "sha256": str(BUNDLE_SHA256),
-                "manifest_json": str(MANIFEST_JSON),
-                "manifest_md": str(MANIFEST_MD),
+                "bundle": display_path(BUNDLE_ZIP),
+                "sha256": display_path(BUNDLE_SHA256),
+                "manifest_json": display_path(MANIFEST_JSON),
+                "manifest_md": display_path(MANIFEST_MD),
                 "file_count": len(files),
             },
             ensure_ascii=False,

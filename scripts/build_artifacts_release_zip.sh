@@ -53,7 +53,8 @@ run_zip_with_tolerance "$ZIP_PATH" . \
      ".titan-venv/*" ".lint-venv/*" ".venv/*" ".idea/*" \
      ".pytest_cache/*" ".ruff_cache/*" ".mypy_cache/*" \
      ".env" ".env.*" "logs/*" "checkpoints/*" "reports/.one_command_full_sop_raw.*" \
-     "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256"
+     "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256" \
+     "apps/chess_gui/logs/*" "apps/chess_gui/checkpoints/*" "apps/chess_gui/assets/*" "apps/chess_gui/chess_5080_onefile.py"
 
 shasum -a 256 "$ZIP_PATH" > "$SHA_PATH"
 

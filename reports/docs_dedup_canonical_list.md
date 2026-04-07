@@ -62,6 +62,16 @@ Generated automatically.
 - `ablations/no_moe/README_TR.md`
 - `ablations/results.md`
 - `ablations/results_TR.md`
+- `apps/chess_gui/README.md`
+- `apps/chess_gui/checkpoints/README.md`
+- `apps/chess_gui/logs/README.md`
+- `apps/chess_gui/logs/stockfish_1100_20260406_235718.md`
+- `apps/chess_gui/logs/stockfish_1100_20260406_235903.md`
+- `apps/chess_gui/logs/stockfish_1600_20260406_233934.md`
+- `apps/chess_gui/logs/stockfish_1600_20260406_234202.md`
+- `apps/chess_gui/logs/stockfish_1600_20260406_234632.md`
+- `apps/chess_gui/logs/stockfish_1600_20260406_234646.md`
+- `apps/chess_gui/logs/stockfish_1600_20260406_234718.md`
 - `assets/sources/README.md`
 - `assets/sources/README_TR.md`
 - `datasets/INTERNAL_POLICY.md`
@@ -395,6 +405,9 @@ Generated automatically.
   - `ablations/dense_only/README.md`
   - `ablations/no_liquid/README.md`
   - `ablations/no_moe/README.md`
+  - `apps/chess_gui/README.md`
+  - `apps/chess_gui/checkpoints/README.md`
+  - `apps/chess_gui/logs/README.md`
   - `assets/sources/README.md`
   - `datasets/README.md`
   - `datasets/offline_demo/README.md`

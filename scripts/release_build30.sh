@@ -44,7 +44,8 @@ rm -f "$REL_ZIP" "$LOCKED_AGE"
        '.titan-venv/*' '.titan-venv.bak_*/*' '.lint-venv/*' '.venv/*' \
        '__pycache__/*' '*/__pycache__/*' '*.pyc' '.pytest_cache/*' '*/.pytest_cache/*' '.ruff_cache/*' '*/.ruff_cache/*' '.mypy_cache/*' '*/.mypy_cache/*' \
        'logs/*' '.DS_Store' 'packages/*' '.env' '.env.*' 'checkpoints/*' \
-       'datasets/stage*/*' 'datasets/logits/*' 'data/*' 'artifacts/*'
+       'datasets/stage*/*' 'datasets/logits/*' 'data/*' 'artifacts/*' \
+       'apps/chess_gui/logs/*' 'apps/chess_gui/checkpoints/*' 'apps/chess_gui/assets/*' 'apps/chess_gui/chess_5080_onefile.py'
 )
 
 "$PY" "$ROOT_DIR/scripts/zip_denylist_audit.py" --zip "$REL_ZIP"

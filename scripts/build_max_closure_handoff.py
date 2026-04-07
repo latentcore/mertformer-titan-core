@@ -24,6 +24,19 @@ def desktop_handoff_display_path() -> str:
     return f"<DESKTOP_PATH>/{DESKTOP_HANDOFF.name}"
 
 
+def repo_display_path(path: Path) -> str:
+    resolved = path.resolve()
+    root_resolved = ROOT.resolve()
+    if resolved == root_resolved:
+        return "<REPO_ROOT>"
+    try:
+        rel = resolved.relative_to(root_resolved)
+        rel_text = rel.as_posix()
+        return f"<REPO_ROOT>/{rel_text}" if rel_text else "<REPO_ROOT>"
+    except ValueError:
+        return str(resolved)
+
+
 def load_json(path: Path) -> dict:
     if not path.exists():
         return {}
@@ -210,7 +223,14 @@ def main() -> int:
     write_handoff(body)
     if desktop_copy['status'] == 'written':
         DESKTOP_HANDOFF.write_text(body, encoding='utf-8')
-    print(json.dumps({'repo_handoff': str(HANDOFF_MD), 'desktop_copy': desktop_copy}, ensure_ascii=False))
+    stdout_payload = {
+        'repo_handoff': repo_display_path(HANDOFF_MD),
+        'desktop_copy': {
+            **desktop_copy,
+            'path': desktop_copy['display_path'],
+        },
+    }
+    print(json.dumps(stdout_payload, ensure_ascii=False))
     return 0
 
 

@@ -1544,6 +1544,16 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   └── README_TR.md  # Turkish document counterpart
 │   ├── results.md  # documentation/report file
 │   └── results_TR.md  # Turkish document counterpart
+├── apps/  # directory
+│   └── chess_gui/  # directory
+│       ├── checkpoints/  # directory
+│       │   └── README.md  # primary documentation (EN)
+│       ├── logs/  # directory
+│       │   └── README.md  # primary documentation (EN)
+│       ├── .gitignore  # git ignore policy
+│       ├── README.md  # primary documentation (EN)
+│       ├── launch_mertformer_chess_gui.command  # artifact
+│       └── play_mertformer_chess_web.py  # Python module/script (module for play mertformer chess web)
 ├── artifacts/  # directory
 │   └── mertformer_release.zip.sha256  # artifact checksum
 ├── assets/  # directory
@@ -1607,13 +1617,15 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │       ├── notes.md  # documentation/report file
 │       └── notes_TR.md  # Turkish document counterpart
 ├── interfaces/  # directory
+│   ├── backlog_item_v1.schema.json  # JSON schema artifact
 │   ├── closure_57_matrix_v1.schema.json  # JSON schema artifact
 │   ├── inference_contract.md  # documentation/report file
 │   ├── inference_contract_TR.md  # Turkish document counterpart
 │   ├── kpi_report_v1.schema.json  # JSON schema artifact
 │   ├── pilot_report_v1.schema.json  # JSON schema artifact
 │   ├── run_manifest_v1.schema.json  # JSON schema artifact
-│   └── tokenizer_spec.json  # JSON data artifact
+│   ├── tokenizer_spec.json  # JSON data artifact
+│   └── workspace_hygiene_manifest_v1.schema.json  # JSON schema artifact
 ├── layers/  # directory
 │   ├── __init__.py  # Python module/script (layers package initializer and exports)
 │   ├── bitlinear.py  # Python module/script (BitLinear low-bit linear layer implementation)
@@ -1796,6 +1808,10 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── checkpoint_contract.md  # documentation/report file
 │   ├── checkpoint_hash_manifest.json  # JSON data artifact
 │   ├── checkpoint_restore_report.json  # JSON data artifact
+│   ├── chess_gui_onefile_sync_report.json  # JSON data artifact
+│   ├── chess_gui_onefile_sync_report.md  # documentation/report file
+│   ├── chess_teaching_contract_report.json  # JSON data artifact
+│   ├── chess_teaching_contract_report.md  # documentation/report file
 │   ├── claim_number_audit.json  # JSON data artifact
 │   ├── claim_registry.json  # JSON data artifact
 │   ├── cleanroom_verification.md  # documentation/report file
@@ -1809,6 +1825,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── closure_report_build30_v2.md  # documentation/report file
 │   ├── closure_risk_register.md  # documentation/report file
 │   ├── cloud_readiness_report.md  # documentation/report file
+│   ├── code_truth_contract.md  # documentation/report file
+│   ├── code_truth_delta_audit.json  # JSON data artifact
+│   ├── code_truth_delta_audit.md  # documentation/report file
 │   ├── codex_deep_audit_DE.md  # documentation/report file
 │   ├── codex_deep_audit_DE_TR.md  # Turkish document counterpart
 │   ├── codex_deep_audit_EN.md  # documentation/report file
@@ -1962,14 +1981,19 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── snapshot_manifest_main.json  # JSON data artifact
 │   ├── source_of_truth_map.md  # documentation/report file
 │   ├── stale_script_report.md  # documentation/report file
+│   ├── start_gate_operator_decision.json  # JSON data artifact
+│   ├── start_gate_operator_decision.md  # documentation/report file
 │   ├── start_gate_report.json  # JSON data artifact
 │   ├── startup_selfcheck_report.json  # JSON data artifact
 │   ├── static_analysis_report.json  # JSON data artifact
 │   ├── strategic_value.md  # documentation/report file
 │   ├── strategic_value_TR.md  # Turkish document counterpart
+│   ├── surface_lifecycle_matrix.md  # documentation/report file
 │   ├── system_hardware.md  # documentation/report file
 │   ├── system_hardware_TR.md  # Turkish document counterpart
 │   ├── system_stats.jsonl  # JSONL data/log artifact
+│   ├── target_machine_handoff_manifest.json  # JSON data artifact
+│   ├── target_machine_handoff_manifest.md  # documentation/report file
 │   ├── teacher_decision_record.md  # documentation/report file
 │   ├── teacher_output_license_assessment.md  # documentation/report file
 │   ├── technical_snapshot.md  # documentation/report file
@@ -1982,6 +2006,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── unicode_path_guard_report.json  # JSON data artifact
 │   ├── verified_matrix.md  # documentation/report file
 │   ├── verified_matrix_TR.md  # Turkish document counterpart
+│   ├── workspace_hygiene_manifest.json  # JSON data artifact
+│   ├── workspace_hygiene_manifest.md  # documentation/report file
 │   ├── xla_smoke_report.json  # JSON data artifact
 │   ├── zip_audit_artifacts.json  # JSON data artifact
 │   └── zip_audit_packages.json  # JSON data artifact
@@ -2013,15 +2039,19 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── bootstrap_venv.sh  # shell automation script
 │   ├── build_artifacts_release_zip.sh  # shell automation script
 │   ├── build_chess_5080_windows_delivery.py  # Python module/script (automation script for build chess 5080 windows delivery)
+│   ├── build_chess_teaching_contract_report.py  # Python module/script (automation script for build chess teaching contract report)
 │   ├── build_closure_governance_pack.py  # Python module/script (automation script for build closure governance pack)
+│   ├── build_code_truth_audit.py  # Python module/script (automation script for build code truth audit)
 │   ├── build_investor_deck.py  # Python module/script (automation script for build investor deck)
 │   ├── build_master_closure_matrix.py  # Python module/script (automation script for build master closure matrix)
 │   ├── build_max_closure_handoff.py  # Python module/script (automation script for build max closure handoff)
 │   ├── build_offline_closure_pack.py  # Python module/script (automation script for build offline closure pack)
 │   ├── build_scoped_external_intake_matrix.py  # Python module/script (automation script for build scoped external intake matrix)
 │   ├── build_summary_pdf.py  # Python module/script (automation script for build summary pdf)
+│   ├── build_target_machine_handoff_bundle.py  # Python module/script (automation script for build target machine handoff bundle)
 │   ├── build_train_readiness_contract.py  # Python module/script (automation script for build train readiness contract)
 │   ├── build_validation_set.py  # Python module/script (automation script for build validation set)
+│   ├── build_workspace_hygiene_manifest.py  # Python module/script (automation script for build workspace hygiene manifest)
 │   ├── cfc_moe_tolerance_check.py  # Python module/script (automation script for cfc moe tolerance check)
 │   ├── chat.py  # Python module/script (automation script for chat)
 │   ├── check_57_matrix.py  # Python module/script (automation script for check 57 matrix)
@@ -2084,6 +2114,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── smart_runner.py  # Python module/script (automation script for smart runner)
 │   ├── smoke_train_benchmark.py  # Python module/script (automation script for smoke train benchmark)
 │   ├── start_gate.py  # Python module/script (automation script for start gate)
+│   ├── sync_chess_gui_onefile.py  # Python module/script (automation script for sync chess gui onefile)
 │   ├── sync_manifest.py  # Python module/script (release manifest and project-structure sync generator)
 │   ├── test_onnx_export.py  # Python module/script (automation script for test onnx export)
 │   ├── titan_onnx_stress_test.py  # Python module/script (automation script for titan onnx stress test)
@@ -2107,9 +2138,14 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_agi_cognitive.py  # Python module/script (automated test module for agi cognitive)
 │   ├── test_architecture_integrity.py  # Python module/script (automated test module for architecture integrity)
 │   ├── test_build_chess_5080_windows_delivery.py  # Python module/script (automated test module for build chess 5080 windows delivery)
+│   ├── test_build_chess_teaching_contract_report.py  # Python module/script (automated test module for build chess teaching contract report)
+│   ├── test_build_code_truth_audit.py  # Python module/script (automated test module for build code truth audit)
 │   ├── test_build_max_closure_handoff.py  # Python module/script (automated test module for build max closure handoff)
+│   ├── test_build_target_machine_handoff_bundle.py  # Python module/script (automated test module for build target machine handoff bundle)
+│   ├── test_build_workspace_hygiene_manifest.py  # Python module/script (automated test module for build workspace hygiene manifest)
 │   ├── test_check_doc_claim_consistency.py  # Python module/script (automated test module for check doc claim consistency)
 │   ├── test_chess_5080_onefile.py  # Python module/script (automated test module for chess 5080 onefile)
+│   ├── test_chess_gui_contract.py  # Python module/script (automated test module for chess gui contract)
 │   ├── test_cognitive_extensions.py  # Python module/script (automated test module for cognitive extensions)
 │   ├── test_comprehensive.py  # Python module/script (automated test module for comprehensive)
 │   ├── test_continual_adapter.py  # Python module/script (automated test module for continual adapter)
@@ -2141,6 +2177,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_scoped_external_tools.py  # Python module/script (automated test module for scoped external tools)
 │   ├── test_sdk_api.py  # Python module/script (automated test module for sdk api)
 │   ├── test_sdk_pilot_cli.py  # Python module/script (automated test module for sdk pilot cli)
+│   ├── test_start_gate.py  # Python module/script (automated test module for start gate)
+│   ├── test_sync_chess_gui_onefile.py  # Python module/script (automated test module for sync chess gui onefile)
 │   ├── test_titan_preflight_contract.py  # Python module/script (automated test module for titan preflight contract)
 │   ├── test_train_loop_sanity.py  # Python module/script (automated test module for train loop sanity)
 │   ├── test_triad_omega_api.py  # Python module/script (automated test module for triad omega api)

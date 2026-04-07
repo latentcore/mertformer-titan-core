@@ -5,8 +5,8 @@
     "<HOME>/Documents/mertformer_outputs",
     "<HOME>/Downloads/content/mertformer_outputs"
   ],
-  "found_count": 617,
-  "removed_count": 617,
+  "found_count": 618,
+  "removed_count": 618,
   "stale_deleted_count": 0,
   "found": [
     "<REPO_ROOT>/.pytest_cache",
@@ -23,6 +23,7 @@
     "<REPO_ROOT>/model/__pycache__",
     "<REPO_ROOT>/train/__pycache__",
     "<REPO_ROOT>/eval/__pycache__",
+    "<REPO_ROOT>/apps/chess_gui/__pycache__",
     "<REPO_ROOT>/orchestrator/__pycache__",
     "<REPO_ROOT>/.titan-venv/lib/python3.11/site-packages/__pycache__",
     "<REPO_ROOT>/.titan-venv/lib/python3.11/site-packages/ruff/__pycache__",
@@ -642,6 +643,7 @@
     "<REPO_ROOT>/model/__pycache__",
     "<REPO_ROOT>/train/__pycache__",
     "<REPO_ROOT>/eval/__pycache__",
+    "<REPO_ROOT>/apps/chess_gui/__pycache__",
     "<REPO_ROOT>/orchestrator/__pycache__",
     "<REPO_ROOT>/.titan-venv/lib/python3.11/site-packages/__pycache__",
     "<REPO_ROOT>/.titan-venv/lib/python3.11/site-packages/ruff/__pycache__",

@@ -16,6 +16,19 @@ def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def display_path(path: Path) -> str:
+    resolved = path.resolve()
+    root_resolved = ROOT.resolve()
+    if resolved == root_resolved:
+        return "<REPO_ROOT>"
+    try:
+        rel = resolved.relative_to(root_resolved)
+        rel_text = rel.as_posix()
+        return f"<REPO_ROOT>/{rel_text}" if rel_text else "<REPO_ROOT>"
+    except ValueError:
+        return str(resolved)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Verify tokenizer spec mirror stays byte-synced.")
     parser.add_argument("--canonical", default=str(DEFAULT_CANONICAL))
@@ -38,8 +51,8 @@ def main() -> int:
     c_hash = sha256_bytes(c_data)
     m_hash = sha256_bytes(m_data)
 
-    print(f"canonical={canonical}")
-    print(f"mirror={mirror}")
+    print(f"canonical={display_path(canonical)}")
+    print(f"mirror={display_path(mirror)}")
     print(f"canonical_sha256={c_hash}")
     print(f"mirror_sha256={m_hash}")
 

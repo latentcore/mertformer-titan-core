@@ -9,7 +9,7 @@ sys.path.insert(0, str(ROOT))
 
 import scripts.chess_5080_onefile as onefile
 
-GUI_PATH = Path("/Users/mertyunlu/Documents/MertFormer_Chess_GUI/play_mertformer_chess_web.py")
+GUI_PATH = ROOT / "apps" / "chess_gui" / "play_mertformer_chess_web.py"
 
 
 def load_gui_module():
@@ -85,4 +85,3 @@ def test_arena_state_passes_mode_and_teaching_level_to_contract(monkeypatch, tmp
     assert captured["teaching_level"] == "advanced"
     assert payload["last_trace"]["response_contract"]["mode"] == "turkish_teach"
     assert payload["last_trace"]["response_contract"]["teaching_level"] == "advanced"
-

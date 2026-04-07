@@ -1,37 +1,37 @@
 {
   "schema": "workspace_hygiene_manifest_v1",
-  "generated_utc": "2026-04-07T21:26:55Z",
+  "generated_utc": "2026-04-07T21:59:55Z",
   "mode": "audit_only",
-  "workspace_root": "/Users/mertyunlu/Desktop/NİHAİ",
-  "repo_root": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core",
-  "quarantine_root": "/Users/mertyunlu/Desktop/NİHAİ/workspace_quarantine",
+  "workspace_root": "<WORKSPACE_ROOT>",
+  "repo_root": "<REPO_ROOT>",
+  "quarantine_root": "<QUARANTINE_ROOT>",
   "items": [
     {
-      "path": "/Users/mertyunlu/Desktop/NİHAİ/.DS_Store",
+      "path": "<WORKSPACE_ROOT>/.DS_Store",
       "classification": "desktop_metadata",
       "reason": "macOS metadata file. Ignore by default unless a human wants cosmetic cleanup.",
-      "restore_target": "/Users/mertyunlu/Desktop/NİHAİ/.DS_Store",
+      "restore_target": "<WORKSPACE_ROOT>/.DS_Store",
       "decision_state": "ignore"
     },
     {
-      "path": "/Users/mertyunlu/Desktop/NİHAİ/.idea",
+      "path": "<WORKSPACE_ROOT>/.idea",
       "classification": "workspace_metadata",
       "reason": "IDE workspace metadata outside the repo root. Keep unless a human explicitly retires the workspace.",
-      "restore_target": "/Users/mertyunlu/Desktop/NİHAİ/.idea",
+      "restore_target": "<WORKSPACE_ROOT>/.idea",
       "decision_state": "keep"
     },
     {
-      "path": "/Users/mertyunlu/Desktop/NİHAİ/.ruff_cache",
+      "path": "<WORKSPACE_ROOT>/.ruff_cache",
       "classification": "workspace_cache",
       "reason": "Rebuildable lint cache outside the repo root. Safe candidate for quarantine-first handling.",
-      "restore_target": "/Users/mertyunlu/Desktop/NİHAİ/.ruff_cache",
+      "restore_target": "<WORKSPACE_ROOT>/.ruff_cache",
       "decision_state": "quarantine_first"
     },
     {
-      "path": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core",
+      "path": "<REPO_ROOT>",
       "classification": "project_repo",
       "reason": "Active main repository root; never quarantine or delete directly from workspace hygiene.",
-      "restore_target": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core",
+      "restore_target": "<REPO_ROOT>",
       "decision_state": "keep"
     }
   ]
