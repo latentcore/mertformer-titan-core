@@ -41,6 +41,8 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - `check_tokenizer_sync.py` — Enforces canonical tokenizer spec sync (`interfaces/tokenizer_spec.json` -> `tokenizer/tokenizer.json`).
 - `check_translation_pointer_policy.py` — Enforces pointer policy for translated deep-audit counterparts.
 - `check_doc_claim_consistency.py` — Checks claim/evidence consistency in key docs.
+- `build_code_truth_audit.py` — Emits the code-truth delta audit with maturity labels, four-column evidence requirements, and marker scan output.
+- `build_workspace_hygiene_manifest.py` — Builds the quarantine-first workspace hygiene manifest; `--apply-quarantine` is opt-in and should only be used after reviewing the generated manifest.
 - `clean_runtime_artifacts.sh` — Cleans runtime artifacts (including root `kaggle_onefile_build30_*.jsonl`).
 - `run_and_clean_pycache.py` — Runs any command and then guarantees post-run cache cleanup (`--full-clean` includes `.DS_Store`, `.cache`, `.ipynb_checkpoints`, `.tox`, `.nox`, `.hypothesis`, `.vs`; add `--include-venv-caches` to also clean venv caches).
 - `zip_denylist_audit.py` — Audits release zip against denylisted paths and secret patterns.

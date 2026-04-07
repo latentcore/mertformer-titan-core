@@ -21,9 +21,24 @@
 ## Hard Rules
 - No claim without evidence.
 - Do not say `45K-ready` unless the current readiness report says `TRAIN_ALLOWED`.
+- A closure-critical item is only `done` when code path, canonical command, verification, and artifact/report evidence all exist together.
+- Docs-only closure is forbidden.
 - Do not convert scaffolds, placeholders, historical snapshots, or plans into completed work.
 - Do not use historical audit files as current truth unless the current source-of-truth files explicitly point back to them.
 - Keep measured vs target vs vision language explicit in README, model card, policy files, and prompts.
+
+## Code-Truth Maturity Labels
+- `reference_safe`: correctness-first reference or scaffold path that is safe for parity/debug use, not for production-depth speed claims.
+- `tested_fallback`: deterministic or bounded implementation with test coverage, but not a release-grade performance claim surface.
+- `optimized_production`: measured and release-grade optimized path backed by claim-grade evidence.
+
+## Surface Lifecycle Classes
+- `frozen`: rules, schemas, naming, source-of-truth order, and release-truth constraints.
+- `maintained`: verification gates, manifests, and reproducibility or handoff surfaces that must stay current but not churn without reason.
+- `living`: training, benchmark, kernel, export, product, chess, packaging, security, legal, and pilot implementation surfaces.
+
+## Research-Lane Rule
+- `3000+ Elo`, `20 ms/move`, `10000x speedup`, AGI/ASI language, and long-context moonshots remain research lanes unless measured evidence explicitly upgrades them.
 
 ## Release-Truth Gates
 - `bash scripts/verify_all.sh`

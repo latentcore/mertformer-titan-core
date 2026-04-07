@@ -29,6 +29,8 @@ bash scripts/final_one_shot.sh
 ```bash
 python3 scripts/build_master_closure_matrix.py
 python3 scripts/build_train_readiness_contract.py --allow-not-ready
+python3 scripts/start_gate.py --skip-verify-all --allow-not-ready
+python3 scripts/build_target_machine_handoff_bundle.py
 python3 scripts/build_max_closure_handoff.py
 ```
 

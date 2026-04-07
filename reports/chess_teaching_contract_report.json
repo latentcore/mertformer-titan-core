@@ -1,0 +1,188 @@
+{
+  "schema": "chess_teaching_contract_report_v1",
+  "generated_utc": "2026-04-07T21:26:56Z",
+  "contract_version": "1.0",
+  "summary": {
+    "case_total": 5,
+    "case_pass": 5,
+    "mode_total": 5,
+    "mode_pass": 5,
+    "level_monotonic_non_decreasing": true,
+    "all_green": true
+  },
+  "case_results": [
+    {
+      "case_id": "center_control",
+      "title": "Opening central pawn push",
+      "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "mode": "teach",
+      "teaching_level": "club",
+      "move": "e2e4",
+      "san": "e4",
+      "teaching_tags": [
+        "center_control"
+      ],
+      "confidence": {
+        "score": 0.61,
+        "gap": 0.17,
+        "tier": "medium"
+      },
+      "short": "Öğretme modu: e4 oynanıyor; merkez kareler üzerinde daha güçlü kontrol kuruyor. Konum konum tarafında küçük ama gerçek bir baskı avantajı var.",
+      "long": "Öğretme modu bu pozisyonda `e2e4` (e4) hamlesini öne çıkarıyor. Ana fikir: merkez kareler üzerinde daha güçlü kontrol kuruyor. Değer başlığına göre konum konum tarafında küçük ama gerçek bir baskı avantajı var. Güven seviyesi `medium` ve üst aday farkı `0.1700`. Yakın alternatif adaylar: d2d4, g1f3. Buradaki principal variation search-derinliği değil, mevcut policy seçiminin tek hamlelik özetidir.",
+      "status": "pass",
+      "problems": []
+    },
+    {
+      "case_id": "development",
+      "title": "Knight development from the home square",
+      "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "mode": "teach",
+      "teaching_level": "club",
+      "move": "g1f3",
+      "san": "Nf3",
+      "teaching_tags": [
+        "development"
+      ],
+      "confidence": {
+        "score": 0.61,
+        "gap": 0.17,
+        "tier": "medium"
+      },
+      "short": "Öğretme modu: Nf3 oynanıyor; gelişimi hızlandırıp taş koordinasyonunu iyileştiriyor. Konum konum tarafında küçük ama gerçek bir baskı avantajı var.",
+      "long": "Öğretme modu bu pozisyonda `g1f3` (Nf3) hamlesini öne çıkarıyor. Ana fikir: gelişimi hızlandırıp taş koordinasyonunu iyileştiriyor. Değer başlığına göre konum konum tarafında küçük ama gerçek bir baskı avantajı var. Güven seviyesi `medium` ve üst aday farkı `0.1700`. Yakın alternatif adaylar: d2d4. Buradaki principal variation search-derinliği değil, mevcut policy seçiminin tek hamlelik özetidir.",
+      "status": "pass",
+      "problems": []
+    },
+    {
+      "case_id": "capture_check",
+      "title": "Capture that also gives check",
+      "fen": "rnbqkbnr/pppp1ppp/8/4p2Q/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1",
+      "mode": "teach",
+      "teaching_level": "club",
+      "move": "h5f7",
+      "san": "Qxf7+",
+      "teaching_tags": [
+        "capture",
+        "check",
+        "activity"
+      ],
+      "confidence": {
+        "score": 0.83,
+        "gap": 0.44,
+        "tier": "high"
+      },
+      "short": "Öğretme modu: Qxf7+ oynanıyor; materyal dengesini etkileyen bir değişim yaratıyor. Konum eldeki konum belirgin biçimde iyi görünüyor.",
+      "long": "Öğretme modu bu pozisyonda `h5f7` (Qxf7+) hamlesini öne çıkarıyor. Ana fikir: materyal dengesini etkileyen bir değişim yaratıyor, rakip şahı hemen cevap vermeye zorluyor, tek hamlede birden fazla tehdit hattını canlandırıyor. Değer başlığına göre konum eldeki konum belirgin biçimde iyi görünüyor. Güven seviyesi `high` ve üst aday farkı `0.4400`. Yakın alternatif adaylar: d2d4, g1f3. Buradaki principal variation search-derinliği değil, mevcut policy seçiminin tek hamlelik özetidir.",
+      "status": "pass",
+      "problems": []
+    },
+    {
+      "case_id": "castle",
+      "title": "Kingside castling move",
+      "fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 3",
+      "mode": "analyze",
+      "teaching_level": "advanced",
+      "move": "e1g1",
+      "san": "O-O",
+      "teaching_tags": [
+        "castle"
+      ],
+      "confidence": {
+        "score": 0.42,
+        "gap": 0.08,
+        "tier": "medium"
+      },
+      "short": "Analiz modu: O-O oynanıyor; şah güvenliğini artırıp kaleleri daha hızlı oyuna sokuyor. Konum değer başlığı tarafında keskin bir kopuş yok; plan ve uygulama öne çıkıyor.",
+      "long": "Analiz modu bu pozisyonda `e1g1` (O-O) hamlesini öne çıkarıyor. Ana fikir: şah güvenliğini artırıp kaleleri daha hızlı oyuna sokuyor. Değer başlığına göre konum değer başlığı tarafında keskin bir kopuş yok; plan ve uygulama öne çıkıyor. Güven seviyesi `medium` ve üst aday farkı `0.0800`. Yakın alternatif adaylar: d2d4, g1f3. Buradaki principal variation search-derinliği değil, mevcut policy seçiminin tek hamlelik özetidir.",
+      "status": "pass",
+      "problems": []
+    },
+    {
+      "case_id": "promotion",
+      "title": "Promotion move",
+      "fen": "7k/P7/7K/8/8/8/8/8 w - - 0 1",
+      "mode": "turkish_teach",
+      "teaching_level": "basic",
+      "move": "a7a8q",
+      "san": "a8=Q#",
+      "teaching_tags": [
+        "promotion",
+        "check",
+        "checkmate"
+      ],
+      "confidence": {
+        "score": 0.91,
+        "gap": 0.52,
+        "tier": "high"
+      },
+      "short": "Türkçe öğretme modu: a8=Q# oynanıyor; terfi ile taş gücünü ciddi biçimde yükseltiyor. Konum açık şekilde iyi görünüyor.",
+      "long": "Türkçe öğretme modu bu pozisyonda `a7a8q` (a8=Q#) hamlesini öne çıkarıyor. Ana fikir: terfi ile taş gücünü ciddi biçimde yükseltiyor, rakip şahı hemen cevap vermeye zorluyor. Değer başlığına göre konum açık şekilde iyi görünüyor. Güven seviyesi `high` ve üst aday farkı `0.5200`. Yakın alternatif adaylar: d2d4, g1f3. Buradaki principal variation search-derinliği değil, mevcut policy seçiminin tek hamlelik özetidir.",
+      "status": "pass",
+      "problems": []
+    }
+  ],
+  "mode_results": [
+    {
+      "mode": "play",
+      "normalized_mode": "play",
+      "short_prefix": "Oyun modu",
+      "status": "pass"
+    },
+    {
+      "mode": "teach",
+      "normalized_mode": "teach",
+      "short_prefix": "Öğretme modu",
+      "status": "pass"
+    },
+    {
+      "mode": "analyze",
+      "normalized_mode": "analyze",
+      "short_prefix": "Analiz modu",
+      "status": "pass"
+    },
+    {
+      "mode": "turkish_teach",
+      "normalized_mode": "turkish_teach",
+      "short_prefix": "Türkçe öğretme modu",
+      "status": "pass"
+    },
+    {
+      "mode": "benchmark",
+      "normalized_mode": "benchmark",
+      "short_prefix": "Benchmark modu",
+      "status": "pass"
+    }
+  ],
+  "level_results": [
+    {
+      "level": "basic",
+      "reason_count": 2,
+      "reasons": [
+        "gelişimi hızlandırıp taş koordinasyonunu iyileştiriyor",
+        "merkez kareler üzerinde daha güçlü kontrol kuruyor"
+      ]
+    },
+    {
+      "level": "club",
+      "reason_count": 3,
+      "reasons": [
+        "gelişimi hızlandırıp taş koordinasyonunu iyileştiriyor",
+        "merkez kareler üzerinde daha güçlü kontrol kuruyor",
+        "tek hamlede birden fazla tehdit hattını canlandırıyor"
+      ]
+    },
+    {
+      "level": "advanced",
+      "reason_count": 4,
+      "reasons": [
+        "gelişimi hızlandırıp taş koordinasyonunu iyileştiriyor",
+        "merkez kareler üzerinde daha güçlü kontrol kuruyor",
+        "tek hamlede birden fazla tehdit hattını canlandırıyor",
+        "rakip vezire tempo kazandıran baskı uyguluyor"
+      ]
+    },
+    {
+      "monotonic_non_decreasing": true
+    }
+  ]
+}

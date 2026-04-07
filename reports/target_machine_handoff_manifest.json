@@ -1,0 +1,75 @@
+{
+  "schema": "target_machine_handoff_manifest_v1",
+  "generated_utc": "2026-04-07T21:27:05Z",
+  "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
+  "train_allowed": true,
+  "decision_reason_code": "READY_OFFLINE_CLEAN",
+  "recommended_path": "offline_clean",
+  "bundle_path": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/artifacts/target_machine_handoff_bundle.zip",
+  "bundle_sha256_path": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/artifacts/target_machine_handoff_bundle.zip.sha256",
+  "transfer_files": [
+    {
+      "path": "zero_touch_start.sh",
+      "size_bytes": 854,
+      "sha256": "964e874d2dfcbc00c2de0ca2321125ccb3afeefdcde7cc994fa36a01b905be4a"
+    },
+    {
+      "path": "run.sh",
+      "size_bytes": 23997,
+      "sha256": "5a66b3f4db9fefb11b76332eb39b39693b230a638f2af4bf4a748cd874f57470"
+    },
+    {
+      "path": "scripts/final_orchestrator.py",
+      "size_bytes": 24901,
+      "sha256": "bd62e06d4be1f262c5748e1139555e945417577e19e1e872f22fd6c777feb840"
+    },
+    {
+      "path": "scripts/start_gate.py",
+      "size_bytes": 8154,
+      "sha256": "bafd1afb61b5f8d02e153cd822ef5b6f3a89f988876fd849df68b803d91c5e55"
+    },
+    {
+      "path": "scripts/build_train_readiness_contract.py",
+      "size_bytes": 5746,
+      "sha256": "0b7a89c5ed289814b9d962713caa901d348ba7dde3dd7f6dfa64794ff77e74bb"
+    },
+    {
+      "path": "reports/train_readiness_decision.json",
+      "size_bytes": 2943,
+      "sha256": "fae486c7dc7efbdf7f86819e5b3eab2ebbfae26e47fdd5a4734ac8a71b3eb282"
+    },
+    {
+      "path": "reports/train_readiness_decision.md",
+      "size_bytes": 553,
+      "sha256": "a442f9f895d0fda9e30b149b22666a1f36db187ce35acca82eb869345dca1e76"
+    },
+    {
+      "path": "reports/start_gate_report.json",
+      "size_bytes": 4950,
+      "sha256": "176ed533c9a84ad7e9399973da9c5267911df9500d313f36986a9be1cf853d1b"
+    },
+    {
+      "path": "reports/start_gate_operator_decision.json",
+      "size_bytes": 1040,
+      "sha256": "f45e7e6e52bae11322dd86b308b9f50be54b456de8750d4a8dcffbb6f869f453"
+    },
+    {
+      "path": "reports/start_gate_operator_decision.md",
+      "size_bytes": 902,
+      "sha256": "c898ab513e027883fcb2cf03a94bd270438334007fff3ccc4d82529d7d624d85"
+    },
+    {
+      "path": "reports/repo_external_handoff.md",
+      "size_bytes": 1468,
+      "sha256": "112300b640539b04bc880c82b1a8b549bd7c8b56ced7afe5cc99f85a44a91522"
+    }
+  ],
+  "operator_steps": [
+    "Copy or extract this bundle onto the target training machine.",
+    "Run `bash zero_touch_start.sh --check-only` first.",
+    "If the target machine start gate remains green, launch the canonical path immediately.",
+    "Canonical offline-clean launcher: `TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh`",
+    "Optional online teacher lane only if intentionally chosen: `HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh`",
+    "Current repo-side recommended_path is `offline_clean`."
+  ]
+}

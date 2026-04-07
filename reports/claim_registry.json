@@ -148,5 +148,42 @@
       "reports/repo_external_handoff.md"
     ],
     "still_missing": "Real 45K outputs still remain external to the current working tree."
+  },
+  {
+    "claim_id": "claim.docs_only_done_forbidden",
+    "claim": "Closure-critical work is not done if it only exists as prose without code path, command, verification, and artifact evidence.",
+    "mode": "policy",
+    "status": "verified",
+    "evidence": [
+      "AGENTS.md",
+      "reports/code_truth_contract.md",
+      "scripts/build_code_truth_audit.py"
+    ],
+    "still_missing": "This rule is now explicit in the repo, but humans still need to honor it during future edits and release decisions."
+  },
+  {
+    "claim_id": "claim.kernel_maturity_labels_explicit",
+    "claim": "Critical kernel and chess proof surfaces carry explicit maturity labels instead of being narrated as uniformly production-depth.",
+    "mode": "measured",
+    "status": "verified",
+    "evidence": [
+      "reports/code_truth_delta_audit.md",
+      "scripts/build_code_truth_audit.py",
+      "reports/surface_lifecycle_matrix.md"
+    ],
+    "still_missing": "Optimized-production claims still require measured backend-specific evidence rather than label upgrades by prose."
+  },
+  {
+    "claim_id": "claim.workspace_hygiene_quarantine_first",
+    "claim": "Workspace hygiene is governed by a quarantine-first manifest instead of direct destructive cleanup.",
+    "mode": "policy",
+    "status": "verified",
+    "evidence": [
+      "reports/workspace_hygiene_manifest.md",
+      "reports/workspace_hygiene_manifest.json",
+      "interfaces/workspace_hygiene_manifest_v1.schema.json",
+      "scripts/build_workspace_hygiene_manifest.py"
+    ],
+    "still_missing": "Any destructive cleanup still requires a reviewed manifest and explicit operator intent."
   }
 ]

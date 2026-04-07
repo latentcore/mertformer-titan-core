@@ -1,7 +1,6 @@
 {
   "roots": [
     "<REPO_ROOT>",
-    "<HOME>/Desktop/MertFormer_45K_Launch_Bundle_20260401_2130",
     "<HOME>/Desktop/MertFormerStream",
     "<HOME>/Documents/mertformer_outputs",
     "<HOME>/Downloads/content/mertformer_outputs"

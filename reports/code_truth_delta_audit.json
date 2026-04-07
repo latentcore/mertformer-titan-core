@@ -1,0 +1,646 @@
+{
+  "schema": "code_truth_delta_audit_v1",
+  "generated_utc": "2026-04-07T21:26:54Z",
+  "evidence_contract": {
+    "required_columns": [
+      "code_path",
+      "canonical_command",
+      "verification",
+      "artifact"
+    ],
+    "done_rule": "A closure-critical item is only done when code path, canonical command, verification, and artifact/report evidence all exist together."
+  },
+  "surface_groups": {
+    "no-touch": [
+      "AGENTS.md",
+      "reports/final_backlog_classification.md",
+      "reports/final_freeze_manifest.md",
+      "reports/source_of_truth_map.md",
+      "reports/final_truth_matrix.md"
+    ],
+    "high-risk": [
+      "layers/bitlinear.py",
+      "mertformer_sdk/kernels/dispatcher.py",
+      "mertformer_sdk/kernels/triton_ternary.py",
+      "mertformer_sdk/kernels/cpp/bitnet_cpu.cpp",
+      "mertformer_sdk/kernels/metal/engine.py",
+      "scripts/chess_5080_onefile.py"
+    ],
+    "closure": [
+      "zero_touch_start.sh",
+      "scripts/verify_all.sh",
+      "scripts/final_orchestrator.py",
+      "scripts/post_train_autorun.py",
+      "scripts/build_closure_governance_pack.py"
+    ],
+    "research": [
+      "scripts/train_tpu_turbo.py",
+      "reports/phase2_carryover.md",
+      "CHESS_5080_POC_INTERNAL_TR.md",
+      "OFFLINE_4060_DEMO.md"
+    ],
+    "desktop-hygiene": [
+      "scripts/build_workspace_hygiene_manifest.py",
+      "interfaces/workspace_hygiene_manifest_v1.schema.json",
+      "reports/workspace_hygiene_manifest.md",
+      "reports/workspace_hygiene_manifest.json"
+    ]
+  },
+  "technical_surfaces": [
+    {
+      "path": "layers/bitlinear.py",
+      "exists": true,
+      "lane": "bitnet-kernel",
+      "surface_class": "living",
+      "maturity": "tested_fallback",
+      "markers": [],
+      "evidence": {
+        "code_path": [
+          "layers/bitlinear.py"
+        ],
+        "canonical_command": [
+          "python3 -m pytest -q tests/test_kernel_dispatcher.py tests/test_kernel_equivalence.py tests/test_cpp_kernel_loader.py"
+        ],
+        "verification": [
+          "tests/test_kernel_dispatcher.py",
+          "tests/test_kernel_equivalence.py",
+          "tests/test_cpp_kernel_loader.py"
+        ],
+        "artifact": [
+          "reports/code_truth_delta_audit.md",
+          "reports/final_truth_matrix.md"
+        ]
+      },
+      "evidence_complete": true,
+      "source_of_truth": [
+        "AGENTS.md",
+        "reports/code_truth_contract.md",
+        "reports/final_truth_matrix.md"
+      ],
+      "notes": "BitLinear is correctness-first and dispatch-aware, but production-depth performance claims still depend on backend-specific measurement."
+    },
+    {
+      "path": "mertformer_sdk/kernels/dispatcher.py",
+      "exists": true,
+      "lane": "bitnet-kernel",
+      "surface_class": "maintained",
+      "maturity": "tested_fallback",
+      "markers": [
+        "fallback"
+      ],
+      "evidence": {
+        "code_path": [
+          "mertformer_sdk/kernels/dispatcher.py"
+        ],
+        "canonical_command": [
+          "python3 -m pytest -q tests/test_kernel_dispatcher.py"
+        ],
+        "verification": [
+          "tests/test_kernel_dispatcher.py"
+        ],
+        "artifact": [
+          "reports/code_truth_delta_audit.md"
+        ]
+      },
+      "evidence_complete": true,
+      "source_of_truth": [
+        "reports/code_truth_contract.md",
+        "reports/final_truth_matrix.md"
+      ],
+      "notes": "Dispatcher routing is deterministic and test-covered; it is a contract surface rather than a speed claim by itself."
+    },
+    {
+      "path": "mertformer_sdk/kernels/triton_ternary.py",
+      "exists": true,
+      "lane": "bitnet-performance",
+      "surface_class": "living",
+      "maturity": "tested_fallback",
+      "markers": [],
+      "evidence": {
+        "code_path": [
+          "mertformer_sdk/kernels/triton_ternary.py"
+        ],
+        "canonical_command": [
+          "python3 -m pytest -q tests/test_kernel_equivalence.py"
+        ],
+        "verification": [
+          "tests/test_kernel_equivalence.py"
+        ],
+        "artifact": [
+          "reports/code_truth_delta_audit.md"
+        ]
+      },
+      "evidence_complete": true,
+      "source_of_truth": [
+        "reports/code_truth_contract.md",
+        "reports/final_truth_matrix.md"
+      ],
+      "notes": "The Triton kernel is explicitly experimental; correctness is partially covered, but it is not yet a release-grade performance claim surface."
+    },
+    {
+      "path": "mertformer_sdk/kernels/cpp/bitnet_cpu.cpp",
+      "exists": true,
+      "lane": "cpu-reference",
+      "surface_class": "maintained",
+      "maturity": "reference_safe",
+      "markers": [
+        "scaffold"
+      ],
+      "evidence": {
+        "code_path": [
+          "mertformer_sdk/kernels/cpp/bitnet_cpu.cpp"
+        ],
+        "canonical_command": [
+          "python3 -m pytest -q tests/test_cpp_kernel_loader.py"
+        ],
+        "verification": [
+          "tests/test_cpp_kernel_loader.py"
+        ],
+        "artifact": [
+          "reports/code_truth_delta_audit.md"
+        ]
+      },
+      "evidence_complete": true,
+      "source_of_truth": [
+        "reports/code_truth_contract.md",
+        "reports/surface_lifecycle_matrix.md"
+      ],
+      "notes": "This file is a minimal CPU reference kernel and should remain a parity/debug surface, not a production-depth speed claim."
+    },
+    {
+      "path": "mertformer_sdk/kernels/metal/engine.py",
+      "exists": true,
+      "lane": "mps-metal",
+      "surface_class": "living",
+      "maturity": "tested_fallback",
+      "markers": [
+        "fallback"
+      ],
+      "evidence": {
+        "code_path": [
+          "mertformer_sdk/kernels/metal/engine.py"
+        ],
+        "canonical_command": [
+          "python3 -m pytest -q tests/test_kernel_dispatcher.py"
+        ],
+        "verification": [
+          "tests/test_kernel_dispatcher.py"
+        ],
+        "artifact": [
+          "reports/code_truth_delta_audit.md"
+        ]
+      },
+      "evidence_complete": true,
+      "source_of_truth": [
+        "reports/code_truth_contract.md",
+        "reports/surface_lifecycle_matrix.md"
+      ],
+      "notes": "Metal currently routes through deterministic PyTorch fallback math and must not be narrated as a custom optimized kernel path."
+    },
+    {
+      "path": "scripts/chess_5080_onefile.py",
+      "exists": true,
+      "lane": "chess-proof",
+      "surface_class": "living",
+      "maturity": "tested_fallback",
+      "markers": [
+        "fallback"
+      ],
+      "evidence": {
+        "code_path": [
+          "scripts/chess_5080_onefile.py"
+        ],
+        "canonical_command": [
+          "python3 -m pytest -q tests/test_chess_5080_onefile.py tests/test_export_chess_5080_share.py"
+        ],
+        "verification": [
+          "tests/test_chess_5080_onefile.py",
+          "tests/test_export_chess_5080_share.py"
+        ],
+        "artifact": [
+          "reports/code_truth_delta_audit.md",
+          "CHESS_5080_POC_INTERNAL_TR.md"
+        ]
+      },
+      "evidence_complete": true,
+      "source_of_truth": [
+        "CHESS_5080_POC_INTERNAL_TR.md",
+        "reports/code_truth_contract.md"
+      ],
+      "notes": "The chess onefile is a real code path with tests and delivery helpers, but it remains a proof/product baseline rather than a solved final product lane."
+    },
+    {
+      "path": "scripts/export_chess_5080_share.py",
+      "exists": true,
+      "lane": "chess-proof",
+      "surface_class": "maintained",
+      "maturity": "tested_fallback",
+      "markers": [],
+      "evidence": {
+        "code_path": [
+          "scripts/export_chess_5080_share.py"
+        ],
+        "canonical_command": [
+          "python3 -m pytest -q tests/test_export_chess_5080_share.py"
+        ],
+        "verification": [
+          "tests/test_export_chess_5080_share.py"
+        ],
+        "artifact": [
+          "reports/code_truth_delta_audit.md"
+        ]
+      },
+      "evidence_complete": true,
+      "source_of_truth": [
+        "CHESS_5080_POC_INTERNAL_TR.md",
+        "reports/code_truth_contract.md"
+      ],
+      "notes": "Delivery/export logic is implemented and tested, but external product-grade distribution still depends on trained outputs and operator validation."
+    }
+  ],
+  "doc_claim_crosswalk": [
+    {
+      "doc": "README.md",
+      "claim": "Canonical verification and train-end entrypoints are real code paths.",
+      "code_path": [
+        "scripts/verify_all.sh",
+        "zero_touch_start.sh",
+        "scripts/final_orchestrator.py"
+      ],
+      "canonical_command": [
+        "bash scripts/verify_all.sh",
+        "bash zero_touch_start.sh --check-only"
+      ],
+      "verification": [
+        "reports/train_readiness_decision.json",
+        "reports/start_gate_report.json"
+      ],
+      "artifact": [
+        "reports/final_truth_matrix.md",
+        "reports/canonical_entrypoint.md"
+      ]
+    },
+    {
+      "doc": "MODEL_CARD.md",
+      "claim": "Measured versus target boundaries remain explicit.",
+      "code_path": [
+        "scripts/check_doc_claim_consistency.py",
+        "scripts/build_closure_governance_pack.py"
+      ],
+      "canonical_command": [
+        "python3 scripts/check_doc_claim_consistency.py",
+        "python3 scripts/build_closure_governance_pack.py"
+      ],
+      "verification": [
+        "reports/claim_registry.json",
+        "reports/final_truth_matrix.md"
+      ],
+      "artifact": [
+        "reports/code_truth_delta_audit.md"
+      ]
+    },
+    {
+      "doc": "reports/final_truth_matrix.md",
+      "claim": "Closure-critical claims map to evidence instead of living only as prose.",
+      "code_path": [
+        "scripts/build_closure_governance_pack.py",
+        "scripts/build_code_truth_audit.py"
+      ],
+      "canonical_command": [
+        "python3 scripts/build_closure_governance_pack.py",
+        "python3 scripts/build_code_truth_audit.py"
+      ],
+      "verification": [
+        "reports/claim_registry.json",
+        "reports/code_truth_delta_audit.json"
+      ],
+      "artifact": [
+        "reports/final_truth_matrix.md",
+        "reports/code_truth_delta_audit.md"
+      ]
+    }
+  ],
+  "marker_scan": [
+    {
+      "path": "README.md",
+      "markers": [
+        "TBD",
+        "scaffold",
+        "fallback"
+      ],
+      "summary": "TBD, scaffold, fallback"
+    },
+    {
+      "path": "README_TR.md",
+      "markers": [
+        "TBD",
+        "fallback"
+      ],
+      "summary": "TBD, fallback"
+    },
+    {
+      "path": "datasets/INTERNAL_POLICY.md",
+      "markers": [
+        "TBD"
+      ],
+      "summary": "TBD"
+    },
+    {
+      "path": "datasets/INTERNAL_POLICY_TR.md",
+      "markers": [
+        "TBD"
+      ],
+      "summary": "TBD"
+    },
+    {
+      "path": "datasets/LICENSES.md",
+      "markers": [
+        "TBD"
+      ],
+      "summary": "TBD"
+    },
+    {
+      "path": "datasets/LICENSES_TR.md",
+      "markers": [
+        "TBD"
+      ],
+      "summary": "TBD"
+    },
+    {
+      "path": "datasets/SOURCES.md",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "datasets/SOURCES_TR.md",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "datasets/inventory.md",
+      "markers": [
+        "TBD"
+      ],
+      "summary": "TBD"
+    },
+    {
+      "path": "datasets/inventory_TR.md",
+      "markers": [
+        "TBD"
+      ],
+      "summary": "TBD"
+    },
+    {
+      "path": "layers/mertformer_block.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "layers/mla.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "layers/moe.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "layers/qinn.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "mertformer_sdk/kernels/cpp/bitnet_cpu.cpp",
+      "markers": [
+        "scaffold"
+      ],
+      "summary": "scaffold"
+    },
+    {
+      "path": "mertformer_sdk/kernels/cpp/loader.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "mertformer_sdk/kernels/dispatcher.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "mertformer_sdk/kernels/metal/__init__.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "mertformer_sdk/kernels/metal/engine.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "mertformer_sdk/kernels/npu/__init__.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "mertformer_sdk/kernels/npu/engine.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "mertformer_sdk/kernels/onnx_custom_op.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "mertformer_sdk/kernels/vulkan/__init__.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "mertformer_sdk/kernels/vulkan/engine.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "mertformer_sdk/pilot.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/README.md",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/README_TR.md",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/bitnet_kernel_benchmark_standalone.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/build_closure_governance_pack.py",
+      "markers": [
+        "scaffold",
+        "fallback"
+      ],
+      "summary": "scaffold, fallback"
+    },
+    {
+      "path": "scripts/check_57_matrix.py",
+      "markers": [
+        "scaffold",
+        "fallback"
+      ],
+      "summary": "scaffold, fallback"
+    },
+    {
+      "path": "scripts/chess_5080_onefile.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/generate_bench_reports.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/hardening_bundle.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/kaggle_onefile_demo_build30.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/mobile_export.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/record_dataset_hashes.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/smart_runner.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/test_onnx_export.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/update_investor_deck.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/update_system_hardware.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/verify_datasets.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "tests/test_architecture_integrity.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "tests/test_onnx_custom_op_contract.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    }
+  ],
+  "summary": {
+    "technical_surface_count": 7,
+    "maturity_counts": {
+      "tested_fallback": 6,
+      "reference_safe": 1
+    },
+    "marker_hit_count": 44
+  }
+}

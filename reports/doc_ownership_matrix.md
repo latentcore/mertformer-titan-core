@@ -34,6 +34,14 @@ Operational ownership map for closure-critical surfaces.
 | `reports/source_of_truth_map.md` | automation | every verify or final refresh run | authoritative |
 | `reports/doc_ownership_matrix.md` | automation | every verify or final refresh run | authoritative |
 | `reports/final_truth_constitution.md` | automation | every verify or final refresh run | authoritative |
+| `reports/code_truth_contract.md` | automation | every verify or final refresh run | authoritative |
+| `reports/surface_lifecycle_matrix.md` | automation | every verify or final refresh run | authoritative |
+| `reports/code_truth_delta_audit.md` | automation | every verify or final refresh run | authoritative |
+| `reports/code_truth_delta_audit.json` | automation | every verify or final refresh run | authoritative |
+| `reports/workspace_hygiene_manifest.md` | automation | every verify or final refresh run | authoritative |
+| `reports/workspace_hygiene_manifest.json` | automation | every verify or final refresh run | authoritative |
+| `interfaces/backlog_item_v1.schema.json` | repo maintainer | when the policy, command ladder, or product wording changes | authoritative |
+| `interfaces/workspace_hygiene_manifest_v1.schema.json` | repo maintainer | when the policy, command ladder, or product wording changes | authoritative |
 | `reports/run_contract.md` | automation | every verify or final refresh run | authoritative |
 | `reports/expected_artifacts_list.md` | automation | every verify or final refresh run | authoritative |
 | `reports/exit_code_standard.md` | automation | every verify or final refresh run | authoritative |

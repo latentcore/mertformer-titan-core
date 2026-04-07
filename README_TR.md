@@ -122,7 +122,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `158 passed, 4 skipped` |
+| `python3 -m pytest -q` | `175 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -135,7 +135,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`158 passed, 4 skipped`)
+   - `pytest` geçti (`175 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -2104,6 +2104,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_architecture_integrity.py  # Python modülü/scripti (architecture integrity için otomatik test modülü)
 │   ├── test_build_chess_5080_windows_delivery.py  # Python modülü/scripti (build chess 5080 windows delivery için otomatik test modülü)
 │   ├── test_build_max_closure_handoff.py  # Python modülü/scripti (build max closure handoff için otomatik test modülü)
+│   ├── test_check_doc_claim_consistency.py  # Python modülü/scripti (check doc claim consistency için otomatik test modülü)
 │   ├── test_chess_5080_onefile.py  # Python modülü/scripti (chess 5080 onefile için otomatik test modülü)
 │   ├── test_cognitive_extensions.py  # Python modülü/scripti (cognitive extensions için otomatik test modülü)
 │   ├── test_comprehensive.py  # Python modülü/scripti (comprehensive için otomatik test modülü)

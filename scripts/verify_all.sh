@@ -76,8 +76,26 @@ echo "[verify] Train readiness contract refresh ..."
 echo "[verify] Final orchestrator contract refresh ..."
 "$PY" scripts/final_orchestrator.py --plan-only
 
+echo "[verify] Code-truth delta audit refresh ..."
+"$PY" scripts/build_code_truth_audit.py
+
+echo "[verify] Workspace hygiene manifest refresh ..."
+"$PY" scripts/build_workspace_hygiene_manifest.py
+
+echo "[verify] Chess GUI onefile sync check ..."
+"$PY" scripts/sync_chess_gui_onefile.py --check-only
+
+echo "[verify] Chess teaching contract smoke report ..."
+"$PY" scripts/build_chess_teaching_contract_report.py
+
 echo "[verify] Closure governance pack refresh ..."
 "$PY" scripts/build_closure_governance_pack.py
+
+echo "[verify] Start gate operator decision refresh ..."
+"$PY" scripts/start_gate.py --skip-verify-all --allow-not-ready
+
+echo "[verify] Target machine handoff bundle refresh ..."
+"$PY" scripts/build_target_machine_handoff_bundle.py
 
 echo "[verify] Max closure handoff refresh ..."
 "$PY" scripts/build_max_closure_handoff.py

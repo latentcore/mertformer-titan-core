@@ -90,6 +90,64 @@
       "raw_item_count": 5
     },
     {
+      "group_id": "code_truth_gate",
+      "title": "Code-truth gate, maturity labels, and four-column done rule",
+      "status": "DONE_NOW",
+      "timing_bucket": "required before 45K",
+      "plan_covered": true,
+      "blocks_45k_readiness": false,
+      "mapped_categories": [
+        "truth_claim",
+        "closure_flow"
+      ],
+      "evidence": [
+        "reports/code_truth_contract.md",
+        "reports/code_truth_delta_audit.md",
+        "reports/code_truth_delta_audit.json",
+        "scripts/build_code_truth_audit.py",
+        "interfaces/backlog_item_v1.schema.json"
+      ],
+      "what_is_done": "The repo now defines done-ness through code path, canonical command, verification, and artifact evidence, and it labels critical technical surfaces by maturity instead of flattening them into one production story.",
+      "still_missing": "Real optimized-production claims still require measured artifacts and backend-specific proof.",
+      "raw_item_count": 7
+    },
+    {
+      "group_id": "surface_lifecycle_regime",
+      "title": "Frozen, maintained, and living surface policy",
+      "status": "DONE_NOW",
+      "timing_bucket": "required before 45K",
+      "plan_covered": true,
+      "blocks_45k_readiness": false,
+      "mapped_categories": [
+        "policy"
+      ],
+      "evidence": [
+        "reports/surface_lifecycle_matrix.md",
+        "interfaces/backlog_item_v1.schema.json"
+      ],
+      "what_is_done": "Frozen governance surfaces are now separated from maintained verification surfaces and living implementation or product surfaces.",
+      "still_missing": "Lane-by-lane lifecycle assignment still needs to stay current as the repo evolves.",
+      "raw_item_count": 1
+    },
+    {
+      "group_id": "workspace_hygiene_regime",
+      "title": "Workspace hygiene manifest and quarantine-first cleanup policy",
+      "status": "DONE_NOW",
+      "timing_bucket": "required before destructive cleanup",
+      "plan_covered": true,
+      "blocks_45k_readiness": false,
+      "mapped_categories": [],
+      "evidence": [
+        "reports/workspace_hygiene_manifest.md",
+        "reports/workspace_hygiene_manifest.json",
+        "interfaces/workspace_hygiene_manifest_v1.schema.json",
+        "scripts/build_workspace_hygiene_manifest.py"
+      ],
+      "what_is_done": "Workspace hygiene now emits written keep/quarantine/ignore decisions before any destructive action.",
+      "still_missing": "Any actual quarantine apply step still requires reviewed operator intent.",
+      "raw_item_count": 0
+    },
+    {
       "group_id": "closure_entrypoints",
       "title": "Canonical closure commands and current entrypoint mapping",
       "status": "DONE_NOW",

@@ -109,6 +109,33 @@ def test_move_vocab_contains_common_uci_moves() -> None:
     assert onefile.MOVE_TO_ID['a7a8q'] >= 0
 
 
+def test_choose_move_trace_emits_structured_response_contract() -> None:
+    class StubModel:
+        def __call__(self, piece: onefile.torch.Tensor, meta: onefile.torch.Tensor):
+            logits = onefile.torch.full((1, len(onefile.MOVE_VOCAB)), -10.0, dtype=onefile.torch.float32)
+            logits[0, onefile.MOVE_TO_ID['e2e4']] = 4.0
+            logits[0, onefile.MOVE_TO_ID['d2d4']] = 2.0
+            value = onefile.torch.tensor([0.34], dtype=onefile.torch.float32)
+            return logits, value, onefile.torch.tensor(0.0), {}
+
+    trace = onefile.choose_move_trace(
+        StubModel(),
+        onefile.chess.Board(),
+        onefile.torch.device('cpu'),
+        mode='teach',
+        teaching_level='advanced',
+    )
+    contract = trace['response_contract']
+    assert trace['move'] == 'e2e4'
+    assert contract['best_move'] == 'e2e4'
+    assert contract['principal_variation'] == ['e2e4']
+    assert contract['mode'] == 'teach'
+    assert contract['teaching_level'] == 'advanced'
+    assert 'center_control' in contract['teaching_tags']
+    assert contract['confidence']['tier'] in {'medium', 'high'}
+    assert trace['masked_topk_scores'][0] >= trace['masked_topk_scores'][1]
+
+
 def test_resolve_runtime_config_verify_mode_uses_embedded_seed() -> None:
     cfg = onefile.resolve_runtime_config(make_args(mode='verify'), onefile.RUN_CONFIG)
     assert cfg['mode'] == 'verify'

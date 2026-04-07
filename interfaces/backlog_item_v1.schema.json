@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mertformer.local/interfaces/backlog_item_v1.schema.json",
+  "title": "Backlog Item v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "lane",
+    "status",
+    "timing",
+    "risk",
+    "surface_class",
+    "maturity",
+    "source_of_truth",
+    "evidence",
+    "blockers",
+    "next_step"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lane": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "todo",
+        "in_progress",
+        "blocked",
+        "completed",
+        "archived",
+        "DONE_NOW",
+        "PREPARED_FOR_POSTRUN",
+        "PHASE2",
+        "EXTERNAL_DEPENDENCY"
+      ]
+    },
+    "timing": {
+      "type": "string",
+      "minLength": 1
+    },
+    "risk": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical",
+        "external"
+      ]
+    },
+    "surface_class": {
+      "type": "string",
+      "enum": [
+        "frozen",
+        "maintained",
+        "living"
+      ]
+    },
+    "maturity": {
+      "type": "string",
+      "enum": [
+        "reference_safe",
+        "tested_fallback",
+        "optimized_production"
+      ]
+    },
+    "source_of_truth": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code_path",
+        "canonical_command",
+        "verification",
+        "artifact"
+      ],
+      "properties": {
+        "code_path": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "canonical_command": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "verification": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "artifact": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_step": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

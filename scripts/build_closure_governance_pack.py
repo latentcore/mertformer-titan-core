@@ -275,6 +275,70 @@ SOURCE_DOCS = [
         "notes": "Closure writing rules and truth boundaries.",
     },
     {
+        "path": "reports/code_truth_contract.md",
+        "role": "code-truth gate, maturity labels, and four-column evidence contract",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Defines when a closure item is truly done instead of only documented.",
+    },
+    {
+        "path": "reports/surface_lifecycle_matrix.md",
+        "role": "frozen, maintained, and living surface policy",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Keeps frozen rules separate from maintained and living implementation surfaces.",
+    },
+    {
+        "path": "reports/code_truth_delta_audit.md",
+        "role": "human-readable code-truth delta audit",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Lists maturity, evidence shape, and marker scan hits for critical repo surfaces.",
+    },
+    {
+        "path": "reports/code_truth_delta_audit.json",
+        "role": "machine-readable code-truth delta audit",
+        "audience": "automation",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Machine-readable mirror of the code-truth delta audit.",
+    },
+    {
+        "path": "reports/workspace_hygiene_manifest.md",
+        "role": "human-readable quarantine-first workspace hygiene manifest",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Documents keep vs quarantine vs ignore decisions before any destructive cleanup.",
+    },
+    {
+        "path": "reports/workspace_hygiene_manifest.json",
+        "role": "machine-readable quarantine-first workspace hygiene manifest",
+        "audience": "automation",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Machine-readable workspace hygiene manifest for audit-only or apply-quarantine mode.",
+    },
+    {
+        "path": "interfaces/backlog_item_v1.schema.json",
+        "role": "canonical backlog item schema for code-truth closure tracking",
+        "audience": "automation",
+        "update_mode": "manual",
+        "authority": "authoritative",
+        "notes": "Defines the lane/risk/maturity/source-of-truth/evidence fields for canonical backlog entries.",
+    },
+    {
+        "path": "interfaces/workspace_hygiene_manifest_v1.schema.json",
+        "role": "canonical workspace hygiene manifest schema",
+        "audience": "automation",
+        "update_mode": "manual",
+        "authority": "authoritative",
+        "notes": "Defines quarantine-first workspace hygiene entries and decision states.",
+    },
+    {
         "path": "reports/run_contract.md",
         "role": "canonical runtime contract for the 45K launcher",
         "audience": "operators",
@@ -517,6 +581,43 @@ CLAIMS = [
         ],
         "still_missing": "Real 45K outputs still remain external to the current working tree.",
     },
+    {
+        "claim_id": "claim.docs_only_done_forbidden",
+        "claim": "Closure-critical work is not done if it only exists as prose without code path, command, verification, and artifact evidence.",
+        "mode": "policy",
+        "status": "verified",
+        "evidence": [
+            "AGENTS.md",
+            "reports/code_truth_contract.md",
+            "scripts/build_code_truth_audit.py",
+        ],
+        "still_missing": "This rule is now explicit in the repo, but humans still need to honor it during future edits and release decisions.",
+    },
+    {
+        "claim_id": "claim.kernel_maturity_labels_explicit",
+        "claim": "Critical kernel and chess proof surfaces carry explicit maturity labels instead of being narrated as uniformly production-depth.",
+        "mode": "measured",
+        "status": "verified",
+        "evidence": [
+            "reports/code_truth_delta_audit.md",
+            "scripts/build_code_truth_audit.py",
+            "reports/surface_lifecycle_matrix.md",
+        ],
+        "still_missing": "Optimized-production claims still require measured backend-specific evidence rather than label upgrades by prose.",
+    },
+    {
+        "claim_id": "claim.workspace_hygiene_quarantine_first",
+        "claim": "Workspace hygiene is governed by a quarantine-first manifest instead of direct destructive cleanup.",
+        "mode": "policy",
+        "status": "verified",
+        "evidence": [
+            "reports/workspace_hygiene_manifest.md",
+            "reports/workspace_hygiene_manifest.json",
+            "interfaces/workspace_hygiene_manifest_v1.schema.json",
+            "scripts/build_workspace_hygiene_manifest.py",
+        ],
+        "still_missing": "Any destructive cleanup still requires a reviewed manifest and explicit operator intent.",
+    },
 ]
 
 
@@ -573,6 +674,56 @@ BACKLOG_GROUPS = [
         ],
         "what_is_done": "Closure-critical claims now map to evidence, mode, and missing proof instead of living only as prose.",
         "still_missing": "Real-run claims remain pending until the 45K run produces their artifacts.",
+    },
+    {
+        "group_id": "code_truth_gate",
+        "title": "Code-truth gate, maturity labels, and four-column done rule",
+        "status": "DONE_NOW",
+        "timing_bucket": "required before 45K",
+        "plan_covered": True,
+        "blocks_45k_readiness": False,
+        "mapped_categories": ["truth_claim", "closure_flow"],
+        "evidence": [
+            "reports/code_truth_contract.md",
+            "reports/code_truth_delta_audit.md",
+            "reports/code_truth_delta_audit.json",
+            "scripts/build_code_truth_audit.py",
+            "interfaces/backlog_item_v1.schema.json",
+        ],
+        "what_is_done": "The repo now defines done-ness through code path, canonical command, verification, and artifact evidence, and it labels critical technical surfaces by maturity instead of flattening them into one production story.",
+        "still_missing": "Real optimized-production claims still require measured artifacts and backend-specific proof.",
+    },
+    {
+        "group_id": "surface_lifecycle_regime",
+        "title": "Frozen, maintained, and living surface policy",
+        "status": "DONE_NOW",
+        "timing_bucket": "required before 45K",
+        "plan_covered": True,
+        "blocks_45k_readiness": False,
+        "mapped_categories": ["policy"],
+        "evidence": [
+            "reports/surface_lifecycle_matrix.md",
+            "interfaces/backlog_item_v1.schema.json",
+        ],
+        "what_is_done": "Frozen governance surfaces are now separated from maintained verification surfaces and living implementation or product surfaces.",
+        "still_missing": "Lane-by-lane lifecycle assignment still needs to stay current as the repo evolves.",
+    },
+    {
+        "group_id": "workspace_hygiene_regime",
+        "title": "Workspace hygiene manifest and quarantine-first cleanup policy",
+        "status": "DONE_NOW",
+        "timing_bucket": "required before destructive cleanup",
+        "plan_covered": True,
+        "blocks_45k_readiness": False,
+        "mapped_categories": [],
+        "evidence": [
+            "reports/workspace_hygiene_manifest.md",
+            "reports/workspace_hygiene_manifest.json",
+            "interfaces/workspace_hygiene_manifest_v1.schema.json",
+            "scripts/build_workspace_hygiene_manifest.py",
+        ],
+        "what_is_done": "Workspace hygiene now emits written keep/quarantine/ignore decisions before any destructive action.",
+        "still_missing": "Any actual quarantine apply step still requires reviewed operator intent.",
     },
     {
         "group_id": "closure_entrypoints",
@@ -935,9 +1086,24 @@ def build_truth_constitution(readiness: dict) -> str:
         ## Hard Rules
         - No claim without evidence.
         - Do not say `45K-ready` unless the current readiness report says `TRAIN_ALLOWED`.
+        - A closure-critical item is only `done` when code path, canonical command, verification, and artifact/report evidence all exist together.
+        - Docs-only closure is forbidden.
         - Do not convert scaffolds, placeholders, historical snapshots, or plans into completed work.
         - Do not use historical audit files as current truth unless the current source-of-truth files explicitly point back to them.
         - Keep measured vs target vs vision language explicit in README, model card, policy files, and prompts.
+
+        ## Code-Truth Maturity Labels
+        - `reference_safe`: correctness-first reference or scaffold path that is safe for parity/debug use, not for production-depth speed claims.
+        - `tested_fallback`: deterministic or bounded implementation with test coverage, but not a release-grade performance claim surface.
+        - `optimized_production`: measured and release-grade optimized path backed by claim-grade evidence.
+
+        ## Surface Lifecycle Classes
+        - `frozen`: rules, schemas, naming, source-of-truth order, and release-truth constraints.
+        - `maintained`: verification gates, manifests, and reproducibility or handoff surfaces that must stay current but not churn without reason.
+        - `living`: training, benchmark, kernel, export, product, chess, packaging, security, legal, and pilot implementation surfaces.
+
+        ## Research-Lane Rule
+        - `3000+ Elo`, `20 ms/move`, `10000x speedup`, AGI/ASI language, and long-context moonshots remain research lanes unless measured evidence explicitly upgrades them.
 
         ## Release-Truth Gates
         - `bash scripts/verify_all.sh`
@@ -954,6 +1120,53 @@ def build_truth_constitution(readiness: dict) -> str:
         Trained weights, checkpoints, benchmark summaries, demo bundle, evidence pack, and measured deployment outputs are not current facts until the real 45K run produces them.
         """
     ).format(runtime_gate=runtime_gate, readiness_rule=readiness_rule).strip()
+
+
+def build_code_truth_contract() -> str:
+    return dedent(
+        """
+        # Code-Truth Contract
+
+        ## Purpose
+        - Keep closure truth anchored to executable repo reality instead of prose alone.
+        - Prevent scaffold, fallback, or experimental paths from being narrated as uniformly production-depth.
+
+        ## Done Rule
+        A closure-critical item is only done when all four columns are present:
+        - `code_path`
+        - `canonical_command`
+        - `verification`
+        - `artifact`
+
+        ## Maturity Labels
+        - `reference_safe`: safe correctness or parity reference; not a production speed claim.
+        - `tested_fallback`: tested bounded implementation or deterministic fallback; safe to rely on for correctness, not enough for release-grade performance claims.
+        - `optimized_production`: measured and release-grade optimized surface with claim-grade evidence.
+
+        ## Practical Rules
+        - Docs-only closure is forbidden.
+        - `scaffold`, `fallback`, `placeholder`, or `experimental` surfaces must remain explicitly labeled.
+        - README, model card, release truth, and backlog wording must map back to code-truth evidence.
+        - The code-truth audit is a guardrail, not a substitute for the real 45K run or the real chess product benchmarks.
+        """
+    ).strip()
+
+
+def build_surface_lifecycle_matrix() -> str:
+    lines = [
+        "# Surface Lifecycle Matrix",
+        "",
+        "Canonical lifecycle classes for the current closure pass.",
+        "",
+        "| Surface Family | Lifecycle Class | Change Barrier | Notes |",
+        "| --- | --- | --- | --- |",
+        "| `AGENTS.md`, source-of-truth maps, truth constitution, schemas | `frozen` | high | Frozen surfaces define governance, schemas, naming, and release-truth constraints. |",
+        "| Verification gates, manifests, handoff packs, readiness contracts | `maintained` | medium | These must stay current and reproducible, but should not churn without measured reason. |",
+        "| Training, benchmark, kernel, chess, export, packaging, product, security, legal, pilot lanes | `living` | controlled | These surfaces are expected to change as implementation and measured evidence evolve. |",
+        "| Workspace hygiene reports and quarantine manifests | `maintained` | medium | Hygiene policy is stable, but item-level decisions must refresh as the workspace changes. |",
+        "| Research moonshots (`3000+ Elo`, `20 ms/move`, `10000x speedup`, AGI/ASI) | `living` | high external proof bar | Research lanes stay outside V1 release truth until independently measured. |",
+    ]
+    return "\n".join(lines)
 
 
 def build_claim_registry(readiness: dict) -> list[dict]:
@@ -1166,14 +1379,17 @@ def main() -> int:
     readiness = read_json(REPORTS / "training_readiness_manifest.json")
 
     registry = build_claim_registry(readiness)
-    backlog_md, backlog_payload = build_backlog_classification(matrix, readiness)
 
     write_text(REPORTS / "source_of_truth_map.md", build_source_of_truth_map())
     write_text(REPORTS / "doc_ownership_matrix.md", build_doc_ownership_matrix())
     write_text(REPORTS / "final_truth_constitution.md", build_truth_constitution(readiness))
+    write_text(REPORTS / "code_truth_contract.md", build_code_truth_contract())
+    write_text(REPORTS / "surface_lifecycle_matrix.md", build_surface_lifecycle_matrix())
     write_text(REPORTS / "canonical_entrypoint.md", build_canonical_entrypoint())
     write_text(REPORTS / "entrypoint_deprecation_map.md", build_entrypoint_deprecation_map())
     write_text(REPORTS / "final_truth_matrix.md", build_truth_matrix(registry))
+
+    backlog_md, backlog_payload = build_backlog_classification(matrix, readiness)
     write_text(REPORTS / "final_backlog_classification.md", backlog_md)
     write_text(REPORTS / "final_backlog_coverage_diff.md", build_coverage_diff(matrix))
     write_text(REPORTS / "final_backlog_missing_items.md", build_missing_items(readiness))
@@ -1187,6 +1403,8 @@ def main() -> int:
     print(f" - {rel(REPORTS / 'source_of_truth_map.md')}")
     print(f" - {rel(REPORTS / 'doc_ownership_matrix.md')}")
     print(f" - {rel(REPORTS / 'final_truth_constitution.md')}")
+    print(f" - {rel(REPORTS / 'code_truth_contract.md')}")
+    print(f" - {rel(REPORTS / 'surface_lifecycle_matrix.md')}")
     print(f" - {rel(REPORTS / 'canonical_entrypoint.md')}")
     print(f" - {rel(REPORTS / 'entrypoint_deprecation_map.md')}")
     print(f" - {rel(REPORTS / 'claim_registry.json')}")

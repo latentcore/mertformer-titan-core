@@ -1,17 +1,8 @@
 {
   "scope": "Desktop/Documents/Downloads/Applications project-related artifacts only",
   "repo_root": "<REPO_ROOT>",
-  "entry_count": 12,
+  "entry_count": 10,
   "entries": [
-    {
-      "path": "<HOME>/Desktop/MertFormer_45K_Launch_Bundle_20260401_2130",
-      "kind": "dir",
-      "exists": true,
-      "size_bytes": null,
-      "sha256": null,
-      "duplicate_rank": 1,
-      "disposition": "archive_into_closure_pack"
-    },
     {
       "path": "<HOME>/Desktop/MertFormer_45K_Launch_Bundle_20260401_2130.zip",
       "kind": "file",
@@ -99,15 +90,6 @@
       "exists": true,
       "size_bytes": null,
       "sha256": null,
-      "duplicate_rank": 1,
-      "disposition": "keep_as_external_artifact"
-    },
-    {
-      "path": "/Applications/mertformer-titan-core.zip",
-      "kind": "file",
-      "exists": true,
-      "size_bytes": 569418832,
-      "sha256": "19e1505030ae019d8194b49cbe2fb8e1d5d5e03ad644eae0e4c4f56bddfd012c",
       "duplicate_rank": 1,
       "disposition": "keep_as_external_artifact"
     }

@@ -10,6 +10,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_REPORTS = ROOT / "reports"
+DECISION_JSON = DEFAULT_REPORTS / "start_gate_operator_decision.json"
+DECISION_MD = DEFAULT_REPORTS / "start_gate_operator_decision.md"
 
 
 def sanitize_text(text: str) -> str:
@@ -45,6 +48,98 @@ def load_json(path: Path) -> dict:
     if not path.exists():
         return {}
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def write_text(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text.rstrip() + "\n", encoding="utf-8")
+
+
+def transfer_file_candidates() -> list[str]:
+    candidates = [
+        "zero_touch_start.sh",
+        "run.sh",
+        "scripts/final_orchestrator.py",
+        "scripts/start_gate.py",
+        "scripts/build_train_readiness_contract.py",
+        "reports/train_readiness_decision.json",
+        "reports/train_readiness_decision.md",
+        "reports/start_gate_report.json",
+        "reports/start_gate_operator_decision.json",
+        "reports/start_gate_operator_decision.md",
+        "reports/repo_external_handoff.md",
+    ]
+    always_present_outputs = {
+        "reports/start_gate_operator_decision.json",
+        "reports/start_gate_operator_decision.md",
+    }
+    return [path for path in candidates if path in always_present_outputs or (ROOT / path).exists()]
+
+
+def build_operator_decision(structural_ok: bool, train_allowed: bool, readiness: dict, steps: dict) -> dict:
+    blockers = list(readiness.get("blockers", []))
+    recommended_path = readiness.get("recommended_path")
+    decision_reason_code = readiness.get("decision_reason_code")
+    verify_ok = bool(steps.get("verify_all", {}).get("ok", True))
+
+    if structural_ok and train_allowed:
+        next_action = "ALLOCATE_TARGET_MACHINE_AND_START"
+        operator_message = (
+            "Repo-side gate is green. Allocate or rent the target training machine, transfer the canonical files, "
+            "rerun `bash zero_touch_start.sh --check-only` there, and start training immediately if it remains green."
+        )
+    elif train_allowed and not verify_ok:
+        next_action = "DO_NOT_RENT_YET_FIX_START_GATE"
+        operator_message = (
+            "Train readiness is green, but the start gate is not fully clean. Do not rent or allocate the expensive machine yet; "
+            "fix the failing gate, keep the log, and rerun the canonical check."
+        )
+    else:
+        next_action = "DO_NOT_RENT_YET_FIX_REPO_BLOCKERS"
+        operator_message = (
+            "Do not rent or allocate the expensive machine yet. Fix the exact repo-side blockers first, keep this decision log, "
+            "then rerun the canonical start gate."
+        )
+
+    return {
+        "schema": "start_gate_operator_decision_v1",
+        "generated_utc": datetime.now(timezone.utc).isoformat(),
+        "next_action": next_action,
+        "operator_message": operator_message,
+        "train_allowed": train_allowed,
+        "structural_ok": structural_ok,
+        "recommended_path": recommended_path,
+        "decision_reason_code": decision_reason_code,
+        "blockers": blockers,
+        "required_transfer_files": transfer_file_candidates() if train_allowed else [],
+    }
+
+
+def build_operator_decision_md(payload: dict) -> str:
+    lines = [
+        "# Start Gate Operator Decision",
+        "",
+        f"- next_action: `{payload['next_action']}`",
+        f"- train_allowed: `{payload['train_allowed']}`",
+        f"- structural_ok: `{payload['structural_ok']}`",
+        f"- recommended_path: `{payload.get('recommended_path') or 'none'}`",
+        f"- decision_reason_code: `{payload.get('decision_reason_code') or 'none'}`",
+        "",
+        "## Operator Message",
+        payload["operator_message"],
+        "",
+        "## Blockers",
+    ]
+    if payload["blockers"]:
+        lines.extend(f"- `{item}`" for item in payload["blockers"])
+    else:
+        lines.append("- none")
+    lines.extend(["", "## Required Transfer Files"])
+    if payload["required_transfer_files"]:
+        lines.extend(f"- `{item}`" for item in payload["required_transfer_files"])
+    else:
+        lines.append("- none")
+    return "\n".join(lines)
 
 
 def main() -> int:
@@ -84,16 +179,20 @@ def main() -> int:
         "blockers": readiness.get("blockers", []),
         "steps": steps,
     }
+    operator_decision = build_operator_decision(structural_ok, train_allowed, readiness, steps)
 
     out = Path(args.report_out).resolve()
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(sanitize_value(payload), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    DECISION_JSON.write_text(json.dumps(sanitize_value(operator_decision), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_text(DECISION_MD, build_operator_decision_md(sanitize_value(operator_decision)))
     print(
         json.dumps(
             {
                 "ok": structural_ok,
                 "train_allowed": train_allowed,
                 "decision_reason_code": readiness.get("decision_reason_code"),
+                "next_action": operator_decision["next_action"],
             },
             ensure_ascii=False,
         )

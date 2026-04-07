@@ -121,7 +121,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `158 passed, 4 skipped` |
+| `python3 -m pytest -q` | `175 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -134,7 +134,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`158 passed, 4 skipped`)
+   - `pytest` passed (`175 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -2108,6 +2108,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_architecture_integrity.py  # Python module/script (automated test module for architecture integrity)
 │   ├── test_build_chess_5080_windows_delivery.py  # Python module/script (automated test module for build chess 5080 windows delivery)
 │   ├── test_build_max_closure_handoff.py  # Python module/script (automated test module for build max closure handoff)
+│   ├── test_check_doc_claim_consistency.py  # Python module/script (automated test module for check doc claim consistency)
 │   ├── test_chess_5080_onefile.py  # Python module/script (automated test module for chess 5080 onefile)
 │   ├── test_cognitive_extensions.py  # Python module/script (automated test module for cognitive extensions)
 │   ├── test_comprehensive.py  # Python module/script (automated test module for comprehensive)

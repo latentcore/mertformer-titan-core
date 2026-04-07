@@ -176,6 +176,8 @@ Generated automatically.
 - `reports/benchmarks/text_understanding/run_20260315_180151_compare.md`
 - `reports/canonical_entrypoint.md`
 - `reports/checkpoint_contract.md`
+- `reports/chess_gui_onefile_sync_report.md`
+- `reports/chess_teaching_contract_report.md`
 - `reports/cleanroom_verification.md`
 - `reports/cleanroom_verification_TR.md`
 - `reports/cli_smoke_log.md`
@@ -185,6 +187,8 @@ Generated automatically.
 - `reports/closure_report_build30_v2.md`
 - `reports/closure_risk_register.md`
 - `reports/cloud_readiness_report.md`
+- `reports/code_truth_contract.md`
+- `reports/code_truth_delta_audit.md`
 - `reports/codex_deep_audit_DE.md`
 - `reports/codex_deep_audit_DE_TR.md`
 - `reports/codex_deep_audit_EN.md`
@@ -304,10 +308,13 @@ Generated automatically.
 - `reports/snapshots/2026-02-24/web_validation_sources_2026-02-24.md`
 - `reports/source_of_truth_map.md`
 - `reports/stale_script_report.md`
+- `reports/start_gate_operator_decision.md`
 - `reports/strategic_value.md`
 - `reports/strategic_value_TR.md`
+- `reports/surface_lifecycle_matrix.md`
 - `reports/system_hardware.md`
 - `reports/system_hardware_TR.md`
+- `reports/target_machine_handoff_manifest.md`
 - `reports/teacher_decision_record.md`
 - `reports/teacher_output_license_assessment.md`
 - `reports/technical_snapshot.md`
@@ -316,6 +323,7 @@ Generated automatically.
 - `reports/train_readiness_decision.md`
 - `reports/verified_matrix.md`
 - `reports/verified_matrix_TR.md`
+- `reports/workspace_hygiene_manifest.md`
 - `repro/python.md`
 - `repro/python_TR.md`
 - `repro/seed_policy.md`

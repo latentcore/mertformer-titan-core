@@ -4380,8 +4380,216 @@ def detect_stockfish_path(cfg: Dict[str, Any]) -> Optional[str]:
     return None
 
 
+CHESS_RESPONSE_CONTRACT_VERSION = "1.0"
+CHESS_RESPONSE_MODES = {"play", "teach", "analyze", "turkish_teach", "benchmark"}
+CHESS_TEACHING_LEVELS = {"basic", "club", "advanced"}
+
+
+def normalize_chess_response_mode(mode: str) -> str:
+    mode_norm = str(mode or "play").strip().lower()
+    return mode_norm if mode_norm in CHESS_RESPONSE_MODES else "play"
+
+
+def normalize_teaching_level(level: str) -> str:
+    level_norm = str(level or "club").strip().lower()
+    return level_norm if level_norm in CHESS_TEACHING_LEVELS else "club"
+
+
+def classify_evaluation_label(value: float) -> str:
+    if value >= 0.75:
+        return "winning"
+    if value >= 0.25:
+        return "pressing"
+    if value <= -0.75:
+        return "losing"
+    if value <= -0.25:
+        return "under_pressure"
+    return "balanced"
+
+
+def build_evaluation_phrase_tr(value: float, level: str) -> str:
+    label = classify_evaluation_label(value)
+    phrases = {
+        "winning": {
+            "basic": "açık şekilde iyi görünüyor",
+            "club": "eldeki konum belirgin biçimde iyi görünüyor",
+            "advanced": "değerlendirme tarafında net üstünlük sinyali veriyor",
+        },
+        "pressing": {
+            "basic": "hafif daha rahat görünüyor",
+            "club": "konum tarafında küçük ama gerçek bir baskı avantajı var",
+            "advanced": "motor-benzeri olmayan bu policy ölçümünde hafif artı bölgede kalıyor",
+        },
+        "balanced": {
+            "basic": "yaklaşık dengeli görünüyor",
+            "club": "konum büyük ölçüde dengeli, daha çok plan kalitesi fark yaratacak",
+            "advanced": "değer başlığı tarafında keskin bir kopuş yok; plan ve uygulama öne çıkıyor",
+        },
+        "under_pressure": {
+            "basic": "biraz baskı altında görünüyor",
+            "club": "konum hafif eksi bölgede ve dikkatli savunma istiyor",
+            "advanced": "değer başlığı tarafında eksi bölgede; tempo ve dayanıklılık önemli",
+        },
+        "losing": {
+            "basic": "zor görünüyor",
+            "club": "konum ciddi baskı altında ve hata payı daralmış durumda",
+            "advanced": "değer başlığı tarafında ağır eksi sinyali var; savunma kaynakları sınırlı olabilir",
+        },
+    }
+    return phrases[label][normalize_teaching_level(level)]
+
+
+def build_confidence_payload(
+    masked_logits: torch.Tensor,
+    best_id: int,
+    masked_topk_ids: Sequence[int],
+) -> Dict[str, Any]:
+    probs = torch.softmax(masked_logits, dim=-1)
+    best_prob = float(probs[best_id].item())
+    runner_prob = float(probs[masked_topk_ids[1]].item()) if len(masked_topk_ids) > 1 else 0.0
+    gap = max(0.0, best_prob - runner_prob)
+    if best_prob >= 0.55 or gap >= 0.25:
+        tier = "high"
+    elif best_prob >= 0.30 or gap >= 0.10:
+        tier = "medium"
+    else:
+        tier = "low"
+    return {
+        "score": round(best_prob, 4),
+        "gap": round(gap, 4),
+        "tier": tier,
+    }
+
+
+def classify_teaching_tags(board: chess.Board, move: chess.Move) -> List[str]:
+    piece = board.piece_at(move.from_square)
+    if piece is None:
+        return ["positional_choice"]
+    tags: List[str] = []
+    target_square = chess.square_name(move.to_square)
+    source_square = chess.square_name(move.from_square)
+    if board.is_capture(move):
+        tags.append("capture")
+    if board.is_castling(move):
+        tags.append("castle")
+    if move.promotion:
+        tags.append("promotion")
+    if board.gives_check(move):
+        tags.append("check")
+    board_after = board.copy(stack=False)
+    board_after.push(move)
+    if board_after.is_checkmate():
+        tags.append("checkmate")
+    if piece.piece_type == chess.PAWN and target_square in {"c4", "d4", "e4", "f4", "c5", "d5", "e5", "f5"}:
+        tags.append("center_control")
+    if piece.piece_type in {chess.KNIGHT, chess.BISHOP} and source_square in {"b1", "g1", "c1", "f1", "b8", "g8", "c8", "f8"}:
+        tags.append("development")
+    enemy_queen_squares = list(board_after.pieces(chess.QUEEN, not piece.color))
+    if enemy_queen_squares and board_after.is_attacked_by(piece.color, enemy_queen_squares[0]):
+        tags.append("queen_pressure")
+    attacked_enemy_count = 0
+    for square in board_after.attacks(move.to_square):
+        attacked_piece = board_after.piece_at(square)
+        if attacked_piece is not None and attacked_piece.color != piece.color:
+            attacked_enemy_count += 1
+    if attacked_enemy_count >= 2:
+        tags.append("activity")
+    if not tags:
+        tags.append("positional_choice")
+    return list(dict.fromkeys(tags))
+
+
+def build_teaching_reasons_tr(tags: Sequence[str], level: str) -> List[str]:
+    phrases = {
+        "capture": "materyal dengesini etkileyen bir değişim yaratıyor",
+        "castle": "şah güvenliğini artırıp kaleleri daha hızlı oyuna sokuyor",
+        "promotion": "terfi ile taş gücünü ciddi biçimde yükseltiyor",
+        "check": "rakip şahı hemen cevap vermeye zorluyor",
+        "checkmate": "pozisyonu doğrudan mat ağına kapatıyor",
+        "center_control": "merkez kareler üzerinde daha güçlü kontrol kuruyor",
+        "development": "gelişimi hızlandırıp taş koordinasyonunu iyileştiriyor",
+        "queen_pressure": "rakip vezire tempo kazandıran baskı uyguluyor",
+        "activity": "tek hamlede birden fazla tehdit hattını canlandırıyor",
+        "positional_choice": "konumun genel dengesini bozmadan oynanabilir bir plan seçiyor",
+    }
+    reasons = [phrases[tag] for tag in tags if tag in phrases]
+    if not reasons:
+        reasons = [phrases["positional_choice"]]
+    if normalize_teaching_level(level) == "basic":
+        return reasons[:2]
+    if normalize_teaching_level(level) == "club":
+        return reasons[:3]
+    return reasons[:4]
+
+
+def build_chess_response_contract(
+    board: chess.Board,
+    trace: Dict[str, Any],
+    *,
+    mode: str = "play",
+    teaching_level: str = "club",
+) -> Dict[str, Any]:
+    mode_norm = normalize_chess_response_mode(mode)
+    level_norm = normalize_teaching_level(teaching_level)
+    move_uci = str(trace["move"])
+    move = chess.Move.from_uci(move_uci)
+    san = board.san(move)
+    value = float(trace["value"])
+    tags = classify_teaching_tags(board, move)
+    reasons = build_teaching_reasons_tr(tags, level_norm)
+    confidence_payload = dict(trace.get("confidence", {}))
+    if not confidence_payload:
+        confidence_payload = {"score": 0.0, "gap": 0.0, "tier": "low"}
+    evaluation_payload = {
+        "value": round(value, 4),
+        "label": classify_evaluation_label(value),
+        "perspective": "side_to_move",
+        "phrase_tr": build_evaluation_phrase_tr(value, level_norm),
+    }
+    alternatives = [item for item in trace.get("masked_topk", []) if item != move_uci][:2]
+    prefix = {
+        "play": "Oyun modu",
+        "teach": "Öğretme modu",
+        "analyze": "Analiz modu",
+        "turkish_teach": "Türkçe öğretme modu",
+        "benchmark": "Benchmark modu",
+    }[mode_norm]
+    short_reason = reasons[0]
+    explanation_tr_short = f"{prefix}: {san} oynanıyor; {short_reason}. Konum {evaluation_payload['phrase_tr']}."
+    long_parts = [
+        f"{prefix} bu pozisyonda `{move_uci}` ({san}) hamlesini öne çıkarıyor.",
+        f"Ana fikir: {', '.join(reasons)}.",
+        f"Değer başlığına göre konum {evaluation_payload['phrase_tr']}.",
+        f"Güven seviyesi `{confidence_payload['tier']}` ve üst aday farkı `{confidence_payload['gap']:.4f}`.",
+    ]
+    if alternatives:
+        long_parts.append(f"Yakın alternatif adaylar: {', '.join(alternatives)}.")
+    long_parts.append("Buradaki principal variation search-derinliği değil, mevcut policy seçiminin tek hamlelik özetidir.")
+    return {
+        "contract_version": CHESS_RESPONSE_CONTRACT_VERSION,
+        "best_move": move_uci,
+        "best_move_san": san,
+        "evaluation": evaluation_payload,
+        "principal_variation": [move_uci],
+        "confidence": confidence_payload,
+        "teaching_tags": tags,
+        "explanation_tr_short": explanation_tr_short,
+        "explanation_tr_long": " ".join(long_parts),
+        "mode": mode_norm,
+        "teaching_level": level_norm,
+    }
+
+
 @torch.no_grad()
-def choose_move_trace(model: ChessPolicyValueNet, board: chess.Board, device: torch.device, topk: int = 5) -> Dict[str, Any]:
+def choose_move_trace(
+    model: ChessPolicyValueNet,
+    board: chess.Board,
+    device: torch.device,
+    topk: int = 5,
+    *,
+    mode: str = "play",
+    teaching_level: str = "club",
+) -> Dict[str, Any]:
     legal_ids = legal_move_ids(board)
     if not legal_ids:
         raise RuntimeError("No legal moves available for choose_move_trace")
@@ -4392,25 +4600,39 @@ def choose_move_trace(model: ChessPolicyValueNet, board: chess.Board, device: to
     logits, value, _, _ = model(piece, meta)
     latency_ms = (time.time() - start) * 1000.0
     logits = logits[0]
-    raw_topk_ids = torch.topk(logits, k=min(topk, logits.size(-1)), dim=-1).indices.tolist()
+    raw_topk = torch.topk(logits, k=min(topk, logits.size(-1)), dim=-1)
+    raw_topk_ids = raw_topk.indices.tolist()
+    raw_topk_scores = [round(float(item), 6) for item in raw_topk.values.tolist()]
     mask = torch.zeros_like(logits, dtype=torch.bool)
     mask[legal_ids] = True
     masked_logits = logits.masked_fill(~mask, -1e9)
-    masked_topk_ids = torch.topk(masked_logits, k=min(topk, masked_logits.size(-1)), dim=-1).indices.tolist()
+    masked_topk = torch.topk(masked_logits, k=min(topk, masked_logits.size(-1)), dim=-1)
+    masked_topk_ids = masked_topk.indices.tolist()
+    masked_topk_scores = [round(float(item), 6) for item in masked_topk.values.tolist()]
     best_id = int(masked_logits.argmax().item())
     move_uci = ID_TO_MOVE[best_id]
     move = chess.Move.from_uci(move_uci)
     if move not in board.legal_moves:
         raise RuntimeError(f"Masked policy selected illegal move: {move_uci}")
     raw_top1_id = int(logits.argmax().item())
-    return {
+    trace = {
         "move": move_uci,
         "value": float(value[0].item()),
         "latency_ms": round(latency_ms, 4),
         "raw_top1_is_legal": raw_top1_id in legal_ids,
         "raw_topk": [ID_TO_MOVE[idx] for idx in raw_topk_ids],
+        "raw_topk_scores": raw_topk_scores,
         "masked_topk": [ID_TO_MOVE[idx] for idx in masked_topk_ids],
+        "masked_topk_scores": masked_topk_scores,
+        "confidence": build_confidence_payload(masked_logits, best_id, masked_topk_ids),
     }
+    trace["response_contract"] = build_chess_response_contract(
+        board,
+        trace,
+        mode=mode,
+        teaching_level=teaching_level,
+    )
+    return trace
 
 
 @torch.no_grad()

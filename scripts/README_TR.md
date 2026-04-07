@@ -40,6 +40,8 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - `check_tokenizer_sync.py` — Kanonik tokenizer spec senkronunu zorunlu kılar (`interfaces/tokenizer_spec.json` -> `tokenizer/tokenizer.json`).
 - `check_translation_pointer_policy.py` — Derin denetim TR counterpart dosyalarında pointer politikasını zorunlu kılar.
 - `check_doc_claim_consistency.py` — Ana dokümanlarda claim/evidence tutarliligini kontrol eder.
+- `build_code_truth_audit.py` — Maturity etiketleri, dört sütunlu kanıt zorunluluğu ve marker taraması ile code-truth delta audit üretir.
+- `build_workspace_hygiene_manifest.py` — Quarantine-first workspace hygiene manifest üretir; `--apply-quarantine` yalnız üretilen manifest insan gözüyle incelendikten sonra kullanılmalıdır.
 - `clean_runtime_artifacts.sh` — Runtime artefaktlarını temizler (kök `kaggle_onefile_build30_*.jsonl` dahil).
 - `run_and_clean_pycache.py` — Herhangi bir komutu çalıştırır ve koşu sonunda cache temizliğini garanti eder (`--full-clean` ile `.DS_Store`, `.cache`, `.ipynb_checkpoints`, `.tox`, `.nox`, `.hypothesis`, `.vs`; venv cache icin `--include-venv-caches`).
 - `zip_denylist_audit.py` — Release zip'i denylist yol/secret pattern kontrolünden geçirir.
