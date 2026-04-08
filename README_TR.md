@@ -91,6 +91,8 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 - `reports/core_complete_decision_stub.json`, `reports/research_continues_stub.json`, `reports/product_maintenance_only_stub.json` ve `reports/closure_decision_record_stub.json`, yönetimsel kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
 - `reports/master_closure_table.json`, `reports/remaining_core_blockers.json`, `reports/repo_side_completion_summary.json` ve `reports/readiness_snapshot.json`, neyin mevcut olduğunu ve final kapanışı neyin hâlâ blokladığını repo gerçeğinden özetler.
 - `reports/aggregated_master_table.json`, `reports/real_remaining_core_work.json`, `reports/repo_truth_inventory.json` ve `reports/closure_gap_summary.json`, repo gerçeğini son master tabloya çevirmek için daha kompakt üst seviye truth katmanı sağlar.
+- Kanonik doküman özeti: [docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md](docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md)
+- Kanonik proje özeti: [docs/PROJECT_MASTER_TRUTH_TR.md](docs/PROJECT_MASTER_TRUTH_TR.md)
 
 
 ![MertFormer Titan Header](assets/header.png)
