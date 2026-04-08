@@ -2,7 +2,7 @@
 
 - start_utc: 2026-04-07T23:02:18Z
 - end_utc: 2026-04-07T23:04:23Z
-- pytest: 184 passed, 3 skipped, 9 warnings in 36.94s
+- pytest: 187 passed, 3 skipped, 9 warnings in 36.94s
 - md_quality_all: md_quality: scope=all files=355 errors=0 warnings=0
 - linkcheck_all: linkcheck: scope=all files=355 missing=0
 - unicode_path_guard: PASS

@@ -73,6 +73,11 @@ DEFAULT_ENCRYPT_OUTPUT_ENV = "MERTFORMER_CHESS_ENCRYPT_OUTPUT"
 DEFAULT_ENCRYPTION_REQUIRED_ENV = "MERTFORMER_CHESS_ENCRYPTION_REQUIRED"
 DEFAULT_CLEANUP_AFTER_BUNDLE_ENV = "MERTFORMER_CHESS_CLEANUP_AFTER_BUNDLE"
 DEFAULT_SINGLE_OUTPUT_ENV = "MERTFORMER_CHESS_SINGLE_OUTPUT"
+DEFAULT_PROFILE_ENV = "MERTFORMER_CHESS_PROFILE"
+DEFAULT_ARTIFACT_ROOT_ENV = "MERTFORMER_CHESS_ARTIFACT_ROOT"
+DEFAULT_CACHE_ROOT_ENV = "MERTFORMER_CHESS_CACHE_ROOT"
+DEFAULT_STOCKFISH_CACHE_ROOT_ENV = "MERTFORMER_CHESS_STOCKFISH_CACHE_ROOT"
+DEFAULT_STOCKFISH_AUTO_FETCH_ENV = "MERTFORMER_CHESS_STOCKFISH_AUTO_FETCH"
 LOG_SCHEMA_VERSION = "2.0"
 DEFAULT_LOG_MAX_BYTES = 2 * 1024 * 1024
 DEFAULT_LOG_BACKUP_COUNT = 3
@@ -151,6 +156,7 @@ RUN_CONFIG: Dict[str, Any] = {
     "device": "auto",
     "artifact_root": "~/Desktop",
     "cache_root": "~/Desktop/mertformer_chess_cache",
+    "delivery_mode": False,
     "result_prefix": RESULT_ZIP_PREFIX,
     "redact_paths": True,
     "allow_install": False,
@@ -179,6 +185,7 @@ RUN_CONFIG: Dict[str, Any] = {
     "max_games": 120000,
     "max_positions": 480000,
     "max_positions_per_game": 8,
+    "position_selection_strategy": "scored",
     "min_elo": 1900,
     "time_control_min_seconds": 180,
     "time_control_max_seconds": 900,
@@ -286,11 +293,25 @@ RUN_CONFIG: Dict[str, Any] = {
     "synthetic_teaching_corpus_enabled": True,
     "curated_suite_eval_enabled": True,
     "stockfish_path": "",
+    "stockfish_auto_fetch": True,
+    "stockfish_cache_root": "~/Desktop/mertformer_chess_cache/stockfish",
+    "stockfish_release_api": "https://api.github.com/repos/official-stockfish/Stockfish/releases/latest",
+    "stockfish_download_timeout_sec": 60,
     "stockfish_ladder": [
         {"label": "sf_skill4_nodes20k", "games": 12, "skill": 4, "nodes": 20000, "anchor_elo_proxy": 1100},
         {"label": "sf_skill8_nodes50k", "games": 12, "skill": 8, "nodes": 50000, "anchor_elo_proxy": 1400},
         {"label": "sf_skill12_nodes100k", "games": 16, "skill": 12, "nodes": 100000, "anchor_elo_proxy": 1700},
     ],
+    "search_enabled": True,
+    "search_candidate_topk": 4,
+    "search_reply_topk": 3,
+    "search_policy_blend": 0.35,
+    "search_value_blend": 0.65,
+    "search_tactical_bonus": 0.05,
+    "search_auto_budget": True,
+    "midrun_curated_snapshot_interval": 0,
+    "midrun_stockfish_snapshot_interval": 0,
+    "midrun_stockfish_snapshot_games": 4,
     "rating_target_proxy_threshold": 1600,
     "claim_min_benchmark_games": 40,
     "zip_outputs": True,
@@ -340,6 +361,95 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
             {"label": "sf_skill16_nodes200k", "games": 14, "skill": 16, "nodes": 200000, "anchor_elo_proxy": 1900},
         ],
         "claim_min_benchmark_games": 56,
+    },
+    "strength_4060_24h": {
+        "download_partial_mb": 3072,
+        "download_archive_count": 8,
+        "max_games": 400000,
+        "max_positions": 2400000,
+        "max_positions_per_game": 12,
+        "min_elo": 2200,
+        "max_steps": 120000,
+        "max_wall_hours": 24.0,
+        "batch_size": 128,
+        "eval_batch_size": 128,
+        "hidden_size": 448,
+        "intermediate_size": 1792,
+        "num_layers": 10,
+        "num_heads": 8,
+        "num_kv_heads": 4,
+        "head_dim": 56,
+        "curated_position_repeat": 10,
+        "search_enabled": True,
+        "search_candidate_topk": 5,
+        "search_reply_topk": 4,
+        "search_auto_budget": True,
+        "midrun_curated_snapshot_interval": 4000,
+        "midrun_stockfish_snapshot_interval": 12000,
+        "midrun_stockfish_snapshot_games": 4,
+        "stockfish_ladder": [
+            {"label": "sf_skill4_nodes40k", "games": 24, "skill": 4, "nodes": 40000, "anchor_elo_proxy": 1100},
+            {"label": "sf_skill8_nodes80k", "games": 24, "skill": 8, "nodes": 80000, "anchor_elo_proxy": 1400},
+            {"label": "sf_skill12_nodes160k", "games": 28, "skill": 12, "nodes": 160000, "anchor_elo_proxy": 1700},
+            {"label": "sf_skill16_nodes320k", "games": 28, "skill": 16, "nodes": 320000, "anchor_elo_proxy": 1900},
+        ],
+        "rating_target_proxy_threshold": 2000,
+        "claim_min_benchmark_games": 100,
+    },
+    "benchmark_4060_hard": {
+        "download_partial_mb": 4096,
+        "download_archive_count": 10,
+        "max_games": 500000,
+        "max_positions": 3200000,
+        "max_positions_per_game": 12,
+        "min_elo": 2250,
+        "max_steps": 160000,
+        "max_wall_hours": 24.0,
+        "batch_size": 128,
+        "eval_batch_size": 128,
+        "curated_position_repeat": 12,
+        "search_enabled": True,
+        "search_candidate_topk": 5,
+        "search_reply_topk": 4,
+        "search_auto_budget": True,
+        "midrun_curated_snapshot_interval": 3000,
+        "midrun_stockfish_snapshot_interval": 10000,
+        "midrun_stockfish_snapshot_games": 6,
+        "stockfish_ladder": [
+            {"label": "sf_skill4_nodes60k", "games": 28, "skill": 4, "nodes": 60000, "anchor_elo_proxy": 1100},
+            {"label": "sf_skill8_nodes120k", "games": 28, "skill": 8, "nodes": 120000, "anchor_elo_proxy": 1400},
+            {"label": "sf_skill12_nodes240k", "games": 32, "skill": 12, "nodes": 240000, "anchor_elo_proxy": 1700},
+            {"label": "sf_skill16_nodes400k", "games": 32, "skill": 16, "nodes": 400000, "anchor_elo_proxy": 1900},
+        ],
+        "rating_target_proxy_threshold": 2100,
+        "claim_min_benchmark_games": 120,
+    },
+    "delivery_windows_oneclick": {
+        "artifact_root": "~/Desktop/MertFormer_Chess_5080_Runtime",
+        "cache_root": "~/Desktop/MertFormer_Chess_5080_Runtime/cache",
+        "delivery_mode": True,
+        "single_output_only": True,
+        "cleanup_after_bundle": True,
+        "download_partial_mb": 2048,
+        "download_archive_count": 6,
+        "max_games": 220000,
+        "max_positions": 1200000,
+        "max_positions_per_game": 10,
+        "max_steps": 48000,
+        "max_wall_hours": 8.0,
+        "batch_size": 128,
+        "eval_batch_size": 128,
+        "min_elo": 2100,
+        "stockfish_auto_fetch": True,
+        "search_enabled": True,
+        "search_candidate_topk": 4,
+        "search_reply_topk": 3,
+        "search_auto_budget": True,
+        "midrun_curated_snapshot_interval": 2000,
+        "midrun_stockfish_snapshot_interval": 8000,
+        "midrun_stockfish_snapshot_games": 4,
+        "rating_target_proxy_threshold": 1900,
+        "claim_min_benchmark_games": 80,
     },
     "smoke": {
         "offline_seed_only": True,
@@ -1166,7 +1276,9 @@ def env_snapshot(cfg: Dict[str, Any]) -> Dict[str, Any]:
         "cudnn_version": str(torch.backends.cudnn.version()) if hasattr(torch.backends, "cudnn") else "unknown",
         "driver_version": get_nvidia_driver_version(),
         "share_mode": bool(cfg.get("share_mode", False)),
+        "delivery_mode": bool(cfg.get("delivery_mode", False)),
         "allow_install": bool(cfg.get("allow_install", False)),
+        "stockfish_auto_fetch": bool(cfg.get("stockfish_auto_fetch", True)),
         "self_delete_target_configured": bool(str(cfg.get("self_delete_target", "")).strip()),
         "determinism_strict": bool(cfg.get("determinism_strict", True)),
         "cudnn_deterministic": bool(getattr(torch.backends.cudnn, "deterministic", False)) if hasattr(torch.backends, "cudnn") else False,
@@ -1242,7 +1354,10 @@ def apply_baseline(cfg: Dict[str, Any], baseline: str) -> Dict[str, Any]:
 
 def resolve_runtime_config(args: argparse.Namespace, base_cfg: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     cfg = dict(base_cfg or RUN_CONFIG)
+    env_profile = os.environ.get(DEFAULT_PROFILE_ENV, "").strip()
     profile = str(getattr(args, "profile", cfg["profile"]))
+    if env_profile and profile == str((base_cfg or RUN_CONFIG)["profile"]):
+        profile = env_profile
     cfg = apply_profile(cfg, profile)
     baseline = str(getattr(args, "baseline", cfg["baseline"]))
     cfg = apply_baseline(cfg, baseline)
@@ -1294,9 +1409,26 @@ def resolve_runtime_config(args: argparse.Namespace, base_cfg: Optional[Dict[str
         cfg["single_output_only"] = True
     if os.environ.get(DEFAULT_CLEANUP_AFTER_BUNDLE_ENV, "0") == "1":
         cfg["cleanup_after_bundle"] = True
+    env_artifact_root = os.environ.get(DEFAULT_ARTIFACT_ROOT_ENV, "").strip()
+    if env_artifact_root:
+        cfg["artifact_root"] = env_artifact_root
+    env_cache_root = os.environ.get(DEFAULT_CACHE_ROOT_ENV, "").strip()
+    if env_cache_root:
+        cfg["cache_root"] = env_cache_root
+    env_stockfish_cache_root = os.environ.get(DEFAULT_STOCKFISH_CACHE_ROOT_ENV, "").strip()
+    if env_stockfish_cache_root:
+        cfg["stockfish_cache_root"] = env_stockfish_cache_root
+    env_stockfish_auto_fetch = os.environ.get(DEFAULT_STOCKFISH_AUTO_FETCH_ENV, "").strip()
+    if env_stockfish_auto_fetch:
+        cfg["stockfish_auto_fetch"] = env_stockfish_auto_fetch == "1"
 
     cfg["artifact_root"] = str(Path(str(cfg["artifact_root"])).expanduser())
     cfg["cache_root"] = str(Path(str(cfg["cache_root"])).expanduser())
+    stockfish_cache_root = str(cfg.get("stockfish_cache_root", "")).strip()
+    if not stockfish_cache_root:
+        cfg["stockfish_cache_root"] = str(Path(str(cfg["cache_root"])) / "stockfish")
+    else:
+        cfg["stockfish_cache_root"] = str(Path(stockfish_cache_root).expanduser())
     cfg["resume_from"] = str(Path(str(cfg.get("resume_from", ""))).expanduser()) if str(cfg.get("resume_from", "")) else ""
     cfg["self_delete_target"] = str(Path(str(cfg.get("self_delete_target", ""))).expanduser()) if str(cfg.get("self_delete_target", "")) else ""
     cfg["use_liquid"] = bool(cfg.get("use_liquid", cfg.get("use_liquid_adapter", False)))
@@ -1346,6 +1478,12 @@ def validate_runtime_config(cfg: Dict[str, Any]) -> None:
         "max_steps",
         "batch_size",
         "eval_batch_size",
+        "stockfish_download_timeout_sec",
+        "search_candidate_topk",
+        "search_reply_topk",
+        "midrun_curated_snapshot_interval",
+        "midrun_stockfish_snapshot_interval",
+        "midrun_stockfish_snapshot_games",
         "hidden_size",
         "num_layers",
         "num_heads",
@@ -3326,19 +3464,64 @@ def comment_has_eval_tag(comment: str) -> bool:
     return "[%eval" in (comment or "")
 
 
-def select_ply_indices(moves: Sequence[Tuple[chess.Move, str]], limit: int, prefer_eval_positions: bool) -> List[int]:
+def score_candidate_ply(
+    board: chess.Board,
+    move: chess.Move,
+    comment: str,
+    ply_idx: int,
+    total_plies: int,
+) -> float:
+    score = 0.0
+    if comment_has_eval_tag(comment):
+        score += 4.0
+    parsed_eval = parse_eval_comment(comment)
+    if parsed_eval is not None:
+        score += min(1.5, abs(float(parsed_eval)) * 1.5)
+    if board.is_capture(move):
+        score += 3.0
+    if board.gives_check(move):
+        score += 3.0
+    if move.promotion is not None:
+        score += 4.0
+    if board.is_castling(move):
+        score += 2.0
+    if infer_phase(board, ply_idx) == 2:
+        score += 1.25
+    if board.legal_moves.count() <= 14:
+        score += 1.0
+    if ply_idx <= max(6, total_plies // 8):
+        piece = board.piece_at(move.from_square)
+        if piece is not None and piece.piece_type in {chess.KNIGHT, chess.BISHOP}:
+            score += 0.75
+    progress = 0.0 if total_plies <= 1 else float(ply_idx) / float(max(1, total_plies - 1))
+    score += progress * 0.5
+    return score
+
+
+def select_ply_indices(
+    moves: Sequence[Tuple[chess.Move, str]],
+    limit: int,
+    prefer_eval_positions: bool,
+    board: Optional[chess.Board] = None,
+) -> List[int]:
     total_plies = len(moves)
     if total_plies <= 0 or limit <= 0:
         return []
     if total_plies <= limit:
         return list(range(total_plies))
+    board_state = board.copy(stack=False) if board is not None else chess.Board()
+    scored_candidates: List[Tuple[float, int]] = []
+    for idx, (move, comment) in enumerate(moves):
+        scored_candidates.append((score_candidate_ply(board_state, move, comment, idx, total_plies), idx))
+        board_state.push(move)
     picks: List[int] = []
     eval_indices = [idx for idx, (_, comment) in enumerate(moves) if comment_has_eval_tag(comment)] if prefer_eval_positions else []
+    scored_indices = [idx for _, idx in sorted(scored_candidates, key=lambda item: (-item[0], item[1]))]
     evenly_spaced = sorted({
         int(round(position))
         for position in np.linspace(0, total_plies - 1, num=min(total_plies, max(limit * 2, limit + 2)))
     })
-    for idx in eval_indices + evenly_spaced:
+    for idx in eval_indices + scored_indices + evenly_spaced:
         if 0 <= idx < total_plies and idx not in picks:
             picks.append(idx)
         if len(picks) >= limit:
@@ -3856,7 +4039,12 @@ def build_examples_from_games(
 
             total_plies = len(moves)
             opening_prefix = opening_prefix_from_moves(raw_moves)
-            selected_indices = select_ply_indices(moves, max_positions_per_game, bool(cfg.get("prefer_eval_positions", True)))
+            selected_indices = select_ply_indices(
+                moves,
+                max_positions_per_game,
+                bool(cfg.get("prefer_eval_positions", True)),
+                board=game.board(),
+            )
             board = game.board()
             for ply_idx, (move, comment) in enumerate(moves):
                 if ply_idx not in selected_indices:
@@ -4410,20 +4598,27 @@ def infer_existing_run_dir_from_resume(resume_from: str) -> Optional[Path]:
 def make_layout(cfg: Dict[str, Any], existing_run_dir: Optional[Path] = None) -> ArtifactLayout:
     desktop = detect_desktop_dir()
     root = Path(str(cfg["artifact_root"]))
+    delivery_mode = bool(cfg.get("delivery_mode", False))
+    if existing_run_dir is not None and existing_run_dir.parent.name == "runs":
+        root = existing_run_dir.parent.parent
     root.mkdir(parents=True, exist_ok=True)
+    runs_root = root / "runs" if delivery_mode else root
+    final_root = root / "final" if delivery_mode else desktop
+    runs_root.mkdir(parents=True, exist_ok=True)
+    final_root.mkdir(parents=True, exist_ok=True)
     if existing_run_dir is not None:
         run_dir = existing_run_dir
         run_id = existing_run_dir.name.removeprefix(f"{DELIVERY_PREFIX}_") or datetime.now().strftime("%Y%m%d_%H%M%S")
     else:
         run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
-        run_dir = root / f"{DELIVERY_PREFIX}_{run_id}"
+        run_dir = runs_root / f"{DELIVERY_PREFIX}_{run_id}"
     logs_dir = run_dir / "logs"
     reports_dir = run_dir / "reports"
     checkpoints_dir = run_dir / "checkpoints"
     export_dir = run_dir / "exports"
     benchmark_dir = run_dir / "benchmarks"
-    final_zip = desktop / f"{cfg['result_prefix']}_{run_id}.zip"
-    final_sha = desktop / f"{cfg['result_prefix']}_{run_id}.zip.sha256"
+    final_zip = final_root / f"{cfg['result_prefix']}_{run_id}.zip"
+    final_sha = final_root / f"{cfg['result_prefix']}_{run_id}.zip.sha256"
     for path in (run_dir, logs_dir, reports_dir, checkpoints_dir, export_dir, benchmark_dir):
         path.mkdir(parents=True, exist_ok=True)
     return ArtifactLayout(
@@ -4515,6 +4710,8 @@ def training_loop(
     stage_loader: Optional[torch.utils.data.DataLoader] = None
     stage_iterator: Optional[Iterator[Dict[str, torch.Tensor]]] = None
     stage_epoch = 0
+    last_val_eval: Dict[str, Any] = {"status": "not_run", "metrics": {}}
+    last_train_row: Dict[str, Any] = {}
 
     while global_step < max_steps:
         elapsed_hours = (time.time() - start_time) / 3600.0
@@ -4604,6 +4801,7 @@ def training_loop(
                 entropies = [float(item.get("router_entropy", 0.0)) for item in router_reports.values() if item]
                 row["router_entropy"] = float(sum(entropies) / len(entropies)) if entropies else 0.0
             curve_rows.append(row)
+            last_train_row = dict(row)
             if global_step == start_step or (global_step + 1) % 25 == 0:
                 logger.write("train_step", row)
         except torch.cuda.OutOfMemoryError as exc:  # pragma: no cover - depends on hardware
@@ -4636,6 +4834,7 @@ def training_loop(
                 "peak_vram_mb": float(torch.cuda.max_memory_allocated(device) / (1024 ** 2)) if device.type == "cuda" else 0.0,
             }
             curve_rows.append(val_row)
+            last_val_eval = dict(val_eval)
             logger.write("eval_step", {"step": global_step, **val_eval["metrics"]})
             current_val_loss = float(val_eval["metrics"].get("loss", 0.0))
             if current_val_loss < best_val_loss:
@@ -4644,6 +4843,16 @@ def training_loop(
                 shutil.copy2(best_ckpt, compatibility_best)
         if global_step - last_checkpoint_at >= int(cfg["checkpoint_interval"]):
             save_checkpoint(model, optimizer, latest_ckpt, global_step, cfg, {"type": "latest", "step": global_step}, best_val_loss)
+            maybe_write_midrun_training_snapshots(
+                model,
+                cfg,
+                device,
+                layout,
+                logger,
+                step=global_step,
+                latest_train_row=last_train_row,
+                latest_val_eval=last_val_eval,
+            )
             last_checkpoint_at = global_step
 
     save_checkpoint(model, optimizer, latest_ckpt, global_step, cfg, {"type": "latest", "step": global_step}, best_val_loss)
@@ -4659,10 +4868,161 @@ def training_loop(
     return summary, curve_rows, latest_ckpt, best_ckpt
 
 
-def detect_stockfish_path(cfg: Dict[str, Any]) -> Optional[str]:
+def _find_stockfish_binary(root: Path) -> Optional[Path]:
+    if not root.exists():
+        return None
+    suffix = ".exe" if platform.system() == "Windows" else ""
+    candidates: List[Path] = []
+    for path in root.rglob("*"):
+        if not path.is_file():
+            continue
+        name = path.name.lower()
+        if "stockfish" not in name:
+            continue
+        if suffix and not name.endswith(suffix):
+            continue
+        if path.suffix.lower() in {".zip", ".txt", ".json", ".md"}:
+            continue
+        candidates.append(path)
+    if not candidates:
+        return None
+    candidates.sort(key=lambda item: (len(item.parts), item.name.lower()))
+    return candidates[0]
+
+
+def _stockfish_asset_score(name: str, system_name: str) -> int:
+    lowered = name.lower()
+    if any(token in lowered for token in ("source", "src", "android", "wasm", "browser", "armv7", "appimage")):
+        return -100
+    score = 0
+    if system_name == "Windows":
+        if "windows" in lowered or "win" in lowered:
+            score += 20
+        if lowered.endswith(".zip"):
+            score += 8
+        if any(token in lowered for token in ("x64", "x86-64", "x86_64", "64")):
+            score += 6
+        if any(token in lowered for token in ("avx2", "modern", "bmi2")):
+            score += 3
+        if lowered.endswith(".exe"):
+            score += 2
+    elif system_name == "Linux":
+        if "linux" in lowered or "ubuntu" in lowered:
+            score += 20
+        if lowered.endswith((".zip", ".tar", ".tar.gz", ".tgz")):
+            score += 8
+    elif system_name == "Darwin":
+        if any(token in lowered for token in ("mac", "macos", "osx")):
+            score += 20
+        if lowered.endswith((".zip", ".tar", ".tar.gz", ".tgz")):
+            score += 8
+    return score
+
+
+def _download_to_path(url: str, path: Path, timeout: int) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    request = urllib.request.Request(url, headers={"User-Agent": f"{SCRIPT_BASENAME}/{SCRIPT_VERSION}"})
+    with urllib.request.urlopen(request, timeout=timeout) as response, path.open("wb") as handle:
+        while True:
+            chunk = response.read(1024 * 1024)
+            if not chunk:
+                break
+            handle.write(chunk)
+
+
+def _fetch_stockfish_binary(cfg: Dict[str, Any], logger: Optional[JSONLLogger] = None) -> Optional[str]:
+    if not bool(cfg.get("stockfish_auto_fetch", True)):
+        return None
+    if not bool(cfg.get("auto_download_enabled", True)):
+        return None
+    cache_root = Path(str(cfg.get("stockfish_cache_root", Path(str(cfg["cache_root"])) / "stockfish")))
+    current_binary = _find_stockfish_binary(cache_root / "current")
+    if current_binary is not None:
+        return str(current_binary)
+    release_api = str(cfg.get("stockfish_release_api", "")).strip()
+    if not release_api:
+        return None
+    timeout = max(5, int(cfg.get("stockfish_download_timeout_sec", 60)))
+    try:
+        request = urllib.request.Request(release_api, headers={"User-Agent": f"{SCRIPT_BASENAME}/{SCRIPT_VERSION}"})
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            release_payload = json.loads(response.read().decode("utf-8"))
+    except Exception as exc:
+        if logger is not None:
+            logger.write("stockfish_fetch_error", {"stage": "release_metadata", "error": f"{type(exc).__name__}: {exc}"})
+        return None
+    system_name = platform.system()
+    assets = release_payload.get("assets", []) if isinstance(release_payload, dict) else []
+    best_asset: Optional[Dict[str, Any]] = None
+    best_score = -10**9
+    for asset in assets:
+        if not isinstance(asset, dict):
+            continue
+        name = str(asset.get("name", ""))
+        score = _stockfish_asset_score(name, system_name)
+        if score > best_score:
+            best_score = score
+            best_asset = asset
+    if best_asset is None or best_score < 0:
+        if logger is not None:
+            logger.write("stockfish_fetch_error", {"stage": "asset_selection", "system": system_name, "asset_count": len(assets)})
+        return None
+    asset_name = str(best_asset.get("name", "")).strip() or "stockfish_download.zip"
+    asset_url = str(best_asset.get("browser_download_url", "")).strip()
+    if not asset_url:
+        if logger is not None:
+            logger.write("stockfish_fetch_error", {"stage": "asset_url_missing", "asset_name": asset_name})
+        return None
+    release_tag = str(release_payload.get("tag_name", "latest")).strip() or "latest"
+    release_root = cache_root / "releases" / safe_name(release_tag)
+    release_root.mkdir(parents=True, exist_ok=True)
+    archive_path = release_root / asset_name
+    extract_root = release_root / "extracted"
+    try:
+        if not archive_path.exists():
+            if logger is not None:
+                logger.write("stockfish_fetch_start", {"asset_name": asset_name, "asset_url": asset_url, "target": str(archive_path)})
+            _download_to_path(asset_url, archive_path, timeout)
+        if not extract_root.exists():
+            extract_root.mkdir(parents=True, exist_ok=True)
+            with zipfile.ZipFile(archive_path) as bundle:
+                bundle.extractall(extract_root)
+    except Exception as exc:
+        if logger is not None:
+            logger.write("stockfish_fetch_error", {"stage": "download_or_extract", "asset_name": asset_name, "error": f"{type(exc).__name__}: {exc}"})
+        return None
+    extracted_binary = _find_stockfish_binary(extract_root)
+    if extracted_binary is None:
+        if logger is not None:
+            logger.write("stockfish_fetch_error", {"stage": "binary_discovery", "extract_root": str(extract_root)})
+        return None
+    current_root = cache_root / "current"
+    current_root.mkdir(parents=True, exist_ok=True)
+    current_copy = current_root / extracted_binary.name
+    shutil.copy2(extracted_binary, current_copy)
+    manifest = {
+        "fetched_at_utc": utc_now(),
+        "release_tag": release_tag,
+        "asset_name": asset_name,
+        "asset_url": asset_url,
+        "archive_path": str(archive_path),
+        "extracted_binary": str(extracted_binary),
+        "current_binary": str(current_copy),
+        "sha256": path_sha256(current_copy),
+    }
+    atomic_json(cache_root / "stockfish_manifest.json", manifest)
+    if logger is not None:
+        logger.write("stockfish_fetch_done", {"asset_name": asset_name, "binary": str(current_copy)})
+    return str(current_copy)
+
+
+def detect_stockfish_path(cfg: Dict[str, Any], logger: Optional[JSONLLogger] = None) -> Optional[str]:
     explicit = str(cfg.get("stockfish_path", "") or "").strip()
     if explicit and Path(explicit).exists():
         return explicit
+    cached_binary = _find_stockfish_binary(Path(str(cfg.get("stockfish_cache_root", Path(str(cfg["cache_root"])) / "stockfish"))) / "current")
+    if cached_binary is not None:
+        return str(cached_binary)
     for candidate in (
         shutil.which("stockfish"),
         shutil.which("stockfish.exe"),
@@ -4671,7 +5031,7 @@ def detect_stockfish_path(cfg: Dict[str, Any]) -> Optional[str]:
     ):
         if candidate and Path(candidate).exists():
             return candidate
-    return None
+    return _fetch_stockfish_binary(cfg, logger)
 
 
 CHESS_RESPONSE_CONTRACT_VERSION = "1.0"
@@ -4752,6 +5112,143 @@ def build_confidence_payload(
         "score": round(best_prob, 4),
         "gap": round(gap, 4),
         "tier": tier,
+    }
+
+
+def unpack_model_outputs(model_output: Any, device: torch.device) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, Dict[str, Any]]:
+    if not isinstance(model_output, (tuple, list)) or len(model_output) < 2:
+        raise RuntimeError("Model output must contain at least logits and value tensors")
+    logits = model_output[0]
+    value = model_output[1]
+    aux_loss = model_output[2] if len(model_output) >= 3 else torch.tensor(0.0, device=device)
+    router_reports = model_output[3] if len(model_output) >= 4 and isinstance(model_output[3], dict) else {}
+    return logits, value, aux_loss, router_reports
+
+
+def terminal_value_for_color(board: chess.Board, perspective_color: bool) -> Optional[float]:
+    outcome = board.outcome()
+    if outcome is None:
+        return None
+    if outcome.winner is None:
+        return 0.0
+    return 1.0 if outcome.winner == perspective_color else -1.0
+
+
+@torch.no_grad()
+def evaluate_board_value(
+    model: ChessPolicyValueNet,
+    board: chess.Board,
+    device: torch.device,
+) -> float:
+    legal_ids = legal_move_ids(board)
+    if not legal_ids:
+        terminal = terminal_value_for_color(board, board.turn)
+        return float(terminal if terminal is not None else 0.0)
+    piece_ids, meta_ids = encode_board_state(board, legal_move_count=len(legal_ids))
+    piece = torch.tensor([piece_ids], dtype=torch.long, device=device)
+    meta = torch.tensor([meta_ids], dtype=torch.long, device=device)
+    _, value, _, _ = unpack_model_outputs(model(piece, meta), device)
+    return float(value[0].item())
+
+
+@torch.no_grad()
+def policy_snapshot_for_board(
+    model: ChessPolicyValueNet,
+    board: chess.Board,
+    device: torch.device,
+    topk: int,
+) -> Dict[str, Any]:
+    legal_ids = legal_move_ids(board)
+    if not legal_ids:
+        raise RuntimeError("No legal moves available for policy snapshot")
+    piece_ids, meta_ids = encode_board_state(board, legal_move_count=len(legal_ids))
+    piece = torch.tensor([piece_ids], dtype=torch.long, device=device)
+    meta = torch.tensor([meta_ids], dtype=torch.long, device=device)
+    logits, value, _, _ = unpack_model_outputs(model(piece, meta), device)
+    logits = logits[0]
+    raw_topk = torch.topk(logits, k=min(max(1, topk), logits.size(-1)), dim=-1)
+    mask = torch.zeros_like(logits, dtype=torch.bool)
+    mask[legal_ids] = True
+    masked_logits = logits.masked_fill(~mask, -1e9)
+    masked_topk = torch.topk(masked_logits, k=min(max(1, topk), masked_logits.size(-1)), dim=-1)
+    return {
+        "legal_ids": legal_ids,
+        "piece_ids": piece_ids,
+        "meta_ids": meta_ids,
+        "logits": logits,
+        "masked_logits": masked_logits,
+        "value": float(value[0].item()),
+        "raw_topk_ids": raw_topk.indices.tolist(),
+        "raw_topk_scores": [round(float(item), 6) for item in raw_topk.values.tolist()],
+        "masked_topk_ids": masked_topk.indices.tolist(),
+        "masked_topk_scores": [round(float(item), 6) for item in masked_topk.values.tolist()],
+    }
+
+
+def is_tactically_forcing(board: chess.Board, move: chess.Move) -> bool:
+    return bool(board.is_capture(move) or board.gives_check(move) or move.promotion is not None)
+
+
+def infer_search_budget(board: chess.Board, confidence: Dict[str, Any], cfg: Dict[str, Any], topk: int) -> Dict[str, int]:
+    candidate_topk = max(1, int(cfg.get("search_candidate_topk", topk)))
+    reply_topk = max(1, int(cfg.get("search_reply_topk", 3)))
+    if not bool(cfg.get("search_auto_budget", True)):
+        return {"candidate_topk": candidate_topk, "reply_topk": reply_topk}
+    legal_moves = list(board.legal_moves)
+    forcing_count = sum(1 for move in legal_moves if is_tactically_forcing(board, move))
+    if board.is_check() or forcing_count >= 5 or confidence.get("tier") == "low":
+        candidate_topk = max(candidate_topk, 5)
+        reply_topk = max(reply_topk, 4)
+    elif confidence.get("tier") == "high" and float(confidence.get("gap", 0.0)) >= 0.20 and forcing_count == 0:
+        candidate_topk = min(candidate_topk, max(2, topk))
+        reply_topk = min(reply_topk, 2)
+    return {"candidate_topk": candidate_topk, "reply_topk": reply_topk}
+
+
+@torch.no_grad()
+def score_move_with_shallow_search(
+    model: ChessPolicyValueNet,
+    board: chess.Board,
+    move: chess.Move,
+    device: torch.device,
+    cfg: Dict[str, Any],
+    reply_topk: int,
+) -> Dict[str, Any]:
+    perspective_color = board.turn
+    board_after = board.copy(stack=False)
+    board_after.push(move)
+    terminal_after = terminal_value_for_color(board_after, perspective_color)
+    if terminal_after is not None:
+        return {
+            "score": float(terminal_after),
+            "immediate_score": float(terminal_after),
+            "reply_move": "",
+            "reply_scores": [],
+        }
+    immediate_score = -evaluate_board_value(model, board_after, device)
+    snapshot = policy_snapshot_for_board(model, board_after, device, topk=max(1, reply_topk))
+    worst_reply_score = immediate_score
+    worst_reply_move = ""
+    reply_scores: List[Dict[str, Any]] = []
+    for reply_id in snapshot["masked_topk_ids"][: max(1, reply_topk)]:
+        reply_uci = ID_TO_MOVE[int(reply_id)]
+        reply_move = chess.Move.from_uci(reply_uci)
+        if reply_move not in board_after.legal_moves:
+            continue
+        reply_board = board_after.copy(stack=False)
+        reply_board.push(reply_move)
+        terminal_reply = terminal_value_for_color(reply_board, perspective_color)
+        reply_score = float(terminal_reply) if terminal_reply is not None else evaluate_board_value(model, reply_board, device)
+        reply_scores.append({"move": reply_uci, "score": round(reply_score, 6)})
+        if reply_score < worst_reply_score:
+            worst_reply_score = reply_score
+            worst_reply_move = reply_uci
+    tactical_bonus = float(cfg.get("search_tactical_bonus", 0.0)) if is_tactically_forcing(board, move) else 0.0
+    return {
+        "score": float(worst_reply_score + tactical_bonus),
+        "immediate_score": float(immediate_score),
+        "reply_move": worst_reply_move,
+        "reply_scores": reply_scores,
     }
 
 
@@ -4965,44 +5462,90 @@ def choose_move_trace(
     device: torch.device,
     topk: int = 5,
     *,
+    cfg: Optional[Dict[str, Any]] = None,
     mode: str = "play",
     teaching_level: str = "club",
 ) -> Dict[str, Any]:
-    legal_ids = legal_move_ids(board)
-    if not legal_ids:
+    runtime_cfg = dict(RUN_CONFIG)
+    if LAST_RUNTIME_CFG is not None:
+        runtime_cfg.update(LAST_RUNTIME_CFG)
+    if cfg is not None:
+        runtime_cfg.update(cfg)
+    search_snapshot_topk = max(
+        int(topk),
+        int(runtime_cfg.get("search_candidate_topk", topk)),
+        int(runtime_cfg.get("search_reply_topk", 1)),
+    )
+    if not list(board.legal_moves):
         raise RuntimeError("No legal moves available for choose_move_trace")
-    piece_ids, meta_ids = encode_board_state(board, legal_move_count=len(legal_ids))
-    piece = torch.tensor([piece_ids], dtype=torch.long, device=device)
-    meta = torch.tensor([meta_ids], dtype=torch.long, device=device)
     start = time.time()
-    logits, value, _, _ = model(piece, meta)
+    snapshot = policy_snapshot_for_board(model, board, device, topk=max(1, search_snapshot_topk))
     latency_ms = (time.time() - start) * 1000.0
-    logits = logits[0]
-    raw_topk = torch.topk(logits, k=min(topk, logits.size(-1)), dim=-1)
-    raw_topk_ids = raw_topk.indices.tolist()
-    raw_topk_scores = [round(float(item), 6) for item in raw_topk.values.tolist()]
-    mask = torch.zeros_like(logits, dtype=torch.bool)
-    mask[legal_ids] = True
-    masked_logits = logits.masked_fill(~mask, -1e9)
-    masked_topk = torch.topk(masked_logits, k=min(topk, masked_logits.size(-1)), dim=-1)
-    masked_topk_ids = masked_topk.indices.tolist()
-    masked_topk_scores = [round(float(item), 6) for item in masked_topk.values.tolist()]
+    logits = snapshot["logits"]
+    masked_logits = snapshot["masked_logits"]
+    raw_topk_ids = snapshot["raw_topk_ids"][: max(1, topk)]
+    raw_topk_scores = snapshot["raw_topk_scores"][: max(1, topk)]
+    masked_topk_ids = snapshot["masked_topk_ids"][: max(1, topk)]
+    masked_topk_scores = snapshot["masked_topk_scores"][: max(1, topk)]
     best_id = int(masked_logits.argmax().item())
-    move_uci = ID_TO_MOVE[best_id]
+    confidence = build_confidence_payload(masked_logits, best_id, snapshot["masked_topk_ids"])
+    budget = infer_search_budget(board, confidence, runtime_cfg, topk=max(1, topk))
+    probs = torch.softmax(masked_logits, dim=-1)
+    candidate_ids = snapshot["masked_topk_ids"][: max(1, budget["candidate_topk"])]
+    candidate_records: List[Dict[str, Any]] = []
+    if bool(runtime_cfg.get("search_enabled", True)):
+        policy_blend = float(runtime_cfg.get("search_policy_blend", 0.35))
+        value_blend = float(runtime_cfg.get("search_value_blend", 0.65))
+        for candidate_id in candidate_ids:
+            move_uci = ID_TO_MOVE[int(candidate_id)]
+            move = chess.Move.from_uci(move_uci)
+            if move not in board.legal_moves:
+                continue
+            search_info = score_move_with_shallow_search(
+                model,
+                board,
+                move,
+                device,
+                runtime_cfg,
+                reply_topk=max(1, budget["reply_topk"]),
+            )
+            policy_score = float(probs[int(candidate_id)].item())
+            final_score = policy_blend * policy_score + value_blend * float(search_info["score"])
+            candidate_records.append(
+                {
+                    "move": move_uci,
+                    "policy_score": round(policy_score, 6),
+                    "search_score": round(float(search_info["score"]), 6),
+                    "immediate_score": round(float(search_info["immediate_score"]), 6),
+                    "reply_move": str(search_info["reply_move"]),
+                    "reply_scores": search_info["reply_scores"],
+                    "final_score": round(final_score, 6),
+                }
+            )
+    if candidate_records:
+        candidate_records.sort(key=lambda item: (-float(item["final_score"]), -float(item["policy_score"]), item["move"]))
+        move_uci = str(candidate_records[0]["move"])
+        search_enabled = True
+    else:
+        move_uci = ID_TO_MOVE[best_id]
+        search_enabled = False
     move = chess.Move.from_uci(move_uci)
     if move not in board.legal_moves:
         raise RuntimeError(f"Masked policy selected illegal move: {move_uci}")
     raw_top1_id = int(logits.argmax().item())
     trace = {
         "move": move_uci,
-        "value": float(value[0].item()),
+        "value": float(snapshot["value"]),
         "latency_ms": round(latency_ms, 4),
-        "raw_top1_is_legal": raw_top1_id in legal_ids,
+        "raw_top1_is_legal": raw_top1_id in snapshot["legal_ids"],
         "raw_topk": [ID_TO_MOVE[idx] for idx in raw_topk_ids],
         "raw_topk_scores": raw_topk_scores,
         "masked_topk": [ID_TO_MOVE[idx] for idx in masked_topk_ids],
         "masked_topk_scores": masked_topk_scores,
-        "confidence": build_confidence_payload(masked_logits, best_id, masked_topk_ids),
+        "confidence": confidence,
+        "search_enabled": search_enabled,
+        "search_budget": budget,
+        "search_candidates": candidate_records[: max(1, topk)],
     }
     trace["response_contract"] = build_chess_response_contract(
         board,
@@ -5044,7 +5587,7 @@ def evaluate_curated_position_suites(model: ChessPolicyValueNet, cfg: Dict[str, 
     try:
         for item in bank:
             board = item["board"]
-            trace = choose_move_trace(model, board, device, mode="teach", teaching_level="advanced")
+            trace = choose_move_trace(model, board, device, cfg=cfg, mode="teach", teaching_level="advanced")
             expected_move = str(item["expected_move_uci"])
             response_contract = dict(trace.get("response_contract", {}))
             observed_tags = set(response_contract.get("teaching_tags", []))
@@ -5229,7 +5772,6 @@ def play_human_vs_model_arena(
     device: torch.device,
     logger: Optional[JSONLLogger] = None,
 ) -> Dict[str, Any]:
-    del cfg
     ensure_interactive_console()
     was_training = model.training
     model.eval()
@@ -5292,7 +5834,7 @@ def play_human_vs_model_arena(
                     print(board)
                     break
             else:
-                trace = choose_move_trace(model, board, device)
+                trace = choose_move_trace(model, board, device, cfg=cfg)
                 move = chess.Move.from_uci(trace["move"])
                 board.push(move)
                 transcript.append(
@@ -5497,6 +6039,7 @@ def build_benchmark_protocol(cfg: Dict[str, Any], engine_path: Optional[str]) ->
         "status": "configured" if engine_path else "engine_missing",
         "engine_path": redact_path(engine_path) if engine_path else "",
         "engine_sha256": engine_sha,
+        "engine_acquisition": "auto_fetch_or_cached" if bool(cfg.get("stockfish_auto_fetch", True)) else "manual_only",
         "openings": OPENING_SEEDS,
         "ladder": cfg.get("stockfish_ladder", []),
         "rating_note": "This protocol emits elo_proxy_internal only. It does not emit a plain ELO claim.",
@@ -5529,7 +6072,7 @@ def play_stockfish_gauntlet(
     layout: ArtifactLayout,
     logger: JSONLLogger,
 ) -> Dict[str, Any]:
-    engine_path = detect_stockfish_path(cfg)
+    engine_path = detect_stockfish_path(cfg, logger)
     protocol = build_benchmark_protocol(cfg, engine_path)
     atomic_json(layout.reports_dir / "benchmark_protocol.json", protocol)
     if not engine_path or not cfg.get("stockfish_ladder"):
@@ -5602,7 +6145,7 @@ def play_stockfish_gauntlet(
                 played_moves: List[str] = []
                 while not board.is_game_over() and len(played_moves) < 180:
                     if board.turn == model_color:
-                        trace = choose_move_trace(model, board, device)
+                        trace = choose_move_trace(model, board, device, cfg=cfg)
                         move = chess.Move.from_uci(trace["move"])
                         if move not in board.legal_moves:
                             report = {
@@ -5673,6 +6216,96 @@ def play_stockfish_gauntlet(
             engine.quit()
 
 
+def build_midrun_stockfish_snapshot_cfg(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    snapshot_cfg = dict(cfg)
+    games_per_level = max(1, int(cfg.get("midrun_stockfish_snapshot_games", 4)))
+    ladder = []
+    for level in cfg.get("stockfish_ladder", [])[:2]:
+        level_copy = dict(level)
+        level_copy["games"] = min(int(level_copy.get("games", games_per_level)), games_per_level)
+        ladder.append(level_copy)
+    snapshot_cfg["stockfish_ladder"] = ladder
+    return snapshot_cfg
+
+
+def build_snapshot_layout(layout: ArtifactLayout, snapshot_root: Path, step: int) -> ArtifactLayout:
+    snapshot_run_dir = snapshot_root / f"step_{step:07d}"
+    logs_dir = snapshot_run_dir / "logs"
+    reports_dir = snapshot_run_dir / "reports"
+    checkpoints_dir = snapshot_run_dir / "checkpoints"
+    export_dir = snapshot_run_dir / "exports"
+    benchmark_dir = snapshot_run_dir / "benchmarks"
+    for path in (snapshot_run_dir, logs_dir, reports_dir, checkpoints_dir, export_dir, benchmark_dir):
+        path.mkdir(parents=True, exist_ok=True)
+    return ArtifactLayout(
+        run_id=f"{layout.run_id}_snapshot_{step:07d}",
+        root=layout.root,
+        run_dir=snapshot_run_dir,
+        logs_dir=logs_dir,
+        reports_dir=reports_dir,
+        checkpoints_dir=checkpoints_dir,
+        export_dir=export_dir,
+        benchmark_dir=benchmark_dir,
+        desktop_dir=layout.desktop_dir,
+        final_zip_path=layout.final_zip_path,
+        final_sha_path=layout.final_sha_path,
+    )
+
+
+def maybe_write_midrun_training_snapshots(
+    model: ChessPolicyValueNet,
+    cfg: Dict[str, Any],
+    device: torch.device,
+    layout: ArtifactLayout,
+    logger: JSONLLogger,
+    *,
+    step: int,
+    latest_train_row: Dict[str, Any],
+    latest_val_eval: Dict[str, Any],
+) -> None:
+    snapshot_root = layout.reports_dir / "midrun_snapshots"
+    snapshot_root.mkdir(parents=True, exist_ok=True)
+    snapshot_layout = build_snapshot_layout(layout, snapshot_root, step)
+    atomic_json(
+        snapshot_layout.reports_dir / "training_progress.json",
+        {
+            "step": step,
+            "train_row": latest_train_row,
+            "latest_val_eval": latest_val_eval,
+        },
+    )
+    curated_interval = max(0, int(cfg.get("midrun_curated_snapshot_interval", 0)))
+    if curated_interval > 0 and step % curated_interval == 0:
+        curated_report = evaluate_curated_position_suites(model, cfg, device)
+        atomic_json(snapshot_layout.reports_dir / "curated_position_suite_report.json", curated_report)
+        atomic_write_text(
+            snapshot_layout.reports_dir / "curated_position_suite_report.md",
+            render_curated_position_suite_report_md(curated_report),
+        )
+        logger.write(
+            "midrun_snapshot_curated",
+            {
+                "step": step,
+                "exact_hit_rate": curated_report.get("exact_hit_rate", 0.0),
+                "top3_hit_rate": curated_report.get("top3_hit_rate", 0.0),
+            },
+        )
+    stockfish_interval = max(0, int(cfg.get("midrun_stockfish_snapshot_interval", 0)))
+    if stockfish_interval > 0 and step % stockfish_interval == 0:
+        snapshot_cfg = build_midrun_stockfish_snapshot_cfg(cfg)
+        if snapshot_cfg.get("stockfish_ladder"):
+            stockfish_report = play_stockfish_gauntlet(model, snapshot_cfg, device, snapshot_layout, logger)
+            atomic_json(snapshot_layout.reports_dir / "stockfish_snapshot_report.json", stockfish_report)
+            logger.write(
+                "midrun_snapshot_stockfish",
+                {
+                    "step": step,
+                    "status": stockfish_report.get("status", "not_run"),
+                    "elo_proxy_internal": stockfish_report.get("elo_proxy_internal"),
+                },
+            )
+
+
 def generate_demo_replay(model: ChessPolicyValueNet, cfg: Dict[str, Any], device: torch.device) -> Dict[str, Any]:
     was_training = model.training
     model.eval()
@@ -5687,7 +6320,7 @@ def generate_demo_replay(model: ChessPolicyValueNet, cfg: Dict[str, Any], device
                 board.push(chess.Move.from_uci(move_uci))
             moves: List[Dict[str, Any]] = []
             while not board.is_game_over() and len(moves) < max_plies:
-                trace = choose_move_trace(model, board, device)
+                trace = choose_move_trace(model, board, device, cfg=cfg)
                 move = chess.Move.from_uci(trace["move"])
                 if move not in board.legal_moves:
                     break

@@ -15,6 +15,8 @@ Bu hat private/operator odaklı satranç proof akışıdır.
 - Log, config, provenance, checkpoint ve SHA256 içeren zip proof paketi üretmek.
 - Gömülü curated opening/tactical/endgame/blunder-correction suite ile training split'i güçlendirmek.
 - Synthetic Turkish teaching corpus ve curated suite benchmark yüzeylerini aynı onefile çevresinde taşımak.
+- Windows delivery hattında tek tık EXE üretmek ve runtime artefactlarini `runtime/` kökü altında toplamak.
+- Stockfish anchor yüzeyi gerektiğinde runtime tarafında auto-fetch/cache ile ayağa kalkabilsin.
 
 ## Claim Sınırı
 - `1600+` garanti değil, hedeftir.
@@ -26,11 +28,13 @@ Bu hat private/operator odaklı satranç proof akışıdır.
 - Okunabilir kanonik script repo içinde kalır.
 - `scripts/export_chess_5080_share.py` şunları üretir:
   - açık kopya
-  - obfuscate edilmiş share kopyası
+  - Windows build workspace
   - delivery zip
   - SHA256 dosyası
 - Share wrapper sadece başarılı paketlenmiş koşudan sonra kendini silebilir.
 - Repo içindeki kanonik kopya asla kendini silmez.
+- Final kullanıcı artifacti kaynak `.py` değil, `external_delivery/mertformer_chess_5080.exe` olur.
+- Final EXE `delivery_windows_oneclick` profilini ve runtime stockfish cache kökünü otomatik kullanır.
 
 ## Repo-Side Hazırlık Yüzeyi
 - `reports/chess_training_readiness_report.md`: repo-side training readiness kararı

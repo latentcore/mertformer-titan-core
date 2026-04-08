@@ -122,6 +122,8 @@ def render_launcher() -> str:
         '''\
         from __future__ import annotations
         import os
+        import sys
+        from pathlib import Path
 
         os.environ.setdefault('MERTFORMER_CHESS_ALLOW_INSTALL', '0')
         os.environ.setdefault('MERTFORMER_CHESS_SHARE_MODE', '0')
@@ -130,6 +132,13 @@ def render_launcher() -> str:
         os.environ.setdefault('MERTFORMER_CHESS_ENCRYPTION_REQUIRED', '1')
         os.environ.setdefault('MERTFORMER_CHESS_SINGLE_OUTPUT', '1')
         os.environ.setdefault('MERTFORMER_CHESS_CLEANUP_AFTER_BUNDLE', '1')
+        os.environ.setdefault('MERTFORMER_CHESS_PROFILE', 'delivery_windows_oneclick')
+
+        runtime_root = Path(sys.argv[0]).resolve().parent / 'runtime'
+        os.environ.setdefault('MERTFORMER_CHESS_ARTIFACT_ROOT', str(runtime_root))
+        os.environ.setdefault('MERTFORMER_CHESS_CACHE_ROOT', str(runtime_root / 'cache'))
+        os.environ.setdefault('MERTFORMER_CHESS_STOCKFISH_CACHE_ROOT', str(runtime_root / 'stockfish'))
+        os.environ.setdefault('MERTFORMER_CHESS_STOCKFISH_AUTO_FETCH', '1')
 
         from chess_5080_onefile import main
 
@@ -258,6 +267,7 @@ def main() -> int:
             'final_external_artifact': 'single Windows executable',
             'source_repo_remains_open': True,
             'runtime_output_contract': 'single encrypted archive from the compiled executable',
+            'runtime_root_contract': 'runtime artifacts stay under <exe_dir>/runtime and the executable auto-fetches/cache-manages Stockfish when needed',
             'runtime_password_contract': f'set {DEFAULT_PASSWORD_ENV} before running the final executable when encrypted output is required',
             'password_embedded_in_launcher': False,
             'observability_contract': {

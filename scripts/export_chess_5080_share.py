@@ -111,6 +111,8 @@ def render_run_final_ps1() -> str:
         Write-Host '- Bu build compiled Windows executable uretir; kaynak .py dosyasi final teslim değildir.'
         Write-Host '- Derlenen EXE pratikte kaynak koda göre daha korumalıdır, ama tersine mühendislik teorik olarak tamamen imkansiz değildir.'
         Write-Host '- Arena modu source/runtime yuzeyinde desteklenir; anlamli oyun icin egitilmis checkpoint kullan.'
+        Write-Host '- Final EXE runtime artefactlarini kendi yaninda olusturdugu runtime/ kokeni altinda toplar; Desktop spam hedeflenmez.'
+        Write-Host '- Stockfish benchmark gerekiyorsa runtime stockfish binarysini indirip cachelemeyi dener; manuel stockfish.exe koymak zorunlu degildir.'
         Write-Host '- Runtime sonucu sifreli archive uretecekse EXE yi calistirmadan once MERTFORMER_CHESS_ARCHIVE_PASSWORD ortam degiskenini hedef makinede ayarla.'
         """
     )
@@ -190,6 +192,9 @@ def render_readme(source_name: str, builder_name: str, bundle_name: str) -> str:
         - The runtime writes the main structured log to `logs/run_log.jsonl`.
         - The runtime writes operator-facing logging reports to `reports/logging_contract.json` and `reports/observability_report.json`.
         - Fatal failures are expected to appear in both `logs/run_log.jsonl` and a Desktop-side `*_FAILED_*.json` artifact.
+        - The compiled EXE runs with the `delivery_windows_oneclick` runtime profile.
+        - Runtime artifacts are expected under `runtime/` next to the EXE instead of spraying new run folders directly onto Desktop.
+        - The runtime attempts to auto-fetch/cache Stockfish under `runtime/stockfish/` when benchmark surfaces need it.
         - The chess script now includes an interactive human-vs-AI CLI through `--mode arena`; meaningful play expects a trained checkpoint via `--resume-from`.
         '''
     )
@@ -247,6 +252,9 @@ def main() -> int:
             'password_storage': 'runtime password is provided via MERTFORMER_CHESS_ARCHIVE_PASSWORD on the target machine and is not embedded into the compiled launcher',
             'repo_source_of_truth': str(SOURCE),
             'recommended_entrypoint': 'RUN_FINAL_BUILD.ps1',
+            'runtime_profile': 'delivery_windows_oneclick',
+            'runtime_root': 'runtime/',
+            'stockfish_contract': 'runtime auto-fetch/cache under runtime/stockfish when benchmark surfaces need a local engine',
             'observability': {
                 'main_run_log': 'logs/run_log.jsonl',
                 'logging_contract_report': 'reports/logging_contract.json',

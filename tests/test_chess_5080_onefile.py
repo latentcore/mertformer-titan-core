@@ -186,6 +186,17 @@ def test_prepare_layout_reuses_existing_package_run(tmp_path: Path) -> None:
     assert layout.checkpoints_dir == checkpoint_dir
 
 
+def test_make_layout_delivery_mode_uses_internal_runtime_roots(tmp_path: Path) -> None:
+    cfg = {
+        **onefile.RUN_CONFIG,
+        'artifact_root': str(tmp_path / 'runtime'),
+        'delivery_mode': True,
+    }
+    layout = onefile.make_layout(cfg)
+    assert layout.run_dir.parent == Path(cfg['artifact_root']) / 'runs'
+    assert layout.final_zip_path.parent == Path(cfg['artifact_root']) / 'final'
+
+
 def test_create_result_bundle_single_output_mode_omits_sha(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr(onefile, 'detect_desktop_dir', lambda: tmp_path)
     cfg = {
@@ -209,6 +220,32 @@ def test_validate_runtime_config_requires_explicit_self_delete_target() -> None:
             make_args(share_mode=True, enable_self_delete=True),
             onefile.RUN_CONFIG,
         )
+
+
+def test_resolve_runtime_config_honors_delivery_env_overrides(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv(onefile.DEFAULT_PROFILE_ENV, 'delivery_windows_oneclick')
+    monkeypatch.setenv(onefile.DEFAULT_ARTIFACT_ROOT_ENV, str(tmp_path / 'runtime'))
+    monkeypatch.setenv(onefile.DEFAULT_CACHE_ROOT_ENV, str(tmp_path / 'runtime_cache'))
+    cfg = onefile.resolve_runtime_config(make_args(), onefile.RUN_CONFIG)
+    assert cfg['profile'] == 'delivery_windows_oneclick'
+    assert cfg['delivery_mode'] is True
+    assert Path(cfg['artifact_root']) == tmp_path / 'runtime'
+    assert Path(cfg['cache_root']) == tmp_path / 'runtime_cache'
+
+
+def test_detect_stockfish_path_prefers_cached_runtime_binary(tmp_path: Path) -> None:
+    cached_dir = tmp_path / 'stockfish_cache' / 'current'
+    cached_dir.mkdir(parents=True)
+    binary = cached_dir / 'stockfish.exe'
+    binary.write_bytes(b'binary')
+    cfg = {
+        **onefile.RUN_CONFIG,
+        'cache_root': str(tmp_path / 'cache'),
+        'stockfish_cache_root': str(tmp_path / 'stockfish_cache'),
+        'stockfish_auto_fetch': False,
+        'auto_download_enabled': False,
+    }
+    assert onefile.detect_stockfish_path(cfg) == str(binary)
 
 
 def test_schedule_self_delete_ignores_canonical_repo_script(monkeypatch) -> None:
@@ -350,7 +387,7 @@ def test_play_human_vs_model_arena_accepts_human_moves_and_can_abort(monkeypatch
     monkeypatch.setattr(
         onefile,
         'choose_move_trace',
-        lambda model, board, device: {
+        lambda model, board, device, cfg=None, **kwargs: {
             'move': 'e7e5',
             'value': 0.12,
             'latency_ms': 1.5,

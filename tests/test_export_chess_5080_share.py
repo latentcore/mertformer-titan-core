@@ -41,6 +41,10 @@ def test_export_main_creates_bundle(monkeypatch, tmp_path: Path) -> None:
     assert '--mode arena' in (target / 'README_BUILD.md').read_text(encoding='utf-8')
     assert 'does not embed `MERTFORMER_CHESS_ARCHIVE_PASSWORD` into the compiled launcher' in (target / 'README_BUILD.md').read_text(encoding='utf-8')
     assert 'logs/run_log.jsonl' in (target / 'README_BUILD.md').read_text(encoding='utf-8')
+    assert 'delivery_windows_oneclick' in (target / 'README_BUILD.md').read_text(encoding='utf-8')
+    assert 'runtime/stockfish/' in (target / 'README_BUILD.md').read_text(encoding='utf-8')
     assert manifest['files']
     assert manifest['contract']['recommended_entrypoint'] == 'RUN_FINAL_BUILD.ps1'
+    assert manifest['contract']['runtime_profile'] == 'delivery_windows_oneclick'
+    assert manifest['contract']['runtime_root'] == 'runtime/'
     assert manifest['contract']['observability']['main_run_log'] == 'logs/run_log.jsonl'
