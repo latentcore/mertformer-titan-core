@@ -87,6 +87,10 @@ Expect these reports under the run directory:
 - `reports/token_accounting_stub.json`
 - `reports/compute_accounting_stub.json`
 - `reports/cost_report_stub.json`
+- `reports/final_weights_truth_stub.json`
+- `reports/best_checkpoint_truth_stub.json`
+- `reports/latest_checkpoint_truth_stub.json`
+- `reports/trained_artifact_registry_stub.json`
 - `logs/run_log.jsonl`
 
 ## Operator Gates

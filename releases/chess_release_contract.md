@@ -42,6 +42,10 @@ A chess onefile run is not release-grade unless all of these exist together:
 - token accounting stub
 - compute accounting stub
 - cost report stub
+- final weights truth stub
+- best checkpoint truth stub
+- latest checkpoint truth stub
+- trained artifact registry stub
 - artifact truth matrix
 - run status manifest
 - postrun analysis manifest

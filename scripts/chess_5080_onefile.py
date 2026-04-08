@@ -7862,6 +7862,10 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("token_accounting_stub", "token_accounting_stub.json"),
         ("compute_accounting_stub", "compute_accounting_stub.json"),
         ("cost_report_stub", "cost_report_stub.json"),
+        ("final_weights_truth_stub", "final_weights_truth_stub.json"),
+        ("best_checkpoint_truth_stub", "best_checkpoint_truth_stub.json"),
+        ("latest_checkpoint_truth_stub", "latest_checkpoint_truth_stub.json"),
+        ("trained_artifact_registry_stub", "trained_artifact_registry_stub.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
         ("replay_buffer_manifest", "replay_buffer_manifest.json"),
@@ -8382,6 +8386,12 @@ def build_known_limits(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[
             "status": "active",
             "detail": "Training report, token accounting, compute accounting, and cost reporting still require formal closure.",
         },
+        {
+            "label": "trained_artifact_truth_pending",
+            "severity": "high",
+            "status": "active",
+            "detail": "Final weights truth, best/latest checkpoint truth, and trained artifact registry still require formal artifact closure.",
+        },
     ]
     if cfg.get("mode") == "verify":
         limits.append(
@@ -8544,6 +8554,12 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("compute_accounting_stub", {}).get("exists", False))
         and bool(truth_entries.get("cost_report_stub", {}).get("exists", False))
     )
+    trained_artifact_surfaces_present = (
+        bool(truth_entries.get("final_weights_truth_stub", {}).get("exists", False))
+        and bool(truth_entries.get("best_checkpoint_truth_stub", {}).get("exists", False))
+        and bool(truth_entries.get("latest_checkpoint_truth_stub", {}).get("exists", False))
+        and bool(truth_entries.get("trained_artifact_registry_stub", {}).get("exists", False))
+    )
     gates = [
         {"label": "core_artifacts_present", "passed": core_artifacts_present},
         {"label": "checkpoint_or_package_provenance", "passed": checkpoint_or_provenance},
@@ -8559,6 +8575,7 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         {"label": "device_packaging_surfaces_present", "passed": device_packaging_surfaces_present},
         {"label": "benchmark_closure_surfaces_present", "passed": benchmark_closure_surfaces_present},
         {"label": "training_accounting_surfaces_present", "passed": training_accounting_surfaces_present},
+        {"label": "trained_artifact_surfaces_present", "passed": trained_artifact_surfaces_present},
     ]
     overall_internal_ready = all(gate["passed"] for gate in gates if gate["label"] != "stockfish_completed")
     overall_external_ready = all(gate["passed"] for gate in gates) and payload.get("rating_claim_status") == RatingClaimStatus.TARGET_MET_EXTERNAL.value
@@ -8682,6 +8699,10 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "token_accounting_stub",
         "compute_accounting_stub",
         "cost_report_stub",
+        "final_weights_truth_stub",
+        "best_checkpoint_truth_stub",
+        "latest_checkpoint_truth_stub",
+        "trained_artifact_registry_stub",
         "run_log",
     ]
     items = [
@@ -8750,6 +8771,11 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         for item in items
         if item.get("label") in {"training_report_stub", "token_accounting_stub", "compute_accounting_stub", "cost_report_stub"} and item.get("exists", False)
     )
+    trained_artifact_count = sum(
+        1
+        for item in items
+        if item.get("label") in {"final_weights_truth_stub", "best_checkpoint_truth_stub", "latest_checkpoint_truth_stub", "trained_artifact_registry_stub"} and item.get("exists", False)
+    )
     return {
         "schema": "chess_operator_handoff_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -8762,6 +8788,7 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         "device_packaging_count": device_packaging_count,
         "benchmark_closure_count": benchmark_closure_count,
         "training_accounting_count": training_accounting_count,
+        "trained_artifact_count": trained_artifact_count,
         "overall_internal_ready": bool(release_gate.get("overall_internal_ready", False)),
         "overall_external_ready": bool(release_gate.get("overall_external_ready", False)),
         "operator_note": "Operator handoff can be internally complete while external release readiness remains false.",
@@ -8782,6 +8809,7 @@ def render_operator_handoff_summary_md(report: Dict[str, Any]) -> str:
         f"- device_packaging_count: `{report.get('device_packaging_count', 0)}`",
         f"- benchmark_closure_count: `{report.get('benchmark_closure_count', 0)}`",
         f"- training_accounting_count: `{report.get('training_accounting_count', 0)}`",
+        f"- trained_artifact_count: `{report.get('trained_artifact_count', 0)}`",
         f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
         f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
         f"- operator_note: {report.get('operator_note', '')}",
@@ -9323,6 +9351,112 @@ def render_cost_report_stub_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def build_final_weights_truth_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    bundle = dict(payload.get("bundle", {}))
+    final_zip = str(bundle.get("zip_path", "")).strip()
+    return {
+        "schema": "chess_final_weights_truth_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_final_weights_truth",
+        "bundle_zip_present": bool(final_zip),
+        "reason": "Final weights truth requires explicit trained-weight provenance and validation beyond internal onefile artifact generation.",
+    }
+
+
+def render_final_weights_truth_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Final Weights Truth Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- bundle_zip_present: `{report.get('bundle_zip_present', False)}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_best_checkpoint_truth_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    best_checkpoint = str(payload.get("best_checkpoint", "")).strip()
+    return {
+        "schema": "chess_best_checkpoint_truth_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_best_checkpoint_truth",
+        "best_checkpoint_present": bool(best_checkpoint),
+        "reason": "Best-checkpoint truth requires measured checkpoint selection and validation beyond local artifact generation.",
+    }
+
+
+def render_best_checkpoint_truth_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Best Checkpoint Truth Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- best_checkpoint_present: `{report.get('best_checkpoint_present', False)}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_latest_checkpoint_truth_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    latest_checkpoint = str(payload.get("latest_checkpoint", "")).strip()
+    return {
+        "schema": "chess_latest_checkpoint_truth_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_latest_checkpoint_truth",
+        "latest_checkpoint_present": bool(latest_checkpoint),
+        "reason": "Latest-checkpoint truth requires explicit artifact validation beyond local onefile artifact generation.",
+    }
+
+
+def render_latest_checkpoint_truth_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Latest Checkpoint Truth Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- latest_checkpoint_present: `{report.get('latest_checkpoint_present', False)}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_trained_artifact_registry_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    tracked_labels = [
+        label
+        for label in ("best_checkpoint", "latest_checkpoint", "bundle_zip", "bundle_sha")
+        if truth_entries.get(label, {}).get("exists", False)
+    ]
+    return {
+        "schema": "chess_trained_artifact_registry_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_trained_artifact_registry_lock",
+        "tracked_label_count": len(tracked_labels),
+        "tracked_labels": tracked_labels,
+        "reason": "Trained artifact registry closure requires a locked trained-artifact registry beyond local onefile artifact generation.",
+    }
+
+
+def render_trained_artifact_registry_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Trained Artifact Registry Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- tracked_label_count: `{report.get('tracked_label_count', 0)}`",
+        f"- reason: {report.get('reason', '')}",
+        "",
+        "## Tracked Labels",
+    ]
+    for label in report.get("tracked_labels", []):
+        lines.append(f"- `{label}`")
+    return "\n".join(lines) + "\n"
+
+
 def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
     run_contract = build_run_contract(layout, payload)
     atomic_json(layout.reports_dir / "run_contract.json", run_contract)
@@ -9432,6 +9566,18 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     cost_report_stub = build_cost_report_stub(layout, payload)
     atomic_json(layout.reports_dir / "cost_report_stub.json", cost_report_stub)
     atomic_write_text(layout.reports_dir / "cost_report_stub.md", render_cost_report_stub_md(cost_report_stub))
+    final_weights_truth_stub = build_final_weights_truth_stub(layout, payload)
+    atomic_json(layout.reports_dir / "final_weights_truth_stub.json", final_weights_truth_stub)
+    atomic_write_text(layout.reports_dir / "final_weights_truth_stub.md", render_final_weights_truth_stub_md(final_weights_truth_stub))
+    best_checkpoint_truth_stub = build_best_checkpoint_truth_stub(layout, payload)
+    atomic_json(layout.reports_dir / "best_checkpoint_truth_stub.json", best_checkpoint_truth_stub)
+    atomic_write_text(layout.reports_dir / "best_checkpoint_truth_stub.md", render_best_checkpoint_truth_stub_md(best_checkpoint_truth_stub))
+    latest_checkpoint_truth_stub = build_latest_checkpoint_truth_stub(layout, payload)
+    atomic_json(layout.reports_dir / "latest_checkpoint_truth_stub.json", latest_checkpoint_truth_stub)
+    atomic_write_text(layout.reports_dir / "latest_checkpoint_truth_stub.md", render_latest_checkpoint_truth_stub_md(latest_checkpoint_truth_stub))
+    trained_artifact_registry_stub = build_trained_artifact_registry_stub(layout, payload)
+    atomic_json(layout.reports_dir / "trained_artifact_registry_stub.json", trained_artifact_registry_stub)
+    atomic_write_text(layout.reports_dir / "trained_artifact_registry_stub.md", render_trained_artifact_registry_stub_md(trained_artifact_registry_stub))
 
 
 def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:

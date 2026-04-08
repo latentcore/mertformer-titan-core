@@ -45,3 +45,7 @@
 - `token accounting stub`: explicit reminder that training closure still needs explicit token accounting beyond local artifact generation.
 - `compute accounting stub`: explicit reminder that training closure still needs explicit compute accounting beyond local artifact generation.
 - `cost report stub`: explicit reminder that training closure still needs explicit cost reporting beyond local artifact generation.
+- `final weights truth stub`: explicit reminder that final trained weights still need validated artifact truth beyond local artifact generation.
+- `best checkpoint truth stub`: explicit reminder that best checkpoint selection still needs validated truth beyond local artifact generation.
+- `latest checkpoint truth stub`: explicit reminder that latest checkpoint still needs validated truth beyond local artifact generation.
+- `trained artifact registry stub`: explicit reminder that trained artifacts still need a locked registry beyond local artifact generation.

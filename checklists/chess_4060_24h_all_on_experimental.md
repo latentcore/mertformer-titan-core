@@ -55,5 +55,9 @@
 - [ ] `reports/token_accounting_stub.json` present
 - [ ] `reports/compute_accounting_stub.json` present
 - [ ] `reports/cost_report_stub.json` present
+- [ ] `reports/final_weights_truth_stub.json` present
+- [ ] `reports/best_checkpoint_truth_stub.json` present
+- [ ] `reports/latest_checkpoint_truth_stub.json` present
+- [ ] `reports/trained_artifact_registry_stub.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed

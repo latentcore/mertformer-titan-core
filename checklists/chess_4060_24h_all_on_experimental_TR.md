@@ -55,5 +55,9 @@
 - [ ] `reports/token_accounting_stub.json` mevcut
 - [ ] `reports/compute_accounting_stub.json` mevcut
 - [ ] `reports/cost_report_stub.json` mevcut
+- [ ] `reports/final_weights_truth_stub.json` mevcut
+- [ ] `reports/best_checkpoint_truth_stub.json` mevcut
+- [ ] `reports/latest_checkpoint_truth_stub.json` mevcut
+- [ ] `reports/trained_artifact_registry_stub.json` mevcut
 - [ ] Final checkpoint yolu kaydedildi
 - [ ] Koşu sonrası claim sınırı tekrar gözden geçirildi
