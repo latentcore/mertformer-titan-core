@@ -83,5 +83,7 @@
 - `project evidence backlog report`: grouped view of still-missing evidence surfaces and which blockers, owners, and closure surfaces depend on each evidence item.
 - `project dependency bottleneck report`: ranked view of which blockers currently create the strongest dependency bottlenecks across the closure graph.
 - `project owner phase frontier report`: per-owner view of the next active phase frontier, including which blockers are next and whether that frontier is ready now or still dependency-blocked.
+- `project evidence criticality report`: ranked view of which evidence surfaces currently matter most because they affect the widest blocker set and earliest closure phases.
+- `project phase transition matrix`: per-phase transition map showing how dependency flow moves between closure phases across the blocker graph.
 - `generated truth consistency report`: explicit check that generated truth summaries agree with each other instead of only existing side by side.
 - `generated truth crosscheck matrix`: extra consistency layer that cross-checks blocker coverage, dependency order, lane coverage, and summary alignment.
