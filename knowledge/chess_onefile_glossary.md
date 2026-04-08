@@ -101,5 +101,8 @@
 - `project training run readiness report`: root-plus-downstream view of the real training run blocker showing what it unlocks immediately and which dependent blockers are still staged behind it.
 - `project benchmark closure dependency report`: dependency view rooted at benchmark closure, showing which release-reaching blockers stay downstream of missing benchmark evidence.
 - `project release decision queue report`: compact queue of release-finalization and governance-closeout blockers that still require formal release or management decisions.
+- `project external validation readiness report`: external-validation-phase view that combines signoff queue, owner evidence burden, blocker risk, and release distance for the blockers that must survive outside-repo scrutiny next.
+- `project artifact lock readiness report`: compact artifact-lock view that ties real training, trained-artifact truth, benchmark closure, device validation, and release lock surfaces into one pre-freeze readiness slice.
+- `project final release cutover report`: cutover-stage summary that compresses release-reaching blockers and final decision blockers into the last ordered sequence before RC/golden/final release.
 - `generated truth consistency report`: explicit check that generated truth summaries agree with each other instead of only existing side by side.
 - `generated truth crosscheck matrix`: extra consistency layer that cross-checks blocker coverage, dependency order, lane coverage, and summary alignment.
