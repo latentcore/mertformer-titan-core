@@ -872,6 +872,10 @@ def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path)
     assert entries['golden_stub']['exists'] is False
     assert entries['handoff_pack_manifest']['exists'] is False
     assert entries['operator_handoff_summary']['exists'] is False
+    assert entries['external_repro_stub']['exists'] is False
+    assert entries['pilot_stub']['exists'] is False
+    assert entries['security_stub']['exists'] is False
+    assert entries['legal_stub']['exists'] is False
     assert truth['present_required_count'] < truth['required_count']
 
 
@@ -951,6 +955,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     golden_stub = json.loads((layout.reports_dir / 'golden_stub.json').read_text(encoding='utf-8'))
     handoff_pack_manifest = json.loads((layout.reports_dir / 'handoff_pack_manifest.json').read_text(encoding='utf-8'))
     operator_handoff_summary = json.loads((layout.reports_dir / 'operator_handoff_summary.json').read_text(encoding='utf-8'))
+    external_repro_stub = json.loads((layout.reports_dir / 'external_repro_stub.json').read_text(encoding='utf-8'))
+    pilot_stub = json.loads((layout.reports_dir / 'pilot_stub.json').read_text(encoding='utf-8'))
+    security_stub = json.loads((layout.reports_dir / 'security_stub.json').read_text(encoding='utf-8'))
+    legal_stub = json.loads((layout.reports_dir / 'legal_stub.json').read_text(encoding='utf-8'))
     entries = {entry['label']: entry for entry in truth['entries']}
     assert run_contract['schema'] == 'chess_run_contract_v1'
     assert run_contract['feature_bundle'] == 'all_on_experimental'
@@ -968,6 +976,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert golden_stub['schema'] == 'chess_golden_stub_v1'
     assert handoff_pack_manifest['schema'] == 'chess_handoff_pack_manifest_v1'
     assert operator_handoff_summary['schema'] == 'chess_operator_handoff_summary_v1'
+    assert external_repro_stub['schema'] == 'chess_external_repro_stub_v1'
+    assert pilot_stub['schema'] == 'chess_pilot_stub_v1'
+    assert security_stub['schema'] == 'chess_security_stub_v1'
+    assert legal_stub['schema'] == 'chess_legal_stub_v1'
     assert entries['run_contract']['exists'] is True
     assert entries['release_snapshot']['exists'] is True
     assert entries['evidence_pack_stub']['exists'] is True
@@ -979,10 +991,26 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert entries['golden_stub']['exists'] is True
     assert entries['handoff_pack_manifest']['exists'] is True
     assert entries['operator_handoff_summary']['exists'] is True
+    assert entries['external_repro_stub']['exists'] is True
+    assert entries['pilot_stub']['exists'] is True
+    assert entries['security_stub']['exists'] is True
+    assert entries['legal_stub']['exists'] is True
     assert truth['present_required_count'] == truth['required_count']
     assert rc_stub['status'] == 'candidate_internal_only'
     assert golden_stub['status'] == 'not_ready'
     assert operator_handoff_summary['handoff_surface_status'] == 'internal_ready'
+    assert operator_handoff_summary['external_stub_count'] == 4
+    assert external_repro_stub['status'] == 'pending_external_reproduction'
+    assert pilot_stub['status'] == 'pending_pilot_validation'
+    assert security_stub['status'] == 'pending_security_review'
+    assert legal_stub['status'] == 'pending_legal_review'
+    known_limit_labels = {item['label'] for item in known_limits['limits']}
+    assert 'external_reproduction_pending' in known_limit_labels
+    assert 'security_legal_pilot_pending' in known_limit_labels
+    gate_labels = {item['label']: item['passed'] for item in release_gate_summary['gates']}
+    assert gate_labels['external_closure_stubs_present'] is True
+    handoff_labels = {item['label'] for item in handoff_pack_manifest['items']}
+    assert {'external_repro_stub', 'pilot_stub', 'security_stub', 'legal_stub'} <= handoff_labels
     assert release_gate_summary['overall_internal_ready'] is True
     assert release_gate_summary['overall_external_ready'] is False
 

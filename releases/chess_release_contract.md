@@ -18,6 +18,10 @@ A chess onefile run is not release-grade unless all of these exist together:
 - golden stub
 - handoff pack manifest
 - operator handoff summary
+- external repro stub
+- pilot stub
+- security stub
+- legal stub
 - artifact truth matrix
 - run status manifest
 - postrun analysis manifest

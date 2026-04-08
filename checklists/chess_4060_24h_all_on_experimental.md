@@ -31,5 +31,9 @@
 - [ ] `reports/golden_stub.json` present
 - [ ] `reports/handoff_pack_manifest.json` present
 - [ ] `reports/operator_handoff_summary.json` present
+- [ ] `reports/external_repro_stub.json` present
+- [ ] `reports/pilot_stub.json` present
+- [ ] `reports/security_stub.json` present
+- [ ] `reports/legal_stub.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed

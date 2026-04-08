@@ -21,3 +21,7 @@
 - `golden stub`: explicit placeholder showing golden release is still not granted by onefile closure alone.
 - `handoff pack manifest`: list of operator-facing documents and artifacts expected in a handoff.
 - `operator handoff summary`: compact summary of whether the handoff pack is internally complete.
+- `external repro stub`: explicit reminder that independent third-party reproduction is still outside the internal onefile evidence chain.
+- `pilot stub`: explicit reminder that real pilot validation is still outside the internal onefile evidence chain.
+- `security stub`: explicit reminder that security closure still requires review beyond local artifact generation.
+- `legal stub`: explicit reminder that legal closure still requires licensing and deployment review beyond local artifact generation.

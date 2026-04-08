@@ -81,6 +81,7 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 - `reports/golden_stub.json`, golden release’in iç kapanıştan daha sıkı ve ayrı olduğunu kaydeder.
 - `reports/handoff_pack_manifest.json`, tam o koşunun operatör odaklı handoff paketini listeler.
 - `reports/operator_handoff_summary.json`, operatör handoff yüzeyinin içten tamam olup olmadığını özetler.
+- `reports/external_repro_stub.json`, `reports/pilot_stub.json`, `reports/security_stub.json` ve `reports/legal_stub.json`, dış kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
 
 
 ![MertFormer Titan Header](assets/header.png)

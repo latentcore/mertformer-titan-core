@@ -21,6 +21,10 @@ A serious chess onefile run should preserve:
 - `reports/golden_stub.json`
 - `reports/handoff_pack_manifest.json`
 - `reports/operator_handoff_summary.json`
+- `reports/external_repro_stub.json`
+- `reports/pilot_stub.json`
+- `reports/security_stub.json`
+- `reports/legal_stub.json`
 - `reports/artifact_manifest_with_hashes.json`
 - `logs/run_log.jsonl`
 

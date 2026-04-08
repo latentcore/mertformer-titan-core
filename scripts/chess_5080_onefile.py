@@ -7838,6 +7838,10 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("golden_stub", "golden_stub.json"),
         ("handoff_pack_manifest", "handoff_pack_manifest.json"),
         ("operator_handoff_summary", "operator_handoff_summary.json"),
+        ("external_repro_stub", "external_repro_stub.json"),
+        ("pilot_stub", "pilot_stub.json"),
+        ("security_stub", "security_stub.json"),
+        ("legal_stub", "legal_stub.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
         ("replay_buffer_manifest", "replay_buffer_manifest.json"),
@@ -8316,6 +8320,18 @@ def build_known_limits(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[
             "status": "active",
             "detail": "Internal release-surface readiness is not the same thing as external release-grade verification.",
         },
+        {
+            "label": "external_reproduction_pending",
+            "severity": "high",
+            "status": "active",
+            "detail": "External reproducibility confirmation remains pending even when internal artifacts are complete.",
+        },
+        {
+            "label": "security_legal_pilot_pending",
+            "severity": "high",
+            "status": "active",
+            "detail": "Security, legal, and pilot closures remain separate external work streams.",
+        },
     ]
     if cfg.get("mode") == "verify":
         limits.append(
@@ -8442,6 +8458,12 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
     internal_claim_boundary_preserved = payload.get("rating_claim_status", "") != RatingClaimStatus.TARGET_MET_EXTERNAL.value
     release_registry_present = bool(truth_entries.get("run_contract", {}).get("exists", False)) and bool(truth_entries.get("release_snapshot", {}).get("exists", False))
     handoff_surfaces_present = bool(truth_entries.get("handoff_pack_manifest", {}).get("exists", False)) and bool(truth_entries.get("operator_handoff_summary", {}).get("exists", False))
+    external_closure_stubs_present = (
+        bool(truth_entries.get("external_repro_stub", {}).get("exists", False))
+        and bool(truth_entries.get("pilot_stub", {}).get("exists", False))
+        and bool(truth_entries.get("security_stub", {}).get("exists", False))
+        and bool(truth_entries.get("legal_stub", {}).get("exists", False))
+    )
     gates = [
         {"label": "core_artifacts_present", "passed": core_artifacts_present},
         {"label": "checkpoint_or_package_provenance", "passed": checkpoint_or_provenance},
@@ -8451,6 +8473,7 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         {"label": "internal_claim_boundary_preserved", "passed": internal_claim_boundary_preserved},
         {"label": "release_registry_present", "passed": release_registry_present},
         {"label": "handoff_surfaces_present", "passed": handoff_surfaces_present},
+        {"label": "external_closure_stubs_present", "passed": external_closure_stubs_present},
     ]
     overall_internal_ready = all(gate["passed"] for gate in gates if gate["label"] != "stockfish_completed")
     overall_external_ready = all(gate["passed"] for gate in gates) and payload.get("rating_claim_status") == RatingClaimStatus.TARGET_MET_EXTERNAL.value
@@ -8550,6 +8573,10 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "known_limits",
         "support_matrix",
         "release_gate_summary",
+        "external_repro_stub",
+        "pilot_stub",
+        "security_stub",
+        "legal_stub",
         "run_log",
     ]
     items = [
@@ -8588,12 +8615,18 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
     items = handoff.get("items", [])
     existing_items = sum(1 for item in items if item.get("exists", False))
     total_items = len(items)
+    external_stub_count = sum(
+        1
+        for item in items
+        if item.get("label") in {"external_repro_stub", "pilot_stub", "security_stub", "legal_stub"} and item.get("exists", False)
+    )
     return {
         "schema": "chess_operator_handoff_summary_v1",
         "run_id": payload.get("run_id", ""),
         "handoff_surface_status": "internal_ready" if total_items > 0 and existing_items == total_items else "incomplete",
         "existing_items": existing_items,
         "total_items": total_items,
+        "external_stub_count": external_stub_count,
         "overall_internal_ready": bool(release_gate.get("overall_internal_ready", False)),
         "overall_external_ready": bool(release_gate.get("overall_external_ready", False)),
         "operator_note": "Operator handoff can be internally complete while external release readiness remains false.",
@@ -8608,9 +8641,96 @@ def render_operator_handoff_summary_md(report: Dict[str, Any]) -> str:
         f"- handoff_surface_status: `{report.get('handoff_surface_status', 'unknown')}`",
         f"- existing_items: `{report.get('existing_items', 0)}`",
         f"- total_items: `{report.get('total_items', 0)}`",
+        f"- external_stub_count: `{report.get('external_stub_count', 0)}`",
         f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
         f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
         f"- operator_note: {report.get('operator_note', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_external_repro_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    gate = _read_json_if_exists(layout.reports_dir / "release_gate_summary.json")
+    return {
+        "schema": "chess_external_repro_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_external_reproduction",
+        "overall_internal_ready": bool(gate.get("overall_internal_ready", False)),
+        "reason": "External reproducibility requires third-party rerun or independent confirmation outside this onefile artifact chain.",
+    }
+
+
+def render_external_repro_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# External Repro Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_pilot_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_pilot_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_pilot_validation",
+        "reason": "Pilot validation requires real operator or user deployment outside internal artifact generation.",
+    }
+
+
+def render_pilot_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Pilot Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_security_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_security_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_security_review",
+        "reason": "Security closure requires external review, threat assessment, and deployment-specific checks beyond onefile artifacts.",
+    }
+
+
+def render_security_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Security Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_legal_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_legal_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_legal_review",
+        "reason": "Legal closure requires external licensing, data, and deployment review beyond this internal run record.",
+    }
+
+
+def render_legal_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Legal Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
     ]
     return "\n".join(lines) + "\n"
 
@@ -8652,6 +8772,18 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     operator_handoff_summary = build_operator_handoff_summary(layout, payload)
     atomic_json(layout.reports_dir / "operator_handoff_summary.json", operator_handoff_summary)
     atomic_write_text(layout.reports_dir / "operator_handoff_summary.md", render_operator_handoff_summary_md(operator_handoff_summary))
+    external_repro_stub = build_external_repro_stub(layout, payload)
+    atomic_json(layout.reports_dir / "external_repro_stub.json", external_repro_stub)
+    atomic_write_text(layout.reports_dir / "external_repro_stub.md", render_external_repro_stub_md(external_repro_stub))
+    pilot_stub = build_pilot_stub(layout, payload)
+    atomic_json(layout.reports_dir / "pilot_stub.json", pilot_stub)
+    atomic_write_text(layout.reports_dir / "pilot_stub.md", render_pilot_stub_md(pilot_stub))
+    security_stub = build_security_stub(layout, payload)
+    atomic_json(layout.reports_dir / "security_stub.json", security_stub)
+    atomic_write_text(layout.reports_dir / "security_stub.md", render_security_stub_md(security_stub))
+    legal_stub = build_legal_stub(layout, payload)
+    atomic_json(layout.reports_dir / "legal_stub.json", legal_stub)
+    atomic_write_text(layout.reports_dir / "legal_stub.md", render_legal_stub_md(legal_stub))
 
 
 def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:

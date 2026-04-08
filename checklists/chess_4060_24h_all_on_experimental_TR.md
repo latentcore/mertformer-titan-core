@@ -31,5 +31,9 @@
 - [ ] `reports/golden_stub.json` mevcut
 - [ ] `reports/handoff_pack_manifest.json` mevcut
 - [ ] `reports/operator_handoff_summary.json` mevcut
+- [ ] `reports/external_repro_stub.json` mevcut
+- [ ] `reports/pilot_stub.json` mevcut
+- [ ] `reports/security_stub.json` mevcut
+- [ ] `reports/legal_stub.json` mevcut
 - [ ] Final checkpoint yolu kaydedildi
 - [ ] Koşu sonrası claim sınırı tekrar gözden geçirildi
