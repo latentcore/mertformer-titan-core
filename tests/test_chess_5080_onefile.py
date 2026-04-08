@@ -917,7 +917,11 @@ def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path)
     assert entries['truth_docs_index']['exists'] is False
     assert entries['truth_docs_drift_report']['exists'] is False
     assert entries['project_blocker_action_plan']['exists'] is False
+    assert entries['project_blocker_dependency_graph']['exists'] is False
+    assert entries['project_execution_sequence']['exists'] is False
+    assert entries['project_lane_status_board']['exists'] is False
     assert entries['generated_truth_consistency_report']['exists'] is False
+    assert entries['generated_truth_crosscheck_matrix']['exists'] is False
     assert truth['present_required_count'] < truth['required_count']
 
 
@@ -1042,7 +1046,11 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     truth_docs_index = json.loads((layout.reports_dir / 'truth_docs_index.json').read_text(encoding='utf-8'))
     truth_docs_drift_report = json.loads((layout.reports_dir / 'truth_docs_drift_report.json').read_text(encoding='utf-8'))
     project_blocker_action_plan = json.loads((layout.reports_dir / 'project_blocker_action_plan.json').read_text(encoding='utf-8'))
+    project_blocker_dependency_graph = json.loads((layout.reports_dir / 'project_blocker_dependency_graph.json').read_text(encoding='utf-8'))
+    project_execution_sequence = json.loads((layout.reports_dir / 'project_execution_sequence.json').read_text(encoding='utf-8'))
+    project_lane_status_board = json.loads((layout.reports_dir / 'project_lane_status_board.json').read_text(encoding='utf-8'))
     generated_truth_consistency_report = json.loads((layout.reports_dir / 'generated_truth_consistency_report.json').read_text(encoding='utf-8'))
+    generated_truth_crosscheck_matrix = json.loads((layout.reports_dir / 'generated_truth_crosscheck_matrix.json').read_text(encoding='utf-8'))
     entries = {entry['label']: entry for entry in truth['entries']}
     assert run_contract['schema'] == 'chess_run_contract_v1'
     assert run_contract['feature_bundle'] == 'all_on_experimental'
@@ -1105,7 +1113,11 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert truth_docs_index['schema'] == 'chess_truth_docs_index_v1'
     assert truth_docs_drift_report['schema'] == 'chess_truth_docs_drift_report_v1'
     assert project_blocker_action_plan['schema'] == 'chess_project_blocker_action_plan_v1'
+    assert project_blocker_dependency_graph['schema'] == 'chess_project_blocker_dependency_graph_v1'
+    assert project_execution_sequence['schema'] == 'chess_project_execution_sequence_v1'
+    assert project_lane_status_board['schema'] == 'chess_project_lane_status_board_v1'
     assert generated_truth_consistency_report['schema'] == 'chess_generated_truth_consistency_report_v1'
+    assert generated_truth_crosscheck_matrix['schema'] == 'chess_generated_truth_crosscheck_matrix_v1'
     assert entries['run_contract']['exists'] is True
     assert entries['release_snapshot']['exists'] is True
     assert entries['evidence_pack_stub']['exists'] is True
@@ -1162,7 +1174,11 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert entries['truth_docs_index']['exists'] is True
     assert entries['truth_docs_drift_report']['exists'] is True
     assert entries['project_blocker_action_plan']['exists'] is True
+    assert entries['project_blocker_dependency_graph']['exists'] is True
+    assert entries['project_execution_sequence']['exists'] is True
+    assert entries['project_lane_status_board']['exists'] is True
     assert entries['generated_truth_consistency_report']['exists'] is True
+    assert entries['generated_truth_crosscheck_matrix']['exists'] is True
     assert truth['present_required_count'] == truth['required_count']
     assert rc_stub['status'] == 'candidate_internal_only'
     assert golden_stub['status'] == 'not_ready'
@@ -1205,9 +1221,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert product_maintenance_only_stub['status'] == 'pending_maintenance_only_decision'
     assert closure_decision_record_stub['status'] == 'pending_management_closure_record'
     assert 'release_gate_summary' in closure_decision_record_stub['tracked_labels']
-    assert master_closure_table['row_count'] >= 11
+    assert master_closure_table['row_count'] >= 12
     assert any(row['label'] == 'management_closure' and row['complete'] is True for row in master_closure_table['rows'])
     assert any(row['label'] == 'truth_docs_alignment' and row['complete'] is True for row in master_closure_table['rows'])
+    assert any(row['label'] == 'project_actionability' and row['complete'] is True for row in master_closure_table['rows'])
     assert any(row['label'] == 'generated_truth_consistency' and row['complete'] is True for row in master_closure_table['rows'])
     assert remaining_core_blockers['blocker_count'] >= 1
     assert any(blocker['label'] == 'management_closure_pending' for blocker in remaining_core_blockers['blockers'])
@@ -1216,9 +1233,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert readiness_snapshot['release_surface_status'] == 'candidate_internal_only'
     assert readiness_snapshot['rc_status'] == 'candidate_internal_only'
     assert readiness_snapshot['golden_status'] == 'not_ready'
-    assert aggregated_master_table['row_count'] >= 11
+    assert aggregated_master_table['row_count'] >= 12
     assert any(row['label'] == 'management_closure' and row['real_closure_blocked'] is True for row in aggregated_master_table['rows'])
     assert any(row['label'] == 'truth_docs_alignment' and row['real_closure_blocked'] is False for row in aggregated_master_table['rows'])
+    assert any(row['label'] == 'project_actionability' and row['real_closure_blocked'] is False for row in aggregated_master_table['rows'])
     assert any(row['label'] == 'generated_truth_consistency' and row['real_closure_blocked'] is False for row in aggregated_master_table['rows'])
     assert real_remaining_core_work['item_count'] == remaining_core_blockers['blocker_count']
     assert repo_truth_inventory['entry_count'] >= truth['required_count']
@@ -1226,6 +1244,8 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert closure_gap_summary['missing_required_count'] == 0
     assert closure_gap_summary['blocker_count'] == remaining_core_blockers['blocker_count']
     assert closure_gap_summary['truth_docs_status'] == 'in_sync'
+    assert closure_gap_summary['project_actionability_status'] == 'ready'
+    assert closure_gap_summary['generated_truth_crosscheck_status'] == 'consistent'
     assert project_master_truth_reference['doc_exists'] is True
     assert project_master_truth_reference['doc_tr_exists'] is True
     assert project_master_truth_reference['row_count'] >= 10
@@ -1238,8 +1258,24 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert truth_docs_drift_report['missing_truth_index_items'] == []
     assert project_blocker_action_plan['item_count'] == project_remaining_real_blockers['item_count']
     assert any(item['label'] == 'external_strength_unproven' and item['owner_domain'] == 'training_eval' for item in project_blocker_action_plan['items'])
+    assert project_blocker_dependency_graph['node_count'] == project_remaining_real_blockers['item_count']
+    assert project_blocker_dependency_graph['root_count'] >= 1
+    assert project_blocker_dependency_graph['terminal_count'] >= 1
+    assert any(
+        node['label'] == 'external_strength_unproven' and 'benchmark_evidence_pending' in node['depends_on']
+        for node in project_blocker_dependency_graph['nodes']
+    )
+    assert project_execution_sequence['item_count'] == project_remaining_real_blockers['item_count']
+    assert project_execution_sequence['cycle_detected'] is False
+    assert project_execution_sequence['items'][0]['label'] == 'real_training_outputs_pending'
+    assert project_lane_status_board['lane_count'] == project_master_truth_reference['row_count']
+    assert project_lane_status_board['covered_blocker_count'] == project_remaining_real_blockers['item_count']
+    assert project_lane_status_board['status'] == 'ready'
+    assert any(row['label'] == 'management_finalization' and row['blocker_count'] >= 1 for row in project_lane_status_board['rows'])
     assert generated_truth_consistency_report['status'] == 'consistent'
     assert generated_truth_consistency_report['failed_checks'] == []
+    assert generated_truth_crosscheck_matrix['status'] == 'consistent'
+    assert generated_truth_crosscheck_matrix['failed_checks'] == []
     assert changelog_snapshot['execution_status'] == 'completed'
     assert changelog_snapshot['evaluation_status'] == 'completed'
     assert 'release_gate_summary' in changelog_snapshot['included_labels']
@@ -1255,6 +1291,7 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert 'management_closure_pending' in known_limit_labels
     assert 'truth_docs_drift_pending' not in known_limit_labels
     assert 'generated_truth_consistency_pending' not in known_limit_labels
+    assert 'generated_truth_crosscheck_pending' not in known_limit_labels
     gate_labels = {item['label']: item['passed'] for item in release_gate_summary['gates']}
     assert gate_labels['external_closure_stubs_present'] is True
     assert gate_labels['operational_stub_surfaces_present'] is True
@@ -1267,10 +1304,12 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert gate_labels['master_summary_surfaces_present'] is True
     assert gate_labels['aggregate_truth_surfaces_present'] is True
     assert gate_labels['project_truth_surfaces_present'] is True
-    assert gate_labels['project_blocker_action_plan_present'] is True
+    assert gate_labels['project_actionability_surfaces_present'] is True
     assert gate_labels['generated_truth_consistency_present'] is True
+    assert gate_labels['generated_truth_crosscheck_present'] is True
     assert gate_labels['truth_docs_drift_clear'] is True
     assert gate_labels['generated_truth_consistency_clear'] is True
+    assert gate_labels['generated_truth_crosscheck_clear'] is True
     handoff_labels = {item['label'] for item in handoff_pack_manifest['items']}
     assert {'external_repro_stub', 'pilot_stub', 'security_stub', 'legal_stub'} <= handoff_labels
     assert {'operator_handbook_stub', 'dr_evidence_stub', 'backup_retention_stub', 'blind_handoff_stub'} <= handoff_labels
@@ -1283,7 +1322,8 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert {'master_closure_table', 'remaining_core_blockers', 'repo_side_completion_summary', 'readiness_snapshot'} <= handoff_labels
     assert {'aggregated_master_table', 'real_remaining_core_work', 'repo_truth_inventory', 'closure_gap_summary'} <= handoff_labels
     assert {'project_master_truth_reference', 'project_remaining_real_blockers', 'truth_docs_index', 'truth_docs_drift_report'} <= handoff_labels
-    assert {'project_blocker_action_plan', 'generated_truth_consistency_report'} <= handoff_labels
+    assert {'project_blocker_action_plan', 'project_blocker_dependency_graph', 'project_execution_sequence', 'project_lane_status_board'} <= handoff_labels
+    assert {'generated_truth_consistency_report', 'generated_truth_crosscheck_matrix'} <= handoff_labels
     assert release_gate_summary['overall_internal_ready'] is True
     assert release_gate_summary['overall_external_ready'] is False
     assert operator_handoff_summary['operational_stub_count'] == 4
@@ -1296,6 +1336,7 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert operator_handoff_summary['master_summary_count'] == 4
     assert operator_handoff_summary['aggregate_truth_count'] == 4
     assert operator_handoff_summary['truth_docs_count'] == 4
+    assert operator_handoff_summary['project_actionability_count'] == 4
     assert operator_handoff_summary['generated_truth_count'] == 2
 
 
