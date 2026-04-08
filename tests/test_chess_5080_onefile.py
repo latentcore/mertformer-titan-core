@@ -924,6 +924,8 @@ def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path)
     assert entries['project_phase_readiness_scoreboard']['exists'] is False
     assert entries['project_owner_accountability_matrix']['exists'] is False
     assert entries['project_owner_work_queue']['exists'] is False
+    assert entries['project_critical_path_report']['exists'] is False
+    assert entries['project_owner_next_actions_summary']['exists'] is False
     assert entries['generated_truth_consistency_report']['exists'] is False
     assert entries['generated_truth_crosscheck_matrix']['exists'] is False
     assert truth['present_required_count'] < truth['required_count']
@@ -1057,6 +1059,8 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     project_phase_readiness_scoreboard = json.loads((layout.reports_dir / 'project_phase_readiness_scoreboard.json').read_text(encoding='utf-8'))
     project_owner_accountability_matrix = json.loads((layout.reports_dir / 'project_owner_accountability_matrix.json').read_text(encoding='utf-8'))
     project_owner_work_queue = json.loads((layout.reports_dir / 'project_owner_work_queue.json').read_text(encoding='utf-8'))
+    project_critical_path_report = json.loads((layout.reports_dir / 'project_critical_path_report.json').read_text(encoding='utf-8'))
+    project_owner_next_actions_summary = json.loads((layout.reports_dir / 'project_owner_next_actions_summary.json').read_text(encoding='utf-8'))
     generated_truth_consistency_report = json.loads((layout.reports_dir / 'generated_truth_consistency_report.json').read_text(encoding='utf-8'))
     generated_truth_crosscheck_matrix = json.loads((layout.reports_dir / 'generated_truth_crosscheck_matrix.json').read_text(encoding='utf-8'))
     entries = {entry['label']: entry for entry in truth['entries']}
@@ -1128,6 +1132,8 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert project_phase_readiness_scoreboard['schema'] == 'chess_project_phase_readiness_scoreboard_v1'
     assert project_owner_accountability_matrix['schema'] == 'chess_project_owner_accountability_matrix_v1'
     assert project_owner_work_queue['schema'] == 'chess_project_owner_work_queue_v1'
+    assert project_critical_path_report['schema'] == 'chess_project_critical_path_report_v1'
+    assert project_owner_next_actions_summary['schema'] == 'chess_project_owner_next_actions_summary_v1'
     assert generated_truth_consistency_report['schema'] == 'chess_generated_truth_consistency_report_v1'
     assert generated_truth_crosscheck_matrix['schema'] == 'chess_generated_truth_crosscheck_matrix_v1'
     assert entries['run_contract']['exists'] is True
@@ -1193,6 +1199,8 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert entries['project_phase_readiness_scoreboard']['exists'] is True
     assert entries['project_owner_accountability_matrix']['exists'] is True
     assert entries['project_owner_work_queue']['exists'] is True
+    assert entries['project_critical_path_report']['exists'] is True
+    assert entries['project_owner_next_actions_summary']['exists'] is True
     assert entries['generated_truth_consistency_report']['exists'] is True
     assert entries['generated_truth_crosscheck_matrix']['exists'] is True
     assert truth['present_required_count'] == truth['required_count']
@@ -1265,6 +1273,8 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert closure_gap_summary['project_phase_readiness_status'] == 'ready'
     assert closure_gap_summary['project_owner_status'] == 'ready'
     assert closure_gap_summary['project_owner_queue_status'] == 'ready'
+    assert closure_gap_summary['project_critical_path_status'] == 'ready'
+    assert closure_gap_summary['project_owner_next_actions_status'] == 'ready'
     assert closure_gap_summary['generated_truth_crosscheck_status'] == 'consistent'
     assert project_master_truth_reference['doc_exists'] is True
     assert project_master_truth_reference['doc_tr_exists'] is True
@@ -1307,6 +1317,14 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert project_owner_work_queue['owner_count'] == project_owner_accountability_matrix['owner_count']
     assert project_owner_work_queue['status'] == 'ready'
     assert any(row['owner_domain'] == 'release_governance' and row['next_up'] for row in project_owner_work_queue['rows'])
+    assert project_critical_path_report['path_length'] >= 2
+    assert project_critical_path_report['status'] == 'ready'
+    assert project_critical_path_report['terminal_label'] == 'management_closure_pending'
+    assert project_critical_path_report['path_labels'][0] == 'real_training_outputs_pending'
+    assert 'release_governance' in project_critical_path_report['owner_domains']
+    assert project_owner_next_actions_summary['owner_count'] == project_owner_work_queue['owner_count']
+    assert project_owner_next_actions_summary['status'] == 'ready'
+    assert any(row['owner_domain'] == 'release_governance' and row['next_up'] for row in project_owner_next_actions_summary['rows'])
     assert generated_truth_consistency_report['status'] == 'consistent'
     assert generated_truth_consistency_report['failed_checks'] == []
     assert generated_truth_crosscheck_matrix['status'] == 'consistent'
@@ -1314,6 +1332,8 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     crosscheck_labels = {item['label']: item['passed'] for item in generated_truth_crosscheck_matrix['checks']}
     assert crosscheck_labels['phase_readiness_matches_phase_plan'] is True
     assert crosscheck_labels['owner_work_queue_matches_owner_matrix'] is True
+    assert crosscheck_labels['critical_path_is_valid'] is True
+    assert crosscheck_labels['owner_next_actions_match_queue'] is True
     assert changelog_snapshot['execution_status'] == 'completed'
     assert changelog_snapshot['evaluation_status'] == 'completed'
     assert 'release_gate_summary' in changelog_snapshot['included_labels']
@@ -1360,7 +1380,7 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert {'master_closure_table', 'remaining_core_blockers', 'repo_side_completion_summary', 'readiness_snapshot'} <= handoff_labels
     assert {'aggregated_master_table', 'real_remaining_core_work', 'repo_truth_inventory', 'closure_gap_summary'} <= handoff_labels
     assert {'project_master_truth_reference', 'project_remaining_real_blockers', 'truth_docs_index', 'truth_docs_drift_report'} <= handoff_labels
-    assert {'project_blocker_action_plan', 'project_blocker_dependency_graph', 'project_execution_sequence', 'project_lane_status_board', 'project_closure_phase_plan', 'project_phase_readiness_scoreboard', 'project_owner_accountability_matrix', 'project_owner_work_queue'} <= handoff_labels
+    assert {'project_blocker_action_plan', 'project_blocker_dependency_graph', 'project_execution_sequence', 'project_lane_status_board', 'project_closure_phase_plan', 'project_phase_readiness_scoreboard', 'project_owner_accountability_matrix', 'project_owner_work_queue', 'project_critical_path_report', 'project_owner_next_actions_summary'} <= handoff_labels
     assert {'generated_truth_consistency_report', 'generated_truth_crosscheck_matrix'} <= handoff_labels
     assert release_gate_summary['overall_internal_ready'] is True
     assert release_gate_summary['overall_external_ready'] is False
@@ -1374,7 +1394,7 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert operator_handoff_summary['master_summary_count'] == 4
     assert operator_handoff_summary['aggregate_truth_count'] == 4
     assert operator_handoff_summary['truth_docs_count'] == 4
-    assert operator_handoff_summary['project_actionability_count'] == 8
+    assert operator_handoff_summary['project_actionability_count'] == 10
     assert operator_handoff_summary['generated_truth_count'] == 2
 
 

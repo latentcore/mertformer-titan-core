@@ -73,5 +73,7 @@
 - `project phase readiness scoreboard`: phase-by-phase readiness view that separates blockers ready to move now from blockers still waiting on upstream dependencies.
 - `project owner accountability matrix`: owner-domain view of the remaining blockers, associated phases, lanes, and closure surfaces.
 - `project owner work queue`: owner-domain execution queue that orders each blocker by closure step and identifies the next blocker each owner should take.
+- `project critical path report`: longest dependency chain through the remaining blockers, used to show which closure path unlocks the most downstream work.
+- `project owner next actions summary`: compact per-owner summary of the next blocker, next phase, and next closure surface to tackle.
 - `generated truth consistency report`: explicit check that generated truth summaries agree with each other instead of only existing side by side.
 - `generated truth crosscheck matrix`: extra consistency layer that cross-checks blocker coverage, dependency order, lane coverage, and summary alignment.
