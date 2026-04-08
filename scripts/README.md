@@ -18,7 +18,9 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Chess onefile supported modes: `train`, `verify`, `benchmark`, `package`, `resume`, `arena`
 - Chess onefile now supports named feature bundles through `--feature-bundle` plus explicit `--enable-features` / `--disable-features` overrides.
 - Recommended advanced bundle names: `routing_stack`, `liquid_stack`, `memory_attention_stack`, `cognitive_stack`, `objective_stack`, `postrun_analysis_stack`, `all_stable_extensions`, `all_on_experimental`.
-- New long-run experimental profiles for local ablations: `strength_4060_24h_all_on_experimental` and `strength_4060_24h_omni_max`.
+- Canonical 24h RTX 4060 profile: `strength_4060_24h` (`baseline_supported`, release-candidate eligible).
+- Supported portable baseline profile: `production_5080` (`supported_portable_baseline`).
+- Research-only 24h RTX 4060 profiles: `strength_4060_24h_all_on_experimental` (`experimental`) and `strength_4060_24h_omni_max` (`experimental_high_risk`).
 - `--mode arena` provides an interactive human-vs-model terminal surface; use `--resume-from <checkpoint>` for meaningful play.
 - The chess onefile now mirrors the canonical Build30 trunk families in one file: BitLinear, MLA, CfC Liquid, MoE/LiquidRouter, QINN, cognitive extensions, and world-model hooks.
 - Auxiliary chess heads can now be toggled inside the onefile: `phase_head`, `wdl_head`, and `legality_head`.
@@ -41,7 +43,8 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Aggregated truth artifacts are written to `reports/aggregated_master_table.json`, `reports/real_remaining_core_work.json`, `reports/repo_truth_inventory.json`, and `reports/closure_gap_summary.json`.
 - Project-truth and docs-alignment artifacts are written to `reports/project_master_truth_reference.json`, `reports/project_remaining_real_blockers.json`, `reports/truth_docs_index.json`, and `reports/truth_docs_drift_report.json`.
 - Consistency/action artifacts are written to `reports/project_blocker_action_plan.json`, `reports/project_blocker_dependency_graph.json`, `reports/project_execution_sequence.json`, `reports/project_lane_status_board.json`, `reports/project_closure_phase_plan.json`, `reports/project_phase_readiness_scoreboard.json`, `reports/project_owner_accountability_matrix.json`, `reports/project_owner_work_queue.json`, `reports/project_critical_path_report.json`, `reports/project_owner_next_actions_summary.json`, `reports/project_ready_now_board.json`, `reports/project_unlock_impact_report.json`, `reports/project_parallel_workset_report.json`, `reports/project_phase_exit_criteria_report.json`, `reports/project_execution_wave_report.json`, `reports/project_evidence_backlog_report.json`, `reports/project_dependency_bottleneck_report.json`, `reports/project_owner_phase_frontier_report.json`, `reports/project_evidence_criticality_report.json`, `reports/project_phase_transition_matrix.json`, `reports/project_owner_load_report.json`, `reports/project_phase_dependency_pressure_report.json`, `reports/project_owner_bottleneck_alignment_report.json`, `reports/project_evidence_phase_heatmap_report.json`, `reports/project_blocker_risk_register_report.json`, `reports/project_release_prereq_matrix_report.json`, `reports/project_foundation_run_dependency_report.json`, `reports/project_release_path_report.json`, `reports/project_external_closure_cluster_report.json`, `reports/project_owner_evidence_gap_report.json`, `reports/project_release_gate_dependency_report.json`, `reports/project_external_signoff_queue_report.json`, `reports/project_release_evidence_bridge_report.json`, `reports/project_training_run_readiness_report.json`, `reports/project_benchmark_closure_dependency_report.json`, `reports/project_release_decision_queue_report.json`, `reports/project_external_validation_readiness_report.json`, `reports/project_artifact_lock_readiness_report.json`, `reports/project_final_release_cutover_report.json`, `reports/project_real_run_execution_queue_report.json`, `reports/project_benchmark_evidence_lock_report.json`, `reports/project_final_signoff_cutset_report.json`, `reports/generated_truth_consistency_report.json`, and `reports/generated_truth_crosscheck_matrix.json`.
-- Runbook/checklist support for the 24h 4060 all-on path now lives under `runbooks/` and `checklists/`.
+- Canonical runbook/checklist support for the frozen 24h 4060 path now lives under `runbooks/chess_4060_24h.md` and `checklists/chess_4060_24h.md`.
+- Experimental 24h 4060 runbooks remain under `runbooks/chess_4060_24h_all_on_experimental.md` and `checklists/chess_4060_24h_all_on_experimental.md`.
 - Canonical repo-side contract surfaces now also include `configs/`, `releases/`, `knowledge/`, and `evidence/`.
 - Chess runtime observability is contract-backed: `logs/run_log.jsonl`, `reports/logging_contract.json`, and `reports/observability_report.json`.
 - Fatal runtime failures are expected to appear both in `logs/run_log.jsonl` (`fatal_exception`) and in the Desktop-side `*_FAILED_*.json` artifact.
@@ -51,13 +54,16 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 
 ### Chess Onefile Bundle Examples
 ```bash
-# Stable-ish advanced stack on top of the canonical profile
+# Canonical 24h RTX 4060 train-start command
+python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
+
+# Stable-ish advanced stack on top of the portable baseline
 python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --feature-bundle all_stable_extensions
 
-# 24h RTX 4060 experimental copy with every major onefile extension enabled
+# 24h RTX 4060 research-only profile with every major onefile extension enabled
 python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_all_on_experimental
 
-# More aggressive 24h RTX 4060 omni-max variant with every feature flag forced on
+# More aggressive 24h RTX 4060 omni-max research variant with every feature flag forced on
 python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_omni_max
 
 # Start from the all-on profile but explicitly disable a risky surface

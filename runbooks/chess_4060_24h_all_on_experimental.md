@@ -1,11 +1,16 @@
 # Chess 4060 24h All-On Experimental Runbook
 
+Research-only surface. This runbook can never satisfy the frozen chess release gate.
+
 ## Purpose
 Run the onefile chess stack on a single RTX 4060 for a bounded 24-hour experimental training pass with the widest safe feature surface enabled.
 
 Profiles:
 - `strength_4060_24h_all_on_experimental`
 - `strength_4060_24h_omni_max`
+
+Canonical release-bearing alternative:
+- `strength_4060_24h`
 
 ## Recommended Commands
 Baseline all-on experimental:

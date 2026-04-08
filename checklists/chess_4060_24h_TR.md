@@ -1,0 +1,37 @@
+# Chess 4060 24h Kanonik Checklist
+
+- [ ] Seçilen profil: `strength_4060_24h`
+- [ ] Tam eğitim komutu kaydedildi
+- [ ] CUDA cihazı görünür
+- [ ] Disk boşluğu kontrol edildi
+- [ ] Artifact root yazılabilir
+- [ ] İsteğe bağlı Stockfish politikası netleşti
+- [ ] `logs/run_log.jsonl` mevcut
+- [ ] `reports/run_summary.json` mevcut
+- [ ] `reports/model_card.json` mevcut
+- [ ] `reports/eval_card.json` mevcut
+- [ ] `reports/feature_flag_report.json` mevcut
+- [ ] `reports/observability_report.json` mevcut
+- [ ] `reports/selfplay_report.json` mevcut
+- [ ] `reports/inference_mode_tournament_report.json` mevcut
+- [ ] `reports/replay_buffer_manifest.json` mevcut
+- [ ] `reports/run_status_manifest.json` mevcut
+- [ ] `reports/postrun_analysis_manifest.json` mevcut
+- [ ] `reports/artifact_truth_matrix.json` mevcut
+- [ ] `reports/run_contract.json` mevcut
+- [ ] `reports/release_snapshot.json` mevcut
+- [ ] `reports/evidence_pack_stub.json` mevcut
+- [ ] `reports/final_truth_registry.json` mevcut
+- [ ] `reports/claim_registry.json` mevcut
+- [ ] `reports/known_limits.json` mevcut
+- [ ] `reports/support_matrix.json` mevcut
+- [ ] `reports/release_gate_summary.json` mevcut
+- [ ] `reports/rc_stub.json` mevcut
+- [ ] `reports/golden_stub.json` mevcut
+- [ ] `reports/handoff_pack_manifest.json` mevcut
+- [ ] `reports/operator_handoff_summary.json` mevcut
+- [ ] Support matrix içindeki aktif satır `strength_4060_24h`
+- [ ] Release-candidate uygunluğu yalnız `strength_4060_24h` için true
+- [ ] Known-limit blocker’ları kanonik blocker sözlüğü ile eşleşiyor
+- [ ] Final checkpoint yolu kaydedildi
+- [ ] Koşu-sonrası claim boundary gözden geçirildi

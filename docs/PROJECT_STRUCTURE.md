@@ -23,6 +23,10 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   └── README_TR.md  # Turkish document counterpart
 │   ├── results.md  # documentation/report file
 │   └── results_TR.md  # Turkish document counterpart
+├── adr/  # directory
+│   ├── ADR-0001-source-of-truth-and-claim-boundary.md  # documentation/report file
+│   ├── ADR-0002-change-control-and-closure-governance.md  # documentation/report file
+│   └── ADR-0003-chess-oneclick-delivery-runtime-contract.md  # documentation/report file
 ├── apps/  # directory
 │   └── chess_gui/  # directory
 │       ├── checkpoints/  # directory
@@ -43,6 +47,10 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── snake_demo_preview.gif  # media asset
 │   ├── snake_demo_proof.mp4  # media asset
 │   └── synaptic_map.png  # media asset
+├── checklists/  # directory
+│   ├── README.md  # primary documentation (EN)
+│   ├── chess_4060_24h_all_on_experimental.md  # documentation/report file
+│   └── chess_4060_24h_all_on_experimental_TR.md  # Turkish document counterpart
 ├── config/  # directory
 │   ├── export/  # directory
 │   │   └── onnx_mobile.yaml  # YAML configuration file
@@ -56,6 +64,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── __init__.py  # Python module/script (config package initializer and exports)
 │   ├── base.yaml  # YAML configuration file
 │   └── config.py  # Python module/script (runtime configuration model and validation helpers)
+├── configs/  # directory
+│   ├── README.md  # primary documentation (EN)
+│   └── chess_onefile_profile_contract.md  # documentation/report file
 ├── datasets/  # directory
 │   ├── INTERNAL_POLICY.md  # documentation/report file
 │   ├── INTERNAL_POLICY_TR.md  # Turkish document counterpart
@@ -75,7 +86,11 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── validation.jsonl  # JSONL data/log artifact
 ├── docs/  # directory
 │   ├── CHAIN_MAP.md  # documentation/report file
-│   └── CHAIN_MAP_TR.md  # Turkish document counterpart
+│   ├── CHAIN_MAP_TR.md  # Turkish document counterpart
+│   ├── CHESS_ONEFILE_MASTER_TRUTH.md  # documentation/report file
+│   ├── CHESS_ONEFILE_MASTER_TRUTH_TR.md  # Turkish document counterpart
+│   ├── PROJECT_MASTER_TRUTH.md  # documentation/report file
+│   └── PROJECT_MASTER_TRUTH_TR.md  # Turkish document counterpart
 ├── economics/  # directory
 │   ├── cost_model.md  # documentation/report file
 │   ├── cost_model_TR.md  # Turkish document counterpart
@@ -89,6 +104,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── gsm8k.py  # Python module/script (evaluation routine for gsm8k)
 │   ├── humaneval.py  # Python module/script (evaluation routine for humaneval)
 │   └── report_builder.py  # Python module/script (evaluation routine for report builder)
+├── evidence/  # directory
+│   ├── README.md  # primary documentation (EN)
+│   └── chess_evidence_contract.md  # documentation/report file
 ├── experiments/  # directory
 │   └── exp_001_baseline/  # directory
 │       ├── config.yaml  # YAML configuration file
@@ -105,6 +123,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── run_manifest_v1.schema.json  # JSON schema artifact
 │   ├── tokenizer_spec.json  # JSON data artifact
 │   └── workspace_hygiene_manifest_v1.schema.json  # JSON schema artifact
+├── knowledge/  # directory
+│   ├── README.md  # primary documentation (EN)
+│   └── chess_onefile_glossary.md  # documentation/report file
 ├── layers/  # directory
 │   ├── __init__.py  # Python module/script (layers package initializer and exports)
 │   ├── bitlinear.py  # Python module/script (BitLinear low-bit linear layer implementation)
@@ -199,6 +220,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── system_v1.txt  # text artifact
 ├── registry/  # directory
 │   └── mertformer_v0.1.json  # JSON data artifact
+├── releases/  # directory
+│   ├── README.md  # primary documentation (EN)
+│   └── chess_release_contract.md  # documentation/report file
 ├── reports/  # directory
 │   ├── benchmarks/  # directory
 │   │   ├── linkedin_sweetspot/  # directory
@@ -269,10 +293,13 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │       ├── readiness_scorecard_v1_2026-02-24.json  # JSON data artifact
 │   │       ├── report_interface_schema_v1.json  # JSON schema artifact
 │   │       └── web_validation_sources_2026-02-24.md  # documentation/report file
+│   ├── adr_index.md  # documentation/report file
 │   ├── architecture_honesty_audit.md  # documentation/report file
 │   ├── artifacts_zip_denylist_audit.json  # JSON data artifact
 │   ├── asset_stack.md  # documentation/report file
 │   ├── asset_stack_TR.md  # Turkish document counterpart
+│   ├── automation_boundary_policy.md  # documentation/report file
+│   ├── backlog_operating_contract.md  # documentation/report file
 │   ├── backup_restore_report.json  # JSON data artifact
 │   ├── bench_cpp_report.json  # JSON data artifact
 │   ├── bench_metal_report.json  # JSON data artifact
@@ -284,6 +311,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── benchmark_contract.md  # documentation/report file
 │   ├── canonical_entrypoint.md  # documentation/report file
 │   ├── cfc_moe_tolerance_report.json  # JSON data artifact
+│   ├── change_control_sop.md  # documentation/report file
 │   ├── checkpoint_contract.md  # documentation/report file
 │   ├── checkpoint_hash_manifest.json  # JSON data artifact
 │   ├── checkpoint_restore_report.json  # JSON data artifact
@@ -365,6 +393,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── final_evidence_pack.md  # documentation/report file
 │   ├── final_freeze_manifest.json  # JSON data artifact
 │   ├── final_freeze_manifest.md  # documentation/report file
+│   ├── final_master_plan_freeze.md  # documentation/report file
 │   ├── final_orchestrator_status.json  # JSON data artifact
 │   ├── final_orchestrator_status.md  # documentation/report file
 │   ├── final_repo_audit.md  # documentation/report file
@@ -389,6 +418,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── ip_licensing_split.md  # documentation/report file
 │   ├── ip_licensing_split_TR.md  # Turkish document counterpart
 │   ├── kernel_fuzz_report.json  # JSON data artifact
+│   ├── known_limits_v1.md  # documentation/report file
 │   ├── kpi_contract_build30.md  # documentation/report file
 │   ├── kpi_pack_v1.md  # documentation/report file
 │   ├── kpi_pack_v1_TR.md  # Turkish document counterpart
@@ -435,12 +465,16 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── presentation_readiness_final.md  # documentation/report file
 │   ├── proje_zip_rebuild_manifest_v2.json  # JSON data artifact
 │   ├── proje_zip_rebuild_manifest_v2.md  # documentation/report file
+│   ├── quality_gate_matrix.md  # documentation/report file
 │   ├── ram_guard_report.json  # JSON data artifact
 │   ├── release_closure_lock_report.json  # JSON data artifact
 │   ├── release_closure_note.md  # documentation/report file
 │   ├── release_snapshot.md  # documentation/report file
 │   ├── release_snapshot_TR.md  # Turkish document counterpart
 │   ├── rented_machine_bringup.md  # documentation/report file
+│   ├── repo_closure_scorecard.json  # JSON data artifact
+│   ├── repo_closure_scorecard.md  # documentation/report file
+│   ├── repo_directory_contract.md  # documentation/report file
 │   ├── repo_external_handoff.md  # documentation/report file
 │   ├── report_accuracy_audit.md  # documentation/report file
 │   ├── report_accuracy_audit_TR.md  # Turkish document counterpart
@@ -471,9 +505,11 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── static_analysis_report.json  # JSON data artifact
 │   ├── strategic_value.md  # documentation/report file
 │   ├── strategic_value_TR.md  # Turkish document counterpart
+│   ├── support_maintenance_policy.md  # documentation/report file
 │   ├── surface_lifecycle_matrix.md  # documentation/report file
 │   ├── system_hardware.md  # documentation/report file
 │   ├── system_hardware_TR.md  # Turkish document counterpart
+│   ├── system_memory_policy.md  # documentation/report file
 │   ├── system_stats.jsonl  # JSONL data/log artifact
 │   ├── target_machine_handoff_manifest.json  # JSON data artifact
 │   ├── target_machine_handoff_manifest.md  # documentation/report file
@@ -481,12 +517,14 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── teacher_output_license_assessment.md  # documentation/report file
 │   ├── technical_snapshot.md  # documentation/report file
 │   ├── technical_snapshot_TR.md  # Turkish document counterpart
+│   ├── test_verification_matrix.md  # documentation/report file
 │   ├── thermal_baseline.json  # JSON data artifact
 │   ├── tokenizer_sync_final_report.md  # documentation/report file
 │   ├── train_readiness_decision.json  # JSON data artifact
 │   ├── train_readiness_decision.md  # documentation/report file
 │   ├── training_readiness_manifest.json  # JSON data artifact
 │   ├── unicode_path_guard_report.json  # JSON data artifact
+│   ├── update_first_policy.md  # documentation/report file
 │   ├── verified_matrix.md  # documentation/report file
 │   ├── verified_matrix_TR.md  # Turkish document counterpart
 │   ├── workspace_hygiene_manifest.json  # JSON data artifact
@@ -503,6 +541,10 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── python_TR.md  # Turkish document counterpart
 │   ├── seed_policy.md  # documentation/report file
 │   └── seed_policy_TR.md  # Turkish document counterpart
+├── runbooks/  # directory
+│   ├── README.md  # primary documentation (EN)
+│   ├── chess_4060_24h_all_on_experimental.md  # documentation/report file
+│   └── chess_4060_24h_all_on_experimental_TR.md  # Turkish document counterpart
 ├── scripts/  # directory
 │   ├── reports/  # directory
 │   │   ├── model_health.md  # documentation/report file
@@ -626,6 +668,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_build_chess_onefile_extension_report.py  # Python module/script (automated test module for build chess onefile extension report)
 │   ├── test_build_chess_teaching_contract_report.py  # Python module/script (automated test module for build chess teaching contract report)
 │   ├── test_build_chess_training_readiness_report.py  # Python module/script (automated test module for build chess training readiness report)
+│   ├── test_build_closure_governance_pack.py  # Python module/script (automated test module for build closure governance pack)
 │   ├── test_build_code_truth_audit.py  # Python module/script (automated test module for build code truth audit)
 │   ├── test_build_max_closure_handoff.py  # Python module/script (automated test module for build max closure handoff)
 │   ├── test_build_target_machine_handoff_bundle.py  # Python module/script (automated test module for build target machine handoff bundle)

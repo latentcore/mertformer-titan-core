@@ -56,6 +56,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, DefaultDict, Dict, Iterable, Iterator, List, Optional, Sequence, Tuple
 
+from scripts.chess_onefile_contract import (
+    CANONICAL_CHESS_PROFILE,
+    PORTABLE_BASELINE_PROFILE,
+    is_release_candidate_configuration,
+    profile_support_rows,
+    release_candidate_configuration_reason,
+)
+
 SCRIPT_VERSION = "mertformer_chess_5080_onefile_v2"
 SCRIPT_BASENAME = "mertformer_chess_5080_onefile"
 RESULT_ZIP_PREFIX = "MertFormer_Chess_5080_Result"
@@ -78,6 +86,7 @@ DEFAULT_ARTIFACT_ROOT_ENV = "MERTFORMER_CHESS_ARTIFACT_ROOT"
 DEFAULT_CACHE_ROOT_ENV = "MERTFORMER_CHESS_CACHE_ROOT"
 DEFAULT_STOCKFISH_CACHE_ROOT_ENV = "MERTFORMER_CHESS_STOCKFISH_CACHE_ROOT"
 DEFAULT_STOCKFISH_AUTO_FETCH_ENV = "MERTFORMER_CHESS_STOCKFISH_AUTO_FETCH"
+DEFAULT_TORCHSCRIPT_COMPAT_ENV = "MERTFORMER_CHESS_ENABLE_TORCHSCRIPT_COMPAT"
 LOG_SCHEMA_VERSION = "2.0"
 DEFAULT_LOG_MAX_BYTES = 2 * 1024 * 1024
 DEFAULT_LOG_BACKUP_COUNT = 3
@@ -2529,6 +2538,8 @@ class MertFormerFFN(nn.Module):
 
 def _jit_script_if_supported(fn):
     if sys.version_info >= (3, 14):
+        return fn
+    if os.environ.get(DEFAULT_TORCHSCRIPT_COMPAT_ENV, "").strip().lower() not in {"1", "true", "yes", "on"}:
         return fn
     try:
         return torch.jit.script(fn)
@@ -8092,6 +8103,7 @@ def build_release_snapshot(layout: ArtifactLayout, payload: Dict[str, Any]) -> D
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
     bundle = dict(payload.get("bundle", {}))
     notes = dict(payload.get("notes", {}))
+    cfg = dict(payload.get("config", {}))
     zip_path = str(bundle.get("zip_path", "")).strip()
     sha_path = str(bundle.get("sha256_path", "")).strip()
     best_checkpoint = str(payload.get("best_checkpoint", "")).strip()
@@ -8102,14 +8114,21 @@ def build_release_snapshot(layout: ArtifactLayout, payload: Dict[str, Any]) -> D
     required_count = int(truth.get("required_count", 0))
     present_required_count = int(truth.get("present_required_count", 0))
     core_reports_ready = required_count > 0 and present_required_count == required_count
-    release_surface_status = "candidate_internal_only" if core_reports_ready and checkpoint_ready and bundle_exists else "incomplete"
+    profile = str(cfg.get("profile", ""))
+    feature_bundle = str(cfg.get("feature_bundle", "default"))
+    release_candidate_selected = is_release_candidate_configuration(profile, feature_bundle)
+    release_surface_status = (
+        "candidate_internal_only"
+        if core_reports_ready and checkpoint_ready and bundle_exists and release_candidate_selected
+        else "incomplete"
+    )
     return {
         "schema": "chess_release_snapshot_v1",
         "script_version": payload.get("script_version", SCRIPT_VERSION),
         "run_id": payload.get("run_id", ""),
-        "mode": payload.get("config", {}).get("mode", ""),
-        "profile": payload.get("config", {}).get("profile", ""),
-        "feature_bundle": payload.get("config", {}).get("feature_bundle", "default"),
+        "mode": cfg.get("mode", ""),
+        "profile": profile,
+        "feature_bundle": cfg.get("feature_bundle", "default"),
         "execution_status": payload.get("execution_status", "unknown"),
         "evaluation_status": payload.get("evaluation_status", "unknown"),
         "rating_claim_status": payload.get("rating_claim_status", "unknown"),
@@ -8126,6 +8145,10 @@ def build_release_snapshot(layout: ArtifactLayout, payload: Dict[str, Any]) -> D
         },
         "best_checkpoint": best_checkpoint,
         "latest_checkpoint": latest_checkpoint,
+        "canonical_profile": CANONICAL_CHESS_PROFILE,
+        "active_feature_bundle": feature_bundle,
+        "release_candidate_selected": release_candidate_selected,
+        "release_candidate_reason": release_candidate_configuration_reason(profile, feature_bundle),
         "release_surface_status": release_surface_status,
         "external_release_grade": False,
         "external_release_reason": "Chess onefile run artifacts remain internal-only unless separately benchmarked and externally validated.",
@@ -8160,29 +8183,92 @@ def render_release_snapshot_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _truth_entry_exists(truth_entries: Dict[str, Dict[str, Any]], label: str) -> bool:
+    return bool(truth_entries.get(label, {}).get("exists", False))
+
+
+def _artifact_consumer_state(
+    truth_entries: Dict[str, Dict[str, Any]],
+    required_labels: Sequence[str],
+    *,
+    ready_status: str,
+    pending_status: str,
+    ready_reason: str,
+    pending_reason: str,
+) -> Dict[str, Any]:
+    missing_required_items = [label for label in required_labels if not _truth_entry_exists(truth_entries, label)]
+    consumed_artifacts = [label for label in required_labels if label not in missing_required_items]
+    return {
+        "status": ready_status if not missing_required_items else pending_status,
+        "consumed_artifact_count": len(consumed_artifacts),
+        "consumed_artifacts": consumed_artifacts,
+        "missing_required_items": missing_required_items,
+        "reason": ready_reason if not missing_required_items else pending_reason,
+    }
+
+
+def _artifact_consumer_state_with_paths(
+    layout: ArtifactLayout,
+    truth_entries: Dict[str, Dict[str, Any]],
+    required_items: Sequence[Tuple[str, Path]],
+    *,
+    ready_status: str,
+    pending_status: str,
+    ready_reason: str,
+    pending_reason: str,
+) -> Dict[str, Any]:
+    consumed_artifacts: List[str] = []
+    missing_required_items: List[str] = []
+    for label, path in required_items:
+        exists = _truth_entry_exists(truth_entries, label) or path.exists()
+        if exists:
+            consumed_artifacts.append(label)
+        else:
+            missing_required_items.append(label)
+    return {
+        "status": ready_status if not missing_required_items else pending_status,
+        "consumed_artifact_count": len(consumed_artifacts),
+        "consumed_artifacts": consumed_artifacts,
+        "missing_required_items": missing_required_items,
+        "reason": ready_reason if not missing_required_items else pending_reason,
+    }
+
+
 def build_evidence_pack_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
     truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
     notes = dict(payload.get("notes", {}))
-    core_labels = [
-        "run_summary_json",
-        "model_card",
-        "eval_card",
-        "feature_flag_report_json",
-        "run_status_manifest",
-        "postrun_analysis_manifest",
-        "artifact_truth_matrix",
-        "artifact_manifest",
-        "run_log",
+    core_requirements = [
+        ("run_summary_json", layout.reports_dir / "run_summary.json"),
+        ("model_card", layout.reports_dir / "model_card.json"),
+        ("eval_card", layout.reports_dir / "eval_card.json"),
+        ("feature_flag_report_json", layout.reports_dir / "feature_flag_report.json"),
+        ("run_status_manifest", layout.reports_dir / "run_status_manifest.json"),
+        ("postrun_analysis_manifest", layout.reports_dir / "postrun_analysis_manifest.json"),
+        ("artifact_truth_matrix", layout.reports_dir / "artifact_truth_matrix.json"),
+        ("artifact_manifest", layout.reports_dir / "artifact_manifest_with_hashes.json"),
+        ("run_contract", layout.reports_dir / "run_contract.json"),
+        ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+        ("run_log", layout.logs_dir / "run_log.jsonl"),
     ]
-    core_items = [
-        {
-            "label": label,
-            "exists": bool(truth_entries.get(label, {}).get("exists", False)),
-            "path": truth_entries.get(label, {}).get("path", ""),
-        }
-        for label in core_labels
-    ]
+    core_items = []
+    for label, path in core_requirements:
+        core_items.append(
+            {
+                "label": label,
+                "exists": _truth_entry_exists(truth_entries, label) or path.exists(),
+                "path": str(path),
+            }
+        )
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        core_requirements,
+        ready_status="partial_internal_only",
+        pending_status="incomplete",
+        ready_reason="Core internal evidence surfaces are present and can be bundled, but external release proof still remains out of scope.",
+        pending_reason="Evidence pack is still missing one or more mandatory internal evidence surfaces.",
+    )
     internal_items = [
         {"label": "selfplay_report", "status": payload.get("selfplay_report", {}).get("status", "unknown"), "scope": "internal_only"},
         {"label": "tournament_report", "status": payload.get("tournament_report", {}).get("status", "unknown"), "scope": "internal_only"},
@@ -8195,11 +8281,14 @@ def build_evidence_pack_stub(layout: ArtifactLayout, payload: Dict[str, Any]) ->
     if payload.get("stockfish", {}).get("status") != "completed":
         missing_for_external_release.append("completed stockfish benchmark evidence")
     missing_for_external_release.append("external benchmark reproduction")
-    status = "partial_internal_only" if all(item["exists"] for item in core_items) else "incomplete"
     return {
         "schema": "chess_evidence_pack_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": status,
+        "status": consumer_state["status"],
+        "consumed_artifact_count": consumer_state["consumed_artifact_count"],
+        "consumed_artifacts": consumer_state["consumed_artifacts"],
+        "missing_required_items": consumer_state["missing_required_items"],
+        "reason": consumer_state["reason"],
         "core_items": core_items,
         "internal_only_items": internal_items,
         "missing_for_external_release": missing_for_external_release,
@@ -8402,16 +8491,16 @@ def build_known_limits(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[
             "detail": "Chess onefile artifacts alone do not prove externally validated chess strength.",
         },
         {
+            "label": "real_training_outputs_pending",
+            "severity": "high",
+            "status": "active",
+            "detail": "The first real 24h RTX 4060 run and the main long-run outputs still need to be executed and preserved.",
+        },
+        {
             "label": "diagnostic_surfaces_internal_only",
             "severity": "medium",
             "status": "active",
             "detail": "Self-play, inference-mode tournament, replay buffer, and proxy score surfaces remain internal diagnostics unless separately validated.",
-        },
-        {
-            "label": "release_surface_not_external_grade",
-            "severity": "high",
-            "status": "active",
-            "detail": "Internal release-surface readiness is not the same thing as external release-grade verification.",
         },
         {
             "label": "external_reproduction_pending",
@@ -8432,34 +8521,28 @@ def build_known_limits(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[
             "detail": "Operator handbook, DR evidence, backup retention, and blind handoff closures remain separate operational work streams.",
         },
         {
-            "label": "release_governance_pending",
-            "severity": "medium",
-            "status": "active",
-            "detail": "Release notes, freeze manifest, changelog snapshot review, and maintenance policy still require formal release governance closure.",
-        },
-        {
-            "label": "device_export_packaging_pending",
+            "label": "export_device_packaging_pending",
             "severity": "high",
             "status": "active",
             "detail": "Export truth, device validation, packaging closure, and installer validation remain separate release work streams.",
         },
         {
-            "label": "benchmark_closure_pending",
+            "label": "benchmark_evidence_pending",
             "severity": "medium",
             "status": "active",
             "detail": "Benchmark raw outputs, compare reports, summaries, and benchmark manifests still require formal benchmark closure.",
-        },
-        {
-            "label": "training_accounting_pending",
-            "severity": "medium",
-            "status": "active",
-            "detail": "Training report, token accounting, compute accounting, and cost reporting still require formal closure.",
         },
         {
             "label": "trained_artifact_truth_pending",
             "severity": "high",
             "status": "active",
             "detail": "Final weights truth, best/latest checkpoint truth, and trained artifact registry still require formal artifact closure.",
+        },
+        {
+            "label": "rc_golden_final_release_pending",
+            "severity": "high",
+            "status": "active",
+            "detail": "RC, golden release, and final release still require real trained artifacts and formal sign-off.",
         },
         {
             "label": "management_closure_pending",
@@ -8553,11 +8636,9 @@ def build_support_matrix(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dic
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
     truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
     cfg = dict(payload.get("config", {}))
-    profiles = [
-        {"label": "production_5080", "support_level": "baseline_supported", "active": cfg.get("profile") == "production_5080"},
-        {"label": "strength_4060_24h_all_on_experimental", "support_level": "experimental", "active": cfg.get("profile") == "strength_4060_24h_all_on_experimental"},
-        {"label": "strength_4060_24h_omni_max", "support_level": "experimental_high_risk", "active": cfg.get("profile") == "strength_4060_24h_omni_max"},
-    ]
+    active_profile = str(cfg.get("profile", ""))
+    active_feature_bundle = str(cfg.get("feature_bundle", "default"))
+    profiles = profile_support_rows(active_profile)
     modes = [
         {"label": "verify", "support_level": "supported", "active": cfg.get("mode") == "verify"},
         {"label": "arena", "support_level": "supported", "active": cfg.get("mode") == "arena"},
@@ -8576,6 +8657,12 @@ def build_support_matrix(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dic
     return {
         "schema": "chess_support_matrix_v1",
         "run_id": payload.get("run_id", ""),
+        "canonical_profile": CANONICAL_CHESS_PROFILE,
+        "portable_baseline_profile": PORTABLE_BASELINE_PROFILE,
+        "release_candidate_profile": CANONICAL_CHESS_PROFILE,
+        "active_feature_bundle": active_feature_bundle,
+        "release_candidate_selected": is_release_candidate_configuration(active_profile, active_feature_bundle),
+        "release_candidate_reason": release_candidate_configuration_reason(active_profile, active_feature_bundle),
         "profiles": profiles,
         "modes": modes,
         "artifact_surfaces": artifact_surfaces,
@@ -8617,11 +8704,15 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
     truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
     notes = dict(payload.get("notes", {}))
     bundle = dict(payload.get("bundle", {}))
+    cfg = dict(payload.get("config", {}))
+    profile = str(cfg.get("profile", ""))
+    feature_bundle = str(cfg.get("feature_bundle", "default"))
     core_artifacts_present = truth.get("required_count", 0) > 0 and truth.get("present_required_count", 0) == truth.get("required_count", 0)
     checkpoint_or_provenance = bool(str(payload.get("best_checkpoint", "")).strip() or str(payload.get("latest_checkpoint", "")).strip() or notes.get("package_only", False))
     bundle_present = bool(truth_entries.get("bundle_zip", {}).get("exists", False) or str(bundle.get("zip_path", "")).strip())
     run_log_present = bool(truth_entries.get("run_log", {}).get("exists", False))
     stockfish_completed = payload.get("stockfish", {}).get("status") == "completed"
+    canonical_release_profile_selected = is_release_candidate_configuration(profile, feature_bundle)
     internal_claim_boundary_preserved = payload.get("rating_claim_status", "") != RatingClaimStatus.TARGET_MET_EXTERNAL.value
     release_registry_present = bool(truth_entries.get("run_contract", {}).get("exists", False)) and bool(truth_entries.get("release_snapshot", {}).get("exists", False))
     handoff_surfaces_present = bool(truth_entries.get("handoff_pack_manifest", {}).get("exists", False)) and bool(truth_entries.get("operator_handoff_summary", {}).get("exists", False))
@@ -8741,6 +8832,7 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
     generated_truth_consistency_clear = generated_truth_consistency_report.get("status") == "consistent"
     generated_truth_crosscheck_clear = generated_truth_crosscheck_matrix.get("status") == "consistent"
     gates = [
+        {"label": "canonical_release_profile_selected", "passed": canonical_release_profile_selected},
         {"label": "core_artifacts_present", "passed": core_artifacts_present},
         {"label": "checkpoint_or_package_provenance", "passed": checkpoint_or_provenance},
         {"label": "bundle_present", "passed": bundle_present},
@@ -8772,6 +8864,10 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
     return {
         "schema": "chess_release_gate_summary_v1",
         "run_id": payload.get("run_id", ""),
+        "canonical_profile": CANONICAL_CHESS_PROFILE,
+        "active_profile": profile,
+        "active_feature_bundle": feature_bundle,
+        "release_candidate_reason": release_candidate_configuration_reason(profile, feature_bundle),
         "gate_count": len(gates),
         "gates": gates,
         "overall_internal_ready": overall_internal_ready,
@@ -8798,11 +8894,18 @@ def render_release_gate_summary_md(report: Dict[str, Any]) -> str:
 def build_rc_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
     gate = _read_json_if_exists(layout.reports_dir / "release_gate_summary.json")
+    profile = str(payload.get("config", {}).get("profile", ""))
+    feature_bundle = str(payload.get("config", {}).get("feature_bundle", "default"))
     return {
         "schema": "chess_rc_stub_v1",
         "run_id": payload.get("run_id", ""),
         "candidate_type": "internal_rc_stub",
         "status": "candidate_internal_only" if gate.get("overall_internal_ready", False) else "not_ready",
+        "canonical_profile": CANONICAL_CHESS_PROFILE,
+        "active_profile": profile,
+        "active_feature_bundle": feature_bundle,
+        "release_candidate_selected": is_release_candidate_configuration(profile, feature_bundle),
+        "release_candidate_reason": release_candidate_configuration_reason(profile, feature_bundle),
         "required_count": int(truth.get("required_count", 0)),
         "present_required_count": int(truth.get("present_required_count", 0)),
         "overall_internal_ready": bool(gate.get("overall_internal_ready", False)),
@@ -8827,11 +8930,18 @@ def render_rc_stub_md(report: Dict[str, Any]) -> str:
 
 def build_golden_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     gate = _read_json_if_exists(layout.reports_dir / "release_gate_summary.json")
+    profile = str(payload.get("config", {}).get("profile", ""))
+    feature_bundle = str(payload.get("config", {}).get("feature_bundle", "default"))
     return {
         "schema": "chess_golden_stub_v1",
         "run_id": payload.get("run_id", ""),
         "candidate_type": "golden_stub",
         "status": "not_ready",
+        "canonical_profile": CANONICAL_CHESS_PROFILE,
+        "active_profile": profile,
+        "active_feature_bundle": feature_bundle,
+        "release_candidate_selected": is_release_candidate_configuration(profile, feature_bundle),
+        "release_candidate_reason": release_candidate_configuration_reason(profile, feature_bundle),
         "overall_external_ready": bool(gate.get("overall_external_ready", False)),
         "reason": "Golden release requires external verification and final release closure beyond internal onefile artifacts.",
     }
@@ -9323,12 +9433,27 @@ def render_blind_handoff_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_release_notes_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("run_contract", layout.reports_dir / "run_contract.json"),
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("claim_registry", layout.reports_dir / "claim_registry.json"),
+            ("known_limits", layout.reports_dir / "known_limits.json"),
+            ("release_gate_summary", layout.reports_dir / "release_gate_summary.json"),
+        ],
+        ready_status="awaiting_release_note_curation",
+        pending_status="pending_release_note_curation",
+        ready_reason="Release-note inputs are present; final note curation now depends on human review.",
+        pending_reason="Release-note inputs are still incomplete.",
+    )
     return {
         "schema": "chess_release_notes_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_release_note_curation",
-        "reason": "Final release notes require curated human review beyond automatically generated onefile evidence.",
+        **consumer_state,
     }
 
 
@@ -9344,12 +9469,26 @@ def render_release_notes_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_freeze_manifest_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("claim_registry", layout.reports_dir / "claim_registry.json"),
+            ("support_matrix", layout.reports_dir / "support_matrix.json"),
+            ("release_gate_summary", layout.reports_dir / "release_gate_summary.json"),
+        ],
+        ready_status="awaiting_freeze_signoff",
+        pending_status="pending_freeze_signoff",
+        ready_reason="Freeze-manifest inputs are present; only formal sign-off remains.",
+        pending_reason="Freeze-manifest inputs are still incomplete.",
+    )
     return {
         "schema": "chess_freeze_manifest_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_freeze_signoff",
-        "reason": "Freeze manifest closure requires final release governance signoff beyond local onefile artifact generation.",
+        **consumer_state,
     }
 
 
@@ -9412,12 +9551,26 @@ def render_changelog_snapshot_md(report: Dict[str, Any]) -> str:
 
 
 def build_maintenance_policy_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("known_limits", layout.reports_dir / "known_limits.json"),
+            ("support_matrix", layout.reports_dir / "support_matrix.json"),
+            ("release_gate_summary", layout.reports_dir / "release_gate_summary.json"),
+        ],
+        ready_status="awaiting_maintenance_policy_finalization",
+        pending_status="pending_maintenance_policy_finalization",
+        ready_reason="Maintenance-policy inputs are present; governance finalization remains.",
+        pending_reason="Maintenance-policy inputs are still incomplete.",
+    )
     return {
         "schema": "chess_maintenance_policy_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_maintenance_policy_finalization",
-        "reason": "Maintenance/support policy requires explicit governance and release support decisions beyond onefile-local artifact generation.",
+        **consumer_state,
     }
 
 
@@ -9433,13 +9586,32 @@ def render_maintenance_policy_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_export_truth_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
     gate = _read_json_if_exists(layout.reports_dir / "release_gate_summary.json")
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("claim_registry", layout.reports_dir / "claim_registry.json"),
+            ("support_matrix", layout.reports_dir / "support_matrix.json"),
+            ("release_gate_summary", layout.reports_dir / "release_gate_summary.json"),
+        ],
+        ready_status="awaiting_export_validation",
+        pending_status="pending_export_truth_validation",
+        ready_reason="Export-truth prerequisites are present; real export validation is still required.",
+        pending_reason="Export-truth prerequisites are still incomplete.",
+    )
     return {
         "schema": "chess_export_truth_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_export_truth_validation",
+        "status": consumer_state["status"],
+        "consumed_artifact_count": consumer_state["consumed_artifact_count"],
+        "consumed_artifacts": consumer_state["consumed_artifacts"],
+        "missing_required_items": consumer_state["missing_required_items"],
         "overall_internal_ready": bool(gate.get("overall_internal_ready", False)),
-        "reason": "Export truth closure requires parity and packaged export validation beyond internal onefile artifact generation.",
+        "reason": consumer_state["reason"],
     }
 
 
@@ -9456,12 +9628,25 @@ def render_export_truth_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_device_validation_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("run_contract", layout.reports_dir / "run_contract.json"),
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("support_matrix", layout.reports_dir / "support_matrix.json"),
+        ],
+        ready_status="awaiting_device_validation",
+        pending_status="pending_device_validation",
+        ready_reason="Device-validation prerequisites are present; real device measurements are still required.",
+        pending_reason="Device-validation prerequisites are still incomplete.",
+    )
     return {
         "schema": "chess_device_validation_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_device_validation",
-        "reason": "Device validation closure requires latency, RAM, thermal, and runtime checks outside internal onefile artifact generation.",
+        **consumer_state,
     }
 
 
@@ -9477,12 +9662,25 @@ def render_device_validation_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_packaging_closure_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("run_contract", layout.reports_dir / "run_contract.json"),
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("support_matrix", layout.reports_dir / "support_matrix.json"),
+        ],
+        ready_status="awaiting_packaging_closure",
+        pending_status="pending_packaging_closure",
+        ready_reason="Packaging-closure prerequisites are present; packaging validation still remains.",
+        pending_reason="Packaging-closure prerequisites are still incomplete.",
+    )
     return {
         "schema": "chess_packaging_closure_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_packaging_closure",
-        "reason": "Packaging closure requires finalized packaging validation beyond locally generated onefile artifacts.",
+        **consumer_state,
     }
 
 
@@ -9498,12 +9696,25 @@ def render_packaging_closure_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_installer_validation_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("run_contract", layout.reports_dir / "run_contract.json"),
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("support_matrix", layout.reports_dir / "support_matrix.json"),
+        ],
+        ready_status="awaiting_installer_validation",
+        pending_status="pending_installer_validation",
+        ready_reason="Installer-validation prerequisites are present; clean install validation is still required.",
+        pending_reason="Installer-validation prerequisites are still incomplete.",
+    )
     return {
         "schema": "chess_installer_validation_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_installer_validation",
-        "reason": "Installer validation closure requires clean install and restore checks beyond internal onefile artifact generation.",
+        **consumer_state,
     }
 
 
@@ -9519,12 +9730,26 @@ def render_installer_validation_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_benchmark_raw_outputs_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("claim_registry", layout.reports_dir / "claim_registry.json"),
+            ("support_matrix", layout.reports_dir / "support_matrix.json"),
+            ("run_log", layout.logs_dir / "run_log.jsonl"),
+        ],
+        ready_status="awaiting_benchmark_raw_output_capture",
+        pending_status="pending_benchmark_raw_output_capture",
+        ready_reason="Benchmark raw-output prerequisites are present; measured raw outputs still need to be captured.",
+        pending_reason="Benchmark raw-output prerequisites are still incomplete.",
+    )
     return {
         "schema": "chess_benchmark_raw_outputs_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_benchmark_raw_output_capture",
-        "reason": "Benchmark closure requires preserved raw outputs beyond summary-level internal artifacts.",
+        **consumer_state,
     }
 
 
@@ -9540,12 +9765,25 @@ def render_benchmark_raw_outputs_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_benchmark_compare_report_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("claim_registry", layout.reports_dir / "claim_registry.json"),
+            ("support_matrix", layout.reports_dir / "support_matrix.json"),
+        ],
+        ready_status="awaiting_benchmark_compare_report",
+        pending_status="pending_benchmark_compare_report",
+        ready_reason="Benchmark compare-report prerequisites are present; measured compare data still needs to be populated.",
+        pending_reason="Benchmark compare-report prerequisites are still incomplete.",
+    )
     return {
         "schema": "chess_benchmark_compare_report_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_benchmark_compare_report",
-        "reason": "Benchmark closure requires before/after or baseline compare reporting beyond internal run-local evidence.",
+        **consumer_state,
     }
 
 
@@ -9561,12 +9799,25 @@ def render_benchmark_compare_report_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_benchmark_summary_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("claim_registry", layout.reports_dir / "claim_registry.json"),
+            ("known_limits", layout.reports_dir / "known_limits.json"),
+        ],
+        ready_status="awaiting_benchmark_summary_closure",
+        pending_status="pending_benchmark_summary_closure",
+        ready_reason="Benchmark-summary prerequisites are present; measured benchmark summary still needs curation.",
+        pending_reason="Benchmark-summary prerequisites are still incomplete.",
+    )
     return {
         "schema": "chess_benchmark_summary_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_benchmark_summary_closure",
-        "reason": "Benchmark closure requires a curated benchmark summary beyond isolated internal artifacts.",
+        **consumer_state,
     }
 
 
@@ -9582,12 +9833,25 @@ def render_benchmark_summary_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_benchmark_manifest_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("claim_registry", layout.reports_dir / "claim_registry.json"),
+            ("support_matrix", layout.reports_dir / "support_matrix.json"),
+        ],
+        ready_status="awaiting_benchmark_manifest_lock",
+        pending_status="pending_benchmark_manifest_lock",
+        ready_reason="Benchmark-manifest prerequisites are present; measured manifest lock still remains.",
+        pending_reason="Benchmark-manifest prerequisites are still incomplete.",
+    )
     return {
         "schema": "chess_benchmark_manifest_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_benchmark_manifest_lock",
-        "reason": "Benchmark closure requires a locked benchmark manifest beyond ad hoc internal run-local reporting.",
+        **consumer_state,
     }
 
 
@@ -9603,12 +9867,25 @@ def render_benchmark_manifest_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_training_report_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("run_summary_json", layout.reports_dir / "run_summary.json"),
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("run_log", layout.logs_dir / "run_log.jsonl"),
+        ],
+        ready_status="awaiting_training_report_closure",
+        pending_status="pending_training_report_closure",
+        ready_reason="Training-report prerequisites are present; measured training summary still needs to be written.",
+        pending_reason="Training-report prerequisites are still incomplete.",
+    )
     return {
         "schema": "chess_training_report_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_training_report_closure",
-        "reason": "Training closure requires a curated training report beyond local onefile artifact generation.",
+        **consumer_state,
     }
 
 
@@ -9624,12 +9901,25 @@ def render_training_report_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_token_accounting_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("run_summary_json", layout.reports_dir / "run_summary.json"),
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("run_log", layout.logs_dir / "run_log.jsonl"),
+        ],
+        ready_status="awaiting_token_accounting",
+        pending_status="pending_token_accounting",
+        ready_reason="Token-accounting prerequisites are present; measured token accounting still needs to be captured.",
+        pending_reason="Token-accounting prerequisites are still incomplete.",
+    )
     return {
         "schema": "chess_token_accounting_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_token_accounting",
-        "reason": "Training closure requires explicit token accounting beyond local onefile artifact generation.",
+        **consumer_state,
     }
 
 
@@ -9645,12 +9935,25 @@ def render_token_accounting_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_compute_accounting_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("run_summary_json", layout.reports_dir / "run_summary.json"),
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("run_log", layout.logs_dir / "run_log.jsonl"),
+        ],
+        ready_status="awaiting_compute_accounting",
+        pending_status="pending_compute_accounting",
+        ready_reason="Compute-accounting prerequisites are present; measured compute accounting still needs to be captured.",
+        pending_reason="Compute-accounting prerequisites are still incomplete.",
+    )
     return {
         "schema": "chess_compute_accounting_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_compute_accounting",
-        "reason": "Training closure requires explicit compute accounting beyond local onefile artifact generation.",
+        **consumer_state,
     }
 
 
@@ -9666,12 +9969,25 @@ def render_compute_accounting_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_cost_report_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("run_summary_json", layout.reports_dir / "run_summary.json"),
+            ("release_snapshot", layout.reports_dir / "release_snapshot.json"),
+            ("run_log", layout.logs_dir / "run_log.jsonl"),
+        ],
+        ready_status="awaiting_cost_report",
+        pending_status="pending_cost_report",
+        ready_reason="Cost-report prerequisites are present; measured cost accounting still needs to be captured.",
+        pending_reason="Cost-report prerequisites are still incomplete.",
+    )
     return {
         "schema": "chess_cost_report_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_cost_report",
-        "reason": "Training closure requires explicit cost reporting beyond local onefile artifact generation.",
+        **consumer_state,
     }
 
 
@@ -9687,14 +10003,34 @@ def render_cost_report_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_final_weights_truth_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
     bundle = dict(payload.get("bundle", {}))
     final_zip = str(bundle.get("zip_path", "")).strip()
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("best_checkpoint", layout.checkpoints_dir / "best_by_val_loss.pt"),
+            ("latest_checkpoint", layout.checkpoints_dir / "latest.pt"),
+            ("bundle_zip", layout.final_zip_path),
+            ("bundle_sha", layout.final_sha_path),
+            ("run_log", layout.logs_dir / "run_log.jsonl"),
+        ],
+        ready_status="awaiting_final_weights_lock",
+        pending_status="pending_final_weights_truth",
+        ready_reason="Final-weight inputs are present; formal final-weight lock and provenance curation still remain.",
+        pending_reason="Final-weight inputs are still incomplete.",
+    )
     return {
         "schema": "chess_final_weights_truth_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_final_weights_truth",
+        "status": consumer_state["status"],
         "bundle_zip_present": bool(final_zip),
-        "reason": "Final weights truth requires explicit trained-weight provenance and validation beyond internal onefile artifact generation.",
+        "consumed_artifact_count": consumer_state["consumed_artifact_count"],
+        "consumed_artifacts": consumer_state["consumed_artifacts"],
+        "missing_required_items": consumer_state["missing_required_items"],
+        "reason": consumer_state["reason"],
     }
 
 
@@ -9711,14 +10047,30 @@ def render_final_weights_truth_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_best_checkpoint_truth_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
     best_checkpoint = str(payload.get("best_checkpoint", "")).strip()
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("best_checkpoint", layout.checkpoints_dir / "best_by_val_loss.pt"),
+            ("run_log", layout.logs_dir / "run_log.jsonl"),
+        ],
+        ready_status="awaiting_best_checkpoint_lock",
+        pending_status="pending_best_checkpoint_truth",
+        ready_reason="Best-checkpoint inputs are present; measured checkpoint lock still remains.",
+        pending_reason="Best-checkpoint inputs are still incomplete.",
+    )
     return {
         "schema": "chess_best_checkpoint_truth_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_best_checkpoint_truth",
+        "status": consumer_state["status"],
         "best_checkpoint_present": bool(best_checkpoint),
-        "reason": "Best-checkpoint truth requires measured checkpoint selection and validation beyond local artifact generation.",
+        "consumed_artifact_count": consumer_state["consumed_artifact_count"],
+        "consumed_artifacts": consumer_state["consumed_artifacts"],
+        "missing_required_items": consumer_state["missing_required_items"],
+        "reason": consumer_state["reason"],
     }
 
 
@@ -9735,14 +10087,30 @@ def render_best_checkpoint_truth_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_latest_checkpoint_truth_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
     latest_checkpoint = str(payload.get("latest_checkpoint", "")).strip()
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("latest_checkpoint", layout.checkpoints_dir / "latest.pt"),
+            ("run_log", layout.logs_dir / "run_log.jsonl"),
+        ],
+        ready_status="awaiting_latest_checkpoint_lock",
+        pending_status="pending_latest_checkpoint_truth",
+        ready_reason="Latest-checkpoint inputs are present; measured checkpoint lock still remains.",
+        pending_reason="Latest-checkpoint inputs are still incomplete.",
+    )
     return {
         "schema": "chess_latest_checkpoint_truth_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_latest_checkpoint_truth",
+        "status": consumer_state["status"],
         "latest_checkpoint_present": bool(latest_checkpoint),
-        "reason": "Latest-checkpoint truth requires explicit artifact validation beyond local onefile artifact generation.",
+        "consumed_artifact_count": consumer_state["consumed_artifact_count"],
+        "consumed_artifacts": consumer_state["consumed_artifacts"],
+        "missing_required_items": consumer_state["missing_required_items"],
+        "reason": consumer_state["reason"],
     }
 
 
@@ -9761,6 +10129,21 @@ def render_latest_checkpoint_truth_stub_md(report: Dict[str, Any]) -> str:
 def build_trained_artifact_registry_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
     truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    consumer_state = _artifact_consumer_state_with_paths(
+        layout,
+        truth_entries,
+        [
+            ("best_checkpoint", layout.checkpoints_dir / "best_by_val_loss.pt"),
+            ("latest_checkpoint", layout.checkpoints_dir / "latest.pt"),
+            ("bundle_zip", layout.final_zip_path),
+            ("bundle_sha", layout.final_sha_path),
+            ("run_log", layout.logs_dir / "run_log.jsonl"),
+        ],
+        ready_status="awaiting_trained_artifact_registry_lock",
+        pending_status="pending_trained_artifact_registry_lock",
+        ready_reason="Registry inputs are present; trained-artifact registry still needs formal lock and provenance review.",
+        pending_reason="Registry inputs are still incomplete.",
+    )
     tracked_labels = [
         label
         for label in ("best_checkpoint", "latest_checkpoint", "bundle_zip", "bundle_sha")
@@ -9769,10 +10152,13 @@ def build_trained_artifact_registry_stub(layout: ArtifactLayout, payload: Dict[s
     return {
         "schema": "chess_trained_artifact_registry_stub_v1",
         "run_id": payload.get("run_id", ""),
-        "status": "pending_trained_artifact_registry_lock",
+        "status": consumer_state["status"],
         "tracked_label_count": len(tracked_labels),
         "tracked_labels": tracked_labels,
-        "reason": "Trained artifact registry closure requires a locked trained-artifact registry beyond local onefile artifact generation.",
+        "consumed_artifact_count": consumer_state["consumed_artifact_count"],
+        "consumed_artifacts": consumer_state["consumed_artifacts"],
+        "missing_required_items": consumer_state["missing_required_items"],
+        "reason": consumer_state["reason"],
     }
 
 
@@ -9999,6 +10385,7 @@ def render_master_closure_table_md(report: Dict[str, Any]) -> str:
 
 def build_remaining_core_blockers(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     known_limits = _read_json_if_exists(layout.reports_dir / "known_limits.json")
+    canonical_labels = set(_project_blocker_specs().keys())
     blockers = [
         {
             "label": item.get("label", ""),
@@ -10006,7 +10393,7 @@ def build_remaining_core_blockers(layout: ArtifactLayout, payload: Dict[str, Any
             "detail": item.get("detail", ""),
         }
         for item in known_limits.get("limits", [])
-        if item.get("status") == "active"
+        if item.get("status") == "active" and item.get("label", "") in canonical_labels
     ]
     return {
         "schema": "chess_remaining_core_blockers_v1",
@@ -10106,13 +10493,13 @@ def build_aggregated_master_table(layout: ArtifactLayout, payload: Dict[str, Any
     blockers = _read_json_if_exists(layout.reports_dir / "remaining_core_blockers.json")
     blocker_labels = {item.get("label", "") for item in blockers.get("blockers", [])}
     group_to_blockers = {
-        "release_registry": {"release_surface_not_external_grade"},
-        "external_closure": {"external_reproduction_pending", "security_legal_pilot_pending"},
+        "release_registry": {"rc_golden_final_release_pending"},
+        "external_closure": {"external_strength_unproven", "external_reproduction_pending", "security_legal_pilot_pending"},
         "operational_closure": {"operator_handoff_dr_pending"},
-        "release_governance": {"release_governance_pending"},
-        "device_packaging": {"device_export_packaging_pending"},
-        "benchmark_closure": {"benchmark_closure_pending"},
-        "training_accounting": {"training_accounting_pending"},
+        "release_governance": {"rc_golden_final_release_pending"},
+        "device_packaging": {"export_device_packaging_pending"},
+        "benchmark_closure": {"benchmark_evidence_pending"},
+        "training_accounting": {"real_training_outputs_pending"},
         "trained_artifact_truth": {"trained_artifact_truth_pending"},
         "management_closure": {"management_closure_pending"},
         "truth_docs_alignment": {"truth_docs_drift_pending"},
@@ -10680,15 +11067,14 @@ def build_truth_docs_drift_report(layout: ArtifactLayout, payload: Dict[str, Any
     chess_lane_labels = [str(row.get("label", "")) for row in master.get("rows", [])]
     documented_chess_blocker_labels = {
         "external_strength_unproven",
-        "release_surface_not_external_grade",
+        "real_training_outputs_pending",
         "external_reproduction_pending",
         "security_legal_pilot_pending",
         "operator_handoff_dr_pending",
-        "release_governance_pending",
-        "device_export_packaging_pending",
-        "benchmark_closure_pending",
-        "training_accounting_pending",
+        "benchmark_evidence_pending",
+        "export_device_packaging_pending",
         "trained_artifact_truth_pending",
+        "rc_golden_final_release_pending",
         "management_closure_pending",
     }
     chess_blocker_labels = [

@@ -77,6 +77,13 @@ Generated automatically.
 - `apps/chess_gui/logs/stockfish_1600_20260406_234718.md`
 - `assets/sources/README.md`
 - `assets/sources/README_TR.md`
+- `checklists/README.md`
+- `checklists/chess_4060_24h.md`
+- `checklists/chess_4060_24h_TR.md`
+- `checklists/chess_4060_24h_all_on_experimental.md`
+- `checklists/chess_4060_24h_all_on_experimental_TR.md`
+- `configs/README.md`
+- `configs/chess_onefile_profile_contract.md`
 - `datasets/INTERNAL_POLICY.md`
 - `datasets/INTERNAL_POLICY_TR.md`
 - `datasets/LICENSES.md`
@@ -90,15 +97,23 @@ Generated automatically.
 - `datasets/offline_demo/README.md`
 - `docs/CHAIN_MAP.md`
 - `docs/CHAIN_MAP_TR.md`
+- `docs/CHESS_ONEFILE_MASTER_TRUTH.md`
+- `docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md`
+- `docs/PROJECT_MASTER_TRUTH.md`
+- `docs/PROJECT_MASTER_TRUTH_TR.md`
 - `docs/PROJECT_STRUCTURE.md`
 - `economics/cost_model.md`
 - `economics/cost_model_TR.md`
 - `economics/efficiency_report.md`
 - `economics/efficiency_report_TR.md`
+- `evidence/README.md`
+- `evidence/chess_evidence_contract.md`
 - `experiments/exp_001_baseline/notes.md`
 - `experiments/exp_001_baseline/notes_TR.md`
 - `interfaces/inference_contract.md`
 - `interfaces/inference_contract_TR.md`
+- `knowledge/README.md`
+- `knowledge/chess_onefile_glossary.md`
 - `limits/scaling_breakpoints.md`
 - `limits/scaling_breakpoints_TR.md`
 - `logs/README.md`
@@ -169,6 +184,8 @@ Generated automatically.
 - `postmortems/example_001_TR.md`
 - `prompts/changelog.md`
 - `prompts/changelog_TR.md`
+- `releases/README.md`
+- `releases/chess_release_contract.md`
 - `reports/adr_index.md`
 - `reports/architecture_honesty_audit.md`
 - `reports/asset_stack.md`
@@ -356,6 +373,11 @@ Generated automatically.
 - `repro/python_TR.md`
 - `repro/seed_policy.md`
 - `repro/seed_policy_TR.md`
+- `runbooks/README.md`
+- `runbooks/chess_4060_24h.md`
+- `runbooks/chess_4060_24h_TR.md`
+- `runbooks/chess_4060_24h_all_on_experimental.md`
+- `runbooks/chess_4060_24h_all_on_experimental_TR.md`
 - `scripts/README.md`
 - `scripts/README_TR.md`
 - `scripts/reports/model_health.md`
@@ -383,6 +405,18 @@ Generated automatically.
 - `changelog_tr.md`
   - `CHANGELOG_TR.md`
   - `prompts/changelog_TR.md`
+- `chess_4060_24h.md`
+  - `checklists/chess_4060_24h.md`
+  - `runbooks/chess_4060_24h.md`
+- `chess_4060_24h_all_on_experimental.md`
+  - `checklists/chess_4060_24h_all_on_experimental.md`
+  - `runbooks/chess_4060_24h_all_on_experimental.md`
+- `chess_4060_24h_all_on_experimental_tr.md`
+  - `checklists/chess_4060_24h_all_on_experimental_TR.md`
+  - `runbooks/chess_4060_24h_all_on_experimental_TR.md`
+- `chess_4060_24h_tr.md`
+  - `checklists/chess_4060_24h_TR.md`
+  - `runbooks/chess_4060_24h_TR.md`
 - `closure_57_matrix_tr.md`
   - `mertformer-titan-dealroom-private/03_TECH_EVIDENCE/closure_57_matrix_TR.md`
   - `reports/closure_57_matrix_TR.md`
@@ -427,15 +461,21 @@ Generated automatically.
   - `apps/chess_gui/checkpoints/README.md`
   - `apps/chess_gui/logs/README.md`
   - `assets/sources/README.md`
+  - `checklists/README.md`
+  - `configs/README.md`
   - `datasets/README.md`
   - `datasets/offline_demo/README.md`
+  - `evidence/README.md`
+  - `knowledge/README.md`
   - `logs/README.md`
   - `postmortems/README.md`
+  - `releases/README.md`
   - `reports/benchmarks/README.md`
   - `reports/benchmarks/linkedin_sweetspot/README.md`
   - `reports/benchmarks/math_fastproof/README.md`
   - `reports/benchmarks/text_understanding/README.md`
   - `reports/pilots/README.md`
+  - `runbooks/README.md`
   - `scripts/README.md`
   - `tokenizer/tr/README.md`
   - `tools/contracts/README.md`

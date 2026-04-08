@@ -18,7 +18,9 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - Satranç one-file desteklenen modlar: `train`, `verify`, `benchmark`, `package`, `resume`, `arena`
 - Satranç one-file artık isimli feature bundle desteği taşır: `--feature-bundle` ve bunun üstüne `--enable-features` / `--disable-features` override’ları kullanılabilir.
 - Önerilen ileri bundle adları: `routing_stack`, `liquid_stack`, `memory_attention_stack`, `cognitive_stack`, `objective_stack`, `postrun_analysis_stack`, `all_stable_extensions`, `all_on_experimental`.
-- Yeni uzun koşu deneysel profilleri: `strength_4060_24h_all_on_experimental` ve `strength_4060_24h_omni_max`.
+- Kanonik 24 saatlik RTX 4060 profili: `strength_4060_24h` (`baseline_supported`, release-candidate uygun).
+- Desteklenen taşınabilir baseline profil: `production_5080` (`supported_portable_baseline`).
+- Research-only 24 saatlik RTX 4060 profilleri: `strength_4060_24h_all_on_experimental` (`experimental`) ve `strength_4060_24h_omni_max` (`experimental_high_risk`).
 - `--mode arena` insan-vs-model terminal yüzeyi açar; anlamlı oyun için `--resume-from <checkpoint>` kullanın.
 - Satranç one-file artık kanonik Build30 trunk ailelerini tek dosyada mirror eder: BitLinear, MLA, CfC Liquid, MoE/LiquidRouter, QINN, cognitive extension katmanları ve world-model hookları.
 - Yardımcı satranç head’leri artık feature flag ile açılıp kapanabilir: `phase_head`, `wdl_head`, `legality_head`.
@@ -41,7 +43,8 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - Aggregated truth artefaktları artık `reports/aggregated_master_table.json`, `reports/real_remaining_core_work.json`, `reports/repo_truth_inventory.json` ve `reports/closure_gap_summary.json` dosyalarını üretir.
 - Project-truth ve docs-alignment artefaktları artık `reports/project_master_truth_reference.json`, `reports/project_remaining_real_blockers.json`, `reports/truth_docs_index.json` ve `reports/truth_docs_drift_report.json` dosyalarını üretir.
 - Consistency/action artefaktları artık `reports/project_blocker_action_plan.json`, `reports/project_blocker_dependency_graph.json`, `reports/project_execution_sequence.json`, `reports/project_lane_status_board.json`, `reports/project_closure_phase_plan.json`, `reports/project_phase_readiness_scoreboard.json`, `reports/project_owner_accountability_matrix.json`, `reports/project_owner_work_queue.json`, `reports/project_critical_path_report.json`, `reports/project_owner_next_actions_summary.json`, `reports/project_ready_now_board.json`, `reports/project_unlock_impact_report.json`, `reports/project_parallel_workset_report.json`, `reports/project_phase_exit_criteria_report.json`, `reports/project_execution_wave_report.json`, `reports/project_evidence_backlog_report.json`, `reports/project_dependency_bottleneck_report.json`, `reports/project_owner_phase_frontier_report.json`, `reports/project_evidence_criticality_report.json`, `reports/project_phase_transition_matrix.json`, `reports/project_owner_load_report.json`, `reports/project_phase_dependency_pressure_report.json`, `reports/project_owner_bottleneck_alignment_report.json`, `reports/project_evidence_phase_heatmap_report.json`, `reports/project_blocker_risk_register_report.json`, `reports/project_release_prereq_matrix_report.json`, `reports/project_foundation_run_dependency_report.json`, `reports/project_release_path_report.json`, `reports/project_external_closure_cluster_report.json`, `reports/project_owner_evidence_gap_report.json`, `reports/project_release_gate_dependency_report.json`, `reports/project_external_signoff_queue_report.json`, `reports/project_release_evidence_bridge_report.json`, `reports/project_training_run_readiness_report.json`, `reports/project_benchmark_closure_dependency_report.json`, `reports/project_release_decision_queue_report.json`, `reports/project_external_validation_readiness_report.json`, `reports/project_artifact_lock_readiness_report.json`, `reports/project_final_release_cutover_report.json`, `reports/project_real_run_execution_queue_report.json`, `reports/project_benchmark_evidence_lock_report.json`, `reports/project_final_signoff_cutset_report.json`, `reports/generated_truth_consistency_report.json` ve `reports/generated_truth_crosscheck_matrix.json` dosyalarını üretir.
-- 24 saatlik 4060 all-on yolu için runbook/checklist dokümanları artık `runbooks/` ve `checklists/` altındadır.
+- Donmuş 24 saatlik 4060 yolu için kanonik runbook/checklist artık `runbooks/chess_4060_24h.md` ve `checklists/chess_4060_24h.md` altındadır.
+- Deneysel 24 saatlik 4060 runbook/checklist dokümanları `runbooks/chess_4060_24h_all_on_experimental.md` ve `checklists/chess_4060_24h_all_on_experimental.md` altında kalır.
 - Kanonik repo-side contract yüzeyleri artık `configs/`, `releases/`, `knowledge/` ve `evidence/` klasörlerini de içerir.
 - Satranç runtime observability sözleşmesi artık nettir: `logs/run_log.jsonl`, `reports/logging_contract.json`, `reports/observability_report.json`.
 - Fatal runtime hatalarının hem `logs/run_log.jsonl` içindeki `fatal_exception` event'inde hem de Desktop tarafındaki `*_FAILED_*.json` artefaktında görünmesi beklenir.
@@ -51,13 +54,16 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 
 ### Satranç Onefile Bundle Örnekleri
 ```bash
-# Kanonik profil üstüne nispeten stabil ileri stack
+# Kanonik 24 saatlik RTX 4060 eğitim-başlat komutu
+python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
+
+# Taşınabilir baseline üstüne nispeten stabil ileri stack
 python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --feature-bundle all_stable_extensions
 
-# RTX 4060 için 24 saatlik, tüm büyük onefile extension’ları açık deneysel kopya profil
+# RTX 4060 için 24 saatlik, tüm büyük onefile extension’ları açık research-only profil
 python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_all_on_experimental
 
-# RTX 4060 için daha agresif omni-max varyant
+# RTX 4060 için daha agresif omni-max research varyantı
 python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_omni_max
 
 # All-on profilden başlayıp belirli riskli yüzeyleri kapatma örneği

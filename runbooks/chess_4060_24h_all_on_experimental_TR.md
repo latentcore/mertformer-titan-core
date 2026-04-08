@@ -1,11 +1,16 @@
 # Satranç 4060 24 Saat All-On Experimental Runbook
 
+Research-only yüzeydir. Bu runbook donmuş chess release kapısını hiçbir zaman kapatamaz.
+
 ## Amaç
 Tek bir RTX 4060 üzerinde chess onefile hattını 24 saatlik, sınırlandırılmış ve geniş feature yüzeyi açık deneysel eğitim koşusunda çalıştırmak.
 
 Profiller:
 - `strength_4060_24h_all_on_experimental`
 - `strength_4060_24h_omni_max`
+
+Kanonik release-taşıyan alternatif:
+- `strength_4060_24h`
 
 ## Önerilen Komutlar
 Temel all-on experimental:

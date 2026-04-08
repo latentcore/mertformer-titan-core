@@ -7,5 +7,5 @@
 - hashes_match: `False`
 - canonical_onefile: `<REPO_ROOT>/scripts/chess_5080_onefile.py`
 - gui_onefile: `<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py`
-- canonical_sha256: `6fc3e61ea5a1f843fcb0861d5297981adbdb0f75f0739acfb23a890c4d11ad6a`
+- canonical_sha256: `5d0f0b93a29488c49e0b371dbc77254cc213a8556a0b91135ec2d5c8bb538c57`
 - gui_sha256: `missing`

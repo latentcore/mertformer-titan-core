@@ -55,14 +55,13 @@ It is intentionally strict about the difference between:
 The following remain actual blockers even after repo-side closure is strong:
 
 - `external_strength_unproven`
-- `release_surface_not_external_grade`
+- `real_training_outputs_pending`
 - `external_reproduction_pending`
 - `security_legal_pilot_pending`
 - `operator_handoff_dr_pending`
-- `release_governance_pending`
-- `device_export_packaging_pending`
-- `benchmark_closure_pending`
-- `training_accounting_pending`
+- `rc_golden_final_release_pending`
+- `export_device_packaging_pending`
+- `benchmark_evidence_pending`
 - `trained_artifact_truth_pending`
 - `management_closure_pending`
 

@@ -252,6 +252,19 @@ def test_resolve_runtime_config_feature_overrides_win_over_bundle() -> None:
     assert cfg['enabled_features'] == ['use_bitlinear']
 
 
+def test_release_candidate_configuration_requires_canonical_profile_and_non_experimental_bundle() -> None:
+    rows = {row['label']: row for row in onefile.profile_support_rows('strength_4060_24h')}
+    assert rows['strength_4060_24h']['support_level'] == 'baseline_supported'
+    assert rows['production_5080']['support_level'] == 'supported_portable_baseline'
+    assert rows['strength_4060_24h_all_on_experimental']['support_level'] == 'experimental'
+    assert rows['strength_4060_24h_omni_max']['support_level'] == 'experimental_high_risk'
+    assert onefile.is_release_candidate_configuration('strength_4060_24h', 'default') is True
+    assert onefile.is_release_candidate_configuration('strength_4060_24h', 'postrun_analysis_stack') is True
+    assert onefile.is_release_candidate_configuration('strength_4060_24h', 'all_on_experimental') is False
+    assert onefile.is_release_candidate_configuration('production_5080', 'default') is False
+    assert onefile.is_release_candidate_configuration('strength_4060_24h_all_on_experimental', 'default') is False
+
+
 def test_deterministic_seed_sets_strict_flags() -> None:
     onefile.deterministic_seed(123, strict=True)
     assert onefile.torch.backends.cudnn.deterministic is True
@@ -807,8 +820,8 @@ def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path)
         **onefile.RUN_CONFIG,
         'artifact_root': str(tmp_path),
         'mode': 'train',
-        'profile': 'strength_4060_24h_all_on_experimental',
-        'feature_bundle': 'all_on_experimental',
+        'profile': 'strength_4060_24h',
+        'feature_bundle': 'default',
     }
     layout = onefile.make_layout(cfg)
     required_reports = [
@@ -968,8 +981,8 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
         **onefile.RUN_CONFIG,
         'artifact_root': str(tmp_path),
         'mode': 'train',
-        'profile': 'strength_4060_24h_all_on_experimental',
-        'feature_bundle': 'all_on_experimental',
+        'profile': 'strength_4060_24h',
+        'feature_bundle': 'default',
     }
     layout = onefile.make_layout(cfg)
     required_reports = [
@@ -1129,8 +1142,12 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     generated_truth_crosscheck_matrix = json.loads((layout.reports_dir / 'generated_truth_crosscheck_matrix.json').read_text(encoding='utf-8'))
     entries = {entry['label']: entry for entry in truth['entries']}
     assert run_contract['schema'] == 'chess_run_contract_v1'
-    assert run_contract['feature_bundle'] == 'all_on_experimental'
+    assert run_contract['profile'] == 'strength_4060_24h'
+    assert run_contract['feature_bundle'] == 'default'
     assert release_snapshot['schema'] == 'chess_release_snapshot_v1'
+    assert release_snapshot['profile'] == 'strength_4060_24h'
+    assert release_snapshot['active_feature_bundle'] == 'default'
+    assert release_snapshot['release_candidate_selected'] is True
     assert release_snapshot['release_surface_status'] == 'candidate_internal_only'
     assert evidence_pack['schema'] == 'chess_evidence_pack_stub_v1'
     assert evidence_pack['status'] == 'partial_internal_only'
@@ -1139,7 +1156,17 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert claim_registry['schema'] == 'chess_claim_registry_v1'
     assert known_limits['schema'] == 'chess_known_limits_v1'
     assert support_matrix['schema'] == 'chess_support_matrix_v1'
+    assert support_matrix['canonical_profile'] == 'strength_4060_24h'
+    assert support_matrix['active_feature_bundle'] == 'default'
+    assert support_matrix['release_candidate_selected'] is True
+    support_levels = {row['label']: row['support_level'] for row in support_matrix['profiles']}
+    assert support_levels['strength_4060_24h'] == 'baseline_supported'
+    assert support_levels['production_5080'] == 'supported_portable_baseline'
+    assert support_levels['strength_4060_24h_all_on_experimental'] == 'experimental'
+    assert support_levels['strength_4060_24h_omni_max'] == 'experimental_high_risk'
     assert release_gate_summary['schema'] == 'chess_release_gate_summary_v1'
+    assert release_gate_summary['active_profile'] == 'strength_4060_24h'
+    assert release_gate_summary['active_feature_bundle'] == 'default'
     assert rc_stub['schema'] == 'chess_rc_stub_v1'
     assert golden_stub['schema'] == 'chess_golden_stub_v1'
     assert handoff_pack_manifest['schema'] == 'chess_handoff_pack_manifest_v1'
@@ -1344,28 +1371,28 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert dr_evidence_stub['status'] == 'pending_dr_validation'
     assert backup_retention_stub['status'] == 'pending_retention_policy_finalization'
     assert blind_handoff_stub['status'] == 'pending_blind_handoff_rehearsal'
-    assert release_notes_stub['status'] == 'pending_release_note_curation'
-    assert freeze_manifest_stub['status'] == 'pending_freeze_signoff'
-    assert maintenance_policy_stub['status'] == 'pending_maintenance_policy_finalization'
-    assert export_truth_stub['status'] == 'pending_export_truth_validation'
-    assert device_validation_stub['status'] == 'pending_device_validation'
-    assert packaging_closure_stub['status'] == 'pending_packaging_closure'
-    assert installer_validation_stub['status'] == 'pending_installer_validation'
-    assert benchmark_raw_outputs_stub['status'] == 'pending_benchmark_raw_output_capture'
-    assert benchmark_compare_report_stub['status'] == 'pending_benchmark_compare_report'
-    assert benchmark_summary_stub['status'] == 'pending_benchmark_summary_closure'
-    assert benchmark_manifest_stub['status'] == 'pending_benchmark_manifest_lock'
-    assert training_report_stub['status'] == 'pending_training_report_closure'
-    assert token_accounting_stub['status'] == 'pending_token_accounting'
-    assert compute_accounting_stub['status'] == 'pending_compute_accounting'
-    assert cost_report_stub['status'] == 'pending_cost_report'
-    assert final_weights_truth_stub['status'] == 'pending_final_weights_truth'
+    assert release_notes_stub['status'] == 'awaiting_release_note_curation'
+    assert freeze_manifest_stub['status'] == 'awaiting_freeze_signoff'
+    assert maintenance_policy_stub['status'] == 'awaiting_maintenance_policy_finalization'
+    assert export_truth_stub['status'] == 'awaiting_export_validation'
+    assert device_validation_stub['status'] == 'awaiting_device_validation'
+    assert packaging_closure_stub['status'] == 'awaiting_packaging_closure'
+    assert installer_validation_stub['status'] == 'awaiting_installer_validation'
+    assert benchmark_raw_outputs_stub['status'] == 'awaiting_benchmark_raw_output_capture'
+    assert benchmark_compare_report_stub['status'] == 'awaiting_benchmark_compare_report'
+    assert benchmark_summary_stub['status'] == 'awaiting_benchmark_summary_closure'
+    assert benchmark_manifest_stub['status'] == 'awaiting_benchmark_manifest_lock'
+    assert training_report_stub['status'] == 'awaiting_training_report_closure'
+    assert token_accounting_stub['status'] == 'awaiting_token_accounting'
+    assert compute_accounting_stub['status'] == 'awaiting_compute_accounting'
+    assert cost_report_stub['status'] == 'awaiting_cost_report'
+    assert final_weights_truth_stub['status'] == 'awaiting_final_weights_lock'
     assert final_weights_truth_stub['bundle_zip_present'] is True
-    assert best_checkpoint_truth_stub['status'] == 'pending_best_checkpoint_truth'
+    assert best_checkpoint_truth_stub['status'] == 'awaiting_best_checkpoint_lock'
     assert best_checkpoint_truth_stub['best_checkpoint_present'] is True
-    assert latest_checkpoint_truth_stub['status'] == 'pending_latest_checkpoint_truth'
+    assert latest_checkpoint_truth_stub['status'] == 'awaiting_latest_checkpoint_lock'
     assert latest_checkpoint_truth_stub['latest_checkpoint_present'] is True
-    assert trained_artifact_registry_stub['status'] == 'pending_trained_artifact_registry_lock'
+    assert trained_artifact_registry_stub['status'] == 'awaiting_trained_artifact_registry_lock'
     assert 'best_checkpoint' in trained_artifact_registry_stub['tracked_labels']
     assert 'latest_checkpoint' in trained_artifact_registry_stub['tracked_labels']
     assert core_complete_decision_stub['status'] == 'pending_core_complete_decision'
@@ -1676,19 +1703,21 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert changelog_snapshot['evaluation_status'] == 'completed'
     assert 'release_gate_summary' in changelog_snapshot['included_labels']
     known_limit_labels = {item['label'] for item in known_limits['limits']}
+    assert 'external_strength_unproven' in known_limit_labels
+    assert 'real_training_outputs_pending' in known_limit_labels
     assert 'external_reproduction_pending' in known_limit_labels
     assert 'security_legal_pilot_pending' in known_limit_labels
     assert 'operator_handoff_dr_pending' in known_limit_labels
-    assert 'release_governance_pending' in known_limit_labels
-    assert 'device_export_packaging_pending' in known_limit_labels
-    assert 'benchmark_closure_pending' in known_limit_labels
-    assert 'training_accounting_pending' in known_limit_labels
+    assert 'rc_golden_final_release_pending' in known_limit_labels
+    assert 'export_device_packaging_pending' in known_limit_labels
+    assert 'benchmark_evidence_pending' in known_limit_labels
     assert 'trained_artifact_truth_pending' in known_limit_labels
     assert 'management_closure_pending' in known_limit_labels
     assert 'truth_docs_drift_pending' not in known_limit_labels
     assert 'generated_truth_consistency_pending' not in known_limit_labels
     assert 'generated_truth_crosscheck_pending' not in known_limit_labels
     gate_labels = {item['label']: item['passed'] for item in release_gate_summary['gates']}
+    assert gate_labels['canonical_release_profile_selected'] is True
     assert gate_labels['external_closure_stubs_present'] is True
     assert gate_labels['operational_stub_surfaces_present'] is True
     assert gate_labels['release_governance_surfaces_present'] is True

@@ -24,10 +24,14 @@ from typing import Optional, Tuple
 
 from layers.bitlinear import BitLinear
 
+DEFAULT_TORCHSCRIPT_COMPAT_ENV = "MERTFORMER_ENABLE_TORCHSCRIPT_COMPAT"
+
 
 def _jit_script_if_supported(fn):
-    """Use TorchScript where supported; fall back cleanly on Python 3.14+."""
+    """Use TorchScript only when explicitly requested; default verify path stays warning-free."""
     if sys.version_info >= (3, 14):
+        return fn
+    if os.environ.get(DEFAULT_TORCHSCRIPT_COMPAT_ENV, "").strip().lower() not in {"1", "true", "yes", "on"}:
         return fn
     try:
         return torch.jit.script(fn)

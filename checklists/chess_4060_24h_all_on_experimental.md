@@ -1,5 +1,7 @@
 # Chess 4060 24h All-On Experimental Checklist
 
+Research-only checklist. Use `chess_4060_24h.md` for the canonical release-bearing path.
+
 - [ ] Profile selected: `strength_4060_24h_all_on_experimental` or `strength_4060_24h_omni_max`
 - [ ] Disk headroom checked
 - [ ] CUDA device visible

@@ -1,6 +1,6 @@
 {
   "schema": "chess_gui_onefile_sync_report_v1",
-  "generated_utc": "2026-04-08T12:24:11Z",
+  "generated_utc": "2026-04-08T20:32:40Z",
   "canonical_onefile": "<REPO_ROOT>/scripts/chess_5080_onefile.py",
   "gui_dir": "<REPO_ROOT>/apps/chess_gui",
   "gui_onefile": "<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py",
@@ -8,7 +8,7 @@
   "reason": "local_copy_missing_repo_canonical_fallback_available",
   "copied": false,
   "local_copy_present": false,
-  "canonical_sha256": "6fc3e61ea5a1f843fcb0861d5297981adbdb0f75f0739acfb23a890c4d11ad6a",
+  "canonical_sha256": "5d0f0b93a29488c49e0b371dbc77254cc213a8556a0b91135ec2d5c8bb538c57",
   "gui_sha256": "",
   "hashes_match": false
 }

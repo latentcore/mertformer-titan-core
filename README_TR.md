@@ -167,7 +167,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `191 passed, 3 skipped` |
+| `python3 -m pytest -q` | `203 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -180,7 +180,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`191 passed, 3 skipped`)
+   - `pytest` geçti (`203 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -745,21 +745,25 @@ bash zero_touch_start.sh --check-only
 ```
 
 ### Chess Onefile Feature-Bundle Yolu
-`/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/scripts/chess_5080_onefile.py` artık mirror edilen ileri mimari yüzeyler için isimli bundle overlay'leri ve tekil flag override'larını destekler.
+`scripts/chess_5080_onefile.py` artık mirror edilen ileri mimari yüzeyler için isimli bundle overlay'leri ve tekil flag override'larını destekler.
 
 - Bundle CLI: `--feature-bundle <isim>`
 - Tekil flag CLI: `--enable-features flag_a,flag_b` ve `--disable-features flag_c`
+- Kanonik 24 saatlik RTX 4060 eğitim-başlangıç profili: `strength_4060_24h`
+- Desteklenen taşınabilir baseline profil: `production_5080`
+- Donmuş chess lane üzerinde release-candidate uygun olan tek profil `strength_4060_24h` profilidir
 - Yardımcı satranç head bundle’ı: `objective_stack`
 - Koşu-sonrası analiz bundle’ı: `postrun_analysis_stack`
-- Uzun koşu all-on yerel ablation profilleri: `strength_4060_24h_all_on_experimental` ve `strength_4060_24h_omni_max`
+- Research-only 24 saatlik RTX 4060 profilleri: `strength_4060_24h_all_on_experimental` ve `strength_4060_24h_omni_max`
 - Yeni yardımcı head’ler: `phase_head`, `wdl_head`, `legality_head`
 - Koşu başına bundle kanıtı: `reports/feature_flag_report.json` ve `reports/feature_flag_report.md`
 - Yeni koşu-sonrası satranç artefaktları: `reports/selfplay_report.json`, `reports/inference_mode_tournament_report.json`, `reports/replay_buffer_manifest.json`
-- Operatör runbook/checklist yolu: `runbooks/chess_4060_24h_all_on_experimental.md` ve `checklists/chess_4060_24h_all_on_experimental.md`
+- Kanonik operatör runbook/checklist yolu: `runbooks/chess_4060_24h.md` ve `checklists/chess_4060_24h.md`
+- Research-only runbook/checklist yolu: `runbooks/chess_4060_24h_all_on_experimental.md` ve `checklists/chess_4060_24h_all_on_experimental.md`
 
 Örnek:
 ```bash
-python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_all_on_experimental
+python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
 ```
 
 ```text
@@ -1603,6 +1607,10 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   │   └── README_TR.md  # Türkçe doküman karşılığı
 │   ├── results.md  # dokümantasyon/rapor dosyası
 │   └── results_TR.md  # Türkçe doküman karşılığı
+├── adr/  # dizin
+│   ├── ADR-0001-source-of-truth-and-claim-boundary.md  # dokümantasyon/rapor dosyası
+│   ├── ADR-0002-change-control-and-closure-governance.md  # dokümantasyon/rapor dosyası
+│   └── ADR-0003-chess-oneclick-delivery-runtime-contract.md  # dokümantasyon/rapor dosyası
 ├── apps/  # dizin
 │   └── chess_gui/  # dizin
 │       ├── checkpoints/  # dizin
@@ -1623,6 +1631,10 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── snake_demo_preview.gif  # medya varlığı
 │   ├── snake_demo_proof.mp4  # medya varlığı
 │   └── synaptic_map.png  # medya varlığı
+├── checklists/  # dizin
+│   ├── README.md  # ana dokümantasyon (EN)
+│   ├── chess_4060_24h_all_on_experimental.md  # dokümantasyon/rapor dosyası
+│   └── chess_4060_24h_all_on_experimental_TR.md  # Türkçe doküman karşılığı
 ├── config/  # dizin
 │   ├── export/  # dizin
 │   │   └── onnx_mobile.yaml  # YAML yapılandırma dosyası
@@ -1636,6 +1648,9 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── __init__.py  # Python modülü/scripti (config paket başlatıcısı ve dışa aktarmalar)
 │   ├── base.yaml  # YAML yapılandırma dosyası
 │   └── config.py  # Python modülü/scripti (çalışma zamanı konfigürasyon modeli ve doğrulama yardımcıları)
+├── configs/  # dizin
+│   ├── README.md  # ana dokümantasyon (EN)
+│   └── chess_onefile_profile_contract.md  # dokümantasyon/rapor dosyası
 ├── datasets/  # dizin
 │   ├── INTERNAL_POLICY.md  # dokümantasyon/rapor dosyası
 │   ├── INTERNAL_POLICY_TR.md  # Türkçe doküman karşılığı
@@ -1655,7 +1670,11 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   └── validation.jsonl  # JSONL veri/log artefaktı
 ├── docs/  # dizin
 │   ├── CHAIN_MAP.md  # dokümantasyon/rapor dosyası
-│   └── CHAIN_MAP_TR.md  # Türkçe doküman karşılığı
+│   ├── CHAIN_MAP_TR.md  # Türkçe doküman karşılığı
+│   ├── CHESS_ONEFILE_MASTER_TRUTH.md  # dokümantasyon/rapor dosyası
+│   ├── CHESS_ONEFILE_MASTER_TRUTH_TR.md  # Türkçe doküman karşılığı
+│   ├── PROJECT_MASTER_TRUTH.md  # dokümantasyon/rapor dosyası
+│   └── PROJECT_MASTER_TRUTH_TR.md  # Türkçe doküman karşılığı
 ├── economics/  # dizin
 │   ├── cost_model.md  # dokümantasyon/rapor dosyası
 │   ├── cost_model_TR.md  # Türkçe doküman karşılığı
@@ -1669,6 +1688,9 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── gsm8k.py  # Python modülü/scripti (gsm8k için değerlendirme rutini)
 │   ├── humaneval.py  # Python modülü/scripti (humaneval için değerlendirme rutini)
 │   └── report_builder.py  # Python modülü/scripti (report builder için değerlendirme rutini)
+├── evidence/  # dizin
+│   ├── README.md  # ana dokümantasyon (EN)
+│   └── chess_evidence_contract.md  # dokümantasyon/rapor dosyası
 ├── experiments/  # dizin
 │   └── exp_001_baseline/  # dizin
 │       ├── config.yaml  # YAML yapılandırma dosyası
@@ -1685,6 +1707,9 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── run_manifest_v1.schema.json  # JSON şema artefaktı
 │   ├── tokenizer_spec.json  # JSON veri artefaktı
 │   └── workspace_hygiene_manifest_v1.schema.json  # JSON şema artefaktı
+├── knowledge/  # dizin
+│   ├── README.md  # ana dokümantasyon (EN)
+│   └── chess_onefile_glossary.md  # dokümantasyon/rapor dosyası
 ├── layers/  # dizin
 │   ├── __init__.py  # Python modülü/scripti (layers paket başlatıcısı ve dışa aktarmalar)
 │   ├── bitlinear.py  # Python modülü/scripti (BitLinear düşük-bit linear katman implementasyonu)
@@ -1779,6 +1804,9 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   └── system_v1.txt  # metin artefaktı
 ├── registry/  # dizin
 │   └── mertformer_v0.1.json  # JSON veri artefaktı
+├── releases/  # dizin
+│   ├── README.md  # ana dokümantasyon (EN)
+│   └── chess_release_contract.md  # dokümantasyon/rapor dosyası
 ├── reports/  # dizin
 │   ├── benchmarks/  # dizin
 │   │   ├── linkedin_sweetspot/  # dizin
@@ -1849,10 +1877,13 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   │       ├── readiness_scorecard_v1_2026-02-24.json  # JSON veri artefaktı
 │   │       ├── report_interface_schema_v1.json  # JSON şema artefaktı
 │   │       └── web_validation_sources_2026-02-24.md  # dokümantasyon/rapor dosyası
+│   ├── adr_index.md  # dokümantasyon/rapor dosyası
 │   ├── architecture_honesty_audit.md  # dokümantasyon/rapor dosyası
 │   ├── artifacts_zip_denylist_audit.json  # JSON veri artefaktı
 │   ├── asset_stack.md  # dokümantasyon/rapor dosyası
 │   ├── asset_stack_TR.md  # Türkçe doküman karşılığı
+│   ├── automation_boundary_policy.md  # dokümantasyon/rapor dosyası
+│   ├── backlog_operating_contract.md  # dokümantasyon/rapor dosyası
 │   ├── backup_restore_report.json  # JSON veri artefaktı
 │   ├── bench_cpp_report.json  # JSON veri artefaktı
 │   ├── bench_metal_report.json  # JSON veri artefaktı
@@ -1864,6 +1895,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── benchmark_contract.md  # dokümantasyon/rapor dosyası
 │   ├── canonical_entrypoint.md  # dokümantasyon/rapor dosyası
 │   ├── cfc_moe_tolerance_report.json  # JSON veri artefaktı
+│   ├── change_control_sop.md  # dokümantasyon/rapor dosyası
 │   ├── checkpoint_contract.md  # dokümantasyon/rapor dosyası
 │   ├── checkpoint_hash_manifest.json  # JSON veri artefaktı
 │   ├── checkpoint_restore_report.json  # JSON veri artefaktı
@@ -1945,6 +1977,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── final_evidence_pack.md  # dokümantasyon/rapor dosyası
 │   ├── final_freeze_manifest.json  # JSON veri artefaktı
 │   ├── final_freeze_manifest.md  # dokümantasyon/rapor dosyası
+│   ├── final_master_plan_freeze.md  # dokümantasyon/rapor dosyası
 │   ├── final_orchestrator_status.json  # JSON veri artefaktı
 │   ├── final_orchestrator_status.md  # dokümantasyon/rapor dosyası
 │   ├── final_repo_audit.md  # dokümantasyon/rapor dosyası
@@ -1969,6 +2002,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── ip_licensing_split.md  # dokümantasyon/rapor dosyası
 │   ├── ip_licensing_split_TR.md  # Türkçe doküman karşılığı
 │   ├── kernel_fuzz_report.json  # JSON veri artefaktı
+│   ├── known_limits_v1.md  # dokümantasyon/rapor dosyası
 │   ├── kpi_contract_build30.md  # dokümantasyon/rapor dosyası
 │   ├── kpi_pack_v1.md  # dokümantasyon/rapor dosyası
 │   ├── kpi_pack_v1_TR.md  # Türkçe doküman karşılığı
@@ -2015,12 +2049,16 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── presentation_readiness_final.md  # dokümantasyon/rapor dosyası
 │   ├── proje_zip_rebuild_manifest_v2.json  # JSON veri artefaktı
 │   ├── proje_zip_rebuild_manifest_v2.md  # dokümantasyon/rapor dosyası
+│   ├── quality_gate_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── ram_guard_report.json  # JSON veri artefaktı
 │   ├── release_closure_lock_report.json  # JSON veri artefaktı
 │   ├── release_closure_note.md  # dokümantasyon/rapor dosyası
 │   ├── release_snapshot.md  # dokümantasyon/rapor dosyası
 │   ├── release_snapshot_TR.md  # Türkçe doküman karşılığı
 │   ├── rented_machine_bringup.md  # dokümantasyon/rapor dosyası
+│   ├── repo_closure_scorecard.json  # JSON veri artefaktı
+│   ├── repo_closure_scorecard.md  # dokümantasyon/rapor dosyası
+│   ├── repo_directory_contract.md  # dokümantasyon/rapor dosyası
 │   ├── repo_external_handoff.md  # dokümantasyon/rapor dosyası
 │   ├── report_accuracy_audit.md  # dokümantasyon/rapor dosyası
 │   ├── report_accuracy_audit_TR.md  # Türkçe doküman karşılığı
@@ -2051,9 +2089,11 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── static_analysis_report.json  # JSON veri artefaktı
 │   ├── strategic_value.md  # dokümantasyon/rapor dosyası
 │   ├── strategic_value_TR.md  # Türkçe doküman karşılığı
+│   ├── support_maintenance_policy.md  # dokümantasyon/rapor dosyası
 │   ├── surface_lifecycle_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── system_hardware.md  # dokümantasyon/rapor dosyası
 │   ├── system_hardware_TR.md  # Türkçe doküman karşılığı
+│   ├── system_memory_policy.md  # dokümantasyon/rapor dosyası
 │   ├── system_stats.jsonl  # JSONL veri/log artefaktı
 │   ├── target_machine_handoff_manifest.json  # JSON veri artefaktı
 │   ├── target_machine_handoff_manifest.md  # dokümantasyon/rapor dosyası
@@ -2061,12 +2101,14 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── teacher_output_license_assessment.md  # dokümantasyon/rapor dosyası
 │   ├── technical_snapshot.md  # dokümantasyon/rapor dosyası
 │   ├── technical_snapshot_TR.md  # Türkçe doküman karşılığı
+│   ├── test_verification_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── thermal_baseline.json  # JSON veri artefaktı
 │   ├── tokenizer_sync_final_report.md  # dokümantasyon/rapor dosyası
 │   ├── train_readiness_decision.json  # JSON veri artefaktı
 │   ├── train_readiness_decision.md  # dokümantasyon/rapor dosyası
 │   ├── training_readiness_manifest.json  # JSON veri artefaktı
 │   ├── unicode_path_guard_report.json  # JSON veri artefaktı
+│   ├── update_first_policy.md  # dokümantasyon/rapor dosyası
 │   ├── verified_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── verified_matrix_TR.md  # Türkçe doküman karşılığı
 │   ├── workspace_hygiene_manifest.json  # JSON veri artefaktı
@@ -2083,6 +2125,10 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── python_TR.md  # Türkçe doküman karşılığı
 │   ├── seed_policy.md  # dokümantasyon/rapor dosyası
 │   └── seed_policy_TR.md  # Türkçe doküman karşılığı
+├── runbooks/  # dizin
+│   ├── README.md  # ana dokümantasyon (EN)
+│   ├── chess_4060_24h_all_on_experimental.md  # dokümantasyon/rapor dosyası
+│   └── chess_4060_24h_all_on_experimental_TR.md  # Türkçe doküman karşılığı
 ├── scripts/  # dizin
 │   ├── reports/  # dizin
 │   │   ├── model_health.md  # dokümantasyon/rapor dosyası
@@ -2206,6 +2252,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_build_chess_onefile_extension_report.py  # Python modülü/scripti (build chess onefile extension report için otomatik test modülü)
 │   ├── test_build_chess_teaching_contract_report.py  # Python modülü/scripti (build chess teaching contract report için otomatik test modülü)
 │   ├── test_build_chess_training_readiness_report.py  # Python modülü/scripti (build chess training readiness report için otomatik test modülü)
+│   ├── test_build_closure_governance_pack.py  # Python modülü/scripti (build closure governance pack için otomatik test modülü)
 │   ├── test_build_code_truth_audit.py  # Python modülü/scripti (build code truth audit için otomatik test modülü)
 │   ├── test_build_max_closure_handoff.py  # Python modülü/scripti (build max closure handoff için otomatik test modülü)
 │   ├── test_build_target_machine_handoff_bundle.py  # Python modülü/scripti (build target machine handoff bundle için otomatik test modülü)
