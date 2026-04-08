@@ -7887,6 +7887,8 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("project_blocker_dependency_graph", "project_blocker_dependency_graph.json"),
         ("project_execution_sequence", "project_execution_sequence.json"),
         ("project_lane_status_board", "project_lane_status_board.json"),
+        ("project_closure_phase_plan", "project_closure_phase_plan.json"),
+        ("project_owner_accountability_matrix", "project_owner_accountability_matrix.json"),
         ("generated_truth_crosscheck_matrix", "generated_truth_crosscheck_matrix.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
@@ -8658,6 +8660,8 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("project_blocker_dependency_graph", {}).get("exists", False))
         and bool(truth_entries.get("project_execution_sequence", {}).get("exists", False))
         and bool(truth_entries.get("project_lane_status_board", {}).get("exists", False))
+        and bool(truth_entries.get("project_closure_phase_plan", {}).get("exists", False))
+        and bool(truth_entries.get("project_owner_accountability_matrix", {}).get("exists", False))
     )
     generated_truth_consistency_present = bool(truth_entries.get("generated_truth_consistency_report", {}).get("exists", False))
     generated_truth_crosscheck_present = bool(truth_entries.get("generated_truth_crosscheck_matrix", {}).get("exists", False))
@@ -8837,6 +8841,8 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "project_blocker_dependency_graph",
         "project_execution_sequence",
         "project_lane_status_board",
+        "project_closure_phase_plan",
+        "project_owner_accountability_matrix",
         "generated_truth_consistency_report",
         "generated_truth_crosscheck_matrix",
         "run_log",
@@ -8935,7 +8941,14 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
     project_actionability_count = sum(
         1
         for item in items
-        if item.get("label") in {"project_blocker_action_plan", "project_blocker_dependency_graph", "project_execution_sequence", "project_lane_status_board"} and item.get("exists", False)
+        if item.get("label") in {
+            "project_blocker_action_plan",
+            "project_blocker_dependency_graph",
+            "project_execution_sequence",
+            "project_lane_status_board",
+            "project_closure_phase_plan",
+            "project_owner_accountability_matrix",
+        } and item.get("exists", False)
     )
     generated_truth_count = sum(
         1
@@ -9754,7 +9767,14 @@ def build_master_closure_table(layout: ArtifactLayout, payload: Dict[str, Any]) 
         "trained_artifact_truth": ["final_weights_truth_stub", "best_checkpoint_truth_stub", "latest_checkpoint_truth_stub", "trained_artifact_registry_stub"],
         "management_closure": ["core_complete_decision_stub", "research_continues_stub", "product_maintenance_only_stub", "closure_decision_record_stub"],
         "truth_docs_alignment": ["project_master_truth_reference", "project_remaining_real_blockers", "truth_docs_index", "truth_docs_drift_report"],
-        "project_actionability": ["project_blocker_action_plan", "project_blocker_dependency_graph", "project_execution_sequence", "project_lane_status_board"],
+        "project_actionability": [
+            "project_blocker_action_plan",
+            "project_blocker_dependency_graph",
+            "project_execution_sequence",
+            "project_lane_status_board",
+            "project_closure_phase_plan",
+            "project_owner_accountability_matrix",
+        ],
         "generated_truth_consistency": ["generated_truth_consistency_report", "generated_truth_crosscheck_matrix"],
     }
     rows: List[Dict[str, Any]] = []
@@ -10045,6 +10065,8 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
     readiness = _read_json_if_exists(layout.reports_dir / "readiness_snapshot.json")
     truth_docs_drift_report = _read_json_if_exists(layout.reports_dir / "truth_docs_drift_report.json")
     project_lane_status_board = _read_json_if_exists(layout.reports_dir / "project_lane_status_board.json")
+    project_closure_phase_plan = _read_json_if_exists(layout.reports_dir / "project_closure_phase_plan.json")
+    project_owner_accountability_matrix = _read_json_if_exists(layout.reports_dir / "project_owner_accountability_matrix.json")
     return {
         "schema": "chess_closure_gap_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -10055,6 +10077,8 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
         "overall_external_ready": bool(readiness.get("overall_external_ready", False)),
         "truth_docs_status": truth_docs_drift_report.get("status", "unknown"),
         "project_actionability_status": project_lane_status_board.get("status", "unknown"),
+        "project_phase_status": project_closure_phase_plan.get("status", "unknown"),
+        "project_owner_status": project_owner_accountability_matrix.get("status", "unknown"),
         "generated_truth_status": _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json").get("status", "unknown"),
         "generated_truth_crosscheck_status": _read_json_if_exists(layout.reports_dir / "generated_truth_crosscheck_matrix.json").get("status", "unknown"),
     }
@@ -10072,6 +10096,8 @@ def render_closure_gap_summary_md(report: Dict[str, Any]) -> str:
         f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
         f"- truth_docs_status: `{report.get('truth_docs_status', 'unknown')}`",
         f"- project_actionability_status: `{report.get('project_actionability_status', 'unknown')}`",
+        f"- project_phase_status: `{report.get('project_phase_status', 'unknown')}`",
+        f"- project_owner_status: `{report.get('project_owner_status', 'unknown')}`",
         f"- generated_truth_status: `{report.get('generated_truth_status', 'unknown')}`",
         f"- generated_truth_crosscheck_status: `{report.get('generated_truth_crosscheck_status', 'unknown')}`",
     ]
@@ -10172,6 +10198,8 @@ def _project_blocker_specs() -> Dict[str, Dict[str, Any]]:
             "required_evidence": ["trained checkpoints", "benchmark raw outputs", "compare report"],
             "depends_on": ["trained_artifact_truth_pending", "benchmark_evidence_pending"],
             "lane_labels": ["chess_onefile_closure", "benchmark_and_claim_safety"],
+            "phase": "external_validation",
+            "phase_order": 3,
         },
         "real_training_outputs_pending": {
             "owner_domain": "training_ops",
@@ -10180,6 +10208,8 @@ def _project_blocker_specs() -> Dict[str, Dict[str, Any]]:
             "required_evidence": ["training logs", "training report", "token/compute accounting"],
             "depends_on": [],
             "lane_labels": ["train_readiness_45k", "chess_onefile_closure"],
+            "phase": "foundation_runs",
+            "phase_order": 1,
         },
         "trained_artifact_truth_pending": {
             "owner_domain": "artifact_governance",
@@ -10188,6 +10218,8 @@ def _project_blocker_specs() -> Dict[str, Dict[str, Any]]:
             "required_evidence": ["final weights truth", "best/latest checkpoint truth", "artifact registry"],
             "depends_on": ["real_training_outputs_pending"],
             "lane_labels": ["chess_onefile_closure", "release_process_integrity"],
+            "phase": "measured_internal_closure",
+            "phase_order": 2,
         },
         "benchmark_evidence_pending": {
             "owner_domain": "evaluation",
@@ -10196,6 +10228,8 @@ def _project_blocker_specs() -> Dict[str, Dict[str, Any]]:
             "required_evidence": ["benchmark raw outputs", "benchmark compare report", "locked benchmark manifest"],
             "depends_on": ["real_training_outputs_pending"],
             "lane_labels": ["chess_onefile_closure", "benchmark_and_claim_safety"],
+            "phase": "measured_internal_closure",
+            "phase_order": 2,
         },
         "export_device_packaging_pending": {
             "owner_domain": "device_release",
@@ -10204,6 +10238,8 @@ def _project_blocker_specs() -> Dict[str, Dict[str, Any]]:
             "required_evidence": ["export parity report", "device validation", "installer validation"],
             "depends_on": ["real_training_outputs_pending"],
             "lane_labels": ["device_export_packaging_truth", "release_process_integrity"],
+            "phase": "measured_internal_closure",
+            "phase_order": 2,
         },
         "external_reproduction_pending": {
             "owner_domain": "external_validation",
@@ -10212,6 +10248,8 @@ def _project_blocker_specs() -> Dict[str, Dict[str, Any]]:
             "required_evidence": ["external repro note", "reproduction logs"],
             "depends_on": ["benchmark_evidence_pending", "external_strength_unproven"],
             "lane_labels": ["security_legal_pilot_external", "benchmark_and_claim_safety"],
+            "phase": "external_validation",
+            "phase_order": 3,
         },
         "security_legal_pilot_pending": {
             "owner_domain": "security_legal_ops",
@@ -10220,6 +10258,8 @@ def _project_blocker_specs() -> Dict[str, Dict[str, Any]]:
             "required_evidence": ["security review", "legal review", "pilot sign-off"],
             "depends_on": ["benchmark_evidence_pending", "export_device_packaging_pending"],
             "lane_labels": ["security_legal_pilot_external"],
+            "phase": "external_validation",
+            "phase_order": 3,
         },
         "operator_handoff_dr_pending": {
             "owner_domain": "ops_handoff",
@@ -10228,6 +10268,8 @@ def _project_blocker_specs() -> Dict[str, Dict[str, Any]]:
             "required_evidence": ["operator rehearsal", "DR evidence", "blind handoff report"],
             "depends_on": ["real_training_outputs_pending"],
             "lane_labels": ["security_legal_pilot_external", "release_process_integrity"],
+            "phase": "external_validation",
+            "phase_order": 3,
         },
         "rc_golden_final_release_pending": {
             "owner_domain": "release_governance",
@@ -10244,6 +10286,8 @@ def _project_blocker_specs() -> Dict[str, Dict[str, Any]]:
                 "operator_handoff_dr_pending",
             ],
             "lane_labels": ["release_process_integrity", "management_finalization"],
+            "phase": "release_finalization",
+            "phase_order": 4,
         },
         "management_closure_pending": {
             "owner_domain": "management",
@@ -10252,6 +10296,8 @@ def _project_blocker_specs() -> Dict[str, Dict[str, Any]]:
             "required_evidence": ["closure decision record", "management sign-off"],
             "depends_on": ["rc_golden_final_release_pending"],
             "lane_labels": ["management_finalization"],
+            "phase": "governance_closeout",
+            "phase_order": 5,
         },
     }
 
@@ -10708,6 +10754,167 @@ def render_project_lane_status_board_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def build_project_closure_phase_plan(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    blocker_report = _read_json_if_exists(layout.reports_dir / "project_remaining_real_blockers.json")
+    action_plan = _read_json_if_exists(layout.reports_dir / "project_blocker_action_plan.json")
+    action_by_label = {str(item.get("label", "")): item for item in action_plan.get("items", [])}
+    specs = _project_blocker_specs()
+    phase_labels = {
+        "foundation_runs": "Foundation Runs",
+        "measured_internal_closure": "Measured Internal Closure",
+        "external_validation": "External Validation",
+        "release_finalization": "Release Finalization",
+        "governance_closeout": "Governance Closeout",
+    }
+    phases: Dict[str, Dict[str, Any]] = {}
+    for blocker in blocker_report.get("items", []):
+        label = str(blocker.get("label", ""))
+        spec = specs.get(label, {})
+        phase = str(spec.get("phase", "unassigned"))
+        phase_order = int(spec.get("phase_order", 999))
+        phase_entry = phases.setdefault(
+            phase,
+            {
+                "phase": phase,
+                "phase_label": phase_labels.get(phase, phase.replace("_", " ").title()),
+                "phase_order": phase_order,
+                "blockers": [],
+                "owner_domains": set(),
+                "ready_now_count": 0,
+            },
+        )
+        phase_entry["blockers"].append(label)
+        owner_domain = action_by_label.get(label, {}).get("owner_domain", spec.get("owner_domain", "unknown"))
+        phase_entry["owner_domains"].add(owner_domain)
+        if not spec.get("depends_on", []):
+            phase_entry["ready_now_count"] += 1
+    rows = []
+    for phase in sorted(phases.values(), key=lambda item: (item["phase_order"], item["phase"])):
+        rows.append(
+            {
+                "phase": phase["phase"],
+                "phase_label": phase["phase_label"],
+                "phase_order": phase["phase_order"],
+                "blocker_count": len(phase["blockers"]),
+                "blockers": sorted(phase["blockers"]),
+                "owner_domains": sorted(phase["owner_domains"]),
+                "ready_now_count": int(phase["ready_now_count"]),
+                "status": "ready" if phase["blockers"] else "empty",
+            }
+        )
+    return {
+        "schema": "chess_project_closure_phase_plan_v1",
+        "run_id": blocker_report.get("run_id", ""),
+        "phase_count": len(rows),
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_closure_phase_plan_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Closure Phase Plan",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- phase_count: `{report.get('phase_count', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "| Phase | Order | Blocker Count | Ready Now |",
+        "|---|---:|---:|---:|",
+    ]
+    for row in report.get("rows", []):
+        lines.append(
+            f"| `{row.get('phase_label', '')}` | `{row.get('phase_order', 0)}` | `{row.get('blocker_count', 0)}` | `{row.get('ready_now_count', 0)}` |"
+        )
+    lines.append("")
+    lines.append("## Phase Details")
+    for row in report.get("rows", []):
+        blockers = ", ".join(f"`{entry}`" for entry in row.get("blockers", []))
+        owners = ", ".join(f"`{entry}`" for entry in row.get("owner_domains", []))
+        lines.append(
+            f"- `{row.get('phase_label', '')}`: blockers={blockers} owner_domains={owners} status=`{row.get('status', 'unknown')}`"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_project_owner_accountability_matrix(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    blocker_report = _read_json_if_exists(layout.reports_dir / "project_remaining_real_blockers.json")
+    action_plan = _read_json_if_exists(layout.reports_dir / "project_blocker_action_plan.json")
+    specs = _project_blocker_specs()
+    owners: Dict[str, Dict[str, Any]] = {}
+    for blocker in blocker_report.get("items", []):
+        label = str(blocker.get("label", ""))
+        action = next((item for item in action_plan.get("items", []) if item.get("label") == label), {})
+        owner_domain = str(action.get("owner_domain", specs.get(label, {}).get("owner_domain", "unknown")))
+        entry = owners.setdefault(
+            owner_domain,
+            {
+                "owner_domain": owner_domain,
+                "blockers": [],
+                "phases": set(),
+                "lane_labels": set(),
+                "closure_surfaces": set(),
+            },
+        )
+        spec = specs.get(label, {})
+        entry["blockers"].append(label)
+        entry["phases"].add(str(spec.get("phase", "unassigned")))
+        for lane_label in spec.get("lane_labels", []):
+            entry["lane_labels"].add(str(lane_label))
+        entry["closure_surfaces"].add(str(action.get("closure_surface", spec.get("closure_surface", "unknown"))))
+    rows = []
+    for owner in sorted(owners.values(), key=lambda item: item["owner_domain"]):
+        rows.append(
+            {
+                "owner_domain": owner["owner_domain"],
+                "blocker_count": len(owner["blockers"]),
+                "blockers": sorted(owner["blockers"]),
+                "phases": sorted(owner["phases"]),
+                "lane_labels": sorted(owner["lane_labels"]),
+                "closure_surfaces": sorted(owner["closure_surfaces"]),
+                "status": "covered" if owner["blockers"] else "empty",
+            }
+        )
+    covered_blockers = sum(row["blocker_count"] for row in rows)
+    return {
+        "schema": "chess_project_owner_accountability_matrix_v1",
+        "run_id": blocker_report.get("run_id", ""),
+        "owner_count": len(rows),
+        "covered_blocker_count": covered_blockers,
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_owner_accountability_matrix_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Owner Accountability Matrix",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- owner_count: `{report.get('owner_count', 0)}`",
+        f"- covered_blocker_count: `{report.get('covered_blocker_count', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "| Owner | Blocker Count | Phases |",
+        "|---|---:|---|",
+    ]
+    for row in report.get("rows", []):
+        phases = ", ".join(f"`{entry}`" for entry in row.get("phases", []))
+        lines.append(f"| `{row.get('owner_domain', '')}` | `{row.get('blocker_count', 0)}` | {phases} |")
+    lines.append("")
+    lines.append("## Ownership Details")
+    for row in report.get("rows", []):
+        blockers = ", ".join(f"`{entry}`" for entry in row.get("blockers", []))
+        lanes = ", ".join(f"`{entry}`" for entry in row.get("lane_labels", []))
+        surfaces = ", ".join(f"`{entry}`" for entry in row.get("closure_surfaces", []))
+        lines.append(
+            f"- `{row.get('owner_domain', '')}`: blockers={blockers} lane_labels={lanes} closure_surfaces={surfaces} status=`{row.get('status', 'unknown')}`"
+        )
+    return "\n".join(lines) + "\n"
+
+
 def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     del payload
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
@@ -10724,6 +10931,8 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
     project_blocker_dependency_graph = _read_json_if_exists(layout.reports_dir / "project_blocker_dependency_graph.json")
     project_execution_sequence = _read_json_if_exists(layout.reports_dir / "project_execution_sequence.json")
     project_lane_status_board = _read_json_if_exists(layout.reports_dir / "project_lane_status_board.json")
+    project_closure_phase_plan = _read_json_if_exists(layout.reports_dir / "project_closure_phase_plan.json")
+    project_owner_accountability_matrix = _read_json_if_exists(layout.reports_dir / "project_owner_accountability_matrix.json")
 
     checks = [
         {
@@ -10759,6 +10968,8 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
                 int(project_blocker_dependency_graph.get("node_count", 0)) > 0
                 and int(project_execution_sequence.get("item_count", 0)) > 0
                 and int(project_lane_status_board.get("lane_count", 0)) > 0
+                and int(project_closure_phase_plan.get("phase_count", 0)) > 0
+                and int(project_owner_accountability_matrix.get("owner_count", 0)) > 0
             ),
         },
         {
@@ -10804,7 +11015,10 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
     project_blocker_dependency_graph = _read_json_if_exists(layout.reports_dir / "project_blocker_dependency_graph.json")
     project_execution_sequence = _read_json_if_exists(layout.reports_dir / "project_execution_sequence.json")
     project_lane_status_board = _read_json_if_exists(layout.reports_dir / "project_lane_status_board.json")
+    project_closure_phase_plan = _read_json_if_exists(layout.reports_dir / "project_closure_phase_plan.json")
+    project_owner_accountability_matrix = _read_json_if_exists(layout.reports_dir / "project_owner_accountability_matrix.json")
     generated_truth_consistency_report = _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json")
+    specs = _project_blocker_specs()
 
     blocker_labels = {str(item.get("label", "")) for item in project_blockers.get("items", [])}
     sequence_labels = {str(item.get("label", "")) for item in project_execution_sequence.get("items", [])}
@@ -10814,6 +11028,19 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
         for label in row.get("blockers", [])
         if isinstance(label, str)
     }
+    phase_covered_labels = {
+        label
+        for row in project_closure_phase_plan.get("rows", [])
+        for label in row.get("blockers", [])
+        if isinstance(label, str)
+    }
+    owner_covered_labels = {
+        label
+        for row in project_owner_accountability_matrix.get("rows", [])
+        for label in row.get("blockers", [])
+        if isinstance(label, str)
+    }
+    sequence_phase_orders = [int(specs.get(str(item.get("label", "")), {}).get("phase_order", 999)) for item in project_execution_sequence.get("items", [])]
     checks = [
         {
             "label": "action_plan_matches_blockers",
@@ -10838,6 +11065,18 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
         {
             "label": "lane_status_board_covers_all_blockers",
             "passed": blocker_labels == lane_covered_labels,
+        },
+        {
+            "label": "phase_plan_covers_all_blockers",
+            "passed": blocker_labels == phase_covered_labels and project_closure_phase_plan.get("status") == "ready",
+        },
+        {
+            "label": "owner_matrix_covers_all_blockers",
+            "passed": blocker_labels == owner_covered_labels and project_owner_accountability_matrix.get("status") == "ready",
+        },
+        {
+            "label": "execution_sequence_respects_phase_order",
+            "passed": sequence_phase_orders == sorted(sequence_phase_orders),
         },
         {
             "label": "generated_truth_consistency_report_clear",
@@ -11049,6 +11288,15 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     project_lane_status_board = build_project_lane_status_board(layout, payload)
     atomic_json(layout.reports_dir / "project_lane_status_board.json", project_lane_status_board)
     atomic_write_text(layout.reports_dir / "project_lane_status_board.md", render_project_lane_status_board_md(project_lane_status_board))
+    project_closure_phase_plan = build_project_closure_phase_plan(layout, payload)
+    atomic_json(layout.reports_dir / "project_closure_phase_plan.json", project_closure_phase_plan)
+    atomic_write_text(layout.reports_dir / "project_closure_phase_plan.md", render_project_closure_phase_plan_md(project_closure_phase_plan))
+    project_owner_accountability_matrix = build_project_owner_accountability_matrix(layout, payload)
+    atomic_json(layout.reports_dir / "project_owner_accountability_matrix.json", project_owner_accountability_matrix)
+    atomic_write_text(
+        layout.reports_dir / "project_owner_accountability_matrix.md",
+        render_project_owner_accountability_matrix_md(project_owner_accountability_matrix),
+    )
     truth_docs_index = build_truth_docs_index(layout, payload)
     atomic_json(layout.reports_dir / "truth_docs_index.json", truth_docs_index)
     atomic_write_text(layout.reports_dir / "truth_docs_index.md", render_truth_docs_index_md(truth_docs_index))

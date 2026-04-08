@@ -67,6 +67,8 @@ A chess onefile run is not release-grade unless all of these exist together:
 - project blocker dependency graph
 - project execution sequence
 - project lane status board
+- project closure phase plan
+- project owner accountability matrix
 - generated truth crosscheck matrix
 - artifact truth matrix
 - run status manifest
