@@ -39,6 +39,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Management-closure artifacts are written to `reports/core_complete_decision_stub.json`, `reports/research_continues_stub.json`, `reports/product_maintenance_only_stub.json`, and `reports/closure_decision_record_stub.json`.
 - Repo-truth summary artifacts are written to `reports/master_closure_table.json`, `reports/remaining_core_blockers.json`, `reports/repo_side_completion_summary.json`, and `reports/readiness_snapshot.json`.
 - Aggregated truth artifacts are written to `reports/aggregated_master_table.json`, `reports/real_remaining_core_work.json`, `reports/repo_truth_inventory.json`, and `reports/closure_gap_summary.json`.
+- Project-truth and docs-alignment artifacts are written to `reports/project_master_truth_reference.json`, `reports/project_remaining_real_blockers.json`, `reports/truth_docs_index.json`, and `reports/truth_docs_drift_report.json`.
 - Runbook/checklist support for the 24h 4060 all-on path now lives under `runbooks/` and `checklists/`.
 - Canonical repo-side contract surfaces now also include `configs/`, `releases/`, `knowledge/`, and `evidence/`.
 - Chess runtime observability is contract-backed: `logs/run_log.jsonl`, `reports/logging_contract.json`, and `reports/observability_report.json`.

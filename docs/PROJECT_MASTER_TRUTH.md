@@ -46,13 +46,16 @@ The remaining blockers are not mostly "missing folders" or "missing scripts".
 
 They are mostly:
 
-- real 24h and 45K training outputs
-- trained checkpoint truth and benchmark evidence
-- export/device/package validation on real targets
-- external reproducibility
-- legal/security/pilot sign-off
-- handoff, DR, and operator rehearsal
-- RC, golden release, and final release decision
+- `external_strength_unproven`
+- `real_training_outputs_pending`
+- `trained_artifact_truth_pending`
+- `benchmark_evidence_pending`
+- `export_device_packaging_pending`
+- `external_reproduction_pending`
+- `security_legal_pilot_pending`
+- `operator_handoff_dr_pending`
+- `rc_golden_final_release_pending`
+- `management_closure_pending`
 
 ## Bottom Line
 

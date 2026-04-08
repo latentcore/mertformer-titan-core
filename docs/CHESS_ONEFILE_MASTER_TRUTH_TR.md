@@ -27,6 +27,7 @@ Bilerek şu ayrımı korur:
 | `training_accounting` | `true` | `true` | Training report, token accounting, compute accounting ve cost reporting hâlâ gerçek ölçüm ister. |
 | `trained_artifact_truth` | `true` | `true` | Final weights, best/latest checkpoint truth ve trained artifact registry hâlâ doğrulanmış trained output ister. |
 | `management_closure` | `true` | `true` | Core-complete, research separation, maintenance-only ve final closure kararları hâlâ yönetim imzası ister. |
+| `truth_docs_alignment` | `true` | `false` | Kanonik chess/project truth docs ile üretilen truth raporları şu anda senkron durumdadır. |
 
 ## Repo-Side Complete Yüzeyler
 

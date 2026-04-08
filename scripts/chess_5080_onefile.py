@@ -7878,6 +7878,10 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("real_remaining_core_work", "real_remaining_core_work.json"),
         ("repo_truth_inventory", "repo_truth_inventory.json"),
         ("closure_gap_summary", "closure_gap_summary.json"),
+        ("project_master_truth_reference", "project_master_truth_reference.json"),
+        ("project_remaining_real_blockers", "project_remaining_real_blockers.json"),
+        ("truth_docs_index", "truth_docs_index.json"),
+        ("truth_docs_drift_report", "truth_docs_drift_report.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
         ("replay_buffer_manifest", "replay_buffer_manifest.json"),
@@ -7949,6 +7953,15 @@ def _read_json_if_exists(path: Path) -> Dict[str, Any]:
         return json.loads(path.read_text(encoding="utf-8"))
     except Exception:
         return {}
+
+
+def _read_text_if_exists(path: Path) -> str:
+    if not path.exists():
+        return ""
+    try:
+        return path.read_text(encoding="utf-8")
+    except Exception:
+        return ""
 
 
 def build_run_contract(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
@@ -8335,7 +8348,7 @@ def render_claim_registry_md(report: Dict[str, Any]) -> str:
 
 
 def build_known_limits(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
-    del layout
+    drift_report = _read_json_if_exists(layout.reports_dir / "truth_docs_drift_report.json")
     cfg = dict(payload.get("config", {}))
     limits: List[Dict[str, Any]] = [
         {
@@ -8438,6 +8451,15 @@ def build_known_limits(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[
                 "detail": "Stockfish benchmark evidence is absent or incomplete for this exact run.",
             }
         )
+    if drift_report.get("status") not in {"", "in_sync"}:
+        limits.append(
+            {
+                "label": "truth_docs_drift_pending",
+                "severity": "medium",
+                "status": "active",
+                "detail": "Canonical chess/project truth docs and generated reports are not fully aligned yet.",
+            }
+        )
     return {
         "schema": "chess_known_limits_v1",
         "run_id": payload.get("run_id", ""),
@@ -8525,6 +8547,7 @@ def render_support_matrix_md(report: Dict[str, Any]) -> str:
 
 def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_docs_drift_report = _read_json_if_exists(layout.reports_dir / "truth_docs_drift_report.json")
     truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
     notes = dict(payload.get("notes", {}))
     bundle = dict(payload.get("bundle", {}))
@@ -8596,6 +8619,13 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("repo_truth_inventory", {}).get("exists", False))
         and bool(truth_entries.get("closure_gap_summary", {}).get("exists", False))
     )
+    project_truth_surfaces_present = (
+        bool(truth_entries.get("project_master_truth_reference", {}).get("exists", False))
+        and bool(truth_entries.get("project_remaining_real_blockers", {}).get("exists", False))
+        and bool(truth_entries.get("truth_docs_index", {}).get("exists", False))
+        and bool(truth_entries.get("truth_docs_drift_report", {}).get("exists", False))
+    )
+    truth_docs_drift_clear = truth_docs_drift_report.get("status") == "in_sync"
     gates = [
         {"label": "core_artifacts_present", "passed": core_artifacts_present},
         {"label": "checkpoint_or_package_provenance", "passed": checkpoint_or_provenance},
@@ -8615,6 +8645,8 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         {"label": "management_closure_surfaces_present", "passed": management_closure_surfaces_present},
         {"label": "master_summary_surfaces_present", "passed": master_summary_surfaces_present},
         {"label": "aggregate_truth_surfaces_present", "passed": aggregate_truth_surfaces_present},
+        {"label": "project_truth_surfaces_present", "passed": project_truth_surfaces_present},
+        {"label": "truth_docs_drift_clear", "passed": truth_docs_drift_clear},
     ]
     overall_internal_ready = all(gate["passed"] for gate in gates if gate["label"] != "stockfish_completed")
     overall_external_ready = all(gate["passed"] for gate in gates) and payload.get("rating_claim_status") == RatingClaimStatus.TARGET_MET_EXTERNAL.value
@@ -8754,6 +8786,10 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "real_remaining_core_work",
         "repo_truth_inventory",
         "closure_gap_summary",
+        "project_master_truth_reference",
+        "project_remaining_real_blockers",
+        "truth_docs_index",
+        "truth_docs_drift_report",
         "run_log",
     ]
     items = [
@@ -8842,6 +8878,11 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         for item in items
         if item.get("label") in {"aggregated_master_table", "real_remaining_core_work", "repo_truth_inventory", "closure_gap_summary"} and item.get("exists", False)
     )
+    truth_docs_count = sum(
+        1
+        for item in items
+        if item.get("label") in {"project_master_truth_reference", "project_remaining_real_blockers", "truth_docs_index", "truth_docs_drift_report"} and item.get("exists", False)
+    )
     return {
         "schema": "chess_operator_handoff_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -8858,6 +8899,7 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         "management_closure_count": management_closure_count,
         "master_summary_count": master_summary_count,
         "aggregate_truth_count": aggregate_truth_count,
+        "truth_docs_count": truth_docs_count,
         "overall_internal_ready": bool(release_gate.get("overall_internal_ready", False)),
         "overall_external_ready": bool(release_gate.get("overall_external_ready", False)),
         "operator_note": "Operator handoff can be internally complete while external release readiness remains false.",
@@ -8882,6 +8924,7 @@ def render_operator_handoff_summary_md(report: Dict[str, Any]) -> str:
         f"- management_closure_count: `{report.get('management_closure_count', 0)}`",
         f"- master_summary_count: `{report.get('master_summary_count', 0)}`",
         f"- aggregate_truth_count: `{report.get('aggregate_truth_count', 0)}`",
+        f"- truth_docs_count: `{report.get('truth_docs_count', 0)}`",
         f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
         f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
         f"- operator_note: {report.get('operator_note', '')}",
@@ -9647,6 +9690,7 @@ def build_master_closure_table(layout: ArtifactLayout, payload: Dict[str, Any]) 
         "training_accounting": ["training_report_stub", "token_accounting_stub", "compute_accounting_stub", "cost_report_stub"],
         "trained_artifact_truth": ["final_weights_truth_stub", "best_checkpoint_truth_stub", "latest_checkpoint_truth_stub", "trained_artifact_registry_stub"],
         "management_closure": ["core_complete_decision_stub", "research_continues_stub", "product_maintenance_only_stub", "closure_decision_record_stub"],
+        "truth_docs_alignment": ["project_master_truth_reference", "project_remaining_real_blockers", "truth_docs_index", "truth_docs_drift_report"],
     }
     rows: List[Dict[str, Any]] = []
     for label, members in groups.items():
@@ -9806,6 +9850,7 @@ def build_aggregated_master_table(layout: ArtifactLayout, payload: Dict[str, Any
         "training_accounting": {"training_accounting_pending"},
         "trained_artifact_truth": {"trained_artifact_truth_pending"},
         "management_closure": {"management_closure_pending"},
+        "truth_docs_alignment": {"truth_docs_drift_pending"},
     }
     rows: List[Dict[str, Any]] = []
     for row in master.get("rows", []):
@@ -9931,6 +9976,7 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
     repo_summary = _read_json_if_exists(layout.reports_dir / "repo_side_completion_summary.json")
     blockers = _read_json_if_exists(layout.reports_dir / "remaining_core_blockers.json")
     readiness = _read_json_if_exists(layout.reports_dir / "readiness_snapshot.json")
+    truth_docs_drift_report = _read_json_if_exists(layout.reports_dir / "truth_docs_drift_report.json")
     return {
         "schema": "chess_closure_gap_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -9939,6 +9985,7 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
         "blocker_count": int(blockers.get("blocker_count", 0)),
         "overall_internal_ready": bool(readiness.get("overall_internal_ready", False)),
         "overall_external_ready": bool(readiness.get("overall_external_ready", False)),
+        "truth_docs_status": truth_docs_drift_report.get("status", "unknown"),
     }
 
 
@@ -9952,7 +9999,291 @@ def render_closure_gap_summary_md(report: Dict[str, Any]) -> str:
         f"- blocker_count: `{report.get('blocker_count', 0)}`",
         f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
         f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
+        f"- truth_docs_status: `{report.get('truth_docs_status', 'unknown')}`",
     ]
+    return "\n".join(lines) + "\n"
+
+
+def build_project_master_truth_reference(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    rows = [
+        {"label": "governance_and_repo_contracts", "repo_side_state": "repo-side strong", "real_closure_blocked": True},
+        {"label": "train_readiness_45k", "repo_side_state": "repo-side strong", "real_closure_blocked": True},
+        {"label": "chess_onefile_closure", "repo_side_state": "repo-side strong", "real_closure_blocked": True},
+        {"label": "release_process_integrity", "repo_side_state": "repo-side strong", "real_closure_blocked": True},
+        {"label": "kernel_and_runtime_paths", "repo_side_state": "repo-side strong", "real_closure_blocked": True},
+        {"label": "product_modes_offline_rag_assistant", "repo_side_state": "repo-side partial", "real_closure_blocked": True},
+        {"label": "device_export_packaging_truth", "repo_side_state": "repo-side partial", "real_closure_blocked": True},
+        {"label": "benchmark_and_claim_safety", "repo_side_state": "repo-side strong", "real_closure_blocked": True},
+        {"label": "security_legal_pilot_external", "repo_side_state": "repo-side partial", "real_closure_blocked": True},
+        {"label": "management_finalization", "repo_side_state": "repo-side partial", "real_closure_blocked": True},
+    ]
+    doc_path = REPO_ROOT / "docs" / "PROJECT_MASTER_TRUTH.md"
+    doc_tr_path = REPO_ROOT / "docs" / "PROJECT_MASTER_TRUTH_TR.md"
+    return {
+        "schema": "chess_project_master_truth_reference_v1",
+        "run_id": payload.get("run_id", ""),
+        "doc_path": str(doc_path),
+        "doc_exists": doc_path.exists(),
+        "doc_tr_path": str(doc_tr_path),
+        "doc_tr_exists": doc_tr_path.exists(),
+        "row_count": len(rows),
+        "rows": rows,
+    }
+
+
+def render_project_master_truth_reference_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Master Truth Reference",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- doc_exists: `{report.get('doc_exists', False)}`",
+        f"- doc_tr_exists: `{report.get('doc_tr_exists', False)}`",
+        f"- row_count: `{report.get('row_count', 0)}`",
+        "",
+        "| Lane | Repo-Side State | Real Closure Blocked |",
+        "|---|---|---|",
+    ]
+    for row in report.get("rows", []):
+        lines.append(
+            f"| `{row.get('label', '')}` | `{row.get('repo_side_state', 'unknown')}` | `{row.get('real_closure_blocked', False)}` |"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_project_remaining_real_blockers(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    items = [
+        {"label": "external_strength_unproven", "severity": "high", "detail": "Measured external strength remains unproven until real runs and benchmark evidence exist."},
+        {"label": "real_training_outputs_pending", "severity": "high", "detail": "The repository still needs real 24h and 45K training outputs, not just readiness and packaging surfaces."},
+        {"label": "trained_artifact_truth_pending", "severity": "high", "detail": "Final weights truth and best/latest checkpoint truth still require validated trained artifacts."},
+        {"label": "benchmark_evidence_pending", "severity": "high", "detail": "Benchmark raw outputs, compare reports, summaries, and locked manifests still require measured closure."},
+        {"label": "export_device_packaging_pending", "severity": "high", "detail": "Export parity, device validation, packaging validation, and installer proof still require real target validation."},
+        {"label": "external_reproduction_pending", "severity": "high", "detail": "Independent reproduction remains a distinct external confirmation lane."},
+        {"label": "security_legal_pilot_pending", "severity": "high", "detail": "Security, legal, and pilot sign-off remain external closure work streams."},
+        {"label": "operator_handoff_dr_pending", "severity": "high", "detail": "Operator rehearsal, disaster recovery, backup retention, and blind handoff still require operational proof."},
+        {"label": "rc_golden_final_release_pending", "severity": "high", "detail": "RC, golden release, and final release still require real trained artifacts and formal sign-off."},
+        {"label": "management_closure_pending", "severity": "medium", "detail": "Final core-complete and maintenance posture decisions still require explicit management closure."},
+    ]
+    return {
+        "schema": "chess_project_remaining_real_blockers_v1",
+        "run_id": payload.get("run_id", ""),
+        "item_count": len(items),
+        "items": items,
+    }
+
+
+def render_project_remaining_real_blockers_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Remaining Real Blockers",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- item_count: `{report.get('item_count', 0)}`",
+        "",
+        "## Blockers",
+    ]
+    for item in report.get("items", []):
+        lines.append(
+            f"- `{item.get('label', '')}`: severity=`{item.get('severity', 'unknown')}` detail={item.get('detail', '')}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_truth_docs_index(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    readme = _read_text_if_exists(REPO_ROOT / "README.md")
+    readme_tr = _read_text_if_exists(REPO_ROOT / "README_TR.md")
+    items = [
+        {
+            "label": "chess_master_truth_en",
+            "kind": "doc",
+            "path": str(REPO_ROOT / "docs" / "CHESS_ONEFILE_MASTER_TRUTH.md"),
+            "exists": (REPO_ROOT / "docs" / "CHESS_ONEFILE_MASTER_TRUTH.md").exists(),
+        },
+        {
+            "label": "chess_master_truth_tr",
+            "kind": "doc",
+            "path": str(REPO_ROOT / "docs" / "CHESS_ONEFILE_MASTER_TRUTH_TR.md"),
+            "exists": (REPO_ROOT / "docs" / "CHESS_ONEFILE_MASTER_TRUTH_TR.md").exists(),
+        },
+        {
+            "label": "project_master_truth_en",
+            "kind": "doc",
+            "path": str(REPO_ROOT / "docs" / "PROJECT_MASTER_TRUTH.md"),
+            "exists": (REPO_ROOT / "docs" / "PROJECT_MASTER_TRUTH.md").exists(),
+        },
+        {
+            "label": "project_master_truth_tr",
+            "kind": "doc",
+            "path": str(REPO_ROOT / "docs" / "PROJECT_MASTER_TRUTH_TR.md"),
+            "exists": (REPO_ROOT / "docs" / "PROJECT_MASTER_TRUTH_TR.md").exists(),
+        },
+        {
+            "label": "readme_chess_master_truth_link_en",
+            "kind": "readme_link",
+            "path": str(REPO_ROOT / "README.md"),
+            "exists": "docs/CHESS_ONEFILE_MASTER_TRUTH.md" in readme,
+        },
+        {
+            "label": "readme_project_master_truth_link_en",
+            "kind": "readme_link",
+            "path": str(REPO_ROOT / "README.md"),
+            "exists": "docs/PROJECT_MASTER_TRUTH.md" in readme,
+        },
+        {
+            "label": "readme_chess_master_truth_link_tr",
+            "kind": "readme_link",
+            "path": str(REPO_ROOT / "README_TR.md"),
+            "exists": "docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md" in readme_tr,
+        },
+        {
+            "label": "readme_project_master_truth_link_tr",
+            "kind": "readme_link",
+            "path": str(REPO_ROOT / "README_TR.md"),
+            "exists": "docs/PROJECT_MASTER_TRUTH_TR.md" in readme_tr,
+        },
+    ]
+    return {
+        "schema": "chess_truth_docs_index_v1",
+        "run_id": payload.get("run_id", ""),
+        "item_count": len(items),
+        "items": items,
+    }
+
+
+def render_truth_docs_index_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Truth Docs Index",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- item_count: `{report.get('item_count', 0)}`",
+        "",
+        "## Items",
+    ]
+    for item in report.get("items", []):
+        lines.append(
+            f"- `{item.get('label', '')}`: kind=`{item.get('kind', 'unknown')}` exists=`{item.get('exists', False)}` path=`{item.get('path', '')}`"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_truth_docs_drift_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    master = _read_json_if_exists(layout.reports_dir / "master_closure_table.json")
+    blockers = _read_json_if_exists(layout.reports_dir / "remaining_core_blockers.json")
+    project_master = _read_json_if_exists(layout.reports_dir / "project_master_truth_reference.json")
+    project_blockers = _read_json_if_exists(layout.reports_dir / "project_remaining_real_blockers.json")
+    truth_docs_index = _read_json_if_exists(layout.reports_dir / "truth_docs_index.json")
+
+    chess_doc_en = _read_text_if_exists(REPO_ROOT / "docs" / "CHESS_ONEFILE_MASTER_TRUTH.md")
+    chess_doc_tr = _read_text_if_exists(REPO_ROOT / "docs" / "CHESS_ONEFILE_MASTER_TRUTH_TR.md")
+    project_doc_en = _read_text_if_exists(REPO_ROOT / "docs" / "PROJECT_MASTER_TRUTH.md")
+    project_doc_tr = _read_text_if_exists(REPO_ROOT / "docs" / "PROJECT_MASTER_TRUTH_TR.md")
+
+    chess_lane_labels = [str(row.get("label", "")) for row in master.get("rows", [])]
+    documented_chess_blocker_labels = {
+        "external_strength_unproven",
+        "release_surface_not_external_grade",
+        "external_reproduction_pending",
+        "security_legal_pilot_pending",
+        "operator_handoff_dr_pending",
+        "release_governance_pending",
+        "device_export_packaging_pending",
+        "benchmark_closure_pending",
+        "training_accounting_pending",
+        "trained_artifact_truth_pending",
+        "management_closure_pending",
+    }
+    chess_blocker_labels = [
+        str(item.get("label", ""))
+        for item in blockers.get("blockers", [])
+        if str(item.get("label", "")) in documented_chess_blocker_labels
+    ]
+    project_lane_labels = [str(row.get("label", "")) for row in project_master.get("rows", [])]
+    project_blocker_labels = [str(item.get("label", "")) for item in project_blockers.get("items", [])]
+
+    missing_chess_lanes_en = [label for label in chess_lane_labels if label and label not in chess_doc_en]
+    missing_chess_lanes_tr = [label for label in chess_lane_labels if label and label not in chess_doc_tr]
+    missing_chess_blockers_en = [label for label in chess_blocker_labels if label and label not in chess_doc_en]
+    missing_chess_blockers_tr = [label for label in chess_blocker_labels if label and label not in chess_doc_tr]
+    missing_project_lanes_en = [label for label in project_lane_labels if label and label not in project_doc_en]
+    missing_project_lanes_tr = [label for label in project_lane_labels if label and label not in project_doc_tr]
+    missing_project_blockers_en = [label for label in project_blocker_labels if label and label not in project_doc_en]
+    missing_project_blockers_tr = [label for label in project_blocker_labels if label and label not in project_doc_tr]
+    missing_truth_index_items = [
+        str(item.get("label", ""))
+        for item in truth_docs_index.get("items", [])
+        if not item.get("exists", False)
+    ]
+    missing = (
+        missing_chess_lanes_en
+        + missing_chess_lanes_tr
+        + missing_chess_blockers_en
+        + missing_chess_blockers_tr
+        + missing_project_lanes_en
+        + missing_project_lanes_tr
+        + missing_project_blockers_en
+        + missing_project_blockers_tr
+        + missing_truth_index_items
+    )
+    return {
+        "schema": "chess_truth_docs_drift_report_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "in_sync" if not missing else "drift_detected",
+        "missing_chess_lanes_en": missing_chess_lanes_en,
+        "missing_chess_lanes_tr": missing_chess_lanes_tr,
+        "missing_chess_blockers_en": missing_chess_blockers_en,
+        "missing_chess_blockers_tr": missing_chess_blockers_tr,
+        "missing_project_lanes_en": missing_project_lanes_en,
+        "missing_project_lanes_tr": missing_project_lanes_tr,
+        "missing_project_blockers_en": missing_project_blockers_en,
+        "missing_project_blockers_tr": missing_project_blockers_tr,
+        "missing_truth_index_items": missing_truth_index_items,
+    }
+
+
+def render_truth_docs_drift_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Truth Docs Drift Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Missing Chess Lanes (EN)",
+    ]
+    for label in report.get("missing_chess_lanes_en", []):
+        lines.append(f"- `{label}`")
+    lines.append("")
+    lines.append("## Missing Chess Lanes (TR)")
+    for label in report.get("missing_chess_lanes_tr", []):
+        lines.append(f"- `{label}`")
+    lines.append("")
+    lines.append("## Missing Chess Blockers (EN)")
+    for label in report.get("missing_chess_blockers_en", []):
+        lines.append(f"- `{label}`")
+    lines.append("")
+    lines.append("## Missing Chess Blockers (TR)")
+    for label in report.get("missing_chess_blockers_tr", []):
+        lines.append(f"- `{label}`")
+    lines.append("")
+    lines.append("## Missing Project Lanes (EN)")
+    for label in report.get("missing_project_lanes_en", []):
+        lines.append(f"- `{label}`")
+    lines.append("")
+    lines.append("## Missing Project Lanes (TR)")
+    for label in report.get("missing_project_lanes_tr", []):
+        lines.append(f"- `{label}`")
+    lines.append("")
+    lines.append("## Missing Project Blockers (EN)")
+    for label in report.get("missing_project_blockers_en", []):
+        lines.append(f"- `{label}`")
+    lines.append("")
+    lines.append("## Missing Project Blockers (TR)")
+    for label in report.get("missing_project_blockers_tr", []):
+        lines.append(f"- `{label}`")
+    lines.append("")
+    lines.append("## Missing Truth Index Items")
+    for label in report.get("missing_truth_index_items", []):
+        lines.append(f"- `{label}`")
     return "\n".join(lines) + "\n"
 
 
@@ -10113,6 +10444,18 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     closure_gap_summary = build_closure_gap_summary(layout, payload)
     atomic_json(layout.reports_dir / "closure_gap_summary.json", closure_gap_summary)
     atomic_write_text(layout.reports_dir / "closure_gap_summary.md", render_closure_gap_summary_md(closure_gap_summary))
+    project_master_truth_reference = build_project_master_truth_reference(layout, payload)
+    atomic_json(layout.reports_dir / "project_master_truth_reference.json", project_master_truth_reference)
+    atomic_write_text(layout.reports_dir / "project_master_truth_reference.md", render_project_master_truth_reference_md(project_master_truth_reference))
+    project_remaining_real_blockers = build_project_remaining_real_blockers(layout, payload)
+    atomic_json(layout.reports_dir / "project_remaining_real_blockers.json", project_remaining_real_blockers)
+    atomic_write_text(layout.reports_dir / "project_remaining_real_blockers.md", render_project_remaining_real_blockers_md(project_remaining_real_blockers))
+    truth_docs_index = build_truth_docs_index(layout, payload)
+    atomic_json(layout.reports_dir / "truth_docs_index.json", truth_docs_index)
+    atomic_write_text(layout.reports_dir / "truth_docs_index.md", render_truth_docs_index_md(truth_docs_index))
+    truth_docs_drift_report = build_truth_docs_drift_report(layout, payload)
+    atomic_json(layout.reports_dir / "truth_docs_drift_report.json", truth_docs_drift_report)
+    atomic_write_text(layout.reports_dir / "truth_docs_drift_report.md", render_truth_docs_drift_report_md(truth_docs_drift_report))
 
 
 def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:

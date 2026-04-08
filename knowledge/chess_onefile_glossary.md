@@ -61,3 +61,7 @@
 - `real remaining core work`: compact top-level list of real remaining blockers after repo-side surfaces are accounted for.
 - `repo truth inventory`: count-based inventory of what kinds of repo-side truth artifacts exist or are missing.
 - `closure gap summary`: compact top-level summary of repo-side completeness versus real closure blockers.
+- `project master truth reference`: report-side mirror of the canonical whole-project truth table.
+- `project remaining real blockers`: compact report-side list of whole-project blockers that remain after repo-side closure becomes strong.
+- `truth docs index`: explicit index of canonical chess/project truth docs and README link coverage.
+- `truth docs drift report`: explicit check that canonical truth docs still mention the lanes and blockers surfaced by generated reports.

@@ -39,6 +39,7 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - Management-closure artefaktları artık `reports/core_complete_decision_stub.json`, `reports/research_continues_stub.json`, `reports/product_maintenance_only_stub.json` ve `reports/closure_decision_record_stub.json` dosyalarını üretir.
 - Repo-truth summary artefaktları artık `reports/master_closure_table.json`, `reports/remaining_core_blockers.json`, `reports/repo_side_completion_summary.json` ve `reports/readiness_snapshot.json` dosyalarını üretir.
 - Aggregated truth artefaktları artık `reports/aggregated_master_table.json`, `reports/real_remaining_core_work.json`, `reports/repo_truth_inventory.json` ve `reports/closure_gap_summary.json` dosyalarını üretir.
+- Project-truth ve docs-alignment artefaktları artık `reports/project_master_truth_reference.json`, `reports/project_remaining_real_blockers.json`, `reports/truth_docs_index.json` ve `reports/truth_docs_drift_report.json` dosyalarını üretir.
 - 24 saatlik 4060 all-on yolu için runbook/checklist dokümanları artık `runbooks/` ve `checklists/` altındadır.
 - Kanonik repo-side contract yüzeyleri artık `configs/`, `releases/`, `knowledge/` ve `evidence/` klasörlerini de içerir.
 - Satranç runtime observability sözleşmesi artık nettir: `logs/run_log.jsonl`, `reports/logging_contract.json`, `reports/observability_report.json`.

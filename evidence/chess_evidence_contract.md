@@ -61,6 +61,10 @@ A serious chess onefile run should preserve:
 - `reports/real_remaining_core_work.json`
 - `reports/repo_truth_inventory.json`
 - `reports/closure_gap_summary.json`
+- `reports/project_master_truth_reference.json`
+- `reports/project_remaining_real_blockers.json`
+- `reports/truth_docs_index.json`
+- `reports/truth_docs_drift_report.json`
 - `reports/artifact_manifest_with_hashes.json`
 - `logs/run_log.jsonl`
 

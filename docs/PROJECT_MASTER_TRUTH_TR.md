@@ -46,13 +46,16 @@ Kalan blocker’ların ana sınıfı artık çoğunlukla `eksik klasör` veya `e
 
 Ana kalanlar şunlardır:
 
-- gerçek 24h ve 45K eğitim çıktıları
-- trained checkpoint truth ve benchmark kanıtı
-- gerçek hedeflerde export/device/package validation
-- harici reproducibility
-- legal/security/pilot sign-off
-- handoff, DR ve operatör provası
-- RC, golden release ve final release kararı
+- `external_strength_unproven`
+- `real_training_outputs_pending`
+- `trained_artifact_truth_pending`
+- `benchmark_evidence_pending`
+- `export_device_packaging_pending`
+- `external_reproduction_pending`
+- `security_legal_pilot_pending`
+- `operator_handoff_dr_pending`
+- `rc_golden_final_release_pending`
+- `management_closure_pending`
 
 ## Alt Sonuç
 
