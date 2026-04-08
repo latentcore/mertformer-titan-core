@@ -7910,6 +7910,9 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("project_blocker_risk_register_report", "project_blocker_risk_register_report.json"),
         ("project_release_prereq_matrix_report", "project_release_prereq_matrix_report.json"),
         ("project_foundation_run_dependency_report", "project_foundation_run_dependency_report.json"),
+        ("project_release_path_report", "project_release_path_report.json"),
+        ("project_external_closure_cluster_report", "project_external_closure_cluster_report.json"),
+        ("project_owner_evidence_gap_report", "project_owner_evidence_gap_report.json"),
         ("generated_truth_crosscheck_matrix", "generated_truth_crosscheck_matrix.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
@@ -8704,6 +8707,9 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("project_blocker_risk_register_report", {}).get("exists", False))
         and bool(truth_entries.get("project_release_prereq_matrix_report", {}).get("exists", False))
         and bool(truth_entries.get("project_foundation_run_dependency_report", {}).get("exists", False))
+        and bool(truth_entries.get("project_release_path_report", {}).get("exists", False))
+        and bool(truth_entries.get("project_external_closure_cluster_report", {}).get("exists", False))
+        and bool(truth_entries.get("project_owner_evidence_gap_report", {}).get("exists", False))
     )
     generated_truth_consistency_present = bool(truth_entries.get("generated_truth_consistency_report", {}).get("exists", False))
     generated_truth_crosscheck_present = bool(truth_entries.get("generated_truth_crosscheck_matrix", {}).get("exists", False))
@@ -8906,6 +8912,9 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "project_blocker_risk_register_report",
         "project_release_prereq_matrix_report",
         "project_foundation_run_dependency_report",
+        "project_release_path_report",
+        "project_external_closure_cluster_report",
+        "project_owner_evidence_gap_report",
         "generated_truth_consistency_report",
         "generated_truth_crosscheck_matrix",
         "run_log",
@@ -9032,6 +9041,9 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
             "project_blocker_risk_register_report",
             "project_release_prereq_matrix_report",
             "project_foundation_run_dependency_report",
+            "project_release_path_report",
+            "project_external_closure_cluster_report",
+            "project_owner_evidence_gap_report",
         } and item.get("exists", False)
     )
     generated_truth_count = sum(
@@ -9879,6 +9891,9 @@ def build_master_closure_table(layout: ArtifactLayout, payload: Dict[str, Any]) 
             "project_blocker_risk_register_report",
             "project_release_prereq_matrix_report",
             "project_foundation_run_dependency_report",
+            "project_release_path_report",
+            "project_external_closure_cluster_report",
+            "project_owner_evidence_gap_report",
         ],
         "generated_truth_consistency": ["generated_truth_consistency_report", "generated_truth_crosscheck_matrix"],
     }
@@ -10193,6 +10208,9 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
     project_blocker_risk_register_report = _read_json_if_exists(layout.reports_dir / "project_blocker_risk_register_report.json")
     project_release_prereq_matrix_report = _read_json_if_exists(layout.reports_dir / "project_release_prereq_matrix_report.json")
     project_foundation_run_dependency_report = _read_json_if_exists(layout.reports_dir / "project_foundation_run_dependency_report.json")
+    project_release_path_report = _read_json_if_exists(layout.reports_dir / "project_release_path_report.json")
+    project_external_closure_cluster_report = _read_json_if_exists(layout.reports_dir / "project_external_closure_cluster_report.json")
+    project_owner_evidence_gap_report = _read_json_if_exists(layout.reports_dir / "project_owner_evidence_gap_report.json")
     return {
         "schema": "chess_closure_gap_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -10226,6 +10244,9 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
         "project_blocker_risk_register_status": project_blocker_risk_register_report.get("status", "unknown"),
         "project_release_prereq_matrix_status": project_release_prereq_matrix_report.get("status", "unknown"),
         "project_foundation_run_dependency_status": project_foundation_run_dependency_report.get("status", "unknown"),
+        "project_release_path_status": project_release_path_report.get("status", "unknown"),
+        "project_external_closure_cluster_status": project_external_closure_cluster_report.get("status", "unknown"),
+        "project_owner_evidence_gap_status": project_owner_evidence_gap_report.get("status", "unknown"),
         "generated_truth_status": _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json").get("status", "unknown"),
         "generated_truth_crosscheck_status": _read_json_if_exists(layout.reports_dir / "generated_truth_crosscheck_matrix.json").get("status", "unknown"),
     }
@@ -10266,6 +10287,9 @@ def render_closure_gap_summary_md(report: Dict[str, Any]) -> str:
         f"- project_blocker_risk_register_status: `{report.get('project_blocker_risk_register_status', 'unknown')}`",
         f"- project_release_prereq_matrix_status: `{report.get('project_release_prereq_matrix_status', 'unknown')}`",
         f"- project_foundation_run_dependency_status: `{report.get('project_foundation_run_dependency_status', 'unknown')}`",
+        f"- project_release_path_status: `{report.get('project_release_path_status', 'unknown')}`",
+        f"- project_external_closure_cluster_status: `{report.get('project_external_closure_cluster_status', 'unknown')}`",
+        f"- project_owner_evidence_gap_status: `{report.get('project_owner_evidence_gap_status', 'unknown')}`",
         f"- generated_truth_status: `{report.get('generated_truth_status', 'unknown')}`",
         f"- generated_truth_crosscheck_status: `{report.get('generated_truth_crosscheck_status', 'unknown')}`",
     ]
@@ -12650,6 +12674,221 @@ def render_project_foundation_run_dependency_report_md(report: Dict[str, Any]) -
     return "\n".join(lines) + "\n"
 
 
+def build_project_release_path_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    graph = _read_json_if_exists(layout.reports_dir / "project_blocker_dependency_graph.json")
+    specs = _project_blocker_specs()
+    node_map = {str(node.get("label", "")): node for node in graph.get("nodes", [])}
+    outgoing: Dict[str, List[str]] = {label: [] for label in node_map}
+    for edge in graph.get("edges", []):
+        source = str(edge.get("from", ""))
+        target = str(edge.get("to", ""))
+        if source in outgoing and target:
+            outgoing[source].append(target)
+    roots = sorted(str(node.get("label", "")) for node in graph.get("nodes", []) if not node.get("depends_on", []))
+    target = "rc_golden_final_release_pending"
+    paths: List[List[str]] = []
+
+    def dfs(cursor: str, path: List[str]) -> None:
+        if cursor == target:
+            paths.append(path[:])
+            return
+        for child in sorted(outgoing.get(cursor, [])):
+            if child in path:
+                continue
+            dfs(child, path + [child])
+
+    for root in roots:
+        dfs(root, [root])
+    rows = []
+    for index, path in enumerate(sorted(paths, key=lambda item: (len(item), item)), start=1):
+        rows.append(
+            {
+                "path_index": index,
+                "path_length": len(path),
+                "root_label": path[0] if path else "",
+                "terminal_label": path[-1] if path else "",
+                "owner_domains": sorted({str(node_map.get(label, {}).get("owner_domain", "")) for label in path if str(node_map.get(label, {}).get("owner_domain", ""))}),
+                "phase_labels": sorted({str(specs.get(label, {}).get("phase", "")) for label in path if str(specs.get(label, {}).get("phase", ""))}),
+                "labels": path,
+                "status": "ready",
+            }
+        )
+    path_lengths = [int(row["path_length"]) for row in rows]
+    return {
+        "schema": "chess_project_release_path_report_v1",
+        "run_id": graph.get("run_id", ""),
+        "path_count": len(rows),
+        "root_count": len(roots),
+        "terminal_label": target,
+        "shortest_path_length": min(path_lengths) if path_lengths else 0,
+        "longest_path_length": max(path_lengths) if path_lengths else 0,
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_release_path_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Release Path Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- path_count: `{report.get('path_count', 0)}`",
+        f"- root_count: `{report.get('root_count', 0)}`",
+        f"- terminal_label: `{report.get('terminal_label', '')}`",
+        f"- shortest_path_length: `{report.get('shortest_path_length', 0)}`",
+        f"- longest_path_length: `{report.get('longest_path_length', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Release Paths",
+    ]
+    for row in report.get("rows", []):
+        owners = ", ".join(f"`{entry}`" for entry in row.get("owner_domains", []))
+        phases = ", ".join(f"`{entry}`" for entry in row.get("phase_labels", []))
+        labels = ", ".join(f"`{entry}`" for entry in row.get("labels", []))
+        lines.append(
+            f"- path_index=`{row.get('path_index', 0)}` path_length=`{row.get('path_length', 0)}` root_label=`{row.get('root_label', '')}` "
+            f"terminal_label=`{row.get('terminal_label', '')}` owner_domains={owners} phase_labels={phases} "
+            f"status=`{row.get('status', 'unknown')}` labels={labels}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_project_external_closure_cluster_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    action_plan = _read_json_if_exists(layout.reports_dir / "project_blocker_action_plan.json")
+    risk_register = _read_json_if_exists(layout.reports_dir / "project_blocker_risk_register_report.json")
+    prereq_matrix = _read_json_if_exists(layout.reports_dir / "project_release_prereq_matrix_report.json")
+    specs = _project_blocker_specs()
+    action_by_label = {str(item.get("label", "")): item for item in action_plan.get("items", [])}
+    risk_by_label = {str(row.get("label", "")): row for row in risk_register.get("rows", [])}
+    prereq_by_label = {str(row.get("label", "")): row for row in prereq_matrix.get("rows", [])}
+    cluster_phases = ["external_validation", "release_finalization", "governance_closeout"]
+    rows = []
+    for phase in cluster_phases:
+        labels = sorted(label for label, spec in specs.items() if str(spec.get("phase", "")) == phase)
+        owner_domains = sorted({str(action_by_label.get(label, {}).get("owner_domain", spec.get("owner_domain", "unknown"))) for label, spec in specs.items() if label in labels})
+        evidence_labels = sorted(
+            {
+                str(entry)
+                for label in labels
+                for entry in action_by_label.get(label, {}).get("required_evidence", specs.get(label, {}).get("required_evidence", []))
+                if str(entry)
+            }
+        )
+        risk_score_total = sum(int(risk_by_label.get(label, {}).get("risk_score", 0)) for label in labels)
+        direct_release_prereq_count = sum(1 for label in labels if bool(prereq_by_label.get(label, {}).get("direct_release_prereq", False)))
+        rows.append(
+            {
+                "phase": phase,
+                "phase_label": phase.replace("_", " ").title(),
+                "blocker_count": len(labels),
+                "owner_count": len(owner_domains),
+                "evidence_count": len(evidence_labels),
+                "risk_score_total": risk_score_total,
+                "direct_release_prereq_count": direct_release_prereq_count,
+                "labels": labels,
+                "owner_domains": owner_domains,
+                "status": "ready" if labels else "empty",
+            }
+        )
+    return {
+        "schema": "chess_project_external_closure_cluster_report_v1",
+        "run_id": action_plan.get("run_id", ""),
+        "cluster_count": len(rows),
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_external_closure_cluster_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project External Closure Cluster Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- cluster_count: `{report.get('cluster_count', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Clusters",
+    ]
+    for row in report.get("rows", []):
+        owners = ", ".join(f"`{entry}`" for entry in row.get("owner_domains", []))
+        labels = ", ".join(f"`{entry}`" for entry in row.get("labels", []))
+        lines.append(
+            f"- `{row.get('phase_label', '')}`: blocker_count=`{row.get('blocker_count', 0)}` owner_count=`{row.get('owner_count', 0)}` "
+            f"evidence_count=`{row.get('evidence_count', 0)}` risk_score_total=`{row.get('risk_score_total', 0)}` "
+            f"direct_release_prereq_count=`{row.get('direct_release_prereq_count', 0)}` owner_domains={owners} "
+            f"status=`{row.get('status', 'unknown')}` labels={labels}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_project_owner_evidence_gap_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    owner_matrix = _read_json_if_exists(layout.reports_dir / "project_owner_accountability_matrix.json")
+    evidence_backlog = _read_json_if_exists(layout.reports_dir / "project_evidence_backlog_report.json")
+    risk_register = _read_json_if_exists(layout.reports_dir / "project_blocker_risk_register_report.json")
+    risk_by_label = {str(row.get("label", "")): row for row in risk_register.get("rows", [])}
+    evidence_rows = evidence_backlog.get("rows", [])
+    rows = []
+    for owner_row in owner_matrix.get("rows", []):
+        blockers = {str(label) for label in owner_row.get("blockers", []) if str(label)}
+        owner_evidence = sorted(
+            {
+                str(row.get("evidence_label", ""))
+                for row in evidence_rows
+                if blockers & {str(label) for label in row.get("blockers", []) if str(label)}
+            }
+        )
+        ranked_owner_risks = sorted(
+            (risk_by_label.get(label, {}) for label in blockers),
+            key=lambda item: (-int(item.get("risk_score", 0)), str(item.get("label", ""))),
+        )
+        top_risk = ranked_owner_risks[0] if ranked_owner_risks else {}
+        rows.append(
+            {
+                "owner_domain": str(owner_row.get("owner_domain", "")),
+                "blocker_count": int(owner_row.get("blocker_count", 0)),
+                "evidence_count": len(owner_evidence),
+                "phase_count": len([entry for entry in owner_row.get("phase_labels", []) if str(entry)]),
+                "high_risk_blocker_count": sum(1 for label in blockers if str(risk_by_label.get(label, {}).get("risk_tier", "")) == "high"),
+                "top_risk_blocker_label": str(top_risk.get("label", "")),
+                "top_risk_score": int(top_risk.get("risk_score", 0)) if top_risk else 0,
+                "evidence_labels": owner_evidence,
+                "status": "ready" if blockers else "empty",
+            }
+        )
+    rows.sort(key=lambda item: (-int(item["evidence_count"]), -int(item["high_risk_blocker_count"]), item["owner_domain"]))
+    return {
+        "schema": "chess_project_owner_evidence_gap_report_v1",
+        "run_id": owner_matrix.get("run_id", ""),
+        "owner_count": len(rows),
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_owner_evidence_gap_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Owner Evidence Gap Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- owner_count: `{report.get('owner_count', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Owner Evidence Gaps",
+    ]
+    for row in report.get("rows", []):
+        evidence = ", ".join(f"`{entry}`" for entry in row.get("evidence_labels", []))
+        lines.append(
+            f"- `{row.get('owner_domain', '')}`: blocker_count=`{row.get('blocker_count', 0)}` evidence_count=`{row.get('evidence_count', 0)}` "
+            f"phase_count=`{row.get('phase_count', 0)}` high_risk_blocker_count=`{row.get('high_risk_blocker_count', 0)}` "
+            f"top_risk_blocker_label=`{row.get('top_risk_blocker_label', '')}` top_risk_score=`{row.get('top_risk_score', 0)}` "
+            f"status=`{row.get('status', 'unknown')}` evidence={evidence}"
+        )
+    return "\n".join(lines) + "\n"
+
+
 def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     del payload
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
@@ -12689,6 +12928,9 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
     project_blocker_risk_register_report = _read_json_if_exists(layout.reports_dir / "project_blocker_risk_register_report.json")
     project_release_prereq_matrix_report = _read_json_if_exists(layout.reports_dir / "project_release_prereq_matrix_report.json")
     project_foundation_run_dependency_report = _read_json_if_exists(layout.reports_dir / "project_foundation_run_dependency_report.json")
+    project_release_path_report = _read_json_if_exists(layout.reports_dir / "project_release_path_report.json")
+    project_external_closure_cluster_report = _read_json_if_exists(layout.reports_dir / "project_external_closure_cluster_report.json")
+    project_owner_evidence_gap_report = _read_json_if_exists(layout.reports_dir / "project_owner_evidence_gap_report.json")
 
     checks = [
         {
@@ -12747,6 +12989,9 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
                 and int(project_blocker_risk_register_report.get("item_count", 0)) > 0
                 and int(project_release_prereq_matrix_report.get("item_count", 0)) > 0
                 and int(project_foundation_run_dependency_report.get("dependent_blocker_count", 0)) > 0
+                and int(project_release_path_report.get("path_count", 0)) > 0
+                and int(project_external_closure_cluster_report.get("cluster_count", 0)) > 0
+                and int(project_owner_evidence_gap_report.get("owner_count", 0)) > 0
             ),
         },
         {
@@ -12863,6 +13108,28 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
             ),
         },
         {
+            "label": "release_path_report_complete",
+            "passed": (
+                int(project_release_path_report.get("path_count", 0)) > 0
+                and str(project_release_path_report.get("terminal_label", "")) == "rc_golden_final_release_pending"
+                and project_release_path_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "external_closure_cluster_report_complete",
+            "passed": (
+                int(project_external_closure_cluster_report.get("cluster_count", 0)) == 3
+                and project_external_closure_cluster_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "owner_evidence_gap_report_complete",
+            "passed": (
+                int(project_owner_evidence_gap_report.get("owner_count", 0)) == int(project_owner_accountability_matrix.get("owner_count", -1))
+                and project_owner_evidence_gap_report.get("status") == "ready"
+            ),
+        },
+        {
             "label": "truth_docs_are_in_sync",
             "passed": truth_docs_drift.get("status") == "in_sync",
         },
@@ -12928,6 +13195,9 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
     project_blocker_risk_register_report = _read_json_if_exists(layout.reports_dir / "project_blocker_risk_register_report.json")
     project_release_prereq_matrix_report = _read_json_if_exists(layout.reports_dir / "project_release_prereq_matrix_report.json")
     project_foundation_run_dependency_report = _read_json_if_exists(layout.reports_dir / "project_foundation_run_dependency_report.json")
+    project_release_path_report = _read_json_if_exists(layout.reports_dir / "project_release_path_report.json")
+    project_external_closure_cluster_report = _read_json_if_exists(layout.reports_dir / "project_external_closure_cluster_report.json")
+    project_owner_evidence_gap_report = _read_json_if_exists(layout.reports_dir / "project_owner_evidence_gap_report.json")
     generated_truth_consistency_report = _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json")
     specs = _project_blocker_specs()
 
@@ -13006,6 +13276,9 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
     release_prereq_by_label = {str(row.get("label", "")): row for row in project_release_prereq_matrix_report.get("rows", [])}
     foundation_run_dependency_labels = {str(row.get("label", "")) for row in project_foundation_run_dependency_report.get("rows", [])}
     unlock_impact_by_label = {str(row.get("label", "")): row for row in project_unlock_impact_report.get("rows", [])}
+    release_path_rows = project_release_path_report.get("rows", [])
+    external_cluster_phase_labels = {str(row.get("phase", "")) for row in project_external_closure_cluster_report.get("rows", [])}
+    owner_evidence_gap_owners = {str(row.get("owner_domain", "")) for row in project_owner_evidence_gap_report.get("rows", [])}
     sequence_phase_orders = [int(specs.get(str(item.get("label", "")), {}).get("phase_order", 999)) for item in project_execution_sequence.get("items", [])]
     wave_ids = [int(row.get("wave", -1)) for row in project_execution_wave_report.get("rows", [])]
     checks = [
@@ -13213,6 +13486,32 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
                 and int(project_foundation_run_dependency_report.get("dependent_blocker_count", 0))
                 == int(unlock_impact_by_label.get("real_training_outputs_pending", {}).get("total_unlock_count", -1))
                 and project_foundation_run_dependency_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "release_path_report_matches_release_target",
+            "passed": (
+                int(project_release_path_report.get("path_count", 0)) == len(release_path_rows)
+                and all(str(row.get("terminal_label", "")) == "rc_golden_final_release_pending" for row in release_path_rows)
+                and all(str(row.get("root_label", "")) in root_labels for row in release_path_rows)
+                and project_release_path_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "external_closure_cluster_matches_phase_plan",
+            "passed": (
+                external_cluster_phase_labels == {"external_validation", "release_finalization", "governance_closeout"}
+                and sum(int(row.get("blocker_count", 0)) for row in project_external_closure_cluster_report.get("rows", []))
+                == len([label for label in blocker_labels if int(specs.get(label, {}).get("phase_order", 0)) >= 3])
+                and project_external_closure_cluster_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "owner_evidence_gap_matches_owner_matrix",
+            "passed": (
+                owner_evidence_gap_owners == owner_load_owners
+                and int(project_owner_evidence_gap_report.get("owner_count", 0)) == int(project_owner_accountability_matrix.get("owner_count", -1))
+                and project_owner_evidence_gap_report.get("status") == "ready"
             ),
         },
         {
@@ -13563,6 +13862,24 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     atomic_write_text(
         layout.reports_dir / "project_foundation_run_dependency_report.md",
         render_project_foundation_run_dependency_report_md(project_foundation_run_dependency_report),
+    )
+    project_release_path_report = build_project_release_path_report(layout, payload)
+    atomic_json(layout.reports_dir / "project_release_path_report.json", project_release_path_report)
+    atomic_write_text(
+        layout.reports_dir / "project_release_path_report.md",
+        render_project_release_path_report_md(project_release_path_report),
+    )
+    project_external_closure_cluster_report = build_project_external_closure_cluster_report(layout, payload)
+    atomic_json(layout.reports_dir / "project_external_closure_cluster_report.json", project_external_closure_cluster_report)
+    atomic_write_text(
+        layout.reports_dir / "project_external_closure_cluster_report.md",
+        render_project_external_closure_cluster_report_md(project_external_closure_cluster_report),
+    )
+    project_owner_evidence_gap_report = build_project_owner_evidence_gap_report(layout, payload)
+    atomic_json(layout.reports_dir / "project_owner_evidence_gap_report.json", project_owner_evidence_gap_report)
+    atomic_write_text(
+        layout.reports_dir / "project_owner_evidence_gap_report.md",
+        render_project_owner_evidence_gap_report_md(project_owner_evidence_gap_report),
     )
     truth_docs_index = build_truth_docs_index(layout, payload)
     atomic_json(layout.reports_dir / "truth_docs_index.json", truth_docs_index)

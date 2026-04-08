@@ -92,5 +92,8 @@
 - `project blocker risk register report`: ranked blocker-level risk view that combines severity, dependency load, downstream blast radius, and externality into one operational register.
 - `project release prereq matrix report`: blocker-level matrix showing which blockers are direct or indirect prerequisites for release and management closeout.
 - `project foundation run dependency report`: explicit dependency view of which blockers stay downstream of the real training run and how far they are from that root dependency.
+- `project release path report`: explicit root-to-release path inventory showing which blocker chains can reach RC/golden/final release.
+- `project external closure cluster report`: grouped view of the external-validation, release-finalization, and governance-closeout phases as a combined external closure surface.
+- `project owner evidence gap report`: owner-level view of missing evidence burden, top-risk blocker, and evidence concentration.
 - `generated truth consistency report`: explicit check that generated truth summaries agree with each other instead of only existing side by side.
 - `generated truth crosscheck matrix`: extra consistency layer that cross-checks blocker coverage, dependency order, lane coverage, and summary alignment.
