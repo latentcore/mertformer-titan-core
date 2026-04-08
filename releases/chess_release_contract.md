@@ -62,6 +62,8 @@ A chess onefile run is not release-grade unless all of these exist together:
 - project remaining real blockers
 - truth docs index
 - truth docs drift report
+- project blocker action plan
+- generated truth consistency report
 - artifact truth matrix
 - run status manifest
 - postrun analysis manifest

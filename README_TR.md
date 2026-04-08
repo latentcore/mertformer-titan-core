@@ -92,6 +92,7 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 - `reports/master_closure_table.json`, `reports/remaining_core_blockers.json`, `reports/repo_side_completion_summary.json` ve `reports/readiness_snapshot.json`, neyin mevcut olduğunu ve final kapanışı neyin hâlâ blokladığını repo gerçeğinden özetler.
 - `reports/aggregated_master_table.json`, `reports/real_remaining_core_work.json`, `reports/repo_truth_inventory.json` ve `reports/closure_gap_summary.json`, repo gerçeğini son master tabloya çevirmek için daha kompakt üst seviye truth katmanı sağlar.
 - `reports/project_master_truth_reference.json`, `reports/project_remaining_real_blockers.json`, `reports/truth_docs_index.json` ve `reports/truth_docs_drift_report.json`, onefile release evidence katmanını kanonik repo truth docs ile bağlar ve doküman drift’ini açıkça görünür kılar.
+- `reports/project_blocker_action_plan.json` ve `reports/generated_truth_consistency_report.json`, kalan proje blocker’larını operasyonel hale getirir ve üretilen truth summary’lerin kendi içinde tutarlı kalmasını denetler.
 - Kanonik doküman özeti: [docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md](docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md)
 - Kanonik proje özeti: [docs/PROJECT_MASTER_TRUTH_TR.md](docs/PROJECT_MASTER_TRUTH_TR.md)
 

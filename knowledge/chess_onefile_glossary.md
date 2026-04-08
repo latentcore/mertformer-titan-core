@@ -65,3 +65,5 @@
 - `project remaining real blockers`: compact report-side list of whole-project blockers that remain after repo-side closure becomes strong.
 - `truth docs index`: explicit index of canonical chess/project truth docs and README link coverage.
 - `truth docs drift report`: explicit check that canonical truth docs still mention the lanes and blockers surfaced by generated reports.
+- `project blocker action plan`: operational next-step map from each whole-project blocker to the next closure action and expected evidence.
+- `generated truth consistency report`: explicit check that generated truth summaries agree with each other instead of only existing side by side.

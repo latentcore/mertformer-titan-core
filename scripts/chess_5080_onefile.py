@@ -7882,6 +7882,8 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("project_remaining_real_blockers", "project_remaining_real_blockers.json"),
         ("truth_docs_index", "truth_docs_index.json"),
         ("truth_docs_drift_report", "truth_docs_drift_report.json"),
+        ("project_blocker_action_plan", "project_blocker_action_plan.json"),
+        ("generated_truth_consistency_report", "generated_truth_consistency_report.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
         ("replay_buffer_manifest", "replay_buffer_manifest.json"),
@@ -8460,6 +8462,16 @@ def build_known_limits(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[
                 "detail": "Canonical chess/project truth docs and generated reports are not fully aligned yet.",
             }
         )
+    consistency_report = _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json")
+    if consistency_report.get("status") not in {"", "consistent"}:
+        limits.append(
+            {
+                "label": "generated_truth_consistency_pending",
+                "severity": "medium",
+                "status": "active",
+                "detail": "Generated truth reports are present but not fully consistent with each other yet.",
+            }
+        )
     return {
         "schema": "chess_known_limits_v1",
         "run_id": payload.get("run_id", ""),
@@ -8548,6 +8560,7 @@ def render_support_matrix_md(report: Dict[str, Any]) -> str:
 def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
     truth_docs_drift_report = _read_json_if_exists(layout.reports_dir / "truth_docs_drift_report.json")
+    generated_truth_consistency_report = _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json")
     truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
     notes = dict(payload.get("notes", {}))
     bundle = dict(payload.get("bundle", {}))
@@ -8625,7 +8638,10 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("truth_docs_index", {}).get("exists", False))
         and bool(truth_entries.get("truth_docs_drift_report", {}).get("exists", False))
     )
+    project_blocker_action_plan_present = bool(truth_entries.get("project_blocker_action_plan", {}).get("exists", False))
+    generated_truth_consistency_present = bool(truth_entries.get("generated_truth_consistency_report", {}).get("exists", False))
     truth_docs_drift_clear = truth_docs_drift_report.get("status") == "in_sync"
+    generated_truth_consistency_clear = generated_truth_consistency_report.get("status") == "consistent"
     gates = [
         {"label": "core_artifacts_present", "passed": core_artifacts_present},
         {"label": "checkpoint_or_package_provenance", "passed": checkpoint_or_provenance},
@@ -8646,7 +8662,10 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         {"label": "master_summary_surfaces_present", "passed": master_summary_surfaces_present},
         {"label": "aggregate_truth_surfaces_present", "passed": aggregate_truth_surfaces_present},
         {"label": "project_truth_surfaces_present", "passed": project_truth_surfaces_present},
+        {"label": "project_blocker_action_plan_present", "passed": project_blocker_action_plan_present},
+        {"label": "generated_truth_consistency_present", "passed": generated_truth_consistency_present},
         {"label": "truth_docs_drift_clear", "passed": truth_docs_drift_clear},
+        {"label": "generated_truth_consistency_clear", "passed": generated_truth_consistency_clear},
     ]
     overall_internal_ready = all(gate["passed"] for gate in gates if gate["label"] != "stockfish_completed")
     overall_external_ready = all(gate["passed"] for gate in gates) and payload.get("rating_claim_status") == RatingClaimStatus.TARGET_MET_EXTERNAL.value
@@ -8790,6 +8809,8 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "project_remaining_real_blockers",
         "truth_docs_index",
         "truth_docs_drift_report",
+        "project_blocker_action_plan",
+        "generated_truth_consistency_report",
         "run_log",
     ]
     items = [
@@ -8883,6 +8904,11 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         for item in items
         if item.get("label") in {"project_master_truth_reference", "project_remaining_real_blockers", "truth_docs_index", "truth_docs_drift_report"} and item.get("exists", False)
     )
+    generated_truth_count = sum(
+        1
+        for item in items
+        if item.get("label") in {"project_blocker_action_plan", "generated_truth_consistency_report"} and item.get("exists", False)
+    )
     return {
         "schema": "chess_operator_handoff_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -8900,6 +8926,7 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         "master_summary_count": master_summary_count,
         "aggregate_truth_count": aggregate_truth_count,
         "truth_docs_count": truth_docs_count,
+        "generated_truth_count": generated_truth_count,
         "overall_internal_ready": bool(release_gate.get("overall_internal_ready", False)),
         "overall_external_ready": bool(release_gate.get("overall_external_ready", False)),
         "operator_note": "Operator handoff can be internally complete while external release readiness remains false.",
@@ -8925,6 +8952,7 @@ def render_operator_handoff_summary_md(report: Dict[str, Any]) -> str:
         f"- master_summary_count: `{report.get('master_summary_count', 0)}`",
         f"- aggregate_truth_count: `{report.get('aggregate_truth_count', 0)}`",
         f"- truth_docs_count: `{report.get('truth_docs_count', 0)}`",
+        f"- generated_truth_count: `{report.get('generated_truth_count', 0)}`",
         f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
         f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
         f"- operator_note: {report.get('operator_note', '')}",
@@ -9691,6 +9719,7 @@ def build_master_closure_table(layout: ArtifactLayout, payload: Dict[str, Any]) 
         "trained_artifact_truth": ["final_weights_truth_stub", "best_checkpoint_truth_stub", "latest_checkpoint_truth_stub", "trained_artifact_registry_stub"],
         "management_closure": ["core_complete_decision_stub", "research_continues_stub", "product_maintenance_only_stub", "closure_decision_record_stub"],
         "truth_docs_alignment": ["project_master_truth_reference", "project_remaining_real_blockers", "truth_docs_index", "truth_docs_drift_report"],
+        "generated_truth_consistency": ["project_blocker_action_plan", "generated_truth_consistency_report"],
     }
     rows: List[Dict[str, Any]] = []
     for label, members in groups.items():
@@ -9851,6 +9880,7 @@ def build_aggregated_master_table(layout: ArtifactLayout, payload: Dict[str, Any
         "trained_artifact_truth": {"trained_artifact_truth_pending"},
         "management_closure": {"management_closure_pending"},
         "truth_docs_alignment": {"truth_docs_drift_pending"},
+        "generated_truth_consistency": {"generated_truth_consistency_pending"},
     }
     rows: List[Dict[str, Any]] = []
     for row in master.get("rows", []):
@@ -9986,6 +10016,7 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
         "overall_internal_ready": bool(readiness.get("overall_internal_ready", False)),
         "overall_external_ready": bool(readiness.get("overall_external_ready", False)),
         "truth_docs_status": truth_docs_drift_report.get("status", "unknown"),
+        "generated_truth_status": _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json").get("status", "unknown"),
     }
 
 
@@ -10000,6 +10031,7 @@ def render_closure_gap_summary_md(report: Dict[str, Any]) -> str:
         f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
         f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
         f"- truth_docs_status: `{report.get('truth_docs_status', 'unknown')}`",
+        f"- generated_truth_status: `{report.get('generated_truth_status', 'unknown')}`",
     ]
     return "\n".join(lines) + "\n"
 
@@ -10287,6 +10319,188 @@ def render_truth_docs_drift_report_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def build_project_blocker_action_plan(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    action_map = {
+        "external_strength_unproven": {
+            "owner_domain": "training_eval",
+            "closure_surface": "measured_benchmark",
+            "next_action": "Run real chess/main-model training and publish measured benchmark evidence.",
+            "required_evidence": ["trained checkpoints", "benchmark raw outputs", "compare report"],
+        },
+        "real_training_outputs_pending": {
+            "owner_domain": "training_ops",
+            "closure_surface": "real_training_run",
+            "next_action": "Execute the planned 24h and 45K training runs on target hardware.",
+            "required_evidence": ["training logs", "training report", "token/compute accounting"],
+        },
+        "trained_artifact_truth_pending": {
+            "owner_domain": "artifact_governance",
+            "closure_surface": "trained_artifact_registry",
+            "next_action": "Lock final weights and best/latest checkpoint truth against the actual trained run.",
+            "required_evidence": ["final weights truth", "best/latest checkpoint truth", "artifact registry"],
+        },
+        "benchmark_evidence_pending": {
+            "owner_domain": "evaluation",
+            "closure_surface": "benchmark_closure",
+            "next_action": "Preserve raw benchmark outputs and publish compare/summary/manifest artifacts.",
+            "required_evidence": ["benchmark raw outputs", "benchmark compare report", "locked benchmark manifest"],
+        },
+        "export_device_packaging_pending": {
+            "owner_domain": "device_release",
+            "closure_surface": "device_validation",
+            "next_action": "Validate export, package, installer, and real target device behavior.",
+            "required_evidence": ["export parity report", "device validation", "installer validation"],
+        },
+        "external_reproduction_pending": {
+            "owner_domain": "external_validation",
+            "closure_surface": "third_party_repro",
+            "next_action": "Get an external rerun or independent reproduction note.",
+            "required_evidence": ["external repro note", "reproduction logs"],
+        },
+        "security_legal_pilot_pending": {
+            "owner_domain": "security_legal_ops",
+            "closure_surface": "external_signoff",
+            "next_action": "Complete legal, security, and pilot reviews outside the local repo boundary.",
+            "required_evidence": ["security review", "legal review", "pilot sign-off"],
+        },
+        "operator_handoff_dr_pending": {
+            "owner_domain": "ops_handoff",
+            "closure_surface": "operational_rehearsal",
+            "next_action": "Run operator handoff, DR restore, backup retention, and blind handoff rehearsals.",
+            "required_evidence": ["operator rehearsal", "DR evidence", "blind handoff report"],
+        },
+        "rc_golden_final_release_pending": {
+            "owner_domain": "release_governance",
+            "closure_surface": "release_decision",
+            "next_action": "Cut RC, then golden release, then final release after all external gates are closed.",
+            "required_evidence": ["RC package", "golden release bundle", "final release note"],
+        },
+        "management_closure_pending": {
+            "owner_domain": "management",
+            "closure_surface": "closure_decision",
+            "next_action": "Record final core-complete and maintenance posture decisions.",
+            "required_evidence": ["closure decision record", "management sign-off"],
+        },
+    }
+    blocker_report = _read_json_if_exists(layout.reports_dir / "project_remaining_real_blockers.json")
+    items = []
+    for blocker in blocker_report.get("items", []):
+        label = str(blocker.get("label", ""))
+        mapped = action_map.get(label, {})
+        items.append(
+            {
+                "label": label,
+                "severity": blocker.get("severity", "unknown"),
+                "owner_domain": mapped.get("owner_domain", "unknown"),
+                "closure_surface": mapped.get("closure_surface", "unknown"),
+                "next_action": mapped.get("next_action", "Define the next closure step explicitly."),
+                "required_evidence": mapped.get("required_evidence", []),
+            }
+        )
+    return {
+        "schema": "chess_project_blocker_action_plan_v1",
+        "run_id": payload.get("run_id", ""),
+        "item_count": len(items),
+        "items": items,
+    }
+
+
+def render_project_blocker_action_plan_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Blocker Action Plan",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- item_count: `{report.get('item_count', 0)}`",
+        "",
+        "## Actions",
+    ]
+    for item in report.get("items", []):
+        evidence = ", ".join(f"`{entry}`" for entry in item.get("required_evidence", []))
+        lines.append(
+            f"- `{item.get('label', '')}`: severity=`{item.get('severity', 'unknown')}` "
+            f"owner_domain=`{item.get('owner_domain', 'unknown')}` closure_surface=`{item.get('closure_surface', 'unknown')}` "
+            f"next_action={item.get('next_action', '')} required_evidence={evidence}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    repo_summary = _read_json_if_exists(layout.reports_dir / "repo_side_completion_summary.json")
+    master = _read_json_if_exists(layout.reports_dir / "master_closure_table.json")
+    aggregated = _read_json_if_exists(layout.reports_dir / "aggregated_master_table.json")
+    blockers = _read_json_if_exists(layout.reports_dir / "remaining_core_blockers.json")
+    real_remaining = _read_json_if_exists(layout.reports_dir / "real_remaining_core_work.json")
+    closure_gap = _read_json_if_exists(layout.reports_dir / "closure_gap_summary.json")
+    truth_docs_drift = _read_json_if_exists(layout.reports_dir / "truth_docs_drift_report.json")
+    project_master = _read_json_if_exists(layout.reports_dir / "project_master_truth_reference.json")
+    project_blockers = _read_json_if_exists(layout.reports_dir / "project_remaining_real_blockers.json")
+    project_blocker_action_plan = _read_json_if_exists(layout.reports_dir / "project_blocker_action_plan.json")
+
+    checks = [
+        {
+            "label": "master_row_count_matches_aggregated",
+            "passed": int(master.get("row_count", 0)) == int(aggregated.get("row_count", -1)) and int(master.get("row_count", 0)) > 0,
+        },
+        {
+            "label": "remaining_blockers_match_real_remaining",
+            "passed": int(blockers.get("blocker_count", 0)) == int(real_remaining.get("item_count", -1)),
+        },
+        {
+            "label": "repo_summary_matches_truth_matrix",
+            "passed": (
+                int(repo_summary.get("required_count", -1)) == int(truth.get("required_count", -2))
+                and int(repo_summary.get("present_required_count", -1)) == int(truth.get("present_required_count", -2))
+            ),
+        },
+        {
+            "label": "closure_gap_matches_truth_docs_status",
+            "passed": str(closure_gap.get("truth_docs_status", "")) == str(truth_docs_drift.get("status", "")),
+        },
+        {
+            "label": "project_reference_and_blockers_present",
+            "passed": int(project_master.get("row_count", 0)) > 0 and int(project_blockers.get("item_count", 0)) > 0,
+        },
+        {
+            "label": "project_blocker_action_plan_complete",
+            "passed": int(project_blocker_action_plan.get("item_count", 0)) == int(project_blockers.get("item_count", -1)),
+        },
+        {
+            "label": "truth_docs_are_in_sync",
+            "passed": truth_docs_drift.get("status") == "in_sync",
+        },
+    ]
+    failed = [item["label"] for item in checks if not item["passed"]]
+    return {
+        "schema": "chess_generated_truth_consistency_report_v1",
+        "run_id": truth.get("run_id", ""),
+        "check_count": len(checks),
+        "checks": checks,
+        "failed_checks": failed,
+        "status": "consistent" if not failed else "inconsistent",
+    }
+
+
+def render_generated_truth_consistency_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Generated Truth Consistency Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- check_count: `{report.get('check_count', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Checks",
+    ]
+    for item in report.get("checks", []):
+        lines.append(f"- `{item.get('label', '')}`: passed=`{item.get('passed', False)}`")
+    lines.append("")
+    lines.append("## Failed Checks")
+    for label in report.get("failed_checks", []):
+        lines.append(f"- `{label}`")
+    return "\n".join(lines) + "\n"
+
+
 def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
     run_contract = build_run_contract(layout, payload)
     atomic_json(layout.reports_dir / "run_contract.json", run_contract)
@@ -10450,16 +10664,29 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     project_remaining_real_blockers = build_project_remaining_real_blockers(layout, payload)
     atomic_json(layout.reports_dir / "project_remaining_real_blockers.json", project_remaining_real_blockers)
     atomic_write_text(layout.reports_dir / "project_remaining_real_blockers.md", render_project_remaining_real_blockers_md(project_remaining_real_blockers))
+    project_blocker_action_plan = build_project_blocker_action_plan(layout, payload)
+    atomic_json(layout.reports_dir / "project_blocker_action_plan.json", project_blocker_action_plan)
+    atomic_write_text(layout.reports_dir / "project_blocker_action_plan.md", render_project_blocker_action_plan_md(project_blocker_action_plan))
     truth_docs_index = build_truth_docs_index(layout, payload)
     atomic_json(layout.reports_dir / "truth_docs_index.json", truth_docs_index)
     atomic_write_text(layout.reports_dir / "truth_docs_index.md", render_truth_docs_index_md(truth_docs_index))
     truth_docs_drift_report = build_truth_docs_drift_report(layout, payload)
     atomic_json(layout.reports_dir / "truth_docs_drift_report.json", truth_docs_drift_report)
     atomic_write_text(layout.reports_dir / "truth_docs_drift_report.md", render_truth_docs_drift_report_md(truth_docs_drift_report))
+    generated_truth_consistency_report = build_generated_truth_consistency_report(layout, payload)
+    atomic_json(layout.reports_dir / "generated_truth_consistency_report.json", generated_truth_consistency_report)
+    atomic_write_text(layout.reports_dir / "generated_truth_consistency_report.md", render_generated_truth_consistency_report_md(generated_truth_consistency_report))
 
 
 def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
     _write_release_evidence_reports_once(layout, payload)
+    truth = build_artifact_truth_matrix(layout, payload)
+    atomic_json(layout.reports_dir / "artifact_truth_matrix.json", truth)
+    atomic_write_text(layout.reports_dir / "artifact_truth_matrix.md", render_artifact_truth_matrix_md(truth))
+    _write_release_evidence_reports_once(layout, payload)
+    # The release/evidence chain is self-referential: later generated summaries can
+    # change gate readiness, so we refresh the truth matrix once more and run a final
+    # pass to converge the derived reports onto the last consistent state.
     truth = build_artifact_truth_matrix(layout, payload)
     atomic_json(layout.reports_dir / "artifact_truth_matrix.json", truth)
     atomic_write_text(layout.reports_dir / "artifact_truth_matrix.md", render_artifact_truth_matrix_md(truth))

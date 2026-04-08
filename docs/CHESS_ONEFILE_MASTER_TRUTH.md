@@ -28,6 +28,7 @@ It is intentionally strict about the difference between:
 | `trained_artifact_truth` | `true` | `true` | Final weights, best/latest checkpoint truth, and trained artifact registry still need validated trained outputs. |
 | `management_closure` | `true` | `true` | Core-complete, research separation, maintenance-only, and final closure decisions still need management sign-off. |
 | `truth_docs_alignment` | `true` | `false` | Canonical chess/project truth docs and generated truth reports are currently synchronized. |
+| `generated_truth_consistency` | `true` | `false` | Generated summary reports and blocker/action-plan layers are currently internally consistent. |
 
 ## Repo-Side Complete Surfaces
 
