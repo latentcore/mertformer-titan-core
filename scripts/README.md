@@ -25,7 +25,9 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Post-run chess analysis surfaces can now be toggled: `selfplay_eval_enabled`, `tournament_eval_enabled`, and `replay_buffer_enabled`.
 - Mirror anti-drift evidence is written to `reports/mirror_parity_report.json` during chess runs.
 - Feature-bundle evidence is written to `reports/feature_flag_report.json` and `reports/feature_flag_report.md` during chess runs.
+- Closure manifests are written to `reports/run_status_manifest.json`, `reports/postrun_analysis_manifest.json`, and `reports/artifact_truth_matrix.json`.
 - Runbook/checklist support for the 24h 4060 all-on path now lives under `runbooks/` and `checklists/`.
+- Canonical repo-side contract surfaces now also include `configs/`, `releases/`, `knowledge/`, and `evidence/`.
 - Chess runtime observability is contract-backed: `logs/run_log.jsonl`, `reports/logging_contract.json`, and `reports/observability_report.json`.
 - Fatal runtime failures are expected to appear both in `logs/run_log.jsonl` (`fatal_exception`) and in the Desktop-side `*_FAILED_*.json` artifact.
 - The Windows builder/export flow no longer embeds `MERTFORMER_CHESS_ARCHIVE_PASSWORD` into the compiled launcher; provide it on the target machine before running the final EXE when encrypted output is required.

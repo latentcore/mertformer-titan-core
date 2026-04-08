@@ -802,6 +802,66 @@ def test_play_inference_mode_tournament_runs_with_stub_model(tmp_path: Path) -> 
     assert 'search_assisted' in report['players']
 
 
+def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path) -> None:
+    cfg = {
+        **onefile.RUN_CONFIG,
+        'artifact_root': str(tmp_path),
+        'mode': 'train',
+        'profile': 'strength_4060_24h_all_on_experimental',
+        'feature_bundle': 'all_on_experimental',
+    }
+    layout = onefile.make_layout(cfg)
+    required_reports = [
+        'resolved_config.json',
+        'run_summary.json',
+        'run_summary.md',
+        'data_card.json',
+        'model_card.json',
+        'eval_card.json',
+        'benchmark_protocol.json',
+        'feature_flag_report.json',
+        'feature_flag_report.md',
+        'observability_report.json',
+        'artifact_manifest_with_hashes.json',
+        'selfplay_report.json',
+        'inference_mode_tournament_report.json',
+        'replay_buffer_manifest.json',
+    ]
+    for name in required_reports:
+        path = layout.reports_dir / name
+        if path.suffix == '.md':
+            path.write_text(f'# {name}\n', encoding='utf-8')
+        else:
+            path.write_text(json.dumps({'ok': True}), encoding='utf-8')
+    (layout.logs_dir / 'run_log.jsonl').write_text('', encoding='utf-8')
+    payload = {
+        'run_id': 'pytest-run',
+        'script_version': onefile.SCRIPT_VERSION,
+        'config': cfg,
+        'execution_status': 'completed',
+        'evaluation_status': 'completed',
+        'rating_claim_status': 'internal_only',
+        'selfplay_report': {'status': 'completed', 'games_played': 1, 'average_plies': 8.0},
+        'tournament_report': {'status': 'completed', 'games_played': 2, 'players': {'search_assisted': {}, 'pure_policy': {}}},
+        'replay_buffer_report': {'status': 'completed', 'positions': 12, 'games_used': 1, 'truncated': False},
+        'curated_position_suite': {'status': 'completed', 'exact_hit_rate': 0.5, 'top3_hit_rate': 1.0},
+        'stockfish': {'status': 'completed', 'games_total': 4, 'elo_proxy_internal': 1820.0},
+        'compile_report': {'status': 'completed'},
+        'forward_verify': {'status': 'completed'},
+        'holdout_validation': {'status': 'completed'},
+        'locked_test': {'status': 'completed'},
+        'legality_report': {'status': 'completed'},
+        'bundle': {},
+    }
+    onefile.write_closure_manifests(layout, payload)
+    truth = json.loads((layout.reports_dir / 'artifact_truth_matrix.json').read_text(encoding='utf-8'))
+    entries = {entry['label']: entry for entry in truth['entries']}
+    assert entries['run_status_manifest']['exists'] is True
+    assert entries['postrun_analysis_manifest']['exists'] is True
+    assert entries['artifact_truth_matrix']['exists'] is True
+    assert truth['present_required_count'] == truth['required_count']
+
+
 def test_main_logs_fatal_exception_to_run_log(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr(onefile, 'detect_desktop_dir', lambda: tmp_path)
 

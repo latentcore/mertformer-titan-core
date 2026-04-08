@@ -25,7 +25,9 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - Koşu-sonrası satranç analiz yüzeyleri artık feature flag ile açılıp kapanabilir: `selfplay_eval_enabled`, `tournament_eval_enabled`, `replay_buffer_enabled`.
 - Mirror anti-drift kanıtı satranç koşularında `reports/mirror_parity_report.json` olarak yazılır.
 - Feature-bundle kanıtı satranç koşularında `reports/feature_flag_report.json` ve `reports/feature_flag_report.md` olarak yazılır.
+- Closure manifest yüzeyi artık `reports/run_status_manifest.json`, `reports/postrun_analysis_manifest.json` ve `reports/artifact_truth_matrix.json` dosyalarını üretir.
 - 24 saatlik 4060 all-on yolu için runbook/checklist dokümanları artık `runbooks/` ve `checklists/` altındadır.
+- Kanonik repo-side contract yüzeyleri artık `configs/`, `releases/`, `knowledge/` ve `evidence/` klasörlerini de içerir.
 - Satranç runtime observability sözleşmesi artık nettir: `logs/run_log.jsonl`, `reports/logging_contract.json`, `reports/observability_report.json`.
 - Fatal runtime hatalarının hem `logs/run_log.jsonl` içindeki `fatal_exception` event'inde hem de Desktop tarafındaki `*_FAILED_*.json` artefaktında görünmesi beklenir.
 - Windows builder/export akışı artık `MERTFORMER_CHESS_ARCHIVE_PASSWORD` değerini derlenmiş launcher içine gömmez; şifreli çıktı gerekiyorsa final EXE çalıştırılmadan önce hedef makinede ortam değişkeni olarak verin.

@@ -7691,6 +7691,205 @@ def build_artifact_manifest(layout: ArtifactLayout) -> Dict[str, Any]:
     return manifest
 
 
+def build_run_status_manifest(payload: Dict[str, Any]) -> Dict[str, Any]:
+    config = dict(payload.get("config", {}))
+    return {
+        "schema": "chess_run_status_manifest_v1",
+        "script_version": payload.get("script_version", SCRIPT_VERSION),
+        "run_id": payload.get("run_id", ""),
+        "mode": config.get("mode", ""),
+        "profile": config.get("profile", ""),
+        "baseline": config.get("baseline", ""),
+        "feature_bundle": config.get("feature_bundle", "default"),
+        "execution_status": payload.get("execution_status", "unknown"),
+        "evaluation_status": payload.get("evaluation_status", "unknown"),
+        "rating_claim_status": payload.get("rating_claim_status", "unknown"),
+        "best_checkpoint": payload.get("best_checkpoint", ""),
+        "latest_checkpoint": payload.get("latest_checkpoint", ""),
+        "bundle": payload.get("bundle", {}),
+        "status_surfaces": {
+            "compile_report": payload.get("compile_report", {}).get("status", payload.get("compile_report", {}).get("mode", "unknown")),
+            "forward_verify": payload.get("forward_verify", {}).get("status", "unknown"),
+            "holdout_validation": payload.get("holdout_validation", {}).get("status", "completed"),
+            "locked_test": payload.get("locked_test", {}).get("status", "completed"),
+            "legality_report": payload.get("legality_report", {}).get("status", "completed"),
+            "stockfish": payload.get("stockfish", {}).get("status", "unknown"),
+            "curated_position_suite": payload.get("curated_position_suite", {}).get("status", "unknown"),
+            "selfplay_report": payload.get("selfplay_report", {}).get("status", "unknown"),
+            "tournament_report": payload.get("tournament_report", {}).get("status", "unknown"),
+            "replay_buffer_report": payload.get("replay_buffer_report", {}).get("status", "unknown"),
+        },
+    }
+
+
+def render_run_status_manifest_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Run Status Manifest",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- mode: `{report.get('mode', '')}`",
+        f"- profile: `{report.get('profile', '')}`",
+        f"- baseline: `{report.get('baseline', '')}`",
+        f"- feature_bundle: `{report.get('feature_bundle', 'default')}`",
+        f"- execution_status: `{report.get('execution_status', 'unknown')}`",
+        f"- evaluation_status: `{report.get('evaluation_status', 'unknown')}`",
+        f"- rating_claim_status: `{report.get('rating_claim_status', 'unknown')}`",
+        "",
+        "## Status Surfaces",
+    ]
+    for name, status in sorted(report.get("status_surfaces", {}).items()):
+        lines.append(f"- `{name}`: `{status}`")
+    return "\n".join(lines) + "\n"
+
+
+def build_postrun_analysis_manifest(payload: Dict[str, Any]) -> Dict[str, Any]:
+    selfplay_report = dict(payload.get("selfplay_report", {}))
+    tournament_report = dict(payload.get("tournament_report", {}))
+    replay_buffer_report = dict(payload.get("replay_buffer_report", {}))
+    return {
+        "schema": "chess_postrun_analysis_manifest_v1",
+        "selfplay": {
+            "status": selfplay_report.get("status", "unknown"),
+            "games_played": int(selfplay_report.get("games_played", 0)),
+            "average_plies": float(selfplay_report.get("average_plies", 0.0)),
+        },
+        "tournament": {
+            "status": tournament_report.get("status", "unknown"),
+            "games_played": int(tournament_report.get("games_played", 0)),
+            "players": tournament_report.get("players", {}),
+        },
+        "replay_buffer": {
+            "status": replay_buffer_report.get("status", "unknown"),
+            "positions": int(replay_buffer_report.get("positions", 0)),
+            "games_used": int(replay_buffer_report.get("games_used", 0)),
+            "truncated": bool(replay_buffer_report.get("truncated", False)),
+        },
+        "curated_position_suite": {
+            "status": payload.get("curated_position_suite", {}).get("status", "unknown"),
+            "exact_hit_rate": float(payload.get("curated_position_suite", {}).get("exact_hit_rate", 0.0)),
+            "top3_hit_rate": float(payload.get("curated_position_suite", {}).get("top3_hit_rate", 0.0)),
+        },
+        "stockfish": {
+            "status": payload.get("stockfish", {}).get("status", "unknown"),
+            "games_total": int(payload.get("stockfish", {}).get("games_total", 0)),
+            "elo_proxy_internal": payload.get("stockfish", {}).get("elo_proxy_internal"),
+        },
+    }
+
+
+def render_postrun_analysis_manifest_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Post-Run Analysis Manifest",
+        "",
+        f"- selfplay_status: `{report.get('selfplay', {}).get('status', 'unknown')}`",
+        f"- tournament_status: `{report.get('tournament', {}).get('status', 'unknown')}`",
+        f"- replay_buffer_status: `{report.get('replay_buffer', {}).get('status', 'unknown')}`",
+        f"- curated_suite_status: `{report.get('curated_position_suite', {}).get('status', 'unknown')}`",
+        f"- stockfish_status: `{report.get('stockfish', {}).get('status', 'unknown')}`",
+        "",
+        "## Counts",
+        f"- selfplay_games_played: `{report.get('selfplay', {}).get('games_played', 0)}`",
+        f"- tournament_games_played: `{report.get('tournament', {}).get('games_played', 0)}`",
+        f"- replay_buffer_positions: `{report.get('replay_buffer', {}).get('positions', 0)}`",
+        f"- stockfish_games_total: `{report.get('stockfish', {}).get('games_total', 0)}`",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    reports = layout.reports_dir
+    entries: List[Dict[str, Any]] = []
+
+    def add_entry(label: str, path: Path, *, required: bool, kind: str) -> None:
+        entries.append(
+            {
+                "label": label,
+                "kind": kind,
+                "required": bool(required),
+                "path": str(path),
+                "exists": path.exists(),
+            }
+        )
+
+    for label, filename in (
+        ("resolved_config", "resolved_config.json"),
+        ("run_summary_json", "run_summary.json"),
+        ("run_summary_md", "run_summary.md"),
+        ("data_card", "data_card.json"),
+        ("model_card", "model_card.json"),
+        ("eval_card", "eval_card.json"),
+        ("benchmark_protocol", "benchmark_protocol.json"),
+        ("feature_flag_report_json", "feature_flag_report.json"),
+        ("feature_flag_report_md", "feature_flag_report.md"),
+        ("observability_report", "observability_report.json"),
+        ("artifact_manifest", "artifact_manifest_with_hashes.json"),
+        ("run_status_manifest", "run_status_manifest.json"),
+        ("postrun_analysis_manifest", "postrun_analysis_manifest.json"),
+        ("artifact_truth_matrix", "artifact_truth_matrix.json"),
+        ("selfplay_report", "selfplay_report.json"),
+        ("tournament_report", "inference_mode_tournament_report.json"),
+        ("replay_buffer_manifest", "replay_buffer_manifest.json"),
+    ):
+        add_entry(label, reports / filename, required=True, kind="report")
+
+    add_entry("run_log", layout.logs_dir / "run_log.jsonl", required=True, kind="log")
+    best_checkpoint = str(payload.get("best_checkpoint", "")).strip()
+    latest_checkpoint = str(payload.get("latest_checkpoint", "")).strip()
+    if best_checkpoint:
+        add_entry("best_checkpoint", Path(best_checkpoint), required=False, kind="checkpoint")
+    if latest_checkpoint and latest_checkpoint != best_checkpoint:
+        add_entry("latest_checkpoint", Path(latest_checkpoint), required=False, kind="checkpoint")
+    bundle = dict(payload.get("bundle", {}))
+    zip_path = str(bundle.get("zip_path", "")).strip()
+    sha_path = str(bundle.get("sha256_path", "")).strip()
+    if zip_path:
+        add_entry("bundle_zip", Path(zip_path), required=True, kind="bundle")
+    if sha_path:
+        add_entry("bundle_sha", Path(sha_path), required=False, kind="bundle")
+    return {
+        "schema": "chess_artifact_truth_matrix_v1",
+        "run_id": payload.get("run_id", ""),
+        "required_count": sum(1 for entry in entries if entry["required"]),
+        "present_required_count": sum(1 for entry in entries if entry["required"] and entry["exists"]),
+        "entries": entries,
+    }
+
+
+def render_artifact_truth_matrix_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Artifact Truth Matrix",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- required_count: `{report.get('required_count', 0)}`",
+        f"- present_required_count: `{report.get('present_required_count', 0)}`",
+        "",
+        "## Entries",
+    ]
+    for entry in report.get("entries", []):
+        lines.append(
+            f"- `{entry.get('label', '')}`: exists=`{entry.get('exists', False)}` "
+            f"required=`{entry.get('required', False)}` kind=`{entry.get('kind', '')}` path=`{entry.get('path', '')}`"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def write_closure_manifests(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
+    run_status = build_run_status_manifest(payload)
+    atomic_json(layout.reports_dir / "run_status_manifest.json", run_status)
+    atomic_write_text(layout.reports_dir / "run_status_manifest.md", render_run_status_manifest_md(run_status))
+    postrun = build_postrun_analysis_manifest(payload)
+    atomic_json(layout.reports_dir / "postrun_analysis_manifest.json", postrun)
+    atomic_write_text(layout.reports_dir / "postrun_analysis_manifest.md", render_postrun_analysis_manifest_md(postrun))
+    # Emit the upstream closure manifests first so the truth matrix can account for
+    # them, then rewrite once so the matrix also records its own JSON artifact.
+    truth = build_artifact_truth_matrix(layout, payload)
+    atomic_json(layout.reports_dir / "artifact_truth_matrix.json", truth)
+    atomic_write_text(layout.reports_dir / "artifact_truth_matrix.md", render_artifact_truth_matrix_md(truth))
+    truth = build_artifact_truth_matrix(layout, payload)
+    atomic_json(layout.reports_dir / "artifact_truth_matrix.json", truth)
+    atomic_write_text(layout.reports_dir / "artifact_truth_matrix.md", render_artifact_truth_matrix_md(truth))
+
+
 def resolve_archive_password(cfg: Dict[str, Any]) -> str:
     env_name = str(cfg.get("archive_password_env", DEFAULT_ARCHIVE_PASSWORD_ENV)).strip() or DEFAULT_ARCHIVE_PASSWORD_ENV
     return os.environ.get(env_name, "")
@@ -7962,6 +8161,7 @@ def package_existing_run(
     atomic_write_text(layout.reports_dir / "feature_flag_report.md", render_feature_flag_report_md(payload["feature_flags"]))
     atomic_json(layout.reports_dir / "logging_contract.json", logger.contract())
     atomic_json(layout.reports_dir / "observability_report.json", logger.observability_report())
+    write_closure_manifests(layout, payload)
     logger.write("package_only_complete", {"checkpoint": str(cfg["resume_from"]), **bundle})
     cleanup_after_bundle_if_needed(cfg, layout, logger)
     return payload
@@ -8106,6 +8306,7 @@ def run_pipeline(
         payload["logging"] = logger.observability_report()
         atomic_json(layout.reports_dir / "run_summary.json", payload)
         atomic_write_text(layout.reports_dir / "run_summary.md", render_run_summary_md(payload))
+        write_closure_manifests(layout, payload)
         logger.write("run_complete", {"execution_status": payload["execution_status"], "rating_claim_status": payload["rating_claim_status"], **bundle})
         cleanup_after_bundle_if_needed(cfg, layout, logger)
         return payload
@@ -8322,6 +8523,7 @@ def run_pipeline(
     payload["logging"] = logger.observability_report()
     atomic_json(layout.reports_dir / "run_summary.json", payload)
     atomic_write_text(layout.reports_dir / "run_summary.md", render_run_summary_md(payload))
+    write_closure_manifests(layout, payload)
     logger.write("run_complete", {"execution_status": payload["execution_status"], "rating_claim_status": payload["rating_claim_status"], **bundle})
     cleanup_after_bundle_if_needed(cfg, layout, logger)
     return payload

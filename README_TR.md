@@ -63,6 +63,12 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 - `reports/known_limits_v1.md`, ölçülmüş gerçeği henüz üretilmemiş trained kanıtlardan ayırır.
 - `reports/support_maintenance_policy.md`, `reports/quality_gate_matrix.md` ve `reports/test_verification_matrix.md` bakım ve doğrulama kontratını tanımlar.
 - `reports/adr_index.md`, güncel mimari ve governance karar zincirini indeksler.
+- `configs/`, `releases/`, `knowledge/` ve `evidence/` klasörleri artık isimli chess profil kontratları, release beklentileri, glossary terimleri ve evidence policy için kalıcı repo-side contract yüzeyi taşır.
+
+### Chess Onefile Closure Artefaktları
+- `reports/run_status_manifest.json`, bitmiş bir chess onefile koşusunun kompakt son durum özetini verir.
+- `reports/postrun_analysis_manifest.json`, curated suite, stockfish, self-play, tournament ve replay-buffer yüzeylerini özetler.
+- `reports/artifact_truth_matrix.json`, beklenen koşu artefaktlarını ve gerçekten var olup olmadıklarını listeler.
 
 
 ![MertFormer Titan Header](assets/header.png)

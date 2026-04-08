@@ -63,6 +63,12 @@ This repository includes a decision-complete, single-pass closure flow for engin
 - `reports/known_limits_v1.md` keeps measured truth separate from absent trained evidence.
 - `reports/support_maintenance_policy.md`, `reports/quality_gate_matrix.md`, and `reports/test_verification_matrix.md` define the maintenance and verification contract.
 - `reports/adr_index.md` indexes the current architecture and governance decisions.
+- `configs/`, `releases/`, `knowledge/`, and `evidence/` now hold stable repo-side contract surfaces for named chess profiles, release expectations, glossary terms, and evidence policy.
+
+### Chess Onefile Closure Artifacts
+- `reports/run_status_manifest.json` provides the compact end-state snapshot for a finished chess onefile run.
+- `reports/postrun_analysis_manifest.json` summarizes curated suite, stockfish, self-play, tournament, and replay-buffer surfaces.
+- `reports/artifact_truth_matrix.json` lists expected run artifacts and whether they actually exist.
 
 ![MertFormer Titan Header](assets/header.png)
 

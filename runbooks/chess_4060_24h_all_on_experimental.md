@@ -48,6 +48,9 @@ Expect these reports under the run directory:
 - `reports/selfplay_report.json`
 - `reports/inference_mode_tournament_report.json`
 - `reports/replay_buffer_manifest.json`
+- `reports/run_status_manifest.json`
+- `reports/postrun_analysis_manifest.json`
+- `reports/artifact_truth_matrix.json`
 - `logs/run_log.jsonl`
 
 ## Operator Gates

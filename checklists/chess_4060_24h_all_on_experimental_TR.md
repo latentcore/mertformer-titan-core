@@ -13,5 +13,11 @@
 - [ ] `reports/eval_card.json` mevcut
 - [ ] `reports/legal_move_safety.json` mevcut
 - [ ] `reports/observability_report.json` mevcut
+- [ ] `reports/selfplay_report.json` mevcut
+- [ ] `reports/inference_mode_tournament_report.json` mevcut
+- [ ] `reports/replay_buffer_manifest.json` mevcut
+- [ ] `reports/run_status_manifest.json` mevcut
+- [ ] `reports/postrun_analysis_manifest.json` mevcut
+- [ ] `reports/artifact_truth_matrix.json` mevcut
 - [ ] Final checkpoint yolu kaydedildi
 - [ ] Koşu sonrası claim sınırı tekrar gözden geçirildi

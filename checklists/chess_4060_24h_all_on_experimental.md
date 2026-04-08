@@ -16,5 +16,8 @@
 - [ ] `reports/selfplay_report.json` present
 - [ ] `reports/inference_mode_tournament_report.json` present
 - [ ] `reports/replay_buffer_manifest.json` present
+- [ ] `reports/run_status_manifest.json` present
+- [ ] `reports/postrun_analysis_manifest.json` present
+- [ ] `reports/artifact_truth_matrix.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed
