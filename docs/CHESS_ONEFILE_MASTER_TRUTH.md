@@ -28,7 +28,7 @@ It is intentionally strict about the difference between:
 | `trained_artifact_truth` | `true` | `true` | Final weights, best/latest checkpoint truth, and trained artifact registry still need validated trained outputs. |
 | `management_closure` | `true` | `true` | Core-complete, research separation, maintenance-only, and final closure decisions still need management sign-off. |
 | `truth_docs_alignment` | `true` | `false` | Canonical chess/project truth docs and generated truth reports are currently synchronized. |
-| `project_actionability` | `true` | `false` | Project blockers now have an execution order, dependency graph, lane board, phase plan, phase readiness scoreboard, owner accountability matrix, owner work queue, critical path report, owner next-actions summary, ready-now board, unlock-impact report, parallel workset report, phase-exit criteria report, execution-wave report, and evidence-backlog report wired into the repo-side truth chain. |
+| `project_actionability` | `true` | `false` | Project blockers now have an execution order, dependency graph, lane board, phase plan, phase readiness scoreboard, owner accountability matrix, owner work queue, critical path report, owner next-actions summary, ready-now board, unlock-impact report, parallel workset report, phase-exit criteria report, execution-wave report, evidence-backlog report, dependency-bottleneck report, and owner-phase-frontier report wired into the repo-side truth chain. |
 | `generated_truth_consistency` | `true` | `false` | Generated summary reports and blocker/action-plan layers are currently internally consistent. |
 
 ## Repo-Side Complete Surfaces

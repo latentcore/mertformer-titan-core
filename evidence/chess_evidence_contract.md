@@ -82,6 +82,8 @@ A serious chess onefile run should preserve:
 - `reports/project_phase_exit_criteria_report.json`
 - `reports/project_execution_wave_report.json`
 - `reports/project_evidence_backlog_report.json`
+- `reports/project_dependency_bottleneck_report.json`
+- `reports/project_owner_phase_frontier_report.json`
 - `reports/generated_truth_crosscheck_matrix.json`
 - `reports/artifact_manifest_with_hashes.json`
 - `logs/run_log.jsonl`

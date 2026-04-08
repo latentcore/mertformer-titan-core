@@ -81,5 +81,7 @@
 - `project phase exit criteria report`: phase-by-phase summary of which blockers, owners, closure surfaces, and evidence are required before each closure phase can honestly exit.
 - `project execution wave report`: topological wave view of blockers showing which dependency layer each blocker belongs to across the full closure sequence.
 - `project evidence backlog report`: grouped view of still-missing evidence surfaces and which blockers, owners, and closure surfaces depend on each evidence item.
+- `project dependency bottleneck report`: ranked view of which blockers currently create the strongest dependency bottlenecks across the closure graph.
+- `project owner phase frontier report`: per-owner view of the next active phase frontier, including which blockers are next and whether that frontier is ready now or still dependency-blocked.
 - `generated truth consistency report`: explicit check that generated truth summaries agree with each other instead of only existing side by side.
 - `generated truth crosscheck matrix`: extra consistency layer that cross-checks blocker coverage, dependency order, lane coverage, and summary alignment.
