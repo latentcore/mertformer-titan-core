@@ -27,6 +27,7 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - Feature-bundle kanıtı satranç koşularında `reports/feature_flag_report.json` ve `reports/feature_flag_report.md` olarak yazılır.
 - Closure manifest yüzeyi artık `reports/run_status_manifest.json`, `reports/postrun_analysis_manifest.json` ve `reports/artifact_truth_matrix.json` dosyalarını üretir.
 - Release/evidence registry yüzeyi artık `reports/run_contract.json`, `reports/release_snapshot.json`, `reports/evidence_pack_stub.json` ve `reports/final_truth_registry.json` dosyalarını üretir.
+- Ek release-truth artefaktları artık `reports/claim_registry.json`, `reports/known_limits.json`, `reports/support_matrix.json` ve `reports/release_gate_summary.json` dosyalarını üretir.
 - 24 saatlik 4060 all-on yolu için runbook/checklist dokümanları artık `runbooks/` ve `checklists/` altındadır.
 - Kanonik repo-side contract yüzeyleri artık `configs/`, `releases/`, `knowledge/` ve `evidence/` klasörlerini de içerir.
 - Satranç runtime observability sözleşmesi artık nettir: `logs/run_log.jsonl`, `reports/logging_contract.json`, `reports/observability_report.json`.

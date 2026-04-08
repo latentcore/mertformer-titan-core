@@ -834,6 +834,8 @@ def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path)
         else:
             path.write_text(json.dumps({'ok': True}), encoding='utf-8')
     (layout.logs_dir / 'run_log.jsonl').write_text('', encoding='utf-8')
+    layout.final_zip_path.write_bytes(b'zip')
+    layout.final_sha_path.write_text('deadbeef  bundle.zip\n', encoding='utf-8')
     payload = {
         'run_id': 'pytest-run',
         'script_version': onefile.SCRIPT_VERSION,
@@ -859,7 +861,10 @@ def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path)
     assert entries['run_status_manifest']['exists'] is True
     assert entries['postrun_analysis_manifest']['exists'] is True
     assert entries['artifact_truth_matrix']['exists'] is True
-    assert truth['present_required_count'] == truth['required_count']
+    assert entries['run_contract']['exists'] is False
+    assert entries['release_snapshot']['exists'] is False
+    assert entries['evidence_pack_stub']['exists'] is False
+    assert truth['present_required_count'] < truth['required_count']
 
 
 def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) -> None:
@@ -917,10 +922,16 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     }
     onefile.write_closure_manifests(layout, payload)
     onefile.write_release_evidence_reports(layout, payload)
+    truth = json.loads((layout.reports_dir / 'artifact_truth_matrix.json').read_text(encoding='utf-8'))
     run_contract = json.loads((layout.reports_dir / 'run_contract.json').read_text(encoding='utf-8'))
     release_snapshot = json.loads((layout.reports_dir / 'release_snapshot.json').read_text(encoding='utf-8'))
     evidence_pack = json.loads((layout.reports_dir / 'evidence_pack_stub.json').read_text(encoding='utf-8'))
     truth_registry = json.loads((layout.reports_dir / 'final_truth_registry.json').read_text(encoding='utf-8'))
+    claim_registry = json.loads((layout.reports_dir / 'claim_registry.json').read_text(encoding='utf-8'))
+    known_limits = json.loads((layout.reports_dir / 'known_limits.json').read_text(encoding='utf-8'))
+    support_matrix = json.loads((layout.reports_dir / 'support_matrix.json').read_text(encoding='utf-8'))
+    release_gate_summary = json.loads((layout.reports_dir / 'release_gate_summary.json').read_text(encoding='utf-8'))
+    entries = {entry['label']: entry for entry in truth['entries']}
     assert run_contract['schema'] == 'chess_run_contract_v1'
     assert run_contract['feature_bundle'] == 'all_on_experimental'
     assert release_snapshot['schema'] == 'chess_release_snapshot_v1'
@@ -929,6 +940,19 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert evidence_pack['status'] == 'partial_internal_only'
     assert truth_registry['schema'] == 'chess_final_truth_registry_v1'
     assert any(claim['label'] == 'external_strength_claim' for claim in truth_registry['claims'])
+    assert claim_registry['schema'] == 'chess_claim_registry_v1'
+    assert known_limits['schema'] == 'chess_known_limits_v1'
+    assert support_matrix['schema'] == 'chess_support_matrix_v1'
+    assert release_gate_summary['schema'] == 'chess_release_gate_summary_v1'
+    assert entries['run_contract']['exists'] is True
+    assert entries['release_snapshot']['exists'] is True
+    assert entries['evidence_pack_stub']['exists'] is True
+    assert entries['claim_registry']['exists'] is True
+    assert entries['known_limits']['exists'] is True
+    assert entries['support_matrix']['exists'] is True
+    assert entries['release_gate_summary']['exists'] is True
+    assert truth['present_required_count'] == truth['required_count']
+    assert release_gate_summary['overall_external_ready'] is False
 
 
 def test_main_logs_fatal_exception_to_run_log(monkeypatch, tmp_path: Path) -> None:

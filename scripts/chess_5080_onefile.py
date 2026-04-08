@@ -7826,6 +7826,14 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("run_status_manifest", "run_status_manifest.json"),
         ("postrun_analysis_manifest", "postrun_analysis_manifest.json"),
         ("artifact_truth_matrix", "artifact_truth_matrix.json"),
+        ("run_contract", "run_contract.json"),
+        ("release_snapshot", "release_snapshot.json"),
+        ("evidence_pack_stub", "evidence_pack_stub.json"),
+        ("final_truth_registry", "final_truth_registry.json"),
+        ("claim_registry", "claim_registry.json"),
+        ("known_limits", "known_limits.json"),
+        ("support_matrix", "support_matrix.json"),
+        ("release_gate_summary", "release_gate_summary.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
         ("replay_buffer_manifest", "replay_buffer_manifest.json"),
@@ -8190,7 +8198,281 @@ def render_final_truth_registry_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
+def build_claim_registry(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+
+    def evidence_for(*labels: str) -> List[Dict[str, Any]]:
+        items: List[Dict[str, Any]] = []
+        for label in labels:
+            entry = truth_entries.get(label, {})
+            items.append(
+                {
+                    "label": label,
+                    "exists": bool(entry.get("exists", False)),
+                    "path": entry.get("path", ""),
+                }
+            )
+        return items
+
+    claims = [
+        {
+            "label": "runtime_execution",
+            "classification": "measured" if str(payload.get("execution_status", "unknown")) != "failed" else "not_met",
+            "status": payload.get("execution_status", "unknown"),
+            "evidence": evidence_for("run_summary_json", "run_log"),
+        },
+        {
+            "label": "artifact_chain_presence",
+            "classification": "measured" if truth.get("required_count", 0) and truth.get("present_required_count", 0) == truth.get("required_count", 0) else "partial",
+            "status": f"{truth.get('present_required_count', 0)}/{truth.get('required_count', 0)}",
+            "evidence": evidence_for("artifact_truth_matrix", "artifact_manifest"),
+        },
+        {
+            "label": "feature_surface_auditable",
+            "classification": "measured" if truth_entries.get("feature_flag_report_json", {}).get("exists", False) else "not_met",
+            "status": "present" if truth_entries.get("feature_flag_report_json", {}).get("exists", False) else "missing",
+            "evidence": evidence_for("feature_flag_report_json", "run_contract"),
+        },
+        {
+            "label": "stockfish_proxy_benchmark",
+            "classification": "internal_only" if payload.get("stockfish", {}).get("status") == "completed" else "not_run",
+            "status": payload.get("stockfish", {}).get("status", "unknown"),
+            "evidence": evidence_for("release_snapshot"),
+        },
+        {
+            "label": "selfplay_diagnostic",
+            "classification": "internal_only" if payload.get("selfplay_report", {}).get("status") == "completed" else "not_run",
+            "status": payload.get("selfplay_report", {}).get("status", "unknown"),
+            "evidence": evidence_for("selfplay_report"),
+        },
+        {
+            "label": "tournament_diagnostic",
+            "classification": "internal_only" if payload.get("tournament_report", {}).get("status") == "completed" else "not_run",
+            "status": payload.get("tournament_report", {}).get("status", "unknown"),
+            "evidence": evidence_for("tournament_report"),
+        },
+        {
+            "label": "replay_buffer_diagnostic",
+            "classification": "internal_only" if payload.get("replay_buffer_report", {}).get("status") == "completed" else "not_run",
+            "status": payload.get("replay_buffer_report", {}).get("status", "unknown"),
+            "evidence": evidence_for("replay_buffer_manifest"),
+        },
+        {
+            "label": "external_strength_claim",
+            "classification": "not_eligible",
+            "status": "not_proven_by_onefile_artifacts_alone",
+            "evidence": evidence_for("claim_registry", "known_limits", "release_gate_summary"),
+        },
+    ]
+    return {
+        "schema": "chess_claim_registry_v1",
+        "run_id": payload.get("run_id", ""),
+        "claim_count": len(claims),
+        "claims": claims,
+    }
+
+
+def render_claim_registry_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Claim Registry",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- claim_count: `{report.get('claim_count', 0)}`",
+        "",
+        "## Claims",
+    ]
+    for claim in report.get("claims", []):
+        lines.append(
+            f"- `{claim.get('label', '')}`: classification=`{claim.get('classification', 'unknown')}` "
+            f"status=`{claim.get('status', 'unknown')}`"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_known_limits(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    cfg = dict(payload.get("config", {}))
+    limits: List[Dict[str, Any]] = [
+        {
+            "label": "external_strength_unproven",
+            "severity": "high",
+            "status": "active",
+            "detail": "Chess onefile artifacts alone do not prove externally validated chess strength.",
+        },
+        {
+            "label": "diagnostic_surfaces_internal_only",
+            "severity": "medium",
+            "status": "active",
+            "detail": "Self-play, inference-mode tournament, replay buffer, and proxy score surfaces remain internal diagnostics unless separately validated.",
+        },
+        {
+            "label": "release_surface_not_external_grade",
+            "severity": "high",
+            "status": "active",
+            "detail": "Internal release-surface readiness is not the same thing as external release-grade verification.",
+        },
+    ]
+    if cfg.get("mode") == "verify":
+        limits.append(
+            {
+                "label": "verify_mode_runtime_only",
+                "severity": "medium",
+                "status": "active",
+                "detail": "Verify mode proves runtime integrity and artifact packaging, not strength or benchmark quality.",
+            }
+        )
+    if bool(payload.get("notes", {}).get("package_only", False)):
+        limits.append(
+            {
+                "label": "package_only_repackaging",
+                "severity": "medium",
+                "status": "active",
+                "detail": "Package mode repackages an existing run and does not create fresh training or evaluation evidence.",
+            }
+        )
+    if payload.get("stockfish", {}).get("status") != "completed":
+        limits.append(
+            {
+                "label": "stockfish_benchmark_missing_or_not_run",
+                "severity": "medium",
+                "status": "active",
+                "detail": "Stockfish benchmark evidence is absent or incomplete for this exact run.",
+            }
+        )
+    return {
+        "schema": "chess_known_limits_v1",
+        "run_id": payload.get("run_id", ""),
+        "limit_count": len(limits),
+        "limits": limits,
+    }
+
+
+def render_known_limits_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Known Limits",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- limit_count: `{report.get('limit_count', 0)}`",
+        "",
+        "## Limits",
+    ]
+    for item in report.get("limits", []):
+        lines.append(
+            f"- `{item.get('label', '')}`: severity=`{item.get('severity', 'unknown')}` "
+            f"status=`{item.get('status', 'unknown')}` detail={item.get('detail', '')}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_support_matrix(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    cfg = dict(payload.get("config", {}))
+    profiles = [
+        {"label": "production_5080", "support_level": "baseline_supported", "active": cfg.get("profile") == "production_5080"},
+        {"label": "strength_4060_24h_all_on_experimental", "support_level": "experimental", "active": cfg.get("profile") == "strength_4060_24h_all_on_experimental"},
+        {"label": "strength_4060_24h_omni_max", "support_level": "experimental_high_risk", "active": cfg.get("profile") == "strength_4060_24h_omni_max"},
+    ]
+    modes = [
+        {"label": "verify", "support_level": "supported", "active": cfg.get("mode") == "verify"},
+        {"label": "arena", "support_level": "supported", "active": cfg.get("mode") == "arena"},
+        {"label": "train", "support_level": "supported", "active": cfg.get("mode") == "train"},
+        {"label": "resume", "support_level": "supported", "active": cfg.get("mode") == "resume"},
+        {"label": "benchmark", "support_level": "supported", "active": cfg.get("mode") == "benchmark"},
+        {"label": "package", "support_level": "supported", "active": cfg.get("mode") == "package"},
+    ]
+    artifact_surfaces = [
+        {"label": "closure_manifests", "support_level": "supported", "present": truth_entries.get("run_status_manifest", {}).get("exists", False)},
+        {"label": "release_evidence_registry", "support_level": "supported", "present": truth_entries.get("run_contract", {}).get("exists", False)},
+        {"label": "diagnostic_selfplay", "support_level": "flagged_internal", "present": truth_entries.get("selfplay_report", {}).get("exists", False)},
+        {"label": "diagnostic_tournament", "support_level": "flagged_internal", "present": truth_entries.get("tournament_report", {}).get("exists", False)},
+        {"label": "diagnostic_replay_buffer", "support_level": "flagged_internal", "present": truth_entries.get("replay_buffer_manifest", {}).get("exists", False)},
+    ]
+    return {
+        "schema": "chess_support_matrix_v1",
+        "run_id": payload.get("run_id", ""),
+        "profiles": profiles,
+        "modes": modes,
+        "artifact_surfaces": artifact_surfaces,
+    }
+
+
+def render_support_matrix_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Support Matrix",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        "",
+        "## Profiles",
+    ]
+    for item in report.get("profiles", []):
+        lines.append(
+            f"- `{item.get('label', '')}`: support_level=`{item.get('support_level', 'unknown')}` active=`{item.get('active', False)}`"
+        )
+    lines.append("")
+    lines.append("## Modes")
+    for item in report.get("modes", []):
+        lines.append(
+            f"- `{item.get('label', '')}`: support_level=`{item.get('support_level', 'unknown')}` active=`{item.get('active', False)}`"
+        )
+    lines.append("")
+    lines.append("## Artifact Surfaces")
+    for item in report.get("artifact_surfaces", []):
+        lines.append(
+            f"- `{item.get('label', '')}`: support_level=`{item.get('support_level', 'unknown')}` present=`{item.get('present', False)}`"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    notes = dict(payload.get("notes", {}))
+    bundle = dict(payload.get("bundle", {}))
+    core_artifacts_present = truth.get("required_count", 0) > 0 and truth.get("present_required_count", 0) == truth.get("required_count", 0)
+    checkpoint_or_provenance = bool(str(payload.get("best_checkpoint", "")).strip() or str(payload.get("latest_checkpoint", "")).strip() or notes.get("package_only", False))
+    bundle_present = bool(truth_entries.get("bundle_zip", {}).get("exists", False) or str(bundle.get("zip_path", "")).strip())
+    run_log_present = bool(truth_entries.get("run_log", {}).get("exists", False))
+    stockfish_completed = payload.get("stockfish", {}).get("status") == "completed"
+    internal_claim_boundary_preserved = payload.get("rating_claim_status", "") != RatingClaimStatus.TARGET_MET_EXTERNAL.value
+    gates = [
+        {"label": "core_artifacts_present", "passed": core_artifacts_present},
+        {"label": "checkpoint_or_package_provenance", "passed": checkpoint_or_provenance},
+        {"label": "bundle_present", "passed": bundle_present},
+        {"label": "run_log_present", "passed": run_log_present},
+        {"label": "stockfish_completed", "passed": stockfish_completed},
+        {"label": "internal_claim_boundary_preserved", "passed": internal_claim_boundary_preserved},
+    ]
+    overall_internal_ready = all(gate["passed"] for gate in gates if gate["label"] != "stockfish_completed")
+    overall_external_ready = all(gate["passed"] for gate in gates) and payload.get("rating_claim_status") == RatingClaimStatus.TARGET_MET_EXTERNAL.value
+    return {
+        "schema": "chess_release_gate_summary_v1",
+        "run_id": payload.get("run_id", ""),
+        "gate_count": len(gates),
+        "gates": gates,
+        "overall_internal_ready": overall_internal_ready,
+        "overall_external_ready": overall_external_ready,
+    }
+
+
+def render_release_gate_summary_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Release Gate Summary",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- gate_count: `{report.get('gate_count', 0)}`",
+        f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
+        f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
+        "",
+        "## Gates",
+    ]
+    for gate in report.get("gates", []):
+        lines.append(f"- `{gate.get('label', '')}`: passed=`{gate.get('passed', False)}`")
+    return "\n".join(lines) + "\n"
+
+
+def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
     run_contract = build_run_contract(layout, payload)
     atomic_json(layout.reports_dir / "run_contract.json", run_contract)
     atomic_write_text(layout.reports_dir / "run_contract.md", render_run_contract_md(run_contract))
@@ -8203,6 +8485,26 @@ def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, An
     truth_registry = build_final_truth_registry(layout, payload)
     atomic_json(layout.reports_dir / "final_truth_registry.json", truth_registry)
     atomic_write_text(layout.reports_dir / "final_truth_registry.md", render_final_truth_registry_md(truth_registry))
+    claim_registry = build_claim_registry(layout, payload)
+    atomic_json(layout.reports_dir / "claim_registry.json", claim_registry)
+    atomic_write_text(layout.reports_dir / "claim_registry.md", render_claim_registry_md(claim_registry))
+    known_limits = build_known_limits(layout, payload)
+    atomic_json(layout.reports_dir / "known_limits.json", known_limits)
+    atomic_write_text(layout.reports_dir / "known_limits.md", render_known_limits_md(known_limits))
+    support_matrix = build_support_matrix(layout, payload)
+    atomic_json(layout.reports_dir / "support_matrix.json", support_matrix)
+    atomic_write_text(layout.reports_dir / "support_matrix.md", render_support_matrix_md(support_matrix))
+    release_gate_summary = build_release_gate_summary(layout, payload)
+    atomic_json(layout.reports_dir / "release_gate_summary.json", release_gate_summary)
+    atomic_write_text(layout.reports_dir / "release_gate_summary.md", render_release_gate_summary_md(release_gate_summary))
+
+
+def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
+    _write_release_evidence_reports_once(layout, payload)
+    truth = build_artifact_truth_matrix(layout, payload)
+    atomic_json(layout.reports_dir / "artifact_truth_matrix.json", truth)
+    atomic_write_text(layout.reports_dir / "artifact_truth_matrix.md", render_artifact_truth_matrix_md(truth))
+    _write_release_evidence_reports_once(layout, payload)
 
 
 def resolve_archive_password(cfg: Dict[str, Any]) -> str:

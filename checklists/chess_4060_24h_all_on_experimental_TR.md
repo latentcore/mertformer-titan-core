@@ -23,5 +23,9 @@
 - [ ] `reports/release_snapshot.json` mevcut
 - [ ] `reports/evidence_pack_stub.json` mevcut
 - [ ] `reports/final_truth_registry.json` mevcut
+- [ ] `reports/claim_registry.json` mevcut
+- [ ] `reports/known_limits.json` mevcut
+- [ ] `reports/support_matrix.json` mevcut
+- [ ] `reports/release_gate_summary.json` mevcut
 - [ ] Final checkpoint yolu kaydedildi
 - [ ] Koşu sonrası claim sınırı tekrar gözden geçirildi

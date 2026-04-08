@@ -13,3 +13,7 @@
 - `release snapshot`: internal release-surface readiness summary for one exact run.
 - `evidence pack stub`: compact list of present evidence versus still-missing external proof.
 - `final truth registry`: claim list that labels each chess surface as measured, internal-only, partial, or not eligible.
+- `claim registry`: per-claim mapping from classification to supporting evidence.
+- `known limits`: explicit list of what the exact run still does not prove.
+- `support matrix`: run-local matrix of supported modes, profiles, and artifact surfaces.
+- `release gate summary`: compact pass/fail summary of internal and external release gates.

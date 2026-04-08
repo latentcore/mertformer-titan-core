@@ -73,6 +73,10 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 - `reports/release_snapshot.json`, dış release kanıtını abartmadan iç release-surface readiness durumunu kaydeder.
 - `reports/evidence_pack_stub.json`, şu an var olanlarla external release-grade evidence için hâlâ eksik olanları ayırır.
 - `reports/final_truth_registry.json`, measured/internal/not-eligible satranç claim’lerini açık ve denetlenebilir tutar.
+- `reports/claim_registry.json`, her satranç koşusu claim’ini sınıflandırma ve kanıt ile eşler.
+- `reports/known_limits.json`, eksik kanıtı kapanmış gibi göstermeden koşuya özel sınırları listeler.
+- `reports/support_matrix.json`, tam o koşunun aktif profil/mod/destek durumunu kaydeder.
+- `reports/release_gate_summary.json`, iç ve dış release gate pass/fail durumunu kaydeder.
 
 
 ![MertFormer Titan Header](assets/header.png)

@@ -13,6 +13,10 @@ A serious chess onefile run should preserve:
 - `reports/release_snapshot.json`
 - `reports/evidence_pack_stub.json`
 - `reports/final_truth_registry.json`
+- `reports/claim_registry.json`
+- `reports/known_limits.json`
+- `reports/support_matrix.json`
+- `reports/release_gate_summary.json`
 - `reports/artifact_manifest_with_hashes.json`
 - `logs/run_log.jsonl`
 

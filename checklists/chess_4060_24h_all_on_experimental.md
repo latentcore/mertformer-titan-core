@@ -23,5 +23,9 @@
 - [ ] `reports/release_snapshot.json` present
 - [ ] `reports/evidence_pack_stub.json` present
 - [ ] `reports/final_truth_registry.json` present
+- [ ] `reports/claim_registry.json` present
+- [ ] `reports/known_limits.json` present
+- [ ] `reports/support_matrix.json` present
+- [ ] `reports/release_gate_summary.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed

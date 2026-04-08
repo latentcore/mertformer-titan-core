@@ -10,6 +10,10 @@ A chess onefile run is not release-grade unless all of these exist together:
 - release snapshot
 - evidence pack stub
 - final truth registry
+- claim registry
+- known limits
+- support matrix
+- release gate summary
 - artifact truth matrix
 - run status manifest
 - postrun analysis manifest

@@ -73,6 +73,10 @@ This repository includes a decision-complete, single-pass closure flow for engin
 - `reports/release_snapshot.json` records internal release-surface readiness without overstating external release proof.
 - `reports/evidence_pack_stub.json` lists what is present now versus what is still missing for external release-grade evidence.
 - `reports/final_truth_registry.json` keeps measured/internal/not-eligible chess claims explicit and auditable.
+- `reports/claim_registry.json` maps each chess run claim to classification and evidence.
+- `reports/known_limits.json` lists run-specific known limits instead of pretending missing proof is closed.
+- `reports/support_matrix.json` records active profile/mode/support status for the exact run.
+- `reports/release_gate_summary.json` records internal and external release-gate pass/fail state.
 
 ![MertFormer Titan Header](assets/header.png)
 
