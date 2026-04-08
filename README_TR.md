@@ -82,6 +82,7 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 - `reports/handoff_pack_manifest.json`, tam o koşunun operatör odaklı handoff paketini listeler.
 - `reports/operator_handoff_summary.json`, operatör handoff yüzeyinin içten tamam olup olmadığını özetler.
 - `reports/external_repro_stub.json`, `reports/pilot_stub.json`, `reports/security_stub.json` ve `reports/legal_stub.json`, dış kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
+- `reports/operator_handbook_stub.json`, `reports/dr_evidence_stub.json`, `reports/backup_retention_stub.json` ve `reports/blind_handoff_stub.json`, operatör/DR kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
 
 
 ![MertFormer Titan Header](assets/header.png)

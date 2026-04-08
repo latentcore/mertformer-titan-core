@@ -67,6 +67,10 @@ Expect these reports under the run directory:
 - `reports/pilot_stub.json`
 - `reports/security_stub.json`
 - `reports/legal_stub.json`
+- `reports/operator_handbook_stub.json`
+- `reports/dr_evidence_stub.json`
+- `reports/backup_retention_stub.json`
+- `reports/blind_handoff_stub.json`
 - `logs/run_log.jsonl`
 
 ## Operator Gates

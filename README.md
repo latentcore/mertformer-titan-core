@@ -82,6 +82,7 @@ This repository includes a decision-complete, single-pass closure flow for engin
 - `reports/handoff_pack_manifest.json` enumerates the operator-facing handoff bundle for the exact run.
 - `reports/operator_handoff_summary.json` summarizes whether the operator handoff surface is internally complete.
 - `reports/external_repro_stub.json`, `reports/pilot_stub.json`, `reports/security_stub.json`, and `reports/legal_stub.json` keep external closure gaps explicit instead of pretending they are solved by internal artifacts.
+- `reports/operator_handbook_stub.json`, `reports/dr_evidence_stub.json`, `reports/backup_retention_stub.json`, and `reports/blind_handoff_stub.json` keep operator/DR closure gaps explicit instead of pretending they are solved by internal artifacts.
 
 ![MertFormer Titan Header](assets/header.png)
 

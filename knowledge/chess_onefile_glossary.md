@@ -25,3 +25,7 @@
 - `pilot stub`: explicit reminder that real pilot validation is still outside the internal onefile evidence chain.
 - `security stub`: explicit reminder that security closure still requires review beyond local artifact generation.
 - `legal stub`: explicit reminder that legal closure still requires licensing and deployment review beyond local artifact generation.
+- `operator handbook stub`: explicit reminder that operator-facing handbook closure still requires rehearsal beyond local artifact generation.
+- `dr evidence stub`: explicit reminder that disaster-recovery closure still requires restore evidence beyond local artifact generation.
+- `backup retention stub`: explicit reminder that retention policy closure still requires explicit operational policy beyond local artifact generation.
+- `blind handoff stub`: explicit reminder that blind handoff closure still requires a fresh operator rehearsal beyond local artifact generation.

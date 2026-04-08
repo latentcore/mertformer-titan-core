@@ -35,5 +35,9 @@
 - [ ] `reports/pilot_stub.json` present
 - [ ] `reports/security_stub.json` present
 - [ ] `reports/legal_stub.json` present
+- [ ] `reports/operator_handbook_stub.json` present
+- [ ] `reports/dr_evidence_stub.json` present
+- [ ] `reports/backup_retention_stub.json` present
+- [ ] `reports/blind_handoff_stub.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed
