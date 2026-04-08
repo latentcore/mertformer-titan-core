@@ -7897,6 +7897,8 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("project_unlock_impact_report", "project_unlock_impact_report.json"),
         ("project_parallel_workset_report", "project_parallel_workset_report.json"),
         ("project_phase_exit_criteria_report", "project_phase_exit_criteria_report.json"),
+        ("project_execution_wave_report", "project_execution_wave_report.json"),
+        ("project_evidence_backlog_report", "project_evidence_backlog_report.json"),
         ("generated_truth_crosscheck_matrix", "generated_truth_crosscheck_matrix.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
@@ -8678,6 +8680,8 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("project_unlock_impact_report", {}).get("exists", False))
         and bool(truth_entries.get("project_parallel_workset_report", {}).get("exists", False))
         and bool(truth_entries.get("project_phase_exit_criteria_report", {}).get("exists", False))
+        and bool(truth_entries.get("project_execution_wave_report", {}).get("exists", False))
+        and bool(truth_entries.get("project_evidence_backlog_report", {}).get("exists", False))
     )
     generated_truth_consistency_present = bool(truth_entries.get("generated_truth_consistency_report", {}).get("exists", False))
     generated_truth_crosscheck_present = bool(truth_entries.get("generated_truth_crosscheck_matrix", {}).get("exists", False))
@@ -8867,6 +8871,8 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "project_unlock_impact_report",
         "project_parallel_workset_report",
         "project_phase_exit_criteria_report",
+        "project_execution_wave_report",
+        "project_evidence_backlog_report",
         "generated_truth_consistency_report",
         "generated_truth_crosscheck_matrix",
         "run_log",
@@ -8980,6 +8986,8 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
             "project_unlock_impact_report",
             "project_parallel_workset_report",
             "project_phase_exit_criteria_report",
+            "project_execution_wave_report",
+            "project_evidence_backlog_report",
         } and item.get("exists", False)
     )
     generated_truth_count = sum(
@@ -9814,6 +9822,8 @@ def build_master_closure_table(layout: ArtifactLayout, payload: Dict[str, Any]) 
             "project_unlock_impact_report",
             "project_parallel_workset_report",
             "project_phase_exit_criteria_report",
+            "project_execution_wave_report",
+            "project_evidence_backlog_report",
         ],
         "generated_truth_consistency": ["generated_truth_consistency_report", "generated_truth_crosscheck_matrix"],
     }
@@ -10115,6 +10125,8 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
     project_unlock_impact_report = _read_json_if_exists(layout.reports_dir / "project_unlock_impact_report.json")
     project_parallel_workset_report = _read_json_if_exists(layout.reports_dir / "project_parallel_workset_report.json")
     project_phase_exit_criteria_report = _read_json_if_exists(layout.reports_dir / "project_phase_exit_criteria_report.json")
+    project_execution_wave_report = _read_json_if_exists(layout.reports_dir / "project_execution_wave_report.json")
+    project_evidence_backlog_report = _read_json_if_exists(layout.reports_dir / "project_evidence_backlog_report.json")
     return {
         "schema": "chess_closure_gap_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -10135,6 +10147,8 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
         "project_unlock_impact_status": project_unlock_impact_report.get("status", "unknown"),
         "project_parallel_workset_status": project_parallel_workset_report.get("status", "unknown"),
         "project_phase_exit_criteria_status": project_phase_exit_criteria_report.get("status", "unknown"),
+        "project_execution_wave_status": project_execution_wave_report.get("status", "unknown"),
+        "project_evidence_backlog_status": project_evidence_backlog_report.get("status", "unknown"),
         "generated_truth_status": _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json").get("status", "unknown"),
         "generated_truth_crosscheck_status": _read_json_if_exists(layout.reports_dir / "generated_truth_crosscheck_matrix.json").get("status", "unknown"),
     }
@@ -10162,6 +10176,8 @@ def render_closure_gap_summary_md(report: Dict[str, Any]) -> str:
         f"- project_unlock_impact_status: `{report.get('project_unlock_impact_status', 'unknown')}`",
         f"- project_parallel_workset_status: `{report.get('project_parallel_workset_status', 'unknown')}`",
         f"- project_phase_exit_criteria_status: `{report.get('project_phase_exit_criteria_status', 'unknown')}`",
+        f"- project_execution_wave_status: `{report.get('project_execution_wave_status', 'unknown')}`",
+        f"- project_evidence_backlog_status: `{report.get('project_evidence_backlog_status', 'unknown')}`",
         f"- generated_truth_status: `{report.get('generated_truth_status', 'unknown')}`",
         f"- generated_truth_crosscheck_status: `{report.get('generated_truth_crosscheck_status', 'unknown')}`",
     ]
@@ -11502,6 +11518,165 @@ def render_project_phase_exit_criteria_report_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def build_project_execution_wave_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    graph = _read_json_if_exists(layout.reports_dir / "project_blocker_dependency_graph.json")
+    sequence = _read_json_if_exists(layout.reports_dir / "project_execution_sequence.json")
+    action_plan = _read_json_if_exists(layout.reports_dir / "project_blocker_action_plan.json")
+    action_by_label = {str(item.get("label", "")): item for item in action_plan.get("items", [])}
+    node_map = {str(node.get("label", "")): node for node in graph.get("nodes", [])}
+    sequence_map = {str(item.get("label", "")): item for item in sequence.get("items", [])}
+    waves: Dict[int, Dict[str, Any]] = {}
+    wave_by_label: Dict[str, int] = {}
+    for item in sequence.get("items", []):
+        label = str(item.get("label", ""))
+        if not label:
+            continue
+        node = node_map.get(label, {})
+        deps = [str(dep) for dep in node.get("depends_on", []) if str(dep)]
+        wave = 0 if not deps else max(wave_by_label.get(dep, 0) for dep in deps) + 1
+        wave_by_label[label] = wave
+        entry = waves.setdefault(
+            wave,
+            {
+                "wave": wave,
+                "blockers": [],
+                "owner_domains": set(),
+                "closure_surfaces": set(),
+                "ready_now_count": 0,
+            },
+        )
+        entry["blockers"].append(label)
+        entry["owner_domains"].add(str(node.get("owner_domain", "")))
+        entry["closure_surfaces"].add(str(node.get("closure_surface", "")))
+        if bool(node.get("ready_now", False)):
+            entry["ready_now_count"] += 1
+    rows = []
+    for wave in sorted(waves):
+        entry = waves[wave]
+        blockers = sorted(entry["blockers"], key=lambda label: (int(sequence_map.get(label, {}).get("step", 999)), label))
+        rows.append(
+            {
+                "wave": wave,
+                "phase_hint": str(node_map.get(blockers[0], {}).get("phase", "")) if blockers else "",
+                "blocker_count": len(blockers),
+                "ready_now_count": int(entry["ready_now_count"]),
+                "owner_domains": sorted(item for item in entry["owner_domains"] if item),
+                "closure_surfaces": sorted(item for item in entry["closure_surfaces"] if item),
+                "blockers": blockers,
+                "status": "ready_now" if wave == 0 else "dependency_blocked",
+            }
+        )
+    return {
+        "schema": "chess_project_execution_wave_report_v1",
+        "run_id": graph.get("run_id", ""),
+        "wave_count": len(rows),
+        "covered_blocker_count": sum(int(row.get("blocker_count", 0)) for row in rows),
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_execution_wave_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Execution Wave Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- wave_count: `{report.get('wave_count', 0)}`",
+        f"- covered_blocker_count: `{report.get('covered_blocker_count', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Waves",
+    ]
+    for row in report.get("rows", []):
+        blockers = ", ".join(f"`{entry}`" for entry in row.get("blockers", []))
+        owners = ", ".join(f"`{entry}`" for entry in row.get("owner_domains", []))
+        surfaces = ", ".join(f"`{entry}`" for entry in row.get("closure_surfaces", []))
+        lines.append(
+            f"- wave=`{row.get('wave', 0)}` phase_hint=`{row.get('phase_hint', '')}` blocker_count=`{row.get('blocker_count', 0)}` "
+            f"ready_now_count=`{row.get('ready_now_count', 0)}` owner_domains={owners} closure_surfaces={surfaces} "
+            f"status=`{row.get('status', 'unknown')}` blockers={blockers}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_project_evidence_backlog_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    action_plan = _read_json_if_exists(layout.reports_dir / "project_blocker_action_plan.json")
+    specs = _project_blocker_specs()
+    evidence_rows: Dict[str, Dict[str, Any]] = {}
+    covered_blockers: set[str] = set()
+    for item in action_plan.get("items", []):
+        label = str(item.get("label", ""))
+        owner_domain = str(item.get("owner_domain", specs.get(label, {}).get("owner_domain", "unknown")))
+        phase = str(specs.get(label, {}).get("phase", "unassigned"))
+        closure_surface = str(item.get("closure_surface", specs.get(label, {}).get("closure_surface", "unknown")))
+        for evidence in item.get("required_evidence", []):
+            evidence_label = str(evidence)
+            if not evidence_label:
+                continue
+            covered_blockers.add(label)
+            row = evidence_rows.setdefault(
+                evidence_label,
+                {
+                    "evidence_label": evidence_label,
+                    "blockers": set(),
+                    "owner_domains": set(),
+                    "phases": set(),
+                    "closure_surfaces": set(),
+                },
+            )
+            row["blockers"].add(label)
+            row["owner_domains"].add(owner_domain)
+            row["phases"].add(phase)
+            row["closure_surfaces"].add(closure_surface)
+    rows = []
+    for evidence_label in sorted(evidence_rows):
+        item = evidence_rows[evidence_label]
+        rows.append(
+            {
+                "evidence_label": evidence_label,
+                "blocker_count": len(item["blockers"]),
+                "blockers": sorted(item["blockers"]),
+                "owner_domains": sorted(item["owner_domains"]),
+                "phases": sorted(item["phases"]),
+                "closure_surfaces": sorted(item["closure_surfaces"]),
+                "status": "pending_evidence",
+            }
+        )
+    return {
+        "schema": "chess_project_evidence_backlog_report_v1",
+        "run_id": action_plan.get("run_id", ""),
+        "evidence_count": len(rows),
+        "covered_blocker_count": len(covered_blockers),
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_evidence_backlog_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Evidence Backlog Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- evidence_count: `{report.get('evidence_count', 0)}`",
+        f"- covered_blocker_count: `{report.get('covered_blocker_count', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Evidence Backlog",
+    ]
+    for row in report.get("rows", []):
+        blockers = ", ".join(f"`{entry}`" for entry in row.get("blockers", []))
+        owners = ", ".join(f"`{entry}`" for entry in row.get("owner_domains", []))
+        phases = ", ".join(f"`{entry}`" for entry in row.get("phases", []))
+        surfaces = ", ".join(f"`{entry}`" for entry in row.get("closure_surfaces", []))
+        lines.append(
+            f"- `{row.get('evidence_label', '')}`: blocker_count=`{row.get('blocker_count', 0)}` owners={owners} phases={phases} "
+            f"closure_surfaces={surfaces} blockers={blockers} status=`{row.get('status', 'unknown')}`"
+        )
+    return "\n".join(lines) + "\n"
+
+
 def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     del payload
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
@@ -11528,6 +11703,8 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
     project_unlock_impact_report = _read_json_if_exists(layout.reports_dir / "project_unlock_impact_report.json")
     project_parallel_workset_report = _read_json_if_exists(layout.reports_dir / "project_parallel_workset_report.json")
     project_phase_exit_criteria_report = _read_json_if_exists(layout.reports_dir / "project_phase_exit_criteria_report.json")
+    project_execution_wave_report = _read_json_if_exists(layout.reports_dir / "project_execution_wave_report.json")
+    project_evidence_backlog_report = _read_json_if_exists(layout.reports_dir / "project_evidence_backlog_report.json")
 
     checks = [
         {
@@ -11573,6 +11750,8 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
                 and int(project_unlock_impact_report.get("item_count", 0)) > 0
                 and int(project_parallel_workset_report.get("workset_count", 0)) > 0
                 and int(project_phase_exit_criteria_report.get("phase_count", 0)) > 0
+                and int(project_execution_wave_report.get("wave_count", 0)) > 0
+                and int(project_evidence_backlog_report.get("evidence_count", 0)) > 0
             ),
         },
         {
@@ -11588,6 +11767,22 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
             "passed": (
                 int(project_phase_exit_criteria_report.get("phase_count", 0)) == int(project_closure_phase_plan.get("phase_count", -1))
                 and project_phase_exit_criteria_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "execution_wave_report_complete",
+            "passed": (
+                int(project_execution_wave_report.get("wave_count", 0)) > 0
+                and int(project_execution_wave_report.get("covered_blocker_count", 0)) == int(project_blockers.get("item_count", -1))
+                and project_execution_wave_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "evidence_backlog_report_complete",
+            "passed": (
+                int(project_evidence_backlog_report.get("evidence_count", 0)) > 0
+                and int(project_evidence_backlog_report.get("covered_blocker_count", 0)) == int(project_blockers.get("item_count", -1))
+                and project_evidence_backlog_report.get("status") == "ready"
             ),
         },
         {
@@ -11643,6 +11838,8 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
     project_unlock_impact_report = _read_json_if_exists(layout.reports_dir / "project_unlock_impact_report.json")
     project_parallel_workset_report = _read_json_if_exists(layout.reports_dir / "project_parallel_workset_report.json")
     project_phase_exit_criteria_report = _read_json_if_exists(layout.reports_dir / "project_phase_exit_criteria_report.json")
+    project_execution_wave_report = _read_json_if_exists(layout.reports_dir / "project_execution_wave_report.json")
+    project_evidence_backlog_report = _read_json_if_exists(layout.reports_dir / "project_evidence_backlog_report.json")
     generated_truth_consistency_report = _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json")
     specs = _project_blocker_specs()
 
@@ -11687,10 +11884,23 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
         for label in row.get("blockers", [])
         if isinstance(label, str)
     }
+    wave_labels = {
+        str(label)
+        for row in project_execution_wave_report.get("rows", [])
+        for label in row.get("blockers", [])
+        if isinstance(label, str)
+    }
     root_labels = {str(node.get("label", "")) for node in project_blocker_dependency_graph.get("nodes", []) if not node.get("depends_on", [])}
     phase_exit_labels = {str(row.get("phase", "")) for row in project_phase_exit_criteria_report.get("rows", [])}
     phase_plan_labels = {str(row.get("phase", "")) for row in project_closure_phase_plan.get("rows", [])}
+    evidence_blocker_labels = {
+        str(label)
+        for row in project_evidence_backlog_report.get("rows", [])
+        for label in row.get("blockers", [])
+        if isinstance(label, str)
+    }
     sequence_phase_orders = [int(specs.get(str(item.get("label", "")), {}).get("phase_order", 999)) for item in project_execution_sequence.get("items", [])]
+    wave_ids = [int(row.get("wave", -1)) for row in project_execution_wave_report.get("rows", [])]
     checks = [
         {
             "label": "action_plan_matches_blockers",
@@ -11786,6 +11996,23 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
                 phase_exit_labels == phase_plan_labels
                 and int(project_phase_exit_criteria_report.get("phase_count", 0)) == int(project_closure_phase_plan.get("phase_count", -1))
                 and project_phase_exit_criteria_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "execution_wave_covers_blockers",
+            "passed": (
+                wave_labels == blocker_labels
+                and int(project_execution_wave_report.get("covered_blocker_count", 0)) == len(blocker_labels)
+                and wave_ids == list(range(len(wave_ids)))
+                and project_execution_wave_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "evidence_backlog_covers_blockers",
+            "passed": (
+                evidence_blocker_labels == blocker_labels
+                and int(project_evidence_backlog_report.get("covered_blocker_count", 0)) == len(blocker_labels)
+                and project_evidence_backlog_report.get("status") == "ready"
             ),
         },
         {
@@ -12058,6 +12285,18 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     atomic_write_text(
         layout.reports_dir / "project_phase_exit_criteria_report.md",
         render_project_phase_exit_criteria_report_md(project_phase_exit_criteria_report),
+    )
+    project_execution_wave_report = build_project_execution_wave_report(layout, payload)
+    atomic_json(layout.reports_dir / "project_execution_wave_report.json", project_execution_wave_report)
+    atomic_write_text(
+        layout.reports_dir / "project_execution_wave_report.md",
+        render_project_execution_wave_report_md(project_execution_wave_report),
+    )
+    project_evidence_backlog_report = build_project_evidence_backlog_report(layout, payload)
+    atomic_json(layout.reports_dir / "project_evidence_backlog_report.json", project_evidence_backlog_report)
+    atomic_write_text(
+        layout.reports_dir / "project_evidence_backlog_report.md",
+        render_project_evidence_backlog_report_md(project_evidence_backlog_report),
     )
     truth_docs_index = build_truth_docs_index(layout, payload)
     atomic_json(layout.reports_dir / "truth_docs_index.json", truth_docs_index)

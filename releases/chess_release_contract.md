@@ -77,6 +77,8 @@ A chess onefile run is not release-grade unless all of these exist together:
 - project unlock-impact report
 - project parallel workset report
 - project phase exit criteria report
+- project execution wave report
+- project evidence backlog report
 - generated truth crosscheck matrix
 - artifact truth matrix
 - run status manifest
