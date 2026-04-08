@@ -93,6 +93,9 @@ A chess onefile run is not release-grade unless all of these exist together:
 - project release path report
 - project external closure cluster report
 - project owner evidence gap report
+- project release gate dependency report
+- project external signoff queue report
+- project release evidence bridge report
 - generated truth crosscheck matrix
 - artifact truth matrix
 - run status manifest
