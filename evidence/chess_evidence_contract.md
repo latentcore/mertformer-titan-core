@@ -105,6 +105,9 @@ A serious chess onefile run should preserve:
 - `reports/project_external_validation_readiness_report.json`
 - `reports/project_artifact_lock_readiness_report.json`
 - `reports/project_final_release_cutover_report.json`
+- `reports/project_real_run_execution_queue_report.json`
+- `reports/project_benchmark_evidence_lock_report.json`
+- `reports/project_final_signoff_cutset_report.json`
 - `reports/generated_truth_crosscheck_matrix.json`
 - `reports/artifact_manifest_with_hashes.json`
 - `logs/run_log.jsonl`

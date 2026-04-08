@@ -7922,6 +7922,9 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("project_external_validation_readiness_report", "project_external_validation_readiness_report.json"),
         ("project_artifact_lock_readiness_report", "project_artifact_lock_readiness_report.json"),
         ("project_final_release_cutover_report", "project_final_release_cutover_report.json"),
+        ("project_real_run_execution_queue_report", "project_real_run_execution_queue_report.json"),
+        ("project_benchmark_evidence_lock_report", "project_benchmark_evidence_lock_report.json"),
+        ("project_final_signoff_cutset_report", "project_final_signoff_cutset_report.json"),
         ("generated_truth_crosscheck_matrix", "generated_truth_crosscheck_matrix.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
@@ -8728,6 +8731,9 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("project_external_validation_readiness_report", {}).get("exists", False))
         and bool(truth_entries.get("project_artifact_lock_readiness_report", {}).get("exists", False))
         and bool(truth_entries.get("project_final_release_cutover_report", {}).get("exists", False))
+        and bool(truth_entries.get("project_real_run_execution_queue_report", {}).get("exists", False))
+        and bool(truth_entries.get("project_benchmark_evidence_lock_report", {}).get("exists", False))
+        and bool(truth_entries.get("project_final_signoff_cutset_report", {}).get("exists", False))
     )
     generated_truth_consistency_present = bool(truth_entries.get("generated_truth_consistency_report", {}).get("exists", False))
     generated_truth_crosscheck_present = bool(truth_entries.get("generated_truth_crosscheck_matrix", {}).get("exists", False))
@@ -8942,6 +8948,9 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "project_external_validation_readiness_report",
         "project_artifact_lock_readiness_report",
         "project_final_release_cutover_report",
+        "project_real_run_execution_queue_report",
+        "project_benchmark_evidence_lock_report",
+        "project_final_signoff_cutset_report",
         "generated_truth_consistency_report",
         "generated_truth_crosscheck_matrix",
         "run_log",
@@ -9080,6 +9089,9 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
             "project_external_validation_readiness_report",
             "project_artifact_lock_readiness_report",
             "project_final_release_cutover_report",
+            "project_real_run_execution_queue_report",
+            "project_benchmark_evidence_lock_report",
+            "project_final_signoff_cutset_report",
         } and item.get("exists", False)
     )
     generated_truth_count = sum(
@@ -9939,6 +9951,9 @@ def build_master_closure_table(layout: ArtifactLayout, payload: Dict[str, Any]) 
             "project_external_validation_readiness_report",
             "project_artifact_lock_readiness_report",
             "project_final_release_cutover_report",
+            "project_real_run_execution_queue_report",
+            "project_benchmark_evidence_lock_report",
+            "project_final_signoff_cutset_report",
         ],
         "generated_truth_consistency": ["generated_truth_consistency_report", "generated_truth_crosscheck_matrix"],
     }
@@ -10265,6 +10280,9 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
     project_external_validation_readiness_report = _read_json_if_exists(layout.reports_dir / "project_external_validation_readiness_report.json")
     project_artifact_lock_readiness_report = _read_json_if_exists(layout.reports_dir / "project_artifact_lock_readiness_report.json")
     project_final_release_cutover_report = _read_json_if_exists(layout.reports_dir / "project_final_release_cutover_report.json")
+    project_real_run_execution_queue_report = _read_json_if_exists(layout.reports_dir / "project_real_run_execution_queue_report.json")
+    project_benchmark_evidence_lock_report = _read_json_if_exists(layout.reports_dir / "project_benchmark_evidence_lock_report.json")
+    project_final_signoff_cutset_report = _read_json_if_exists(layout.reports_dir / "project_final_signoff_cutset_report.json")
     return {
         "schema": "chess_closure_gap_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -10310,6 +10328,9 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
         "project_external_validation_readiness_status": project_external_validation_readiness_report.get("status", "unknown"),
         "project_artifact_lock_readiness_status": project_artifact_lock_readiness_report.get("status", "unknown"),
         "project_final_release_cutover_status": project_final_release_cutover_report.get("status", "unknown"),
+        "project_real_run_execution_queue_status": project_real_run_execution_queue_report.get("status", "unknown"),
+        "project_benchmark_evidence_lock_status": project_benchmark_evidence_lock_report.get("status", "unknown"),
+        "project_final_signoff_cutset_status": project_final_signoff_cutset_report.get("status", "unknown"),
         "generated_truth_status": _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json").get("status", "unknown"),
         "generated_truth_crosscheck_status": _read_json_if_exists(layout.reports_dir / "generated_truth_crosscheck_matrix.json").get("status", "unknown"),
     }
@@ -13734,6 +13755,268 @@ def render_project_final_release_cutover_report_md(report: Dict[str, Any]) -> st
     return "\n".join(lines) + "\n"
 
 
+def build_project_real_run_execution_queue_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    training_run_readiness = _read_json_if_exists(layout.reports_dir / "project_training_run_readiness_report.json")
+    foundation = _read_json_if_exists(layout.reports_dir / "project_foundation_run_dependency_report.json")
+    unlock_impact = _read_json_if_exists(layout.reports_dir / "project_unlock_impact_report.json")
+    action_plan = _read_json_if_exists(layout.reports_dir / "project_blocker_action_plan.json")
+    specs = _project_blocker_specs()
+    unlock_by_label = {str(row.get("label", "")): row for row in unlock_impact.get("rows", [])}
+    action_by_label = {str(item.get("label", "")): item for item in action_plan.get("items", [])}
+    root_label = str(training_run_readiness.get("root_label", foundation.get("root_label", "real_training_outputs_pending")))
+    rows = []
+    for row in training_run_readiness.get("rows", []):
+        label = str(row.get("label", ""))
+        if not label:
+            continue
+        spec = specs.get(label, {})
+        action = action_by_label.get(label, {})
+        unlock = unlock_by_label.get(label, {})
+        dependency_distance = int(row.get("dependency_distance", 999))
+        phase = str(row.get("phase", spec.get("phase", "unassigned")))
+        if dependency_distance == 0:
+            execution_stage = "run_now"
+        elif phase == "measured_internal_closure":
+            execution_stage = "post_run_internal_closure"
+        elif phase == "external_validation":
+            execution_stage = "external_followthrough"
+        elif phase == "release_finalization":
+            execution_stage = "release_followthrough"
+        else:
+            execution_stage = "management_followthrough"
+        rows.append(
+            {
+                "label": label,
+                "execution_stage": execution_stage,
+                "owner_domain": str(row.get("owner_domain", action.get("owner_domain", spec.get("owner_domain", "unknown")))),
+                "phase": phase,
+                "phase_order": int(row.get("phase_order", spec.get("phase_order", 999))),
+                "dependency_distance": dependency_distance,
+                "closure_surface": str(row.get("closure_surface", action.get("closure_surface", spec.get("closure_surface", "unknown")))),
+                "required_evidence_count": int(row.get("required_evidence_count", len(action.get("required_evidence", spec.get("required_evidence", []))))),
+                "ready_now": bool(row.get("ready_now", False)),
+                "immediate_execution": dependency_distance == 0 and bool(row.get("ready_now", False)),
+                "direct_unlock_count": int(unlock.get("direct_unlock_count", 0)),
+                "total_unlock_count": int(unlock.get("total_unlock_count", 0)),
+                "next_action": str(action.get("next_action", spec.get("next_action", ""))),
+                "status": "ready",
+            }
+        )
+    rows.sort(key=lambda item: (int(item["dependency_distance"]), int(item["phase_order"]), item["label"]))
+    return {
+        "schema": "chess_project_real_run_execution_queue_report_v1",
+        "run_id": training_run_readiness.get("run_id", ""),
+        "root_label": root_label,
+        "item_count": len(rows),
+        "ready_now_count": sum(1 for row in rows if bool(row.get("ready_now", False))),
+        "immediate_run_count": sum(1 for row in rows if str(row.get("execution_stage", "")) == "run_now"),
+        "max_dependency_distance": max((int(row.get("dependency_distance", 0)) for row in rows), default=0),
+        "status": "ready" if rows and root_label else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_real_run_execution_queue_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Real Run Execution Queue Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- root_label: `{report.get('root_label', '')}`",
+        f"- item_count: `{report.get('item_count', 0)}`",
+        f"- ready_now_count: `{report.get('ready_now_count', 0)}`",
+        f"- immediate_run_count: `{report.get('immediate_run_count', 0)}`",
+        f"- max_dependency_distance: `{report.get('max_dependency_distance', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Real Run Execution Queue",
+    ]
+    for row in report.get("rows", []):
+        lines.append(
+            f"- `{row.get('label', '')}`: execution_stage=`{row.get('execution_stage', '')}` owner_domain=`{row.get('owner_domain', '')}` "
+            f"phase=`{row.get('phase', '')}` dependency_distance=`{row.get('dependency_distance', 0)}` "
+            f"closure_surface=`{row.get('closure_surface', '')}` required_evidence_count=`{row.get('required_evidence_count', 0)}` "
+            f"ready_now=`{row.get('ready_now', False)}` immediate_execution=`{row.get('immediate_execution', False)}` "
+            f"direct_unlock_count=`{row.get('direct_unlock_count', 0)}` total_unlock_count=`{row.get('total_unlock_count', 0)}` "
+            f"status=`{row.get('status', 'unknown')}` next_action={row.get('next_action', '')}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_project_benchmark_evidence_lock_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    benchmark_dependency = _read_json_if_exists(layout.reports_dir / "project_benchmark_closure_dependency_report.json")
+    release_evidence_bridge = _read_json_if_exists(layout.reports_dir / "project_release_evidence_bridge_report.json")
+    artifact_lock = _read_json_if_exists(layout.reports_dir / "project_artifact_lock_readiness_report.json")
+    prereq_matrix = _read_json_if_exists(layout.reports_dir / "project_release_prereq_matrix_report.json")
+    artifact_by_label = {str(row.get("label", "")): row for row in artifact_lock.get("rows", [])}
+    prereq_by_label = {str(row.get("label", "")): row for row in prereq_matrix.get("rows", [])}
+    bridge_labels = {str(row.get("evidence_label", "")) for row in release_evidence_bridge.get("rows", [])}
+    rows = []
+    for row in benchmark_dependency.get("rows", []):
+        label = str(row.get("label", ""))
+        if not label:
+            continue
+        artifact = artifact_by_label.get(label, {})
+        prereq = prereq_by_label.get(label, {})
+        benchmark_evidence_labels = [str(entry) for entry in row.get("benchmark_evidence_labels", []) if str(entry)]
+        bridged = sorted(entry for entry in benchmark_evidence_labels if entry in bridge_labels)
+        rows.append(
+            {
+                "label": label,
+                "owner_domain": str(row.get("owner_domain", "unknown")),
+                "phase": str(row.get("phase", "unassigned")),
+                "phase_order": int(row.get("phase_order", 999)),
+                "benchmark_dependency_distance": int(row.get("benchmark_dependency_distance", 999)),
+                "release_distance": prereq.get("release_distance", row.get("release_distance")),
+                "reaches_release": bool(row.get("reaches_release", False)),
+                "artifact_locked": label in artifact_by_label,
+                "artifact_lock_class": str(artifact.get("artifact_lock_class", "")),
+                "required_benchmark_evidence_count": len(benchmark_evidence_labels),
+                "bridged_release_evidence_count": len(bridged),
+                "bridged_release_evidence_labels": bridged,
+                "status": "ready",
+            }
+        )
+    rows.sort(
+        key=lambda item: (
+            int(item["benchmark_dependency_distance"]),
+            item["release_distance"] is None,
+            int(item["release_distance"]) if item["release_distance"] is not None else 999,
+            item["label"],
+        )
+    )
+    return {
+        "schema": "chess_project_benchmark_evidence_lock_report_v1",
+        "run_id": benchmark_dependency.get("run_id", ""),
+        "root_label": str(benchmark_dependency.get("root_label", "benchmark_evidence_pending")),
+        "item_count": len(rows),
+        "release_reaching_count": sum(1 for row in rows if bool(row.get("reaches_release", False))),
+        "locked_surface_count": sum(1 for row in rows if bool(row.get("artifact_locked", False))),
+        "bridged_item_count": sum(1 for row in rows if int(row.get("bridged_release_evidence_count", 0)) > 0),
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_benchmark_evidence_lock_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Benchmark Evidence Lock Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- root_label: `{report.get('root_label', '')}`",
+        f"- item_count: `{report.get('item_count', 0)}`",
+        f"- release_reaching_count: `{report.get('release_reaching_count', 0)}`",
+        f"- locked_surface_count: `{report.get('locked_surface_count', 0)}`",
+        f"- bridged_item_count: `{report.get('bridged_item_count', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Benchmark Evidence Lock",
+    ]
+    for row in report.get("rows", []):
+        bridged = ", ".join(f"`{entry}`" for entry in row.get("bridged_release_evidence_labels", []))
+        lines.append(
+            f"- `{row.get('label', '')}`: owner_domain=`{row.get('owner_domain', '')}` phase=`{row.get('phase', '')}` "
+            f"benchmark_dependency_distance=`{row.get('benchmark_dependency_distance', 0)}` release_distance=`{row.get('release_distance', None)}` "
+            f"reaches_release=`{row.get('reaches_release', False)}` artifact_locked=`{row.get('artifact_locked', False)}` "
+            f"artifact_lock_class=`{row.get('artifact_lock_class', '')}` required_benchmark_evidence_count=`{row.get('required_benchmark_evidence_count', 0)}` "
+            f"bridged_release_evidence_count=`{row.get('bridged_release_evidence_count', 0)}` status=`{row.get('status', 'unknown')}` bridged_evidence={bridged}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_project_final_signoff_cutset_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    action_plan = _read_json_if_exists(layout.reports_dir / "project_blocker_action_plan.json")
+    external_signoff_queue = _read_json_if_exists(layout.reports_dir / "project_external_signoff_queue_report.json")
+    release_decision_queue = _read_json_if_exists(layout.reports_dir / "project_release_decision_queue_report.json")
+    final_release_cutover = _read_json_if_exists(layout.reports_dir / "project_final_release_cutover_report.json")
+    specs = _project_blocker_specs()
+    action_by_label = {str(item.get("label", "")): item for item in action_plan.get("items", [])}
+    signoff_labels = {str(row.get("label", "")) for row in external_signoff_queue.get("rows", [])}
+    decision_labels = {str(row.get("label", "")) for row in release_decision_queue.get("rows", [])}
+    cutover_by_label = {str(row.get("label", "")): row for row in final_release_cutover.get("rows", [])}
+
+    def cutset_role(phase: str) -> str:
+        if phase == "external_validation":
+            return "external_signoff"
+        if phase == "release_finalization":
+            return "release_decision"
+        if phase == "governance_closeout":
+            return "management_closeout"
+        return "signoff_cutset"
+
+    labels = sorted(
+        signoff_labels | decision_labels,
+        key=lambda label: (
+            int(specs.get(label, {}).get("phase_order", 999)),
+            label not in decision_labels,
+            label,
+        ),
+    )
+    rows = []
+    for label in labels:
+        spec = specs.get(label, {})
+        action = action_by_label.get(label, {})
+        cutover = cutover_by_label.get(label, {})
+        phase = str(spec.get("phase", "unassigned"))
+        required_evidence = [str(entry) for entry in action.get("required_evidence", spec.get("required_evidence", [])) if str(entry)]
+        rows.append(
+            {
+                "label": label,
+                "cutset_role": cutset_role(phase),
+                "owner_domain": str(action.get("owner_domain", spec.get("owner_domain", "unknown"))),
+                "phase": phase,
+                "phase_order": int(spec.get("phase_order", 999)),
+                "in_external_signoff_queue": label in signoff_labels,
+                "in_release_decision_queue": label in decision_labels,
+                "in_final_release_cutover": label in cutover_by_label,
+                "direct_release_prereq": bool(cutover.get("direct_release_prereq", False)),
+                "required_evidence_count": len(required_evidence),
+                "next_action": str(action.get("next_action", spec.get("next_action", ""))),
+                "status": "ready",
+            }
+        )
+    return {
+        "schema": "chess_project_final_signoff_cutset_report_v1",
+        "run_id": action_plan.get("run_id", ""),
+        "item_count": len(rows),
+        "external_signoff_count": sum(1 for row in rows if bool(row.get("in_external_signoff_queue", False))),
+        "release_decision_count": sum(1 for row in rows if bool(row.get("in_release_decision_queue", False))),
+        "management_closeout_count": sum(1 for row in rows if str(row.get("cutset_role", "")) == "management_closeout"),
+        "cutover_covered_count": sum(1 for row in rows if bool(row.get("in_final_release_cutover", False))),
+        "terminal_label": str(final_release_cutover.get("terminal_label", "")),
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_final_signoff_cutset_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Final Signoff Cutset Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- item_count: `{report.get('item_count', 0)}`",
+        f"- external_signoff_count: `{report.get('external_signoff_count', 0)}`",
+        f"- release_decision_count: `{report.get('release_decision_count', 0)}`",
+        f"- management_closeout_count: `{report.get('management_closeout_count', 0)}`",
+        f"- cutover_covered_count: `{report.get('cutover_covered_count', 0)}`",
+        f"- terminal_label: `{report.get('terminal_label', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Final Signoff Cutset",
+    ]
+    for row in report.get("rows", []):
+        lines.append(
+            f"- `{row.get('label', '')}`: cutset_role=`{row.get('cutset_role', '')}` owner_domain=`{row.get('owner_domain', '')}` "
+            f"phase=`{row.get('phase', '')}` in_external_signoff_queue=`{row.get('in_external_signoff_queue', False)}` "
+            f"in_release_decision_queue=`{row.get('in_release_decision_queue', False)}` in_final_release_cutover=`{row.get('in_final_release_cutover', False)}` "
+            f"direct_release_prereq=`{row.get('direct_release_prereq', False)}` required_evidence_count=`{row.get('required_evidence_count', 0)}` "
+            f"status=`{row.get('status', 'unknown')}` next_action={row.get('next_action', '')}"
+        )
+    return "\n".join(lines) + "\n"
+
+
 def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     del payload
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
@@ -13785,6 +14068,9 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
     project_external_validation_readiness_report = _read_json_if_exists(layout.reports_dir / "project_external_validation_readiness_report.json")
     project_artifact_lock_readiness_report = _read_json_if_exists(layout.reports_dir / "project_artifact_lock_readiness_report.json")
     project_final_release_cutover_report = _read_json_if_exists(layout.reports_dir / "project_final_release_cutover_report.json")
+    project_real_run_execution_queue_report = _read_json_if_exists(layout.reports_dir / "project_real_run_execution_queue_report.json")
+    project_benchmark_evidence_lock_report = _read_json_if_exists(layout.reports_dir / "project_benchmark_evidence_lock_report.json")
+    project_final_signoff_cutset_report = _read_json_if_exists(layout.reports_dir / "project_final_signoff_cutset_report.json")
 
     checks = [
         {
@@ -13855,6 +14141,9 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
                 and int(project_external_validation_readiness_report.get("item_count", 0)) > 0
                 and int(project_artifact_lock_readiness_report.get("item_count", 0)) > 0
                 and int(project_final_release_cutover_report.get("item_count", 0)) > 0
+                and int(project_real_run_execution_queue_report.get("item_count", 0)) > 0
+                and int(project_benchmark_evidence_lock_report.get("item_count", 0)) > 0
+                and int(project_final_signoff_cutset_report.get("item_count", 0)) > 0
             ),
         },
         {
@@ -14065,6 +14354,30 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
             ),
         },
         {
+            "label": "real_run_execution_queue_report_complete",
+            "passed": (
+                str(project_real_run_execution_queue_report.get("root_label", "")) == "real_training_outputs_pending"
+                and int(project_real_run_execution_queue_report.get("item_count", 0)) > 0
+                and project_real_run_execution_queue_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "benchmark_evidence_lock_report_complete",
+            "passed": (
+                str(project_benchmark_evidence_lock_report.get("root_label", "")) == "benchmark_evidence_pending"
+                and int(project_benchmark_evidence_lock_report.get("item_count", 0)) > 0
+                and project_benchmark_evidence_lock_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "final_signoff_cutset_report_complete",
+            "passed": (
+                str(project_final_signoff_cutset_report.get("terminal_label", "")) == "rc_golden_final_release_pending"
+                and int(project_final_signoff_cutset_report.get("item_count", 0)) > 0
+                and project_final_signoff_cutset_report.get("status") == "ready"
+            ),
+        },
+        {
             "label": "truth_docs_are_in_sync",
             "passed": truth_docs_drift.get("status") == "in_sync",
         },
@@ -14142,6 +14455,9 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
     project_external_validation_readiness_report = _read_json_if_exists(layout.reports_dir / "project_external_validation_readiness_report.json")
     project_artifact_lock_readiness_report = _read_json_if_exists(layout.reports_dir / "project_artifact_lock_readiness_report.json")
     project_final_release_cutover_report = _read_json_if_exists(layout.reports_dir / "project_final_release_cutover_report.json")
+    project_real_run_execution_queue_report = _read_json_if_exists(layout.reports_dir / "project_real_run_execution_queue_report.json")
+    project_benchmark_evidence_lock_report = _read_json_if_exists(layout.reports_dir / "project_benchmark_evidence_lock_report.json")
+    project_final_signoff_cutset_report = _read_json_if_exists(layout.reports_dir / "project_final_signoff_cutset_report.json")
     generated_truth_consistency_report = _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json")
     specs = _project_blocker_specs()
 
@@ -14239,6 +14555,9 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
     external_validation_readiness_labels = {str(row.get("label", "")) for row in project_external_validation_readiness_report.get("rows", [])}
     artifact_lock_readiness_labels = {str(row.get("label", "")) for row in project_artifact_lock_readiness_report.get("rows", [])}
     final_release_cutover_labels = {str(row.get("label", "")) for row in project_final_release_cutover_report.get("rows", [])}
+    real_run_execution_queue_labels = {str(row.get("label", "")) for row in project_real_run_execution_queue_report.get("rows", [])}
+    benchmark_evidence_lock_labels = {str(row.get("label", "")) for row in project_benchmark_evidence_lock_report.get("rows", [])}
+    final_signoff_cutset_labels = {str(row.get("label", "")) for row in project_final_signoff_cutset_report.get("rows", [])}
     benchmark_outgoing: Dict[str, List[str]] = {label: [] for label in blocker_labels}
     for node in project_blocker_dependency_graph.get("nodes", []):
         label = str(node.get("label", ""))
@@ -14602,6 +14921,41 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
                 == len(final_release_cutover_labels & release_decision_queue_labels)
                 and str(project_final_release_cutover_report.get("terminal_label", "")) == "rc_golden_final_release_pending"
                 and project_final_release_cutover_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "real_run_execution_queue_matches_training_readiness",
+            "passed": (
+                real_run_execution_queue_labels == training_run_readiness_labels
+                and int(project_real_run_execution_queue_report.get("ready_now_count", 0))
+                == int(project_training_run_readiness_report.get("ready_now_count", -1))
+                and str(project_real_run_execution_queue_report.get("root_label", "")) == "real_training_outputs_pending"
+                and project_real_run_execution_queue_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "benchmark_evidence_lock_matches_bridge_and_lock",
+            "passed": (
+                benchmark_evidence_lock_labels == benchmark_closure_dependency_labels
+                and int(project_benchmark_evidence_lock_report.get("locked_surface_count", 0))
+                == len(benchmark_evidence_lock_labels & artifact_lock_readiness_labels)
+                and int(project_benchmark_evidence_lock_report.get("bridged_item_count", 0))
+                == sum(
+                    1
+                    for row in project_benchmark_closure_dependency_report.get("rows", [])
+                    if any(str(entry) in release_evidence_bridge_labels for entry in row.get("benchmark_evidence_labels", []))
+                )
+                and project_benchmark_evidence_lock_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "final_signoff_cutset_matches_queues",
+            "passed": (
+                final_signoff_cutset_labels == (external_signoff_queue_labels | release_decision_queue_labels)
+                and int(project_final_signoff_cutset_report.get("cutover_covered_count", 0))
+                == len(final_signoff_cutset_labels & final_release_cutover_labels)
+                and str(project_final_signoff_cutset_report.get("terminal_label", "")) == "rc_golden_final_release_pending"
+                and project_final_signoff_cutset_report.get("status") == "ready"
             ),
         },
         {
@@ -15024,6 +15378,24 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     atomic_write_text(
         layout.reports_dir / "project_final_release_cutover_report.md",
         render_project_final_release_cutover_report_md(project_final_release_cutover_report),
+    )
+    project_real_run_execution_queue_report = build_project_real_run_execution_queue_report(layout, payload)
+    atomic_json(layout.reports_dir / "project_real_run_execution_queue_report.json", project_real_run_execution_queue_report)
+    atomic_write_text(
+        layout.reports_dir / "project_real_run_execution_queue_report.md",
+        render_project_real_run_execution_queue_report_md(project_real_run_execution_queue_report),
+    )
+    project_benchmark_evidence_lock_report = build_project_benchmark_evidence_lock_report(layout, payload)
+    atomic_json(layout.reports_dir / "project_benchmark_evidence_lock_report.json", project_benchmark_evidence_lock_report)
+    atomic_write_text(
+        layout.reports_dir / "project_benchmark_evidence_lock_report.md",
+        render_project_benchmark_evidence_lock_report_md(project_benchmark_evidence_lock_report),
+    )
+    project_final_signoff_cutset_report = build_project_final_signoff_cutset_report(layout, payload)
+    atomic_json(layout.reports_dir / "project_final_signoff_cutset_report.json", project_final_signoff_cutset_report)
+    atomic_write_text(
+        layout.reports_dir / "project_final_signoff_cutset_report.md",
+        render_project_final_signoff_cutset_report_md(project_final_signoff_cutset_report),
     )
     truth_docs_index = build_truth_docs_index(layout, payload)
     atomic_json(layout.reports_dir / "truth_docs_index.json", truth_docs_index)

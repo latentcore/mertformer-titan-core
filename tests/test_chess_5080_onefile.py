@@ -955,6 +955,9 @@ def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path)
     assert entries['project_external_validation_readiness_report']['exists'] is False
     assert entries['project_artifact_lock_readiness_report']['exists'] is False
     assert entries['project_final_release_cutover_report']['exists'] is False
+    assert entries['project_real_run_execution_queue_report']['exists'] is False
+    assert entries['project_benchmark_evidence_lock_report']['exists'] is False
+    assert entries['project_final_signoff_cutset_report']['exists'] is False
     assert entries['generated_truth_consistency_report']['exists'] is False
     assert entries['generated_truth_crosscheck_matrix']['exists'] is False
     assert truth['present_required_count'] < truth['required_count']
@@ -1119,6 +1122,9 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     project_external_validation_readiness_report = json.loads((layout.reports_dir / 'project_external_validation_readiness_report.json').read_text(encoding='utf-8'))
     project_artifact_lock_readiness_report = json.loads((layout.reports_dir / 'project_artifact_lock_readiness_report.json').read_text(encoding='utf-8'))
     project_final_release_cutover_report = json.loads((layout.reports_dir / 'project_final_release_cutover_report.json').read_text(encoding='utf-8'))
+    project_real_run_execution_queue_report = json.loads((layout.reports_dir / 'project_real_run_execution_queue_report.json').read_text(encoding='utf-8'))
+    project_benchmark_evidence_lock_report = json.loads((layout.reports_dir / 'project_benchmark_evidence_lock_report.json').read_text(encoding='utf-8'))
+    project_final_signoff_cutset_report = json.loads((layout.reports_dir / 'project_final_signoff_cutset_report.json').read_text(encoding='utf-8'))
     generated_truth_consistency_report = json.loads((layout.reports_dir / 'generated_truth_consistency_report.json').read_text(encoding='utf-8'))
     generated_truth_crosscheck_matrix = json.loads((layout.reports_dir / 'generated_truth_crosscheck_matrix.json').read_text(encoding='utf-8'))
     entries = {entry['label']: entry for entry in truth['entries']}
@@ -1221,6 +1227,9 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert project_external_validation_readiness_report['schema'] == 'chess_project_external_validation_readiness_report_v1'
     assert project_artifact_lock_readiness_report['schema'] == 'chess_project_artifact_lock_readiness_report_v1'
     assert project_final_release_cutover_report['schema'] == 'chess_project_final_release_cutover_report_v1'
+    assert project_real_run_execution_queue_report['schema'] == 'chess_project_real_run_execution_queue_report_v1'
+    assert project_benchmark_evidence_lock_report['schema'] == 'chess_project_benchmark_evidence_lock_report_v1'
+    assert project_final_signoff_cutset_report['schema'] == 'chess_project_final_signoff_cutset_report_v1'
     assert generated_truth_consistency_report['schema'] == 'chess_generated_truth_consistency_report_v1'
     assert generated_truth_crosscheck_matrix['schema'] == 'chess_generated_truth_crosscheck_matrix_v1'
     assert entries['run_contract']['exists'] is True
@@ -1317,6 +1326,9 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert entries['project_external_validation_readiness_report']['exists'] is True
     assert entries['project_artifact_lock_readiness_report']['exists'] is True
     assert entries['project_final_release_cutover_report']['exists'] is True
+    assert entries['project_real_run_execution_queue_report']['exists'] is True
+    assert entries['project_benchmark_evidence_lock_report']['exists'] is True
+    assert entries['project_final_signoff_cutset_report']['exists'] is True
     assert entries['generated_truth_consistency_report']['exists'] is True
     assert entries['generated_truth_crosscheck_matrix']['exists'] is True
     assert truth['present_required_count'] == truth['required_count']
@@ -1414,6 +1426,9 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert closure_gap_summary['project_external_validation_readiness_status'] == 'ready'
     assert closure_gap_summary['project_artifact_lock_readiness_status'] == 'ready'
     assert closure_gap_summary['project_final_release_cutover_status'] == 'ready'
+    assert closure_gap_summary['project_real_run_execution_queue_status'] == 'ready'
+    assert closure_gap_summary['project_benchmark_evidence_lock_status'] == 'ready'
+    assert closure_gap_summary['project_final_signoff_cutset_status'] == 'ready'
     assert closure_gap_summary['generated_truth_crosscheck_status'] == 'consistent'
     assert project_master_truth_reference['doc_exists'] is True
     assert project_master_truth_reference['doc_tr_exists'] is True
@@ -1594,6 +1609,28 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert project_final_release_cutover_report['terminal_label'] == 'rc_golden_final_release_pending'
     assert project_final_release_cutover_report['status'] == 'ready'
     assert any(row['label'] == 'management_closure_pending' and row['cutover_stage'] == 'management_closeout' for row in project_final_release_cutover_report['rows'])
+    assert project_real_run_execution_queue_report['schema'] == 'chess_project_real_run_execution_queue_report_v1'
+    assert project_real_run_execution_queue_report['root_label'] == 'real_training_outputs_pending'
+    assert project_real_run_execution_queue_report['item_count'] == project_training_run_readiness_report['item_count']
+    assert project_real_run_execution_queue_report['immediate_run_count'] >= 1
+    assert project_real_run_execution_queue_report['status'] == 'ready'
+    assert any(row['label'] == 'real_training_outputs_pending' and row['execution_stage'] == 'run_now' for row in project_real_run_execution_queue_report['rows'])
+    assert any(row['label'] == 'benchmark_evidence_pending' and row['execution_stage'] == 'post_run_internal_closure' for row in project_real_run_execution_queue_report['rows'])
+    assert project_benchmark_evidence_lock_report['schema'] == 'chess_project_benchmark_evidence_lock_report_v1'
+    assert project_benchmark_evidence_lock_report['root_label'] == 'benchmark_evidence_pending'
+    assert project_benchmark_evidence_lock_report['item_count'] == project_benchmark_closure_dependency_report['item_count']
+    assert project_benchmark_evidence_lock_report['locked_surface_count'] >= 1
+    assert project_benchmark_evidence_lock_report['bridged_item_count'] >= 1
+    assert project_benchmark_evidence_lock_report['status'] == 'ready'
+    assert any(row['label'] == 'benchmark_evidence_pending' and row['artifact_lock_class'] == 'benchmark_lock' for row in project_benchmark_evidence_lock_report['rows'])
+    assert project_final_signoff_cutset_report['schema'] == 'chess_project_final_signoff_cutset_report_v1'
+    assert project_final_signoff_cutset_report['item_count'] >= project_release_decision_queue_report['item_count']
+    assert project_final_signoff_cutset_report['external_signoff_count'] >= 1
+    assert project_final_signoff_cutset_report['release_decision_count'] >= 1
+    assert project_final_signoff_cutset_report['management_closeout_count'] >= 1
+    assert project_final_signoff_cutset_report['terminal_label'] == 'rc_golden_final_release_pending'
+    assert project_final_signoff_cutset_report['status'] == 'ready'
+    assert any(row['label'] == 'management_closure_pending' and row['cutset_role'] == 'management_closeout' for row in project_final_signoff_cutset_report['rows'])
     assert generated_truth_consistency_report['status'] == 'consistent'
     assert generated_truth_consistency_report['failed_checks'] == []
     assert generated_truth_crosscheck_matrix['status'] == 'consistent'
@@ -1632,6 +1669,9 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert crosscheck_labels['external_validation_readiness_matches_cluster'] is True
     assert crosscheck_labels['artifact_lock_readiness_matches_release_surfaces'] is True
     assert crosscheck_labels['final_release_cutover_matches_release_and_decision_queues'] is True
+    assert crosscheck_labels['real_run_execution_queue_matches_training_readiness'] is True
+    assert crosscheck_labels['benchmark_evidence_lock_matches_bridge_and_lock'] is True
+    assert crosscheck_labels['final_signoff_cutset_matches_queues'] is True
     assert changelog_snapshot['execution_status'] == 'completed'
     assert changelog_snapshot['evaluation_status'] == 'completed'
     assert 'release_gate_summary' in changelog_snapshot['included_labels']
@@ -1680,6 +1720,7 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert {'project_master_truth_reference', 'project_remaining_real_blockers', 'truth_docs_index', 'truth_docs_drift_report'} <= handoff_labels
     assert {'project_blocker_action_plan', 'project_blocker_dependency_graph', 'project_execution_sequence', 'project_lane_status_board', 'project_closure_phase_plan', 'project_phase_readiness_scoreboard', 'project_owner_accountability_matrix', 'project_owner_work_queue', 'project_critical_path_report', 'project_owner_next_actions_summary', 'project_ready_now_board', 'project_unlock_impact_report', 'project_parallel_workset_report', 'project_phase_exit_criteria_report', 'project_execution_wave_report', 'project_evidence_backlog_report', 'project_dependency_bottleneck_report', 'project_owner_phase_frontier_report', 'project_evidence_criticality_report', 'project_phase_transition_matrix', 'project_owner_load_report', 'project_phase_dependency_pressure_report', 'project_owner_bottleneck_alignment_report', 'project_evidence_phase_heatmap_report', 'project_blocker_risk_register_report', 'project_release_prereq_matrix_report', 'project_foundation_run_dependency_report', 'project_release_path_report', 'project_external_closure_cluster_report', 'project_owner_evidence_gap_report', 'project_release_gate_dependency_report', 'project_external_signoff_queue_report', 'project_release_evidence_bridge_report', 'project_training_run_readiness_report', 'project_benchmark_closure_dependency_report', 'project_release_decision_queue_report'} <= handoff_labels
     assert {'project_external_validation_readiness_report', 'project_artifact_lock_readiness_report', 'project_final_release_cutover_report'} <= handoff_labels
+    assert {'project_real_run_execution_queue_report', 'project_benchmark_evidence_lock_report', 'project_final_signoff_cutset_report'} <= handoff_labels
     assert {'generated_truth_consistency_report', 'generated_truth_crosscheck_matrix'} <= handoff_labels
     assert release_gate_summary['overall_internal_ready'] is True
     assert release_gate_summary['overall_external_ready'] is False
@@ -1693,7 +1734,7 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert operator_handoff_summary['master_summary_count'] == 4
     assert operator_handoff_summary['aggregate_truth_count'] == 4
     assert operator_handoff_summary['truth_docs_count'] == 4
-    assert operator_handoff_summary['project_actionability_count'] == 39
+    assert operator_handoff_summary['project_actionability_count'] == 42
     assert operator_handoff_summary['generated_truth_count'] == 2
 
 
