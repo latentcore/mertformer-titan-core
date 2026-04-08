@@ -13,5 +13,8 @@
 - [ ] `reports/eval_card.json` present
 - [ ] `reports/legal_move_safety.json` present
 - [ ] `reports/observability_report.json` present
+- [ ] `reports/selfplay_report.json` present
+- [ ] `reports/inference_mode_tournament_report.json` present
+- [ ] `reports/replay_buffer_manifest.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed

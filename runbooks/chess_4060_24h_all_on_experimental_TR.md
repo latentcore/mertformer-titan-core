@@ -45,6 +45,9 @@ Run dizini altında en az şu raporlar beklenir:
 - `reports/legal_move_safety.json`
 - `reports/raw_vs_masked_policy_metrics.json`
 - `reports/observability_report.json`
+- `reports/selfplay_report.json`
+- `reports/inference_mode_tournament_report.json`
+- `reports/replay_buffer_manifest.json`
 - `logs/run_log.jsonl`
 
 ## Operatör Kapıları
@@ -62,3 +65,4 @@ Koşu sonrası:
 - Replay/demo çıktısını güç kanıtı gibi yorumlama.
 - Benchmark çıktısını harici tekrar olmadan iç benchmark olarak tut.
 - Feature flag raporunu checkpoint bundle ile birlikte koru; böylece tam açık feature/head kombinasyonu audit edilebilir kalsın.
+- Self-play / tournament / replay-buffer raporlarını ayrı benchmark kanıtı gibi değil, koşu-sonrası iç teşhis artefaktı olarak sakla.

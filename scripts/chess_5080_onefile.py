@@ -299,6 +299,15 @@ RUN_CONFIG: Dict[str, Any] = {
     "resume_from": "",
     "sample_replay_games": 3,
     "sample_replay_max_plies": 24,
+    "selfplay_eval_enabled": False,
+    "selfplay_games": 4,
+    "selfplay_max_plies": 96,
+    "selfplay_opening_prefix_plies": 2,
+    "tournament_eval_enabled": False,
+    "tournament_games": 6,
+    "tournament_max_plies": 96,
+    "replay_buffer_enabled": False,
+    "replay_buffer_max_positions": 256,
     "include_curated_position_suites": True,
     "curated_position_repeat": 6,
     "synthetic_teaching_corpus_enabled": True,
@@ -352,6 +361,9 @@ FEATURE_FLAG_KEYS: Tuple[str, ...] = (
     "use_expert_paging",
     "use_gradient_checkpointing",
     "search_enabled",
+    "selfplay_eval_enabled",
+    "tournament_eval_enabled",
+    "replay_buffer_enabled",
     "curriculum_enabled",
     "curated_suite_eval_enabled",
     "synthetic_teaching_corpus_enabled",
@@ -412,6 +424,14 @@ FEATURE_BUNDLES: Dict[str, Dict[str, Any]] = {
             "legality_loss_coef": 0.03,
         },
     },
+    "postrun_analysis_stack": {
+        "description": "Self-play, inference-mode tournament, and replay-buffer artifact surfaces.",
+        "overrides": {
+            "selfplay_eval_enabled": True,
+            "tournament_eval_enabled": True,
+            "replay_buffer_enabled": True,
+        },
+    },
     "all_stable_extensions": {
         "description": "Broad but relatively stable advanced stack for ambitious local runs.",
         "overrides": {
@@ -433,6 +453,9 @@ FEATURE_BUNDLES: Dict[str, Dict[str, Any]] = {
             "use_lifelong_safety_layer": True,
             "use_gradient_checkpointing": True,
             "search_enabled": True,
+            "selfplay_eval_enabled": True,
+            "tournament_eval_enabled": True,
+            "replay_buffer_enabled": True,
             "curriculum_enabled": True,
             "curated_suite_eval_enabled": True,
             "synthetic_teaching_corpus_enabled": True,
@@ -464,6 +487,9 @@ FEATURE_BUNDLES: Dict[str, Dict[str, Any]] = {
             "use_expert_paging": True,
             "use_gradient_checkpointing": True,
             "search_enabled": True,
+            "selfplay_eval_enabled": True,
+            "tournament_eval_enabled": True,
+            "replay_buffer_enabled": True,
             "curriculum_enabled": True,
             "curated_suite_eval_enabled": True,
             "synthetic_teaching_corpus_enabled": True,
@@ -580,6 +606,14 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         "search_candidate_topk": 6,
         "search_reply_topk": 5,
         "search_auto_budget": True,
+        "selfplay_eval_enabled": True,
+        "selfplay_games": 6,
+        "selfplay_max_plies": 110,
+        "tournament_eval_enabled": True,
+        "tournament_games": 6,
+        "tournament_max_plies": 110,
+        "replay_buffer_enabled": True,
+        "replay_buffer_max_positions": 384,
         "midrun_curated_snapshot_interval": 3000,
         "midrun_stockfish_snapshot_interval": 10000,
         "midrun_stockfish_snapshot_games": 6,
@@ -625,6 +659,14 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         "search_auto_budget": True,
         "search_policy_blend": 0.32,
         "search_value_blend": 0.68,
+        "selfplay_eval_enabled": True,
+        "selfplay_games": 8,
+        "selfplay_max_plies": 120,
+        "tournament_eval_enabled": True,
+        "tournament_games": 8,
+        "tournament_max_plies": 120,
+        "replay_buffer_enabled": True,
+        "replay_buffer_max_positions": 512,
         "midrun_curated_snapshot_interval": 2500,
         "midrun_stockfish_snapshot_interval": 9000,
         "midrun_stockfish_snapshot_games": 8,
@@ -6613,6 +6655,296 @@ def build_pgn_from_moves(starting_moves: Sequence[str], played_moves: Sequence[s
     return str(game)
 
 
+def not_run_selfplay_report(reason: str) -> Dict[str, Any]:
+    return {
+        "status": "not_run",
+        "reason": reason,
+        "games_requested": 0,
+        "games_played": 0,
+        "result_counts": {"1-0": 0, "1/2-1/2": 0, "0-1": 0, "*": 0},
+        "average_plies": 0.0,
+        "games": [],
+        "note": "Self-play artifact generation was skipped for this run.",
+    }
+
+
+def render_selfplay_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Self-Play Report",
+        "",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- games_requested: `{report.get('games_requested', 0)}`",
+        f"- games_played: `{report.get('games_played', 0)}`",
+        f"- average_plies: `{report.get('average_plies', 0.0)}`",
+        "",
+        "## Result Counts",
+    ]
+    for result_name, count in sorted(report.get("result_counts", {}).items()):
+        lines.append(f"- `{result_name}`: `{count}`")
+    return "\n".join(lines) + "\n"
+
+
+def not_run_tournament_report(reason: str) -> Dict[str, Any]:
+    return {
+        "status": "not_run",
+        "reason": reason,
+        "games_requested": 0,
+        "games_played": 0,
+        "players": {},
+        "games": [],
+        "note": "Inference-mode tournament generation was skipped for this run.",
+    }
+
+
+def render_tournament_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Inference-Mode Tournament Report",
+        "",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- games_requested: `{report.get('games_requested', 0)}`",
+        f"- games_played: `{report.get('games_played', 0)}`",
+        "",
+        "## Player Scores",
+    ]
+    for player_name, payload in sorted(report.get("players", {}).items()):
+        lines.append(
+            f"- `{player_name}`: wins=`{payload.get('wins', 0)}`, "
+            f"draws=`{payload.get('draws', 0)}`, losses=`{payload.get('losses', 0)}`, "
+            f"score_rate=`{payload.get('score_rate', 0.0)}`"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def not_run_replay_buffer_report(reason: str) -> Dict[str, Any]:
+    return {
+        "status": "not_run",
+        "reason": reason,
+        "positions": 0,
+        "games_used": 0,
+        "truncated": False,
+        "records": [],
+        "note": "Replay-buffer manifest generation was skipped for this run.",
+    }
+
+
+def render_replay_buffer_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Replay Buffer Manifest",
+        "",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- positions: `{report.get('positions', 0)}`",
+        f"- games_used: `{report.get('games_used', 0)}`",
+        f"- truncated: `{report.get('truncated', False)}`",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def _limited_opening_prefix(game_idx: int, cfg: Dict[str, Any]) -> List[str]:
+    opening = list(OPENING_SEEDS[game_idx % len(OPENING_SEEDS)])
+    prefix_plies = max(0, int(cfg.get("selfplay_opening_prefix_plies", 2)))
+    if prefix_plies <= 0:
+        return []
+    return opening[: min(prefix_plies, len(opening))]
+
+
+@torch.no_grad()
+def generate_selfplay_report(
+    model: ChessPolicyValueNet,
+    cfg: Dict[str, Any],
+    device: torch.device,
+    layout: ArtifactLayout,
+) -> Dict[str, Any]:
+    if not bool(cfg.get("selfplay_eval_enabled", False)):
+        return not_run_selfplay_report("disabled_by_config")
+    was_training = model.training
+    model.eval()
+    pgn_dir = layout.benchmark_dir / "selfplay_pgns"
+    pgn_dir.mkdir(parents=True, exist_ok=True)
+    games_requested = max(0, int(cfg.get("selfplay_games", 0)))
+    max_plies = max(1, int(cfg.get("selfplay_max_plies", 96)))
+    report: Dict[str, Any] = {
+        "status": "completed",
+        "games_requested": games_requested,
+        "games_played": 0,
+        "result_counts": {"1-0": 0, "1/2-1/2": 0, "0-1": 0, "*": 0},
+        "average_plies": 0.0,
+        "games": [],
+        "note": "Self-play uses the current in-memory model and remains an internal artifact, not an external strength claim.",
+    }
+    total_plies = 0
+    try:
+        for game_idx in range(games_requested):
+            board = chess.Board()
+            opening_prefix = _limited_opening_prefix(game_idx, cfg)
+            for move_uci in opening_prefix:
+                move = chess.Move.from_uci(move_uci)
+                if move not in board.legal_moves:
+                    break
+                board.push(move)
+            played_moves: List[str] = []
+            move_rows: List[Dict[str, Any]] = []
+            while not board.is_game_over() and len(played_moves) < max_plies:
+                fen_before = board.fen()
+                trace = choose_move_trace(model, board, device, cfg=cfg, mode="analyze", teaching_level="club")
+                move = chess.Move.from_uci(trace["move"])
+                if move not in board.legal_moves:
+                    break
+                played_moves.append(trace["move"])
+                board.push(move)
+                move_rows.append(
+                    {
+                        "ply": len(played_moves),
+                        "move": trace["move"],
+                        "fen_before": fen_before,
+                        "fen_after": board.fen(),
+                        "value": trace["value"],
+                        "confidence": trace.get("confidence", {}),
+                        "auxiliary_predictions": trace.get("auxiliary_predictions", {}),
+                    }
+                )
+            outcome = board.outcome()
+            result = outcome.result() if outcome is not None else "*"
+            report["result_counts"][result] = report["result_counts"].get(result, 0) + 1
+            pgn_path = pgn_dir / f"selfplay_{game_idx:03d}.pgn"
+            atomic_write_text(pgn_path, build_pgn_from_moves(opening_prefix, played_moves, result))
+            report["games"].append(
+                {
+                    "game_index": game_idx,
+                    "opening_prefix": opening_prefix,
+                    "result": result,
+                    "plies": len(played_moves),
+                    "completed": bool(outcome is not None),
+                    "final_fen": board.fen(),
+                    "pgn_path": str(pgn_path),
+                    "moves": move_rows,
+                }
+            )
+            total_plies += len(played_moves)
+        report["games_played"] = len(report["games"])
+        report["average_plies"] = round(total_plies / max(1, report["games_played"]), 4)
+        return report
+    finally:
+        model.train(was_training)
+
+
+def build_replay_buffer_report(selfplay_report: Dict[str, Any], cfg: Dict[str, Any]) -> Dict[str, Any]:
+    if not bool(cfg.get("replay_buffer_enabled", False)):
+        return not_run_replay_buffer_report("disabled_by_config")
+    if selfplay_report.get("status") != "completed":
+        return not_run_replay_buffer_report(f"selfplay_unavailable:{selfplay_report.get('status', 'unknown')}")
+    max_positions = max(1, int(cfg.get("replay_buffer_max_positions", 256)))
+    records: List[Dict[str, Any]] = []
+    games_used = 0
+    truncated = False
+    for game in selfplay_report.get("games", []):
+        games_used += 1
+        for row in game.get("moves", []):
+            records.append(
+                {
+                    "game_index": game.get("game_index", 0),
+                    "ply": row.get("ply", 0),
+                    "fen_before": row.get("fen_before", ""),
+                    "move": row.get("move", ""),
+                    "value": row.get("value", 0.0),
+                    "confidence": row.get("confidence", {}),
+                    "auxiliary_predictions": row.get("auxiliary_predictions", {}),
+                }
+            )
+            if len(records) >= max_positions:
+                truncated = True
+                break
+        if truncated:
+            break
+    return {
+        "status": "completed",
+        "positions": len(records),
+        "games_used": games_used,
+        "truncated": truncated,
+        "records": records,
+        "note": "Replay-buffer manifest is derived from internal self-play only and is not external benchmark evidence.",
+    }
+
+
+@torch.no_grad()
+def play_inference_mode_tournament(
+    model: ChessPolicyValueNet,
+    cfg: Dict[str, Any],
+    device: torch.device,
+    layout: ArtifactLayout,
+) -> Dict[str, Any]:
+    if not bool(cfg.get("tournament_eval_enabled", False)):
+        return not_run_tournament_report("disabled_by_config")
+    was_training = model.training
+    model.eval()
+    games_requested = max(0, int(cfg.get("tournament_games", 0)))
+    max_plies = max(1, int(cfg.get("tournament_max_plies", cfg.get("selfplay_max_plies", 96))))
+    pgn_dir = layout.benchmark_dir / "inference_mode_tournament_pgns"
+    pgn_dir.mkdir(parents=True, exist_ok=True)
+    report: Dict[str, Any] = {
+        "status": "completed",
+        "games_requested": games_requested,
+        "games_played": 0,
+        "players": {
+            "search_assisted": {"wins": 0, "draws": 0, "losses": 0, "score_rate": 0.0},
+            "pure_policy": {"wins": 0, "draws": 0, "losses": 0, "score_rate": 0.0},
+        },
+        "games": [],
+        "note": "This tournament compares inference modes of the same model. It is diagnostic only.",
+    }
+    try:
+        for game_idx in range(games_requested):
+            board = chess.Board()
+            opening_prefix = _limited_opening_prefix(game_idx, cfg)
+            for move_uci in opening_prefix:
+                move = chess.Move.from_uci(move_uci)
+                if move not in board.legal_moves:
+                    break
+                board.push(move)
+            white_mode = "search_assisted" if game_idx % 2 == 0 else "pure_policy"
+            black_mode = "pure_policy" if white_mode == "search_assisted" else "search_assisted"
+            played_moves: List[str] = []
+            while not board.is_game_over() and len(played_moves) < max_plies:
+                current_mode = white_mode if board.turn == chess.WHITE else black_mode
+                mode_cfg = dict(cfg)
+                mode_cfg["search_enabled"] = current_mode == "search_assisted"
+                trace = choose_move_trace(model, board, device, cfg=mode_cfg, mode="benchmark", teaching_level="club")
+                move = chess.Move.from_uci(trace["move"])
+                if move not in board.legal_moves:
+                    break
+                played_moves.append(trace["move"])
+                board.push(move)
+            outcome = board.outcome()
+            result = outcome.result() if outcome is not None else "*"
+            if result == "1-0":
+                report["players"][white_mode]["wins"] += 1
+                report["players"][black_mode]["losses"] += 1
+            elif result == "0-1":
+                report["players"][black_mode]["wins"] += 1
+                report["players"][white_mode]["losses"] += 1
+            else:
+                report["players"][white_mode]["draws"] += 1
+                report["players"][black_mode]["draws"] += 1
+            pgn_path = pgn_dir / f"mode_tournament_{game_idx:03d}.pgn"
+            atomic_write_text(pgn_path, build_pgn_from_moves(opening_prefix, played_moves, result))
+            report["games"].append(
+                {
+                    "game_index": game_idx,
+                    "white_mode": white_mode,
+                    "black_mode": black_mode,
+                    "result": result,
+                    "plies": len(played_moves),
+                    "pgn_path": str(pgn_path),
+                }
+            )
+        report["games_played"] = len(report["games"])
+        for player_name, player_report in report["players"].items():
+            score = player_report["wins"] + 0.5 * player_report["draws"]
+            player_report["score_rate"] = round(score / max(1, report["games_played"]), 6)
+        return report
+    finally:
+        model.train(was_training)
+
+
 def play_stockfish_gauntlet(
     model: ChessPolicyValueNet,
     cfg: Dict[str, Any],
@@ -7056,6 +7388,9 @@ def build_eval_card(
     legality_report: Dict[str, Any],
     benchmark_report: Dict[str, Any],
     curated_position_suite_report: Dict[str, Any],
+    selfplay_report: Dict[str, Any],
+    tournament_report: Dict[str, Any],
+    replay_buffer_report: Dict[str, Any],
 ) -> Dict[str, Any]:
     return {
         "script_version": SCRIPT_VERSION,
@@ -7067,6 +7402,9 @@ def build_eval_card(
         "benchmark_protocol": "internal_stockfish_gauntlet_v2",
         "benchmark_result": benchmark_report,
         "curated_position_suite": curated_position_suite_report,
+        "selfplay_report": selfplay_report,
+        "inference_mode_tournament": tournament_report,
+        "replay_buffer_manifest": replay_buffer_report,
         "rating_note": "Strength outputs are internal-only unless externally verified.",
         "parity_scope_note": "Exact mirror parity covers the canonical trunk families; chess-specific heads and legality surfaces remain domain-specific.",
     }
@@ -7171,6 +7509,11 @@ def render_run_summary_md(payload: Dict[str, Any]) -> str:
             f"- Explicit enable overrides: `{', '.join(payload.get('feature_flags', {}).get('explicitly_enabled', [])) or 'none'}`",
             f"- Explicit disable overrides: `{', '.join(payload.get('feature_flags', {}).get('explicitly_disabled', [])) or 'none'}`",
             f"- Top enabled surfaces: `{', '.join(payload.get('feature_flags', {}).get('enabled_features', [])[:12]) or 'none'}`",
+            "",
+            "## Post-Run Analysis",
+            f"- Self-play status: `{payload.get('selfplay_report', {}).get('status', 'unknown')}`",
+            f"- Tournament status: `{payload.get('tournament_report', {}).get('status', 'unknown')}`",
+            f"- Replay-buffer status: `{payload.get('replay_buffer_report', {}).get('status', 'unknown')}`",
             "",
             "## Bundle",
             f"- Output root: `{payload['output_root']}`",
@@ -7307,6 +7650,12 @@ def write_cards_and_reports(
     atomic_write_text(reports / "synthetic_teaching_corpus.md", render_synthetic_teaching_corpus_md(payload["synthetic_teaching_corpus"]))
     atomic_json(reports / "curated_position_suite_report.json", payload["curated_position_suite"])
     atomic_write_text(reports / "curated_position_suite_report.md", render_curated_position_suite_report_md(payload["curated_position_suite"]))
+    atomic_json(reports / "selfplay_report.json", payload["selfplay_report"])
+    atomic_write_text(reports / "selfplay_report.md", render_selfplay_report_md(payload["selfplay_report"]))
+    atomic_json(reports / "inference_mode_tournament_report.json", payload["tournament_report"])
+    atomic_write_text(reports / "inference_mode_tournament_report.md", render_tournament_report_md(payload["tournament_report"]))
+    atomic_json(reports / "replay_buffer_manifest.json", payload["replay_buffer_report"])
+    atomic_write_text(reports / "replay_buffer_manifest.md", render_replay_buffer_report_md(payload["replay_buffer_report"]))
     if "arena_session" in payload:
         atomic_json(reports / "arena_session.json", payload["arena_session"])
     atomic_write_text(reports / "PROOF_SCOPE.md", render_proof_scope_md())
@@ -7572,6 +7921,9 @@ def package_existing_run(
             "legality_report": {},
             "stockfish": {"status": "not_run", "reason": "package_only"},
             "curated_position_suite": {"status": "not_run", "reason": "package_only"},
+            "selfplay_report": {"status": "not_run", "reason": "package_only"},
+            "tournament_report": {"status": "not_run", "reason": "package_only"},
+            "replay_buffer_report": {"status": "not_run", "reason": "package_only"},
             "curated_position_manifest": build_curated_position_manifest(cfg),
             "synthetic_teaching_corpus": build_synthetic_teaching_corpus(cfg),
             "training_augmentation": {"enabled": False, "reason": "package_only"},
@@ -7666,6 +8018,9 @@ def run_pipeline(
         demo_replay = not_run_demo_replay("arena_mode_interactive_only")
         stockfish_report = {"status": "not_run", "reason": "arena_mode_interactive_only"}
         curated_position_suite_report = not_run_curated_position_eval("arena_mode_interactive_only")
+        selfplay_report = not_run_selfplay_report("arena_mode_interactive_only")
+        tournament_report = not_run_tournament_report("arena_mode_interactive_only")
+        replay_buffer_report = not_run_replay_buffer_report("arena_mode_interactive_only")
         atomic_json(layout.reports_dir / "model_replay.json", demo_replay)
         atomic_json(layout.reports_dir / "stockfish_match_report.json", stockfish_report)
         model_card = build_model_card(model, cfg, checkpoint_path)
@@ -7680,7 +8035,17 @@ def run_pipeline(
                 "sampling_strategy": "not_used",
             },
         }
-        eval_card = build_eval_card(cfg, holdout_validation, locked_test, legality_report, stockfish_report, curated_position_suite_report)
+        eval_card = build_eval_card(
+            cfg,
+            holdout_validation,
+            locked_test,
+            legality_report,
+            stockfish_report,
+            curated_position_suite_report,
+            selfplay_report,
+            tournament_report,
+            replay_buffer_report,
+        )
         payload = {
             "script_version": SCRIPT_VERSION,
             "run_id": layout.run_id,
@@ -7696,6 +8061,9 @@ def run_pipeline(
             "legality_report": legality_report,
             "stockfish": stockfish_report,
             "curated_position_suite": curated_position_suite_report,
+            "selfplay_report": selfplay_report,
+            "tournament_report": tournament_report,
+            "replay_buffer_report": replay_buffer_report,
             "curated_position_manifest": curated_position_manifest,
             "synthetic_teaching_corpus": synthetic_teaching_corpus,
             "training_augmentation": {"enabled": False, "reason": "arena_mode_interactive_only"},
@@ -7824,6 +8192,9 @@ def run_pipeline(
         locked_test = not_run_evaluation("verify_mode_runtime_only")
         legality_report = not_run_legality_report("verify_mode_runtime_only")
         demo_replay = not_run_demo_replay("verify_mode_runtime_only")
+        selfplay_report = not_run_selfplay_report("verify_mode_runtime_only")
+        tournament_report = not_run_tournament_report("verify_mode_runtime_only")
+        replay_buffer_report = not_run_replay_buffer_report("verify_mode_runtime_only")
     else:
         val_loader = make_loader(val_examples, batch_size=int(cfg["eval_batch_size"]), shuffle=False, num_workers=0, seed=int(cfg["seed"]) + 123)
         test_loader = make_loader(test_examples if test_examples else val_examples, batch_size=int(cfg["eval_batch_size"]), shuffle=False, num_workers=0, seed=int(cfg["seed"]) + 124)
@@ -7832,7 +8203,16 @@ def run_pipeline(
         model.eval()
         legality_report = run_legality_report(model, val_examples, device, cfg)
         demo_replay = generate_demo_replay(model, cfg, device)
+        selfplay_report = generate_selfplay_report(model, cfg, device, layout)
+        tournament_report = play_inference_mode_tournament(model, cfg, device, layout)
+        replay_buffer_report = build_replay_buffer_report(selfplay_report, cfg)
     atomic_json(layout.reports_dir / "model_replay.json", demo_replay)
+    atomic_json(layout.reports_dir / "selfplay_report.json", selfplay_report)
+    atomic_write_text(layout.reports_dir / "selfplay_report.md", render_selfplay_report_md(selfplay_report))
+    atomic_json(layout.reports_dir / "inference_mode_tournament_report.json", tournament_report)
+    atomic_write_text(layout.reports_dir / "inference_mode_tournament_report.md", render_tournament_report_md(tournament_report))
+    atomic_json(layout.reports_dir / "replay_buffer_manifest.json", replay_buffer_report)
+    atomic_write_text(layout.reports_dir / "replay_buffer_manifest.md", render_replay_buffer_report_md(replay_buffer_report))
 
     benchmark_protocol = build_benchmark_protocol(cfg, detect_stockfish_path(cfg))
     stockfish_report = {"status": "not_run", "reason": "mode_disabled"}
@@ -7867,7 +8247,17 @@ def run_pipeline(
             "sampling_strategy": provenance.get("sampling_strategy", "unknown"),
         },
     }
-    eval_card = build_eval_card(cfg, holdout_validation, locked_test, legality_report, stockfish_report, curated_position_suite_report)
+    eval_card = build_eval_card(
+        cfg,
+        holdout_validation,
+        locked_test,
+        legality_report,
+        stockfish_report,
+        curated_position_suite_report,
+        selfplay_report,
+        tournament_report,
+        replay_buffer_report,
+    )
 
     payload = {
         "script_version": SCRIPT_VERSION,
@@ -7884,6 +8274,9 @@ def run_pipeline(
         "legality_report": legality_report,
         "stockfish": stockfish_report,
         "curated_position_suite": curated_position_suite_report,
+        "selfplay_report": selfplay_report,
+        "tournament_report": tournament_report,
+        "replay_buffer_report": replay_buffer_report,
         "curated_position_manifest": curated_position_manifest,
         "synthetic_teaching_corpus": synthetic_teaching_corpus,
         "training_augmentation": curated_training_manifest,

@@ -17,11 +17,12 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Windows RTX 5080 chess PoC one-file script: `scripts/chess_5080_onefile.py`
 - Chess onefile supported modes: `train`, `verify`, `benchmark`, `package`, `resume`, `arena`
 - Chess onefile now supports named feature bundles through `--feature-bundle` plus explicit `--enable-features` / `--disable-features` overrides.
-- Recommended advanced bundle names: `routing_stack`, `liquid_stack`, `memory_attention_stack`, `cognitive_stack`, `objective_stack`, `all_stable_extensions`, `all_on_experimental`.
+- Recommended advanced bundle names: `routing_stack`, `liquid_stack`, `memory_attention_stack`, `cognitive_stack`, `objective_stack`, `postrun_analysis_stack`, `all_stable_extensions`, `all_on_experimental`.
 - New long-run experimental profiles for local ablations: `strength_4060_24h_all_on_experimental` and `strength_4060_24h_omni_max`.
 - `--mode arena` provides an interactive human-vs-model terminal surface; use `--resume-from <checkpoint>` for meaningful play.
 - The chess onefile now mirrors the canonical Build30 trunk families in one file: BitLinear, MLA, CfC Liquid, MoE/LiquidRouter, QINN, cognitive extensions, and world-model hooks.
 - Auxiliary chess heads can now be toggled inside the onefile: `phase_head`, `wdl_head`, and `legality_head`.
+- Post-run chess analysis surfaces can now be toggled: `selfplay_eval_enabled`, `tournament_eval_enabled`, and `replay_buffer_enabled`.
 - Mirror anti-drift evidence is written to `reports/mirror_parity_report.json` during chess runs.
 - Feature-bundle evidence is written to `reports/feature_flag_report.json` and `reports/feature_flag_report.md` during chess runs.
 - Runbook/checklist support for the 24h 4060 all-on path now lives under `runbooks/` and `checklists/`.
@@ -44,6 +45,9 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_o
 
 # Start from the all-on profile but explicitly disable a risky surface
 python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_all_on_experimental --disable-features use_qinn,use_world_model_head
+
+# Keep the trunk profile but only opt into post-run self-play/tournament/replay artifacts
+python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --feature-bundle postrun_analysis_stack
 ```
 
 ## Core Pipelines

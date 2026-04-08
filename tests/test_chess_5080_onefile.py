@@ -174,6 +174,30 @@ def test_choose_move_trace_surfaces_auxiliary_predictions() -> None:
     assert trace['response_contract']['auxiliary_predictions']['phase_head']['label'] == 'opening'
 
 
+class StubInferenceModel:
+    def __init__(self) -> None:
+        self.training = False
+        self._aux = {}
+
+    def eval(self):
+        self.training = False
+        return self
+
+    def train(self, mode: bool = True):
+        self.training = bool(mode)
+        return self
+
+    def __call__(self, piece: onefile.torch.Tensor, meta: onefile.torch.Tensor):
+        logits = onefile.torch.full((1, len(onefile.MOVE_VOCAB)), -10.0, dtype=onefile.torch.float32)
+        logits[0, onefile.MOVE_TO_ID['e2e4']] = 4.0
+        logits[0, onefile.MOVE_TO_ID['d2d4']] = 2.0
+        value = onefile.torch.tensor([0.12], dtype=onefile.torch.float32)
+        return logits, value, onefile.torch.tensor(0.0), {}
+
+    def get_last_auxiliary_outputs(self):
+        return self._aux
+
+
 def test_resolve_runtime_config_verify_mode_uses_embedded_seed() -> None:
     cfg = onefile.resolve_runtime_config(make_args(mode='verify'), onefile.RUN_CONFIG)
     assert cfg['mode'] == 'verify'
@@ -193,6 +217,9 @@ def test_resolve_runtime_config_applies_all_on_profile_bundle() -> None:
     assert cfg['use_qinn'] is True
     assert cfg['use_world_model_head'] is True
     assert cfg['use_gradient_checkpointing'] is True
+    assert cfg['selfplay_eval_enabled'] is True
+    assert cfg['tournament_eval_enabled'] is True
+    assert cfg['replay_buffer_enabled'] is True
 
 
 def test_resolve_runtime_config_omni_max_profile_enables_auxiliary_heads() -> None:
@@ -721,6 +748,58 @@ def test_forward_batch_metrics_reports_auxiliary_head_metrics() -> None:
     assert 'phase_accuracy' in metrics
     assert 'wdl_accuracy' in metrics
     assert 'legality_head_top1_is_legal_rate' in metrics
+
+
+def test_generate_selfplay_report_runs_with_stub_model(tmp_path: Path) -> None:
+    cfg = {
+        **onefile.RUN_CONFIG,
+        'artifact_root': str(tmp_path),
+        'selfplay_eval_enabled': True,
+        'selfplay_games': 1,
+        'selfplay_max_plies': 4,
+        'selfplay_opening_prefix_plies': 1,
+    }
+    layout = onefile.make_layout(cfg)
+    report = onefile.generate_selfplay_report(StubInferenceModel(), cfg, onefile.torch.device('cpu'), layout)
+    assert report['status'] == 'completed'
+    assert report['games_played'] == 1
+    assert report['games'][0]['pgn_path']
+
+
+def test_build_replay_buffer_report_collects_positions() -> None:
+    selfplay_report = {
+        'status': 'completed',
+        'games': [
+            {
+                'game_index': 0,
+                'moves': [
+                    {'ply': 1, 'fen_before': 'fen_a', 'move': 'e2e4', 'value': 0.1, 'confidence': {'tier': 'medium'}, 'auxiliary_predictions': {}},
+                    {'ply': 2, 'fen_before': 'fen_b', 'move': 'e7e5', 'value': 0.0, 'confidence': {'tier': 'medium'}, 'auxiliary_predictions': {}},
+                ],
+            }
+        ],
+    }
+    report = onefile.build_replay_buffer_report(selfplay_report, {'replay_buffer_enabled': True, 'replay_buffer_max_positions': 8})
+    assert report['status'] == 'completed'
+    assert report['positions'] == 2
+    assert report['records'][0]['move'] == 'e2e4'
+
+
+def test_play_inference_mode_tournament_runs_with_stub_model(tmp_path: Path) -> None:
+    cfg = {
+        **onefile.RUN_CONFIG,
+        'artifact_root': str(tmp_path),
+        'tournament_eval_enabled': True,
+        'tournament_games': 2,
+        'tournament_max_plies': 4,
+        'selfplay_opening_prefix_plies': 1,
+        'search_enabled': True,
+    }
+    layout = onefile.make_layout(cfg)
+    report = onefile.play_inference_mode_tournament(StubInferenceModel(), cfg, onefile.torch.device('cpu'), layout)
+    assert report['status'] == 'completed'
+    assert report['games_played'] == 2
+    assert 'search_assisted' in report['players']
 
 
 def test_main_logs_fatal_exception_to_run_log(monkeypatch, tmp_path: Path) -> None:

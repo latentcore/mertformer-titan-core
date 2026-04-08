@@ -17,11 +17,12 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - Windows RTX 5080 satranç PoC one-file script: `scripts/chess_5080_onefile.py`
 - Satranç one-file desteklenen modlar: `train`, `verify`, `benchmark`, `package`, `resume`, `arena`
 - Satranç one-file artık isimli feature bundle desteği taşır: `--feature-bundle` ve bunun üstüne `--enable-features` / `--disable-features` override’ları kullanılabilir.
-- Önerilen ileri bundle adları: `routing_stack`, `liquid_stack`, `memory_attention_stack`, `cognitive_stack`, `objective_stack`, `all_stable_extensions`, `all_on_experimental`.
+- Önerilen ileri bundle adları: `routing_stack`, `liquid_stack`, `memory_attention_stack`, `cognitive_stack`, `objective_stack`, `postrun_analysis_stack`, `all_stable_extensions`, `all_on_experimental`.
 - Yeni uzun koşu deneysel profilleri: `strength_4060_24h_all_on_experimental` ve `strength_4060_24h_omni_max`.
 - `--mode arena` insan-vs-model terminal yüzeyi açar; anlamlı oyun için `--resume-from <checkpoint>` kullanın.
 - Satranç one-file artık kanonik Build30 trunk ailelerini tek dosyada mirror eder: BitLinear, MLA, CfC Liquid, MoE/LiquidRouter, QINN, cognitive extension katmanları ve world-model hookları.
 - Yardımcı satranç head’leri artık feature flag ile açılıp kapanabilir: `phase_head`, `wdl_head`, `legality_head`.
+- Koşu-sonrası satranç analiz yüzeyleri artık feature flag ile açılıp kapanabilir: `selfplay_eval_enabled`, `tournament_eval_enabled`, `replay_buffer_enabled`.
 - Mirror anti-drift kanıtı satranç koşularında `reports/mirror_parity_report.json` olarak yazılır.
 - Feature-bundle kanıtı satranç koşularında `reports/feature_flag_report.json` ve `reports/feature_flag_report.md` olarak yazılır.
 - 24 saatlik 4060 all-on yolu için runbook/checklist dokümanları artık `runbooks/` ve `checklists/` altındadır.
@@ -44,6 +45,9 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_o
 
 # All-on profilden başlayıp belirli riskli yüzeyleri kapatma örneği
 python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_all_on_experimental --disable-features use_qinn,use_world_model_head
+
+# Gövde profili koruyup sadece koşu-sonrası self-play/tournament/replay artefaktlarını açma örneği
+python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --feature-bundle postrun_analysis_stack
 ```
 
 ## Çekirdek Akışlar

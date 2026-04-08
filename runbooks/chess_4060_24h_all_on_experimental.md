@@ -45,6 +45,9 @@ Expect these reports under the run directory:
 - `reports/legal_move_safety.json`
 - `reports/raw_vs_masked_policy_metrics.json`
 - `reports/observability_report.json`
+- `reports/selfplay_report.json`
+- `reports/inference_mode_tournament_report.json`
+- `reports/replay_buffer_manifest.json`
 - `logs/run_log.jsonl`
 
 ## Operator Gates
@@ -60,5 +63,6 @@ During run:
 
 After run:
 - Treat replay/demo output as demonstration material only.
+- Treat self-play, tournament, and replay-buffer artifacts as internal diagnostics unless separately validated.
 - Treat benchmark outputs as internal unless externally reproduced.
 - Preserve the feature report alongside the checkpoint bundle so the exact head/feature mix remains auditable.

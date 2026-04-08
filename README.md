@@ -725,9 +725,11 @@ bash zero_touch_start.sh --check-only
 - Bundle CLI: `--feature-bundle <name>`
 - Per-flag CLI: `--enable-features flag_a,flag_b` and `--disable-features flag_c`
 - Objective bundle for auxiliary chess heads: `objective_stack`
+- Post-run analysis bundle: `postrun_analysis_stack`
 - Long-run all-on local ablation profiles: `strength_4060_24h_all_on_experimental` and `strength_4060_24h_omni_max`
 - New auxiliary heads: `phase_head`, `wdl_head`, `legality_head`
 - Per-run bundle evidence: `reports/feature_flag_report.json` and `reports/feature_flag_report.md`
+- New post-run chess artifacts: `reports/selfplay_report.json`, `reports/inference_mode_tournament_report.json`, `reports/replay_buffer_manifest.json`
 - Operator runbook/checklist path: `runbooks/chess_4060_24h_all_on_experimental.md` and `checklists/chess_4060_24h_all_on_experimental.md`
 
 Example:
