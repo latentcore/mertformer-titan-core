@@ -29,6 +29,9 @@ def make_args(**overrides: object) -> argparse.Namespace:
         'mode': onefile.RUN_CONFIG['mode'],
         'profile': onefile.RUN_CONFIG['profile'],
         'baseline': onefile.RUN_CONFIG['baseline'],
+        'feature_bundle': None,
+        'enable_features': None,
+        'disable_features': None,
         'resume_from': None,
         'artifact_root': None,
         'stockfish_path': None,
@@ -141,6 +144,37 @@ def test_resolve_runtime_config_verify_mode_uses_embedded_seed() -> None:
     assert cfg['mode'] == 'verify'
     assert cfg['offline_seed_only'] is True
     assert cfg['auto_download_enabled'] is False
+
+
+def test_resolve_runtime_config_applies_all_on_profile_bundle() -> None:
+    cfg = onefile.resolve_runtime_config(
+        make_args(profile='strength_4060_24h_all_on_experimental'),
+        onefile.RUN_CONFIG,
+    )
+    assert cfg['profile'] == 'strength_4060_24h_all_on_experimental'
+    assert cfg['feature_bundle'] == 'all_on_experimental'
+    assert cfg['use_moe'] is True
+    assert cfg['use_liquid'] is True
+    assert cfg['use_qinn'] is True
+    assert cfg['use_world_model_head'] is True
+    assert cfg['use_gradient_checkpointing'] is True
+
+
+def test_resolve_runtime_config_feature_overrides_win_over_bundle() -> None:
+    cfg = onefile.resolve_runtime_config(
+        make_args(
+            profile='strength_4060_24h_all_on_experimental',
+            disable_features='use_qinn,use_world_model_head',
+            enable_features='use_bitlinear',
+        ),
+        onefile.RUN_CONFIG,
+    )
+    assert cfg['feature_bundle'] == 'all_on_experimental'
+    assert cfg['use_qinn'] is False
+    assert cfg['use_world_model_head'] is False
+    assert cfg['use_bitlinear'] is True
+    assert cfg['disabled_features'] == ['use_qinn', 'use_world_model_head']
+    assert cfg['enabled_features'] == ['use_bitlinear']
 
 
 def test_deterministic_seed_sets_strict_flags() -> None:
@@ -532,6 +566,59 @@ def test_jsonl_logger_rotates_when_size_limit_is_hit(tmp_path: Path) -> None:
     logger.finalize('completed')
     rotated = sorted(tmp_path.glob('rotate.jsonl*'))
     assert len(rotated) >= 2
+
+
+def test_gradient_checkpointing_feature_path_runs_backward() -> None:
+    cfg = make_mirror_cfg(
+        hidden_size=16,
+        intermediate_size=32,
+        num_layers=2,
+        num_heads=4,
+        num_kv_heads=2,
+        head_dim=4,
+        use_moe=False,
+        use_liquid=False,
+        use_liquid_adapter=False,
+        use_qinn=False,
+        use_global_workspace_broadcast=True,
+        use_world_model_head=False,
+        use_gradient_checkpointing=True,
+        dropout=0.0,
+        attention_dropout=0.0,
+        ffn_dropout=0.0,
+    )
+    model = onefile.ChessPolicyValueNet(cfg, vocab_size=len(onefile.MOVE_VOCAB))
+    model.train()
+    batch = onefile.collate_examples(
+        [
+            onefile.ChessExample(
+                piece_ids=[0] * 64,
+                meta_ids=[0] * len(onefile.ChessPolicyValueNet.META_CARDINALITIES),
+                legal_move_ids=[onefile.MOVE_TO_ID['e2e4'], onefile.MOVE_TO_ID['d2d4']],
+                target_move_id=onefile.MOVE_TO_ID['e2e4'],
+                value_target=0.2,
+                phase=0,
+                source_game_id='g1',
+                ply=0,
+                total_plies=1,
+                turn=1,
+                has_eval=False,
+                opening_prefix='',
+                value_source='test',
+                source_archive='test',
+                position_hash='p1',
+                move_uci='e2e4',
+            )
+        ]
+    )
+    loss, metrics, _ = onefile.compute_loss(model, batch, cfg)
+    loss.backward()
+    grad_norm = 0.0
+    for param in model.parameters():
+        if param.grad is not None:
+            grad_norm += float(param.grad.detach().abs().sum().item())
+    assert metrics['loss'] >= 0.0
+    assert grad_norm > 0.0
 
 
 def test_main_logs_fatal_exception_to_run_log(monkeypatch, tmp_path: Path) -> None:

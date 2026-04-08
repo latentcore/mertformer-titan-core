@@ -719,6 +719,19 @@ TITAN_PROFILE=max_arch bash run.sh
 bash zero_touch_start.sh --check-only
 ```
 
+### Chess Onefile Feature-Bundle Path
+`/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/scripts/chess_5080_onefile.py` now supports named bundle overlays and explicit per-flag overrides for the mirrored advanced surfaces.
+
+- Bundle CLI: `--feature-bundle <name>`
+- Per-flag CLI: `--enable-features flag_a,flag_b` and `--disable-features flag_c`
+- Long-run all-on local ablation profile: `strength_4060_24h_all_on_experimental`
+- Per-run bundle evidence: `reports/feature_flag_report.json` and `reports/feature_flag_report.md`
+
+Example:
+```bash
+python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_all_on_experimental
+```
+
 ```text
       ╔═══════════════════════════════════════════════════════════════════════════╗
       ║  M E R T F O R M E R   T I T A N   (O N Y X   S T O R M)                  ║

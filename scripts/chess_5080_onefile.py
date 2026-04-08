@@ -152,6 +152,9 @@ RUN_CONFIG: Dict[str, Any] = {
     "mode": "train",
     "profile": "production_5080",
     "baseline": "dense",
+    "feature_bundle": "default",
+    "enabled_features": [],
+    "disabled_features": [],
     "seed": 42,
     "device": "auto",
     "artifact_root": "~/Desktop",
@@ -318,6 +321,129 @@ RUN_CONFIG: Dict[str, Any] = {
     "lichess_urls": DEFAULT_LICHESS_URLS,
 }
 
+FEATURE_FLAG_KEYS: Tuple[str, ...] = (
+    "use_moe",
+    "use_bitlinear",
+    "use_liquid",
+    "use_liquid_adapter",
+    "use_qinn",
+    "use_flash_attn_inference",
+    "use_hierarchical_kv_cache",
+    "use_global_workspace_broadcast",
+    "use_neuromodulatory_gain",
+    "use_latent_ode_state_channel",
+    "use_cross_expert_sync_bus",
+    "use_structural_plasticity",
+    "use_hebbian_plasticity",
+    "use_neuro_symbolic_layer",
+    "use_world_model_head",
+    "use_lifelong_safety_layer",
+    "use_expert_paging",
+    "use_gradient_checkpointing",
+    "search_enabled",
+    "curriculum_enabled",
+    "curated_suite_eval_enabled",
+    "synthetic_teaching_corpus_enabled",
+)
+
+FEATURE_BUNDLES: Dict[str, Dict[str, Any]] = {
+    "default": {
+        "description": "Canonical repo-safe defaults with explicit opt-in for advanced surfaces.",
+        "overrides": {},
+    },
+    "routing_stack": {
+        "description": "MoE routing, paging, and expert coordination surfaces.",
+        "overrides": {
+            "use_moe": True,
+            "moe_dispatch_mode": "parallel",
+            "use_expert_paging": True,
+            "use_cross_expert_sync_bus": True,
+            "use_structural_plasticity": True,
+        },
+    },
+    "liquid_stack": {
+        "description": "Liquid/CfC, adapter, and QINN surfaces.",
+        "overrides": {
+            "use_liquid": True,
+            "use_liquid_adapter": True,
+            "liquid_fast_path": True,
+            "use_qinn": True,
+        },
+    },
+    "memory_attention_stack": {
+        "description": "Inference-memory and attention-side optimizations.",
+        "overrides": {
+            "use_flash_attn_inference": True,
+            "use_hierarchical_kv_cache": True,
+            "use_gradient_checkpointing": True,
+        },
+    },
+    "cognitive_stack": {
+        "description": "Workspace, modulation, latent state, symbolic bridge, and world-model side surfaces.",
+        "overrides": {
+            "use_global_workspace_broadcast": True,
+            "use_neuromodulatory_gain": True,
+            "use_latent_ode_state_channel": True,
+            "use_hebbian_plasticity": True,
+            "use_neuro_symbolic_layer": True,
+            "use_world_model_head": True,
+            "use_lifelong_safety_layer": True,
+        },
+    },
+    "all_stable_extensions": {
+        "description": "Broad but relatively stable advanced stack for ambitious local runs.",
+        "overrides": {
+            "use_moe": True,
+            "use_liquid": True,
+            "use_liquid_adapter": True,
+            "use_qinn": True,
+            "use_flash_attn_inference": True,
+            "use_hierarchical_kv_cache": True,
+            "use_global_workspace_broadcast": True,
+            "use_neuromodulatory_gain": True,
+            "use_latent_ode_state_channel": True,
+            "use_hebbian_plasticity": True,
+            "use_neuro_symbolic_layer": True,
+            "use_world_model_head": True,
+            "use_lifelong_safety_layer": True,
+            "use_gradient_checkpointing": True,
+            "search_enabled": True,
+            "curriculum_enabled": True,
+            "curated_suite_eval_enabled": True,
+            "synthetic_teaching_corpus_enabled": True,
+            "moe_dispatch_mode": "parallel",
+        },
+    },
+    "all_on_experimental": {
+        "description": "Maximum onefile surface activation, including experimental and higher-risk combinations.",
+        "overrides": {
+            "use_moe": True,
+            "use_bitlinear": True,
+            "use_liquid": True,
+            "use_liquid_adapter": True,
+            "use_qinn": True,
+            "use_flash_attn_inference": True,
+            "use_hierarchical_kv_cache": True,
+            "use_global_workspace_broadcast": True,
+            "use_neuromodulatory_gain": True,
+            "use_latent_ode_state_channel": True,
+            "use_cross_expert_sync_bus": True,
+            "use_structural_plasticity": True,
+            "use_hebbian_plasticity": True,
+            "use_neuro_symbolic_layer": True,
+            "use_world_model_head": True,
+            "use_lifelong_safety_layer": True,
+            "use_expert_paging": True,
+            "use_gradient_checkpointing": True,
+            "search_enabled": True,
+            "curriculum_enabled": True,
+            "curated_suite_eval_enabled": True,
+            "synthetic_teaching_corpus_enabled": True,
+            "moe_dispatch_mode": "parallel",
+        },
+    },
+}
+
 RUN_PROFILES: Dict[str, Dict[str, Any]] = {
     "production_5080": {
         "download_partial_mb": 768,
@@ -387,6 +513,48 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         "midrun_curated_snapshot_interval": 4000,
         "midrun_stockfish_snapshot_interval": 12000,
         "midrun_stockfish_snapshot_games": 4,
+        "stockfish_ladder": [
+            {"label": "sf_skill4_nodes40k", "games": 24, "skill": 4, "nodes": 40000, "anchor_elo_proxy": 1100},
+            {"label": "sf_skill8_nodes80k", "games": 24, "skill": 8, "nodes": 80000, "anchor_elo_proxy": 1400},
+            {"label": "sf_skill12_nodes160k", "games": 28, "skill": 12, "nodes": 160000, "anchor_elo_proxy": 1700},
+            {"label": "sf_skill16_nodes320k", "games": 28, "skill": 16, "nodes": 320000, "anchor_elo_proxy": 1900},
+        ],
+        "rating_target_proxy_threshold": 2000,
+        "claim_min_benchmark_games": 100,
+    },
+    "strength_4060_24h_all_on_experimental": {
+        "download_partial_mb": 3072,
+        "download_archive_count": 8,
+        "max_games": 400000,
+        "max_positions": 2400000,
+        "max_positions_per_game": 12,
+        "min_elo": 2200,
+        "max_steps": 120000,
+        "max_wall_hours": 24.0,
+        "batch_size": 96,
+        "eval_batch_size": 96,
+        "hidden_size": 448,
+        "intermediate_size": 1792,
+        "num_layers": 10,
+        "num_heads": 8,
+        "num_kv_heads": 4,
+        "head_dim": 56,
+        "num_experts": 8,
+        "moe_top_k": 2,
+        "moe_every_n_layers": 2,
+        "moe_intermediate": 1792,
+        "moe_dispatch_mode": "parallel",
+        "moe_capacity_factor": 1.5,
+        "feature_bundle": "all_on_experimental",
+        "expert_paging_cache_size": 2,
+        "curated_position_repeat": 12,
+        "search_enabled": True,
+        "search_candidate_topk": 6,
+        "search_reply_topk": 5,
+        "search_auto_budget": True,
+        "midrun_curated_snapshot_interval": 3000,
+        "midrun_stockfish_snapshot_interval": 10000,
+        "midrun_stockfish_snapshot_games": 6,
         "stockfish_ladder": [
             {"label": "sf_skill4_nodes40k", "games": 24, "skill": 4, "nodes": 40000, "anchor_elo_proxy": 1100},
             {"label": "sf_skill8_nodes80k", "games": 24, "skill": 8, "nodes": 80000, "anchor_elo_proxy": 1400},
@@ -1319,6 +1487,103 @@ def validate_enum_choice(value: str, choices: Sequence[str], field_name: str) ->
         raise ConfigValidationError(f"{field_name} must be one of {choices}, got {value!r}")
 
 
+def parse_feature_list(raw: Any) -> List[str]:
+    if raw is None:
+        return []
+    if isinstance(raw, str):
+        items = [item.strip() for item in raw.split(",")]
+    elif isinstance(raw, (list, tuple, set)):
+        items = [str(item).strip() for item in raw]
+    else:
+        raise ConfigValidationError(f"Feature list must be string/list-like, got {type(raw).__name__}")
+    normalized = []
+    seen = set()
+    for item in items:
+        if not item:
+            continue
+        if item not in FEATURE_FLAG_KEYS:
+            raise ConfigValidationError(f"Unknown feature flag: {item}")
+        if item in seen:
+            continue
+        seen.add(item)
+        normalized.append(item)
+    return normalized
+
+
+def apply_feature_bundle(cfg: Dict[str, Any], bundle_name: str) -> Dict[str, Any]:
+    validate_enum_choice(bundle_name, list(FEATURE_BUNDLES.keys()), "feature_bundle")
+    merged = dict(cfg)
+    bundle = FEATURE_BUNDLES[bundle_name]
+    merged.update(dict(bundle.get("overrides", {})))
+    merged["feature_bundle"] = bundle_name
+    return merged
+
+
+def apply_feature_flag_overrides(
+    cfg: Dict[str, Any],
+    enabled_features: Sequence[str],
+    disabled_features: Sequence[str],
+) -> Dict[str, Any]:
+    merged = dict(cfg)
+    enable_list = parse_feature_list(enabled_features)
+    disable_list = parse_feature_list(disabled_features)
+    overlap = sorted(set(enable_list) & set(disable_list))
+    if overlap:
+        raise ConfigValidationError(f"Feature flags cannot be enabled and disabled together: {overlap}")
+    for flag_name in enable_list:
+        merged[flag_name] = True
+    for flag_name in disable_list:
+        merged[flag_name] = False
+    merged["enabled_features"] = enable_list
+    merged["disabled_features"] = disable_list
+    return merged
+
+
+def build_feature_flag_report(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    enabled = sorted(flag_name for flag_name in FEATURE_FLAG_KEYS if bool(cfg.get(flag_name, False)))
+    disabled = sorted(flag_name for flag_name in FEATURE_FLAG_KEYS if not bool(cfg.get(flag_name, False)))
+    bundle_name = str(cfg.get("feature_bundle", "default"))
+    bundle_payload = FEATURE_BUNDLES.get(bundle_name, {"description": "unknown", "overrides": {}})
+    explicit_enable = parse_feature_list(cfg.get("enabled_features", []))
+    explicit_disable = parse_feature_list(cfg.get("disabled_features", []))
+    return {
+        "schema": "chess_feature_flag_report_v1",
+        "feature_bundle": bundle_name,
+        "bundle_description": str(bundle_payload.get("description", "")),
+        "bundle_override_count": len(dict(bundle_payload.get("overrides", {}))),
+        "explicitly_enabled": explicit_enable,
+        "explicitly_disabled": explicit_disable,
+        "enabled_count": len(enabled),
+        "disabled_count": len(disabled),
+        "enabled_features": enabled,
+        "disabled_features": disabled,
+    }
+
+
+def render_feature_flag_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Chess Feature Flag Report",
+        "",
+        f"- feature_bundle: `{report.get('feature_bundle', 'default')}`",
+        f"- bundle_description: `{report.get('bundle_description', '')}`",
+        f"- enabled_count: `{report.get('enabled_count', 0)}`",
+        f"- disabled_count: `{report.get('disabled_count', 0)}`",
+        "",
+        "## Explicit Overrides",
+    ]
+    enabled_explicit = report.get("explicitly_enabled", [])
+    disabled_explicit = report.get("explicitly_disabled", [])
+    lines.append(f"- enabled: `{', '.join(enabled_explicit) if enabled_explicit else 'none'}`")
+    lines.append(f"- disabled: `{', '.join(disabled_explicit) if disabled_explicit else 'none'}`")
+    lines.extend(["", "## Enabled Features"])
+    for flag_name in report.get("enabled_features", []):
+        lines.append(f"- `{flag_name}`")
+    lines.extend(["", "## Disabled Features"])
+    for flag_name in report.get("disabled_features", []):
+        lines.append(f"- `{flag_name}`")
+    return "\n".join(lines) + "\n"
+
+
 def apply_profile(cfg: Dict[str, Any], profile: str) -> Dict[str, Any]:
     if profile not in RUN_PROFILES:
         raise ConfigValidationError(f"Unknown profile: {profile}")
@@ -1422,6 +1687,17 @@ def resolve_runtime_config(args: argparse.Namespace, base_cfg: Optional[Dict[str
     if env_stockfish_auto_fetch:
         cfg["stockfish_auto_fetch"] = env_stockfish_auto_fetch == "1"
 
+    bundle_arg = getattr(args, "feature_bundle", None)
+    bundle_name = str(cfg.get("feature_bundle", RUN_CONFIG.get("feature_bundle", "default")))
+    if bundle_arg not in (None, "", RUN_CONFIG.get("feature_bundle", "default")):
+        bundle_name = str(bundle_arg)
+    cfg = apply_feature_bundle(cfg, bundle_name)
+    cfg = apply_feature_flag_overrides(
+        cfg,
+        getattr(args, "enable_features", cfg.get("enabled_features", [])),
+        getattr(args, "disable_features", cfg.get("disabled_features", [])),
+    )
+
     cfg["artifact_root"] = str(Path(str(cfg["artifact_root"])).expanduser())
     cfg["cache_root"] = str(Path(str(cfg["cache_root"])).expanduser())
     stockfish_cache_root = str(cfg.get("stockfish_cache_root", "")).strip()
@@ -1461,6 +1737,9 @@ def validate_runtime_config(cfg: Dict[str, Any]) -> None:
     validate_enum_choice(str(cfg["mode"]), ["train", "verify", "benchmark", "package", "resume", "arena"], "mode")
     validate_enum_choice(str(cfg["profile"]), list(RUN_PROFILES.keys()), "profile")
     validate_enum_choice(str(cfg["baseline"]), ["dense", "moe", "moe_adapter"], "baseline")
+    validate_enum_choice(str(cfg.get("feature_bundle", "default")), list(FEATURE_BUNDLES.keys()), "feature_bundle")
+    parse_feature_list(cfg.get("enabled_features", []))
+    parse_feature_list(cfg.get("disabled_features", []))
     if float(cfg["val_fraction"]) < 0 or float(cfg["test_fraction"]) < 0:
         raise ConfigValidationError("Validation/test fractions must be non-negative")
     if float(cfg["val_fraction"]) + float(cfg["test_fraction"]) >= 1.0:
@@ -3221,10 +3500,33 @@ class ChessPolicyValueNet(nn.Module):
         workspace_state = x.mean(dim=1) if self.use_global_workspace_broadcast else None
         aux_loss = x.new_tensor(0.0)
         router_reports: Dict[str, Any] = {}
+        use_gradient_checkpointing = bool(self.arch_cfg.use_gradient_checkpointing and self.training)
         for block_idx, block in enumerate(self.blocks):
             if self.latent_ode_channel is not None:
                 x = self.latent_ode_channel(x, dt=self.arch_cfg.latent_ode_dt)
-            x, aux, _ = block(x, workspace=workspace_state)
+            if use_gradient_checkpointing:
+                if workspace_state is None:
+                    def _checkpoint_block(block_input: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+                        block_out, block_aux, _ = block(block_input, workspace=None)
+                        return block_out, block_aux
+
+                    x, aux = torch.utils.checkpoint.checkpoint(_checkpoint_block, x, use_reentrant=False)
+                else:
+                    def _checkpoint_block_with_workspace(
+                        block_input: torch.Tensor,
+                        workspace_input: torch.Tensor,
+                    ) -> Tuple[torch.Tensor, torch.Tensor]:
+                        block_out, block_aux, _ = block(block_input, workspace=workspace_input)
+                        return block_out, block_aux
+
+                    x, aux = torch.utils.checkpoint.checkpoint(
+                        _checkpoint_block_with_workspace,
+                        x,
+                        workspace_state,
+                        use_reentrant=False,
+                    )
+            else:
+                x, aux, _ = block(x, workspace=workspace_state)
             aux_loss = aux_loss + aux
             if workspace_state is not None:
                 token_summary = x.mean(dim=1)
@@ -6461,10 +6763,13 @@ def build_model_card(model: ChessPolicyValueNet, cfg: Dict[str, Any], checkpoint
     report = model.parameter_report()
     checkpoint_size = checkpoint_path.stat().st_size if checkpoint_path and checkpoint_path.exists() else 0
     parity_report = build_mirror_parity_report(cfg)
+    feature_report = build_feature_flag_report(cfg)
     report.update(
         {
             "script_version": SCRIPT_VERSION,
             "baseline": cfg.get("baseline", "dense"),
+            "feature_bundle": cfg.get("feature_bundle", "default"),
+            "feature_flags": feature_report,
             "hidden_size": int(cfg["hidden_size"]),
             "num_layers": int(cfg["num_layers"]),
             "num_heads": int(cfg["num_heads"]),
@@ -6499,6 +6804,7 @@ def build_eval_card(
     return {
         "script_version": SCRIPT_VERSION,
         "mirror_parity": build_mirror_parity_report(cfg),
+        "feature_flags": build_feature_flag_report(cfg),
         "holdout_validation": val_eval,
         "locked_test": test_eval,
         "raw_vs_masked_policy_metrics": legality_report,
@@ -6521,6 +6827,8 @@ def render_run_summary_md(payload: Dict[str, Any]) -> str:
         f"- Mode: `{payload['config']['mode']}`",
         f"- Profile: `{payload['config']['profile']}`",
         f"- Baseline: `{payload['config']['baseline']}`",
+        f"- Feature bundle: `{payload['config'].get('feature_bundle', 'default')}`",
+        f"- Enabled feature flags: `{payload.get('feature_flags', {}).get('enabled_count', 0)}`",
         f"- Mirror parity: `{payload.get('mirror_parity', {}).get('parity_mode', 'unknown')}`",
         f"- Execution status: `{payload['execution_status']}`",
         f"- Evaluation status: `{payload['evaluation_status']}`",
@@ -6603,6 +6911,11 @@ def render_run_summary_md(payload: Dict[str, Any]) -> str:
     lines.extend(
         [
             "",
+            "## Feature Flags",
+            f"- Explicit enable overrides: `{', '.join(payload.get('feature_flags', {}).get('explicitly_enabled', [])) or 'none'}`",
+            f"- Explicit disable overrides: `{', '.join(payload.get('feature_flags', {}).get('explicitly_disabled', [])) or 'none'}`",
+            f"- Top enabled surfaces: `{', '.join(payload.get('feature_flags', {}).get('enabled_features', [])[:12]) or 'none'}`",
+            "",
             "## Bundle",
             f"- Output root: `{payload['output_root']}`",
             f"- Final zip: `{bundle.get('zip_path', '')}`",
@@ -6639,6 +6952,15 @@ def render_proof_scope_md() -> str:
 
 def render_repro_md(cfg: Dict[str, Any], layout: ArtifactLayout) -> str:
     cmd = [sys.executable, str(Path(__file__).resolve()), "--mode", str(cfg["mode"]), "--profile", str(cfg["profile"]), "--baseline", str(cfg["baseline"])]
+    feature_bundle = str(cfg.get("feature_bundle", "default")).strip()
+    if feature_bundle and feature_bundle != "default":
+        cmd.extend(["--feature-bundle", feature_bundle])
+    enabled_features = parse_feature_list(cfg.get("enabled_features", []))
+    disabled_features = parse_feature_list(cfg.get("disabled_features", []))
+    if enabled_features:
+        cmd.extend(["--enable-features", ",".join(enabled_features)])
+    if disabled_features:
+        cmd.extend(["--disable-features", ",".join(disabled_features)])
     if str(cfg.get("resume_from", "")).strip():
         cmd.extend(["--resume-from", str(cfg["resume_from"])])
     if bool(cfg.get("offline_seed_only", False)):
@@ -6701,6 +7023,7 @@ def write_cards_and_reports(
 ) -> None:
     reports = layout.reports_dir
     payload["mirror_parity"] = payload.get("mirror_parity", build_mirror_parity_report(cfg))
+    payload["feature_flags"] = payload.get("feature_flags", build_feature_flag_report(cfg))
     if logger is not None:
         payload["logging"] = logger.observability_report()
     atomic_json(reports / "run_summary.json", payload)
@@ -6709,6 +7032,8 @@ def write_cards_and_reports(
     atomic_json(reports / "model_card.json", model_card)
     atomic_json(reports / "eval_card.json", eval_card)
     atomic_json(reports / "mirror_parity_report.json", payload["mirror_parity"])
+    atomic_json(reports / "feature_flag_report.json", payload["feature_flags"])
+    atomic_write_text(reports / "feature_flag_report.md", render_feature_flag_report_md(payload["feature_flags"]))
     atomic_json(reports / "benchmark_protocol.json", benchmark_protocol)
     atomic_json(reports / "dependency_lock.json", dependency_lock)
     atomic_json(reports / "environment_snapshot.json", env_info)
@@ -7017,6 +7342,7 @@ def package_existing_run(
     payload["repackaged_at_utc"] = utc_now()
     payload["repackaged_from_checkpoint"] = str(cfg["resume_from"])
     payload["mirror_parity"] = build_mirror_parity_report(payload["config"])
+    payload["feature_flags"] = build_feature_flag_report(payload["config"])
     payload["logging"] = logger.observability_report()
     manifest = build_artifact_manifest(layout)
     payload["artifact_manifest"] = manifest
@@ -7024,6 +7350,8 @@ def package_existing_run(
     payload["bundle"] = bundle
     atomic_json(summary_path, payload)
     atomic_write_text(layout.reports_dir / "run_summary.md", render_run_summary_md(payload))
+    atomic_json(layout.reports_dir / "feature_flag_report.json", payload["feature_flags"])
+    atomic_write_text(layout.reports_dir / "feature_flag_report.md", render_feature_flag_report_md(payload["feature_flags"]))
     atomic_json(layout.reports_dir / "logging_contract.json", logger.contract())
     atomic_json(layout.reports_dir / "observability_report.json", logger.observability_report())
     logger.write("package_only_complete", {"checkpoint": str(cfg["resume_from"]), **bundle})
@@ -7052,9 +7380,12 @@ def run_pipeline(
     dependency_lock = collect_dependency_lock()
     curated_position_manifest = build_curated_position_manifest(cfg)
     synthetic_teaching_corpus = build_synthetic_teaching_corpus(cfg)
+    feature_flag_report = build_feature_flag_report(cfg)
     atomic_json(layout.reports_dir / "environment_snapshot.json", env_info)
     atomic_json(layout.reports_dir / "dependency_lock.json", dependency_lock)
     atomic_json(layout.reports_dir / "resolved_config.json", cfg)
+    atomic_json(layout.reports_dir / "feature_flag_report.json", feature_flag_report)
+    atomic_write_text(layout.reports_dir / "feature_flag_report.md", render_feature_flag_report_md(feature_flag_report))
     atomic_json(layout.reports_dir / "curated_position_manifest.json", curated_position_manifest)
     atomic_write_text(layout.reports_dir / "curated_position_manifest.md", render_curated_position_manifest_md(curated_position_manifest))
     atomic_json(layout.reports_dir / "synthetic_teaching_corpus.json", synthetic_teaching_corpus)
@@ -7118,6 +7449,7 @@ def run_pipeline(
                 "arena_only": True,
                 "checkpoint_loaded": checkpoint_path is not None,
             },
+            "feature_flags": feature_flag_report,
             "compile_report": compile_report,
             "forward_verify": {"status": "not_run", "reason": "arena_mode_interactive_only"},
             "best_checkpoint": str(checkpoint_path) if checkpoint_path is not None else "",
@@ -7300,6 +7632,7 @@ def run_pipeline(
         "synthetic_teaching_corpus": synthetic_teaching_corpus,
         "training_augmentation": curated_training_manifest,
         "training_summary": training_summary,
+        "feature_flags": feature_flag_report,
         "compile_report": compile_report,
         "forward_verify": forward_verify,
         "best_checkpoint": str(best_ckpt) if best_ckpt.exists() else "",
@@ -7350,6 +7683,9 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--mode", default=RUN_CONFIG["mode"], choices=["train", "verify", "benchmark", "package", "resume", "arena"])
     parser.add_argument("--profile", default=RUN_CONFIG["profile"], choices=list(RUN_PROFILES.keys()))
     parser.add_argument("--baseline", default=RUN_CONFIG["baseline"], choices=["dense", "moe", "moe_adapter"])
+    parser.add_argument("--feature-bundle", choices=list(FEATURE_BUNDLES.keys()), help="Named feature bundle overlay for advanced architecture surfaces.")
+    parser.add_argument("--enable-features", help="Comma-separated feature flags to force-enable on top of the selected profile/bundle.")
+    parser.add_argument("--disable-features", help="Comma-separated feature flags to force-disable on top of the selected profile/bundle.")
     parser.add_argument("--resume-from", help="Load a checkpoint for resume/benchmark/package modes. Verify and arena modes can optionally load one without retraining.")
     parser.add_argument("--artifact-root", help="Override artifact root.")
     parser.add_argument("--stockfish-path", help="Optional Stockfish executable override.")

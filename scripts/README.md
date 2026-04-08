@@ -16,14 +16,30 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Text-understanding PoC one-file script: `scripts/kaggle_onefile_demo_build30_text_understanding.py`
 - Windows RTX 5080 chess PoC one-file script: `scripts/chess_5080_onefile.py`
 - Chess onefile supported modes: `train`, `verify`, `benchmark`, `package`, `resume`, `arena`
+- Chess onefile now supports named feature bundles through `--feature-bundle` plus explicit `--enable-features` / `--disable-features` overrides.
+- Recommended advanced bundle names: `routing_stack`, `liquid_stack`, `memory_attention_stack`, `cognitive_stack`, `all_stable_extensions`, `all_on_experimental`.
+- New long-run experimental profile for local ablations: `strength_4060_24h_all_on_experimental`.
 - `--mode arena` provides an interactive human-vs-model terminal surface; use `--resume-from <checkpoint>` for meaningful play.
 - The chess onefile now mirrors the canonical Build30 trunk families in one file: BitLinear, MLA, CfC Liquid, MoE/LiquidRouter, QINN, cognitive extensions, and world-model hooks.
 - Mirror anti-drift evidence is written to `reports/mirror_parity_report.json` during chess runs.
+- Feature-bundle evidence is written to `reports/feature_flag_report.json` and `reports/feature_flag_report.md` during chess runs.
 - Chess runtime observability is contract-backed: `logs/run_log.jsonl`, `reports/logging_contract.json`, and `reports/observability_report.json`.
 - Fatal runtime failures are expected to appear both in `logs/run_log.jsonl` (`fatal_exception`) and in the Desktop-side `*_FAILED_*.json` artifact.
 - The Windows builder/export flow no longer embeds `MERTFORMER_CHESS_ARCHIVE_PASSWORD` into the compiled launcher; provide it on the target machine before running the final EXE when encrypted output is required.
 - Windows RTX 5080 share/export builder: `scripts/export_chess_5080_share.py`
 - Repo-external copies are unsupported and treated as drift sources.
+
+### Chess Onefile Bundle Examples
+```bash
+# Stable-ish advanced stack on top of the canonical profile
+python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --feature-bundle all_stable_extensions
+
+# 24h RTX 4060 experimental copy with every major onefile extension enabled
+python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_all_on_experimental
+
+# Start from the all-on profile but explicitly disable a risky surface
+python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_all_on_experimental --disable-features use_qinn,use_world_model_head
+```
 
 ## Core Pipelines
 - `smart_runner.py` — Master orchestrator: data → distill → train.
