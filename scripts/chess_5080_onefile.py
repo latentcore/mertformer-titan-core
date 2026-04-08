@@ -7895,6 +7895,8 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("project_owner_next_actions_summary", "project_owner_next_actions_summary.json"),
         ("project_ready_now_board", "project_ready_now_board.json"),
         ("project_unlock_impact_report", "project_unlock_impact_report.json"),
+        ("project_parallel_workset_report", "project_parallel_workset_report.json"),
+        ("project_phase_exit_criteria_report", "project_phase_exit_criteria_report.json"),
         ("generated_truth_crosscheck_matrix", "generated_truth_crosscheck_matrix.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
@@ -8674,6 +8676,8 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("project_owner_next_actions_summary", {}).get("exists", False))
         and bool(truth_entries.get("project_ready_now_board", {}).get("exists", False))
         and bool(truth_entries.get("project_unlock_impact_report", {}).get("exists", False))
+        and bool(truth_entries.get("project_parallel_workset_report", {}).get("exists", False))
+        and bool(truth_entries.get("project_phase_exit_criteria_report", {}).get("exists", False))
     )
     generated_truth_consistency_present = bool(truth_entries.get("generated_truth_consistency_report", {}).get("exists", False))
     generated_truth_crosscheck_present = bool(truth_entries.get("generated_truth_crosscheck_matrix", {}).get("exists", False))
@@ -8861,6 +8865,8 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "project_owner_next_actions_summary",
         "project_ready_now_board",
         "project_unlock_impact_report",
+        "project_parallel_workset_report",
+        "project_phase_exit_criteria_report",
         "generated_truth_consistency_report",
         "generated_truth_crosscheck_matrix",
         "run_log",
@@ -8972,6 +8978,8 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
             "project_owner_next_actions_summary",
             "project_ready_now_board",
             "project_unlock_impact_report",
+            "project_parallel_workset_report",
+            "project_phase_exit_criteria_report",
         } and item.get("exists", False)
     )
     generated_truth_count = sum(
@@ -9804,6 +9812,8 @@ def build_master_closure_table(layout: ArtifactLayout, payload: Dict[str, Any]) 
             "project_owner_next_actions_summary",
             "project_ready_now_board",
             "project_unlock_impact_report",
+            "project_parallel_workset_report",
+            "project_phase_exit_criteria_report",
         ],
         "generated_truth_consistency": ["generated_truth_consistency_report", "generated_truth_crosscheck_matrix"],
     }
@@ -10103,6 +10113,8 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
     project_owner_next_actions_summary = _read_json_if_exists(layout.reports_dir / "project_owner_next_actions_summary.json")
     project_ready_now_board = _read_json_if_exists(layout.reports_dir / "project_ready_now_board.json")
     project_unlock_impact_report = _read_json_if_exists(layout.reports_dir / "project_unlock_impact_report.json")
+    project_parallel_workset_report = _read_json_if_exists(layout.reports_dir / "project_parallel_workset_report.json")
+    project_phase_exit_criteria_report = _read_json_if_exists(layout.reports_dir / "project_phase_exit_criteria_report.json")
     return {
         "schema": "chess_closure_gap_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -10121,6 +10133,8 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
         "project_owner_next_actions_status": project_owner_next_actions_summary.get("status", "unknown"),
         "project_ready_now_status": project_ready_now_board.get("status", "unknown"),
         "project_unlock_impact_status": project_unlock_impact_report.get("status", "unknown"),
+        "project_parallel_workset_status": project_parallel_workset_report.get("status", "unknown"),
+        "project_phase_exit_criteria_status": project_phase_exit_criteria_report.get("status", "unknown"),
         "generated_truth_status": _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json").get("status", "unknown"),
         "generated_truth_crosscheck_status": _read_json_if_exists(layout.reports_dir / "generated_truth_crosscheck_matrix.json").get("status", "unknown"),
     }
@@ -10146,6 +10160,8 @@ def render_closure_gap_summary_md(report: Dict[str, Any]) -> str:
         f"- project_owner_next_actions_status: `{report.get('project_owner_next_actions_status', 'unknown')}`",
         f"- project_ready_now_status: `{report.get('project_ready_now_status', 'unknown')}`",
         f"- project_unlock_impact_status: `{report.get('project_unlock_impact_status', 'unknown')}`",
+        f"- project_parallel_workset_status: `{report.get('project_parallel_workset_status', 'unknown')}`",
+        f"- project_phase_exit_criteria_status: `{report.get('project_phase_exit_criteria_status', 'unknown')}`",
         f"- generated_truth_status: `{report.get('generated_truth_status', 'unknown')}`",
         f"- generated_truth_crosscheck_status: `{report.get('generated_truth_crosscheck_status', 'unknown')}`",
     ]
@@ -11327,6 +11343,165 @@ def render_project_unlock_impact_report_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def build_project_parallel_workset_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    ready_now_board = _read_json_if_exists(layout.reports_dir / "project_ready_now_board.json")
+    specs = _project_blocker_specs()
+    worksets: Dict[str, Dict[str, Any]] = {}
+    for row in ready_now_board.get("rows", []):
+        label = str(row.get("label", ""))
+        spec = specs.get(label, {})
+        closure_surface = str(row.get("closure_surface", "") or spec.get("closure_surface", "unassigned"))
+        workset = worksets.setdefault(
+            closure_surface,
+            {
+                "workset_label": closure_surface,
+                "owner_domains": set(),
+                "blockers": [],
+                "closure_surfaces": {closure_surface},
+                "phase_labels": set(),
+                "direct_unlock_total": 0,
+            },
+        )
+        workset["owner_domains"].add(str(row.get("owner_domain", spec.get("owner_domain", "unknown"))))
+        workset["blockers"].append(label)
+        workset["phase_labels"].add(str(spec.get("phase", "unassigned")))
+        workset["direct_unlock_total"] += int(row.get("direct_unlock_count", 0))
+    rows = []
+    for item in worksets.values():
+        blockers = sorted(item["blockers"])
+        rows.append(
+            {
+                "workset_label": item["workset_label"],
+                "item_count": len(blockers),
+                "owner_domains": sorted(item["owner_domains"]),
+                "blockers": blockers,
+                "closure_surfaces": sorted(item["closure_surfaces"]),
+                "phase_labels": sorted(item["phase_labels"]),
+                "direct_unlock_total": int(item["direct_unlock_total"]),
+                "status": "ready",
+            }
+        )
+    rows.sort(key=lambda item: (-item["direct_unlock_total"], -item["item_count"], item["workset_label"]))
+    return {
+        "schema": "chess_project_parallel_workset_report_v1",
+        "run_id": ready_now_board.get("run_id", ""),
+        "workset_count": len(rows),
+        "covered_ready_now_count": sum(int(row.get("item_count", 0)) for row in rows),
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_parallel_workset_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Parallel Workset Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- workset_count: `{report.get('workset_count', 0)}`",
+        f"- covered_ready_now_count: `{report.get('covered_ready_now_count', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Worksets",
+    ]
+    for row in report.get("rows", []):
+        owners = ", ".join(f"`{entry}`" for entry in row.get("owner_domains", []))
+        blockers = ", ".join(f"`{entry}`" for entry in row.get("blockers", []))
+        phases = ", ".join(f"`{entry}`" for entry in row.get("phase_labels", []))
+        surfaces = ", ".join(f"`{entry}`" for entry in row.get("closure_surfaces", []))
+        lines.append(
+            f"- `{row.get('workset_label', '')}`: item_count=`{row.get('item_count', 0)}` direct_unlock_total=`{row.get('direct_unlock_total', 0)}` "
+            f"owner_domains={owners} phases={phases} closure_surfaces={surfaces} blockers={blockers} status=`{row.get('status', 'unknown')}`"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_project_phase_exit_criteria_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    phase_plan = _read_json_if_exists(layout.reports_dir / "project_closure_phase_plan.json")
+    action_plan = _read_json_if_exists(layout.reports_dir / "project_blocker_action_plan.json")
+    action_by_label = {str(item.get("label", "")): item for item in action_plan.get("items", [])}
+    rows = []
+    for phase in phase_plan.get("rows", []):
+        blockers = [str(label) for label in phase.get("blockers", []) if str(label)]
+        owner_domains = sorted(
+            {
+                str(action_by_label.get(label, {}).get("owner_domain", "unknown"))
+                for label in blockers
+                if str(action_by_label.get(label, {}).get("owner_domain", "unknown"))
+            }
+        )
+        closure_surfaces = sorted(
+            {
+                str(action_by_label.get(label, {}).get("closure_surface", "unknown"))
+                for label in blockers
+                if str(action_by_label.get(label, {}).get("closure_surface", "unknown"))
+            }
+        )
+        required_evidence = sorted(
+            {
+                str(entry)
+                for label in blockers
+                for entry in action_by_label.get(label, {}).get("required_evidence", [])
+                if str(entry)
+            }
+        )
+        rows.append(
+            {
+                "phase": str(phase.get("phase", "")),
+                "phase_label": str(phase.get("phase_label", "")),
+                "phase_order": int(phase.get("phase_order", 0)),
+                "blocker_count": len(blockers),
+                "ready_now_count": int(phase.get("ready_now_count", 0)),
+                "owner_domains": owner_domains,
+                "closure_surfaces": closure_surfaces,
+                "required_evidence": required_evidence,
+                "blockers": blockers,
+                "exit_criteria": (
+                    f"Close {len(blockers)} blocker(s) and collect {len(required_evidence)} evidence surface(s) for phase "
+                    f"`{phase.get('phase_label', '')}`."
+                ),
+                "status": "ready" if blockers else "empty",
+            }
+        )
+    return {
+        "schema": "chess_project_phase_exit_criteria_report_v1",
+        "run_id": phase_plan.get("run_id", ""),
+        "phase_count": len(rows),
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_phase_exit_criteria_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Phase Exit Criteria Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- phase_count: `{report.get('phase_count', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "| Phase | Blockers | Ready Now | Evidence | Owners | Status |",
+        "|---|---:|---:|---:|---:|---|",
+    ]
+    for row in report.get("rows", []):
+        lines.append(
+            f"| `{row.get('phase_label', '')}` | `{row.get('blocker_count', 0)}` | `{row.get('ready_now_count', 0)}` | "
+            f"`{len(row.get('required_evidence', []))}` | `{len(row.get('owner_domains', []))}` | `{row.get('status', 'unknown')}` |"
+        )
+    lines.append("")
+    lines.append("## Exit Criteria Details")
+    for row in report.get("rows", []):
+        blockers = ", ".join(f"`{entry}`" for entry in row.get("blockers", []))
+        owners = ", ".join(f"`{entry}`" for entry in row.get("owner_domains", []))
+        evidence = ", ".join(f"`{entry}`" for entry in row.get("required_evidence", []))
+        lines.append(
+            f"- `{row.get('phase_label', '')}`: blockers={blockers} owners={owners} evidence={evidence} "
+            f"status=`{row.get('status', 'unknown')}` exit_criteria={row.get('exit_criteria', '')}"
+        )
+    return "\n".join(lines) + "\n"
+
+
 def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     del payload
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
@@ -11351,6 +11526,8 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
     project_owner_next_actions_summary = _read_json_if_exists(layout.reports_dir / "project_owner_next_actions_summary.json")
     project_ready_now_board = _read_json_if_exists(layout.reports_dir / "project_ready_now_board.json")
     project_unlock_impact_report = _read_json_if_exists(layout.reports_dir / "project_unlock_impact_report.json")
+    project_parallel_workset_report = _read_json_if_exists(layout.reports_dir / "project_parallel_workset_report.json")
+    project_phase_exit_criteria_report = _read_json_if_exists(layout.reports_dir / "project_phase_exit_criteria_report.json")
 
     checks = [
         {
@@ -11394,6 +11571,23 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
                 and int(project_owner_next_actions_summary.get("owner_count", 0)) > 0
                 and int(project_ready_now_board.get("item_count", 0)) > 0
                 and int(project_unlock_impact_report.get("item_count", 0)) > 0
+                and int(project_parallel_workset_report.get("workset_count", 0)) > 0
+                and int(project_phase_exit_criteria_report.get("phase_count", 0)) > 0
+            ),
+        },
+        {
+            "label": "parallel_workset_report_complete",
+            "passed": (
+                int(project_parallel_workset_report.get("workset_count", 0)) > 0
+                and int(project_parallel_workset_report.get("covered_ready_now_count", 0)) == int(project_ready_now_board.get("item_count", -1))
+                and project_parallel_workset_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "phase_exit_criteria_report_complete",
+            "passed": (
+                int(project_phase_exit_criteria_report.get("phase_count", 0)) == int(project_closure_phase_plan.get("phase_count", -1))
+                and project_phase_exit_criteria_report.get("status") == "ready"
             ),
         },
         {
@@ -11447,6 +11641,8 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
     project_owner_next_actions_summary = _read_json_if_exists(layout.reports_dir / "project_owner_next_actions_summary.json")
     project_ready_now_board = _read_json_if_exists(layout.reports_dir / "project_ready_now_board.json")
     project_unlock_impact_report = _read_json_if_exists(layout.reports_dir / "project_unlock_impact_report.json")
+    project_parallel_workset_report = _read_json_if_exists(layout.reports_dir / "project_parallel_workset_report.json")
+    project_phase_exit_criteria_report = _read_json_if_exists(layout.reports_dir / "project_phase_exit_criteria_report.json")
     generated_truth_consistency_report = _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json")
     specs = _project_blocker_specs()
 
@@ -11485,7 +11681,15 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
         for row in project_owner_work_queue.get("rows", [])
     }
     ready_now_labels = {str(row.get("label", "")) for row in project_ready_now_board.get("rows", [])}
+    workset_labels = {
+        str(label)
+        for row in project_parallel_workset_report.get("rows", [])
+        for label in row.get("blockers", [])
+        if isinstance(label, str)
+    }
     root_labels = {str(node.get("label", "")) for node in project_blocker_dependency_graph.get("nodes", []) if not node.get("depends_on", [])}
+    phase_exit_labels = {str(row.get("phase", "")) for row in project_phase_exit_criteria_report.get("rows", [])}
+    phase_plan_labels = {str(row.get("phase", "")) for row in project_closure_phase_plan.get("rows", [])}
     sequence_phase_orders = [int(specs.get(str(item.get("label", "")), {}).get("phase_order", 999)) for item in project_execution_sequence.get("items", [])]
     checks = [
         {
@@ -11566,6 +11770,22 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
                 int(project_unlock_impact_report.get("item_count", 0)) == int(project_blocker_dependency_graph.get("node_count", -1))
                 and str(project_unlock_impact_report.get("top_unlock_label", "")) in blocker_labels
                 and project_unlock_impact_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "parallel_workset_covers_ready_now",
+            "passed": (
+                workset_labels == ready_now_labels
+                and int(project_parallel_workset_report.get("covered_ready_now_count", 0)) == len(ready_now_labels)
+                and project_parallel_workset_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "phase_exit_criteria_matches_phase_plan",
+            "passed": (
+                phase_exit_labels == phase_plan_labels
+                and int(project_phase_exit_criteria_report.get("phase_count", 0)) == int(project_closure_phase_plan.get("phase_count", -1))
+                and project_phase_exit_criteria_report.get("status") == "ready"
             ),
         },
         {
@@ -11826,6 +12046,18 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     atomic_write_text(
         layout.reports_dir / "project_unlock_impact_report.md",
         render_project_unlock_impact_report_md(project_unlock_impact_report),
+    )
+    project_parallel_workset_report = build_project_parallel_workset_report(layout, payload)
+    atomic_json(layout.reports_dir / "project_parallel_workset_report.json", project_parallel_workset_report)
+    atomic_write_text(
+        layout.reports_dir / "project_parallel_workset_report.md",
+        render_project_parallel_workset_report_md(project_parallel_workset_report),
+    )
+    project_phase_exit_criteria_report = build_project_phase_exit_criteria_report(layout, payload)
+    atomic_json(layout.reports_dir / "project_phase_exit_criteria_report.json", project_phase_exit_criteria_report)
+    atomic_write_text(
+        layout.reports_dir / "project_phase_exit_criteria_report.md",
+        render_project_phase_exit_criteria_report_md(project_phase_exit_criteria_report),
     )
     truth_docs_index = build_truth_docs_index(layout, payload)
     atomic_json(layout.reports_dir / "truth_docs_index.json", truth_docs_index)
