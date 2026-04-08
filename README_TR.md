@@ -717,8 +717,11 @@ bash zero_touch_start.sh --check-only
 
 - Bundle CLI: `--feature-bundle <isim>`
 - Tekil flag CLI: `--enable-features flag_a,flag_b` ve `--disable-features flag_c`
-- Uzun koşu all-on yerel ablation profili: `strength_4060_24h_all_on_experimental`
+- Yardımcı satranç head bundle’ı: `objective_stack`
+- Uzun koşu all-on yerel ablation profilleri: `strength_4060_24h_all_on_experimental` ve `strength_4060_24h_omni_max`
+- Yeni yardımcı head’ler: `phase_head`, `wdl_head`, `legality_head`
 - Koşu başına bundle kanıtı: `reports/feature_flag_report.json` ve `reports/feature_flag_report.md`
+- Operatör runbook/checklist yolu: `runbooks/chess_4060_24h_all_on_experimental.md` ve `checklists/chess_4060_24h_all_on_experimental.md`
 
 Örnek:
 ```bash

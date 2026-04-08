@@ -1,0 +1,17 @@
+# Satranç 4060 24 Saat All-On Experimental Checklist
+
+- [ ] Profil seçildi: `strength_4060_24h_all_on_experimental` veya `strength_4060_24h_omni_max`
+- [ ] Disk alanı kontrol edildi
+- [ ] CUDA cihazı görünüyor
+- [ ] Opsiyonel Stockfish yolu veya auto-fetch politikası doğrulandı
+- [ ] Feature bundle / explicit override kaydı tutuldu
+- [ ] Tam komut kaydedilerek run başlatıldı
+- [ ] `logs/run_log.jsonl` mevcut
+- [ ] `reports/feature_flag_report.json` mevcut
+- [ ] `reports/run_summary.json` mevcut
+- [ ] `reports/model_card.json` mevcut
+- [ ] `reports/eval_card.json` mevcut
+- [ ] `reports/legal_move_safety.json` mevcut
+- [ ] `reports/observability_report.json` mevcut
+- [ ] Final checkpoint yolu kaydedildi
+- [ ] Koşu sonrası claim sınırı tekrar gözden geçirildi

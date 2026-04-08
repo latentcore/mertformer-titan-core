@@ -139,6 +139,41 @@ def test_choose_move_trace_emits_structured_response_contract() -> None:
     assert trace['masked_topk_scores'][0] >= trace['masked_topk_scores'][1]
 
 
+def test_choose_move_trace_surfaces_auxiliary_predictions() -> None:
+    class StubModel:
+        def __init__(self) -> None:
+            self._aux = {
+                'phase_logits': onefile.torch.tensor([[3.0, 0.2, -0.4]], dtype=onefile.torch.float32),
+                'wdl_logits': onefile.torch.tensor([[-0.1, 0.3, 1.2]], dtype=onefile.torch.float32),
+                'legality_logits': onefile.torch.full((1, len(onefile.MOVE_VOCAB)), -3.0, dtype=onefile.torch.float32),
+            }
+            self._aux['legality_logits'][0, onefile.MOVE_TO_ID['e2e4']] = 2.0
+            self._aux['legality_logits'][0, onefile.MOVE_TO_ID['d2d4']] = 1.0
+
+        def __call__(self, piece: onefile.torch.Tensor, meta: onefile.torch.Tensor):
+            logits = onefile.torch.full((1, len(onefile.MOVE_VOCAB)), -10.0, dtype=onefile.torch.float32)
+            logits[0, onefile.MOVE_TO_ID['e2e4']] = 4.0
+            logits[0, onefile.MOVE_TO_ID['d2d4']] = 2.0
+            value = onefile.torch.tensor([0.34], dtype=onefile.torch.float32)
+            return logits, value, onefile.torch.tensor(0.0), {}
+
+        def get_last_auxiliary_outputs(self):
+            return self._aux
+
+    trace = onefile.choose_move_trace(
+        StubModel(),
+        onefile.chess.Board(),
+        onefile.torch.device('cpu'),
+        mode='analyze',
+        teaching_level='club',
+    )
+    aux = trace['auxiliary_predictions']
+    assert aux['phase_head']['label'] == 'opening'
+    assert aux['wdl_head']['label'] == 'win'
+    assert aux['legality_head']['top1_is_legal'] is True
+    assert trace['response_contract']['auxiliary_predictions']['phase_head']['label'] == 'opening'
+
+
 def test_resolve_runtime_config_verify_mode_uses_embedded_seed() -> None:
     cfg = onefile.resolve_runtime_config(make_args(mode='verify'), onefile.RUN_CONFIG)
     assert cfg['mode'] == 'verify'
@@ -158,6 +193,19 @@ def test_resolve_runtime_config_applies_all_on_profile_bundle() -> None:
     assert cfg['use_qinn'] is True
     assert cfg['use_world_model_head'] is True
     assert cfg['use_gradient_checkpointing'] is True
+
+
+def test_resolve_runtime_config_omni_max_profile_enables_auxiliary_heads() -> None:
+    cfg = onefile.resolve_runtime_config(
+        make_args(profile='strength_4060_24h_omni_max'),
+        onefile.RUN_CONFIG,
+    )
+    assert cfg['profile'] == 'strength_4060_24h_omni_max'
+    assert cfg['feature_bundle'] == 'all_on_experimental'
+    assert cfg['use_phase_head'] is True
+    assert cfg['use_wdl_head'] is True
+    assert cfg['use_legality_head'] is True
+    assert cfg['enabled_features']
 
 
 def test_resolve_runtime_config_feature_overrides_win_over_bundle() -> None:
@@ -619,6 +667,60 @@ def test_gradient_checkpointing_feature_path_runs_backward() -> None:
             grad_norm += float(param.grad.detach().abs().sum().item())
     assert metrics['loss'] >= 0.0
     assert grad_norm > 0.0
+
+
+def test_forward_batch_metrics_reports_auxiliary_head_metrics() -> None:
+    cfg = make_mirror_cfg(
+        hidden_size=16,
+        intermediate_size=32,
+        num_layers=2,
+        num_heads=4,
+        num_kv_heads=2,
+        head_dim=4,
+        use_moe=False,
+        use_liquid=False,
+        use_liquid_adapter=False,
+        use_qinn=False,
+        use_global_workspace_broadcast=False,
+        use_world_model_head=False,
+        use_phase_head=True,
+        use_wdl_head=True,
+        use_legality_head=True,
+        dropout=0.0,
+        attention_dropout=0.0,
+        ffn_dropout=0.0,
+    )
+    model = onefile.ChessPolicyValueNet(cfg, vocab_size=len(onefile.MOVE_VOCAB))
+    batch = onefile.collate_examples(
+        [
+            onefile.ChessExample(
+                piece_ids=[0] * 64,
+                meta_ids=[0] * len(onefile.ChessPolicyValueNet.META_CARDINALITIES),
+                legal_move_ids=[onefile.MOVE_TO_ID['e2e4'], onefile.MOVE_TO_ID['d2d4']],
+                target_move_id=onefile.MOVE_TO_ID['e2e4'],
+                value_target=0.8,
+                phase=0,
+                source_game_id='g1',
+                ply=0,
+                total_plies=1,
+                turn=1,
+                has_eval=False,
+                opening_prefix='',
+                value_source='test',
+                source_archive='test',
+                position_hash='p1',
+                move_uci='e2e4',
+            )
+        ]
+    )
+    loss, metrics, _, _, _ = onefile.forward_batch_metrics(model, batch, cfg)
+    assert float(loss.detach().item()) >= 0.0
+    assert 'phase_loss' in metrics
+    assert 'wdl_loss' in metrics
+    assert 'legality_loss' in metrics
+    assert 'phase_accuracy' in metrics
+    assert 'wdl_accuracy' in metrics
+    assert 'legality_head_top1_is_legal_rate' in metrics
 
 
 def test_main_logs_fatal_exception_to_run_log(monkeypatch, tmp_path: Path) -> None:

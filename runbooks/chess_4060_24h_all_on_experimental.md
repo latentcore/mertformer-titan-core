@@ -1,0 +1,64 @@
+# Chess 4060 24h All-On Experimental Runbook
+
+## Purpose
+Run the onefile chess stack on a single RTX 4060 for a bounded 24-hour experimental training pass with the widest safe feature surface enabled.
+
+Profiles:
+- `strength_4060_24h_all_on_experimental`
+- `strength_4060_24h_omni_max`
+
+## Recommended Commands
+Baseline all-on experimental:
+```bash
+python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_all_on_experimental
+```
+
+Higher-pressure omni-max variant:
+```bash
+python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_omni_max
+```
+
+Selective rollback of a risky surface:
+```bash
+python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h_omni_max --disable-features use_qinn,use_world_model_head
+```
+
+## Enabled Surfaces
+The all-on family is expected to activate:
+- MoE / expert paging / cross-expert sync
+- Liquid / liquid adapter / QINN
+- flash-attn inference + hierarchical KV cache
+- workspace / neuromodulatory gain / latent ODE / Hebbian / neuro-symbolic / world-model / lifelong safety
+- gradient checkpointing
+- auxiliary chess heads: `phase_head`, `wdl_head`, `legality_head`
+
+## Mandatory Evidence After Run
+Expect these reports under the run directory:
+- `reports/run_summary.json`
+- `reports/run_summary.md`
+- `reports/model_card.json`
+- `reports/eval_card.json`
+- `reports/feature_flag_report.json`
+- `reports/feature_flag_report.md`
+- `reports/mirror_parity_report.json`
+- `reports/curated_position_suite_report.json`
+- `reports/legal_move_safety.json`
+- `reports/raw_vs_masked_policy_metrics.json`
+- `reports/observability_report.json`
+- `logs/run_log.jsonl`
+
+## Operator Gates
+Before launch:
+- Confirm disk headroom for checkpoints and bundles.
+- Confirm CUDA device visibility.
+- Confirm `stockfish` path or auto-fetch allowance if gauntlet benchmarks are expected.
+- Keep experimental flags explicit in the command or profile name.
+
+During run:
+- Watch for `fatal_exception`, `oom_event`, and repeated `midrun_snapshot_stockfish` failures in `logs/run_log.jsonl`.
+- If the run is unstable, prefer disabling `use_qinn` or `use_world_model_head` first.
+
+After run:
+- Treat replay/demo output as demonstration material only.
+- Treat benchmark outputs as internal unless externally reproduced.
+- Preserve the feature report alongside the checkpoint bundle so the exact head/feature mix remains auditable.

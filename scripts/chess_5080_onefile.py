@@ -276,6 +276,14 @@ RUN_CONFIG: Dict[str, Any] = {
     "neuro_symbolic_rules": 8,
     "use_world_model_head": False,
     "world_model_horizon": 1,
+    "use_phase_head": False,
+    "phase_loss_coef": 0.05,
+    "use_wdl_head": False,
+    "wdl_loss_coef": 0.08,
+    "wdl_draw_threshold": 0.20,
+    "use_legality_head": False,
+    "legality_loss_coef": 0.03,
+    "legality_pos_weight_cap": 64.0,
     "use_lifelong_safety_layer": False,
     "lifelong_ema_decay": 0.99,
     "lifelong_max_adaptation_gain": 0.05,
@@ -337,6 +345,9 @@ FEATURE_FLAG_KEYS: Tuple[str, ...] = (
     "use_hebbian_plasticity",
     "use_neuro_symbolic_layer",
     "use_world_model_head",
+    "use_phase_head",
+    "use_wdl_head",
+    "use_legality_head",
     "use_lifelong_safety_layer",
     "use_expert_paging",
     "use_gradient_checkpointing",
@@ -390,6 +401,17 @@ FEATURE_BUNDLES: Dict[str, Dict[str, Any]] = {
             "use_lifelong_safety_layer": True,
         },
     },
+    "objective_stack": {
+        "description": "Chess-side auxiliary heads for phase, WDL, and legality shaping.",
+        "overrides": {
+            "use_phase_head": True,
+            "phase_loss_coef": 0.05,
+            "use_wdl_head": True,
+            "wdl_loss_coef": 0.08,
+            "use_legality_head": True,
+            "legality_loss_coef": 0.03,
+        },
+    },
     "all_stable_extensions": {
         "description": "Broad but relatively stable advanced stack for ambitious local runs.",
         "overrides": {
@@ -405,6 +427,9 @@ FEATURE_BUNDLES: Dict[str, Dict[str, Any]] = {
             "use_hebbian_plasticity": True,
             "use_neuro_symbolic_layer": True,
             "use_world_model_head": True,
+            "use_phase_head": True,
+            "use_wdl_head": True,
+            "use_legality_head": True,
             "use_lifelong_safety_layer": True,
             "use_gradient_checkpointing": True,
             "search_enabled": True,
@@ -432,6 +457,9 @@ FEATURE_BUNDLES: Dict[str, Dict[str, Any]] = {
             "use_hebbian_plasticity": True,
             "use_neuro_symbolic_layer": True,
             "use_world_model_head": True,
+            "use_phase_head": True,
+            "use_wdl_head": True,
+            "use_legality_head": True,
             "use_lifelong_safety_layer": True,
             "use_expert_paging": True,
             "use_gradient_checkpointing": True,
@@ -563,6 +591,51 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         ],
         "rating_target_proxy_threshold": 2000,
         "claim_min_benchmark_games": 100,
+    },
+    "strength_4060_24h_omni_max": {
+        "download_partial_mb": 3584,
+        "download_archive_count": 9,
+        "max_games": 440000,
+        "max_positions": 2600000,
+        "max_positions_per_game": 12,
+        "min_elo": 2200,
+        "max_steps": 126000,
+        "max_wall_hours": 24.0,
+        "batch_size": 88,
+        "eval_batch_size": 88,
+        "hidden_size": 480,
+        "intermediate_size": 1920,
+        "num_layers": 10,
+        "num_heads": 8,
+        "num_kv_heads": 4,
+        "head_dim": 60,
+        "num_experts": 10,
+        "moe_top_k": 2,
+        "moe_every_n_layers": 2,
+        "moe_intermediate": 1920,
+        "moe_dispatch_mode": "parallel",
+        "moe_capacity_factor": 1.6,
+        "feature_bundle": "all_on_experimental",
+        "enabled_features": list(FEATURE_FLAG_KEYS),
+        "expert_paging_cache_size": 3,
+        "curated_position_repeat": 16,
+        "search_enabled": True,
+        "search_candidate_topk": 7,
+        "search_reply_topk": 5,
+        "search_auto_budget": True,
+        "search_policy_blend": 0.32,
+        "search_value_blend": 0.68,
+        "midrun_curated_snapshot_interval": 2500,
+        "midrun_stockfish_snapshot_interval": 9000,
+        "midrun_stockfish_snapshot_games": 8,
+        "stockfish_ladder": [
+            {"label": "sf_skill4_nodes40k", "games": 24, "skill": 4, "nodes": 40000, "anchor_elo_proxy": 1100},
+            {"label": "sf_skill8_nodes100k", "games": 24, "skill": 8, "nodes": 100000, "anchor_elo_proxy": 1400},
+            {"label": "sf_skill12_nodes200k", "games": 28, "skill": 12, "nodes": 200000, "anchor_elo_proxy": 1700},
+            {"label": "sf_skill16_nodes400k", "games": 28, "skill": 16, "nodes": 400000, "anchor_elo_proxy": 1900},
+        ],
+        "rating_target_proxy_threshold": 2050,
+        "claim_min_benchmark_games": 104,
     },
     "benchmark_4060_hard": {
         "download_partial_mb": 4096,
@@ -1692,10 +1765,12 @@ def resolve_runtime_config(args: argparse.Namespace, base_cfg: Optional[Dict[str
     if bundle_arg not in (None, "", RUN_CONFIG.get("feature_bundle", "default")):
         bundle_name = str(bundle_arg)
     cfg = apply_feature_bundle(cfg, bundle_name)
+    enable_features_arg = getattr(args, "enable_features", None)
+    disable_features_arg = getattr(args, "disable_features", None)
     cfg = apply_feature_flag_overrides(
         cfg,
-        getattr(args, "enable_features", cfg.get("enabled_features", [])),
-        getattr(args, "disable_features", cfg.get("disabled_features", [])),
+        cfg.get("enabled_features", []) if enable_features_arg in (None, "") else enable_features_arg,
+        cfg.get("disabled_features", []) if disable_features_arg in (None, "") else disable_features_arg,
     )
 
     cfg["artifact_root"] = str(Path(str(cfg["artifact_root"])).expanduser())
@@ -1874,6 +1949,14 @@ class MirrorModelConfig:
     neuro_symbolic_rules: int
     use_world_model_head: bool
     world_model_horizon: int
+    use_phase_head: bool
+    phase_loss_coef: float
+    use_wdl_head: bool
+    wdl_loss_coef: float
+    wdl_draw_threshold: float
+    use_legality_head: bool
+    legality_loss_coef: float
+    legality_pos_weight_cap: float
     use_lifelong_safety_layer: bool
     lifelong_ema_decay: float
     lifelong_max_adaptation_gain: float
@@ -1989,6 +2072,14 @@ def build_mirror_model_config(run_cfg: Dict[str, Any]) -> MirrorModelConfig:
         neuro_symbolic_rules=max(1, int(run_cfg.get("neuro_symbolic_rules", 8))),
         use_world_model_head=bool(run_cfg.get("use_world_model_head", False)),
         world_model_horizon=max(1, int(run_cfg.get("world_model_horizon", 1))),
+        use_phase_head=bool(run_cfg.get("use_phase_head", False)),
+        phase_loss_coef=float(run_cfg.get("phase_loss_coef", 0.05)),
+        use_wdl_head=bool(run_cfg.get("use_wdl_head", False)),
+        wdl_loss_coef=float(run_cfg.get("wdl_loss_coef", 0.08)),
+        wdl_draw_threshold=max(0.0, float(run_cfg.get("wdl_draw_threshold", 0.20))),
+        use_legality_head=bool(run_cfg.get("use_legality_head", False)),
+        legality_loss_coef=float(run_cfg.get("legality_loss_coef", 0.03)),
+        legality_pos_weight_cap=max(1.0, float(run_cfg.get("legality_pos_weight_cap", 64.0))),
         use_lifelong_safety_layer=bool(run_cfg.get("use_lifelong_safety_layer", False)),
         lifelong_ema_decay=float(run_cfg.get("lifelong_ema_decay", 0.99)),
         lifelong_max_adaptation_gain=float(run_cfg.get("lifelong_max_adaptation_gain", 0.05)),
@@ -3479,6 +3570,22 @@ class ChessPolicyValueNet(nn.Module):
             else None
         )
         self._last_world_model_outputs: Optional[Dict[str, torch.Tensor]] = None
+        self.phase_head = (
+            make_linear(self.arch_cfg.use_bitnet, hidden, PHASE_CLASS_COUNT, bias=True)
+            if self.arch_cfg.use_phase_head
+            else None
+        )
+        self.wdl_head = (
+            make_linear(self.arch_cfg.use_bitnet, hidden, WDL_CLASS_COUNT, bias=True)
+            if self.arch_cfg.use_wdl_head
+            else None
+        )
+        self.legality_head = (
+            make_linear(self.arch_cfg.use_bitnet, hidden, vocab_size, bias=True)
+            if self.arch_cfg.use_legality_head
+            else None
+        )
+        self._last_auxiliary_outputs: Optional[Dict[str, torch.Tensor]] = None
         self.policy_head = make_linear(self.arch_cfg.use_bitnet, hidden, vocab_size, bias=True)
         self.value_head = make_linear(self.arch_cfg.use_bitnet, hidden, 1, bias=True)
         self.dropout = nn.Dropout(dropout)
@@ -3542,6 +3649,14 @@ class ChessPolicyValueNet(nn.Module):
         else:
             self._last_world_model_outputs = None
         pooled = self.dropout(x.mean(dim=1))
+        auxiliary_outputs: Dict[str, torch.Tensor] = {}
+        if self.phase_head is not None:
+            auxiliary_outputs["phase_logits"] = self.phase_head(pooled)
+        if self.wdl_head is not None:
+            auxiliary_outputs["wdl_logits"] = self.wdl_head(pooled)
+        if self.legality_head is not None:
+            auxiliary_outputs["legality_logits"] = self.legality_head(pooled)
+        self._last_auxiliary_outputs = auxiliary_outputs or None
         policy_logits = self.policy_head(pooled)
         value = torch.tanh(self.value_head(pooled)).squeeze(-1)
         return policy_logits, value, aux_loss, router_reports
@@ -3549,14 +3664,25 @@ class ChessPolicyValueNet(nn.Module):
     def parameter_report(self) -> Dict[str, Any]:
         total = sum(param.numel() for param in self.parameters())
         trainable = sum(param.numel() for param in self.parameters() if param.requires_grad)
+        auxiliary_heads: List[str] = []
+        if self.phase_head is not None:
+            auxiliary_heads.append("phase_head")
+        if self.wdl_head is not None:
+            auxiliary_heads.append("wdl_head")
+        if self.legality_head is not None:
+            auxiliary_heads.append("legality_head")
         return {
             "total_parameters": int(total),
             "trainable_parameters": int(trainable),
             "policy_head_type": "pooled_global_move_classifier",
+            "auxiliary_heads": auxiliary_heads,
         }
 
     def get_last_world_model_outputs(self) -> Optional[Dict[str, torch.Tensor]]:
         return self._last_world_model_outputs
+
+    def get_last_auxiliary_outputs(self) -> Optional[Dict[str, torch.Tensor]]:
+        return self._last_auxiliary_outputs
 
     def reset_router_state(self, batch_size: int = 1) -> None:
         if self.latent_ode_channel is not None:
@@ -3592,6 +3718,26 @@ class ChessExampleDataset(torch.utils.data.Dataset):
 
 
 PHASE_NAMES = {0: "opening", 1: "middlegame", 2: "endgame"}
+WDL_CLASS_NAMES = {0: "loss", 1: "draw", 2: "win"}
+PHASE_CLASS_COUNT = len(PHASE_NAMES)
+WDL_CLASS_COUNT = len(WDL_CLASS_NAMES)
+
+
+def value_target_to_wdl_class(value: float, draw_threshold: float = 0.20) -> int:
+    threshold = max(0.0, float(draw_threshold))
+    if value <= -threshold:
+        return 0
+    if value >= threshold:
+        return 2
+    return 1
+
+
+def value_targets_to_wdl_classes(values: torch.Tensor, draw_threshold: float = 0.20) -> torch.Tensor:
+    threshold = max(0.0, float(draw_threshold))
+    targets = torch.full_like(values, 1, dtype=torch.long)
+    targets = targets.masked_fill(values <= -threshold, 0)
+    targets = targets.masked_fill(values >= threshold, 2)
+    return targets
 
 
 def piece_to_id(piece: Optional[chess.Piece]) -> int:
@@ -4714,6 +4860,7 @@ def forward_batch_metrics(
     cfg: Dict[str, Any],
 ) -> Tuple[torch.Tensor, Dict[str, Any], Dict[str, Any], torch.Tensor, torch.Tensor]:
     logits, value_pred, aux_loss, router_reports = model(batch["piece_ids"], batch["meta_ids"])
+    auxiliary_outputs = model.get_last_auxiliary_outputs() if hasattr(model, "get_last_auxiliary_outputs") else {}
     masked_logits = logits.masked_fill(~batch["legal_mask"], -1e9)
     policy_loss = F.cross_entropy(masked_logits, batch["move_targets"])
     value_loss = F.mse_loss(value_pred, batch["value_targets"])
@@ -4727,6 +4874,39 @@ def forward_batch_metrics(
         "aux_loss": float(aux_loss.detach().item()),
         **compute_prediction_metrics(logits.detach(), masked_logits.detach(), batch["legal_mask"], batch["move_targets"]),
     }
+    phase_logits = auxiliary_outputs.get("phase_logits") if auxiliary_outputs else None
+    if phase_logits is not None:
+        phase_loss = F.cross_entropy(phase_logits, batch["phases"])
+        loss = loss + float(model.arch_cfg.phase_loss_coef) * phase_loss
+        phase_pred = phase_logits.argmax(dim=-1)
+        metrics["phase_loss"] = float(phase_loss.detach().item())
+        metrics["phase_accuracy"] = float((phase_pred == batch["phases"]).float().mean().item())
+    wdl_logits = auxiliary_outputs.get("wdl_logits") if auxiliary_outputs else None
+    if wdl_logits is not None:
+        wdl_targets = value_targets_to_wdl_classes(batch["value_targets"], model.arch_cfg.wdl_draw_threshold)
+        wdl_loss = F.cross_entropy(wdl_logits, wdl_targets)
+        loss = loss + float(model.arch_cfg.wdl_loss_coef) * wdl_loss
+        wdl_pred = wdl_logits.argmax(dim=-1)
+        metrics["wdl_loss"] = float(wdl_loss.detach().item())
+        metrics["wdl_accuracy"] = float((wdl_pred == wdl_targets).float().mean().item())
+    legality_logits = auxiliary_outputs.get("legality_logits") if auxiliary_outputs else None
+    if legality_logits is not None:
+        legality_targets = batch["legal_mask"].float()
+        positive_count = legality_targets.sum().clamp_min(1.0)
+        total_count = legality_targets.new_tensor(float(legality_targets.numel()))
+        negative_count = (total_count - positive_count).clamp_min(1.0)
+        pos_weight_value = min(float((negative_count / positive_count).item()), float(model.arch_cfg.legality_pos_weight_cap))
+        pos_weight = legality_targets.new_tensor(pos_weight_value)
+        legality_loss = F.binary_cross_entropy_with_logits(legality_logits, legality_targets, pos_weight=pos_weight)
+        loss = loss + float(model.arch_cfg.legality_loss_coef) * legality_loss
+        legality_top1 = legality_logits.argmax(dim=-1)
+        legality_top1_is_legal = batch["legal_mask"].gather(1, legality_top1.unsqueeze(-1)).squeeze(-1).float().mean().item()
+        legality_probs = torch.sigmoid(legality_logits.detach())
+        metrics["legality_loss"] = float(legality_loss.detach().item())
+        metrics["legality_head_top1_is_legal_rate"] = float(legality_top1_is_legal)
+        metrics["legality_head_legal_mean"] = float(legality_probs[batch["legal_mask"]].mean().item())
+        metrics["legality_head_illegal_mean"] = float(legality_probs[~batch["legal_mask"]].mean().item())
+    metrics["loss"] = float(loss.detach().item())
     return loss, metrics, router_reports, logits, masked_logits
 
 
@@ -5417,6 +5597,49 @@ def build_confidence_payload(
     }
 
 
+def build_auxiliary_prediction_payload(
+    auxiliary_outputs: Optional[Dict[str, torch.Tensor]],
+    legal_ids: Sequence[int],
+) -> Dict[str, Any]:
+    if not auxiliary_outputs:
+        return {}
+    payload: Dict[str, Any] = {}
+    phase_logits = auxiliary_outputs.get("phase_logits")
+    if phase_logits is not None and phase_logits.ndim >= 2 and phase_logits.size(0) > 0:
+        probs = torch.softmax(phase_logits[0], dim=-1)
+        best_idx = int(probs.argmax().item())
+        payload["phase_head"] = {
+            "label": PHASE_NAMES.get(best_idx, str(best_idx)),
+            "score": round(float(probs[best_idx].item()), 4),
+            "distribution": {PHASE_NAMES.get(idx, str(idx)): round(float(prob.item()), 4) for idx, prob in enumerate(probs)},
+        }
+    wdl_logits = auxiliary_outputs.get("wdl_logits")
+    if wdl_logits is not None and wdl_logits.ndim >= 2 and wdl_logits.size(0) > 0:
+        probs = torch.softmax(wdl_logits[0], dim=-1)
+        best_idx = int(probs.argmax().item())
+        payload["wdl_head"] = {
+            "label": WDL_CLASS_NAMES.get(best_idx, str(best_idx)),
+            "score": round(float(probs[best_idx].item()), 4),
+            "distribution": {WDL_CLASS_NAMES.get(idx, str(idx)): round(float(prob.item()), 4) for idx, prob in enumerate(probs)},
+        }
+    legality_logits = auxiliary_outputs.get("legality_logits")
+    if legality_logits is not None and legality_logits.ndim >= 2 and legality_logits.size(0) > 0:
+        scores = torch.sigmoid(legality_logits[0])
+        legal_index_list = [int(item) for item in legal_ids]
+        legal_mean = float(scores[legal_index_list].mean().item()) if legal_index_list else 0.0
+        illegal_mask = torch.ones_like(scores, dtype=torch.bool)
+        if legal_index_list:
+            illegal_mask[legal_index_list] = False
+        illegal_mean = float(scores[illegal_mask].mean().item()) if int(illegal_mask.sum().item()) > 0 else 0.0
+        top1_id = int(legality_logits[0].argmax().item())
+        payload["legality_head"] = {
+            "top1_is_legal": top1_id in set(legal_index_list),
+            "legal_mean_score": round(legal_mean, 4),
+            "illegal_mean_score": round(illegal_mean, 4),
+        }
+    return payload
+
+
 def unpack_model_outputs(model_output: Any, device: torch.device) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, Dict[str, Any]]:
     if not isinstance(model_output, (tuple, list)) or len(model_output) < 2:
         raise RuntimeError("Model output must contain at least logits and value tensors")
@@ -5467,6 +5690,7 @@ def policy_snapshot_for_board(
     piece = torch.tensor([piece_ids], dtype=torch.long, device=device)
     meta = torch.tensor([meta_ids], dtype=torch.long, device=device)
     logits, value, _, _ = unpack_model_outputs(model(piece, meta), device)
+    auxiliary_outputs = model.get_last_auxiliary_outputs() if hasattr(model, "get_last_auxiliary_outputs") else None
     logits = logits[0]
     raw_topk = torch.topk(logits, k=min(max(1, topk), logits.size(-1)), dim=-1)
     mask = torch.zeros_like(logits, dtype=torch.bool)
@@ -5484,6 +5708,7 @@ def policy_snapshot_for_board(
         "raw_topk_scores": [round(float(item), 6) for item in raw_topk.values.tolist()],
         "masked_topk_ids": masked_topk.indices.tolist(),
         "masked_topk_scores": [round(float(item), 6) for item in masked_topk.values.tolist()],
+        "auxiliary_predictions": build_auxiliary_prediction_payload(auxiliary_outputs, legal_ids),
     }
 
 
@@ -5633,6 +5858,7 @@ def build_chess_response_contract(
     confidence_payload = dict(trace.get("confidence", {}))
     if not confidence_payload:
         confidence_payload = {"score": 0.0, "gap": 0.0, "tier": "low"}
+    auxiliary_predictions = dict(trace.get("auxiliary_predictions", {}))
     evaluation_payload = {
         "value": round(value, 4),
         "label": classify_evaluation_label(value),
@@ -5657,6 +5883,24 @@ def build_chess_response_contract(
     ]
     if alternatives:
         long_parts.append(f"Yakın alternatif adaylar: {', '.join(alternatives)}.")
+    if auxiliary_predictions.get("phase_head"):
+        phase_head = auxiliary_predictions["phase_head"]
+        long_parts.append(
+            f"Phase head bu konumu `{phase_head.get('label', 'unknown')}` olarak işaretliyor "
+            f"(güven `{float(phase_head.get('score', 0.0)):.4f}`)."
+        )
+    if auxiliary_predictions.get("wdl_head"):
+        wdl_head = auxiliary_predictions["wdl_head"]
+        long_parts.append(
+            f"WDL head kısa ufukta `{wdl_head.get('label', 'unknown')}` eğilimi veriyor "
+            f"(güven `{float(wdl_head.get('score', 0.0)):.4f}`)."
+        )
+    if auxiliary_predictions.get("legality_head"):
+        legality_head = auxiliary_predictions["legality_head"]
+        long_parts.append(
+            f"Legality head legal yüzeyde `{float(legality_head.get('legal_mean_score', 0.0)):.4f}`, "
+            f"illegal yüzeyde `{float(legality_head.get('illegal_mean_score', 0.0)):.4f}` ortalama skor üretiyor."
+        )
     long_parts.append("Buradaki principal variation search-derinliği değil, mevcut policy seçiminin tek hamlelik özetidir.")
     return {
         "contract_version": CHESS_RESPONSE_CONTRACT_VERSION,
@@ -5665,6 +5909,7 @@ def build_chess_response_contract(
         "evaluation": evaluation_payload,
         "principal_variation": [move_uci],
         "confidence": confidence_payload,
+        "auxiliary_predictions": auxiliary_predictions,
         "teaching_tags": tags,
         "explanation_tr_short": explanation_tr_short,
         "explanation_tr_long": " ".join(long_parts),
@@ -5845,6 +6090,7 @@ def choose_move_trace(
         "masked_topk": [ID_TO_MOVE[idx] for idx in masked_topk_ids],
         "masked_topk_scores": masked_topk_scores,
         "confidence": confidence,
+        "auxiliary_predictions": snapshot.get("auxiliary_predictions", {}),
         "search_enabled": search_enabled,
         "search_budget": budget,
         "search_candidates": candidate_records[: max(1, topk)],
@@ -6778,6 +7024,15 @@ def build_model_card(model: ChessPolicyValueNet, cfg: Dict[str, Any], checkpoint
             "use_liquid": bool(cfg.get("use_liquid", cfg.get("use_liquid_adapter", False))),
             "use_qinn": bool(cfg.get("use_qinn", False)),
             "moe_top_k": int(cfg.get("moe_top_k", 2)),
+            "enabled_auxiliary_heads": [
+                head_name
+                for head_name, enabled in (
+                    ("phase_head", bool(cfg.get("use_phase_head", False))),
+                    ("wdl_head", bool(cfg.get("use_wdl_head", False))),
+                    ("legality_head", bool(cfg.get("use_legality_head", False))),
+                )
+                if enabled
+            ],
             "checkpoint_size_bytes": int(checkpoint_size),
             "move_vocab_size": len(MOVE_VOCAB),
             "move_vocab_hash": MOVE_VOCAB_HASH,
@@ -6786,6 +7041,7 @@ def build_model_card(model: ChessPolicyValueNet, cfg: Dict[str, Any], checkpoint
                 "Board attention is intentionally non-causal: the model sees the whole board state at once.",
                 "The chess trunk is a strict onefile mirror of the canonical Build30 attention, CfC liquid, MoE, QINN, and extension families.",
                 "Policy head remains a pooled global move-classifier over a fixed UCI vocabulary on top of the mirrored trunk.",
+                "Optional phase/WDL/legality auxiliary heads can be enabled to shape chess-specific supervision without mutating the mirrored trunk contract.",
                 "Chess-specific behavior is limited to board/meta tokenization, legality masking, and policy/value operator surfaces.",
             ],
         }
