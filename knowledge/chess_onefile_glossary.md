@@ -49,3 +49,7 @@
 - `best checkpoint truth stub`: explicit reminder that best checkpoint selection still needs validated truth beyond local artifact generation.
 - `latest checkpoint truth stub`: explicit reminder that latest checkpoint still needs validated truth beyond local artifact generation.
 - `trained artifact registry stub`: explicit reminder that trained artifacts still need a locked registry beyond local artifact generation.
+- `core complete decision stub`: explicit reminder that core-complete status still needs management closure beyond local artifact generation.
+- `research continues stub`: explicit reminder that separating ongoing research from closure still needs management closure beyond local artifact generation.
+- `product maintenance only stub`: explicit reminder that maintenance-only posture still needs management closure beyond local artifact generation.
+- `closure decision record stub`: explicit reminder that final closure still needs a management decision record beyond local artifact generation.

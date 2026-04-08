@@ -88,6 +88,7 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 - `reports/benchmark_raw_outputs_stub.json`, `reports/benchmark_compare_report_stub.json`, `reports/benchmark_summary_stub.json` ve `reports/benchmark_manifest_stub.json`, benchmark kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
 - `reports/training_report_stub.json`, `reports/token_accounting_stub.json`, `reports/compute_accounting_stub.json` ve `reports/cost_report_stub.json`, training/accounting kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
 - `reports/final_weights_truth_stub.json`, `reports/best_checkpoint_truth_stub.json`, `reports/latest_checkpoint_truth_stub.json` ve `reports/trained_artifact_registry_stub.json`, trained-artifact truth boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
+- `reports/core_complete_decision_stub.json`, `reports/research_continues_stub.json`, `reports/product_maintenance_only_stub.json` ve `reports/closure_decision_record_stub.json`, yönetimsel kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
 
 
 ![MertFormer Titan Header](assets/header.png)

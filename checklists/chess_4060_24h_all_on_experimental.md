@@ -59,5 +59,9 @@
 - [ ] `reports/best_checkpoint_truth_stub.json` present
 - [ ] `reports/latest_checkpoint_truth_stub.json` present
 - [ ] `reports/trained_artifact_registry_stub.json` present
+- [ ] `reports/core_complete_decision_stub.json` present
+- [ ] `reports/research_continues_stub.json` present
+- [ ] `reports/product_maintenance_only_stub.json` present
+- [ ] `reports/closure_decision_record_stub.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed

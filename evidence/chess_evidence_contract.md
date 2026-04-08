@@ -49,6 +49,10 @@ A serious chess onefile run should preserve:
 - `reports/best_checkpoint_truth_stub.json`
 - `reports/latest_checkpoint_truth_stub.json`
 - `reports/trained_artifact_registry_stub.json`
+- `reports/core_complete_decision_stub.json`
+- `reports/research_continues_stub.json`
+- `reports/product_maintenance_only_stub.json`
+- `reports/closure_decision_record_stub.json`
 - `reports/artifact_manifest_with_hashes.json`
 - `logs/run_log.jsonl`
 

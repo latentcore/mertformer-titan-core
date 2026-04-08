@@ -59,5 +59,9 @@
 - [ ] `reports/best_checkpoint_truth_stub.json` mevcut
 - [ ] `reports/latest_checkpoint_truth_stub.json` mevcut
 - [ ] `reports/trained_artifact_registry_stub.json` mevcut
+- [ ] `reports/core_complete_decision_stub.json` mevcut
+- [ ] `reports/research_continues_stub.json` mevcut
+- [ ] `reports/product_maintenance_only_stub.json` mevcut
+- [ ] `reports/closure_decision_record_stub.json` mevcut
 - [ ] Final checkpoint yolu kaydedildi
 - [ ] Koşu sonrası claim sınırı tekrar gözden geçirildi

@@ -7866,6 +7866,10 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("best_checkpoint_truth_stub", "best_checkpoint_truth_stub.json"),
         ("latest_checkpoint_truth_stub", "latest_checkpoint_truth_stub.json"),
         ("trained_artifact_registry_stub", "trained_artifact_registry_stub.json"),
+        ("core_complete_decision_stub", "core_complete_decision_stub.json"),
+        ("research_continues_stub", "research_continues_stub.json"),
+        ("product_maintenance_only_stub", "product_maintenance_only_stub.json"),
+        ("closure_decision_record_stub", "closure_decision_record_stub.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
         ("replay_buffer_manifest", "replay_buffer_manifest.json"),
@@ -8392,6 +8396,12 @@ def build_known_limits(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[
             "status": "active",
             "detail": "Final weights truth, best/latest checkpoint truth, and trained artifact registry still require formal artifact closure.",
         },
+        {
+            "label": "management_closure_pending",
+            "severity": "high",
+            "status": "active",
+            "detail": "Core-complete, research-separate, maintenance-only, and final closure decisions still require management closure.",
+        },
     ]
     if cfg.get("mode") == "verify":
         limits.append(
@@ -8560,6 +8570,12 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("latest_checkpoint_truth_stub", {}).get("exists", False))
         and bool(truth_entries.get("trained_artifact_registry_stub", {}).get("exists", False))
     )
+    management_closure_surfaces_present = (
+        bool(truth_entries.get("core_complete_decision_stub", {}).get("exists", False))
+        and bool(truth_entries.get("research_continues_stub", {}).get("exists", False))
+        and bool(truth_entries.get("product_maintenance_only_stub", {}).get("exists", False))
+        and bool(truth_entries.get("closure_decision_record_stub", {}).get("exists", False))
+    )
     gates = [
         {"label": "core_artifacts_present", "passed": core_artifacts_present},
         {"label": "checkpoint_or_package_provenance", "passed": checkpoint_or_provenance},
@@ -8576,6 +8592,7 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         {"label": "benchmark_closure_surfaces_present", "passed": benchmark_closure_surfaces_present},
         {"label": "training_accounting_surfaces_present", "passed": training_accounting_surfaces_present},
         {"label": "trained_artifact_surfaces_present", "passed": trained_artifact_surfaces_present},
+        {"label": "management_closure_surfaces_present", "passed": management_closure_surfaces_present},
     ]
     overall_internal_ready = all(gate["passed"] for gate in gates if gate["label"] != "stockfish_completed")
     overall_external_ready = all(gate["passed"] for gate in gates) and payload.get("rating_claim_status") == RatingClaimStatus.TARGET_MET_EXTERNAL.value
@@ -8703,6 +8720,10 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "best_checkpoint_truth_stub",
         "latest_checkpoint_truth_stub",
         "trained_artifact_registry_stub",
+        "core_complete_decision_stub",
+        "research_continues_stub",
+        "product_maintenance_only_stub",
+        "closure_decision_record_stub",
         "run_log",
     ]
     items = [
@@ -8776,6 +8797,11 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         for item in items
         if item.get("label") in {"final_weights_truth_stub", "best_checkpoint_truth_stub", "latest_checkpoint_truth_stub", "trained_artifact_registry_stub"} and item.get("exists", False)
     )
+    management_closure_count = sum(
+        1
+        for item in items
+        if item.get("label") in {"core_complete_decision_stub", "research_continues_stub", "product_maintenance_only_stub", "closure_decision_record_stub"} and item.get("exists", False)
+    )
     return {
         "schema": "chess_operator_handoff_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -8789,6 +8815,7 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         "benchmark_closure_count": benchmark_closure_count,
         "training_accounting_count": training_accounting_count,
         "trained_artifact_count": trained_artifact_count,
+        "management_closure_count": management_closure_count,
         "overall_internal_ready": bool(release_gate.get("overall_internal_ready", False)),
         "overall_external_ready": bool(release_gate.get("overall_external_ready", False)),
         "operator_note": "Operator handoff can be internally complete while external release readiness remains false.",
@@ -8810,6 +8837,7 @@ def render_operator_handoff_summary_md(report: Dict[str, Any]) -> str:
         f"- benchmark_closure_count: `{report.get('benchmark_closure_count', 0)}`",
         f"- training_accounting_count: `{report.get('training_accounting_count', 0)}`",
         f"- trained_artifact_count: `{report.get('trained_artifact_count', 0)}`",
+        f"- management_closure_count: `{report.get('management_closure_count', 0)}`",
         f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
         f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
         f"- operator_note: {report.get('operator_note', '')}",
@@ -9457,6 +9485,108 @@ def render_trained_artifact_registry_stub_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def build_core_complete_decision_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_core_complete_decision_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_core_complete_decision",
+        "reason": "Core-complete status still requires management decision beyond local onefile artifact generation.",
+    }
+
+
+def render_core_complete_decision_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Core Complete Decision Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_research_continues_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_research_continues_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_research_separation_decision",
+        "reason": "Research-continuation separation still requires management decision beyond local onefile artifact generation.",
+    }
+
+
+def render_research_continues_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Research Continues Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_product_maintenance_only_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_product_maintenance_only_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_maintenance_only_decision",
+        "reason": "Maintenance-only posture still requires management decision beyond local onefile artifact generation.",
+    }
+
+
+def render_product_maintenance_only_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Product Maintenance Only Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_closure_decision_record_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    tracked_labels = [
+        label
+        for label in (
+            "release_gate_summary",
+            "handoff_pack_manifest",
+            "operator_handoff_summary",
+            "trained_artifact_registry_stub",
+        )
+        if truth_entries.get(label, {}).get("exists", False)
+    ]
+    return {
+        "schema": "chess_closure_decision_record_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_management_closure_record",
+        "tracked_label_count": len(tracked_labels),
+        "tracked_labels": tracked_labels,
+        "reason": "Final closure record still requires management signoff beyond local onefile artifact generation.",
+    }
+
+
+def render_closure_decision_record_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Closure Decision Record Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- tracked_label_count: `{report.get('tracked_label_count', 0)}`",
+        f"- reason: {report.get('reason', '')}",
+        "",
+        "## Tracked Labels",
+    ]
+    for label in report.get("tracked_labels", []):
+        lines.append(f"- `{label}`")
+    return "\n".join(lines) + "\n"
+
+
 def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
     run_contract = build_run_contract(layout, payload)
     atomic_json(layout.reports_dir / "run_contract.json", run_contract)
@@ -9578,6 +9708,18 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     trained_artifact_registry_stub = build_trained_artifact_registry_stub(layout, payload)
     atomic_json(layout.reports_dir / "trained_artifact_registry_stub.json", trained_artifact_registry_stub)
     atomic_write_text(layout.reports_dir / "trained_artifact_registry_stub.md", render_trained_artifact_registry_stub_md(trained_artifact_registry_stub))
+    core_complete_decision_stub = build_core_complete_decision_stub(layout, payload)
+    atomic_json(layout.reports_dir / "core_complete_decision_stub.json", core_complete_decision_stub)
+    atomic_write_text(layout.reports_dir / "core_complete_decision_stub.md", render_core_complete_decision_stub_md(core_complete_decision_stub))
+    research_continues_stub = build_research_continues_stub(layout, payload)
+    atomic_json(layout.reports_dir / "research_continues_stub.json", research_continues_stub)
+    atomic_write_text(layout.reports_dir / "research_continues_stub.md", render_research_continues_stub_md(research_continues_stub))
+    product_maintenance_only_stub = build_product_maintenance_only_stub(layout, payload)
+    atomic_json(layout.reports_dir / "product_maintenance_only_stub.json", product_maintenance_only_stub)
+    atomic_write_text(layout.reports_dir / "product_maintenance_only_stub.md", render_product_maintenance_only_stub_md(product_maintenance_only_stub))
+    closure_decision_record_stub = build_closure_decision_record_stub(layout, payload)
+    atomic_json(layout.reports_dir / "closure_decision_record_stub.json", closure_decision_record_stub)
+    atomic_write_text(layout.reports_dir / "closure_decision_record_stub.md", render_closure_decision_record_stub_md(closure_decision_record_stub))
 
 
 def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
