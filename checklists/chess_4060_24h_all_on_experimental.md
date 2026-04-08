@@ -19,5 +19,9 @@
 - [ ] `reports/run_status_manifest.json` present
 - [ ] `reports/postrun_analysis_manifest.json` present
 - [ ] `reports/artifact_truth_matrix.json` present
+- [ ] `reports/run_contract.json` present
+- [ ] `reports/release_snapshot.json` present
+- [ ] `reports/evidence_pack_stub.json` present
+- [ ] `reports/final_truth_registry.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed

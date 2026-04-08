@@ -26,6 +26,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Mirror anti-drift evidence is written to `reports/mirror_parity_report.json` during chess runs.
 - Feature-bundle evidence is written to `reports/feature_flag_report.json` and `reports/feature_flag_report.md` during chess runs.
 - Closure manifests are written to `reports/run_status_manifest.json`, `reports/postrun_analysis_manifest.json`, and `reports/artifact_truth_matrix.json`.
+- Release/evidence registry surfaces are written to `reports/run_contract.json`, `reports/release_snapshot.json`, `reports/evidence_pack_stub.json`, and `reports/final_truth_registry.json`.
 - Runbook/checklist support for the 24h 4060 all-on path now lives under `runbooks/` and `checklists/`.
 - Canonical repo-side contract surfaces now also include `configs/`, `releases/`, `knowledge/`, and `evidence/`.
 - Chess runtime observability is contract-backed: `logs/run_log.jsonl`, `reports/logging_contract.json`, and `reports/observability_report.json`.

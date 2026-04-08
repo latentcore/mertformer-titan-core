@@ -69,6 +69,10 @@ This repository includes a decision-complete, single-pass closure flow for engin
 - `reports/run_status_manifest.json` provides the compact end-state snapshot for a finished chess onefile run.
 - `reports/postrun_analysis_manifest.json` summarizes curated suite, stockfish, self-play, tournament, and replay-buffer surfaces.
 - `reports/artifact_truth_matrix.json` lists expected run artifacts and whether they actually exist.
+- `reports/run_contract.json` freezes the operator-facing run contract and claim boundary for that exact onefile execution.
+- `reports/release_snapshot.json` records internal release-surface readiness without overstating external release proof.
+- `reports/evidence_pack_stub.json` lists what is present now versus what is still missing for external release-grade evidence.
+- `reports/final_truth_registry.json` keeps measured/internal/not-eligible chess claims explicit and auditable.
 
 ![MertFormer Titan Header](assets/header.png)
 

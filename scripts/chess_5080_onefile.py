@@ -7890,6 +7890,321 @@ def write_closure_manifests(layout: ArtifactLayout, payload: Dict[str, Any]) -> 
     atomic_write_text(layout.reports_dir / "artifact_truth_matrix.md", render_artifact_truth_matrix_md(truth))
 
 
+def _read_json_if_exists(path: Path) -> Dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def build_run_contract(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    cfg = dict(payload.get("config", {}))
+    notes = dict(payload.get("notes", {}))
+    provenance = dict(payload.get("dataset_provenance", {}))
+    return {
+        "schema": "chess_run_contract_v1",
+        "script_version": payload.get("script_version", SCRIPT_VERSION),
+        "run_id": payload.get("run_id", ""),
+        "mode": cfg.get("mode", ""),
+        "profile": cfg.get("profile", ""),
+        "baseline": cfg.get("baseline", ""),
+        "feature_bundle": cfg.get("feature_bundle", "default"),
+        "artifact_root": str(layout.run_dir),
+        "operator_boundaries": {
+            "package_only": bool(notes.get("package_only", False)),
+            "replay_is_demo_only": bool(notes.get("replay_is_demo_only", True)),
+            "internal_proxy_only": bool(notes.get("internal_proxy_only", True)),
+        },
+        "dataset_contract": {
+            "offline_seed_only": bool(cfg.get("offline_seed_only", False)),
+            "sampling_strategy": provenance.get("sampling_strategy", "unknown"),
+            "source_mode": provenance.get("source_mode", provenance.get("mode", "unknown")),
+        },
+        "required_core_reports": [
+            "run_summary.json",
+            "model_card.json",
+            "eval_card.json",
+            "feature_flag_report.json",
+            "run_status_manifest.json",
+            "postrun_analysis_manifest.json",
+            "artifact_truth_matrix.json",
+        ],
+        "checkpoint_contract": {
+            "best_checkpoint": payload.get("best_checkpoint", ""),
+            "latest_checkpoint": payload.get("latest_checkpoint", ""),
+        },
+        "claim_boundary": {
+            "execution_status": payload.get("execution_status", "unknown"),
+            "evaluation_status": payload.get("evaluation_status", "unknown"),
+            "rating_claim_status": payload.get("rating_claim_status", "unknown"),
+            "what_this_proves": notes.get("what_this_proves", ""),
+            "what_this_does_not_prove": notes.get("what_this_does_not_prove", ""),
+        },
+    }
+
+
+def render_run_contract_md(report: Dict[str, Any]) -> str:
+    dataset_contract = dict(report.get("dataset_contract", {}))
+    operator_boundaries = dict(report.get("operator_boundaries", {}))
+    claim_boundary = dict(report.get("claim_boundary", {}))
+    lines = [
+        "# Run Contract",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- mode: `{report.get('mode', '')}`",
+        f"- profile: `{report.get('profile', '')}`",
+        f"- baseline: `{report.get('baseline', '')}`",
+        f"- feature_bundle: `{report.get('feature_bundle', 'default')}`",
+        f"- artifact_root: `{report.get('artifact_root', '')}`",
+        "",
+        "## Dataset Contract",
+        f"- offline_seed_only: `{dataset_contract.get('offline_seed_only', False)}`",
+        f"- sampling_strategy: `{dataset_contract.get('sampling_strategy', 'unknown')}`",
+        f"- source_mode: `{dataset_contract.get('source_mode', 'unknown')}`",
+        "",
+        "## Operator Boundaries",
+        f"- package_only: `{operator_boundaries.get('package_only', False)}`",
+        f"- replay_is_demo_only: `{operator_boundaries.get('replay_is_demo_only', True)}`",
+        f"- internal_proxy_only: `{operator_boundaries.get('internal_proxy_only', True)}`",
+        "",
+        "## Claim Boundary",
+        f"- execution_status: `{claim_boundary.get('execution_status', 'unknown')}`",
+        f"- evaluation_status: `{claim_boundary.get('evaluation_status', 'unknown')}`",
+        f"- rating_claim_status: `{claim_boundary.get('rating_claim_status', 'unknown')}`",
+        f"- what_this_proves: {claim_boundary.get('what_this_proves', '')}",
+        f"- what_this_does_not_prove: {claim_boundary.get('what_this_does_not_prove', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_release_snapshot(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    bundle = dict(payload.get("bundle", {}))
+    notes = dict(payload.get("notes", {}))
+    zip_path = str(bundle.get("zip_path", "")).strip()
+    sha_path = str(bundle.get("sha256_path", "")).strip()
+    best_checkpoint = str(payload.get("best_checkpoint", "")).strip()
+    latest_checkpoint = str(payload.get("latest_checkpoint", "")).strip()
+    checkpoint_ready = bool(best_checkpoint or latest_checkpoint or notes.get("package_only", False))
+    bundle_exists = Path(zip_path).exists() if zip_path else False
+    sha_exists = Path(sha_path).exists() if sha_path else False
+    required_count = int(truth.get("required_count", 0))
+    present_required_count = int(truth.get("present_required_count", 0))
+    core_reports_ready = required_count > 0 and present_required_count == required_count
+    release_surface_status = "candidate_internal_only" if core_reports_ready and checkpoint_ready and bundle_exists else "incomplete"
+    return {
+        "schema": "chess_release_snapshot_v1",
+        "script_version": payload.get("script_version", SCRIPT_VERSION),
+        "run_id": payload.get("run_id", ""),
+        "mode": payload.get("config", {}).get("mode", ""),
+        "profile": payload.get("config", {}).get("profile", ""),
+        "feature_bundle": payload.get("config", {}).get("feature_bundle", "default"),
+        "execution_status": payload.get("execution_status", "unknown"),
+        "evaluation_status": payload.get("evaluation_status", "unknown"),
+        "rating_claim_status": payload.get("rating_claim_status", "unknown"),
+        "required_count": required_count,
+        "present_required_count": present_required_count,
+        "core_reports_ready": core_reports_ready,
+        "checkpoint_ready": checkpoint_ready,
+        "bundle": {
+            "zip_path": zip_path,
+            "zip_exists": bundle_exists,
+            "sha256_path": sha_path,
+            "sha256_exists": sha_exists,
+            "encrypted": bool(bundle.get("encrypted", False)),
+        },
+        "best_checkpoint": best_checkpoint,
+        "latest_checkpoint": latest_checkpoint,
+        "release_surface_status": release_surface_status,
+        "external_release_grade": False,
+        "external_release_reason": "Chess onefile run artifacts remain internal-only unless separately benchmarked and externally validated.",
+    }
+
+
+def render_release_snapshot_md(report: Dict[str, Any]) -> str:
+    bundle = dict(report.get("bundle", {}))
+    lines = [
+        "# Release Snapshot",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- mode: `{report.get('mode', '')}`",
+        f"- profile: `{report.get('profile', '')}`",
+        f"- feature_bundle: `{report.get('feature_bundle', 'default')}`",
+        f"- execution_status: `{report.get('execution_status', 'unknown')}`",
+        f"- evaluation_status: `{report.get('evaluation_status', 'unknown')}`",
+        f"- rating_claim_status: `{report.get('rating_claim_status', 'unknown')}`",
+        f"- release_surface_status: `{report.get('release_surface_status', 'unknown')}`",
+        f"- external_release_grade: `{report.get('external_release_grade', False)}`",
+        "",
+        "## Artifact Surface",
+        f"- required_count: `{report.get('required_count', 0)}`",
+        f"- present_required_count: `{report.get('present_required_count', 0)}`",
+        f"- core_reports_ready: `{report.get('core_reports_ready', False)}`",
+        f"- checkpoint_ready: `{report.get('checkpoint_ready', False)}`",
+        f"- bundle_zip_exists: `{bundle.get('zip_exists', False)}`",
+        f"- bundle_sha_exists: `{bundle.get('sha256_exists', False)}`",
+        "",
+        f"- external_release_reason: {report.get('external_release_reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_evidence_pack_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    notes = dict(payload.get("notes", {}))
+    core_labels = [
+        "run_summary_json",
+        "model_card",
+        "eval_card",
+        "feature_flag_report_json",
+        "run_status_manifest",
+        "postrun_analysis_manifest",
+        "artifact_truth_matrix",
+        "artifact_manifest",
+        "run_log",
+    ]
+    core_items = [
+        {
+            "label": label,
+            "exists": bool(truth_entries.get(label, {}).get("exists", False)),
+            "path": truth_entries.get(label, {}).get("path", ""),
+        }
+        for label in core_labels
+    ]
+    internal_items = [
+        {"label": "selfplay_report", "status": payload.get("selfplay_report", {}).get("status", "unknown"), "scope": "internal_only"},
+        {"label": "tournament_report", "status": payload.get("tournament_report", {}).get("status", "unknown"), "scope": "internal_only"},
+        {"label": "replay_buffer_report", "status": payload.get("replay_buffer_report", {}).get("status", "unknown"), "scope": "internal_only"},
+        {"label": "stockfish", "status": payload.get("stockfish", {}).get("status", "unknown"), "scope": "internal_only"},
+    ]
+    missing_for_external_release: List[str] = []
+    if not str(payload.get("best_checkpoint", "")).strip() and not str(payload.get("latest_checkpoint", "")).strip() and not notes.get("package_only", False):
+        missing_for_external_release.append("trained checkpoint or explicit package-only provenance")
+    if payload.get("stockfish", {}).get("status") != "completed":
+        missing_for_external_release.append("completed stockfish benchmark evidence")
+    missing_for_external_release.append("external benchmark reproduction")
+    status = "partial_internal_only" if all(item["exists"] for item in core_items) else "incomplete"
+    return {
+        "schema": "chess_evidence_pack_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": status,
+        "core_items": core_items,
+        "internal_only_items": internal_items,
+        "missing_for_external_release": missing_for_external_release,
+    }
+
+
+def render_evidence_pack_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Evidence Pack Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Core Items",
+    ]
+    for item in report.get("core_items", []):
+        lines.append(f"- `{item.get('label', '')}`: exists=`{item.get('exists', False)}` path=`{item.get('path', '')}`")
+    lines.append("")
+    lines.append("## Internal-Only Items")
+    for item in report.get("internal_only_items", []):
+        lines.append(f"- `{item.get('label', '')}`: status=`{item.get('status', 'unknown')}` scope=`{item.get('scope', 'internal_only')}`")
+    lines.append("")
+    lines.append("## Missing For External Release")
+    for item in report.get("missing_for_external_release", []):
+        lines.append(f"- {item}")
+    return "\n".join(lines) + "\n"
+
+
+def build_final_truth_registry(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    required_count = int(truth.get("required_count", 0))
+    present_required_count = int(truth.get("present_required_count", 0))
+    claims = [
+        {
+            "label": "runtime_execution",
+            "classification": "measured" if str(payload.get("execution_status", "unknown")) != "failed" else "not_met",
+            "status": payload.get("execution_status", "unknown"),
+        },
+        {
+            "label": "artifact_chain_presence",
+            "classification": "measured" if required_count > 0 and present_required_count == required_count else "partial",
+            "status": f"{present_required_count}/{required_count}",
+        },
+        {
+            "label": "feature_surface_auditable",
+            "classification": "measured" if (layout.reports_dir / "feature_flag_report.json").exists() else "not_met",
+            "status": "present" if (layout.reports_dir / "feature_flag_report.json").exists() else "missing",
+        },
+        {
+            "label": "selfplay_diagnostic",
+            "classification": "internal_only" if payload.get("selfplay_report", {}).get("status") == "completed" else "not_run",
+            "status": payload.get("selfplay_report", {}).get("status", "unknown"),
+        },
+        {
+            "label": "tournament_diagnostic",
+            "classification": "internal_only" if payload.get("tournament_report", {}).get("status") == "completed" else "not_run",
+            "status": payload.get("tournament_report", {}).get("status", "unknown"),
+        },
+        {
+            "label": "replay_buffer_diagnostic",
+            "classification": "internal_only" if payload.get("replay_buffer_report", {}).get("status") == "completed" else "not_run",
+            "status": payload.get("replay_buffer_report", {}).get("status", "unknown"),
+        },
+        {
+            "label": "external_strength_claim",
+            "classification": "not_eligible",
+            "status": "not_proven_by_onefile_artifacts_alone",
+        },
+        {
+            "label": "external_release_grade",
+            "classification": "not_ready",
+            "status": "separate_release_validation_required",
+        },
+    ]
+    return {
+        "schema": "chess_final_truth_registry_v1",
+        "run_id": payload.get("run_id", ""),
+        "claim_count": len(claims),
+        "claims": claims,
+    }
+
+
+def render_final_truth_registry_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Final Truth Registry",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- claim_count: `{report.get('claim_count', 0)}`",
+        "",
+        "## Claims",
+    ]
+    for claim in report.get("claims", []):
+        lines.append(
+            f"- `{claim.get('label', '')}`: classification=`{claim.get('classification', 'unknown')}` "
+            f"status=`{claim.get('status', 'unknown')}`"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
+    run_contract = build_run_contract(layout, payload)
+    atomic_json(layout.reports_dir / "run_contract.json", run_contract)
+    atomic_write_text(layout.reports_dir / "run_contract.md", render_run_contract_md(run_contract))
+    release_snapshot = build_release_snapshot(layout, payload)
+    atomic_json(layout.reports_dir / "release_snapshot.json", release_snapshot)
+    atomic_write_text(layout.reports_dir / "release_snapshot.md", render_release_snapshot_md(release_snapshot))
+    evidence_pack = build_evidence_pack_stub(layout, payload)
+    atomic_json(layout.reports_dir / "evidence_pack_stub.json", evidence_pack)
+    atomic_write_text(layout.reports_dir / "evidence_pack_stub.md", render_evidence_pack_stub_md(evidence_pack))
+    truth_registry = build_final_truth_registry(layout, payload)
+    atomic_json(layout.reports_dir / "final_truth_registry.json", truth_registry)
+    atomic_write_text(layout.reports_dir / "final_truth_registry.md", render_final_truth_registry_md(truth_registry))
+
+
 def resolve_archive_password(cfg: Dict[str, Any]) -> str:
     env_name = str(cfg.get("archive_password_env", DEFAULT_ARCHIVE_PASSWORD_ENV)).strip() or DEFAULT_ARCHIVE_PASSWORD_ENV
     return os.environ.get(env_name, "")
@@ -8162,6 +8477,7 @@ def package_existing_run(
     atomic_json(layout.reports_dir / "logging_contract.json", logger.contract())
     atomic_json(layout.reports_dir / "observability_report.json", logger.observability_report())
     write_closure_manifests(layout, payload)
+    write_release_evidence_reports(layout, payload)
     logger.write("package_only_complete", {"checkpoint": str(cfg["resume_from"]), **bundle})
     cleanup_after_bundle_if_needed(cfg, layout, logger)
     return payload
@@ -8307,6 +8623,7 @@ def run_pipeline(
         atomic_json(layout.reports_dir / "run_summary.json", payload)
         atomic_write_text(layout.reports_dir / "run_summary.md", render_run_summary_md(payload))
         write_closure_manifests(layout, payload)
+        write_release_evidence_reports(layout, payload)
         logger.write("run_complete", {"execution_status": payload["execution_status"], "rating_claim_status": payload["rating_claim_status"], **bundle})
         cleanup_after_bundle_if_needed(cfg, layout, logger)
         return payload
@@ -8524,6 +8841,7 @@ def run_pipeline(
     atomic_json(layout.reports_dir / "run_summary.json", payload)
     atomic_write_text(layout.reports_dir / "run_summary.md", render_run_summary_md(payload))
     write_closure_manifests(layout, payload)
+    write_release_evidence_reports(layout, payload)
     logger.write("run_complete", {"execution_status": payload["execution_status"], "rating_claim_status": payload["rating_claim_status"], **bundle})
     cleanup_after_bundle_if_needed(cfg, layout, logger)
     return payload

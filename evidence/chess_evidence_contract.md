@@ -9,6 +9,10 @@ A serious chess onefile run should preserve:
 - `reports/run_status_manifest.json`
 - `reports/postrun_analysis_manifest.json`
 - `reports/artifact_truth_matrix.json`
+- `reports/run_contract.json`
+- `reports/release_snapshot.json`
+- `reports/evidence_pack_stub.json`
+- `reports/final_truth_registry.json`
 - `reports/artifact_manifest_with_hashes.json`
 - `logs/run_log.jsonl`
 

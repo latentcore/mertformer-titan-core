@@ -69,6 +69,10 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 - `reports/run_status_manifest.json`, bitmiş bir chess onefile koşusunun kompakt son durum özetini verir.
 - `reports/postrun_analysis_manifest.json`, curated suite, stockfish, self-play, tournament ve replay-buffer yüzeylerini özetler.
 - `reports/artifact_truth_matrix.json`, beklenen koşu artefaktlarını ve gerçekten var olup olmadıklarını listeler.
+- `reports/run_contract.json`, tam o onefile koşusunun operatör kontratını ve claim sınırını dondurur.
+- `reports/release_snapshot.json`, dış release kanıtını abartmadan iç release-surface readiness durumunu kaydeder.
+- `reports/evidence_pack_stub.json`, şu an var olanlarla external release-grade evidence için hâlâ eksik olanları ayırır.
+- `reports/final_truth_registry.json`, measured/internal/not-eligible satranç claim’lerini açık ve denetlenebilir tutar.
 
 
 ![MertFormer Titan Header](assets/header.png)

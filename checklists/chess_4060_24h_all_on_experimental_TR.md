@@ -19,5 +19,9 @@
 - [ ] `reports/run_status_manifest.json` mevcut
 - [ ] `reports/postrun_analysis_manifest.json` mevcut
 - [ ] `reports/artifact_truth_matrix.json` mevcut
+- [ ] `reports/run_contract.json` mevcut
+- [ ] `reports/release_snapshot.json` mevcut
+- [ ] `reports/evidence_pack_stub.json` mevcut
+- [ ] `reports/final_truth_registry.json` mevcut
 - [ ] Final checkpoint yolu kaydedildi
 - [ ] Koşu sonrası claim sınırı tekrar gözden geçirildi

@@ -51,6 +51,10 @@ Run dizini altında en az şu raporlar beklenir:
 - `reports/run_status_manifest.json`
 - `reports/postrun_analysis_manifest.json`
 - `reports/artifact_truth_matrix.json`
+- `reports/run_contract.json`
+- `reports/release_snapshot.json`
+- `reports/evidence_pack_stub.json`
+- `reports/final_truth_registry.json`
 - `logs/run_log.jsonl`
 
 ## Operatör Kapıları
