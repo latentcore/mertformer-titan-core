@@ -8,6 +8,7 @@ from textwrap import dedent
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORTS = ROOT / "reports"
+ADR_DIR = ROOT / "adr"
 
 
 def rel(path: Path) -> str:
@@ -291,6 +292,118 @@ SOURCE_DOCS = [
         "notes": "Keeps frozen rules separate from maintained and living implementation surfaces.",
     },
     {
+        "path": "reports/final_master_plan_freeze.md",
+        "role": "repo-side frozen master-plan boundary for the current closure pass",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Defines which closure items are locked now versus deferred to post-run or phase-2 work.",
+    },
+    {
+        "path": "reports/update_first_policy.md",
+        "role": "update-first repository modification policy",
+        "audience": "contributors",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Requires existing working paths to be audited before replacement or duplication.",
+    },
+    {
+        "path": "reports/repo_directory_contract.md",
+        "role": "canonical repo directory and generated-artifact contract",
+        "audience": "contributors",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Defines where durable docs, reports, scripts, schemas, and artifacts belong.",
+    },
+    {
+        "path": "reports/automation_boundary_policy.md",
+        "role": "automation-versus-human decision boundary",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Keeps strategic, legal, security, and claim publication decisions outside blind automation.",
+    },
+    {
+        "path": "reports/change_control_sop.md",
+        "role": "change-control and closure-safe SOP ladder",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Defines request, implementation, verification, sync, evidence, and rollback expectations.",
+    },
+    {
+        "path": "reports/system_memory_policy.md",
+        "role": "written system-memory policy for long-running work",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Defines docs, ADRs, manifests, and reports as durable memory instead of chat context alone.",
+    },
+    {
+        "path": "reports/backlog_operating_contract.md",
+        "role": "canonical backlog state and archival operating contract",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Standardizes todo/in-progress/blocked/completed/archived handling for closure-critical work.",
+    },
+    {
+        "path": "reports/known_limits_v1.md",
+        "role": "known-limits and explicit non-claims summary for the current pass",
+        "audience": "public",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Separates measured facts from absent post-run evidence and research-only claims.",
+    },
+    {
+        "path": "reports/support_maintenance_policy.md",
+        "role": "support, maintenance, and update cadence policy",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Explains frozen vs maintained vs living surfaces and ties support expectations to current scope.",
+    },
+    {
+        "path": "reports/quality_gate_matrix.md",
+        "role": "quality-gate, KPI, and release-readiness matrix",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Maps closure-critical lanes to minimum commands, reports, and gate expectations.",
+    },
+    {
+        "path": "reports/test_verification_matrix.md",
+        "role": "unit, integration, smoke, and release verification matrix",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Documents canonical verification depth for the current repo surfaces.",
+    },
+    {
+        "path": "reports/adr_index.md",
+        "role": "active ADR registry and governance index",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Indexes the current ADR chain that governs source-of-truth, change-control, and delivery decisions.",
+    },
+    {
+        "path": "reports/repo_closure_scorecard.md",
+        "role": "repo-side closure scorecard for the current pass",
+        "audience": "operators",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Tracks the repo-side closure count separately from post-run or external evidence work.",
+    },
+    {
+        "path": "reports/repo_closure_scorecard.json",
+        "role": "machine-readable repo-side closure scorecard",
+        "audience": "automation",
+        "update_mode": "generated",
+        "authority": "authoritative",
+        "notes": "Machine-readable mirror of the repo-side closure scorecard.",
+    },
+    {
         "path": "reports/code_truth_delta_audit.md",
         "role": "human-readable code-truth delta audit",
         "audience": "operators",
@@ -419,6 +532,31 @@ SOURCE_DOCS = [
         "notes": "Useful context, but current readiness truth comes from current train readiness outputs.",
     },
 ]
+
+
+def load_adr_entries() -> list[dict]:
+    entries: list[dict] = []
+    for path in sorted(ADR_DIR.glob("ADR-*.md")):
+        first_heading = path.stem
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.startswith("# "):
+                first_heading = line.removeprefix("# ").strip()
+                break
+        entries.append(
+            {
+                "path": rel(path),
+                "role": f"architecture decision record: {first_heading}",
+                "audience": "operators",
+                "update_mode": "manual",
+                "authority": "authoritative",
+                "notes": "Decision record; changes require a superseding ADR or explicit governance exception.",
+            }
+        )
+    return entries
+
+
+def current_source_docs() -> list[dict]:
+    return [*SOURCE_DOCS, *load_adr_entries()]
 
 ZERO_TOUCH_REQUIRED_PATHS = [
     "zero_touch_start.sh",
@@ -1021,7 +1159,7 @@ def build_source_of_truth_map() -> str:
         "| Path | Role | Audience | Update Mode | Authority | Notes |",
         "| --- | --- | --- | --- | --- | --- |",
     ]
-    for entry in SOURCE_DOCS:
+    for entry in current_source_docs():
         lines.append(
             f"| `{entry['path']}` | {entry['role']} | {entry['audience']} | {entry['update_mode']} | {entry['authority']} | {entry['notes']} |"
         )
@@ -1043,7 +1181,7 @@ def build_doc_ownership_matrix() -> str:
         "generated": ("automation", "every verify or final refresh run"),
         "historical": ("archive", "never overwrite without an explicit archival update"),
     }
-    for entry in SOURCE_DOCS:
+    for entry in current_source_docs():
         owner, trigger = owner_rules.get(entry["update_mode"], ("repo maintainer", "manual"))
         lines.append(
             f"| `{entry['path']}` | {owner} | {trigger} | {entry['authority']} |"
@@ -1166,6 +1304,489 @@ def build_surface_lifecycle_matrix() -> str:
         "| Workspace hygiene reports and quarantine manifests | `maintained` | medium | Hygiene policy is stable, but item-level decisions must refresh as the workspace changes. |",
         "| Research moonshots (`3000+ Elo`, `20 ms/move`, `10000x speedup`, AGI/ASI) | `living` | high external proof bar | Research lanes stay outside V1 release truth until independently measured. |",
     ]
+    return "\n".join(lines)
+
+
+def build_master_plan_freeze(readiness: dict) -> str:
+    final_status = readiness.get("final_status", "UNKNOWN")
+    recommended_path = readiness.get("recommended_path") or "none"
+    blockers = readiness.get("blockers", [])
+    blocker_text = ", ".join(blockers) if blockers else "none"
+    return dedent(
+        f"""
+        # Final Master Plan Freeze
+
+        ## Purpose
+        - Freeze the repo-side closure frame for the current pass.
+        - Prevent reopening solved governance surfaces without a real blocker, compliance break, or a measured post-run need.
+
+        ## Current Frozen Scope
+        - Source-of-truth order
+        - Claim boundary and evidence policy
+        - Repo directory contract
+        - Frozen/maintained/living lifecycle split
+        - Change-control and update-first policy
+        - Backlog operating contract
+        - Known-limits and support-maintenance framing
+        - ADR chain and verification matrix
+
+        ## Current Readiness Snapshot
+        - final_status: `{final_status}`
+        - recommended_path: `{recommended_path}`
+        - blockers: `{blocker_text}`
+
+        ## Freeze Rule
+        - Repo-side governance closure is now execution-first.
+        - New ideas do not reopen the frozen frame; they move to post-run evidence work, phase-2, or research lanes unless a real blocker appears.
+        - The real run, benchmarks, release artifacts, legal sign-off, and external reproduction remain outside this repo-side freeze.
+        """
+    ).strip()
+
+
+def build_update_first_policy() -> str:
+    return dedent(
+        """
+        # Update-First Policy
+
+        ## Core Rule
+        - Audit what already exists before adding a replacement.
+        - If the current path is correct, keep it.
+        - If it is incomplete, extend it.
+        - If it is broken, repair it.
+        - If drift exists, synchronize it.
+
+        ## Required Classification Before Change
+        - active path
+        - legacy path
+        - no-touch surface
+        - high-risk surface
+        - closure surface
+
+        ## Forbidden Shortcuts
+        - blind rewrite without reading the current implementation
+        - duplicate entrypoint for the same responsibility
+        - key refactor without a measured or maintainability reason
+        - replacing a canonical path only because a new one feels cleaner
+
+        ## Enforcement
+        - `scripts/verify_all.sh`
+        - `scripts/build_code_truth_audit.py`
+        - `scripts/build_closure_governance_pack.py`
+        """
+    ).strip()
+
+
+def build_repo_directory_contract() -> str:
+    return dedent(
+        """
+        # Repo Directory Contract
+
+        ## Canonical Durable Areas
+        - `docs/`: official structural or explanatory documentation
+        - `reports/`: generated or curated closure, benchmark, readiness, and truth artifacts
+        - `artifacts/`: handoff, package, and delivery bundles
+        - `interfaces/`: canonical schemas and machine-readable contracts
+        - `scripts/`: real entrypoints and automation helpers
+        - `tests/`: verification surfaces
+        - `datasets/`: source notes, hashes, and repo-local validation inputs
+        - `adr/`: architecture decision records
+        - `runbooks/`, `checklists/`, `benchmarks/`, `configs/`, `knowledge/`: reserved canonical homes when used
+
+        ## Generated-Content Rule
+        - Generated reports belong under `reports/`.
+        - Generated packages belong under `artifacts/` or purpose-built runtime/output roots.
+        - Temporary, cache, and debug clutter must not become durable repo truth.
+
+        ## Enforcement
+        - `python3 scripts/sync_manifest.py --root . --manifest reports/release_manifest.json --structure docs/PROJECT_STRUCTURE.md --matrix reports/file_sync_matrix.json --sync-report reports/project_structure_sync_report.json --policy-report reports/policy_sync_report.json`
+        """
+    ).strip()
+
+
+def build_automation_boundary_policy() -> str:
+    return dedent(
+        """
+        # Automation Boundary Policy
+
+        ## Automation Owns
+        - verification chains
+        - report refresh
+        - manifest and hash refresh
+        - benchmark harness execution
+        - package or handoff bundle assembly
+        - scorecard and truth-matrix generation
+
+        ## Human Review Still Owns
+        - strategy changes
+        - legal interpretation
+        - security sign-off
+        - product positioning
+        - claim publication beyond current measured truth
+        - golden release approval
+        - freeze-breach approval
+
+        ## Hard Guardrails
+        - automation must not silently turn a plan into a verified claim
+        - automation must not merge the meaning of proof mode and product mode
+        - automation must not hide blockers; it must emit exact reason-coded state
+        """
+    ).strip()
+
+
+def build_change_control_sop() -> str:
+    return dedent(
+        """
+        # Change Control SOP
+
+        ## Required Ladder
+        1. define scope and affected surfaces
+        2. classify risk and freeze impact
+        3. inspect current implementation first
+        4. implement the smallest change that closes the gap
+        5. run targeted tests
+        6. run the canonical verification ladder
+        7. refresh manifests and generated governance artifacts
+        8. refresh docs and truth surfaces
+        9. verify no drift remains
+        10. capture artifacts and reports
+        11. commit with scoped message
+        12. push only after the verified tree is clean
+
+        ## Exceptions
+        - Hotfixes may shrink scope, but they do not skip verification or truth-sync.
+        - Freeze-breach changes require an ADR or an explicit governance note.
+        """
+    ).strip()
+
+
+def build_system_memory_policy() -> str:
+    return dedent(
+        """
+        # System Memory Policy
+
+        ## Durable Memory Order
+        1. `AGENTS.md`
+        2. source-of-truth and truth-constitution reports
+        3. ADR chain
+        4. runbooks and SOP-aligned operator docs
+        5. manifests, hashes, and provenance artifacts
+        6. closure reports and scorecards
+        7. backlog classification and missing-items reports
+
+        ## Rules
+        - Critical state must be written into repo memory, not left in chat context alone.
+        - Current state must be recoverable from docs plus manifests plus reports.
+        - Resume safety depends on written artifacts, not recollection.
+        """
+    ).strip()
+
+
+def build_backlog_operating_contract() -> str:
+    return dedent(
+        """
+        # Backlog Operating Contract
+
+        ## Canonical States
+        - `todo`
+        - `in_progress`
+        - `blocked`
+        - `completed`
+        - `archived`
+
+        ## Rules
+        - Completed work is closed, not deleted.
+        - Blocked work keeps the blocker reason.
+        - Research-only or post-run work must not masquerade as current closure work.
+        - The raw master closure matrix is coverage input; the grouped backlog classification is current closure truth.
+
+        ## Canonical Files
+        - `reports/master_closure_matrix.md`
+        - `reports/master_closure_matrix.json`
+        - `reports/final_backlog_classification.md`
+        - `reports/final_backlog_classification.json`
+        - `reports/final_backlog_missing_items.md`
+        """
+    ).strip()
+
+
+def build_known_limits(readiness: dict) -> str:
+    final_status = readiness.get("final_status", "UNKNOWN")
+    blockers = ", ".join(readiness.get("blockers", [])) or "none"
+    return dedent(
+        f"""
+        # Known Limits v1
+
+        ## Current Measured Truth
+        - Repo-side verification, truth-sync, and governance surfaces are active.
+        - Chess onefile delivery, runtime containment, and Stockfish auto-fetch are implemented.
+        - Repo-side training readiness is currently `{final_status}` with blockers `{blockers}`.
+
+        ## Not Yet Measured
+        - trained final weights
+        - best/latest checkpoint proof from the real main run
+        - claim-grade benchmark outputs tied to trained checkpoints
+        - final evidence pack tied to the real run
+        - trained-model export or edge/mobile measurement
+
+        ## Chess-Specific Limit
+        - Internal proxy strength and readiness surfaces exist, but real strength claims still require post-run benchmark evidence.
+
+        ## Research-Lane Limit
+        - `3000+ Elo`, `20 ms/move`, `10000x speedup`, and similar moonshots remain non-release research claims unless separately measured.
+        """
+    ).strip()
+
+
+def build_support_maintenance_policy() -> str:
+    return dedent(
+        """
+        # Support and Maintenance Policy
+
+        ## Surface Classes
+        - `frozen`: change only with explicit governance exception
+        - `maintained`: refresh when verification, manifests, or handoff truth changes
+        - `living`: implementation surfaces that can evolve under normal change control
+
+        ## Update Cadence
+        - verification and truth reports: every verify or final refresh run
+        - README and public positioning: when measured truth changes
+        - handoff or package surfaces: when delivery/runtime behavior changes
+        - ADR chain: when a closure-critical decision changes
+
+        ## Support Rule
+        - Repo-side closure support does not equal post-run production support.
+        - Commercial SLA expectations remain separate and are referenced through `reports/commercial_handover/sla_kpi_90_180.md`.
+        """
+    ).strip()
+
+
+def build_quality_gate_matrix() -> str:
+    lines = [
+        "# Quality Gate Matrix",
+        "",
+        "| Lane | Minimum Gate | Evidence Surface |",
+        "| --- | --- | --- |",
+        "| repo closure | `bash scripts/verify_all.sh` | `reports/release_manifest.json`, `reports/policy_sync_report.json` |",
+        "| train readiness | `python3 scripts/build_train_readiness_contract.py --allow-not-ready` | `reports/train_readiness_decision.json` |",
+        "| closure governance | `python3 scripts/build_closure_governance_pack.py` | `reports/final_truth_matrix.md`, `reports/repo_closure_scorecard.md` |",
+        "| code truth | `python3 scripts/build_code_truth_audit.py` | `reports/code_truth_delta_audit.md` |",
+        "| chess onefile readiness | `python3 scripts/build_chess_training_readiness_report.py` | `reports/chess_training_readiness_report.md` |",
+        "| windows delivery | `python3 scripts/export_chess_5080_share.py` plus delivery tests | `reports/target_machine_handoff_manifest.md` |",
+        "| max closeout | `bash scripts/final_one_shot.sh` | release and handoff refresh artifacts |",
+        "",
+        "## KPI and SLA Reference",
+        "- `reports/kpi_pack_v1.md`",
+        "- `reports/commercial_handover/sla_kpi_90_180.md`",
+    ]
+    return "\n".join(lines)
+
+
+def build_test_verification_matrix() -> str:
+    lines = [
+        "# Test and Verification Matrix",
+        "",
+        "| Depth | Canonical Command | Scope |",
+        "| --- | --- | --- |",
+        "| unit/integration baseline | `python3 -m pytest -q` | repo-wide Python test surface |",
+        "| code-truth audit | `python3 scripts/build_code_truth_audit.py` | maturity labels and four-column done rule |",
+        "| closure governance | `python3 scripts/build_closure_governance_pack.py` | source-of-truth, backlog, known-limits, support, ADR, scorecard |",
+        "| offline verify ladder | `bash scripts/verify_all.sh` | canonical repo verification and sync refresh |",
+        "| one-command SOP | `bash scripts/one_command_full_sop.sh` | closure validation plus packaging/refresh ladder |",
+        "| final closeout | `bash scripts/final_one_shot.sh` | maximum release-side refresh and handoff surfaces |",
+        "| chess delivery contract | `python3 -m pytest -q tests/test_chess_5080_onefile.py tests/test_export_chess_5080_share.py tests/test_build_chess_5080_windows_delivery.py` | chess onefile and delivery lane |",
+        "| governance contract | `python3 -m pytest -q tests/test_build_code_truth_audit.py tests/test_build_workspace_hygiene_manifest.py tests/test_build_closure_governance_pack.py` | closure and policy generation |",
+    ]
+    return "\n".join(lines)
+
+
+def build_adr_index() -> str:
+    lines = [
+        "# ADR Index",
+        "",
+        "Current active architecture and governance decisions for the closure pass.",
+        "",
+        "| ADR | Title | Role |",
+        "| --- | --- | --- |",
+    ]
+    adr_paths = sorted(ADR_DIR.glob("ADR-*.md"))
+    if not adr_paths:
+        lines.append("| none | no active ADR files | add ADRs before freezing new governance decisions |")
+        return "\n".join(lines)
+
+    for path in adr_paths:
+        title = path.stem
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.startswith("# "):
+                title = line.removeprefix("# ").strip()
+                break
+        lines.append(
+            f"| `{rel(path)}` | {title} | closure-critical decision record |"
+        )
+    return "\n".join(lines)
+
+
+REPO_CLOSURE_SCORECARD_ITEMS = [
+    {
+        "item_id": "observability_provenance_manifest",
+        "title": "Observability, provenance, and manifest chain",
+        "evidence": ["reports/release_manifest.json", "reports/train_readiness_decision.json", "reports/final_truth_matrix.md"],
+    },
+    {
+        "item_id": "drift_sync_verify",
+        "title": "Drift, sync, and verify discipline",
+        "evidence": ["scripts/verify_all.sh", "reports/policy_sync_report.json", "reports/project_structure_sync_report.json"],
+    },
+    {
+        "item_id": "closure_reporting",
+        "title": "Closure reporting standard",
+        "evidence": ["reports/release_closure_note.md", "reports/final_backlog_classification.md", "reports/final_backlog_missing_items.md"],
+    },
+    {
+        "item_id": "cpu_reference_fallback",
+        "title": "CPU reference and fallback surface",
+        "evidence": ["mertformer_sdk/kernels/cpp/bitnet_cpu.cpp", "tests/test_cpp_kernel_loader.py", "reports/code_truth_delta_audit.md"],
+    },
+    {
+        "item_id": "windows_oneclick_delivery",
+        "title": "Windows one-click delivery",
+        "evidence": ["scripts/build_chess_5080_windows_delivery.py", "scripts/export_chess_5080_share.py", "tests/test_build_chess_5080_windows_delivery.py"],
+    },
+    {
+        "item_id": "stockfish_runtime_contract",
+        "title": "Stockfish auto-fetch and runtime cache",
+        "evidence": ["scripts/chess_5080_onefile.py", "tests/test_chess_5080_onefile.py", "reports/chess_training_readiness_report.md"],
+    },
+    {
+        "item_id": "chess_repo_closure",
+        "title": "Chess onefile repo-side closure",
+        "evidence": ["reports/chess_training_readiness_report.md", "reports/chess_onefile_extension_report.md", "reports/chess_teaching_contract_report.md"],
+    },
+    {
+        "item_id": "claim_safe_boundary",
+        "title": "Claim-safe internal versus external truth boundary",
+        "evidence": ["reports/final_truth_matrix.md", "reports/code_truth_contract.md", "MODEL_CARD.md"],
+    },
+    {
+        "item_id": "runtime_artifact_containment",
+        "title": "Runtime artifact containment and desktop spam reduction",
+        "evidence": ["scripts/chess_5080_onefile.py", "scripts/build_chess_5080_windows_delivery.py", "reports/target_machine_handoff_manifest.md"],
+    },
+    {
+        "item_id": "post_change_sync_hygiene",
+        "title": "Post-change sync and release hygiene",
+        "evidence": ["reports/release_snapshot.md", "reports/final_sync_matrix.md", "reports/one_command_full_sop_summary.md"],
+    },
+    {
+        "item_id": "git_hygiene_remote_sync",
+        "title": "Git hygiene and remote sync discipline",
+        "evidence": ["AGENTS.md", "README.md", "reports/release_snapshot.md"],
+    },
+    {
+        "item_id": "master_plan_freeze",
+        "title": "Frozen master-plan boundary",
+        "evidence": ["reports/final_master_plan_freeze.md", "reports/source_of_truth_map.md"],
+    },
+    {
+        "item_id": "update_first_policy",
+        "title": "Update-first modification policy",
+        "evidence": ["reports/update_first_policy.md", "reports/code_truth_contract.md"],
+    },
+    {
+        "item_id": "repo_directory_contract",
+        "title": "Repo directory contract",
+        "evidence": ["reports/repo_directory_contract.md", "docs/PROJECT_STRUCTURE.md"],
+    },
+    {
+        "item_id": "surface_lifecycle_regime",
+        "title": "Frozen, maintained, and living lifecycle regime",
+        "evidence": ["reports/surface_lifecycle_matrix.md", "reports/final_truth_constitution.md"],
+    },
+    {
+        "item_id": "automation_boundary_policy",
+        "title": "Automation boundary policy",
+        "evidence": ["reports/automation_boundary_policy.md", "reports/change_control_sop.md"],
+    },
+    {
+        "item_id": "change_control_sop",
+        "title": "Change-control SOP",
+        "evidence": ["reports/change_control_sop.md", "scripts/verify_all.sh"],
+    },
+    {
+        "item_id": "system_memory_policy",
+        "title": "Written system-memory policy",
+        "evidence": ["reports/system_memory_policy.md", "reports/source_of_truth_map.md"],
+    },
+    {
+        "item_id": "backlog_operating_contract",
+        "title": "Backlog operating contract",
+        "evidence": ["reports/backlog_operating_contract.md", "reports/final_backlog_classification.json"],
+    },
+    {
+        "item_id": "known_limits_doc",
+        "title": "Known limits document",
+        "evidence": ["reports/known_limits_v1.md", "reports/final_truth_matrix.md"],
+    },
+    {
+        "item_id": "support_maintenance_policy",
+        "title": "Support and maintenance policy",
+        "evidence": ["reports/support_maintenance_policy.md", "reports/commercial_handover/sla_kpi_90_180.md"],
+    },
+    {
+        "item_id": "adr_governance_chain",
+        "title": "ADR governance chain",
+        "evidence": ["reports/adr_index.md", "adr/ADR-0001-source-of-truth-and-claim-boundary.md"],
+    },
+    {
+        "item_id": "quality_gate_matrix",
+        "title": "Quality gate matrix",
+        "evidence": ["reports/quality_gate_matrix.md", "reports/kpi_pack_v1.md"],
+    },
+    {
+        "item_id": "test_verification_matrix",
+        "title": "Test and verification matrix",
+        "evidence": ["reports/test_verification_matrix.md", "tests/test_build_closure_governance_pack.py"],
+    },
+]
+
+
+def build_repo_closure_scorecard_payload() -> dict:
+    items = []
+    for entry in REPO_CLOSURE_SCORECARD_ITEMS:
+        evidence = [path for path in entry["evidence"] if (ROOT / path).exists()]
+        items.append(
+            {
+                "item_id": entry["item_id"],
+                "title": entry["title"],
+                "done": len(evidence) == len(entry["evidence"]),
+                "evidence": evidence,
+            }
+        )
+    completed_count = sum(1 for item in items if item["done"])
+    return {
+        "schema": "repo_closure_scorecard_v1",
+        "completed_count": completed_count,
+        "target_count": len(REPO_CLOSURE_SCORECARD_ITEMS),
+        "all_green": completed_count == len(REPO_CLOSURE_SCORECARD_ITEMS),
+        "items": items,
+    }
+
+
+def build_repo_closure_scorecard_markdown(payload: dict) -> str:
+    lines = [
+        "# Repo Closure Scorecard",
+        "",
+        f"- completed_count: `{payload['completed_count']}`",
+        f"- target_count: `{payload['target_count']}`",
+        f"- all_green: `{str(payload['all_green']).lower()}`",
+        "",
+        "| Item | Status | Evidence |",
+        "| --- | --- | --- |",
+    ]
+    for item in payload["items"]:
+        status = "✅" if item["done"] else "❌"
+        lines.append(
+            f"| {item['title']} | {status} | {inline_paths(item['evidence'])} |"
+        )
     return "\n".join(lines)
 
 
@@ -1385,6 +2006,18 @@ def main() -> int:
     write_text(REPORTS / "final_truth_constitution.md", build_truth_constitution(readiness))
     write_text(REPORTS / "code_truth_contract.md", build_code_truth_contract())
     write_text(REPORTS / "surface_lifecycle_matrix.md", build_surface_lifecycle_matrix())
+    write_text(REPORTS / "final_master_plan_freeze.md", build_master_plan_freeze(readiness))
+    write_text(REPORTS / "update_first_policy.md", build_update_first_policy())
+    write_text(REPORTS / "repo_directory_contract.md", build_repo_directory_contract())
+    write_text(REPORTS / "automation_boundary_policy.md", build_automation_boundary_policy())
+    write_text(REPORTS / "change_control_sop.md", build_change_control_sop())
+    write_text(REPORTS / "system_memory_policy.md", build_system_memory_policy())
+    write_text(REPORTS / "backlog_operating_contract.md", build_backlog_operating_contract())
+    write_text(REPORTS / "known_limits_v1.md", build_known_limits(readiness))
+    write_text(REPORTS / "support_maintenance_policy.md", build_support_maintenance_policy())
+    write_text(REPORTS / "quality_gate_matrix.md", build_quality_gate_matrix())
+    write_text(REPORTS / "test_verification_matrix.md", build_test_verification_matrix())
+    write_text(REPORTS / "adr_index.md", build_adr_index())
     write_text(REPORTS / "canonical_entrypoint.md", build_canonical_entrypoint())
     write_text(REPORTS / "entrypoint_deprecation_map.md", build_entrypoint_deprecation_map())
     write_text(REPORTS / "final_truth_matrix.md", build_truth_matrix(registry))
@@ -1394,9 +2027,15 @@ def main() -> int:
     write_text(REPORTS / "final_backlog_coverage_diff.md", build_coverage_diff(matrix))
     write_text(REPORTS / "final_backlog_missing_items.md", build_missing_items(readiness))
 
+    scorecard_payload = build_repo_closure_scorecard_payload()
+    write_text(REPORTS / "repo_closure_scorecard.md", build_repo_closure_scorecard_markdown(scorecard_payload))
+
     (REPORTS / "claim_registry.json").write_text(json.dumps(registry, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     (REPORTS / "final_backlog_classification.json").write_text(
         json.dumps(backlog_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    (REPORTS / "repo_closure_scorecard.json").write_text(
+        json.dumps(scorecard_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
 
     print("OK: closure governance pack refreshed")
@@ -1405,6 +2044,20 @@ def main() -> int:
     print(f" - {rel(REPORTS / 'final_truth_constitution.md')}")
     print(f" - {rel(REPORTS / 'code_truth_contract.md')}")
     print(f" - {rel(REPORTS / 'surface_lifecycle_matrix.md')}")
+    print(f" - {rel(REPORTS / 'final_master_plan_freeze.md')}")
+    print(f" - {rel(REPORTS / 'update_first_policy.md')}")
+    print(f" - {rel(REPORTS / 'repo_directory_contract.md')}")
+    print(f" - {rel(REPORTS / 'automation_boundary_policy.md')}")
+    print(f" - {rel(REPORTS / 'change_control_sop.md')}")
+    print(f" - {rel(REPORTS / 'system_memory_policy.md')}")
+    print(f" - {rel(REPORTS / 'backlog_operating_contract.md')}")
+    print(f" - {rel(REPORTS / 'known_limits_v1.md')}")
+    print(f" - {rel(REPORTS / 'support_maintenance_policy.md')}")
+    print(f" - {rel(REPORTS / 'quality_gate_matrix.md')}")
+    print(f" - {rel(REPORTS / 'test_verification_matrix.md')}")
+    print(f" - {rel(REPORTS / 'adr_index.md')}")
+    print(f" - {rel(REPORTS / 'repo_closure_scorecard.md')}")
+    print(f" - {rel(REPORTS / 'repo_closure_scorecard.json')}")
     print(f" - {rel(REPORTS / 'canonical_entrypoint.md')}")
     print(f" - {rel(REPORTS / 'entrypoint_deprecation_map.md')}")
     print(f" - {rel(REPORTS / 'claim_registry.json')}")

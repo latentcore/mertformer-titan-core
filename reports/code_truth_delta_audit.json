@@ -1,6 +1,6 @@
 {
   "schema": "code_truth_delta_audit_v1",
-  "generated_utc": "2026-04-08T11:05:44Z",
+  "generated_utc": "2026-04-08T12:24:10Z",
   "evidence_contract": {
     "required_columns": [
       "code_path",
@@ -530,10 +530,11 @@
     {
       "path": "scripts/build_closure_governance_pack.py",
       "markers": [
+        "TODO",
         "scaffold",
         "fallback"
       ],
-      "summary": "scaffold, fallback"
+      "summary": "TODO, scaffold, fallback"
     },
     {
       "path": "scripts/check_57_matrix.py",

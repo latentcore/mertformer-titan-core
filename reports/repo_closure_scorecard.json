@@ -1,0 +1,235 @@
+{
+  "schema": "repo_closure_scorecard_v1",
+  "completed_count": 24,
+  "target_count": 24,
+  "all_green": true,
+  "items": [
+    {
+      "item_id": "observability_provenance_manifest",
+      "title": "Observability, provenance, and manifest chain",
+      "done": true,
+      "evidence": [
+        "reports/release_manifest.json",
+        "reports/train_readiness_decision.json",
+        "reports/final_truth_matrix.md"
+      ]
+    },
+    {
+      "item_id": "drift_sync_verify",
+      "title": "Drift, sync, and verify discipline",
+      "done": true,
+      "evidence": [
+        "scripts/verify_all.sh",
+        "reports/policy_sync_report.json",
+        "reports/project_structure_sync_report.json"
+      ]
+    },
+    {
+      "item_id": "closure_reporting",
+      "title": "Closure reporting standard",
+      "done": true,
+      "evidence": [
+        "reports/release_closure_note.md",
+        "reports/final_backlog_classification.md",
+        "reports/final_backlog_missing_items.md"
+      ]
+    },
+    {
+      "item_id": "cpu_reference_fallback",
+      "title": "CPU reference and fallback surface",
+      "done": true,
+      "evidence": [
+        "mertformer_sdk/kernels/cpp/bitnet_cpu.cpp",
+        "tests/test_cpp_kernel_loader.py",
+        "reports/code_truth_delta_audit.md"
+      ]
+    },
+    {
+      "item_id": "windows_oneclick_delivery",
+      "title": "Windows one-click delivery",
+      "done": true,
+      "evidence": [
+        "scripts/build_chess_5080_windows_delivery.py",
+        "scripts/export_chess_5080_share.py",
+        "tests/test_build_chess_5080_windows_delivery.py"
+      ]
+    },
+    {
+      "item_id": "stockfish_runtime_contract",
+      "title": "Stockfish auto-fetch and runtime cache",
+      "done": true,
+      "evidence": [
+        "scripts/chess_5080_onefile.py",
+        "tests/test_chess_5080_onefile.py",
+        "reports/chess_training_readiness_report.md"
+      ]
+    },
+    {
+      "item_id": "chess_repo_closure",
+      "title": "Chess onefile repo-side closure",
+      "done": true,
+      "evidence": [
+        "reports/chess_training_readiness_report.md",
+        "reports/chess_onefile_extension_report.md",
+        "reports/chess_teaching_contract_report.md"
+      ]
+    },
+    {
+      "item_id": "claim_safe_boundary",
+      "title": "Claim-safe internal versus external truth boundary",
+      "done": true,
+      "evidence": [
+        "reports/final_truth_matrix.md",
+        "reports/code_truth_contract.md",
+        "MODEL_CARD.md"
+      ]
+    },
+    {
+      "item_id": "runtime_artifact_containment",
+      "title": "Runtime artifact containment and desktop spam reduction",
+      "done": true,
+      "evidence": [
+        "scripts/chess_5080_onefile.py",
+        "scripts/build_chess_5080_windows_delivery.py",
+        "reports/target_machine_handoff_manifest.md"
+      ]
+    },
+    {
+      "item_id": "post_change_sync_hygiene",
+      "title": "Post-change sync and release hygiene",
+      "done": true,
+      "evidence": [
+        "reports/release_snapshot.md",
+        "reports/final_sync_matrix.md",
+        "reports/one_command_full_sop_summary.md"
+      ]
+    },
+    {
+      "item_id": "git_hygiene_remote_sync",
+      "title": "Git hygiene and remote sync discipline",
+      "done": true,
+      "evidence": [
+        "AGENTS.md",
+        "README.md",
+        "reports/release_snapshot.md"
+      ]
+    },
+    {
+      "item_id": "master_plan_freeze",
+      "title": "Frozen master-plan boundary",
+      "done": true,
+      "evidence": [
+        "reports/final_master_plan_freeze.md",
+        "reports/source_of_truth_map.md"
+      ]
+    },
+    {
+      "item_id": "update_first_policy",
+      "title": "Update-first modification policy",
+      "done": true,
+      "evidence": [
+        "reports/update_first_policy.md",
+        "reports/code_truth_contract.md"
+      ]
+    },
+    {
+      "item_id": "repo_directory_contract",
+      "title": "Repo directory contract",
+      "done": true,
+      "evidence": [
+        "reports/repo_directory_contract.md",
+        "docs/PROJECT_STRUCTURE.md"
+      ]
+    },
+    {
+      "item_id": "surface_lifecycle_regime",
+      "title": "Frozen, maintained, and living lifecycle regime",
+      "done": true,
+      "evidence": [
+        "reports/surface_lifecycle_matrix.md",
+        "reports/final_truth_constitution.md"
+      ]
+    },
+    {
+      "item_id": "automation_boundary_policy",
+      "title": "Automation boundary policy",
+      "done": true,
+      "evidence": [
+        "reports/automation_boundary_policy.md",
+        "reports/change_control_sop.md"
+      ]
+    },
+    {
+      "item_id": "change_control_sop",
+      "title": "Change-control SOP",
+      "done": true,
+      "evidence": [
+        "reports/change_control_sop.md",
+        "scripts/verify_all.sh"
+      ]
+    },
+    {
+      "item_id": "system_memory_policy",
+      "title": "Written system-memory policy",
+      "done": true,
+      "evidence": [
+        "reports/system_memory_policy.md",
+        "reports/source_of_truth_map.md"
+      ]
+    },
+    {
+      "item_id": "backlog_operating_contract",
+      "title": "Backlog operating contract",
+      "done": true,
+      "evidence": [
+        "reports/backlog_operating_contract.md",
+        "reports/final_backlog_classification.json"
+      ]
+    },
+    {
+      "item_id": "known_limits_doc",
+      "title": "Known limits document",
+      "done": true,
+      "evidence": [
+        "reports/known_limits_v1.md",
+        "reports/final_truth_matrix.md"
+      ]
+    },
+    {
+      "item_id": "support_maintenance_policy",
+      "title": "Support and maintenance policy",
+      "done": true,
+      "evidence": [
+        "reports/support_maintenance_policy.md",
+        "reports/commercial_handover/sla_kpi_90_180.md"
+      ]
+    },
+    {
+      "item_id": "adr_governance_chain",
+      "title": "ADR governance chain",
+      "done": true,
+      "evidence": [
+        "reports/adr_index.md",
+        "adr/ADR-0001-source-of-truth-and-claim-boundary.md"
+      ]
+    },
+    {
+      "item_id": "quality_gate_matrix",
+      "title": "Quality gate matrix",
+      "done": true,
+      "evidence": [
+        "reports/quality_gate_matrix.md",
+        "reports/kpi_pack_v1.md"
+      ]
+    },
+    {
+      "item_id": "test_verification_matrix",
+      "title": "Test and verification matrix",
+      "done": true,
+      "evidence": [
+        "reports/test_verification_matrix.md",
+        "tests/test_build_closure_governance_pack.py"
+      ]
+    }
+  ]
+}

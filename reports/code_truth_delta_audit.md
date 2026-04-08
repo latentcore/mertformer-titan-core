@@ -101,7 +101,7 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `scripts/README_TR.md` | `fallback` |
 | `scripts/bitnet_kernel_benchmark_standalone.py` | `fallback` |
 | `scripts/build_chess_training_readiness_report.py` | `fallback` |
-| `scripts/build_closure_governance_pack.py` | `scaffold`, `fallback` |
+| `scripts/build_closure_governance_pack.py` | `TODO`, `scaffold`, `fallback` |
 | `scripts/check_57_matrix.py` | `scaffold`, `fallback` |
 | `scripts/chess_5080_onefile.py` | `fallback` |
 | `scripts/generate_bench_reports.py` | `fallback` |

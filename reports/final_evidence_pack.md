@@ -1,6 +1,6 @@
 # Final Evidence Pack
 
-- generated_utc: `2026-04-07T23:07:41.478164+00:00`
+- generated_utc: `2026-04-08T12:26:37.240739+00:00`
 - mode: `demo-only`
 - checkpoint: `none`
 

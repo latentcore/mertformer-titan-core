@@ -1,9 +1,9 @@
 # Package Validation Report
 
-- generated_utc: `2026-04-07T23:07:41Z`
+- generated_utc: `2026-04-08T12:26:37Z`
 
 | Path | Size (bytes) | SHA256 | Members | Contains .env | Contains logs |
 | --- | ---: | --- | ---: | --- | --- |
-| `artifacts/mertformer_release.zip` | `105132914` | `35e8e9d0a00008c115beb2ae9d2ce23addf63a410ddcc8e70d995c0ca4c1c955` | `893` | `false` | `false` |
-| `artifacts/target_machine_handoff_bundle.zip` | `27985` | `be25c57d3c9b06bd9edbeaa612ebfa696f6e6fbcd794d2ed7c4ba4c6e7aa2b00` | `14` | `false` | `false` |
-| `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip` | `51760665` | `c3319c59ec06ae07f62fcbbf30a7b8295b31f7067520c0a5ecd3d0cad5e2999f` | `870` | `false` | `false` |
+| `artifacts/mertformer_release.zip` | `105193237` | `f96d1656425082213fdb6ee5e3fcc8f0dbfef1a7d6eaa1441ffd0c3690f5b2e5` | `912` | `false` | `false` |
+| `artifacts/target_machine_handoff_bundle.zip` | `27657` | `2a784974607ffc8fa8f2b3ae23b4a5a46d899c37acbb8893bd24aa0f0dd960d2` | `14` | `false` | `false` |
+| `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip` | `51790984` | `7a5d7a8b15e693aca4b05a9204576f03366f21a8d4b42a424fa4e85cbb2d72f8` | `889` | `false` | `false` |

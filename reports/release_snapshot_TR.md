@@ -20,7 +20,7 @@ bash scripts/verify_all.sh
 
 Beklenen:
 - Secret scan: PASS
-- Pytest: PASS (`187 passed, 3 skipped`)
+- Pytest: PASS (`191 passed, 3 skipped`)
 - Preflight (offline): PASS
 - Operator gate (safe, offline): PASS
 
@@ -35,6 +35,10 @@ TITAN_OFFLINE=1 bash run.sh --test
 
 - Mühendislik denetimi: `reports/codex_deep_audit_EN.md`, `reports/codex_deep_audit_DE.md`, `reports/codex_deep_audit_TR.md`
 - TR denetim dosyaları yönlendirme (pointer) dosyalarıdır: `reports/codex_deep_audit_EN_TR.md`, `reports/codex_deep_audit_DE_TR.md` (kanonik TR içerik: `reports/codex_deep_audit_TR.md`)
+- Repo-side closure scorecard: `reports/repo_closure_scorecard.md`, `reports/repo_closure_scorecard.json`
+- Closure freeze ve known limits: `reports/final_master_plan_freeze.md`, `reports/known_limits_v1.md`
+- Bakım, kalite ve doğrulama kontratı: `reports/support_maintenance_policy.md`, `reports/quality_gate_matrix.md`, `reports/test_verification_matrix.md`
+- ADR zinciri: `reports/adr_index.md`, `adr/ADR-0001-source-of-truth-and-claim-boundary.md`
 - Verified vs Target matrisi: `reports/verified_matrix.md`, `reports/verified_matrix_TR.md`
 - Dış inceleme checklisti: `reports/review_checklist.md`, `reports/review_checklist_TR.md`
 - Final senkron matrisi: `reports/final_sync_matrix.md`, `reports/final_sync_matrix_TR.md`
@@ -50,7 +54,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 - `MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`
 - Locked artefakt durumu: `skipped (expected: AGE_RECIPIENT_FILE missing)`
 - SHA-256:
-  - `c3319c59ec06ae07f62fcbbf30a7b8295b31f7067520c0a5ecd3d0cad5e2999f` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`)
+  - `7a5d7a8b15e693aca4b05a9204576f03366f21a8d4b42a424fa4e85cbb2d72f8` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`)
   - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`)
 
 ## Bilinen Gate / Blokerler

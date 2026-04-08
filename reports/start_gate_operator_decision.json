@@ -1,6 +1,6 @@
 {
   "schema": "start_gate_operator_decision_v1",
-  "generated_utc": "2026-04-08T11:05:55.392800+00:00",
+  "generated_utc": "2026-04-08T12:24:25.951783+00:00",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "operator_message": "Repo-side gate is green. Allocate or rent the target training machine, transfer the canonical files, rerun `bash zero_touch_start.sh --check-only` there, and start training immediately if it remains green.",
   "train_allowed": true,

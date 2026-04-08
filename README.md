@@ -12,6 +12,9 @@ Current maturity: **pilot-ready pre-training baseline** (training/benchmark clai
 - Mission: [MISSION.md](MISSION.md)
 - Use policy: [USE_POLICY.md](USE_POLICY.md)
 - Security: [SECURITY.md](SECURITY.md)
+- Repo-side closure scorecard: [reports/repo_closure_scorecard.md](reports/repo_closure_scorecard.md)
+- Known limits: [reports/known_limits_v1.md](reports/known_limits_v1.md)
+- Closure freeze and ADR index: [reports/final_master_plan_freeze.md](reports/final_master_plan_freeze.md), [reports/adr_index.md](reports/adr_index.md)
 
 ### Official Positioning
 - Product sentence: `Turkey-serving, offline-first, edge-native, locally integrable intelligence infrastructure.`
@@ -45,11 +48,21 @@ This repository includes a decision-complete, single-pass closure flow for engin
 - `reports/project_structure_sync_report.json`
 - `reports/hardening_bundle_summary.json`
 - `reports/master_closure_matrix.md`
+- `reports/repo_closure_scorecard.md`
+- `reports/known_limits_v1.md`
+- `reports/support_maintenance_policy.md`
 - `reports/train_readiness_decision.md`
 - `reports/final_freeze_manifest.md`
 - `reports/repo_external_handoff.md`
 - `artifacts/mertformer_release.zip`
 - `artifacts/mertformer_release.zip.sha256`
+
+### Repo-Side Closure Pack
+- `reports/repo_closure_scorecard.md` tracks the permanent repo-side closure count for the current pass.
+- `reports/final_master_plan_freeze.md` freezes what is closed now versus what is post-run or external.
+- `reports/known_limits_v1.md` keeps measured truth separate from absent trained evidence.
+- `reports/support_maintenance_policy.md`, `reports/quality_gate_matrix.md`, and `reports/test_verification_matrix.md` define the maintenance and verification contract.
+- `reports/adr_index.md` indexes the current architecture and governance decisions.
 
 ![MertFormer Titan Header](assets/header.png)
 
@@ -121,7 +134,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `187 passed, 3 skipped` |
+| `python3 -m pytest -q` | `191 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -134,7 +147,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`187 passed, 3 skipped`)
+   - `pytest` passed (`191 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**

@@ -36,6 +36,20 @@ Operational ownership map for closure-critical surfaces.
 | `reports/final_truth_constitution.md` | automation | every verify or final refresh run | authoritative |
 | `reports/code_truth_contract.md` | automation | every verify or final refresh run | authoritative |
 | `reports/surface_lifecycle_matrix.md` | automation | every verify or final refresh run | authoritative |
+| `reports/final_master_plan_freeze.md` | automation | every verify or final refresh run | authoritative |
+| `reports/update_first_policy.md` | automation | every verify or final refresh run | authoritative |
+| `reports/repo_directory_contract.md` | automation | every verify or final refresh run | authoritative |
+| `reports/automation_boundary_policy.md` | automation | every verify or final refresh run | authoritative |
+| `reports/change_control_sop.md` | automation | every verify or final refresh run | authoritative |
+| `reports/system_memory_policy.md` | automation | every verify or final refresh run | authoritative |
+| `reports/backlog_operating_contract.md` | automation | every verify or final refresh run | authoritative |
+| `reports/known_limits_v1.md` | automation | every verify or final refresh run | authoritative |
+| `reports/support_maintenance_policy.md` | automation | every verify or final refresh run | authoritative |
+| `reports/quality_gate_matrix.md` | automation | every verify or final refresh run | authoritative |
+| `reports/test_verification_matrix.md` | automation | every verify or final refresh run | authoritative |
+| `reports/adr_index.md` | automation | every verify or final refresh run | authoritative |
+| `reports/repo_closure_scorecard.md` | automation | every verify or final refresh run | authoritative |
+| `reports/repo_closure_scorecard.json` | automation | every verify or final refresh run | authoritative |
 | `reports/code_truth_delta_audit.md` | automation | every verify or final refresh run | authoritative |
 | `reports/code_truth_delta_audit.json` | automation | every verify or final refresh run | authoritative |
 | `reports/workspace_hygiene_manifest.md` | automation | every verify or final refresh run | authoritative |
@@ -52,3 +66,6 @@ Operational ownership map for closure-critical surfaces.
 | `reports/repo_external_handoff.md` | automation | every verify or final refresh run | supporting |
 | `reports/final_repo_audit.md` | automation | every verify or final refresh run | authoritative |
 | `reports/go_status_matrix.md` | archive | never overwrite without an explicit archival update | supporting |
+| `adr/ADR-0001-source-of-truth-and-claim-boundary.md` | repo maintainer | when the policy, command ladder, or product wording changes | authoritative |
+| `adr/ADR-0002-change-control-and-closure-governance.md` | repo maintainer | when the policy, command ladder, or product wording changes | authoritative |
+| `adr/ADR-0003-chess-oneclick-delivery-runtime-contract.md` | repo maintainer | when the policy, command ladder, or product wording changes | authoritative |

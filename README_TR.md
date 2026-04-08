@@ -12,6 +12,9 @@ Mevcut olgunluk: **pilota hazır eğitim öncesi baseline** (eğitim/benchmark i
 - Misyon: [MISSION_TR.md](MISSION_TR.md)
 - Kullanım politikası: [USE_POLICY_TR.md](USE_POLICY_TR.md)
 - Güvenlik: [SECURITY_TR.md](SECURITY_TR.md)
+- Repo-side closure scorecard: [reports/repo_closure_scorecard.md](reports/repo_closure_scorecard.md)
+- Known limits: [reports/known_limits_v1.md](reports/known_limits_v1.md)
+- Closure freeze ve ADR index: [reports/final_master_plan_freeze.md](reports/final_master_plan_freeze.md), [reports/adr_index.md](reports/adr_index.md)
 
 ### Resmi Konumlandırma
 - Ürün cümlesi: `Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre edilebilir zeka altyapısı.`
@@ -45,11 +48,21 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 - `reports/project_structure_sync_report.json`
 - `reports/hardening_bundle_summary.json`
 - `reports/master_closure_matrix.md`
+- `reports/repo_closure_scorecard.md`
+- `reports/known_limits_v1.md`
+- `reports/support_maintenance_policy.md`
 - `reports/train_readiness_decision.md`
 - `reports/final_freeze_manifest.md`
 - `reports/repo_external_handoff.md`
 - `artifacts/mertformer_release.zip`
 - `artifacts/mertformer_release.zip.sha256`
+
+### Repo-Side Closure Paketi
+- `reports/repo_closure_scorecard.md`, mevcut geçiş için kalıcı repo-side closure sayısını tutar.
+- `reports/final_master_plan_freeze.md`, şimdi kapananlarla post-run veya harici kalanları ayırır.
+- `reports/known_limits_v1.md`, ölçülmüş gerçeği henüz üretilmemiş trained kanıtlardan ayırır.
+- `reports/support_maintenance_policy.md`, `reports/quality_gate_matrix.md` ve `reports/test_verification_matrix.md` bakım ve doğrulama kontratını tanımlar.
+- `reports/adr_index.md`, güncel mimari ve governance karar zincirini indeksler.
 
 
 ![MertFormer Titan Header](assets/header.png)
@@ -122,7 +135,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `187 passed, 3 skipped` |
+| `python3 -m pytest -q` | `191 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -135,7 +148,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`187 passed, 3 skipped`)
+   - `pytest` geçti (`191 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
