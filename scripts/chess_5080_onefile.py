@@ -7834,6 +7834,10 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("known_limits", "known_limits.json"),
         ("support_matrix", "support_matrix.json"),
         ("release_gate_summary", "release_gate_summary.json"),
+        ("rc_stub", "rc_stub.json"),
+        ("golden_stub", "golden_stub.json"),
+        ("handoff_pack_manifest", "handoff_pack_manifest.json"),
+        ("operator_handoff_summary", "operator_handoff_summary.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
         ("replay_buffer_manifest", "replay_buffer_manifest.json"),
@@ -8436,6 +8440,8 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
     run_log_present = bool(truth_entries.get("run_log", {}).get("exists", False))
     stockfish_completed = payload.get("stockfish", {}).get("status") == "completed"
     internal_claim_boundary_preserved = payload.get("rating_claim_status", "") != RatingClaimStatus.TARGET_MET_EXTERNAL.value
+    release_registry_present = bool(truth_entries.get("run_contract", {}).get("exists", False)) and bool(truth_entries.get("release_snapshot", {}).get("exists", False))
+    handoff_surfaces_present = bool(truth_entries.get("handoff_pack_manifest", {}).get("exists", False)) and bool(truth_entries.get("operator_handoff_summary", {}).get("exists", False))
     gates = [
         {"label": "core_artifacts_present", "passed": core_artifacts_present},
         {"label": "checkpoint_or_package_provenance", "passed": checkpoint_or_provenance},
@@ -8443,6 +8449,8 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         {"label": "run_log_present", "passed": run_log_present},
         {"label": "stockfish_completed", "passed": stockfish_completed},
         {"label": "internal_claim_boundary_preserved", "passed": internal_claim_boundary_preserved},
+        {"label": "release_registry_present", "passed": release_registry_present},
+        {"label": "handoff_surfaces_present", "passed": handoff_surfaces_present},
     ]
     overall_internal_ready = all(gate["passed"] for gate in gates if gate["label"] != "stockfish_completed")
     overall_external_ready = all(gate["passed"] for gate in gates) and payload.get("rating_claim_status") == RatingClaimStatus.TARGET_MET_EXTERNAL.value
@@ -8472,6 +8480,141 @@ def render_release_gate_summary_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def build_rc_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    gate = _read_json_if_exists(layout.reports_dir / "release_gate_summary.json")
+    return {
+        "schema": "chess_rc_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "candidate_type": "internal_rc_stub",
+        "status": "candidate_internal_only" if gate.get("overall_internal_ready", False) else "not_ready",
+        "required_count": int(truth.get("required_count", 0)),
+        "present_required_count": int(truth.get("present_required_count", 0)),
+        "overall_internal_ready": bool(gate.get("overall_internal_ready", False)),
+        "overall_external_ready": bool(gate.get("overall_external_ready", False)),
+    }
+
+
+def render_rc_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# RC Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- candidate_type: `{report.get('candidate_type', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- required_count: `{report.get('required_count', 0)}`",
+        f"- present_required_count: `{report.get('present_required_count', 0)}`",
+        f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
+        f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_golden_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    gate = _read_json_if_exists(layout.reports_dir / "release_gate_summary.json")
+    return {
+        "schema": "chess_golden_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "candidate_type": "golden_stub",
+        "status": "not_ready",
+        "overall_external_ready": bool(gate.get("overall_external_ready", False)),
+        "reason": "Golden release requires external verification and final release closure beyond internal onefile artifacts.",
+    }
+
+
+def render_golden_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Golden Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- candidate_type: `{report.get('candidate_type', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    labels = [
+        "run_summary_json",
+        "model_card",
+        "eval_card",
+        "run_contract",
+        "release_snapshot",
+        "evidence_pack_stub",
+        "final_truth_registry",
+        "claim_registry",
+        "known_limits",
+        "support_matrix",
+        "release_gate_summary",
+        "run_log",
+    ]
+    items = [
+        {
+            "label": label,
+            "exists": bool(truth_entries.get(label, {}).get("exists", False)),
+            "path": truth_entries.get(label, {}).get("path", ""),
+        }
+        for label in labels
+    ]
+    return {
+        "schema": "chess_handoff_pack_manifest_v1",
+        "run_id": payload.get("run_id", ""),
+        "item_count": len(items),
+        "items": items,
+    }
+
+
+def render_handoff_pack_manifest_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Handoff Pack Manifest",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- item_count: `{report.get('item_count', 0)}`",
+        "",
+        "## Items",
+    ]
+    for item in report.get("items", []):
+        lines.append(f"- `{item.get('label', '')}`: exists=`{item.get('exists', False)}` path=`{item.get('path', '')}`")
+    return "\n".join(lines) + "\n"
+
+
+def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    handoff = _read_json_if_exists(layout.reports_dir / "handoff_pack_manifest.json")
+    release_gate = _read_json_if_exists(layout.reports_dir / "release_gate_summary.json")
+    items = handoff.get("items", [])
+    existing_items = sum(1 for item in items if item.get("exists", False))
+    total_items = len(items)
+    return {
+        "schema": "chess_operator_handoff_summary_v1",
+        "run_id": payload.get("run_id", ""),
+        "handoff_surface_status": "internal_ready" if total_items > 0 and existing_items == total_items else "incomplete",
+        "existing_items": existing_items,
+        "total_items": total_items,
+        "overall_internal_ready": bool(release_gate.get("overall_internal_ready", False)),
+        "overall_external_ready": bool(release_gate.get("overall_external_ready", False)),
+        "operator_note": "Operator handoff can be internally complete while external release readiness remains false.",
+    }
+
+
+def render_operator_handoff_summary_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Operator Handoff Summary",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- handoff_surface_status: `{report.get('handoff_surface_status', 'unknown')}`",
+        f"- existing_items: `{report.get('existing_items', 0)}`",
+        f"- total_items: `{report.get('total_items', 0)}`",
+        f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
+        f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
+        f"- operator_note: {report.get('operator_note', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
     run_contract = build_run_contract(layout, payload)
     atomic_json(layout.reports_dir / "run_contract.json", run_contract)
@@ -8497,6 +8640,18 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     release_gate_summary = build_release_gate_summary(layout, payload)
     atomic_json(layout.reports_dir / "release_gate_summary.json", release_gate_summary)
     atomic_write_text(layout.reports_dir / "release_gate_summary.md", render_release_gate_summary_md(release_gate_summary))
+    rc_stub = build_rc_stub(layout, payload)
+    atomic_json(layout.reports_dir / "rc_stub.json", rc_stub)
+    atomic_write_text(layout.reports_dir / "rc_stub.md", render_rc_stub_md(rc_stub))
+    golden_stub = build_golden_stub(layout, payload)
+    atomic_json(layout.reports_dir / "golden_stub.json", golden_stub)
+    atomic_write_text(layout.reports_dir / "golden_stub.md", render_golden_stub_md(golden_stub))
+    handoff_pack_manifest = build_handoff_pack_manifest(layout, payload)
+    atomic_json(layout.reports_dir / "handoff_pack_manifest.json", handoff_pack_manifest)
+    atomic_write_text(layout.reports_dir / "handoff_pack_manifest.md", render_handoff_pack_manifest_md(handoff_pack_manifest))
+    operator_handoff_summary = build_operator_handoff_summary(layout, payload)
+    atomic_json(layout.reports_dir / "operator_handoff_summary.json", operator_handoff_summary)
+    atomic_write_text(layout.reports_dir / "operator_handoff_summary.md", render_operator_handoff_summary_md(operator_handoff_summary))
 
 
 def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:

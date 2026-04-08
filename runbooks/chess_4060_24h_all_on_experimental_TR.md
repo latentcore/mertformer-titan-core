@@ -59,6 +59,10 @@ Run dizini altında en az şu raporlar beklenir:
 - `reports/known_limits.json`
 - `reports/support_matrix.json`
 - `reports/release_gate_summary.json`
+- `reports/rc_stub.json`
+- `reports/golden_stub.json`
+- `reports/handoff_pack_manifest.json`
+- `reports/operator_handoff_summary.json`
 - `logs/run_log.jsonl`
 
 ## Operatör Kapıları

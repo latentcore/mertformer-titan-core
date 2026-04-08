@@ -27,5 +27,9 @@
 - [ ] `reports/known_limits.json` present
 - [ ] `reports/support_matrix.json` present
 - [ ] `reports/release_gate_summary.json` present
+- [ ] `reports/rc_stub.json` present
+- [ ] `reports/golden_stub.json` present
+- [ ] `reports/handoff_pack_manifest.json` present
+- [ ] `reports/operator_handoff_summary.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed

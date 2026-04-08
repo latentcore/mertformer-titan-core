@@ -834,6 +834,10 @@ def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path)
         else:
             path.write_text(json.dumps({'ok': True}), encoding='utf-8')
     (layout.logs_dir / 'run_log.jsonl').write_text('', encoding='utf-8')
+    best_ckpt = layout.checkpoints_dir / 'best_by_val_loss.pt'
+    latest_ckpt = layout.checkpoints_dir / 'latest.pt'
+    best_ckpt.write_bytes(b'checkpoint')
+    latest_ckpt.write_bytes(b'checkpoint')
     layout.final_zip_path.write_bytes(b'zip')
     layout.final_sha_path.write_text('deadbeef  bundle.zip\n', encoding='utf-8')
     payload = {
@@ -864,6 +868,10 @@ def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path)
     assert entries['run_contract']['exists'] is False
     assert entries['release_snapshot']['exists'] is False
     assert entries['evidence_pack_stub']['exists'] is False
+    assert entries['rc_stub']['exists'] is False
+    assert entries['golden_stub']['exists'] is False
+    assert entries['handoff_pack_manifest']['exists'] is False
+    assert entries['operator_handoff_summary']['exists'] is False
     assert truth['present_required_count'] < truth['required_count']
 
 
@@ -899,6 +907,12 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
         else:
             path.write_text(json.dumps({'ok': True}), encoding='utf-8')
     (layout.logs_dir / 'run_log.jsonl').write_text('', encoding='utf-8')
+    best_ckpt = layout.checkpoints_dir / 'best_by_val_loss.pt'
+    latest_ckpt = layout.checkpoints_dir / 'latest.pt'
+    best_ckpt.write_bytes(b'checkpoint')
+    latest_ckpt.write_bytes(b'checkpoint')
+    layout.final_zip_path.write_bytes(b'zip')
+    layout.final_sha_path.write_text('deadbeef  bundle.zip\n', encoding='utf-8')
     payload = {
         'run_id': 'pytest-run',
         'script_version': onefile.SCRIPT_VERSION,
@@ -918,6 +932,8 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
         'legality_report': {'status': 'completed'},
         'dataset_provenance': {'sampling_strategy': 'seeded', 'source_mode': 'embedded_seed'},
         'notes': {'replay_is_demo_only': True, 'internal_proxy_only': True},
+        'best_checkpoint': str(best_ckpt),
+        'latest_checkpoint': str(latest_ckpt),
         'bundle': {'zip_path': str(layout.final_zip_path), 'sha256_path': str(layout.final_sha_path), 'encrypted': False},
     }
     onefile.write_closure_manifests(layout, payload)
@@ -931,11 +947,15 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     known_limits = json.loads((layout.reports_dir / 'known_limits.json').read_text(encoding='utf-8'))
     support_matrix = json.loads((layout.reports_dir / 'support_matrix.json').read_text(encoding='utf-8'))
     release_gate_summary = json.loads((layout.reports_dir / 'release_gate_summary.json').read_text(encoding='utf-8'))
+    rc_stub = json.loads((layout.reports_dir / 'rc_stub.json').read_text(encoding='utf-8'))
+    golden_stub = json.loads((layout.reports_dir / 'golden_stub.json').read_text(encoding='utf-8'))
+    handoff_pack_manifest = json.loads((layout.reports_dir / 'handoff_pack_manifest.json').read_text(encoding='utf-8'))
+    operator_handoff_summary = json.loads((layout.reports_dir / 'operator_handoff_summary.json').read_text(encoding='utf-8'))
     entries = {entry['label']: entry for entry in truth['entries']}
     assert run_contract['schema'] == 'chess_run_contract_v1'
     assert run_contract['feature_bundle'] == 'all_on_experimental'
     assert release_snapshot['schema'] == 'chess_release_snapshot_v1'
-    assert release_snapshot['release_surface_status'] == 'incomplete'
+    assert release_snapshot['release_surface_status'] == 'candidate_internal_only'
     assert evidence_pack['schema'] == 'chess_evidence_pack_stub_v1'
     assert evidence_pack['status'] == 'partial_internal_only'
     assert truth_registry['schema'] == 'chess_final_truth_registry_v1'
@@ -944,6 +964,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert known_limits['schema'] == 'chess_known_limits_v1'
     assert support_matrix['schema'] == 'chess_support_matrix_v1'
     assert release_gate_summary['schema'] == 'chess_release_gate_summary_v1'
+    assert rc_stub['schema'] == 'chess_rc_stub_v1'
+    assert golden_stub['schema'] == 'chess_golden_stub_v1'
+    assert handoff_pack_manifest['schema'] == 'chess_handoff_pack_manifest_v1'
+    assert operator_handoff_summary['schema'] == 'chess_operator_handoff_summary_v1'
     assert entries['run_contract']['exists'] is True
     assert entries['release_snapshot']['exists'] is True
     assert entries['evidence_pack_stub']['exists'] is True
@@ -951,7 +975,15 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert entries['known_limits']['exists'] is True
     assert entries['support_matrix']['exists'] is True
     assert entries['release_gate_summary']['exists'] is True
+    assert entries['rc_stub']['exists'] is True
+    assert entries['golden_stub']['exists'] is True
+    assert entries['handoff_pack_manifest']['exists'] is True
+    assert entries['operator_handoff_summary']['exists'] is True
     assert truth['present_required_count'] == truth['required_count']
+    assert rc_stub['status'] == 'candidate_internal_only'
+    assert golden_stub['status'] == 'not_ready'
+    assert operator_handoff_summary['handoff_surface_status'] == 'internal_ready'
+    assert release_gate_summary['overall_internal_ready'] is True
     assert release_gate_summary['overall_external_ready'] is False
 
 

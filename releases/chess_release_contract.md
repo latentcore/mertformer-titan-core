@@ -14,6 +14,10 @@ A chess onefile run is not release-grade unless all of these exist together:
 - known limits
 - support matrix
 - release gate summary
+- rc stub
+- golden stub
+- handoff pack manifest
+- operator handoff summary
 - artifact truth matrix
 - run status manifest
 - postrun analysis manifest

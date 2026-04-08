@@ -77,6 +77,10 @@ This repository includes a decision-complete, single-pass closure flow for engin
 - `reports/known_limits.json` lists run-specific known limits instead of pretending missing proof is closed.
 - `reports/support_matrix.json` records active profile/mode/support status for the exact run.
 - `reports/release_gate_summary.json` records internal and external release-gate pass/fail state.
+- `reports/rc_stub.json` records internal release-candidate stub state for the exact run.
+- `reports/golden_stub.json` records that golden release is still separate and stricter than internal closure.
+- `reports/handoff_pack_manifest.json` enumerates the operator-facing handoff bundle for the exact run.
+- `reports/operator_handoff_summary.json` summarizes whether the operator handoff surface is internally complete.
 
 ![MertFormer Titan Header](assets/header.png)
 

@@ -17,3 +17,7 @@
 - `known limits`: explicit list of what the exact run still does not prove.
 - `support matrix`: run-local matrix of supported modes, profiles, and artifact surfaces.
 - `release gate summary`: compact pass/fail summary of internal and external release gates.
+- `rc stub`: internal release-candidate placeholder summarizing whether the run is internally candidate-like.
+- `golden stub`: explicit placeholder showing golden release is still not granted by onefile closure alone.
+- `handoff pack manifest`: list of operator-facing documents and artifacts expected in a handoff.
+- `operator handoff summary`: compact summary of whether the handoff pack is internally complete.

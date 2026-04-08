@@ -27,5 +27,9 @@
 - [ ] `reports/known_limits.json` mevcut
 - [ ] `reports/support_matrix.json` mevcut
 - [ ] `reports/release_gate_summary.json` mevcut
+- [ ] `reports/rc_stub.json` mevcut
+- [ ] `reports/golden_stub.json` mevcut
+- [ ] `reports/handoff_pack_manifest.json` mevcut
+- [ ] `reports/operator_handoff_summary.json` mevcut
 - [ ] Final checkpoint yolu kaydedildi
 - [ ] Koşu sonrası claim sınırı tekrar gözden geçirildi

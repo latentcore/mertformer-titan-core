@@ -77,6 +77,10 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 - `reports/known_limits.json`, eksik kanıtı kapanmış gibi göstermeden koşuya özel sınırları listeler.
 - `reports/support_matrix.json`, tam o koşunun aktif profil/mod/destek durumunu kaydeder.
 - `reports/release_gate_summary.json`, iç ve dış release gate pass/fail durumunu kaydeder.
+- `reports/rc_stub.json`, tam o koşunun iç release-candidate stub durumunu kaydeder.
+- `reports/golden_stub.json`, golden release’in iç kapanıştan daha sıkı ve ayrı olduğunu kaydeder.
+- `reports/handoff_pack_manifest.json`, tam o koşunun operatör odaklı handoff paketini listeler.
+- `reports/operator_handoff_summary.json`, operatör handoff yüzeyinin içten tamam olup olmadığını özetler.
 
 
 ![MertFormer Titan Header](assets/header.png)
