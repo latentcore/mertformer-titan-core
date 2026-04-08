@@ -32,6 +32,7 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - External closure stub artefaktları artık `reports/external_repro_stub.json`, `reports/pilot_stub.json`, `reports/security_stub.json` ve `reports/legal_stub.json` dosyalarını üretir.
 - Operator/DR closure stub artefaktları artık `reports/operator_handbook_stub.json`, `reports/dr_evidence_stub.json`, `reports/backup_retention_stub.json` ve `reports/blind_handoff_stub.json` dosyalarını üretir.
 - Release-governance artefaktları artık `reports/release_notes_stub.json`, `reports/freeze_manifest_stub.json`, `reports/changelog_snapshot.json` ve `reports/maintenance_policy_stub.json` dosyalarını üretir.
+- Device/export/packaging closure artefaktları artık `reports/export_truth_stub.json`, `reports/device_validation_stub.json`, `reports/packaging_closure_stub.json` ve `reports/installer_validation_stub.json` dosyalarını üretir.
 - 24 saatlik 4060 all-on yolu için runbook/checklist dokümanları artık `runbooks/` ve `checklists/` altındadır.
 - Kanonik repo-side contract yüzeyleri artık `configs/`, `releases/`, `knowledge/` ve `evidence/` klasörlerini de içerir.
 - Satranç runtime observability sözleşmesi artık nettir: `logs/run_log.jsonl`, `reports/logging_contract.json`, `reports/observability_report.json`.

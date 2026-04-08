@@ -33,3 +33,7 @@
 - `freeze manifest stub`: explicit reminder that freeze closure still requires formal signoff beyond local artifact generation.
 - `changelog snapshot`: compact machine-generated snapshot of current run-facing release surfaces and their readiness state.
 - `maintenance policy stub`: explicit reminder that support and maintenance policy still require formal release governance beyond local artifact generation.
+- `export truth stub`: explicit reminder that export parity and export truth still require validation beyond local artifact generation.
+- `device validation stub`: explicit reminder that device latency, memory, and thermal validation still require measured runs beyond local artifact generation.
+- `packaging closure stub`: explicit reminder that packaging closure still requires package validation beyond local artifact generation.
+- `installer validation stub`: explicit reminder that installer validation still requires clean install checks beyond local artifact generation.

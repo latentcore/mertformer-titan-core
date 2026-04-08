@@ -43,5 +43,9 @@
 - [ ] `reports/freeze_manifest_stub.json` present
 - [ ] `reports/changelog_snapshot.json` present
 - [ ] `reports/maintenance_policy_stub.json` present
+- [ ] `reports/export_truth_stub.json` present
+- [ ] `reports/device_validation_stub.json` present
+- [ ] `reports/packaging_closure_stub.json` present
+- [ ] `reports/installer_validation_stub.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed

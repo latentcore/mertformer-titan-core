@@ -32,6 +32,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - External closure stubs are written to `reports/external_repro_stub.json`, `reports/pilot_stub.json`, `reports/security_stub.json`, and `reports/legal_stub.json`.
 - Operator/DR closure stubs are written to `reports/operator_handbook_stub.json`, `reports/dr_evidence_stub.json`, `reports/backup_retention_stub.json`, and `reports/blind_handoff_stub.json`.
 - Release-governance artifacts are written to `reports/release_notes_stub.json`, `reports/freeze_manifest_stub.json`, `reports/changelog_snapshot.json`, and `reports/maintenance_policy_stub.json`.
+- Device/export/packaging closure artifacts are written to `reports/export_truth_stub.json`, `reports/device_validation_stub.json`, `reports/packaging_closure_stub.json`, and `reports/installer_validation_stub.json`.
 - Runbook/checklist support for the 24h 4060 all-on path now lives under `runbooks/` and `checklists/`.
 - Canonical repo-side contract surfaces now also include `configs/`, `releases/`, `knowledge/`, and `evidence/`.
 - Chess runtime observability is contract-backed: `logs/run_log.jsonl`, `reports/logging_contract.json`, and `reports/observability_report.json`.

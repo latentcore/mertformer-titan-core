@@ -30,6 +30,10 @@ A chess onefile run is not release-grade unless all of these exist together:
 - freeze manifest stub
 - changelog snapshot
 - maintenance policy stub
+- export truth stub
+- device validation stub
+- packaging closure stub
+- installer validation stub
 - artifact truth matrix
 - run status manifest
 - postrun analysis manifest

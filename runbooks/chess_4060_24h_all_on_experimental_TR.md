@@ -75,6 +75,10 @@ Run dizini altında en az şu raporlar beklenir:
 - `reports/freeze_manifest_stub.json`
 - `reports/changelog_snapshot.json`
 - `reports/maintenance_policy_stub.json`
+- `reports/export_truth_stub.json`
+- `reports/device_validation_stub.json`
+- `reports/packaging_closure_stub.json`
+- `reports/installer_validation_stub.json`
 - `logs/run_log.jsonl`
 
 ## Operatör Kapıları

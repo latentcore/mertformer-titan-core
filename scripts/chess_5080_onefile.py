@@ -7850,6 +7850,10 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("freeze_manifest_stub", "freeze_manifest_stub.json"),
         ("changelog_snapshot", "changelog_snapshot.json"),
         ("maintenance_policy_stub", "maintenance_policy_stub.json"),
+        ("export_truth_stub", "export_truth_stub.json"),
+        ("device_validation_stub", "device_validation_stub.json"),
+        ("packaging_closure_stub", "packaging_closure_stub.json"),
+        ("installer_validation_stub", "installer_validation_stub.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
         ("replay_buffer_manifest", "replay_buffer_manifest.json"),
@@ -8352,6 +8356,12 @@ def build_known_limits(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[
             "status": "active",
             "detail": "Release notes, freeze manifest, changelog snapshot review, and maintenance policy still require formal release governance closure.",
         },
+        {
+            "label": "device_export_packaging_pending",
+            "severity": "high",
+            "status": "active",
+            "detail": "Export truth, device validation, packaging closure, and installer validation remain separate release work streams.",
+        },
     ]
     if cfg.get("mode") == "verify":
         limits.append(
@@ -8496,6 +8506,12 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("changelog_snapshot", {}).get("exists", False))
         and bool(truth_entries.get("maintenance_policy_stub", {}).get("exists", False))
     )
+    device_packaging_surfaces_present = (
+        bool(truth_entries.get("export_truth_stub", {}).get("exists", False))
+        and bool(truth_entries.get("device_validation_stub", {}).get("exists", False))
+        and bool(truth_entries.get("packaging_closure_stub", {}).get("exists", False))
+        and bool(truth_entries.get("installer_validation_stub", {}).get("exists", False))
+    )
     gates = [
         {"label": "core_artifacts_present", "passed": core_artifacts_present},
         {"label": "checkpoint_or_package_provenance", "passed": checkpoint_or_provenance},
@@ -8508,6 +8524,7 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         {"label": "external_closure_stubs_present", "passed": external_closure_stubs_present},
         {"label": "operational_stub_surfaces_present", "passed": operational_stub_surfaces_present},
         {"label": "release_governance_surfaces_present", "passed": release_governance_surfaces_present},
+        {"label": "device_packaging_surfaces_present", "passed": device_packaging_surfaces_present},
     ]
     overall_internal_ready = all(gate["passed"] for gate in gates if gate["label"] != "stockfish_completed")
     overall_external_ready = all(gate["passed"] for gate in gates) and payload.get("rating_claim_status") == RatingClaimStatus.TARGET_MET_EXTERNAL.value
@@ -8619,6 +8636,10 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "freeze_manifest_stub",
         "changelog_snapshot",
         "maintenance_policy_stub",
+        "export_truth_stub",
+        "device_validation_stub",
+        "packaging_closure_stub",
+        "installer_validation_stub",
         "run_log",
     ]
     items = [
@@ -8672,6 +8693,11 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         for item in items
         if item.get("label") in {"release_notes_stub", "freeze_manifest_stub", "changelog_snapshot", "maintenance_policy_stub"} and item.get("exists", False)
     )
+    device_packaging_count = sum(
+        1
+        for item in items
+        if item.get("label") in {"export_truth_stub", "device_validation_stub", "packaging_closure_stub", "installer_validation_stub"} and item.get("exists", False)
+    )
     return {
         "schema": "chess_operator_handoff_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -8681,6 +8707,7 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         "external_stub_count": external_stub_count,
         "operational_stub_count": operational_stub_count,
         "release_governance_count": release_governance_count,
+        "device_packaging_count": device_packaging_count,
         "overall_internal_ready": bool(release_gate.get("overall_internal_ready", False)),
         "overall_external_ready": bool(release_gate.get("overall_external_ready", False)),
         "operator_note": "Operator handoff can be internally complete while external release readiness remains false.",
@@ -8698,6 +8725,7 @@ def render_operator_handoff_summary_md(report: Dict[str, Any]) -> str:
         f"- external_stub_count: `{report.get('external_stub_count', 0)}`",
         f"- operational_stub_count: `{report.get('operational_stub_count', 0)}`",
         f"- release_governance_count: `{report.get('release_governance_count', 0)}`",
+        f"- device_packaging_count: `{report.get('device_packaging_count', 0)}`",
         f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
         f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
         f"- operator_note: {report.get('operator_note', '')}",
@@ -8985,6 +9013,92 @@ def render_maintenance_policy_stub_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def build_export_truth_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    gate = _read_json_if_exists(layout.reports_dir / "release_gate_summary.json")
+    return {
+        "schema": "chess_export_truth_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_export_truth_validation",
+        "overall_internal_ready": bool(gate.get("overall_internal_ready", False)),
+        "reason": "Export truth closure requires parity and packaged export validation beyond internal onefile artifact generation.",
+    }
+
+
+def render_export_truth_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Export Truth Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_device_validation_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_device_validation_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_device_validation",
+        "reason": "Device validation closure requires latency, RAM, thermal, and runtime checks outside internal onefile artifact generation.",
+    }
+
+
+def render_device_validation_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Device Validation Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_packaging_closure_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_packaging_closure_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_packaging_closure",
+        "reason": "Packaging closure requires finalized packaging validation beyond locally generated onefile artifacts.",
+    }
+
+
+def render_packaging_closure_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Packaging Closure Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_installer_validation_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_installer_validation_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_installer_validation",
+        "reason": "Installer validation closure requires clean install and restore checks beyond internal onefile artifact generation.",
+    }
+
+
+def render_installer_validation_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Installer Validation Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
     run_contract = build_run_contract(layout, payload)
     atomic_json(layout.reports_dir / "run_contract.json", run_contract)
@@ -9058,6 +9172,18 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     maintenance_policy_stub = build_maintenance_policy_stub(layout, payload)
     atomic_json(layout.reports_dir / "maintenance_policy_stub.json", maintenance_policy_stub)
     atomic_write_text(layout.reports_dir / "maintenance_policy_stub.md", render_maintenance_policy_stub_md(maintenance_policy_stub))
+    export_truth_stub = build_export_truth_stub(layout, payload)
+    atomic_json(layout.reports_dir / "export_truth_stub.json", export_truth_stub)
+    atomic_write_text(layout.reports_dir / "export_truth_stub.md", render_export_truth_stub_md(export_truth_stub))
+    device_validation_stub = build_device_validation_stub(layout, payload)
+    atomic_json(layout.reports_dir / "device_validation_stub.json", device_validation_stub)
+    atomic_write_text(layout.reports_dir / "device_validation_stub.md", render_device_validation_stub_md(device_validation_stub))
+    packaging_closure_stub = build_packaging_closure_stub(layout, payload)
+    atomic_json(layout.reports_dir / "packaging_closure_stub.json", packaging_closure_stub)
+    atomic_write_text(layout.reports_dir / "packaging_closure_stub.md", render_packaging_closure_stub_md(packaging_closure_stub))
+    installer_validation_stub = build_installer_validation_stub(layout, payload)
+    atomic_json(layout.reports_dir / "installer_validation_stub.json", installer_validation_stub)
+    atomic_write_text(layout.reports_dir / "installer_validation_stub.md", render_installer_validation_stub_md(installer_validation_stub))
 
 
 def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:

@@ -43,5 +43,9 @@
 - [ ] `reports/freeze_manifest_stub.json` mevcut
 - [ ] `reports/changelog_snapshot.json` mevcut
 - [ ] `reports/maintenance_policy_stub.json` mevcut
+- [ ] `reports/export_truth_stub.json` mevcut
+- [ ] `reports/device_validation_stub.json` mevcut
+- [ ] `reports/packaging_closure_stub.json` mevcut
+- [ ] `reports/installer_validation_stub.json` mevcut
 - [ ] Final checkpoint yolu kaydedildi
 - [ ] Koşu sonrası claim sınırı tekrar gözden geçirildi
