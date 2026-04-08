@@ -29,3 +29,7 @@
 - `dr evidence stub`: explicit reminder that disaster-recovery closure still requires restore evidence beyond local artifact generation.
 - `backup retention stub`: explicit reminder that retention policy closure still requires explicit operational policy beyond local artifact generation.
 - `blind handoff stub`: explicit reminder that blind handoff closure still requires a fresh operator rehearsal beyond local artifact generation.
+- `release notes stub`: explicit reminder that final release notes still require curated human review beyond local artifact generation.
+- `freeze manifest stub`: explicit reminder that freeze closure still requires formal signoff beyond local artifact generation.
+- `changelog snapshot`: compact machine-generated snapshot of current run-facing release surfaces and their readiness state.
+- `maintenance policy stub`: explicit reminder that support and maintenance policy still require formal release governance beyond local artifact generation.

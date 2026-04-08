@@ -7846,6 +7846,10 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("dr_evidence_stub", "dr_evidence_stub.json"),
         ("backup_retention_stub", "backup_retention_stub.json"),
         ("blind_handoff_stub", "blind_handoff_stub.json"),
+        ("release_notes_stub", "release_notes_stub.json"),
+        ("freeze_manifest_stub", "freeze_manifest_stub.json"),
+        ("changelog_snapshot", "changelog_snapshot.json"),
+        ("maintenance_policy_stub", "maintenance_policy_stub.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
         ("replay_buffer_manifest", "replay_buffer_manifest.json"),
@@ -8342,6 +8346,12 @@ def build_known_limits(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[
             "status": "active",
             "detail": "Operator handbook, DR evidence, backup retention, and blind handoff closures remain separate operational work streams.",
         },
+        {
+            "label": "release_governance_pending",
+            "severity": "medium",
+            "status": "active",
+            "detail": "Release notes, freeze manifest, changelog snapshot review, and maintenance policy still require formal release governance closure.",
+        },
     ]
     if cfg.get("mode") == "verify":
         limits.append(
@@ -8480,6 +8490,12 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("backup_retention_stub", {}).get("exists", False))
         and bool(truth_entries.get("blind_handoff_stub", {}).get("exists", False))
     )
+    release_governance_surfaces_present = (
+        bool(truth_entries.get("release_notes_stub", {}).get("exists", False))
+        and bool(truth_entries.get("freeze_manifest_stub", {}).get("exists", False))
+        and bool(truth_entries.get("changelog_snapshot", {}).get("exists", False))
+        and bool(truth_entries.get("maintenance_policy_stub", {}).get("exists", False))
+    )
     gates = [
         {"label": "core_artifacts_present", "passed": core_artifacts_present},
         {"label": "checkpoint_or_package_provenance", "passed": checkpoint_or_provenance},
@@ -8491,6 +8507,7 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         {"label": "handoff_surfaces_present", "passed": handoff_surfaces_present},
         {"label": "external_closure_stubs_present", "passed": external_closure_stubs_present},
         {"label": "operational_stub_surfaces_present", "passed": operational_stub_surfaces_present},
+        {"label": "release_governance_surfaces_present", "passed": release_governance_surfaces_present},
     ]
     overall_internal_ready = all(gate["passed"] for gate in gates if gate["label"] != "stockfish_completed")
     overall_external_ready = all(gate["passed"] for gate in gates) and payload.get("rating_claim_status") == RatingClaimStatus.TARGET_MET_EXTERNAL.value
@@ -8598,6 +8615,10 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "dr_evidence_stub",
         "backup_retention_stub",
         "blind_handoff_stub",
+        "release_notes_stub",
+        "freeze_manifest_stub",
+        "changelog_snapshot",
+        "maintenance_policy_stub",
         "run_log",
     ]
     items = [
@@ -8646,6 +8667,11 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         for item in items
         if item.get("label") in {"operator_handbook_stub", "dr_evidence_stub", "backup_retention_stub", "blind_handoff_stub"} and item.get("exists", False)
     )
+    release_governance_count = sum(
+        1
+        for item in items
+        if item.get("label") in {"release_notes_stub", "freeze_manifest_stub", "changelog_snapshot", "maintenance_policy_stub"} and item.get("exists", False)
+    )
     return {
         "schema": "chess_operator_handoff_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -8654,6 +8680,7 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         "total_items": total_items,
         "external_stub_count": external_stub_count,
         "operational_stub_count": operational_stub_count,
+        "release_governance_count": release_governance_count,
         "overall_internal_ready": bool(release_gate.get("overall_internal_ready", False)),
         "overall_external_ready": bool(release_gate.get("overall_external_ready", False)),
         "operator_note": "Operator handoff can be internally complete while external release readiness remains false.",
@@ -8670,6 +8697,7 @@ def render_operator_handoff_summary_md(report: Dict[str, Any]) -> str:
         f"- total_items: `{report.get('total_items', 0)}`",
         f"- external_stub_count: `{report.get('external_stub_count', 0)}`",
         f"- operational_stub_count: `{report.get('operational_stub_count', 0)}`",
+        f"- release_governance_count: `{report.get('release_governance_count', 0)}`",
         f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
         f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
         f"- operator_note: {report.get('operator_note', '')}",
@@ -8847,6 +8875,116 @@ def render_blind_handoff_stub_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def build_release_notes_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_release_notes_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_release_note_curation",
+        "reason": "Final release notes require curated human review beyond automatically generated onefile evidence.",
+    }
+
+
+def render_release_notes_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Release Notes Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_freeze_manifest_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_freeze_manifest_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_freeze_signoff",
+        "reason": "Freeze manifest closure requires final release governance signoff beyond local onefile artifact generation.",
+    }
+
+
+def render_freeze_manifest_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Freeze Manifest Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_changelog_snapshot(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    release_gate = _read_json_if_exists(layout.reports_dir / "release_gate_summary.json")
+    truth_entries = {entry.get("label", ""): entry for entry in truth.get("entries", [])}
+    included_labels = [
+        label
+        for label in (
+            "run_contract",
+            "release_snapshot",
+            "claim_registry",
+            "known_limits",
+            "release_gate_summary",
+            "handoff_pack_manifest",
+            "operator_handoff_summary",
+        )
+        if truth_entries.get(label, {}).get("exists", False)
+    ]
+    return {
+        "schema": "chess_changelog_snapshot_v1",
+        "run_id": payload.get("run_id", ""),
+        "execution_status": payload.get("execution_status", "unknown"),
+        "evaluation_status": payload.get("evaluation_status", "unknown"),
+        "included_label_count": len(included_labels),
+        "included_labels": included_labels,
+        "overall_internal_ready": bool(release_gate.get("overall_internal_ready", False)),
+        "overall_external_ready": bool(release_gate.get("overall_external_ready", False)),
+    }
+
+
+def render_changelog_snapshot_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Changelog Snapshot",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- execution_status: `{report.get('execution_status', 'unknown')}`",
+        f"- evaluation_status: `{report.get('evaluation_status', 'unknown')}`",
+        f"- included_label_count: `{report.get('included_label_count', 0)}`",
+        f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
+        f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
+        "",
+        "## Included Labels",
+    ]
+    for label in report.get("included_labels", []):
+        lines.append(f"- `{label}`")
+    return "\n".join(lines) + "\n"
+
+
+def build_maintenance_policy_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_maintenance_policy_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_maintenance_policy_finalization",
+        "reason": "Maintenance/support policy requires explicit governance and release support decisions beyond onefile-local artifact generation.",
+    }
+
+
+def render_maintenance_policy_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Maintenance Policy Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
     run_contract = build_run_contract(layout, payload)
     atomic_json(layout.reports_dir / "run_contract.json", run_contract)
@@ -8908,6 +9046,18 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     blind_handoff_stub = build_blind_handoff_stub(layout, payload)
     atomic_json(layout.reports_dir / "blind_handoff_stub.json", blind_handoff_stub)
     atomic_write_text(layout.reports_dir / "blind_handoff_stub.md", render_blind_handoff_stub_md(blind_handoff_stub))
+    release_notes_stub = build_release_notes_stub(layout, payload)
+    atomic_json(layout.reports_dir / "release_notes_stub.json", release_notes_stub)
+    atomic_write_text(layout.reports_dir / "release_notes_stub.md", render_release_notes_stub_md(release_notes_stub))
+    freeze_manifest_stub = build_freeze_manifest_stub(layout, payload)
+    atomic_json(layout.reports_dir / "freeze_manifest_stub.json", freeze_manifest_stub)
+    atomic_write_text(layout.reports_dir / "freeze_manifest_stub.md", render_freeze_manifest_stub_md(freeze_manifest_stub))
+    changelog_snapshot = build_changelog_snapshot(layout, payload)
+    atomic_json(layout.reports_dir / "changelog_snapshot.json", changelog_snapshot)
+    atomic_write_text(layout.reports_dir / "changelog_snapshot.md", render_changelog_snapshot_md(changelog_snapshot))
+    maintenance_policy_stub = build_maintenance_policy_stub(layout, payload)
+    atomic_json(layout.reports_dir / "maintenance_policy_stub.json", maintenance_policy_stub)
+    atomic_write_text(layout.reports_dir / "maintenance_policy_stub.md", render_maintenance_policy_stub_md(maintenance_policy_stub))
 
 
 def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:

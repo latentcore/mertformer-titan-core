@@ -39,5 +39,9 @@
 - [ ] `reports/dr_evidence_stub.json` present
 - [ ] `reports/backup_retention_stub.json` present
 - [ ] `reports/blind_handoff_stub.json` present
+- [ ] `reports/release_notes_stub.json` present
+- [ ] `reports/freeze_manifest_stub.json` present
+- [ ] `reports/changelog_snapshot.json` present
+- [ ] `reports/maintenance_policy_stub.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed

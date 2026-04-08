@@ -71,6 +71,10 @@ Expect these reports under the run directory:
 - `reports/dr_evidence_stub.json`
 - `reports/backup_retention_stub.json`
 - `reports/blind_handoff_stub.json`
+- `reports/release_notes_stub.json`
+- `reports/freeze_manifest_stub.json`
+- `reports/changelog_snapshot.json`
+- `reports/maintenance_policy_stub.json`
 - `logs/run_log.jsonl`
 
 ## Operator Gates

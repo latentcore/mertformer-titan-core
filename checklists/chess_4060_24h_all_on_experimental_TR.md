@@ -39,5 +39,9 @@
 - [ ] `reports/dr_evidence_stub.json` mevcut
 - [ ] `reports/backup_retention_stub.json` mevcut
 - [ ] `reports/blind_handoff_stub.json` mevcut
+- [ ] `reports/release_notes_stub.json` mevcut
+- [ ] `reports/freeze_manifest_stub.json` mevcut
+- [ ] `reports/changelog_snapshot.json` mevcut
+- [ ] `reports/maintenance_policy_stub.json` mevcut
 - [ ] Final checkpoint yolu kaydedildi
 - [ ] Koşu sonrası claim sınırı tekrar gözden geçirildi

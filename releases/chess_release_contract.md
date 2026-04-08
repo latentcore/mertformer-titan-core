@@ -26,6 +26,10 @@ A chess onefile run is not release-grade unless all of these exist together:
 - dr evidence stub
 - backup retention stub
 - blind handoff stub
+- release notes stub
+- freeze manifest stub
+- changelog snapshot
+- maintenance policy stub
 - artifact truth matrix
 - run status manifest
 - postrun analysis manifest

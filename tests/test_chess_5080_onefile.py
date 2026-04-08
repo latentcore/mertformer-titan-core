@@ -880,6 +880,10 @@ def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path)
     assert entries['dr_evidence_stub']['exists'] is False
     assert entries['backup_retention_stub']['exists'] is False
     assert entries['blind_handoff_stub']['exists'] is False
+    assert entries['release_notes_stub']['exists'] is False
+    assert entries['freeze_manifest_stub']['exists'] is False
+    assert entries['changelog_snapshot']['exists'] is False
+    assert entries['maintenance_policy_stub']['exists'] is False
     assert truth['present_required_count'] < truth['required_count']
 
 
@@ -967,6 +971,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     dr_evidence_stub = json.loads((layout.reports_dir / 'dr_evidence_stub.json').read_text(encoding='utf-8'))
     backup_retention_stub = json.loads((layout.reports_dir / 'backup_retention_stub.json').read_text(encoding='utf-8'))
     blind_handoff_stub = json.loads((layout.reports_dir / 'blind_handoff_stub.json').read_text(encoding='utf-8'))
+    release_notes_stub = json.loads((layout.reports_dir / 'release_notes_stub.json').read_text(encoding='utf-8'))
+    freeze_manifest_stub = json.loads((layout.reports_dir / 'freeze_manifest_stub.json').read_text(encoding='utf-8'))
+    changelog_snapshot = json.loads((layout.reports_dir / 'changelog_snapshot.json').read_text(encoding='utf-8'))
+    maintenance_policy_stub = json.loads((layout.reports_dir / 'maintenance_policy_stub.json').read_text(encoding='utf-8'))
     entries = {entry['label']: entry for entry in truth['entries']}
     assert run_contract['schema'] == 'chess_run_contract_v1'
     assert run_contract['feature_bundle'] == 'all_on_experimental'
@@ -992,6 +1000,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert dr_evidence_stub['schema'] == 'chess_dr_evidence_stub_v1'
     assert backup_retention_stub['schema'] == 'chess_backup_retention_stub_v1'
     assert blind_handoff_stub['schema'] == 'chess_blind_handoff_stub_v1'
+    assert release_notes_stub['schema'] == 'chess_release_notes_stub_v1'
+    assert freeze_manifest_stub['schema'] == 'chess_freeze_manifest_stub_v1'
+    assert changelog_snapshot['schema'] == 'chess_changelog_snapshot_v1'
+    assert maintenance_policy_stub['schema'] == 'chess_maintenance_policy_stub_v1'
     assert entries['run_contract']['exists'] is True
     assert entries['release_snapshot']['exists'] is True
     assert entries['evidence_pack_stub']['exists'] is True
@@ -1011,6 +1023,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert entries['dr_evidence_stub']['exists'] is True
     assert entries['backup_retention_stub']['exists'] is True
     assert entries['blind_handoff_stub']['exists'] is True
+    assert entries['release_notes_stub']['exists'] is True
+    assert entries['freeze_manifest_stub']['exists'] is True
+    assert entries['changelog_snapshot']['exists'] is True
+    assert entries['maintenance_policy_stub']['exists'] is True
     assert truth['present_required_count'] == truth['required_count']
     assert rc_stub['status'] == 'candidate_internal_only'
     assert golden_stub['status'] == 'not_ready'
@@ -1024,19 +1040,29 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert dr_evidence_stub['status'] == 'pending_dr_validation'
     assert backup_retention_stub['status'] == 'pending_retention_policy_finalization'
     assert blind_handoff_stub['status'] == 'pending_blind_handoff_rehearsal'
+    assert release_notes_stub['status'] == 'pending_release_note_curation'
+    assert freeze_manifest_stub['status'] == 'pending_freeze_signoff'
+    assert maintenance_policy_stub['status'] == 'pending_maintenance_policy_finalization'
+    assert changelog_snapshot['execution_status'] == 'completed'
+    assert changelog_snapshot['evaluation_status'] == 'completed'
+    assert 'release_gate_summary' in changelog_snapshot['included_labels']
     known_limit_labels = {item['label'] for item in known_limits['limits']}
     assert 'external_reproduction_pending' in known_limit_labels
     assert 'security_legal_pilot_pending' in known_limit_labels
     assert 'operator_handoff_dr_pending' in known_limit_labels
+    assert 'release_governance_pending' in known_limit_labels
     gate_labels = {item['label']: item['passed'] for item in release_gate_summary['gates']}
     assert gate_labels['external_closure_stubs_present'] is True
     assert gate_labels['operational_stub_surfaces_present'] is True
+    assert gate_labels['release_governance_surfaces_present'] is True
     handoff_labels = {item['label'] for item in handoff_pack_manifest['items']}
     assert {'external_repro_stub', 'pilot_stub', 'security_stub', 'legal_stub'} <= handoff_labels
     assert {'operator_handbook_stub', 'dr_evidence_stub', 'backup_retention_stub', 'blind_handoff_stub'} <= handoff_labels
+    assert {'release_notes_stub', 'freeze_manifest_stub', 'changelog_snapshot', 'maintenance_policy_stub'} <= handoff_labels
     assert release_gate_summary['overall_internal_ready'] is True
     assert release_gate_summary['overall_external_ready'] is False
     assert operator_handoff_summary['operational_stub_count'] == 4
+    assert operator_handoff_summary['release_governance_count'] == 4
 
 
 def test_main_logs_fatal_exception_to_run_log(monkeypatch, tmp_path: Path) -> None:
