@@ -47,5 +47,9 @@
 - [ ] `reports/device_validation_stub.json` present
 - [ ] `reports/packaging_closure_stub.json` present
 - [ ] `reports/installer_validation_stub.json` present
+- [ ] `reports/benchmark_raw_outputs_stub.json` present
+- [ ] `reports/benchmark_compare_report_stub.json` present
+- [ ] `reports/benchmark_summary_stub.json` present
+- [ ] `reports/benchmark_manifest_stub.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed

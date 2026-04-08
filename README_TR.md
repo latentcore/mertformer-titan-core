@@ -85,6 +85,7 @@ Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı t
 - `reports/operator_handbook_stub.json`, `reports/dr_evidence_stub.json`, `reports/backup_retention_stub.json` ve `reports/blind_handoff_stub.json`, operatör/DR kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
 - `reports/release_notes_stub.json`, `reports/freeze_manifest_stub.json`, `reports/changelog_snapshot.json` ve `reports/maintenance_policy_stub.json`, release-governance boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
 - `reports/export_truth_stub.json`, `reports/device_validation_stub.json`, `reports/packaging_closure_stub.json` ve `reports/installer_validation_stub.json`, device/export/packaging kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
+- `reports/benchmark_raw_outputs_stub.json`, `reports/benchmark_compare_report_stub.json`, `reports/benchmark_summary_stub.json` ve `reports/benchmark_manifest_stub.json`, benchmark kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
 
 
 ![MertFormer Titan Header](assets/header.png)

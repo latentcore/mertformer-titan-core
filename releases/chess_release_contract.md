@@ -34,6 +34,10 @@ A chess onefile run is not release-grade unless all of these exist together:
 - device validation stub
 - packaging closure stub
 - installer validation stub
+- benchmark raw outputs stub
+- benchmark compare report stub
+- benchmark summary stub
+- benchmark manifest stub
 - artifact truth matrix
 - run status manifest
 - postrun analysis manifest

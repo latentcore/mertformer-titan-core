@@ -37,3 +37,7 @@
 - `device validation stub`: explicit reminder that device latency, memory, and thermal validation still require measured runs beyond local artifact generation.
 - `packaging closure stub`: explicit reminder that packaging closure still requires package validation beyond local artifact generation.
 - `installer validation stub`: explicit reminder that installer validation still requires clean install checks beyond local artifact generation.
+- `benchmark raw outputs stub`: explicit reminder that benchmark closure still needs preserved raw outputs beyond local artifact generation.
+- `benchmark compare report stub`: explicit reminder that benchmark closure still needs baseline/compare reporting beyond local artifact generation.
+- `benchmark summary stub`: explicit reminder that benchmark closure still needs curated benchmark summary reporting beyond local artifact generation.
+- `benchmark manifest stub`: explicit reminder that benchmark closure still needs a locked benchmark manifest beyond local artifact generation.

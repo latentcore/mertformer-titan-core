@@ -37,6 +37,10 @@ A serious chess onefile run should preserve:
 - `reports/device_validation_stub.json`
 - `reports/packaging_closure_stub.json`
 - `reports/installer_validation_stub.json`
+- `reports/benchmark_raw_outputs_stub.json`
+- `reports/benchmark_compare_report_stub.json`
+- `reports/benchmark_summary_stub.json`
+- `reports/benchmark_manifest_stub.json`
 - `reports/artifact_manifest_with_hashes.json`
 - `logs/run_log.jsonl`
 

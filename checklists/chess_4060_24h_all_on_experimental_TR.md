@@ -47,5 +47,9 @@
 - [ ] `reports/device_validation_stub.json` mevcut
 - [ ] `reports/packaging_closure_stub.json` mevcut
 - [ ] `reports/installer_validation_stub.json` mevcut
+- [ ] `reports/benchmark_raw_outputs_stub.json` mevcut
+- [ ] `reports/benchmark_compare_report_stub.json` mevcut
+- [ ] `reports/benchmark_summary_stub.json` mevcut
+- [ ] `reports/benchmark_manifest_stub.json` mevcut
 - [ ] Final checkpoint yolu kaydedildi
 - [ ] Koşu sonrası claim sınırı tekrar gözden geçirildi
