@@ -76,6 +76,8 @@ A serious chess onefile run should preserve:
 - `reports/project_owner_work_queue.json`
 - `reports/project_critical_path_report.json`
 - `reports/project_owner_next_actions_summary.json`
+- `reports/project_ready_now_board.json`
+- `reports/project_unlock_impact_report.json`
 - `reports/generated_truth_crosscheck_matrix.json`
 - `reports/artifact_manifest_with_hashes.json`
 - `logs/run_log.jsonl`

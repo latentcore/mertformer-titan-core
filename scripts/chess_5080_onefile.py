@@ -7893,6 +7893,8 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("project_owner_work_queue", "project_owner_work_queue.json"),
         ("project_critical_path_report", "project_critical_path_report.json"),
         ("project_owner_next_actions_summary", "project_owner_next_actions_summary.json"),
+        ("project_ready_now_board", "project_ready_now_board.json"),
+        ("project_unlock_impact_report", "project_unlock_impact_report.json"),
         ("generated_truth_crosscheck_matrix", "generated_truth_crosscheck_matrix.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
@@ -8670,6 +8672,8 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("project_owner_work_queue", {}).get("exists", False))
         and bool(truth_entries.get("project_critical_path_report", {}).get("exists", False))
         and bool(truth_entries.get("project_owner_next_actions_summary", {}).get("exists", False))
+        and bool(truth_entries.get("project_ready_now_board", {}).get("exists", False))
+        and bool(truth_entries.get("project_unlock_impact_report", {}).get("exists", False))
     )
     generated_truth_consistency_present = bool(truth_entries.get("generated_truth_consistency_report", {}).get("exists", False))
     generated_truth_crosscheck_present = bool(truth_entries.get("generated_truth_crosscheck_matrix", {}).get("exists", False))
@@ -8855,6 +8859,8 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "project_owner_work_queue",
         "project_critical_path_report",
         "project_owner_next_actions_summary",
+        "project_ready_now_board",
+        "project_unlock_impact_report",
         "generated_truth_consistency_report",
         "generated_truth_crosscheck_matrix",
         "run_log",
@@ -8964,6 +8970,8 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
             "project_owner_work_queue",
             "project_critical_path_report",
             "project_owner_next_actions_summary",
+            "project_ready_now_board",
+            "project_unlock_impact_report",
         } and item.get("exists", False)
     )
     generated_truth_count = sum(
@@ -9794,6 +9802,8 @@ def build_master_closure_table(layout: ArtifactLayout, payload: Dict[str, Any]) 
             "project_owner_work_queue",
             "project_critical_path_report",
             "project_owner_next_actions_summary",
+            "project_ready_now_board",
+            "project_unlock_impact_report",
         ],
         "generated_truth_consistency": ["generated_truth_consistency_report", "generated_truth_crosscheck_matrix"],
     }
@@ -10091,6 +10101,8 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
     project_owner_work_queue = _read_json_if_exists(layout.reports_dir / "project_owner_work_queue.json")
     project_critical_path_report = _read_json_if_exists(layout.reports_dir / "project_critical_path_report.json")
     project_owner_next_actions_summary = _read_json_if_exists(layout.reports_dir / "project_owner_next_actions_summary.json")
+    project_ready_now_board = _read_json_if_exists(layout.reports_dir / "project_ready_now_board.json")
+    project_unlock_impact_report = _read_json_if_exists(layout.reports_dir / "project_unlock_impact_report.json")
     return {
         "schema": "chess_closure_gap_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -10107,6 +10119,8 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
         "project_owner_queue_status": project_owner_work_queue.get("status", "unknown"),
         "project_critical_path_status": project_critical_path_report.get("status", "unknown"),
         "project_owner_next_actions_status": project_owner_next_actions_summary.get("status", "unknown"),
+        "project_ready_now_status": project_ready_now_board.get("status", "unknown"),
+        "project_unlock_impact_status": project_unlock_impact_report.get("status", "unknown"),
         "generated_truth_status": _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json").get("status", "unknown"),
         "generated_truth_crosscheck_status": _read_json_if_exists(layout.reports_dir / "generated_truth_crosscheck_matrix.json").get("status", "unknown"),
     }
@@ -10130,6 +10144,8 @@ def render_closure_gap_summary_md(report: Dict[str, Any]) -> str:
         f"- project_owner_queue_status: `{report.get('project_owner_queue_status', 'unknown')}`",
         f"- project_critical_path_status: `{report.get('project_critical_path_status', 'unknown')}`",
         f"- project_owner_next_actions_status: `{report.get('project_owner_next_actions_status', 'unknown')}`",
+        f"- project_ready_now_status: `{report.get('project_ready_now_status', 'unknown')}`",
+        f"- project_unlock_impact_status: `{report.get('project_unlock_impact_status', 'unknown')}`",
         f"- generated_truth_status: `{report.get('generated_truth_status', 'unknown')}`",
         f"- generated_truth_crosscheck_status: `{report.get('generated_truth_crosscheck_status', 'unknown')}`",
     ]
@@ -11187,6 +11203,130 @@ def render_project_owner_next_actions_summary_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def build_project_ready_now_board(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    graph = _read_json_if_exists(layout.reports_dir / "project_blocker_dependency_graph.json")
+    action_plan = _read_json_if_exists(layout.reports_dir / "project_blocker_action_plan.json")
+    action_by_label = {str(item.get("label", "")): item for item in action_plan.get("items", [])}
+    direct_unlocks: Dict[str, int] = {}
+    for edge in graph.get("edges", []):
+        source = str(edge.get("from", ""))
+        if source:
+            direct_unlocks[source] = direct_unlocks.get(source, 0) + 1
+    rows = []
+    for node in graph.get("nodes", []):
+        if not bool(node.get("ready_now", False)):
+            continue
+        label = str(node.get("label", ""))
+        action = action_by_label.get(label, {})
+        rows.append(
+            {
+                "label": label,
+                "owner_domain": str(node.get("owner_domain", "")),
+                "closure_surface": str(node.get("closure_surface", "")),
+                "direct_unlock_count": int(direct_unlocks.get(label, 0)),
+                "next_action": str(action.get("next_action", "")),
+                "status": "ready_now",
+            }
+        )
+    rows.sort(key=lambda item: (-item["direct_unlock_count"], item["label"]))
+    return {
+        "schema": "chess_project_ready_now_board_v1",
+        "run_id": graph.get("run_id", ""),
+        "item_count": len(rows),
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_ready_now_board_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Ready-Now Board",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- item_count: `{report.get('item_count', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Ready Now",
+    ]
+    for row in report.get("rows", []):
+        lines.append(
+            f"- `{row.get('label', '')}`: owner_domain=`{row.get('owner_domain', '')}` "
+            f"closure_surface=`{row.get('closure_surface', '')}` direct_unlock_count=`{row.get('direct_unlock_count', 0)}` "
+            f"status=`{row.get('status', 'unknown')}` next_action={row.get('next_action', '')}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_project_unlock_impact_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    graph = _read_json_if_exists(layout.reports_dir / "project_blocker_dependency_graph.json")
+    outgoing: Dict[str, List[str]] = {}
+    node_map = {str(node.get("label", "")): node for node in graph.get("nodes", [])}
+    for label in node_map:
+        outgoing[label] = []
+    for edge in graph.get("edges", []):
+        source = str(edge.get("from", ""))
+        target = str(edge.get("to", ""))
+        if source in outgoing and target:
+            outgoing[source].append(target)
+
+    memo: Dict[str, set[str]] = {}
+
+    def descendants(label: str) -> set[str]:
+        if label in memo:
+            return memo[label]
+        seen: set[str] = set()
+        for child in outgoing.get(label, []):
+            seen.add(child)
+            seen.update(descendants(child))
+        memo[label] = seen
+        return seen
+
+    rows = []
+    for label, node in node_map.items():
+        all_desc = descendants(label)
+        rows.append(
+            {
+                "label": label,
+                "owner_domain": str(node.get("owner_domain", "")),
+                "closure_surface": str(node.get("closure_surface", "")),
+                "direct_unlock_count": len(outgoing.get(label, [])),
+                "total_unlock_count": len(all_desc),
+                "status": "ranked",
+            }
+        )
+    rows.sort(key=lambda item: (-item["total_unlock_count"], -item["direct_unlock_count"], item["label"]))
+    return {
+        "schema": "chess_project_unlock_impact_report_v1",
+        "run_id": graph.get("run_id", ""),
+        "item_count": len(rows),
+        "top_unlock_label": rows[0]["label"] if rows else "",
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_unlock_impact_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Unlock Impact Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- item_count: `{report.get('item_count', 0)}`",
+        f"- top_unlock_label: `{report.get('top_unlock_label', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Unlock Ranking",
+    ]
+    for row in report.get("rows", []):
+        lines.append(
+            f"- `{row.get('label', '')}`: total_unlock_count=`{row.get('total_unlock_count', 0)}` "
+            f"direct_unlock_count=`{row.get('direct_unlock_count', 0)}` owner_domain=`{row.get('owner_domain', '')}` "
+            f"closure_surface=`{row.get('closure_surface', '')}` status=`{row.get('status', 'unknown')}`"
+        )
+    return "\n".join(lines) + "\n"
+
+
 def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     del payload
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
@@ -11209,6 +11349,8 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
     project_owner_work_queue = _read_json_if_exists(layout.reports_dir / "project_owner_work_queue.json")
     project_critical_path_report = _read_json_if_exists(layout.reports_dir / "project_critical_path_report.json")
     project_owner_next_actions_summary = _read_json_if_exists(layout.reports_dir / "project_owner_next_actions_summary.json")
+    project_ready_now_board = _read_json_if_exists(layout.reports_dir / "project_ready_now_board.json")
+    project_unlock_impact_report = _read_json_if_exists(layout.reports_dir / "project_unlock_impact_report.json")
 
     checks = [
         {
@@ -11250,6 +11392,8 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
                 and int(project_owner_work_queue.get("owner_count", 0)) > 0
                 and int(project_critical_path_report.get("path_length", 0)) > 0
                 and int(project_owner_next_actions_summary.get("owner_count", 0)) > 0
+                and int(project_ready_now_board.get("item_count", 0)) > 0
+                and int(project_unlock_impact_report.get("item_count", 0)) > 0
             ),
         },
         {
@@ -11301,6 +11445,8 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
     project_owner_work_queue = _read_json_if_exists(layout.reports_dir / "project_owner_work_queue.json")
     project_critical_path_report = _read_json_if_exists(layout.reports_dir / "project_critical_path_report.json")
     project_owner_next_actions_summary = _read_json_if_exists(layout.reports_dir / "project_owner_next_actions_summary.json")
+    project_ready_now_board = _read_json_if_exists(layout.reports_dir / "project_ready_now_board.json")
+    project_unlock_impact_report = _read_json_if_exists(layout.reports_dir / "project_unlock_impact_report.json")
     generated_truth_consistency_report = _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json")
     specs = _project_blocker_specs()
 
@@ -11338,6 +11484,8 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
         str(row.get("owner_domain", "")): str(row.get("next_up", ""))
         for row in project_owner_work_queue.get("rows", [])
     }
+    ready_now_labels = {str(row.get("label", "")) for row in project_ready_now_board.get("rows", [])}
+    root_labels = {str(node.get("label", "")) for node in project_blocker_dependency_graph.get("nodes", []) if not node.get("depends_on", [])}
     sequence_phase_orders = [int(specs.get(str(item.get("label", "")), {}).get("phase_order", 999)) for item in project_execution_sequence.get("items", [])]
     checks = [
         {
@@ -11402,6 +11550,22 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
                 int(project_owner_next_actions_summary.get("owner_count", 0)) == int(project_owner_work_queue.get("owner_count", -1))
                 and next_actions_by_owner == queue_next_by_owner
                 and project_owner_next_actions_summary.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "ready_now_board_matches_roots",
+            "passed": (
+                ready_now_labels == root_labels
+                and int(project_ready_now_board.get("item_count", 0)) == len(root_labels)
+                and project_ready_now_board.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "unlock_impact_matches_graph",
+            "passed": (
+                int(project_unlock_impact_report.get("item_count", 0)) == int(project_blocker_dependency_graph.get("node_count", -1))
+                and str(project_unlock_impact_report.get("top_unlock_label", "")) in blocker_labels
+                and project_unlock_impact_report.get("status") == "ready"
             ),
         },
         {
@@ -11650,6 +11814,18 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     atomic_write_text(
         layout.reports_dir / "project_owner_next_actions_summary.md",
         render_project_owner_next_actions_summary_md(project_owner_next_actions_summary),
+    )
+    project_ready_now_board = build_project_ready_now_board(layout, payload)
+    atomic_json(layout.reports_dir / "project_ready_now_board.json", project_ready_now_board)
+    atomic_write_text(
+        layout.reports_dir / "project_ready_now_board.md",
+        render_project_ready_now_board_md(project_ready_now_board),
+    )
+    project_unlock_impact_report = build_project_unlock_impact_report(layout, payload)
+    atomic_json(layout.reports_dir / "project_unlock_impact_report.json", project_unlock_impact_report)
+    atomic_write_text(
+        layout.reports_dir / "project_unlock_impact_report.md",
+        render_project_unlock_impact_report_md(project_unlock_impact_report),
     )
     truth_docs_index = build_truth_docs_index(layout, payload)
     atomic_json(layout.reports_dir / "truth_docs_index.json", truth_docs_index)

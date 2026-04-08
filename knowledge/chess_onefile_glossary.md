@@ -75,5 +75,7 @@
 - `project owner work queue`: owner-domain execution queue that orders each blocker by closure step and identifies the next blocker each owner should take.
 - `project critical path report`: longest dependency chain through the remaining blockers, used to show which closure path unlocks the most downstream work.
 - `project owner next actions summary`: compact per-owner summary of the next blocker, next phase, and next closure surface to tackle.
+- `project ready-now board`: compact board of blockers that can be started immediately because they have no remaining upstream dependencies.
+- `project unlock impact report`: ranked view of which blockers unlock the most downstream blockers once they close.
 - `generated truth consistency report`: explicit check that generated truth summaries agree with each other instead of only existing side by side.
 - `generated truth crosscheck matrix`: extra consistency layer that cross-checks blocker coverage, dependency order, lane coverage, and summary alignment.
