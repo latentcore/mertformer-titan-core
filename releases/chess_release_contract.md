@@ -83,6 +83,8 @@ A chess onefile run is not release-grade unless all of these exist together:
 - project owner phase frontier report
 - project evidence criticality report
 - project phase transition matrix
+- project owner load report
+- project phase dependency pressure report
 - generated truth crosscheck matrix
 - artifact truth matrix
 - run status manifest

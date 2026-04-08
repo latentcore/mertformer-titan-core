@@ -85,5 +85,7 @@
 - `project owner phase frontier report`: per-owner view of the next active phase frontier, including which blockers are next and whether that frontier is ready now or still dependency-blocked.
 - `project evidence criticality report`: ranked view of which evidence surfaces currently matter most because they affect the widest blocker set and earliest closure phases.
 - `project phase transition matrix`: per-phase transition map showing how dependency flow moves between closure phases across the blocker graph.
+- `project owner load report`: owner-level aggregate of blocker volume, ready frontier count, evidence touch count, and bottleneck weight.
+- `project phase dependency pressure report`: ranked phase-level view of dependency pressure based on phase transitions, blocker load, evidence touch points, and critical-path hits.
 - `generated truth consistency report`: explicit check that generated truth summaries agree with each other instead of only existing side by side.
 - `generated truth crosscheck matrix`: extra consistency layer that cross-checks blocker coverage, dependency order, lane coverage, and summary alignment.
