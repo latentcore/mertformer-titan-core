@@ -7905,6 +7905,8 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("project_phase_transition_matrix", "project_phase_transition_matrix.json"),
         ("project_owner_load_report", "project_owner_load_report.json"),
         ("project_phase_dependency_pressure_report", "project_phase_dependency_pressure_report.json"),
+        ("project_owner_bottleneck_alignment_report", "project_owner_bottleneck_alignment_report.json"),
+        ("project_evidence_phase_heatmap_report", "project_evidence_phase_heatmap_report.json"),
         ("generated_truth_crosscheck_matrix", "generated_truth_crosscheck_matrix.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
@@ -8694,6 +8696,8 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("project_phase_transition_matrix", {}).get("exists", False))
         and bool(truth_entries.get("project_owner_load_report", {}).get("exists", False))
         and bool(truth_entries.get("project_phase_dependency_pressure_report", {}).get("exists", False))
+        and bool(truth_entries.get("project_owner_bottleneck_alignment_report", {}).get("exists", False))
+        and bool(truth_entries.get("project_evidence_phase_heatmap_report", {}).get("exists", False))
     )
     generated_truth_consistency_present = bool(truth_entries.get("generated_truth_consistency_report", {}).get("exists", False))
     generated_truth_crosscheck_present = bool(truth_entries.get("generated_truth_crosscheck_matrix", {}).get("exists", False))
@@ -8891,6 +8895,8 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "project_phase_transition_matrix",
         "project_owner_load_report",
         "project_phase_dependency_pressure_report",
+        "project_owner_bottleneck_alignment_report",
+        "project_evidence_phase_heatmap_report",
         "generated_truth_consistency_report",
         "generated_truth_crosscheck_matrix",
         "run_log",
@@ -9012,6 +9018,8 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
             "project_phase_transition_matrix",
             "project_owner_load_report",
             "project_phase_dependency_pressure_report",
+            "project_owner_bottleneck_alignment_report",
+            "project_evidence_phase_heatmap_report",
         } and item.get("exists", False)
     )
     generated_truth_count = sum(
@@ -9854,6 +9862,8 @@ def build_master_closure_table(layout: ArtifactLayout, payload: Dict[str, Any]) 
             "project_phase_transition_matrix",
             "project_owner_load_report",
             "project_phase_dependency_pressure_report",
+            "project_owner_bottleneck_alignment_report",
+            "project_evidence_phase_heatmap_report",
         ],
         "generated_truth_consistency": ["generated_truth_consistency_report", "generated_truth_crosscheck_matrix"],
     }
@@ -10163,6 +10173,8 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
     project_phase_transition_matrix = _read_json_if_exists(layout.reports_dir / "project_phase_transition_matrix.json")
     project_owner_load_report = _read_json_if_exists(layout.reports_dir / "project_owner_load_report.json")
     project_phase_dependency_pressure_report = _read_json_if_exists(layout.reports_dir / "project_phase_dependency_pressure_report.json")
+    project_owner_bottleneck_alignment_report = _read_json_if_exists(layout.reports_dir / "project_owner_bottleneck_alignment_report.json")
+    project_evidence_phase_heatmap_report = _read_json_if_exists(layout.reports_dir / "project_evidence_phase_heatmap_report.json")
     return {
         "schema": "chess_closure_gap_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -10191,6 +10203,8 @@ def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -
         "project_phase_transition_status": project_phase_transition_matrix.get("status", "unknown"),
         "project_owner_load_status": project_owner_load_report.get("status", "unknown"),
         "project_phase_dependency_pressure_status": project_phase_dependency_pressure_report.get("status", "unknown"),
+        "project_owner_bottleneck_alignment_status": project_owner_bottleneck_alignment_report.get("status", "unknown"),
+        "project_evidence_phase_heatmap_status": project_evidence_phase_heatmap_report.get("status", "unknown"),
         "generated_truth_status": _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json").get("status", "unknown"),
         "generated_truth_crosscheck_status": _read_json_if_exists(layout.reports_dir / "generated_truth_crosscheck_matrix.json").get("status", "unknown"),
     }
@@ -10226,6 +10240,8 @@ def render_closure_gap_summary_md(report: Dict[str, Any]) -> str:
         f"- project_phase_transition_status: `{report.get('project_phase_transition_status', 'unknown')}`",
         f"- project_owner_load_status: `{report.get('project_owner_load_status', 'unknown')}`",
         f"- project_phase_dependency_pressure_status: `{report.get('project_phase_dependency_pressure_status', 'unknown')}`",
+        f"- project_owner_bottleneck_alignment_status: `{report.get('project_owner_bottleneck_alignment_status', 'unknown')}`",
+        f"- project_evidence_phase_heatmap_status: `{report.get('project_evidence_phase_heatmap_status', 'unknown')}`",
         f"- generated_truth_status: `{report.get('generated_truth_status', 'unknown')}`",
         f"- generated_truth_crosscheck_status: `{report.get('generated_truth_crosscheck_status', 'unknown')}`",
     ]
@@ -12160,6 +12176,182 @@ def render_project_phase_dependency_pressure_report_md(report: Dict[str, Any]) -
     return "\n".join(lines) + "\n"
 
 
+def build_project_owner_bottleneck_alignment_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    owner_load = _read_json_if_exists(layout.reports_dir / "project_owner_load_report.json")
+    bottleneck = _read_json_if_exists(layout.reports_dir / "project_dependency_bottleneck_report.json")
+    owner_frontier = _read_json_if_exists(layout.reports_dir / "project_owner_phase_frontier_report.json")
+    frontier_by_owner = {str(row.get("owner_domain", "")): row for row in owner_frontier.get("rows", [])}
+    bottlenecks_by_owner: DefaultDict[str, List[Dict[str, Any]]] = defaultdict(list)
+    for row in bottleneck.get("rows", []):
+        owner = str(row.get("owner_domain", ""))
+        if owner:
+            bottlenecks_by_owner[owner].append(row)
+    rows = []
+    for row in owner_load.get("rows", []):
+        owner = str(row.get("owner_domain", ""))
+        owner_bottlenecks = sorted(
+            bottlenecks_by_owner.get(owner, []),
+            key=lambda item: (
+                -int(item.get("bottleneck_score", 0)),
+                -int(item.get("total_blocked_count", 0)),
+                str(item.get("label", "")),
+            ),
+        )
+        top_item = owner_bottlenecks[0] if owner_bottlenecks else {}
+        frontier = frontier_by_owner.get(owner, {})
+        rows.append(
+            {
+                "owner_domain": owner,
+                "blocker_count": int(row.get("blocker_count", 0)),
+                "frontier_phase": str(frontier.get("frontier_phase", "")),
+                "frontier_ready_now_count": int(frontier.get("frontier_ready_now_count", 0)),
+                "bottleneck_item_count": len(owner_bottlenecks),
+                "bottleneck_score_total": sum(int(item.get("bottleneck_score", 0)) for item in owner_bottlenecks),
+                "top_owner_bottleneck_label": str(top_item.get("label", "")),
+                "top_owner_bottleneck_score": int(top_item.get("bottleneck_score", 0)) if top_item else 0,
+                "status": "ready" if owner_bottlenecks else "no_bottlenecks",
+            }
+        )
+    rows.sort(
+        key=lambda item: (
+            -int(item["bottleneck_score_total"]),
+            -int(item["blocker_count"]),
+            item["owner_domain"],
+        )
+    )
+    return {
+        "schema": "chess_project_owner_bottleneck_alignment_report_v1",
+        "run_id": owner_load.get("run_id", ""),
+        "owner_count": len(rows),
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_owner_bottleneck_alignment_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Owner Bottleneck Alignment Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- owner_count: `{report.get('owner_count', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Owner Bottleneck Alignment",
+    ]
+    for row in report.get("rows", []):
+        lines.append(
+            f"- `{row.get('owner_domain', '')}`: blocker_count=`{row.get('blocker_count', 0)}` "
+            f"frontier_phase=`{row.get('frontier_phase', '')}` frontier_ready_now_count=`{row.get('frontier_ready_now_count', 0)}` "
+            f"bottleneck_item_count=`{row.get('bottleneck_item_count', 0)}` bottleneck_score_total=`{row.get('bottleneck_score_total', 0)}` "
+            f"top_owner_bottleneck_label=`{row.get('top_owner_bottleneck_label', '')}` "
+            f"top_owner_bottleneck_score=`{row.get('top_owner_bottleneck_score', 0)}` status=`{row.get('status', 'unknown')}`"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_project_evidence_phase_heatmap_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del payload
+    evidence_backlog = _read_json_if_exists(layout.reports_dir / "project_evidence_backlog_report.json")
+    phase_transition = _read_json_if_exists(layout.reports_dir / "project_phase_transition_matrix.json")
+    phase_rows: Dict[str, Dict[str, Any]] = {}
+    for row in phase_transition.get("rows", []):
+        phase = str(row.get("phase", ""))
+        if not phase:
+            continue
+        phase_rows[phase] = {
+            "phase": phase,
+            "phase_label": str(row.get("phase_label", "")),
+            "phase_order": int(row.get("phase_order", 0)),
+            "transition_blocker_count": int(row.get("blocker_count", 0)),
+            "incoming_phase_count": int(row.get("incoming_phase_count", 0)),
+            "outgoing_phase_count": int(row.get("outgoing_phase_count", 0)),
+            "unique_evidence_labels": set(),
+            "blockers": set(),
+            "closure_surfaces": set(),
+        }
+    for row in evidence_backlog.get("rows", []):
+        evidence_label = str(row.get("evidence_label", ""))
+        blockers = {str(label) for label in row.get("blockers", []) if str(label)}
+        closure_surfaces = {str(label) for label in row.get("closure_surfaces", []) if str(label)}
+        for phase in row.get("phases", []):
+            phase_key = str(phase)
+            if not phase_key:
+                continue
+            entry = phase_rows.setdefault(
+                phase_key,
+                {
+                    "phase": phase_key,
+                    "phase_label": phase_key.replace("_", " ").title(),
+                    "phase_order": 999,
+                    "transition_blocker_count": 0,
+                    "incoming_phase_count": 0,
+                    "outgoing_phase_count": 0,
+                    "unique_evidence_labels": set(),
+                    "blockers": set(),
+                    "closure_surfaces": set(),
+                },
+            )
+            if evidence_label:
+                entry["unique_evidence_labels"].add(evidence_label)
+            entry["blockers"].update(blockers)
+            entry["closure_surfaces"].update(closure_surfaces)
+    rows = []
+    for phase in sorted(phase_rows.values(), key=lambda item: (int(item["phase_order"]), item["phase"])):
+        evidence_count = len(phase["unique_evidence_labels"])
+        blocker_count = max(int(phase["transition_blocker_count"]), len(phase["blockers"]))
+        pressure_score = evidence_count + blocker_count + int(phase["incoming_phase_count"])
+        if pressure_score >= 8:
+            pressure_hint = "high"
+        elif pressure_score >= 4:
+            pressure_hint = "medium"
+        else:
+            pressure_hint = "low"
+        rows.append(
+            {
+                "phase": phase["phase"],
+                "phase_label": phase["phase_label"],
+                "phase_order": int(phase["phase_order"]),
+                "evidence_count": evidence_count,
+                "blocker_count": blocker_count,
+                "closure_surface_count": len(phase["closure_surfaces"]),
+                "unique_evidence_labels": sorted(phase["unique_evidence_labels"]),
+                "incoming_phase_count": int(phase["incoming_phase_count"]),
+                "outgoing_phase_count": int(phase["outgoing_phase_count"]),
+                "pressure_hint": pressure_hint,
+                "status": "ready",
+            }
+        )
+    return {
+        "schema": "chess_project_evidence_phase_heatmap_report_v1",
+        "run_id": phase_transition.get("run_id", ""),
+        "phase_count": len(rows),
+        "status": "ready" if rows else "incomplete",
+        "rows": rows,
+    }
+
+
+def render_project_evidence_phase_heatmap_report_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Project Evidence Phase Heatmap Report",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- phase_count: `{report.get('phase_count', 0)}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        "",
+        "## Phase Heatmap",
+    ]
+    for row in report.get("rows", []):
+        evidence = ", ".join(f"`{entry}`" for entry in row.get("unique_evidence_labels", []))
+        lines.append(
+            f"- `{row.get('phase_label', '')}`: evidence_count=`{row.get('evidence_count', 0)}` blocker_count=`{row.get('blocker_count', 0)}` "
+            f"closure_surface_count=`{row.get('closure_surface_count', 0)}` incoming_phase_count=`{row.get('incoming_phase_count', 0)}` "
+            f"outgoing_phase_count=`{row.get('outgoing_phase_count', 0)}` pressure_hint=`{row.get('pressure_hint', 'unknown')}` "
+            f"status=`{row.get('status', 'unknown')}` evidence={evidence}"
+        )
+    return "\n".join(lines) + "\n"
+
+
 def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     del payload
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
@@ -12194,6 +12386,8 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
     project_phase_transition_matrix = _read_json_if_exists(layout.reports_dir / "project_phase_transition_matrix.json")
     project_owner_load_report = _read_json_if_exists(layout.reports_dir / "project_owner_load_report.json")
     project_phase_dependency_pressure_report = _read_json_if_exists(layout.reports_dir / "project_phase_dependency_pressure_report.json")
+    project_owner_bottleneck_alignment_report = _read_json_if_exists(layout.reports_dir / "project_owner_bottleneck_alignment_report.json")
+    project_evidence_phase_heatmap_report = _read_json_if_exists(layout.reports_dir / "project_evidence_phase_heatmap_report.json")
 
     checks = [
         {
@@ -12247,6 +12441,8 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
                 and int(project_phase_transition_matrix.get("phase_count", 0)) > 0
                 and int(project_owner_load_report.get("owner_count", 0)) > 0
                 and int(project_phase_dependency_pressure_report.get("phase_count", 0)) > 0
+                and int(project_owner_bottleneck_alignment_report.get("owner_count", 0)) > 0
+                and int(project_evidence_phase_heatmap_report.get("phase_count", 0)) > 0
             ),
         },
         {
@@ -12325,6 +12521,20 @@ def build_generated_truth_consistency_report(layout: ArtifactLayout, payload: Di
             ),
         },
         {
+            "label": "owner_bottleneck_alignment_report_complete",
+            "passed": (
+                int(project_owner_bottleneck_alignment_report.get("owner_count", 0)) == int(project_owner_load_report.get("owner_count", -1))
+                and project_owner_bottleneck_alignment_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "evidence_phase_heatmap_report_complete",
+            "passed": (
+                int(project_evidence_phase_heatmap_report.get("phase_count", 0)) == int(project_phase_transition_matrix.get("phase_count", -1))
+                and project_evidence_phase_heatmap_report.get("status") == "ready"
+            ),
+        },
+        {
             "label": "truth_docs_are_in_sync",
             "passed": truth_docs_drift.get("status") == "in_sync",
         },
@@ -12385,6 +12595,8 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
     project_phase_transition_matrix = _read_json_if_exists(layout.reports_dir / "project_phase_transition_matrix.json")
     project_owner_load_report = _read_json_if_exists(layout.reports_dir / "project_owner_load_report.json")
     project_phase_dependency_pressure_report = _read_json_if_exists(layout.reports_dir / "project_phase_dependency_pressure_report.json")
+    project_owner_bottleneck_alignment_report = _read_json_if_exists(layout.reports_dir / "project_owner_bottleneck_alignment_report.json")
+    project_evidence_phase_heatmap_report = _read_json_if_exists(layout.reports_dir / "project_evidence_phase_heatmap_report.json")
     generated_truth_consistency_report = _read_json_if_exists(layout.reports_dir / "generated_truth_consistency_report.json")
     specs = _project_blocker_specs()
 
@@ -12456,6 +12668,8 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
     transition_phase_labels = {str(row.get("phase", "")) for row in project_phase_transition_matrix.get("rows", [])}
     owner_load_owners = {str(row.get("owner_domain", "")) for row in project_owner_load_report.get("rows", [])}
     phase_pressure_labels = {str(row.get("phase", "")) for row in project_phase_dependency_pressure_report.get("rows", [])}
+    owner_bottleneck_owners = {str(row.get("owner_domain", "")) for row in project_owner_bottleneck_alignment_report.get("rows", [])}
+    heatmap_phase_labels = {str(row.get("phase", "")) for row in project_evidence_phase_heatmap_report.get("rows", [])}
     sequence_phase_orders = [int(specs.get(str(item.get("label", "")), {}).get("phase_order", 999)) for item in project_execution_sequence.get("items", [])]
     wave_ids = [int(row.get("wave", -1)) for row in project_execution_wave_report.get("rows", [])]
     checks = [
@@ -12620,6 +12834,22 @@ def build_generated_truth_crosscheck_matrix(layout: ArtifactLayout, payload: Dic
                 phase_pressure_labels == transition_phase_labels
                 and int(project_phase_dependency_pressure_report.get("phase_count", 0)) == int(project_phase_transition_matrix.get("phase_count", -1))
                 and project_phase_dependency_pressure_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "owner_bottleneck_alignment_matches_owner_load",
+            "passed": (
+                owner_bottleneck_owners == owner_load_owners
+                and int(project_owner_bottleneck_alignment_report.get("owner_count", 0)) == int(project_owner_load_report.get("owner_count", -1))
+                and project_owner_bottleneck_alignment_report.get("status") == "ready"
+            ),
+        },
+        {
+            "label": "evidence_phase_heatmap_matches_phase_transition",
+            "passed": (
+                heatmap_phase_labels == transition_phase_labels
+                and int(project_evidence_phase_heatmap_report.get("phase_count", 0)) == int(project_phase_transition_matrix.get("phase_count", -1))
+                and project_evidence_phase_heatmap_report.get("status") == "ready"
             ),
         },
         {
@@ -12940,6 +13170,18 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     atomic_write_text(
         layout.reports_dir / "project_phase_dependency_pressure_report.md",
         render_project_phase_dependency_pressure_report_md(project_phase_dependency_pressure_report),
+    )
+    project_owner_bottleneck_alignment_report = build_project_owner_bottleneck_alignment_report(layout, payload)
+    atomic_json(layout.reports_dir / "project_owner_bottleneck_alignment_report.json", project_owner_bottleneck_alignment_report)
+    atomic_write_text(
+        layout.reports_dir / "project_owner_bottleneck_alignment_report.md",
+        render_project_owner_bottleneck_alignment_report_md(project_owner_bottleneck_alignment_report),
+    )
+    project_evidence_phase_heatmap_report = build_project_evidence_phase_heatmap_report(layout, payload)
+    atomic_json(layout.reports_dir / "project_evidence_phase_heatmap_report.json", project_evidence_phase_heatmap_report)
+    atomic_write_text(
+        layout.reports_dir / "project_evidence_phase_heatmap_report.md",
+        render_project_evidence_phase_heatmap_report_md(project_evidence_phase_heatmap_report),
     )
     truth_docs_index = build_truth_docs_index(layout, payload)
     atomic_json(layout.reports_dir / "truth_docs_index.json", truth_docs_index)
