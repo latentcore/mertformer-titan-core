@@ -54,6 +54,10 @@ A chess onefile run is not release-grade unless all of these exist together:
 - remaining core blockers
 - repo-side completion summary
 - readiness snapshot
+- aggregated master table
+- real remaining core work
+- repo truth inventory
+- closure gap summary
 - artifact truth matrix
 - run status manifest
 - postrun analysis manifest

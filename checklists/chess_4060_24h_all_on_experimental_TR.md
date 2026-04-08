@@ -67,5 +67,9 @@
 - [ ] `reports/remaining_core_blockers.json` mevcut
 - [ ] `reports/repo_side_completion_summary.json` mevcut
 - [ ] `reports/readiness_snapshot.json` mevcut
+- [ ] `reports/aggregated_master_table.json` mevcut
+- [ ] `reports/real_remaining_core_work.json` mevcut
+- [ ] `reports/repo_truth_inventory.json` mevcut
+- [ ] `reports/closure_gap_summary.json` mevcut
 - [ ] Final checkpoint yolu kaydedildi
 - [ ] Koşu sonrası claim sınırı tekrar gözden geçirildi

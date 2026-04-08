@@ -7874,6 +7874,10 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("remaining_core_blockers", "remaining_core_blockers.json"),
         ("repo_side_completion_summary", "repo_side_completion_summary.json"),
         ("readiness_snapshot", "readiness_snapshot.json"),
+        ("aggregated_master_table", "aggregated_master_table.json"),
+        ("real_remaining_core_work", "real_remaining_core_work.json"),
+        ("repo_truth_inventory", "repo_truth_inventory.json"),
+        ("closure_gap_summary", "closure_gap_summary.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
         ("replay_buffer_manifest", "replay_buffer_manifest.json"),
@@ -8586,6 +8590,12 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("repo_side_completion_summary", {}).get("exists", False))
         and bool(truth_entries.get("readiness_snapshot", {}).get("exists", False))
     )
+    aggregate_truth_surfaces_present = (
+        bool(truth_entries.get("aggregated_master_table", {}).get("exists", False))
+        and bool(truth_entries.get("real_remaining_core_work", {}).get("exists", False))
+        and bool(truth_entries.get("repo_truth_inventory", {}).get("exists", False))
+        and bool(truth_entries.get("closure_gap_summary", {}).get("exists", False))
+    )
     gates = [
         {"label": "core_artifacts_present", "passed": core_artifacts_present},
         {"label": "checkpoint_or_package_provenance", "passed": checkpoint_or_provenance},
@@ -8604,6 +8614,7 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         {"label": "trained_artifact_surfaces_present", "passed": trained_artifact_surfaces_present},
         {"label": "management_closure_surfaces_present", "passed": management_closure_surfaces_present},
         {"label": "master_summary_surfaces_present", "passed": master_summary_surfaces_present},
+        {"label": "aggregate_truth_surfaces_present", "passed": aggregate_truth_surfaces_present},
     ]
     overall_internal_ready = all(gate["passed"] for gate in gates if gate["label"] != "stockfish_completed")
     overall_external_ready = all(gate["passed"] for gate in gates) and payload.get("rating_claim_status") == RatingClaimStatus.TARGET_MET_EXTERNAL.value
@@ -8739,6 +8750,10 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "remaining_core_blockers",
         "repo_side_completion_summary",
         "readiness_snapshot",
+        "aggregated_master_table",
+        "real_remaining_core_work",
+        "repo_truth_inventory",
+        "closure_gap_summary",
         "run_log",
     ]
     items = [
@@ -8822,6 +8837,11 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         for item in items
         if item.get("label") in {"master_closure_table", "remaining_core_blockers", "repo_side_completion_summary", "readiness_snapshot"} and item.get("exists", False)
     )
+    aggregate_truth_count = sum(
+        1
+        for item in items
+        if item.get("label") in {"aggregated_master_table", "real_remaining_core_work", "repo_truth_inventory", "closure_gap_summary"} and item.get("exists", False)
+    )
     return {
         "schema": "chess_operator_handoff_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -8837,6 +8857,7 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         "trained_artifact_count": trained_artifact_count,
         "management_closure_count": management_closure_count,
         "master_summary_count": master_summary_count,
+        "aggregate_truth_count": aggregate_truth_count,
         "overall_internal_ready": bool(release_gate.get("overall_internal_ready", False)),
         "overall_external_ready": bool(release_gate.get("overall_external_ready", False)),
         "operator_note": "Operator handoff can be internally complete while external release readiness remains false.",
@@ -8860,6 +8881,7 @@ def render_operator_handoff_summary_md(report: Dict[str, Any]) -> str:
         f"- trained_artifact_count: `{report.get('trained_artifact_count', 0)}`",
         f"- management_closure_count: `{report.get('management_closure_count', 0)}`",
         f"- master_summary_count: `{report.get('master_summary_count', 0)}`",
+        f"- aggregate_truth_count: `{report.get('aggregate_truth_count', 0)}`",
         f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
         f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
         f"- operator_note: {report.get('operator_note', '')}",
@@ -9770,6 +9792,170 @@ def render_readiness_snapshot_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def build_aggregated_master_table(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    master = _read_json_if_exists(layout.reports_dir / "master_closure_table.json")
+    blockers = _read_json_if_exists(layout.reports_dir / "remaining_core_blockers.json")
+    blocker_labels = {item.get("label", "") for item in blockers.get("blockers", [])}
+    group_to_blockers = {
+        "release_registry": {"release_surface_not_external_grade"},
+        "external_closure": {"external_reproduction_pending", "security_legal_pilot_pending"},
+        "operational_closure": {"operator_handoff_dr_pending"},
+        "release_governance": {"release_governance_pending"},
+        "device_packaging": {"device_export_packaging_pending"},
+        "benchmark_closure": {"benchmark_closure_pending"},
+        "training_accounting": {"training_accounting_pending"},
+        "trained_artifact_truth": {"trained_artifact_truth_pending"},
+        "management_closure": {"management_closure_pending"},
+    }
+    rows: List[Dict[str, Any]] = []
+    for row in master.get("rows", []):
+        label = row.get("label", "")
+        linked = sorted(group_to_blockers.get(label, set()) & blocker_labels)
+        rows.append(
+            {
+                "label": label,
+                "repo_side_complete": bool(row.get("complete", False)),
+                "present": int(row.get("present", 0)),
+                "total": int(row.get("total", 0)),
+                "real_closure_blocked": bool(linked),
+                "linked_blockers": linked,
+            }
+        )
+    return {
+        "schema": "chess_aggregated_master_table_v1",
+        "run_id": payload.get("run_id", ""),
+        "row_count": len(rows),
+        "rows": rows,
+    }
+
+
+def render_aggregated_master_table_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Aggregated Master Table",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- row_count: `{report.get('row_count', 0)}`",
+        "",
+        "| Label | Repo Side Complete | Present | Total | Real Closure Blocked | Linked Blockers |",
+        "|---|---|---:|---:|---|---|",
+    ]
+    for row in report.get("rows", []):
+        blockers = ", ".join(f"`{label}`" for label in row.get("linked_blockers", []))
+        lines.append(
+            f"| `{row.get('label', '')}` | `{row.get('repo_side_complete', False)}` | `{row.get('present', 0)}` | "
+            f"`{row.get('total', 0)}` | `{row.get('real_closure_blocked', False)}` | {blockers} |"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_real_remaining_core_work(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    blockers = _read_json_if_exists(layout.reports_dir / "remaining_core_blockers.json")
+    items = [
+        {
+            "label": blocker.get("label", ""),
+            "severity": blocker.get("severity", "unknown"),
+            "detail": blocker.get("detail", ""),
+        }
+        for blocker in blockers.get("blockers", [])
+    ]
+    return {
+        "schema": "chess_real_remaining_core_work_v1",
+        "run_id": payload.get("run_id", ""),
+        "item_count": len(items),
+        "items": items,
+    }
+
+
+def render_real_remaining_core_work_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Real Remaining Core Work",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- item_count: `{report.get('item_count', 0)}`",
+        "",
+        "## Remaining Work",
+    ]
+    for item in report.get("items", []):
+        lines.append(
+            f"- `{item.get('label', '')}`: severity=`{item.get('severity', 'unknown')}` detail={item.get('detail', '')}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def build_repo_truth_inventory(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
+    entries = truth.get("entries", [])
+    by_kind: DefaultDict[str, Dict[str, int]] = defaultdict(lambda: {"present": 0, "missing": 0})
+    missing_required_labels: List[str] = []
+    for entry in entries:
+        kind = str(entry.get("kind", "unknown"))
+        if entry.get("exists", False):
+            by_kind[kind]["present"] += 1
+        else:
+            by_kind[kind]["missing"] += 1
+            if entry.get("required", False):
+                missing_required_labels.append(str(entry.get("label", "")))
+    kind_rows = [
+        {"kind": kind, "present": counts["present"], "missing": counts["missing"]}
+        for kind, counts in sorted(by_kind.items())
+    ]
+    return {
+        "schema": "chess_repo_truth_inventory_v1",
+        "run_id": payload.get("run_id", ""),
+        "entry_count": len(entries),
+        "kind_rows": kind_rows,
+        "missing_required_labels": missing_required_labels,
+    }
+
+
+def render_repo_truth_inventory_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Repo Truth Inventory",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- entry_count: `{report.get('entry_count', 0)}`",
+        "",
+        "| Kind | Present | Missing |",
+        "|---|---:|---:|",
+    ]
+    for row in report.get("kind_rows", []):
+        lines.append(f"| `{row.get('kind', '')}` | `{row.get('present', 0)}` | `{row.get('missing', 0)}` |")
+    lines.append("")
+    lines.append("## Missing Required Labels")
+    for label in report.get("missing_required_labels", []):
+        lines.append(f"- `{label}`")
+    return "\n".join(lines) + "\n"
+
+
+def build_closure_gap_summary(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    repo_summary = _read_json_if_exists(layout.reports_dir / "repo_side_completion_summary.json")
+    blockers = _read_json_if_exists(layout.reports_dir / "remaining_core_blockers.json")
+    readiness = _read_json_if_exists(layout.reports_dir / "readiness_snapshot.json")
+    return {
+        "schema": "chess_closure_gap_summary_v1",
+        "run_id": payload.get("run_id", ""),
+        "repo_side_complete": bool(repo_summary.get("repo_side_complete", False)),
+        "missing_required_count": int(repo_summary.get("missing_required_count", 0)),
+        "blocker_count": int(blockers.get("blocker_count", 0)),
+        "overall_internal_ready": bool(readiness.get("overall_internal_ready", False)),
+        "overall_external_ready": bool(readiness.get("overall_external_ready", False)),
+    }
+
+
+def render_closure_gap_summary_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Closure Gap Summary",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- repo_side_complete: `{report.get('repo_side_complete', False)}`",
+        f"- missing_required_count: `{report.get('missing_required_count', 0)}`",
+        f"- blocker_count: `{report.get('blocker_count', 0)}`",
+        f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
+        f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
     run_contract = build_run_contract(layout, payload)
     atomic_json(layout.reports_dir / "run_contract.json", run_contract)
@@ -9915,6 +10101,18 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     readiness_snapshot = build_readiness_snapshot(layout, payload)
     atomic_json(layout.reports_dir / "readiness_snapshot.json", readiness_snapshot)
     atomic_write_text(layout.reports_dir / "readiness_snapshot.md", render_readiness_snapshot_md(readiness_snapshot))
+    aggregated_master_table = build_aggregated_master_table(layout, payload)
+    atomic_json(layout.reports_dir / "aggregated_master_table.json", aggregated_master_table)
+    atomic_write_text(layout.reports_dir / "aggregated_master_table.md", render_aggregated_master_table_md(aggregated_master_table))
+    real_remaining_core_work = build_real_remaining_core_work(layout, payload)
+    atomic_json(layout.reports_dir / "real_remaining_core_work.json", real_remaining_core_work)
+    atomic_write_text(layout.reports_dir / "real_remaining_core_work.md", render_real_remaining_core_work_md(real_remaining_core_work))
+    repo_truth_inventory = build_repo_truth_inventory(layout, payload)
+    atomic_json(layout.reports_dir / "repo_truth_inventory.json", repo_truth_inventory)
+    atomic_write_text(layout.reports_dir / "repo_truth_inventory.md", render_repo_truth_inventory_md(repo_truth_inventory))
+    closure_gap_summary = build_closure_gap_summary(layout, payload)
+    atomic_json(layout.reports_dir / "closure_gap_summary.json", closure_gap_summary)
+    atomic_write_text(layout.reports_dir / "closure_gap_summary.md", render_closure_gap_summary_md(closure_gap_summary))
 
 
 def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:

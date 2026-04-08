@@ -99,6 +99,10 @@ Run dizini altında en az şu raporlar beklenir:
 - `reports/remaining_core_blockers.json`
 - `reports/repo_side_completion_summary.json`
 - `reports/readiness_snapshot.json`
+- `reports/aggregated_master_table.json`
+- `reports/real_remaining_core_work.json`
+- `reports/repo_truth_inventory.json`
+- `reports/closure_gap_summary.json`
 - `logs/run_log.jsonl`
 
 ## Operatör Kapıları

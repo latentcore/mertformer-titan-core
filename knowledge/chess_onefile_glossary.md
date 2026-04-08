@@ -57,3 +57,7 @@
 - `remaining core blockers`: compact list of active known limits still blocking final closure.
 - `repo-side completion summary`: compact count-based summary of required repo-side surfaces and gate pass counts.
 - `readiness snapshot`: compact summary of execution/evaluation plus internal/external release readiness state.
+- `aggregated master table`: compact top-level table that joins repo-side completion with real closure blockers.
+- `real remaining core work`: compact top-level list of real remaining blockers after repo-side surfaces are accounted for.
+- `repo truth inventory`: count-based inventory of what kinds of repo-side truth artifacts exist or are missing.
+- `closure gap summary`: compact top-level summary of repo-side completeness versus real closure blockers.

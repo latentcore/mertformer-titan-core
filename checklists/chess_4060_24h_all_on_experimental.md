@@ -67,5 +67,9 @@
 - [ ] `reports/remaining_core_blockers.json` present
 - [ ] `reports/repo_side_completion_summary.json` present
 - [ ] `reports/readiness_snapshot.json` present
+- [ ] `reports/aggregated_master_table.json` present
+- [ ] `reports/real_remaining_core_work.json` present
+- [ ] `reports/repo_truth_inventory.json` present
+- [ ] `reports/closure_gap_summary.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed
