@@ -90,6 +90,9 @@ A serious chess onefile run should preserve:
 - `reports/project_phase_dependency_pressure_report.json`
 - `reports/project_owner_bottleneck_alignment_report.json`
 - `reports/project_evidence_phase_heatmap_report.json`
+- `reports/project_blocker_risk_register_report.json`
+- `reports/project_release_prereq_matrix_report.json`
+- `reports/project_foundation_run_dependency_report.json`
 - `reports/generated_truth_crosscheck_matrix.json`
 - `reports/artifact_manifest_with_hashes.json`
 - `logs/run_log.jsonl`
