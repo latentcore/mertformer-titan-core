@@ -70,6 +70,8 @@
 - `project execution sequence`: ordered closure sequence derived from the blocker dependency graph.
 - `project lane status board`: per-lane board that maps whole-project lanes to the blockers and owner domains still holding them open.
 - `project closure phase plan`: grouped execution phases that show which blockers belong to which closure wave and how much of each phase is ready to move first.
+- `project phase readiness scoreboard`: phase-by-phase readiness view that separates blockers ready to move now from blockers still waiting on upstream dependencies.
 - `project owner accountability matrix`: owner-domain view of the remaining blockers, associated phases, lanes, and closure surfaces.
+- `project owner work queue`: owner-domain execution queue that orders each blocker by closure step and identifies the next blocker each owner should take.
 - `generated truth consistency report`: explicit check that generated truth summaries agree with each other instead of only existing side by side.
 - `generated truth crosscheck matrix`: extra consistency layer that cross-checks blocker coverage, dependency order, lane coverage, and summary alignment.
