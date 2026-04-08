@@ -38,6 +38,10 @@ A chess onefile run is not release-grade unless all of these exist together:
 - benchmark compare report stub
 - benchmark summary stub
 - benchmark manifest stub
+- training report stub
+- token accounting stub
+- compute accounting stub
+- cost report stub
 - artifact truth matrix
 - run status manifest
 - postrun analysis manifest

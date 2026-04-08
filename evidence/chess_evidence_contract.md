@@ -41,6 +41,10 @@ A serious chess onefile run should preserve:
 - `reports/benchmark_compare_report_stub.json`
 - `reports/benchmark_summary_stub.json`
 - `reports/benchmark_manifest_stub.json`
+- `reports/training_report_stub.json`
+- `reports/token_accounting_stub.json`
+- `reports/compute_accounting_stub.json`
+- `reports/cost_report_stub.json`
 - `reports/artifact_manifest_with_hashes.json`
 - `logs/run_log.jsonl`
 

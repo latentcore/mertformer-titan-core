@@ -86,6 +86,7 @@ This repository includes a decision-complete, single-pass closure flow for engin
 - `reports/release_notes_stub.json`, `reports/freeze_manifest_stub.json`, `reports/changelog_snapshot.json`, and `reports/maintenance_policy_stub.json` keep release-governance gaps explicit instead of pretending they are solved by internal artifacts.
 - `reports/export_truth_stub.json`, `reports/device_validation_stub.json`, `reports/packaging_closure_stub.json`, and `reports/installer_validation_stub.json` keep device/export/packaging closure gaps explicit instead of pretending they are solved by internal artifacts.
 - `reports/benchmark_raw_outputs_stub.json`, `reports/benchmark_compare_report_stub.json`, `reports/benchmark_summary_stub.json`, and `reports/benchmark_manifest_stub.json` keep benchmark closure gaps explicit instead of pretending they are solved by internal artifacts.
+- `reports/training_report_stub.json`, `reports/token_accounting_stub.json`, `reports/compute_accounting_stub.json`, and `reports/cost_report_stub.json` keep training/accounting closure gaps explicit instead of pretending they are solved by internal artifacts.
 
 ![MertFormer Titan Header](assets/header.png)
 

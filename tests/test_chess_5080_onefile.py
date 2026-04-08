@@ -892,6 +892,10 @@ def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path)
     assert entries['benchmark_compare_report_stub']['exists'] is False
     assert entries['benchmark_summary_stub']['exists'] is False
     assert entries['benchmark_manifest_stub']['exists'] is False
+    assert entries['training_report_stub']['exists'] is False
+    assert entries['token_accounting_stub']['exists'] is False
+    assert entries['compute_accounting_stub']['exists'] is False
+    assert entries['cost_report_stub']['exists'] is False
     assert truth['present_required_count'] < truth['required_count']
 
 
@@ -991,6 +995,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     benchmark_compare_report_stub = json.loads((layout.reports_dir / 'benchmark_compare_report_stub.json').read_text(encoding='utf-8'))
     benchmark_summary_stub = json.loads((layout.reports_dir / 'benchmark_summary_stub.json').read_text(encoding='utf-8'))
     benchmark_manifest_stub = json.loads((layout.reports_dir / 'benchmark_manifest_stub.json').read_text(encoding='utf-8'))
+    training_report_stub = json.loads((layout.reports_dir / 'training_report_stub.json').read_text(encoding='utf-8'))
+    token_accounting_stub = json.loads((layout.reports_dir / 'token_accounting_stub.json').read_text(encoding='utf-8'))
+    compute_accounting_stub = json.loads((layout.reports_dir / 'compute_accounting_stub.json').read_text(encoding='utf-8'))
+    cost_report_stub = json.loads((layout.reports_dir / 'cost_report_stub.json').read_text(encoding='utf-8'))
     entries = {entry['label']: entry for entry in truth['entries']}
     assert run_contract['schema'] == 'chess_run_contract_v1'
     assert run_contract['feature_bundle'] == 'all_on_experimental'
@@ -1028,6 +1036,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert benchmark_compare_report_stub['schema'] == 'chess_benchmark_compare_report_stub_v1'
     assert benchmark_summary_stub['schema'] == 'chess_benchmark_summary_stub_v1'
     assert benchmark_manifest_stub['schema'] == 'chess_benchmark_manifest_stub_v1'
+    assert training_report_stub['schema'] == 'chess_training_report_stub_v1'
+    assert token_accounting_stub['schema'] == 'chess_token_accounting_stub_v1'
+    assert compute_accounting_stub['schema'] == 'chess_compute_accounting_stub_v1'
+    assert cost_report_stub['schema'] == 'chess_cost_report_stub_v1'
     assert entries['run_contract']['exists'] is True
     assert entries['release_snapshot']['exists'] is True
     assert entries['evidence_pack_stub']['exists'] is True
@@ -1059,6 +1071,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert entries['benchmark_compare_report_stub']['exists'] is True
     assert entries['benchmark_summary_stub']['exists'] is True
     assert entries['benchmark_manifest_stub']['exists'] is True
+    assert entries['training_report_stub']['exists'] is True
+    assert entries['token_accounting_stub']['exists'] is True
+    assert entries['compute_accounting_stub']['exists'] is True
+    assert entries['cost_report_stub']['exists'] is True
     assert truth['present_required_count'] == truth['required_count']
     assert rc_stub['status'] == 'candidate_internal_only'
     assert golden_stub['status'] == 'not_ready'
@@ -1083,6 +1099,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert benchmark_compare_report_stub['status'] == 'pending_benchmark_compare_report'
     assert benchmark_summary_stub['status'] == 'pending_benchmark_summary_closure'
     assert benchmark_manifest_stub['status'] == 'pending_benchmark_manifest_lock'
+    assert training_report_stub['status'] == 'pending_training_report_closure'
+    assert token_accounting_stub['status'] == 'pending_token_accounting'
+    assert compute_accounting_stub['status'] == 'pending_compute_accounting'
+    assert cost_report_stub['status'] == 'pending_cost_report'
     assert changelog_snapshot['execution_status'] == 'completed'
     assert changelog_snapshot['evaluation_status'] == 'completed'
     assert 'release_gate_summary' in changelog_snapshot['included_labels']
@@ -1093,24 +1113,28 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert 'release_governance_pending' in known_limit_labels
     assert 'device_export_packaging_pending' in known_limit_labels
     assert 'benchmark_closure_pending' in known_limit_labels
+    assert 'training_accounting_pending' in known_limit_labels
     gate_labels = {item['label']: item['passed'] for item in release_gate_summary['gates']}
     assert gate_labels['external_closure_stubs_present'] is True
     assert gate_labels['operational_stub_surfaces_present'] is True
     assert gate_labels['release_governance_surfaces_present'] is True
     assert gate_labels['device_packaging_surfaces_present'] is True
     assert gate_labels['benchmark_closure_surfaces_present'] is True
+    assert gate_labels['training_accounting_surfaces_present'] is True
     handoff_labels = {item['label'] for item in handoff_pack_manifest['items']}
     assert {'external_repro_stub', 'pilot_stub', 'security_stub', 'legal_stub'} <= handoff_labels
     assert {'operator_handbook_stub', 'dr_evidence_stub', 'backup_retention_stub', 'blind_handoff_stub'} <= handoff_labels
     assert {'release_notes_stub', 'freeze_manifest_stub', 'changelog_snapshot', 'maintenance_policy_stub'} <= handoff_labels
     assert {'export_truth_stub', 'device_validation_stub', 'packaging_closure_stub', 'installer_validation_stub'} <= handoff_labels
     assert {'benchmark_raw_outputs_stub', 'benchmark_compare_report_stub', 'benchmark_summary_stub', 'benchmark_manifest_stub'} <= handoff_labels
+    assert {'training_report_stub', 'token_accounting_stub', 'compute_accounting_stub', 'cost_report_stub'} <= handoff_labels
     assert release_gate_summary['overall_internal_ready'] is True
     assert release_gate_summary['overall_external_ready'] is False
     assert operator_handoff_summary['operational_stub_count'] == 4
     assert operator_handoff_summary['release_governance_count'] == 4
     assert operator_handoff_summary['device_packaging_count'] == 4
     assert operator_handoff_summary['benchmark_closure_count'] == 4
+    assert operator_handoff_summary['training_accounting_count'] == 4
 
 
 def test_main_logs_fatal_exception_to_run_log(monkeypatch, tmp_path: Path) -> None:

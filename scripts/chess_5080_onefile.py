@@ -7858,6 +7858,10 @@ def build_artifact_truth_matrix(layout: ArtifactLayout, payload: Dict[str, Any])
         ("benchmark_compare_report_stub", "benchmark_compare_report_stub.json"),
         ("benchmark_summary_stub", "benchmark_summary_stub.json"),
         ("benchmark_manifest_stub", "benchmark_manifest_stub.json"),
+        ("training_report_stub", "training_report_stub.json"),
+        ("token_accounting_stub", "token_accounting_stub.json"),
+        ("compute_accounting_stub", "compute_accounting_stub.json"),
+        ("cost_report_stub", "cost_report_stub.json"),
         ("selfplay_report", "selfplay_report.json"),
         ("tournament_report", "inference_mode_tournament_report.json"),
         ("replay_buffer_manifest", "replay_buffer_manifest.json"),
@@ -8372,6 +8376,12 @@ def build_known_limits(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[
             "status": "active",
             "detail": "Benchmark raw outputs, compare reports, summaries, and benchmark manifests still require formal benchmark closure.",
         },
+        {
+            "label": "training_accounting_pending",
+            "severity": "medium",
+            "status": "active",
+            "detail": "Training report, token accounting, compute accounting, and cost reporting still require formal closure.",
+        },
     ]
     if cfg.get("mode") == "verify":
         limits.append(
@@ -8528,6 +8538,12 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         and bool(truth_entries.get("benchmark_summary_stub", {}).get("exists", False))
         and bool(truth_entries.get("benchmark_manifest_stub", {}).get("exists", False))
     )
+    training_accounting_surfaces_present = (
+        bool(truth_entries.get("training_report_stub", {}).get("exists", False))
+        and bool(truth_entries.get("token_accounting_stub", {}).get("exists", False))
+        and bool(truth_entries.get("compute_accounting_stub", {}).get("exists", False))
+        and bool(truth_entries.get("cost_report_stub", {}).get("exists", False))
+    )
     gates = [
         {"label": "core_artifacts_present", "passed": core_artifacts_present},
         {"label": "checkpoint_or_package_provenance", "passed": checkpoint_or_provenance},
@@ -8542,6 +8558,7 @@ def build_release_gate_summary(layout: ArtifactLayout, payload: Dict[str, Any]) 
         {"label": "release_governance_surfaces_present", "passed": release_governance_surfaces_present},
         {"label": "device_packaging_surfaces_present", "passed": device_packaging_surfaces_present},
         {"label": "benchmark_closure_surfaces_present", "passed": benchmark_closure_surfaces_present},
+        {"label": "training_accounting_surfaces_present", "passed": training_accounting_surfaces_present},
     ]
     overall_internal_ready = all(gate["passed"] for gate in gates if gate["label"] != "stockfish_completed")
     overall_external_ready = all(gate["passed"] for gate in gates) and payload.get("rating_claim_status") == RatingClaimStatus.TARGET_MET_EXTERNAL.value
@@ -8661,6 +8678,10 @@ def build_handoff_pack_manifest(layout: ArtifactLayout, payload: Dict[str, Any])
         "benchmark_compare_report_stub",
         "benchmark_summary_stub",
         "benchmark_manifest_stub",
+        "training_report_stub",
+        "token_accounting_stub",
+        "compute_accounting_stub",
+        "cost_report_stub",
         "run_log",
     ]
     items = [
@@ -8724,6 +8745,11 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         for item in items
         if item.get("label") in {"benchmark_raw_outputs_stub", "benchmark_compare_report_stub", "benchmark_summary_stub", "benchmark_manifest_stub"} and item.get("exists", False)
     )
+    training_accounting_count = sum(
+        1
+        for item in items
+        if item.get("label") in {"training_report_stub", "token_accounting_stub", "compute_accounting_stub", "cost_report_stub"} and item.get("exists", False)
+    )
     return {
         "schema": "chess_operator_handoff_summary_v1",
         "run_id": payload.get("run_id", ""),
@@ -8735,6 +8761,7 @@ def build_operator_handoff_summary(layout: ArtifactLayout, payload: Dict[str, An
         "release_governance_count": release_governance_count,
         "device_packaging_count": device_packaging_count,
         "benchmark_closure_count": benchmark_closure_count,
+        "training_accounting_count": training_accounting_count,
         "overall_internal_ready": bool(release_gate.get("overall_internal_ready", False)),
         "overall_external_ready": bool(release_gate.get("overall_external_ready", False)),
         "operator_note": "Operator handoff can be internally complete while external release readiness remains false.",
@@ -8754,6 +8781,7 @@ def render_operator_handoff_summary_md(report: Dict[str, Any]) -> str:
         f"- release_governance_count: `{report.get('release_governance_count', 0)}`",
         f"- device_packaging_count: `{report.get('device_packaging_count', 0)}`",
         f"- benchmark_closure_count: `{report.get('benchmark_closure_count', 0)}`",
+        f"- training_accounting_count: `{report.get('training_accounting_count', 0)}`",
         f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",
         f"- overall_external_ready: `{report.get('overall_external_ready', False)}`",
         f"- operator_note: {report.get('operator_note', '')}",
@@ -9211,6 +9239,90 @@ def render_benchmark_manifest_stub_md(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def build_training_report_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_training_report_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_training_report_closure",
+        "reason": "Training closure requires a curated training report beyond local onefile artifact generation.",
+    }
+
+
+def render_training_report_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Training Report Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_token_accounting_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_token_accounting_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_token_accounting",
+        "reason": "Training closure requires explicit token accounting beyond local onefile artifact generation.",
+    }
+
+
+def render_token_accounting_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Token Accounting Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_compute_accounting_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_compute_accounting_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_compute_accounting",
+        "reason": "Training closure requires explicit compute accounting beyond local onefile artifact generation.",
+    }
+
+
+def render_compute_accounting_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Compute Accounting Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def build_cost_report_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    del layout
+    return {
+        "schema": "chess_cost_report_stub_v1",
+        "run_id": payload.get("run_id", ""),
+        "status": "pending_cost_report",
+        "reason": "Training closure requires explicit cost reporting beyond local onefile artifact generation.",
+    }
+
+
+def render_cost_report_stub_md(report: Dict[str, Any]) -> str:
+    lines = [
+        "# Cost Report Stub",
+        "",
+        f"- run_id: `{report.get('run_id', '')}`",
+        f"- status: `{report.get('status', 'unknown')}`",
+        f"- reason: {report.get('reason', '')}",
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:
     run_contract = build_run_contract(layout, payload)
     atomic_json(layout.reports_dir / "run_contract.json", run_contract)
@@ -9308,6 +9420,18 @@ def _write_release_evidence_reports_once(layout: ArtifactLayout, payload: Dict[s
     benchmark_manifest_stub = build_benchmark_manifest_stub(layout, payload)
     atomic_json(layout.reports_dir / "benchmark_manifest_stub.json", benchmark_manifest_stub)
     atomic_write_text(layout.reports_dir / "benchmark_manifest_stub.md", render_benchmark_manifest_stub_md(benchmark_manifest_stub))
+    training_report_stub = build_training_report_stub(layout, payload)
+    atomic_json(layout.reports_dir / "training_report_stub.json", training_report_stub)
+    atomic_write_text(layout.reports_dir / "training_report_stub.md", render_training_report_stub_md(training_report_stub))
+    token_accounting_stub = build_token_accounting_stub(layout, payload)
+    atomic_json(layout.reports_dir / "token_accounting_stub.json", token_accounting_stub)
+    atomic_write_text(layout.reports_dir / "token_accounting_stub.md", render_token_accounting_stub_md(token_accounting_stub))
+    compute_accounting_stub = build_compute_accounting_stub(layout, payload)
+    atomic_json(layout.reports_dir / "compute_accounting_stub.json", compute_accounting_stub)
+    atomic_write_text(layout.reports_dir / "compute_accounting_stub.md", render_compute_accounting_stub_md(compute_accounting_stub))
+    cost_report_stub = build_cost_report_stub(layout, payload)
+    atomic_json(layout.reports_dir / "cost_report_stub.json", cost_report_stub)
+    atomic_write_text(layout.reports_dir / "cost_report_stub.md", render_cost_report_stub_md(cost_report_stub))
 
 
 def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, Any]) -> None:

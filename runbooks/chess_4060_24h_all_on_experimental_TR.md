@@ -83,6 +83,10 @@ Run dizini altında en az şu raporlar beklenir:
 - `reports/benchmark_compare_report_stub.json`
 - `reports/benchmark_summary_stub.json`
 - `reports/benchmark_manifest_stub.json`
+- `reports/training_report_stub.json`
+- `reports/token_accounting_stub.json`
+- `reports/compute_accounting_stub.json`
+- `reports/cost_report_stub.json`
 - `logs/run_log.jsonl`
 
 ## Operatör Kapıları

@@ -51,5 +51,9 @@
 - [ ] `reports/benchmark_compare_report_stub.json` present
 - [ ] `reports/benchmark_summary_stub.json` present
 - [ ] `reports/benchmark_manifest_stub.json` present
+- [ ] `reports/training_report_stub.json` present
+- [ ] `reports/token_accounting_stub.json` present
+- [ ] `reports/compute_accounting_stub.json` present
+- [ ] `reports/cost_report_stub.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed

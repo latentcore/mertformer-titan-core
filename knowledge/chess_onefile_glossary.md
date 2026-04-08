@@ -41,3 +41,7 @@
 - `benchmark compare report stub`: explicit reminder that benchmark closure still needs baseline/compare reporting beyond local artifact generation.
 - `benchmark summary stub`: explicit reminder that benchmark closure still needs curated benchmark summary reporting beyond local artifact generation.
 - `benchmark manifest stub`: explicit reminder that benchmark closure still needs a locked benchmark manifest beyond local artifact generation.
+- `training report stub`: explicit reminder that training closure still needs a curated training report beyond local artifact generation.
+- `token accounting stub`: explicit reminder that training closure still needs explicit token accounting beyond local artifact generation.
+- `compute accounting stub`: explicit reminder that training closure still needs explicit compute accounting beyond local artifact generation.
+- `cost report stub`: explicit reminder that training closure still needs explicit cost reporting beyond local artifact generation.
