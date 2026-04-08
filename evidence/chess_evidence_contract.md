@@ -99,6 +99,9 @@ A serious chess onefile run should preserve:
 - `reports/project_release_gate_dependency_report.json`
 - `reports/project_external_signoff_queue_report.json`
 - `reports/project_release_evidence_bridge_report.json`
+- `reports/project_training_run_readiness_report.json`
+- `reports/project_benchmark_closure_dependency_report.json`
+- `reports/project_release_decision_queue_report.json`
 - `reports/generated_truth_crosscheck_matrix.json`
 - `reports/artifact_manifest_with_hashes.json`
 - `logs/run_log.jsonl`
