@@ -63,5 +63,9 @@
 - [ ] `reports/research_continues_stub.json` mevcut
 - [ ] `reports/product_maintenance_only_stub.json` mevcut
 - [ ] `reports/closure_decision_record_stub.json` mevcut
+- [ ] `reports/master_closure_table.json` mevcut
+- [ ] `reports/remaining_core_blockers.json` mevcut
+- [ ] `reports/repo_side_completion_summary.json` mevcut
+- [ ] `reports/readiness_snapshot.json` mevcut
 - [ ] Final checkpoint yolu kaydedildi
 - [ ] Koşu sonrası claim sınırı tekrar gözden geçirildi

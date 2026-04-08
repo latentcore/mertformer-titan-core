@@ -904,6 +904,10 @@ def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path)
     assert entries['research_continues_stub']['exists'] is False
     assert entries['product_maintenance_only_stub']['exists'] is False
     assert entries['closure_decision_record_stub']['exists'] is False
+    assert entries['master_closure_table']['exists'] is False
+    assert entries['remaining_core_blockers']['exists'] is False
+    assert entries['repo_side_completion_summary']['exists'] is False
+    assert entries['readiness_snapshot']['exists'] is False
     assert truth['present_required_count'] < truth['required_count']
 
 
@@ -1015,6 +1019,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     research_continues_stub = json.loads((layout.reports_dir / 'research_continues_stub.json').read_text(encoding='utf-8'))
     product_maintenance_only_stub = json.loads((layout.reports_dir / 'product_maintenance_only_stub.json').read_text(encoding='utf-8'))
     closure_decision_record_stub = json.loads((layout.reports_dir / 'closure_decision_record_stub.json').read_text(encoding='utf-8'))
+    master_closure_table = json.loads((layout.reports_dir / 'master_closure_table.json').read_text(encoding='utf-8'))
+    remaining_core_blockers = json.loads((layout.reports_dir / 'remaining_core_blockers.json').read_text(encoding='utf-8'))
+    repo_side_completion_summary = json.loads((layout.reports_dir / 'repo_side_completion_summary.json').read_text(encoding='utf-8'))
+    readiness_snapshot = json.loads((layout.reports_dir / 'readiness_snapshot.json').read_text(encoding='utf-8'))
     entries = {entry['label']: entry for entry in truth['entries']}
     assert run_contract['schema'] == 'chess_run_contract_v1'
     assert run_contract['feature_bundle'] == 'all_on_experimental'
@@ -1064,6 +1072,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert research_continues_stub['schema'] == 'chess_research_continues_stub_v1'
     assert product_maintenance_only_stub['schema'] == 'chess_product_maintenance_only_stub_v1'
     assert closure_decision_record_stub['schema'] == 'chess_closure_decision_record_stub_v1'
+    assert master_closure_table['schema'] == 'chess_master_closure_table_v1'
+    assert remaining_core_blockers['schema'] == 'chess_remaining_core_blockers_v1'
+    assert repo_side_completion_summary['schema'] == 'chess_repo_side_completion_summary_v1'
+    assert readiness_snapshot['schema'] == 'chess_readiness_snapshot_v1'
     assert entries['run_contract']['exists'] is True
     assert entries['release_snapshot']['exists'] is True
     assert entries['evidence_pack_stub']['exists'] is True
@@ -1107,6 +1119,10 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert entries['research_continues_stub']['exists'] is True
     assert entries['product_maintenance_only_stub']['exists'] is True
     assert entries['closure_decision_record_stub']['exists'] is True
+    assert entries['master_closure_table']['exists'] is True
+    assert entries['remaining_core_blockers']['exists'] is True
+    assert entries['repo_side_completion_summary']['exists'] is True
+    assert entries['readiness_snapshot']['exists'] is True
     assert truth['present_required_count'] == truth['required_count']
     assert rc_stub['status'] == 'candidate_internal_only'
     assert golden_stub['status'] == 'not_ready'
@@ -1149,6 +1165,15 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert product_maintenance_only_stub['status'] == 'pending_maintenance_only_decision'
     assert closure_decision_record_stub['status'] == 'pending_management_closure_record'
     assert 'release_gate_summary' in closure_decision_record_stub['tracked_labels']
+    assert master_closure_table['row_count'] >= 9
+    assert any(row['label'] == 'management_closure' and row['complete'] is True for row in master_closure_table['rows'])
+    assert remaining_core_blockers['blocker_count'] >= 1
+    assert any(blocker['label'] == 'management_closure_pending' for blocker in remaining_core_blockers['blockers'])
+    assert repo_side_completion_summary['repo_side_complete'] is True
+    assert repo_side_completion_summary['missing_required_count'] == 0
+    assert readiness_snapshot['release_surface_status'] == 'candidate_internal_only'
+    assert readiness_snapshot['rc_status'] == 'candidate_internal_only'
+    assert readiness_snapshot['golden_status'] == 'not_ready'
     assert changelog_snapshot['execution_status'] == 'completed'
     assert changelog_snapshot['evaluation_status'] == 'completed'
     assert 'release_gate_summary' in changelog_snapshot['included_labels']
@@ -1171,6 +1196,7 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert gate_labels['training_accounting_surfaces_present'] is True
     assert gate_labels['trained_artifact_surfaces_present'] is True
     assert gate_labels['management_closure_surfaces_present'] is True
+    assert gate_labels['master_summary_surfaces_present'] is True
     handoff_labels = {item['label'] for item in handoff_pack_manifest['items']}
     assert {'external_repro_stub', 'pilot_stub', 'security_stub', 'legal_stub'} <= handoff_labels
     assert {'operator_handbook_stub', 'dr_evidence_stub', 'backup_retention_stub', 'blind_handoff_stub'} <= handoff_labels
@@ -1180,6 +1206,7 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert {'training_report_stub', 'token_accounting_stub', 'compute_accounting_stub', 'cost_report_stub'} <= handoff_labels
     assert {'final_weights_truth_stub', 'best_checkpoint_truth_stub', 'latest_checkpoint_truth_stub', 'trained_artifact_registry_stub'} <= handoff_labels
     assert {'core_complete_decision_stub', 'research_continues_stub', 'product_maintenance_only_stub', 'closure_decision_record_stub'} <= handoff_labels
+    assert {'master_closure_table', 'remaining_core_blockers', 'repo_side_completion_summary', 'readiness_snapshot'} <= handoff_labels
     assert release_gate_summary['overall_internal_ready'] is True
     assert release_gate_summary['overall_external_ready'] is False
     assert operator_handoff_summary['operational_stub_count'] == 4
@@ -1189,6 +1216,7 @@ def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) 
     assert operator_handoff_summary['training_accounting_count'] == 4
     assert operator_handoff_summary['trained_artifact_count'] == 4
     assert operator_handoff_summary['management_closure_count'] == 4
+    assert operator_handoff_summary['master_summary_count'] == 4
 
 
 def test_main_logs_fatal_exception_to_run_log(monkeypatch, tmp_path: Path) -> None:

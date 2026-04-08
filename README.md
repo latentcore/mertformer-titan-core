@@ -89,6 +89,7 @@ This repository includes a decision-complete, single-pass closure flow for engin
 - `reports/training_report_stub.json`, `reports/token_accounting_stub.json`, `reports/compute_accounting_stub.json`, and `reports/cost_report_stub.json` keep training/accounting closure gaps explicit instead of pretending they are solved by internal artifacts.
 - `reports/final_weights_truth_stub.json`, `reports/best_checkpoint_truth_stub.json`, `reports/latest_checkpoint_truth_stub.json`, and `reports/trained_artifact_registry_stub.json` keep trained-artifact truth gaps explicit instead of pretending they are solved by internal artifacts.
 - `reports/core_complete_decision_stub.json`, `reports/research_continues_stub.json`, `reports/product_maintenance_only_stub.json`, and `reports/closure_decision_record_stub.json` keep management-closure gaps explicit instead of pretending they are solved by internal artifacts.
+- `reports/master_closure_table.json`, `reports/remaining_core_blockers.json`, `reports/repo_side_completion_summary.json`, and `reports/readiness_snapshot.json` provide a repo-truth summary layer for what is present versus what still blocks final closure.
 
 ![MertFormer Titan Header](assets/header.png)
 

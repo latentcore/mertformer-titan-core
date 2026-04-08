@@ -63,5 +63,9 @@
 - [ ] `reports/research_continues_stub.json` present
 - [ ] `reports/product_maintenance_only_stub.json` present
 - [ ] `reports/closure_decision_record_stub.json` present
+- [ ] `reports/master_closure_table.json` present
+- [ ] `reports/remaining_core_blockers.json` present
+- [ ] `reports/repo_side_completion_summary.json` present
+- [ ] `reports/readiness_snapshot.json` present
 - [ ] Final checkpoint path recorded
 - [ ] Post-run claim boundary reviewed

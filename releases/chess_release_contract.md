@@ -50,6 +50,10 @@ A chess onefile run is not release-grade unless all of these exist together:
 - research continues stub
 - product maintenance only stub
 - closure decision record stub
+- master closure table
+- remaining core blockers
+- repo-side completion summary
+- readiness snapshot
 - artifact truth matrix
 - run status manifest
 - postrun analysis manifest

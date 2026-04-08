@@ -53,6 +53,10 @@ A serious chess onefile run should preserve:
 - `reports/research_continues_stub.json`
 - `reports/product_maintenance_only_stub.json`
 - `reports/closure_decision_record_stub.json`
+- `reports/master_closure_table.json`
+- `reports/remaining_core_blockers.json`
+- `reports/repo_side_completion_summary.json`
+- `reports/readiness_snapshot.json`
 - `reports/artifact_manifest_with_hashes.json`
 - `logs/run_log.jsonl`
 

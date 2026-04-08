@@ -53,3 +53,7 @@
 - `research continues stub`: explicit reminder that separating ongoing research from closure still needs management closure beyond local artifact generation.
 - `product maintenance only stub`: explicit reminder that maintenance-only posture still needs management closure beyond local artifact generation.
 - `closure decision record stub`: explicit reminder that final closure still needs a management decision record beyond local artifact generation.
+- `master closure table`: repo-truth summary table of major closure lanes and whether each lane is repo-side complete.
+- `remaining core blockers`: compact list of active known limits still blocking final closure.
+- `repo-side completion summary`: compact count-based summary of required repo-side surfaces and gate pass counts.
+- `readiness snapshot`: compact summary of execution/evaluation plus internal/external release readiness state.
