@@ -1,6 +1,6 @@
 {
   "schema": "workspace_hygiene_manifest_v1",
-  "generated_utc": "2026-04-08T20:32:40Z",
+  "generated_utc": "2026-04-14T16:44:14Z",
   "mode": "audit_only",
   "workspace_root": "<WORKSPACE_ROOT>",
   "repo_root": "<REPO_ROOT>",
@@ -25,6 +25,13 @@
       "classification": "workspace_cache",
       "reason": "Rebuildable lint cache outside the repo root. Safe candidate for quarantine-first handling.",
       "restore_target": "<WORKSPACE_ROOT>/.ruff_cache",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/adb_pull",
+      "classification": "external_workspace_entry",
+      "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
+      "restore_target": "<WORKSPACE_ROOT>/adb_pull",
       "decision_state": "quarantine_first"
     },
     {

@@ -49,6 +49,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── synaptic_map.png  # media asset
 ├── checklists/  # directory
 │   ├── README.md  # primary documentation (EN)
+│   ├── chess_4060_24h.md  # documentation/report file
+│   ├── chess_4060_24h_TR.md  # Turkish document counterpart
 │   ├── chess_4060_24h_all_on_experimental.md  # documentation/report file
 │   └── chess_4060_24h_all_on_experimental_TR.md  # Turkish document counterpart
 ├── config/  # directory
@@ -543,6 +545,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── seed_policy_TR.md  # Turkish document counterpart
 ├── runbooks/  # directory
 │   ├── README.md  # primary documentation (EN)
+│   ├── chess_4060_24h.md  # documentation/report file
+│   ├── chess_4060_24h_TR.md  # Turkish document counterpart
 │   ├── chess_4060_24h_all_on_experimental.md  # documentation/report file
 │   └── chess_4060_24h_all_on_experimental_TR.md  # Turkish document counterpart
 ├── scripts/  # directory
@@ -587,6 +591,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── check_translation_pointer_policy.py  # Python module/script (automation script for check translation pointer policy)
 │   ├── checkpoint_restore_drill.py  # Python module/script (automation script for checkpoint restore drill)
 │   ├── chess_5080_onefile.py  # Python module/script (automation script for chess 5080 onefile)
+│   ├── chess_onefile_contract.py  # Python module/script (automation script for chess onefile contract)
 │   ├── clean_runtime_artifacts.sh  # shell automation script
 │   ├── cleanroom_verify.sh  # shell automation script
 │   ├── cleanup_scoped_closure_junk.py  # Python module/script (automation script for cleanup scoped closure junk)

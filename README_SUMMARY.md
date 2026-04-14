@@ -7,71 +7,50 @@ Language: [English](README_SUMMARY.md) | [Turkce](README_SUMMARY_TR.md)
 # MertFormer Titan - External Summary (Build 30 V2)
 
 ## What This Project Is
-MertFormer Titan is a mobile-first, offline-capable AI architecture designed for controlled, auditable, and human-supervised use.
-It combines BitNet (1.58-bit), Liquid dynamics, and MoE routing under a production-first engineering approach.
+MertFormer Titan is an offline-first, auditable AI systems repository built around low-bit runtime infrastructure, local assistant foundations, and disciplined evaluation surfaces.
 
-## Current Status
-- **Stage**: Pilot-ready, pre-training baseline (`Build 30 V2`)
-- **Token budget (V2)**: `TITAN_TOKEN_BUDGET_MODE=fixed_steps`, `TITAN_MAX_STEPS=45000`, `TITAN_TARGET_TOKENS_MIN=23.6B`.
-- **Positioning**: Proof-of-system for real-world constrained environments
-- **Not claimed yet**: Final benchmark superiority and production-grade performance claims (require trained checkpoint evidence)
+## Current Exact State
+- Stage: `pilot-ready pre-training baseline`
+- Repo-side readiness: `TRAIN_ALLOWED`
+- Exact reason code: `READY_OFFLINE_CLEAN`
+- Preferred serious validation target: `45K`
+- Application gate: real owned training run + checkpoint-bound evidence
+- Optional gated blocker only if teacher lane is chosen: `online_teacher:MISSING_HF_TOKEN`
 
-## Safety and Governance Policy
-- Human-in-the-loop is mandatory for operational decisions.
-- Audit trail and policy boundaries are mandatory on orchestrator/runtime side.
-- Unauthorized surveillance, hidden tracking, and non-consensual intervention are out of scope.
-- Security and governance gates must pass before pilot performance claims.
+## What Matters For Review
+- No trained checkpoint claims are made yet.
+- Benchmark status remains `NOT ELIGIBLE FOR CLAIM` until a trained checkpoint exists.
+- Exact `45K` is preferred, but application readiness is defined by a meaningful real training run with checkpoint-bound evidence.
+- Export/device evidence is a strong plus, not a hard blocker.
 
-## Verified Local Evidence (Latest Run)
-| Gate | Result |
-| :--- | :--- |
-| `python3 -m pytest -q` | `203 passed, 3 skipped` |
-| `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
-| `bash scripts/verify_all.sh` | `[verify] OK` |
+## Shortest Review Path
+1. [START_HERE.md](START_HERE.md)
+2. [docs/PROJECT_MASTER_TRUTH.md](docs/PROJECT_MASTER_TRUTH.md)
+3. [reports/final_truth_matrix.md](reports/final_truth_matrix.md)
+4. [reports/known_limits_v1.md](reports/known_limits_v1.md)
+5. [reports/systems_performance_case_study.md](reports/systems_performance_case_study.md)
+6. [reports/offline_assistant_case_study.md](reports/offline_assistant_case_study.md)
+7. [reports/chess_proof_teaching_case_study.md](reports/chess_proof_teaching_case_study.md)
+8. [applications/anthropic/README.md](applications/anthropic/README.md)
 
-Closure artifacts:
-- `reports/closure_57_matrix.json`
-- `reports/closure_57_matrix.md`
-- `reports/closure_57_matrix_TR.md`
-
-## Latest SOP Evidence
-- Summary: `reports/one_command_full_sop_summary.md`
-- Raw log: `reports/one_command_full_sop.log`
-
-## Quick Start (External Reviewer)
-1. Create/refresh virtual environment:
+## Canonical Commands
 ```bash
 bash scripts/bootstrap_venv.sh
-```
-2. Run full offline verification gate:
-```bash
 bash scripts/verify_all.sh
+bash zero_touch_start.sh --check-only
+bash zero_touch_start.sh
+bash scripts/final_one_shot.sh
 ```
-3. Check training readiness (strict gate):
-```bash
-bash run.sh --train-ready
-```
-4. Start training when compute + dataset prerequisites are satisfied:
-```bash
-TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash run.sh
-```
-Notes:
-- Default token budget is `fixed_steps` (45K). Use `TITAN_TOKEN_BUDGET_MODE=open_ended` only with explicit target override.
-- Offline runs require pre-generated stage JSONL (`python scripts/data_pipeline.py`).
 
-## External Pilot Usage Model
-- Run reproducible validation gates in the customer environment.
-- Share machine-readable pilot evidence (logs/reports), not unverifiable claims.
-- Use NDA/private data-room flow for sensitive technical details.
-- Keep measured vs projected results clearly separated.
+## Strongest Signals
+- training efficiency and systems-debugging discipline
+- backend routing and fallback honesty
+- offline-first, governance-gated assistant foundations
+- claim-safe verification and repo truth sync
 
-## Claim Boundary (Important)
-- Before a fully trained checkpoint and repeatable benchmark outputs, this repo remains:
-  - **Pilot-ready engineering baseline**
-  - **NOT ELIGIBLE FOR FINAL BENCHMARK CLAIMS**
-
-## Useful Docs
-- Main docs: [README.md](README.md), [README_TR.md](README_TR.md)
-- Usage guide: [USAGE_GUIDE.md](USAGE_GUIDE.md), [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md)
-- SDK guide: [SDK_GUIDE.md](SDK_GUIDE.md), [SDK_GUIDE_TR.md](SDK_GUIDE_TR.md)
-- Safety/policy: [SECURITY.md](SECURITY.md), [USE_POLICY.md](USE_POLICY.md)
+## Open Post-Run Evidence Class
+- trained final weights
+- best/latest checkpoint proof
+- checkpoint-bound benchmark outputs
+- trained demo bundle
+- trained export/device measurements

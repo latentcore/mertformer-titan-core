@@ -1,100 +1,53 @@
 ## MertFormer Titan (Build 30 V2)
 
-Offline-first, auditable, mission-focused AI infrastructure for controlled local deployment.
-Current maturity: **pilot-ready pre-training baseline** (training/benchmark claims pending).
+Offline-first, auditable AI systems infrastructure for controlled local deployment and truthful ML systems evidence.
+Current maturity: **pilot-ready pre-training baseline**.
+Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_OFFLINE_CLEAN`.
 
-**Build 30 V2 note:** V2 refactor pass adds dedup pipeline, MoE dispatch parallel path, CfC fast path, and stricter train gates. Claims remain pre-training.
+### What Matters First
+- Application-relevant gate: a real owned training run plus checkpoint-bound evidence.
+- Exact `45K` is the preferred serious validation target, not the only acceptable application threshold.
+- Canonical repo-side lane: `offline-clean`.
+- Optional gated blocker: `online_teacher:MISSING_HF_TOKEN`.
+- Missing post-run evidence remains: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle, and trained export/device measurements.
 
-### Quick Reader Links
-- English summary: [README_SUMMARY.md](README_SUMMARY.md)
-- Turkish summary: [README_SUMMARY_TR.md](README_SUMMARY_TR.md)
-- Turkish full doc: [README_TR.md](README_TR.md)
-- Mission: [MISSION.md](MISSION.md)
-- Use policy: [USE_POLICY.md](USE_POLICY.md)
-- Security: [SECURITY.md](SECURITY.md)
-- Repo-side closure scorecard: [reports/repo_closure_scorecard.md](reports/repo_closure_scorecard.md)
-- Known limits: [reports/known_limits_v1.md](reports/known_limits_v1.md)
-- Closure freeze and ADR index: [reports/final_master_plan_freeze.md](reports/final_master_plan_freeze.md), [reports/adr_index.md](reports/adr_index.md)
+### Shortest Truthful Review Path
+1. [START_HERE.md](START_HERE.md)
+2. [docs/PROJECT_MASTER_TRUTH.md](docs/PROJECT_MASTER_TRUTH.md)
+3. [docs/CHESS_ONEFILE_MASTER_TRUTH.md](docs/CHESS_ONEFILE_MASTER_TRUTH.md)
+4. [reports/final_truth_matrix.md](reports/final_truth_matrix.md)
+5. [reports/known_limits_v1.md](reports/known_limits_v1.md)
+6. [reports/systems_performance_case_study.md](reports/systems_performance_case_study.md)
+7. [reports/offline_assistant_case_study.md](reports/offline_assistant_case_study.md)
+8. [reports/chess_proof_teaching_case_study.md](reports/chess_proof_teaching_case_study.md)
+9. [applications/anthropic/README.md](applications/anthropic/README.md)
 
-### Official Positioning
-- Product sentence: `Turkey-serving, offline-first, edge-native, locally integrable intelligence infrastructure.`
-- 45K positioning: first serious architecture validation run, not the final capability ceiling.
-- Ship gate: 45K readiness remains the primary gate for this pass.
+### Anthropic-Relevant Signals
+- training efficiency and systems debugging discipline
+- explicit measured vs unmeasured claim boundary
+- low-bit runtime and backend-routing honesty
+- offline-first assistant foundations with governance-gated tooling
+- benchmark discipline that refuses to narrate missing post-run evidence as complete
 
-### Truth and Output Modes
+### Canonical Commands
+- Verify the repo: `bash scripts/verify_all.sh`
+- Check readiness only: `bash zero_touch_start.sh --check-only`
+- Launch the canonical owned training lane: `bash zero_touch_start.sh`
+- Refresh final sync, release artifacts, and hashes: `bash scripts/final_one_shot.sh`
+
+### Truth Boundary
 - `measured` / `target` / `vision` are distinct claim labels.
 - `verified` / `hypothesis` / `creative_or_folklore` are distinct output modes.
 - Default mode is `verified`.
-- No claim without evidence.
-
-### Claims Boundary
 - This repository is **pre-training / unverified** for production-scale quality claims.
-- Release closure artifacts prove process integrity, not final model capability.
+- Before trained checkpoints exist, benchmark status remains `NOT ELIGIBLE FOR CLAIM`.
+- This pass is a proof-of-system engineering release, not to claim a production-ready or certified platform.
+- Costly compute is not a personal-funding requirement; the actual gate is truthful verified evidence and coherent systems signal.
 
-## Release-Ready One-Shot Closure
-
-This repository includes a decision-complete, single-pass closure flow for engineering hardening and release evidence.
-
-### Canonical Root
-- repository root (current working tree)
-
-### Single Entry Point
-- `bash scripts/final_one_shot.sh`
-- `bash scripts/one_command_full_sop.sh` is the core validation subflow used by the canonical closure wrapper above.
-
-### Outputs
-- `reports/start_gate_report.json`
-- `reports/release_manifest.json`
-- `reports/project_structure_sync_report.json`
-- `reports/hardening_bundle_summary.json`
-- `reports/master_closure_matrix.md`
-- `reports/repo_closure_scorecard.md`
-- `reports/known_limits_v1.md`
-- `reports/support_maintenance_policy.md`
-- `reports/train_readiness_decision.md`
-- `reports/final_freeze_manifest.md`
-- `reports/repo_external_handoff.md`
-- `artifacts/mertformer_release.zip`
-- `artifacts/mertformer_release.zip.sha256`
-
-### Repo-Side Closure Pack
-- `reports/repo_closure_scorecard.md` tracks the permanent repo-side closure count for the current pass.
-- `reports/final_master_plan_freeze.md` freezes what is closed now versus what is post-run or external.
-- `reports/known_limits_v1.md` keeps measured truth separate from absent trained evidence.
-- `reports/support_maintenance_policy.md`, `reports/quality_gate_matrix.md`, and `reports/test_verification_matrix.md` define the maintenance and verification contract.
-- `reports/adr_index.md` indexes the current architecture and governance decisions.
-- `configs/`, `releases/`, `knowledge/`, and `evidence/` now hold stable repo-side contract surfaces for named chess profiles, release expectations, glossary terms, and evidence policy.
-
-### Chess Onefile Closure Artifacts
-- `reports/run_status_manifest.json` provides the compact end-state snapshot for a finished chess onefile run.
-- `reports/postrun_analysis_manifest.json` summarizes curated suite, stockfish, self-play, tournament, and replay-buffer surfaces.
-- `reports/artifact_truth_matrix.json` lists expected run artifacts and whether they actually exist.
-- `reports/run_contract.json` freezes the operator-facing run contract and claim boundary for that exact onefile execution.
-- `reports/release_snapshot.json` records internal release-surface readiness without overstating external release proof.
-- `reports/evidence_pack_stub.json` lists what is present now versus what is still missing for external release-grade evidence.
-- `reports/final_truth_registry.json` keeps measured/internal/not-eligible chess claims explicit and auditable.
-- `reports/claim_registry.json` maps each chess run claim to classification and evidence.
-- `reports/known_limits.json` lists run-specific known limits instead of pretending missing proof is closed.
-- `reports/support_matrix.json` records active profile/mode/support status for the exact run.
-- `reports/release_gate_summary.json` records internal and external release-gate pass/fail state.
-- `reports/rc_stub.json` records internal release-candidate stub state for the exact run.
-- `reports/golden_stub.json` records that golden release is still separate and stricter than internal closure.
-- `reports/handoff_pack_manifest.json` enumerates the operator-facing handoff bundle for the exact run.
-- `reports/operator_handoff_summary.json` summarizes whether the operator handoff surface is internally complete.
-- `reports/external_repro_stub.json`, `reports/pilot_stub.json`, `reports/security_stub.json`, and `reports/legal_stub.json` keep external closure gaps explicit instead of pretending they are solved by internal artifacts.
-- `reports/operator_handbook_stub.json`, `reports/dr_evidence_stub.json`, `reports/backup_retention_stub.json`, and `reports/blind_handoff_stub.json` keep operator/DR closure gaps explicit instead of pretending they are solved by internal artifacts.
-- `reports/release_notes_stub.json`, `reports/freeze_manifest_stub.json`, `reports/changelog_snapshot.json`, and `reports/maintenance_policy_stub.json` keep release-governance gaps explicit instead of pretending they are solved by internal artifacts.
-- `reports/export_truth_stub.json`, `reports/device_validation_stub.json`, `reports/packaging_closure_stub.json`, and `reports/installer_validation_stub.json` keep device/export/packaging closure gaps explicit instead of pretending they are solved by internal artifacts.
-- `reports/benchmark_raw_outputs_stub.json`, `reports/benchmark_compare_report_stub.json`, `reports/benchmark_summary_stub.json`, and `reports/benchmark_manifest_stub.json` keep benchmark closure gaps explicit instead of pretending they are solved by internal artifacts.
-- `reports/training_report_stub.json`, `reports/token_accounting_stub.json`, `reports/compute_accounting_stub.json`, and `reports/cost_report_stub.json` keep training/accounting closure gaps explicit instead of pretending they are solved by internal artifacts.
-- `reports/final_weights_truth_stub.json`, `reports/best_checkpoint_truth_stub.json`, `reports/latest_checkpoint_truth_stub.json`, and `reports/trained_artifact_registry_stub.json` keep trained-artifact truth gaps explicit instead of pretending they are solved by internal artifacts.
-- `reports/core_complete_decision_stub.json`, `reports/research_continues_stub.json`, `reports/product_maintenance_only_stub.json`, and `reports/closure_decision_record_stub.json` keep management-closure gaps explicit instead of pretending they are solved by internal artifacts.
-- `reports/master_closure_table.json`, `reports/remaining_core_blockers.json`, `reports/repo_side_completion_summary.json`, and `reports/readiness_snapshot.json` provide a repo-truth summary layer for what is present versus what still blocks final closure.
-- `reports/aggregated_master_table.json`, `reports/real_remaining_core_work.json`, `reports/repo_truth_inventory.json`, and `reports/closure_gap_summary.json` provide a more compact top-level truth layer for turning repo reality into a final master table.
-- `reports/project_master_truth_reference.json`, `reports/project_remaining_real_blockers.json`, `reports/truth_docs_index.json`, and `reports/truth_docs_drift_report.json` tie onefile release evidence back to canonical repo truth docs and surface documentation drift explicitly.
-- `reports/project_blocker_action_plan.json`, `reports/project_blocker_dependency_graph.json`, `reports/project_execution_sequence.json`, `reports/project_lane_status_board.json`, `reports/project_closure_phase_plan.json`, `reports/project_phase_readiness_scoreboard.json`, `reports/project_owner_accountability_matrix.json`, `reports/project_owner_work_queue.json`, `reports/project_critical_path_report.json`, `reports/project_owner_next_actions_summary.json`, `reports/project_ready_now_board.json`, `reports/project_unlock_impact_report.json`, `reports/project_parallel_workset_report.json`, `reports/project_phase_exit_criteria_report.json`, `reports/project_execution_wave_report.json`, `reports/project_evidence_backlog_report.json`, `reports/project_dependency_bottleneck_report.json`, `reports/project_owner_phase_frontier_report.json`, `reports/project_evidence_criticality_report.json`, `reports/project_phase_transition_matrix.json`, `reports/project_owner_load_report.json`, `reports/project_phase_dependency_pressure_report.json`, `reports/project_owner_bottleneck_alignment_report.json`, `reports/project_evidence_phase_heatmap_report.json`, `reports/project_blocker_risk_register_report.json`, `reports/project_release_prereq_matrix_report.json`, `reports/project_foundation_run_dependency_report.json`, `reports/project_release_path_report.json`, `reports/project_external_closure_cluster_report.json`, `reports/project_owner_evidence_gap_report.json`, `reports/project_release_gate_dependency_report.json`, `reports/project_external_signoff_queue_report.json`, `reports/project_release_evidence_bridge_report.json`, `reports/project_training_run_readiness_report.json`, `reports/project_benchmark_closure_dependency_report.json`, `reports/project_release_decision_queue_report.json`, `reports/project_external_validation_readiness_report.json`, `reports/project_artifact_lock_readiness_report.json`, `reports/project_final_release_cutover_report.json`, `reports/project_real_run_execution_queue_report.json`, `reports/project_benchmark_evidence_lock_report.json`, `reports/project_final_signoff_cutset_report.json`, `reports/generated_truth_consistency_report.json`, and `reports/generated_truth_crosscheck_matrix.json` turn the remaining project blockers into an ordered, phase-aware, readiness-aware, owner-aware, leverage-aware, critical-path-aware, parallel-workset-aware, phase-exit-aware, wave-aware, evidence-aware, bottleneck-aware, owner-frontier-aware, evidence-criticality-aware, phase-transition-aware, owner-load-aware, phase-pressure-aware, owner-bottleneck-aware, evidence-phase-aware, risk-aware, release-prereq-aware, foundation-run-aware, release-path-aware, external-closure-cluster-aware, owner-evidence-gap-aware, release-gate-dependency-aware, external-signoff-queue-aware, release-evidence-bridge-aware, training-run-readiness-aware, benchmark-closure-dependency-aware, release-decision-queue-aware, external-validation-readiness-aware, artifact-lock-readiness-aware, final-release-cutover-aware, real-run-execution-queue-aware, benchmark-evidence-lock-aware, final-signoff-cutset-aware, cross-checked closure plan.
-- Canonical docs summary: [docs/CHESS_ONEFILE_MASTER_TRUTH.md](docs/CHESS_ONEFILE_MASTER_TRUTH.md)
-- Canonical project summary: [docs/PROJECT_MASTER_TRUTH.md](docs/PROJECT_MASTER_TRUTH.md)
+### Explicit Implementation Notes
+- `MLA-labeled GQA attention (current implementation)`
+- `Routing policy: token-choice top-k.`
+- Closure-57 transparency note: `out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]`
 
 ![MertFormer Titan Header](assets/header.png)
 
@@ -1637,6 +1590,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── synaptic_map.png  # media asset
 ├── checklists/  # directory
 │   ├── README.md  # primary documentation (EN)
+│   ├── chess_4060_24h.md  # documentation/report file
+│   ├── chess_4060_24h_TR.md  # Turkish document counterpart
 │   ├── chess_4060_24h_all_on_experimental.md  # documentation/report file
 │   └── chess_4060_24h_all_on_experimental_TR.md  # Turkish document counterpart
 ├── config/  # directory
@@ -2131,6 +2086,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── seed_policy_TR.md  # Turkish document counterpart
 ├── runbooks/  # directory
 │   ├── README.md  # primary documentation (EN)
+│   ├── chess_4060_24h.md  # documentation/report file
+│   ├── chess_4060_24h_TR.md  # Turkish document counterpart
 │   ├── chess_4060_24h_all_on_experimental.md  # documentation/report file
 │   └── chess_4060_24h_all_on_experimental_TR.md  # Turkish document counterpart
 ├── scripts/  # directory
@@ -2175,6 +2132,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── check_translation_pointer_policy.py  # Python module/script (automation script for check translation pointer policy)
 │   ├── checkpoint_restore_drill.py  # Python module/script (automation script for checkpoint restore drill)
 │   ├── chess_5080_onefile.py  # Python module/script (automation script for chess 5080 onefile)
+│   ├── chess_onefile_contract.py  # Python module/script (automation script for chess onefile contract)
 │   ├── clean_runtime_artifacts.sh  # shell automation script
 │   ├── cleanroom_verify.sh  # shell automation script
 │   ├── cleanup_scoped_closure_junk.py  # Python module/script (automation script for cleanup scoped closure junk)

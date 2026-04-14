@@ -1,19 +1,19 @@
 {
   "schema": "doc_alignment_report_v1",
-  "generated_utc": "2026-04-08T20:34:30Z",
+  "generated_utc": "2026-04-14T16:42:47Z",
   "checks": [
     {
       "path": "README.md",
       "has_canonical_launcher": true,
-      "mentions_first_serious_run": true,
-      "mentions_final_ceiling": true,
+      "mentions_first_serious_run": false,
+      "mentions_final_ceiling": false,
       "mentions_ready_offline_clean": true
     },
     {
       "path": "README_TR.md",
       "has_canonical_launcher": true,
-      "mentions_first_serious_run": true,
-      "mentions_final_ceiling": true,
+      "mentions_first_serious_run": false,
+      "mentions_final_ceiling": false,
       "mentions_ready_offline_clean": true
     },
     {

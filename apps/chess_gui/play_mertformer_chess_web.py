@@ -34,6 +34,8 @@ DEFAULT_STOCKFISH_ELO = 1100
 DEFAULT_STOCKFISH_TIME_SEC = 0.18
 DEFAULT_BENCHMARK_MAX_PLIES = 220
 DEFAULT_BENCHMARK_VIS_DELAY_SEC = 0.95
+DEFAULT_ARENA_REFRESH_MS = 2400
+DEFAULT_BENCHMARK_REFRESH_MS = 900
 
 PIECE_UNICODE = {
     "P": "♙",
@@ -663,6 +665,20 @@ HTML = r"""
     let refreshTimer = null;
     let viewMode = 'arena';
 
+    function refreshDelayMs() {
+      return viewMode === 'benchmark' ? 900 : 2400;
+    }
+
+    function scheduleRefresh() {
+      if (refreshTimer) {
+        clearTimeout(refreshTimer);
+      }
+      refreshTimer = setTimeout(async () => {
+        await refreshState().catch(() => {});
+        scheduleRefresh();
+      }, refreshDelayMs());
+    }
+
     function pct(v) {
       return `${(v * 100).toFixed(1)}%`;
     }
@@ -937,6 +953,7 @@ HTML = r"""
 
     function switchView(mode) {
       viewMode = mode === 'benchmark' ? 'benchmark' : 'arena';
+      scheduleRefresh();
       preserveScroll(() => {
         renderBoard();
         renderMetrics();
@@ -1028,6 +1045,7 @@ HTML = r"""
       appState = await api('/api/new_game', { human_color: color });
       selectedSquare = null;
       viewMode = 'arena';
+      scheduleRefresh();
       preserveScroll(() => {
         renderBoard();
         renderMetrics();
@@ -1062,6 +1080,7 @@ HTML = r"""
       try {
         appState = await api('/api/benchmark/start', {});
         viewMode = 'benchmark';
+        scheduleRefresh();
         preserveScroll(() => {
           renderBoard();
           renderMetrics();
@@ -1099,7 +1118,7 @@ HTML = r"""
       document.getElementById('statusMain').textContent = 'Arena bootstrap failed';
       document.getElementById('statusSub').textContent = err.message;
     });
-    refreshTimer = setInterval(() => refreshState().catch(() => {}), 800);
+    scheduleRefresh();
   </script>
 </body>
 </html>
@@ -1296,6 +1315,7 @@ class ArenaState:
     benchmark: BenchmarkSnapshot = field(default_factory=BenchmarkSnapshot)
     benchmark_history: List[Dict[str, Any]] = field(default_factory=list)
     stockfish_path: Optional[str] = None
+    fast_arena_cfg: Dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         self.board = self.onefile.chess.Board()
@@ -1418,17 +1438,32 @@ class ArenaState:
     def _model_trace(self, board: Any, *, mode: Optional[str] = None) -> Dict[str, Any]:
         active_mode = normalize_gui_mode(self.onefile, mode or self.ui_mode)
         teaching_level = normalize_gui_teaching_level(self.onefile, self.teaching_level)
+        trace_cfg: Dict[str, Any] = {}
+        if active_mode != "benchmark":
+            trace_cfg.update(self.fast_arena_cfg)
         with self.model_lock:
             try:
                 trace = self.onefile.choose_move_trace(
                     self.model,
                     board,
                     self.device,
+                    cfg=trace_cfg or None,
                     mode=active_mode,
                     teaching_level=teaching_level,
                 )
             except TypeError:
-                trace = self.onefile.choose_move_trace(self.model, board, self.device)
+                # Backward-compatible retry for onefile variants that do not accept `cfg`
+                # but still support explicit mode and teaching-level control.
+                try:
+                    trace = self.onefile.choose_move_trace(
+                        self.model,
+                        board,
+                        self.device,
+                        mode=active_mode,
+                        teaching_level=teaching_level,
+                    )
+                except TypeError:
+                    trace = self.onefile.choose_move_trace(self.model, board, self.device)
             trace.setdefault("raw_topk_scores", [])
             trace.setdefault("masked_topk_scores", [])
             trace.setdefault("confidence", {"score": 0.0, "gap": 0.0, "tier": "low"})
@@ -1985,7 +2020,20 @@ def build_state(preferred_device: Optional[str]) -> ArenaState:
         positions_total=int(runtime_summary.get("dataset_provenance", {}).get("data_stats", {}).get("positions_total", 0)),
         best_val_loss=float(runtime_summary.get("training_summary", {}).get("best_val_loss", 0.0)),
     )
-    state = ArenaState(onefile=onefile, model=model, device=device, summary=summary, human_color=onefile.chess.WHITE)
+    fast_arena_cfg = {
+        "search_enabled": False,
+        "search_auto_budget": False,
+        "search_candidate_topk": 1,
+        "search_reply_topk": 1,
+    }
+    state = ArenaState(
+        onefile=onefile,
+        model=model,
+        device=device,
+        summary=summary,
+        human_color=onefile.chess.WHITE,
+        fast_arena_cfg=fast_arena_cfg,
+    )
     state._set_benchmark_live_state(state.onefile.chess.Board(), [], None, None)
     if BENCHMARK_HISTORY_PATH.exists():
         try:

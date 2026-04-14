@@ -37,6 +37,7 @@ Generated automatically.
 - `SDK_GUIDE_TR.md`
 - `SECURITY.md`
 - `SECURITY_TR.md`
+- `START_HERE.md`
 - `TASK.md`
 - `TASK_TR.md`
 - `TECHNICAL_REPORT.md`
@@ -65,11 +66,21 @@ Generated automatically.
 - `adr/ADR-0001-source-of-truth-and-claim-boundary.md`
 - `adr/ADR-0002-change-control-and-closure-governance.md`
 - `adr/ADR-0003-chess-oneclick-delivery-runtime-contract.md`
+- `applications/anthropic/README.md`
+- `applications/anthropic/interview_prep.md`
+- `applications/anthropic/measured_evidence_summary.md`
+- `applications/anthropic/performance_engineer_fallback.md`
+- `applications/anthropic/project_summary.md`
+- `applications/anthropic/science_of_scaling_cv_seed.md`
+- `applications/anthropic/strongest_stories.md`
+- `applications/anthropic/tokens_variant_notes.md`
+- `applications/anthropic/why_anthropic_science_of_scaling.md`
 - `apps/chess_gui/README.md`
 - `apps/chess_gui/checkpoints/README.md`
 - `apps/chess_gui/logs/README.md`
 - `apps/chess_gui/logs/stockfish_1100_20260406_235718.md`
 - `apps/chess_gui/logs/stockfish_1100_20260406_235903.md`
+- `apps/chess_gui/logs/stockfish_1100_20260411_001504.md`
 - `apps/chess_gui/logs/stockfish_1600_20260406_233934.md`
 - `apps/chess_gui/logs/stockfish_1600_20260406_234202.md`
 - `apps/chess_gui/logs/stockfish_1600_20260406_234632.md`
@@ -212,6 +223,7 @@ Generated automatically.
 - `reports/checkpoint_contract.md`
 - `reports/chess_gui_onefile_sync_report.md`
 - `reports/chess_onefile_extension_report.md`
+- `reports/chess_proof_teaching_case_study.md`
 - `reports/chess_teaching_contract_report.md`
 - `reports/chess_training_readiness_report.md`
 - `reports/cleanroom_verification.md`
@@ -262,6 +274,7 @@ Generated automatically.
 - `reports/entrypoint_deprecation_map.md`
 - `reports/exit_code_standard.md`
 - `reports/expected_artifacts_list.md`
+- `reports/external_readability_checklist.md`
 - `reports/feature_flag_governance.md`
 - `reports/final_backlog_classification.md`
 - `reports/final_backlog_coverage_diff.md`
@@ -300,6 +313,7 @@ Generated automatically.
 - `reports/model_health.md`
 - `reports/model_health_TR.md`
 - `reports/model_health_final.md`
+- `reports/offline_assistant_case_study.md`
 - `reports/one_command_full_sop_summary.md`
 - `reports/one_pager.md`
 - `reports/one_pager_TR.md`
@@ -357,6 +371,7 @@ Generated automatically.
 - `reports/system_hardware.md`
 - `reports/system_hardware_TR.md`
 - `reports/system_memory_policy.md`
+- `reports/systems_performance_case_study.md`
 - `reports/target_machine_handoff_manifest.md`
 - `reports/teacher_decision_record.md`
 - `reports/teacher_output_license_assessment.md`
@@ -457,6 +472,7 @@ Generated automatically.
   - `ablations/dense_only/README.md`
   - `ablations/no_liquid/README.md`
   - `ablations/no_moe/README.md`
+  - `applications/anthropic/README.md`
   - `apps/chess_gui/README.md`
   - `apps/chess_gui/checkpoints/README.md`
   - `apps/chess_gui/logs/README.md`

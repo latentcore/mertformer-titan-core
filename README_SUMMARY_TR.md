@@ -4,74 +4,53 @@ Dil: [English](README_SUMMARY.md) | [Türkçe](README_SUMMARY_TR.md)
 
 ---
 
-# MertFormer Titan - Dış Kullanıcı Özeti (Build 30 V2)
+# MertFormer Titan - Dış Özet (Build 30 V2)
 
 ## Bu Proje Nedir?
-MertFormer Titan, kontrollü, denetlenebilir ve insan onaylı kullanım için tasarlanmış mobil-öncelikli, offline çalışabilen bir yapay zeka mimarisidir.
-BitNet (1.58-bit), Liquid dinamikleri ve MoE yönlendirmesini üretim-öncelikli bir mühendislik yaklaşımıyla birleştirir.
+MertFormer Titan; low-bit runtime altyapısı, yerel assistant foundation ve disiplinli evaluation yüzeyleri etrafında kurulan offline-first, denetlenebilir bir AI systems reposudur.
 
-## Mevcut Durum
-- **Aşama**: Pilota hazır eğitim öncesi baseline (`Build 30 V2`)
-- **Token bütçesi (V2)**: `TITAN_TOKEN_BUDGET_MODE=fixed_steps`, `TITAN_MAX_STEPS=45000`, `TITAN_TARGET_TOKENS_MIN=23.6B`.
-- **Konumlandırma**: Gerçek dünya kısıtlarında proof-of-system
-- **Henüz iddia edilmeyen**: Nihai benchmark üstünlüğü ve production performans iddiaları (eğitimli checkpoint kanıtı gerekir)
+## Mevcut Exact Durum
+- Aşama: `pilot-ready pre-training baseline`
+- Repo-side readiness: `TRAIN_ALLOWED`
+- Exact reason code: `READY_OFFLINE_CLEAN`
+- Tercih edilen ciddi doğrulama hedefi: `45K`
+- Başvuru kapısı: gerçek owned training run + checkpoint-bound evidence
+- Teacher lane seçilirse tek opsiyonel gated blocker: `online_teacher:MISSING_HF_TOKEN`
 
-## Güvenlik ve Yönetişim Politikası
-- Operasyonel kararlarda human-in-the-loop zorunludur.
-- Orchestrator/runtime tarafında audit izi ve policy sınırları zorunludur.
-- İzinsiz gözetim, gizli takip ve onaysız müdahale kapsam dışıdır.
-- Pilot iddialarından önce güvenlik ve governance kapıları geçilmelidir.
+## İnceleme İçin Kritik Noktalar
+- Henüz trained checkpoint claim’i yapılmıyor.
+- Trained checkpoint oluşmadan benchmark durumu `NOT ELIGIBLE FOR CLAIM` olarak kalır.
+- Exact `45K` tercih edilir; ama başvuru readiness, meaningful real training run + checkpoint-bound evidence ile tanımlanır.
+- Export/device evidence güçlü artıdır; hard blocker değildir.
 
-## Doğrulanmış Yerel Kanıt (Son Koşu)
-| Kapı | Sonuç |
-| :--- | :--- |
-| `python3 -m pytest -q` | `203 passed, 3 skipped` |
-| `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
-| `bash scripts/verify_all.sh` | `[verify] OK` |
+## En Kısa İnceleme Yolu
+1. [START_HERE.md](START_HERE.md)
+2. [docs/PROJECT_MASTER_TRUTH.md](docs/PROJECT_MASTER_TRUTH.md)
+3. [reports/final_truth_matrix.md](reports/final_truth_matrix.md)
+4. [reports/known_limits_v1.md](reports/known_limits_v1.md)
+5. [reports/systems_performance_case_study.md](reports/systems_performance_case_study.md)
+6. [reports/offline_assistant_case_study.md](reports/offline_assistant_case_study.md)
+7. [reports/chess_proof_teaching_case_study.md](reports/chess_proof_teaching_case_study.md)
+8. [applications/anthropic/README.md](applications/anthropic/README.md)
 
-Closure artefaktları:
-- `reports/closure_57_matrix.json`
-- `reports/closure_57_matrix.md`
-- `reports/closure_57_matrix_TR.md`
-
-## Son SOP Kanıtı
-- Özet: `reports/one_command_full_sop_summary.md`
-- Ham log: `reports/one_command_full_sop.log`
-
-## Hızlı Başlangıç (Dış İnceleyici)
-1. Sanal ortamı oluştur/güncelle:
+## Kanonik Komutlar
 ```bash
 bash scripts/bootstrap_venv.sh
-```
-2. Tam offline doğrulama kapısını çalıştır:
-```bash
 bash scripts/verify_all.sh
+bash zero_touch_start.sh --check-only
+bash zero_touch_start.sh
+bash scripts/final_one_shot.sh
 ```
-3. Eğitim hazırlık kapısını kontrol et (strict gate):
-```bash
-bash run.sh --train-ready
-```
-4. Compute + dataset önkoşulları sağlanınca eğitimi başlat:
-```bash
-TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash run.sh
-```
-Notlar:
-- Varsayılan token bütçesi `fixed_steps` (45K). `open_ended` yalnızca açık hedef override ile kullanılmalıdır.
-- Offline koşularda stage JSONL önceden üretilmelidir (`python scripts/data_pipeline.py`).
 
-## Dış Pilot Kullanım Modeli
-- Müşteri ortamında tekrarlanabilir doğrulama kapılarını çalıştırın.
-- Doğrulanamayan iddia yerine makine-okur log/rapor artefaktlarını paylaşın.
-- Hassas teknik detaylar için NDA/private data-room çizgisini koruyun.
-- Ölçülmüş sonuçlar ile projeksiyonları net biçimde ayırın.
+## En Güçlü Sinyaller
+- training efficiency ve systems-debugging disiplini
+- backend routing ve fallback dürüstlüğü
+- governance-gated, offline-first assistant foundation
+- claim-safe verification ve repo truth sync
 
-## İddia Sınırı (Kritik)
-- Eğitimli checkpoint ve tekrarlanabilir benchmark çıktıları üretilene kadar bu repo:
-  - **Pilota hazır mühendislik baseline’ıdır**
-  - **Nihai benchmark iddiası için uygun değildir (`NOT ELIGIBLE FOR CLAIM`)**
-
-## Faydalı Dokümanlar
-- Ana dokümanlar: [README.md](README.md), [README_TR.md](README_TR.md)
-- Kullanım kılavuzu: [USAGE_GUIDE.md](USAGE_GUIDE.md), [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md)
-- SDK kılavuzu: [SDK_GUIDE.md](SDK_GUIDE.md), [SDK_GUIDE_TR.md](SDK_GUIDE_TR.md)
-- Güvenlik/politika: [SECURITY.md](SECURITY.md), [USE_POLICY.md](USE_POLICY.md)
+## Hâlâ Açık Post-Run Evidence Sınıfı
+- trained final weights
+- best/latest checkpoint proof
+- checkpoint-bound benchmark outputs
+- trained demo bundle
+- trained export/device measurements

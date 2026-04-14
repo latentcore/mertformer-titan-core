@@ -1,101 +1,54 @@
 ## MertFormer Titan (Build 30 V2)
 
-Kontrollü yerel dağıtım için offline-first, denetlenebilir ve görev odaklı yapay zeka altyapısı.
-Mevcut olgunluk: **pilota hazır eğitim öncesi baseline** (eğitim/benchmark iddiaları beklemede).
+Kontrollü yerel dağıtım ve dürüst ML systems kanıtı için offline-first, denetlenebilir yapay zeka altyapısı.
+Mevcut olgunluk: **pilota hazır eğitim öncesi baseline**.
+Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_OFFLINE_CLEAN`.
 
-**Build 30 V2 notu:** V2 refactor turu; dedup pipeline, MoE paralel dispatch yolu, CfC fast path ve daha sıkı eğitim kapıları ekler. İddialar hâlâ eğitim öncesidir.
+### İlk Bakışta Bilinmesi Gerekenler
+- Başvuru açısından ana kapı: gerçek owned training run + checkpoint-bound evidence.
+- Exact `45K`, tercih edilen ciddi doğrulama hedefidir; tek kabul edilebilir başvuru eşiği değildir.
+- Kanonik repo-side lane: `offline-clean`.
+- Opsiyonel gated blocker: `online_teacher:MISSING_HF_TOKEN`.
+- Hâlâ açık olan post-run evidence sınıfı: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle ve trained export/device measurements.
 
-### Okuyucu Hızlı Linkleri
-- Türkçe özet: [README_SUMMARY_TR.md](README_SUMMARY_TR.md)
-- English summary: [README_SUMMARY.md](README_SUMMARY.md)
-- English full doc: [README.md](README.md)
-- Misyon: [MISSION_TR.md](MISSION_TR.md)
-- Kullanım politikası: [USE_POLICY_TR.md](USE_POLICY_TR.md)
-- Güvenlik: [SECURITY_TR.md](SECURITY_TR.md)
-- Repo-side closure scorecard: [reports/repo_closure_scorecard.md](reports/repo_closure_scorecard.md)
-- Known limits: [reports/known_limits_v1.md](reports/known_limits_v1.md)
-- Closure freeze ve ADR index: [reports/final_master_plan_freeze.md](reports/final_master_plan_freeze.md), [reports/adr_index.md](reports/adr_index.md)
+### En Kısa Doğru Okuma Sırası
+1. [START_HERE.md](START_HERE.md)
+2. [docs/PROJECT_MASTER_TRUTH.md](docs/PROJECT_MASTER_TRUTH.md)
+3. [docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md](docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md)
+4. [docs/PROJECT_MASTER_TRUTH_TR.md](docs/PROJECT_MASTER_TRUTH_TR.md)
+5. [reports/final_truth_matrix.md](reports/final_truth_matrix.md)
+6. [reports/known_limits_v1.md](reports/known_limits_v1.md)
+7. [reports/systems_performance_case_study.md](reports/systems_performance_case_study.md)
+8. [reports/offline_assistant_case_study.md](reports/offline_assistant_case_study.md)
+9. [reports/chess_proof_teaching_case_study.md](reports/chess_proof_teaching_case_study.md)
+10. [applications/anthropic/README.md](applications/anthropic/README.md)
 
-### Resmi Konumlandırma
-- Ürün cümlesi: `Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre edilebilir zeka altyapısı.`
-- 45K konumu: ilk ciddi mimari doğrulama koşusu, nihai kabiliyet tavanı değildir.
-- Bu geçişin ana ship gate’i 45K readiness’tir.
+### Anthropic İçin Yüksek-Sinyal Noktalar
+- training efficiency ve systems debugging disiplini
+- measured vs unmeasured claim sınırının açık tutulması
+- low-bit runtime ve backend-routing dürüstlüğü
+- governance-gated tool execution ile offline-first assistant foundation
+- eksik post-run kanıtı tamamlanmış gibi anlatmayan benchmark disiplini
 
-### Doğruluk ve Çıktı Modları
+### Kanonik Komutlar
+- Repo doğrulaması: `bash scripts/verify_all.sh`
+- Sadece readiness kontrolü: `bash zero_touch_start.sh --check-only`
+- Kanonik owned training lane başlatma: `bash zero_touch_start.sh`
+- Final sync, release artifacts ve hash yenileme: `bash scripts/final_one_shot.sh`
+
+### Doğruluk Sınırı
 - `measured` / `target` / `vision` ayrı claim etiketleridir.
 - `verified` / `hypothesis` / `creative_or_folklore` ayrı çıktı modlarıdır.
 - Varsayılan mod `verified`’dır.
-- Kanıt yoksa claim yoktur.
+- Bu depo, production-scale kalite iddiaları için **pre-training / doğrulanmamış** durumdadır.
+- Trained checkpoint oluşmadan benchmark durumu `NOT ELIGIBLE FOR CLAIM` olarak kalır.
+- Bu geçiş final ürün iddiası değil, bir proof-of-system mühendislik release’idir.
+- Büyük compute, kişisel finansman zorunluluğu değildir; asıl kapı dürüst verified evidence ve coherent systems signal’dır.
 
-### İddia Sınırı
-- Bu depo, üretim kalite iddiası için **pre-training / doğrulanmamış** durumdadır.
-- Release kapanış çıktıları model kalitesini değil, süreç bütünlüğünü kanıtlar.
-
-## Tek Seferde Release Kapanış
-
-Bu depo, mühendislik hardening ve release kanıt zinciri için karar tamamlı tek-geçiş kapanış akışı içerir.
-
-### Canonical Kök
-- depo kökü (mevcut çalışma ağacı)
-
-### Tek Giriş Noktası
-- `bash scripts/final_one_shot.sh`
-- `bash scripts/one_command_full_sop.sh`, yukarıdaki kanonik closure wrapper’ının kullandığı çekirdek doğrulama alt akışıdır.
-
-### Çıktılar
-- `reports/start_gate_report.json`
-- `reports/release_manifest.json`
-- `reports/project_structure_sync_report.json`
-- `reports/hardening_bundle_summary.json`
-- `reports/master_closure_matrix.md`
-- `reports/repo_closure_scorecard.md`
-- `reports/known_limits_v1.md`
-- `reports/support_maintenance_policy.md`
-- `reports/train_readiness_decision.md`
-- `reports/final_freeze_manifest.md`
-- `reports/repo_external_handoff.md`
-- `artifacts/mertformer_release.zip`
-- `artifacts/mertformer_release.zip.sha256`
-
-### Repo-Side Closure Paketi
-- `reports/repo_closure_scorecard.md`, mevcut geçiş için kalıcı repo-side closure sayısını tutar.
-- `reports/final_master_plan_freeze.md`, şimdi kapananlarla post-run veya harici kalanları ayırır.
-- `reports/known_limits_v1.md`, ölçülmüş gerçeği henüz üretilmemiş trained kanıtlardan ayırır.
-- `reports/support_maintenance_policy.md`, `reports/quality_gate_matrix.md` ve `reports/test_verification_matrix.md` bakım ve doğrulama kontratını tanımlar.
-- `reports/adr_index.md`, güncel mimari ve governance karar zincirini indeksler.
-- `configs/`, `releases/`, `knowledge/` ve `evidence/` klasörleri artık isimli chess profil kontratları, release beklentileri, glossary terimleri ve evidence policy için kalıcı repo-side contract yüzeyi taşır.
-
-### Chess Onefile Closure Artefaktları
-- `reports/run_status_manifest.json`, bitmiş bir chess onefile koşusunun kompakt son durum özetini verir.
-- `reports/postrun_analysis_manifest.json`, curated suite, stockfish, self-play, tournament ve replay-buffer yüzeylerini özetler.
-- `reports/artifact_truth_matrix.json`, beklenen koşu artefaktlarını ve gerçekten var olup olmadıklarını listeler.
-- `reports/run_contract.json`, tam o onefile koşusunun operatör kontratını ve claim sınırını dondurur.
-- `reports/release_snapshot.json`, dış release kanıtını abartmadan iç release-surface readiness durumunu kaydeder.
-- `reports/evidence_pack_stub.json`, şu an var olanlarla external release-grade evidence için hâlâ eksik olanları ayırır.
-- `reports/final_truth_registry.json`, measured/internal/not-eligible satranç claim’lerini açık ve denetlenebilir tutar.
-- `reports/claim_registry.json`, her satranç koşusu claim’ini sınıflandırma ve kanıt ile eşler.
-- `reports/known_limits.json`, eksik kanıtı kapanmış gibi göstermeden koşuya özel sınırları listeler.
-- `reports/support_matrix.json`, tam o koşunun aktif profil/mod/destek durumunu kaydeder.
-- `reports/release_gate_summary.json`, iç ve dış release gate pass/fail durumunu kaydeder.
-- `reports/rc_stub.json`, tam o koşunun iç release-candidate stub durumunu kaydeder.
-- `reports/golden_stub.json`, golden release’in iç kapanıştan daha sıkı ve ayrı olduğunu kaydeder.
-- `reports/handoff_pack_manifest.json`, tam o koşunun operatör odaklı handoff paketini listeler.
-- `reports/operator_handoff_summary.json`, operatör handoff yüzeyinin içten tamam olup olmadığını özetler.
-- `reports/external_repro_stub.json`, `reports/pilot_stub.json`, `reports/security_stub.json` ve `reports/legal_stub.json`, dış kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
-- `reports/operator_handbook_stub.json`, `reports/dr_evidence_stub.json`, `reports/backup_retention_stub.json` ve `reports/blind_handoff_stub.json`, operatör/DR kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
-- `reports/release_notes_stub.json`, `reports/freeze_manifest_stub.json`, `reports/changelog_snapshot.json` ve `reports/maintenance_policy_stub.json`, release-governance boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
-- `reports/export_truth_stub.json`, `reports/device_validation_stub.json`, `reports/packaging_closure_stub.json` ve `reports/installer_validation_stub.json`, device/export/packaging kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
-- `reports/benchmark_raw_outputs_stub.json`, `reports/benchmark_compare_report_stub.json`, `reports/benchmark_summary_stub.json` ve `reports/benchmark_manifest_stub.json`, benchmark kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
-- `reports/training_report_stub.json`, `reports/token_accounting_stub.json`, `reports/compute_accounting_stub.json` ve `reports/cost_report_stub.json`, training/accounting kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
-- `reports/final_weights_truth_stub.json`, `reports/best_checkpoint_truth_stub.json`, `reports/latest_checkpoint_truth_stub.json` ve `reports/trained_artifact_registry_stub.json`, trained-artifact truth boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
-- `reports/core_complete_decision_stub.json`, `reports/research_continues_stub.json`, `reports/product_maintenance_only_stub.json` ve `reports/closure_decision_record_stub.json`, yönetimsel kapanış boşluklarını iç artefaktlarla kapanmış gibi göstermeden açıkça tutar.
-- `reports/master_closure_table.json`, `reports/remaining_core_blockers.json`, `reports/repo_side_completion_summary.json` ve `reports/readiness_snapshot.json`, neyin mevcut olduğunu ve final kapanışı neyin hâlâ blokladığını repo gerçeğinden özetler.
-- `reports/aggregated_master_table.json`, `reports/real_remaining_core_work.json`, `reports/repo_truth_inventory.json` ve `reports/closure_gap_summary.json`, repo gerçeğini son master tabloya çevirmek için daha kompakt üst seviye truth katmanı sağlar.
-- `reports/project_master_truth_reference.json`, `reports/project_remaining_real_blockers.json`, `reports/truth_docs_index.json` ve `reports/truth_docs_drift_report.json`, onefile release evidence katmanını kanonik repo truth docs ile bağlar ve doküman drift’ini açıkça görünür kılar.
-- `reports/project_blocker_action_plan.json`, `reports/project_blocker_dependency_graph.json`, `reports/project_execution_sequence.json`, `reports/project_lane_status_board.json`, `reports/project_closure_phase_plan.json`, `reports/project_phase_readiness_scoreboard.json`, `reports/project_owner_accountability_matrix.json`, `reports/project_owner_work_queue.json`, `reports/project_critical_path_report.json`, `reports/project_owner_next_actions_summary.json`, `reports/project_ready_now_board.json`, `reports/project_unlock_impact_report.json`, `reports/project_parallel_workset_report.json`, `reports/project_phase_exit_criteria_report.json`, `reports/project_execution_wave_report.json`, `reports/project_evidence_backlog_report.json`, `reports/project_dependency_bottleneck_report.json`, `reports/project_owner_phase_frontier_report.json`, `reports/project_evidence_criticality_report.json`, `reports/project_phase_transition_matrix.json`, `reports/project_owner_load_report.json`, `reports/project_phase_dependency_pressure_report.json`, `reports/project_owner_bottleneck_alignment_report.json`, `reports/project_evidence_phase_heatmap_report.json`, `reports/project_blocker_risk_register_report.json`, `reports/project_release_prereq_matrix_report.json`, `reports/project_foundation_run_dependency_report.json`, `reports/project_release_path_report.json`, `reports/project_external_closure_cluster_report.json`, `reports/project_owner_evidence_gap_report.json`, `reports/project_release_gate_dependency_report.json`, `reports/project_external_signoff_queue_report.json`, `reports/project_release_evidence_bridge_report.json`, `reports/project_training_run_readiness_report.json`, `reports/project_benchmark_closure_dependency_report.json`, `reports/project_release_decision_queue_report.json`, `reports/project_external_validation_readiness_report.json`, `reports/project_artifact_lock_readiness_report.json`, `reports/project_final_release_cutover_report.json`, `reports/project_real_run_execution_queue_report.json`, `reports/project_benchmark_evidence_lock_report.json`, `reports/project_final_signoff_cutset_report.json`, `reports/generated_truth_consistency_report.json` ve `reports/generated_truth_crosscheck_matrix.json`, kalan proje blocker’larını sıralı, faz-bilinçli, readiness-bilinçli, owner-bilinçli, kaldıraç-bilinçli, kritik-yol-bilinçli, paralel-workset-bilinçli, phase-exit-bilinçli, wave-bilinçli, evidence-bilinçli, bottleneck-bilinçli, owner-frontier-bilinçli, evidence-criticality-bilinçli, phase-transition-bilinçli, owner-load-bilinçli, phase-pressure-bilinçli, owner-bottleneck-bilinçli, evidence-phase-bilinçli, risk-bilinçli, release-prereq-bilinçli, foundation-run-bilinçli, release-path-bilinçli, external-closure-cluster-bilinçli, owner-evidence-gap-bilinçli, release-gate-dependency-bilinçli, external-signoff-queue-bilinçli, release-evidence-bridge-bilinçli, training-run-readiness-bilinçli, benchmark-closure-dependency-bilinçli, release-decision-queue-bilinçli, external-validation-readiness-bilinçli, artifact-lock-readiness-bilinçli, final-release-cutover-bilinçli, real-run-execution-queue-bilinçli, benchmark-evidence-lock-bilinçli, final-signoff-cutset-bilinçli ve çapraz kontrollü bir closure planına dönüştürür.
-- Kanonik doküman özeti: [docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md](docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md)
-- Kanonik proje özeti: [docs/PROJECT_MASTER_TRUTH_TR.md](docs/PROJECT_MASTER_TRUTH_TR.md)
-
+### Açık Teknik Notlar
+- `MLA etiketli GQA dikkat bloğu (mevcut implementasyon)`
+- `Yönlendirme politikası: token-choice top-k.`
+- Closure-57 şeffaflık notu: `out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]`
 
 ![MertFormer Titan Header](assets/header.png)
 
@@ -1633,6 +1586,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   └── synaptic_map.png  # medya varlığı
 ├── checklists/  # dizin
 │   ├── README.md  # ana dokümantasyon (EN)
+│   ├── chess_4060_24h.md  # dokümantasyon/rapor dosyası
+│   ├── chess_4060_24h_TR.md  # Türkçe doküman karşılığı
 │   ├── chess_4060_24h_all_on_experimental.md  # dokümantasyon/rapor dosyası
 │   └── chess_4060_24h_all_on_experimental_TR.md  # Türkçe doküman karşılığı
 ├── config/  # dizin
@@ -2127,6 +2082,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   └── seed_policy_TR.md  # Türkçe doküman karşılığı
 ├── runbooks/  # dizin
 │   ├── README.md  # ana dokümantasyon (EN)
+│   ├── chess_4060_24h.md  # dokümantasyon/rapor dosyası
+│   ├── chess_4060_24h_TR.md  # Türkçe doküman karşılığı
 │   ├── chess_4060_24h_all_on_experimental.md  # dokümantasyon/rapor dosyası
 │   └── chess_4060_24h_all_on_experimental_TR.md  # Türkçe doküman karşılığı
 ├── scripts/  # dizin
@@ -2171,6 +2128,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── check_translation_pointer_policy.py  # Python modülü/scripti (check translation pointer policy için otomasyon scripti)
 │   ├── checkpoint_restore_drill.py  # Python modülü/scripti (checkpoint restore drill için otomasyon scripti)
 │   ├── chess_5080_onefile.py  # Python modülü/scripti (chess 5080 onefile için otomasyon scripti)
+│   ├── chess_onefile_contract.py  # Python modülü/scripti (chess onefile contract için otomasyon scripti)
 │   ├── clean_runtime_artifacts.sh  # kabuk otomasyon scripti
 │   ├── cleanroom_verify.sh  # kabuk otomasyon scripti
 │   ├── cleanup_scoped_closure_junk.py  # Python modülü/scripti (cleanup scoped closure junk için otomasyon scripti)

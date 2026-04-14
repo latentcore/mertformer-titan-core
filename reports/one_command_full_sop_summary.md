@@ -1,10 +1,10 @@
 # One-Command Full SOP Summary
 
-- start_utc: 2026-04-08T20:28:33Z
-- end_utc: 2026-04-08T20:30:57Z
-- pytest: 203 passed, 3 skipped, 3 warnings in 49.43s
-- md_quality_all: md_quality: scope=all files=393 errors=0 warnings=0
-- linkcheck_all: linkcheck: scope=all files=393 missing=0
+- start_utc: 2026-04-14T16:36:21Z
+- end_utc: 2026-04-14T16:39:32Z
+- pytest: 203 passed, 3 skipped, 3 warnings in 35.40s
+- md_quality_all: md_quality: scope=all files=408 errors=0 warnings=0
+- linkcheck_all: linkcheck: scope=all files=408 missing=0
 - unicode_path_guard: PASS
 - duplicate_zip_guard: PASS
 - clean_runtime_artifacts_check: PASS
@@ -12,7 +12,7 @@
 - zip_denylist_audit: PASS
 - secret_scan: PASS
 - training_dashboard: not_generated
-- release_zip_sha256: `39d2272b1f8e2a25bc0cb33518e3896ef4c7a03703819477b590e6d30bc51585`
+- release_zip_sha256: `bfbfa93cbe41fb71a62b63c4a8c2f2d7c81018709d03149417b97c56eca22075`
 - locked_age_sha256: ``
 - locked_age_generated: no
 

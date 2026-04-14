@@ -1,0 +1,55 @@
+# Start Here
+
+This is the shortest truthful path through the repository.
+
+## What This Repo Is
+MertFormer Titan is an offline-first, auditable AI systems project with three connected review lanes:
+- systems and performance infrastructure
+- offline assistant and RAG foundations
+- chess proof and teaching discipline
+
+## Current Exact Status
+- Current maturity: `pilot-ready pre-training baseline`
+- Current repo-side readiness: `TRAIN_ALLOWED`
+- Current readiness reason code: `READY_OFFLINE_CLEAN`
+- Preferred serious validation target: `45K`
+- Exact `45K` is not the only acceptable application threshold
+- Real owned training run + checkpoint-bound evidence are still required for application readiness
+- Optional gated blocker only if teacher lane is chosen: `online_teacher:MISSING_HF_TOKEN`
+- Real trained checkpoints, benchmark outputs, trained demo bundles, and trained export measurements remain post-run evidence
+
+## What To Read In Order
+1. `README_SUMMARY.md` - shortest external summary
+2. `docs/PROJECT_MASTER_TRUTH.md` - compact whole-repo truth table
+3. `reports/final_truth_matrix.md` - claim-by-claim evidence map
+4. `reports/known_limits_v1.md` - current hard limits and missing evidence boundary
+5. `reports/systems_performance_case_study.md` - systems and low-bit runtime story
+6. `reports/offline_assistant_case_study.md` - offline assistant and RAG story
+7. `reports/chess_proof_teaching_case_study.md` - benchmark honesty and teaching discipline story
+8. `reports/final_backlog_missing_items.md` - exact remaining blocker classes
+9. `applications/anthropic/README.md` - application pack index
+10. `MISSION.md` - mission framing and claim philosophy
+
+## Canonical Commands
+- Verify the repo: `bash scripts/verify_all.sh`
+- Check readiness only: `bash zero_touch_start.sh --check-only`
+- Launch the canonical owned training lane: `bash zero_touch_start.sh`
+- Refresh closure, artifacts, and hashes: `bash scripts/final_one_shot.sh`
+
+## Anthropic-Relevant Signals
+- explicit measured vs unmeasured claim boundary
+- training efficiency and experiment-discipline story
+- low-bit runtime plus backend-routing honesty
+- offline-first, governance-gated assistant foundations
+- benchmark discipline that keeps product mode and proof mode separate
+
+## What Is Still Open
+The remaining high-value open class is not missing folders or missing scripts. It is the missing post-run evidence class:
+- real owned training run
+- trained final weights
+- best/latest checkpoint proof
+- checkpoint-bound benchmark outputs
+- trained demo bundle
+- export/device evidence as a strong plus
+
+Everything else in this closure pack is there to keep that boundary explicit, reviewer-friendly, and hard to overclaim.
