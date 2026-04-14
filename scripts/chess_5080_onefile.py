@@ -8894,13 +8894,15 @@ def render_release_gate_summary_md(report: Dict[str, Any]) -> str:
 def build_rc_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
     truth = _read_json_if_exists(layout.reports_dir / "artifact_truth_matrix.json")
     gate = _read_json_if_exists(layout.reports_dir / "release_gate_summary.json")
+    release_snapshot = _read_json_if_exists(layout.reports_dir / "release_snapshot.json")
     profile = str(payload.get("config", {}).get("profile", ""))
     feature_bundle = str(payload.get("config", {}).get("feature_bundle", "default"))
+    release_surface_status = str(release_snapshot.get("release_surface_status", "unknown"))
     return {
         "schema": "chess_rc_stub_v1",
         "run_id": payload.get("run_id", ""),
         "candidate_type": "internal_rc_stub",
-        "status": "candidate_internal_only" if gate.get("overall_internal_ready", False) else "not_ready",
+        "status": "candidate_internal_only" if release_surface_status == "candidate_internal_only" else "not_ready",
         "canonical_profile": CANONICAL_CHESS_PROFILE,
         "active_profile": profile,
         "active_feature_bundle": feature_bundle,
@@ -8908,6 +8910,7 @@ def build_rc_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, 
         "release_candidate_reason": release_candidate_configuration_reason(profile, feature_bundle),
         "required_count": int(truth.get("required_count", 0)),
         "present_required_count": int(truth.get("present_required_count", 0)),
+        "release_surface_status": release_surface_status,
         "overall_internal_ready": bool(gate.get("overall_internal_ready", False)),
         "overall_external_ready": bool(gate.get("overall_external_ready", False)),
     }
@@ -8920,6 +8923,7 @@ def render_rc_stub_md(report: Dict[str, Any]) -> str:
         f"- run_id: `{report.get('run_id', '')}`",
         f"- candidate_type: `{report.get('candidate_type', '')}`",
         f"- status: `{report.get('status', 'unknown')}`",
+        f"- release_surface_status: `{report.get('release_surface_status', 'unknown')}`",
         f"- required_count: `{report.get('required_count', 0)}`",
         f"- present_required_count: `{report.get('present_required_count', 0)}`",
         f"- overall_internal_ready: `{report.get('overall_internal_ready', False)}`",

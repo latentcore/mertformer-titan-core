@@ -1,6 +1,6 @@
 # Teacher Decision Record
 
-- generated_utc: `2026-04-14T16:59:35Z`
+- generated_utc: `2026-04-14T22:02:39Z`
 - canonical_training_lane: `offline_clean`
 - alternate_lane: `online_teacher`
 - readiness_final_status: `TRAIN_ALLOWED`

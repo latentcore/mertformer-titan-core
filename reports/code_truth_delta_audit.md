@@ -72,8 +72,8 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 
 | Path | Markers |
 | --- | --- |
-| `README.md` | `TBD`, `scaffold`, `fallback` |
-| `README_TR.md` | `TBD`, `fallback` |
+| `README.md` | `fallback` |
+| `README_TR.md` | `fallback` |
 | `datasets/INTERNAL_POLICY.md` | `TBD` |
 | `datasets/INTERNAL_POLICY_TR.md` | `TBD` |
 | `datasets/LICENSES.md` | `TBD` |

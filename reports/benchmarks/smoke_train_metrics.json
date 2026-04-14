@@ -1,12 +1,12 @@
 {
-  "elapsed_sec": 3.453,
+  "elapsed_sec": 7.479,
   "env": {
     "device": "mps",
     "python": "3.11.14",
     "torch": "2.10.0"
   },
-  "forensic_sha256": "cb507a29146be51112811c2094cf545c46f947d40bb6853a297f2c19a2cf6696",
-  "generated_at_utc": "2026-04-14T16:59:30Z",
+  "forensic_sha256": "5e2592ce5a9f80ecf7c81987a66c385f20af5d91ab6d38288f386a5d0706c3a4",
+  "generated_at_utc": "2026-04-14T22:02:29Z",
   "liquid": {
     "avg_loss": 119.49087409973144,
     "avg_tau": 0.9751526117324829,
