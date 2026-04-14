@@ -1,4 +1,4 @@
-# Verimlilik ve Dinamizmin Yakınsaması: BitNet b1.58, Sıvı Sinir Ağları ve Uzmanlar Karışımı
+# Verimlilik ve Dinamizmin Yakınsaması: BitNet b1.58, Sıvı Sınır Ağları ve Uzmanlar Karışımı
 
 ## Sınıflandırma
 - **Doküman türü:** Stratejik teknik analiz / öngörü
@@ -8,7 +8,7 @@
 ## Yönetici Özeti
 YZ mimarileri, yoğun ve yüksek hassasiyetli bulut hesaplamadan; seyrek, dinamik ve düşük hassasiyetli modellere kayıyor. Üç ana yaklaşım yakınsıyor:
 1. **BitNet b1.58:** 1.58-bit üçlü ağırlıklarla bellek/enerji verimliliği.
-2. **Sıvı Sinir Ağları (LNN):** sürekli zamanlı, adaptif dinamik yapı.
+2. **Sıvı Sınır Ağları (LNN):** sürekli zamanlı, adaptif dinamik yapı.
 3. **Uzmanlar Karışımı (MoE):** token başına sınırlı aktif hesapla yüksek toplam kapasite.
 
 Bu yakınsama, güç-gecikme-bellek ve deterministik davranış gerektiren uç/safety-critical kullanım için güçlü bir yön sunar.
@@ -25,7 +25,7 @@ Bu yakınsama, güç-gecikme-bellek ve deterministik davranış gerektiren uç/s
 - Asıl fayda, bellek sınırlı inference akışlarında belirginleşir.
 - Ana değer: yüksek hassasiyetli çarpım ağırlıklı akışlardan düşük hassasiyetli daha verimli akışlara geçiş.
 
-### 2) Sıvı Sinir Ağları
+### 2) Sıvı Sınır Ağları
 - Sürekli zamanlı durum dinamiği, gürültülü/düzensiz sinyallerde dayanıklılığı artırabilir.
 - Kontrol odaklı ve uç cihaz senaryolarında zamansal adaptasyon avantajı sağlar.
 - Ana değer: statik tepki yerine bağlama göre evrilen davranış.

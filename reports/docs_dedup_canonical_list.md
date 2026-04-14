@@ -113,6 +113,9 @@ Generated automatically.
 - `docs/PROJECT_MASTER_TRUTH.md`
 - `docs/PROJECT_MASTER_TRUTH_TR.md`
 - `docs/PROJECT_STRUCTURE.md`
+- `documents/README_TR_before_final_simplification.md`
+- `documents/README_before_final_simplification.md`
+- `documents/README_snapshot_source.md`
 - `economics/cost_model.md`
 - `economics/cost_model_TR.md`
 - `economics/efficiency_report.md`

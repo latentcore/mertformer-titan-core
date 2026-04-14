@@ -270,7 +270,7 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 - [SDK API Hızlı Başlangıç](#sdk-api-tr-quickstart)
 - [Sorun Giderme](#sorun-giderme)
 - [Eğitim](#eğitim)
-- [Eğitim Stratejisi (Baseline -> v28)](#eğitim-stratejisi-baseline-v28)
+- [Eğitim Stratejisi (Baseline -> v28)](#egitim-stratejisi-baseline-v28)
 - [Dağıtım (Deployment)](#dağıtım-deployment)
 - [Entegrasyon Hedefleri](#entegrasyon-hedefleri)
 - [Kıyaslamalar (Benchmarks)](#kıyaslamalar-benchmarks)
@@ -1265,7 +1265,7 @@ liquid_spike_threshold = 5.0
 Bu eğitim sırası ve token bütçesi, **güçlü bir temel için yeterli** olacak şekilde tasarlanmıştır.
 **Niş veya özel alanlar** için, en yüksek uzmanlık seviyesine çıkmak amaçıyla **hedefli fine‑tune** önerilir.
 
-<a id="eğitim-stratejisi-baseline-v28"></a>
+<a id="egitim-stratejisi-baseline-v28"></a>
 ### Eğitim Stratejisi (Baseline -> v28, Claim-Safe)
 
 Baseline eğitim öncesinde acil bir mimari değişiklik zorunlu değildir.
@@ -1641,10 +1641,6 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── CHESS_ONEFILE_MASTER_TRUTH_TR.md  # Türkçe doküman karşılığı
 │   ├── PROJECT_MASTER_TRUTH.md  # dokümantasyon/rapor dosyası
 │   └── PROJECT_MASTER_TRUTH_TR.md  # Türkçe doküman karşılığı
-├── documents/  # dizin
-│   ├── README_TR_before_final_simplification.md  # dokümantasyon/rapor dosyası
-│   ├── README_before_final_simplification.md  # dokümantasyon/rapor dosyası
-│   └── README_snapshot_source.md  # dokümantasyon/rapor dosyası
 ├── economics/  # dizin
 │   ├── cost_model.md  # dokümantasyon/rapor dosyası
 │   ├── cost_model_TR.md  # Türkçe doküman karşılığı

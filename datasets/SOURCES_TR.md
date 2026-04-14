@@ -105,7 +105,7 @@ Bkz:
   Durum: dahili (trackli) + SHA256 `datasets/hashes.json` içinde kayıtlı
 
 
-## Demo / tek-dosya datasetleri (egitim disi)
+## Demo / tek-dosya datasetleri (eğitim disi)
 - `codeparrot/github-code` (demo baseline; sadece onefile scriptlerinde)
   Amac: Kaggle/Colab demo icin legacy kod korpusu
   Dataset card: https://huggingface.co/datasets/codeparrot/github-code

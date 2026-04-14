@@ -57,7 +57,7 @@
           "path": "<repo>/repro/cuda.lock"
         }
       },
-      "elapsed_s": 0.009,
+      "elapsed_s": 0.003,
       "path_name": "offline_clean",
       "exit_code": 0,
       "stdout_tail": "TRAIN_READY:PASS reason_code=READY\n",

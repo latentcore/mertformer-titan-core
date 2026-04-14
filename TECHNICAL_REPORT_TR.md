@@ -12,7 +12,7 @@ Yapay zeka ekosistemi, bulut tabanlı devasa modellerden cihaz içi (on-device) 
 1.  **BitNet 1.58-bit Kuantizasyonu** (Verimlilik)
 2.  **MLA etiketli GQA dikkat bloğu (mevcut implementasyon)** (Bellek)
 3.  **Seyrek Uzmanlar Karışımı (MoE)** (Kapasite)
-4.  **Liquid Sinir Ağları (LNN)** (Dinamizm)
+4.  **Liquid Sınır Ağları (LNN)** (Dinamizm)
 
 17 yaşında bir geliştirici tarafından ortaya konan bu mimari, yalnızca bir mühendislik başarısı değil, aynı zamanda Samsung Galaxy S25 ve Snapdragon 8 Elite gibi yeni nesil donanım platformları için optimize edilmiş ticari bir varlıktır.
 

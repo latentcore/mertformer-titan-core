@@ -4,7 +4,7 @@ Tüm datasetler kendi lisansları/terimleri ile uyumlu olmalıdır (gated datase
 Bu tablo, gerçek eğitim öncesi **tek kaynaktan kontrol listesi** olarak kullanılır.
 
 Notlar:
-- “TBD” olan satirlar, **cekirdek egitim datasetleri** icin production egitimde **blocker** kabul edilir (dataset card / upstream repo’dan dogrulanmadan egitime girilmez). Opsiyonel/demo datasetler dogrulanana kadar devre disi tutulmalidir.
+- “TBD” olan satirlar, **cekirdek eğitim datasetleri** icin production egitimde **blocker** kabul edilir (dataset card / upstream repo’dan dogrulanmadan egitime girilmez). Opsiyonel/demo datasetler dogrulanana kadar devre disi tutulmalidir.
 - Snapshot hash’leri `datasets/hashes.json` içinde tutulur ve eğitim öncesi doldurulmalidir.
 
 | Dataset | Lisans | Referans URL | Durum |

@@ -93,7 +93,7 @@ Davranış:
 ## “Eğitimi Başlat” Checklist (Yazdırılabilir)
 
 - [ ] `bash scripts/verify_all.sh` PASS (offline).
-- [ ] `datasets/LICENSES*.md` cekirdek egitim datasetleri icin **TBD icermiyor** (opsiyonel/demo datasetler devre disi tutulmalidir).
+- [ ] `datasets/LICENSES*.md` cekirdek eğitim datasetleri icin **TBD icermiyor** (opsiyonel/demo datasetler devre disi tutulmalidir).
 - [ ] `datasets/hashes.json` eğitimde kullanılacak snapshot hash’leriyle dolduruldu.
 - [ ] İddia seviyesi modda `datasets/validation.jsonl` temsil gücüne sahip ve minimum örnek kapısını geçiyor.
 - [ ] Training config review edildi (seed, dtype, model boyutu, batch ayarları).

@@ -104,6 +104,10 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── CHESS_ONEFILE_MASTER_TRUTH_TR.md  # Turkish document counterpart
 │   ├── PROJECT_MASTER_TRUTH.md  # documentation/report file
 │   └── PROJECT_MASTER_TRUTH_TR.md  # Turkish document counterpart
+├── documents/  # directory
+│   ├── README_TR_before_final_simplification.md  # documentation/report file
+│   ├── README_before_final_simplification.md  # documentation/report file
+│   └── README_snapshot_source.md  # documentation/report file
 ├── economics/  # directory
 │   ├── cost_model.md  # documentation/report file
 │   ├── cost_model_TR.md  # Turkish document counterpart
