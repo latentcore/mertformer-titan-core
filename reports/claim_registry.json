@@ -1,7 +1,7 @@
 [
   {
     "claim_id": "claim.repo_45k_ready_now",
-    "claim": "The repo is genuinely 45K-ready right now.",
+    "claim": "The repo is genuinely main-run-ready right now.",
     "mode": "measured",
     "status": "verified",
     "evidence": [
@@ -22,7 +22,7 @@
       "README.md",
       "reports/final_freeze_manifest.md"
     ],
-    "still_missing": "This framing still needs to survive future doc edits and the real 45K run outputs."
+    "still_missing": "This framing still needs to survive future doc edits and the real owned training-run outputs."
   },
   {
     "claim_id": "claim.no_claim_without_evidence",
@@ -64,7 +64,7 @@
       "reports/run_contract.md",
       "reports/post_train_automation_contract.md"
     ],
-    "still_missing": "Real trained outputs still require the actual 45K run, but the canonical closure flow now includes the zero-touch launcher and post-train state machine."
+    "still_missing": "Real trained outputs still require the actual owned training run, but the canonical closure flow now includes the zero-touch launcher and post-train state machine."
   },
   {
     "claim_id": "claim.true_zero_touch_train_end",
@@ -93,7 +93,7 @@
       "reports/train_readiness_decision.md",
       "reports/final_backlog_missing_items.md"
     ],
-    "still_missing": "Requires the real 45K run plus checkpoint verification artifacts."
+    "still_missing": "Requires the real owned training run plus checkpoint verification artifacts."
   },
   {
     "claim_id": "claim.benchmark_claims_exist",
@@ -104,7 +104,7 @@
       "reports/benchmarks/README.md",
       "reports/final_backlog_missing_items.md"
     ],
-    "still_missing": "Requires the real 45K run, benchmark execution, and checkpoint-bound manifests."
+    "still_missing": "Requires the real owned training run, benchmark execution, and checkpoint-bound manifests."
   },
   {
     "claim_id": "claim.demo_bundle_exists",

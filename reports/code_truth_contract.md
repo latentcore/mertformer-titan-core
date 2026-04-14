@@ -20,4 +20,4 @@ A closure-critical item is only done when all four columns are present:
 - Docs-only closure is forbidden.
 - `scaffold`, `fallback`, `placeholder`, or `experimental` surfaces must remain explicitly labeled.
 - README, model card, release truth, and backlog wording must map back to code-truth evidence.
-- The code-truth audit is a guardrail, not a substitute for the real 45K run or the real chess product benchmarks.
+- The code-truth audit is a guardrail, not a substitute for the real owned training run or the real chess product benchmarks.

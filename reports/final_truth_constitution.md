@@ -1,7 +1,7 @@
 # Final Truth Constitution
 
 ## Current Pass Objective
-- Close the repository for the 45K architecture validation run.
+- Close the repository for the real owned training run and application-facing evidence path.
 - Prefer verifiable outputs over speculative redesign.
 - Keep the repo honest about what is implemented now versus what only becomes true after the real run.
 
@@ -13,14 +13,14 @@
 
 ## Status Modes
 - `DONE_NOW`: implemented now with exact repo evidence.
-- `PREPARED_FOR_POSTRUN`: infrastructure exists, but final proof appears only after the real 45K run.
-- `PHASE2`: explicitly deferred and not required for 45K readiness.
+- `PREPARED_FOR_POSTRUN`: infrastructure exists, but final proof appears only after the real owned training run.
+- `PHASE2`: explicitly deferred and not required for application readiness.
 - `OUT_OF_SCOPE`: not part of the current closure mandate.
 - `EXTERNAL_DEPENDENCY`: blocked by external data, credentials, compute, or the real run itself.
 
 ## Hard Rules
 - No claim without evidence.
-- Do not say `45K-ready` unless the current readiness report says `TRAIN_ALLOWED`.
+- Do not say `main-run-ready` unless the current readiness report says `TRAIN_ALLOWED`.
 - A closure-critical item is only `done` when code path, canonical command, verification, and artifact/report evidence all exist together.
 - Docs-only closure is forbidden.
 - Do not convert scaffolds, placeholders, historical snapshots, or plans into completed work.
@@ -48,8 +48,8 @@
 - `python3 scripts/build_closure_governance_pack.py`
 - `bash zero_touch_start.sh --check-only`
 
-## 45K Readiness Rule
+## Main-Run Readiness Rule
 The current repo-side readiness verdict is `TRAIN_ALLOWED` via the offline-clean lane. The remaining exact blocker is the optional `online_teacher:MISSING_HF_TOKEN` lane when gated teacher access is intentionally requested.
 
 ## Post-Run Rule
-Trained weights, checkpoints, benchmark summaries, demo bundle, evidence pack, and measured deployment outputs are not current facts until the real 45K run produces them.
+Trained weights, checkpoints, benchmark summaries, demo bundle, checkpoint-bound evidence pack, and measured deployment outputs are not current facts until the real owned training run produces them.

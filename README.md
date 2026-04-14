@@ -1568,6 +1568,17 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── ADR-0001-source-of-truth-and-claim-boundary.md  # documentation/report file
 │   ├── ADR-0002-change-control-and-closure-governance.md  # documentation/report file
 │   └── ADR-0003-chess-oneclick-delivery-runtime-contract.md  # documentation/report file
+├── applications/  # directory
+│   └── anthropic/  # directory
+│       ├── README.md  # primary documentation (EN)
+│       ├── interview_prep.md  # documentation/report file
+│       ├── measured_evidence_summary.md  # documentation/report file
+│       ├── performance_engineer_fallback.md  # documentation/report file
+│       ├── project_summary.md  # documentation/report file
+│       ├── science_of_scaling_cv_seed.md  # documentation/report file
+│       ├── strongest_stories.md  # documentation/report file
+│       ├── tokens_variant_notes.md  # documentation/report file
+│       └── why_anthropic_science_of_scaling.md  # documentation/report file
 ├── apps/  # directory
 │   └── chess_gui/  # directory
 │       ├── checkpoints/  # directory
@@ -1862,6 +1873,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── chess_gui_onefile_sync_report.md  # documentation/report file
 │   ├── chess_onefile_extension_report.json  # JSON data artifact
 │   ├── chess_onefile_extension_report.md  # documentation/report file
+│   ├── chess_proof_teaching_case_study.md  # documentation/report file
 │   ├── chess_teaching_contract_report.json  # JSON data artifact
 │   ├── chess_teaching_contract_report.md  # documentation/report file
 │   ├── chess_training_readiness_report.json  # JSON data artifact
@@ -1923,6 +1935,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── exit_code_standard.md  # documentation/report file
 │   ├── expected_artifacts_list.md  # documentation/report file
 │   ├── export_validation_report.json  # JSON data artifact
+│   ├── external_readability_checklist.md  # documentation/report file
 │   ├── fallback_policy_report.json  # JSON data artifact
 │   ├── feature_flag_governance.md  # documentation/report file
 │   ├── file_state_inventory.json  # JSON data artifact
@@ -1981,6 +1994,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── model_health.md  # documentation/report file
 │   ├── model_health_TR.md  # Turkish document counterpart
 │   ├── model_health_final.md  # documentation/report file
+│   ├── offline_assistant_case_study.md  # documentation/report file
 │   ├── one_command_full_sop.log  # text/log artifact (single-command end-to-end SOP raw log; overwritten each run)
 │   ├── one_command_full_sop_summary.md  # documentation/report file (single-command end-to-end SOP summary; overwritten each run)
 │   ├── one_pager.md  # documentation/report file
@@ -2054,6 +2068,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── system_hardware_TR.md  # Turkish document counterpart
 │   ├── system_memory_policy.md  # documentation/report file
 │   ├── system_stats.jsonl  # JSONL data/log artifact
+│   ├── systems_performance_case_study.md  # documentation/report file
 │   ├── target_machine_handoff_manifest.json  # JSON data artifact
 │   ├── target_machine_handoff_manifest.md  # documentation/report file
 │   ├── teacher_decision_record.md  # documentation/report file
@@ -2330,6 +2345,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── SDK_GUIDE_TR.md  # Turkish document counterpart
 ├── SECURITY.md  # documentation/report file
 ├── SECURITY_TR.md  # Turkish document counterpart
+├── START_HERE.md  # documentation/report file
 ├── TASK.md  # documentation/report file
 ├── TASK_TR.md  # Turkish document counterpart
 ├── TECHNICAL_REPORT.md  # documentation/report file

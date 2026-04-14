@@ -1,18 +1,18 @@
 {
   "schema": "final_checksum_manifest_v1",
-  "generated_utc": "2026-04-14T16:42:47Z",
+  "generated_utc": "2026-04-14T16:59:35Z",
   "entries": [
     {
       "path": "artifacts/mertformer_release.zip",
-      "sha256": "6b386527b371ff89b8e0f2464cfa828535c5fa8b4aa91aa8622f8d016c934a2f"
+      "sha256": "a46c5d62a7d73331265ef0a43e28c530f58f4f039273cc9286c65ce830a11e1d"
     },
     {
       "path": "artifacts/target_machine_handoff_bundle.zip",
-      "sha256": "8613b26bbaaf3259b53dcc1c883b2680f5cdb01a788e3fff958c3c6f23e081e9"
+      "sha256": "79f695c2efa40d3d1cdaa3b979c79546bede447ad1c882a07c8629d9b5c1baee"
     },
     {
       "path": "packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip",
-      "sha256": "bfbfa93cbe41fb71a62b63c4a8c2f2d7c81018709d03149417b97c56eca22075"
+      "sha256": "51b6e98dcbf50d136fe64cd1caa61a653b9f25aba37b716f62b03ca3ddf3b8c2"
     }
   ]
 }

@@ -29,7 +29,7 @@
       "group_id": "governance_backlog",
       "title": "Canonical backlog classification and governance pack",
       "status": "DONE_NOW",
-      "timing_bucket": "required before 45K",
+      "timing_bucket": "required before a real main run",
       "plan_covered": true,
       "blocks_45k_readiness": false,
       "mapped_categories": [
@@ -44,14 +44,14 @@
         "reports/final_backlog_missing_items.md"
       ],
       "what_is_done": "The working tree now has a canonical grouped backlog view instead of relying only on the raw 2140-item matrix.",
-      "still_missing": "This grouped truth layer does not replace the raw matrix or the future real-run evidence.",
+      "still_missing": "This grouped truth layer does not replace the raw matrix or the future checkpoint-bound evidence from the real owned training run.",
       "raw_item_count": 7
     },
     {
       "group_id": "source_of_truth_regime",
       "title": "Source-of-truth map, document ownership, and closure constitution",
       "status": "DONE_NOW",
-      "timing_bucket": "required before 45K",
+      "timing_bucket": "required before a real main run",
       "plan_covered": true,
       "blocks_45k_readiness": false,
       "mapped_categories": [
@@ -74,7 +74,7 @@
       "group_id": "claim_registry_truth_matrix",
       "title": "Claim registry and final truth matrix",
       "status": "DONE_NOW",
-      "timing_bucket": "required before 45K",
+      "timing_bucket": "required before a real main run",
       "plan_covered": true,
       "blocks_45k_readiness": false,
       "mapped_categories": [
@@ -86,14 +86,14 @@
         "scripts/check_doc_claim_consistency.py"
       ],
       "what_is_done": "Closure-critical claims now map to evidence, mode, and missing proof instead of living only as prose.",
-      "still_missing": "Real-run claims remain pending until the 45K run produces their artifacts.",
+      "still_missing": "Real-run claims remain pending until the real owned training run produces their artifacts.",
       "raw_item_count": 5
     },
     {
       "group_id": "code_truth_gate",
       "title": "Code-truth gate, maturity labels, and four-column done rule",
       "status": "DONE_NOW",
-      "timing_bucket": "required before 45K",
+      "timing_bucket": "required before a real main run",
       "plan_covered": true,
       "blocks_45k_readiness": false,
       "mapped_categories": [
@@ -115,7 +115,7 @@
       "group_id": "surface_lifecycle_regime",
       "title": "Frozen, maintained, and living surface policy",
       "status": "DONE_NOW",
-      "timing_bucket": "required before 45K",
+      "timing_bucket": "required before a real main run",
       "plan_covered": true,
       "blocks_45k_readiness": false,
       "mapped_categories": [
@@ -151,7 +151,7 @@
       "group_id": "closure_entrypoints",
       "title": "Canonical closure commands and current entrypoint mapping",
       "status": "DONE_NOW",
-      "timing_bucket": "required before 45K",
+      "timing_bucket": "required before a real main run",
       "plan_covered": true,
       "blocks_45k_readiness": false,
       "mapped_categories": [
@@ -170,15 +170,15 @@
         "reports/canonical_entrypoint.md",
         "reports/entrypoint_deprecation_map.md"
       ],
-      "what_is_done": "The repo now has a canonical zero-touch 45K launcher plus the existing verification and release ladders.",
-      "still_missing": "Real-run evidence remains separate from the command ladder and will appear only after the actual 45K run.",
+      "what_is_done": "The repo now has a canonical zero-touch main-run launcher plus the existing verification and release ladders.",
+      "still_missing": "Real-run evidence remains separate from the command ladder and will appear only after the actual owned training run.",
       "raw_item_count": 5
     },
     {
       "group_id": "readiness_gate",
       "title": "Exact train-readiness contract and blocker reason codes",
       "status": "DONE_NOW",
-      "timing_bucket": "required before 45K",
+      "timing_bucket": "required before a real main run",
       "plan_covered": true,
       "blocks_45k_readiness": false,
       "mapped_categories": [
@@ -199,7 +199,7 @@
       "group_id": "data_contract",
       "title": "Data pipeline contract, provenance, and tokenizer or teacher policy hardening",
       "status": "DONE_NOW",
-      "timing_bucket": "required before 45K",
+      "timing_bucket": "required before a real main run",
       "plan_covered": true,
       "blocks_45k_readiness": false,
       "mapped_categories": [
@@ -212,14 +212,14 @@
         "datasets/hashes.json"
       ],
       "what_is_done": "The stage1..stage5 JSONL files exist, the offline tokenizer cache is accepted, and the offline-clean data path is green.",
-      "still_missing": "Claim-grade corpus lineage, large-scale provenance, and the real 45K consumption journal remain post-run evidence.",
+      "still_missing": "Claim-grade corpus lineage, large-scale provenance, and the real owned training-run consumption journal remain post-run evidence.",
       "raw_item_count": 2
     },
     {
       "group_id": "handoff_and_freeze",
       "title": "Freeze manifests and canonical handoff surfaces",
       "status": "DONE_NOW",
-      "timing_bucket": "required before 45K",
+      "timing_bucket": "required before a real main run",
       "plan_covered": true,
       "blocks_45k_readiness": false,
       "mapped_categories": [
@@ -232,14 +232,14 @@
         "reports/closure_risk_register.md"
       ],
       "what_is_done": "Freeze and handoff surfaces exist and refresh with the closure flow.",
-      "still_missing": "They still need the real 45K outputs to become final release evidence.",
+      "still_missing": "They still need the real trained outputs to become final release evidence.",
       "raw_item_count": 3
     },
     {
       "group_id": "zero_touch_train_end",
       "title": "Zero-touch train-end orchestration and post-train autorun",
       "status": "DONE_NOW",
-      "timing_bucket": "required before 45K",
+      "timing_bucket": "required before a real main run",
       "plan_covered": true,
       "blocks_45k_readiness": false,
       "mapped_categories": [],
@@ -262,7 +262,7 @@
       "group_id": "real_run_outputs",
       "title": "Trained outputs, benchmark evidence, demos, and final release artifacts",
       "status": "EXTERNAL_DEPENDENCY",
-      "timing_bucket": "only completable after the real 45K run",
+      "timing_bucket": "required before application readiness",
       "plan_covered": true,
       "blocks_45k_readiness": false,
       "mapped_categories": [
@@ -273,14 +273,14 @@
         "reports/train_readiness_decision.md"
       ],
       "what_is_done": "The repo now names these artifacts explicitly as post-run evidence rather than pretending they already exist.",
-      "still_missing": "Trained final weights, best and latest checkpoints, benchmark summaries, demo bundle, evidence pack, and trained release package.",
+      "still_missing": "A real owned training run, trained final weights, best and latest checkpoints, benchmark summaries, demo bundle, and checkpoint-bound evidence pack are still missing.",
       "raw_item_count": 1
     },
     {
       "group_id": "phase2_compute_and_scaleup",
       "title": "XLA or TPU, cloud expansion, and long-horizon scale-up work",
       "status": "PHASE2",
-      "timing_bucket": "not required for 45K readiness",
+      "timing_bucket": "not required for application readiness",
       "plan_covered": true,
       "blocks_45k_readiness": false,
       "mapped_categories": [
@@ -297,7 +297,7 @@
       "group_id": "commercial_legal_gtm_band",
       "title": "Company, legal, GTM, investor, and operational mega-band",
       "status": "PHASE2",
-      "timing_bucket": "not required for 45K readiness",
+      "timing_bucket": "not required for application readiness",
       "plan_covered": true,
       "blocks_45k_readiness": false,
       "mapped_categories": [],

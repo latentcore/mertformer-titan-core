@@ -1564,6 +1564,17 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── ADR-0001-source-of-truth-and-claim-boundary.md  # dokümantasyon/rapor dosyası
 │   ├── ADR-0002-change-control-and-closure-governance.md  # dokümantasyon/rapor dosyası
 │   └── ADR-0003-chess-oneclick-delivery-runtime-contract.md  # dokümantasyon/rapor dosyası
+├── applications/  # dizin
+│   └── anthropic/  # dizin
+│       ├── README.md  # ana dokümantasyon (EN)
+│       ├── interview_prep.md  # dokümantasyon/rapor dosyası
+│       ├── measured_evidence_summary.md  # dokümantasyon/rapor dosyası
+│       ├── performance_engineer_fallback.md  # dokümantasyon/rapor dosyası
+│       ├── project_summary.md  # dokümantasyon/rapor dosyası
+│       ├── science_of_scaling_cv_seed.md  # dokümantasyon/rapor dosyası
+│       ├── strongest_stories.md  # dokümantasyon/rapor dosyası
+│       ├── tokens_variant_notes.md  # dokümantasyon/rapor dosyası
+│       └── why_anthropic_science_of_scaling.md  # dokümantasyon/rapor dosyası
 ├── apps/  # dizin
 │   └── chess_gui/  # dizin
 │       ├── checkpoints/  # dizin
@@ -1858,6 +1869,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── chess_gui_onefile_sync_report.md  # dokümantasyon/rapor dosyası
 │   ├── chess_onefile_extension_report.json  # JSON veri artefaktı
 │   ├── chess_onefile_extension_report.md  # dokümantasyon/rapor dosyası
+│   ├── chess_proof_teaching_case_study.md  # dokümantasyon/rapor dosyası
 │   ├── chess_teaching_contract_report.json  # JSON veri artefaktı
 │   ├── chess_teaching_contract_report.md  # dokümantasyon/rapor dosyası
 │   ├── chess_training_readiness_report.json  # JSON veri artefaktı
@@ -1919,6 +1931,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── exit_code_standard.md  # dokümantasyon/rapor dosyası
 │   ├── expected_artifacts_list.md  # dokümantasyon/rapor dosyası
 │   ├── export_validation_report.json  # JSON veri artefaktı
+│   ├── external_readability_checklist.md  # dokümantasyon/rapor dosyası
 │   ├── fallback_policy_report.json  # JSON veri artefaktı
 │   ├── feature_flag_governance.md  # dokümantasyon/rapor dosyası
 │   ├── file_state_inventory.json  # JSON veri artefaktı
@@ -1977,6 +1990,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── model_health.md  # dokümantasyon/rapor dosyası
 │   ├── model_health_TR.md  # Türkçe doküman karşılığı
 │   ├── model_health_final.md  # dokümantasyon/rapor dosyası
+│   ├── offline_assistant_case_study.md  # dokümantasyon/rapor dosyası
 │   ├── one_command_full_sop.log  # metin/log artefaktı (tek komut uçtan uca SOP ham logu; her çalıştırmada üzerine yazılır)
 │   ├── one_command_full_sop_summary.md  # dokümantasyon/rapor dosyası (tek komut uçtan uca SOP özeti; her çalıştırmada üzerine yazılır)
 │   ├── one_pager.md  # dokümantasyon/rapor dosyası
@@ -2050,6 +2064,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── system_hardware_TR.md  # Türkçe doküman karşılığı
 │   ├── system_memory_policy.md  # dokümantasyon/rapor dosyası
 │   ├── system_stats.jsonl  # JSONL veri/log artefaktı
+│   ├── systems_performance_case_study.md  # dokümantasyon/rapor dosyası
 │   ├── target_machine_handoff_manifest.json  # JSON veri artefaktı
 │   ├── target_machine_handoff_manifest.md  # dokümantasyon/rapor dosyası
 │   ├── teacher_decision_record.md  # dokümantasyon/rapor dosyası
@@ -2326,6 +2341,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── SDK_GUIDE_TR.md  # Türkçe doküman karşılığı
 ├── SECURITY.md  # dokümantasyon/rapor dosyası
 ├── SECURITY_TR.md  # Türkçe doküman karşılığı
+├── START_HERE.md  # dokümantasyon/rapor dosyası
 ├── TASK.md  # dokümantasyon/rapor dosyası
 ├── TASK_TR.md  # Türkçe doküman karşılığı
 ├── TECHNICAL_REPORT.md  # dokümantasyon/rapor dosyası
