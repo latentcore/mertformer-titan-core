@@ -30,6 +30,26 @@ Latency is the time one unit of work takes; throughput is sustained work rate; u
 ### Trustworthy External Narration
 I want a real artifact chain: run identity, checkpoint identity, benchmark or raw outputs, and docs that match those artifacts. If that chain does not exist, I keep the claim in target or future-work territory.
 
+## Gaps To Say Clearly
+- I do not yet have a real owned long-run checkpoint story for this repo.
+- The offline-clean dataset lane closes the repo contract, but it is not a claim of large-scale ETL ownership.
+- Some eval surfaces are deterministic mini harnesses for discipline and contracts, not frontier-grade capability benchmarks.
+- My fit is strongest on systems rigor, evidence hygiene, and research engineering instincts rather than on claiming that I have already operated Anthropic-scale training infrastructure alone.
+
+## Evidence To Keep Primary
+- `applications/anthropic/application_strategy.md`
+- `applications/anthropic/project_summary.md`
+- `applications/anthropic/measured_evidence_summary.md`
+- `START_HERE.md`
+- `docs/PROJECT_MASTER_TRUTH.md`
+- `reports/final_truth_matrix.md`
+- `reports/known_limits_v1.md`
+
+## Evidence To Keep Secondary
+- `TECHNICAL_REPORT.md`
+- forecast or architecture-rationale reports
+- any document that sounds larger than the current checkpoint-bound evidence
+
 ## Three-Minute Repo Pitch
 MertFormer Titan is an offline-first AI systems repository. The current repo is a pilot-ready pre-training baseline, not a finished trained-model release. The strongest signals are a claim-safe verification surface, a train-readiness contract that currently reports TRAIN_ALLOWED with READY_OFFLINE_CLEAN, a low-bit and multi-backend runtime lane with explicit fallback semantics, an offline assistant foundation built around governed local retrieval, and a chess proof lane that treats benchmark honesty as a feature rather than a liability. The main missing class is post-run evidence: a real training run, trained checkpoints, checkpoint-bound benchmarks, a trained demo bundle, and trained export measurements.
 

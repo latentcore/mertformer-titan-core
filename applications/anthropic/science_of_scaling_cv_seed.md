@@ -10,7 +10,7 @@ Email: add current email
 Research Engineer, Science of Scaling
 
 ## Profile
-Systems-focused ML engineer interested in training efficiency, experiment discipline, low-bit runtime paths, offline-first AI systems, and claim-safe evaluation. Built and hardened a large independent repository that separates measured evidence from projections, keeps backend fallback semantics explicit, and packages verification and readiness outputs as first-class engineering artifacts.
+Systems-focused ML engineer interested in training efficiency, experiment discipline, low-bit runtime paths, offline-first AI systems, and claim-safe evaluation. Built and hardened a large independent repository that separates measured evidence from projections, keeps backend fallback semantics explicit, and packages verification and readiness outputs as first-class engineering artifacts. Best framed as a research engineer who cares about turning compute into trustworthy signal.
 
 ## Selected Experience
 ### MertFormer Titan - Independent Systems and ML Project
@@ -26,6 +26,12 @@ Systems-focused ML engineer interested in training efficiency, experiment discip
 - explicit measured-vs-unmeasured evidence discipline
 - low-bit runtime and backend-routing contract design
 - large-codebase closure, truth-sync, and verification hardening
+
+## Do Not Claim In The CV
+- benchmark-verified trained-model quality
+- distributed training at Anthropic scale
+- large-scale ETL ownership beyond what repo evidence can support
+- JAX or accelerator-specific expertise unless supported outside this repo too
 
 ## Notes For Final CV Pass
 - Replace generic wording with exact GitHub URL and any externally visible artifacts.

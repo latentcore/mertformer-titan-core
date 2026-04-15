@@ -29,6 +29,7 @@ def patched_cfg():
     orig_nh = cfg.num_heads
     orig_hd = cfg.head_dim
     orig_kv = getattr(cfg, "num_kv_heads", orig_nh)
+    orig_msl = cfg.max_seq_len
     
     # Set tiny values
     cfg.hidden_size = 128
@@ -37,6 +38,7 @@ def patched_cfg():
     cfg.num_experts_per_tok = 2
     cfg.active_experts = 2 # Sync alias
     cfg.device = "cpu"
+    cfg.max_seq_len = 128
     
     # [FIX] Ensure MLA shape consistency: 4 * 32 = 128
     cfg.num_heads = 4
@@ -56,6 +58,7 @@ def patched_cfg():
     cfg.num_heads = orig_nh
     cfg.head_dim = orig_hd
     cfg.num_kv_heads = orig_kv
+    cfg.max_seq_len = orig_msl
 
 # -----------------------------------------------------------------------------
 # 1. BITNET 1.58-BIT INTEGRITY TEST

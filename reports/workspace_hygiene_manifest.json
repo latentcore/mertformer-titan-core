@@ -1,6 +1,6 @@
 {
   "schema": "workspace_hygiene_manifest_v1",
-  "generated_utc": "2026-04-14T22:30:00Z",
+  "generated_utc": "2026-04-15T13:02:55Z",
   "mode": "audit_only",
   "workspace_root": "<WORKSPACE_ROOT>",
   "repo_root": "<REPO_ROOT>",
@@ -32,6 +32,13 @@
       "classification": "external_workspace_entry",
       "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
       "restore_target": "<WORKSPACE_ROOT>/adb_pull",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/anthropic_closure_private",
+      "classification": "external_workspace_entry",
+      "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
+      "restore_target": "<WORKSPACE_ROOT>/anthropic_closure_private",
       "decision_state": "quarantine_first"
     },
     {
