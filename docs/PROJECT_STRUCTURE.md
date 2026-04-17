@@ -299,6 +299,10 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   ├── ownership_and_role_TR.md  # Turkish document counterpart
 │   │   ├── sla_kpi_90_180.md  # documentation/report file
 │   │   └── sla_kpi_90_180_TR.md  # Turkish document counterpart
+│   ├── outreach/  # directory
+│   │   ├── github_release_post.md  # documentation/report file
+│   │   ├── huggingface_launch.md  # documentation/report file
+│   │   └── reddit_post.md  # documentation/report file
 │   ├── pilots/  # directory
 │   │   ├── README.md  # primary documentation (EN)
 │   │   └── README_TR.md  # Turkish document counterpart
@@ -634,6 +638,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── golden_score.py  # Python module/script (automation script for golden score)
 │   ├── hardening_bundle.py  # Python module/script (automation script for hardening bundle)
 │   ├── hash_manifest_to_json.py  # Python module/script (automation script for hash manifest to json)
+│   ├── kaggle_onefile_closure_build30.py  # Python module/script (automation script for kaggle onefile closure build30)
 │   ├── kaggle_onefile_demo_build30.py  # Python module/script (automation script for kaggle onefile demo build30)
 │   ├── kaggle_onefile_demo_build30_colab_math_fastproof.py  # Python module/script (automation script for kaggle onefile demo build30 colab math fastproof)
 │   ├── kaggle_onefile_demo_build30_text_understanding.py  # Python module/script (automation script for kaggle onefile demo build30 text understanding)
@@ -641,6 +646,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── linkcheck_gate.py  # Python module/script (automation script for linkcheck gate)
 │   ├── logbook_build.py  # Python module/script (automation script for logbook build)
 │   ├── mac_simulation.py  # Python module/script (automation script for mac simulation)
+│   ├── macos_keepawake.sh  # shell automation script
 │   ├── mathfp_interactive_chat.py  # Python module/script (automation script for mathfp interactive chat)
 │   ├── md_build30_sweep.py  # Python module/script (automation script for md build30 sweep)
 │   ├── md_integrity_check.py  # Python module/script (automation script for md integrity check)
@@ -713,6 +719,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_export_metadata.py  # Python module/script (automated test module for export metadata)
 │   ├── test_final_orchestrator_cli.py  # Python module/script (automated test module for final orchestrator cli)
 │   ├── test_kaggle_compare_script.py  # Python module/script (automated test module for kaggle compare script)
+│   ├── test_kaggle_onefile_closure_build30.py  # Python module/script (automated test module for kaggle onefile closure build30)
 │   ├── test_kaggle_onefile_colab_math_fastproof.py  # Python module/script (automated test module for kaggle onefile colab math fastproof)
 │   ├── test_kaggle_onefile_compile_guard.py  # Python module/script (automated test module for kaggle onefile compile guard)
 │   ├── test_kaggle_onefile_config.py  # Python module/script (automated test module for kaggle onefile config)
@@ -826,6 +833,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── WHITE_PAPER_LIQUIDROUTER.md  # documentation/report file
 ├── WHITE_PAPER_LIQUIDROUTER_TR.md  # Turkish document counterpart
 ├── conftest.py  # Python module/script (module for conftest)
+├── launch_mertformer_kaggle_closure.command  # artifact
 ├── pyproject.toml  # project metadata
 ├── requirements.txt  # text artifact
 ├── run.sh  # shell automation script

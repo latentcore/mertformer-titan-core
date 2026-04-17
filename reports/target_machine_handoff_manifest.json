@@ -1,6 +1,6 @@
 {
   "schema": "target_machine_handoff_manifest_v1",
-  "generated_utc": "2026-04-17T14:35:54Z",
+  "generated_utc": "2026-04-17T14:56:32Z",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "train_allowed": true,
   "decision_reason_code": "READY_OFFLINE_CLEAN",
@@ -25,8 +25,8 @@
     },
     {
       "path": "scripts/kaggle_onefile_closure_build30.py",
-      "size_bytes": 40382,
-      "sha256": "7bf53c788bb4700894237ddc8cd2433b44ba828a5c900a83f87bcd53e7bc82a0"
+      "size_bytes": 40564,
+      "sha256": "40a9abd72020ebeb3d51e46f4656d434d8b765cda2d2340e49e2eae8ea4200da"
     },
     {
       "path": "scripts/macos_keepawake.sh",
@@ -60,13 +60,13 @@
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 3501,
-      "sha256": "975ee021dbb375696cded721b16ceacda126931a8914734204bed34cee11ac6d"
+      "size_bytes": 2381,
+      "sha256": "0b7db7d123d027ade18562c48ffb7decbe73bf22dec0d368cd9cbc9fadab5322"
     },
     {
       "path": "reports/start_gate_operator_decision.json",
       "size_bytes": 1171,
-      "sha256": "096db420ab8b8604e86bab12ea31c7444c2b61374aa23c899e130279ebfca2dd"
+      "sha256": "3ef029c69e98bc8c4afc4d23576ba7ed554dea6662ef568a0168a9ded2e41469"
     },
     {
       "path": "reports/start_gate_operator_decision.md",
@@ -76,7 +76,7 @@
     {
       "path": "reports/repo_external_handoff.md",
       "size_bytes": 1468,
-      "sha256": "987564481d8a8461da3dd98172e790066775c257d25d6a995cfe42974aef1ceb"
+      "sha256": "4b718a62a74cf6185a2de97aaf9df77d145702d83e42df24607ea726886dc273"
     }
   ],
   "operator_steps": [

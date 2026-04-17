@@ -816,10 +816,10 @@ def package_existing_run(
         text_result=None,
         snapshot=snapshot,
     )
-    build_bundle(layout)
     index_payload = build_artifact_index(layout.run_dir, layout.canonical_artifact_index_path, extra_skip={layout.canonical_bundle_path})
     build_sha256_manifest(index_payload, layout.canonical_sha256_manifest_path)
     package_manifest = build_package_manifest(layout, summary, index_payload)
+    build_bundle(layout)
     payload = {
         "schema": SCHEMA,
         "generated_at_utc": utc_now(),
@@ -911,7 +911,7 @@ def main() -> int:
             run_dir=run_dir,
             auxiliary_dir=run_dir / "auxiliary",
             closure_dir=run_dir / "closure",
-            report_out=layout.report_out,
+            report_out=(Path(args.report_out).expanduser() if args.report_out else (run_dir / "closure" / "canonical_status.json")),
             canonical_summary_path=run_dir / "closure" / "canonical_closure_summary.json",
             canonical_summary_md_path=run_dir / "closure" / "canonical_closure_summary.md",
             first100_snapshot_path=run_dir / "closure" / "first_100_step_loss_snapshot.json",
@@ -982,7 +982,7 @@ def main() -> int:
         run_dir=run_dir,
         auxiliary_dir=run_dir / "auxiliary",
         closure_dir=run_dir / "closure",
-        report_out=layout.report_out,
+        report_out=(Path(args.report_out).expanduser() if args.report_out else (run_dir / "closure" / "canonical_status.json")),
         canonical_summary_path=run_dir / "closure" / "canonical_closure_summary.json",
         canonical_summary_md_path=run_dir / "closure" / "canonical_closure_summary.md",
         first100_snapshot_path=run_dir / "closure" / "first_100_step_loss_snapshot.json",
@@ -1007,10 +1007,10 @@ def main() -> int:
         text_result=text_result,
         snapshot=snapshot,
     )
-    build_bundle(layout)
     index_payload = build_artifact_index(layout.run_dir, layout.canonical_artifact_index_path, extra_skip={layout.canonical_bundle_path})
     build_sha256_manifest(index_payload, layout.canonical_sha256_manifest_path)
     package_manifest = build_package_manifest(layout, summary, index_payload)
+    build_bundle(layout)
     repo_posttrain = maybe_refresh_repo_posttrain(checkpoint) if args.refresh_repo_posttrain else None
 
     payload = {

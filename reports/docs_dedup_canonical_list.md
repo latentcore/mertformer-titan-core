@@ -67,6 +67,7 @@ Generated automatically.
 - `adr/ADR-0002-change-control-and-closure-governance.md`
 - `adr/ADR-0003-chess-oneclick-delivery-runtime-contract.md`
 - `applications/anthropic/README.md`
+- `applications/anthropic/application_strategy.md`
 - `applications/anthropic/interview_prep.md`
 - `applications/anthropic/measured_evidence_summary.md`
 - `applications/anthropic/performance_engineer_fallback.md`
@@ -320,6 +321,9 @@ Generated automatically.
 - `reports/one_command_full_sop_summary.md`
 - `reports/one_pager.md`
 - `reports/one_pager_TR.md`
+- `reports/outreach/github_release_post.md`
+- `reports/outreach/huggingface_launch.md`
+- `reports/outreach/reddit_post.md`
 - `reports/owner_matrix.md`
 - `reports/package_validation_report.md`
 - `reports/param_accounting_report.md`

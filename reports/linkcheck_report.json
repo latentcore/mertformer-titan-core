@@ -1,9 +1,1920 @@
 {
-  "generated_utc": "2026-04-14T22:28:34.485502+00:00",
+  "generated_utc": "2026-04-17T14:56:48.600991+00:00",
   "root": ".",
-  "scope": "release_core",
-  "md_file_count": 12,
-  "missing_link_count": 0,
-  "findings": [],
-  "ok": true
+  "scope": "all",
+  "md_file_count": 415,
+  "missing_link_count": 475,
+  "findings": [
+    {
+      "path": "documents/README_TR_before_final_simplification.md",
+      "missing_links": [
+        {
+          "line": 15,
+          "missing": "START_HERE.md"
+        },
+        {
+          "line": 16,
+          "missing": "docs/PROJECT_MASTER_TRUTH.md"
+        },
+        {
+          "line": 17,
+          "missing": "docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md"
+        },
+        {
+          "line": 18,
+          "missing": "docs/PROJECT_MASTER_TRUTH_TR.md"
+        },
+        {
+          "line": 19,
+          "missing": "reports/final_truth_matrix.md"
+        },
+        {
+          "line": 20,
+          "missing": "reports/known_limits_v1.md"
+        },
+        {
+          "line": 21,
+          "missing": "reports/systems_performance_case_study.md"
+        },
+        {
+          "line": 22,
+          "missing": "reports/offline_assistant_case_study.md"
+        },
+        {
+          "line": 23,
+          "missing": "reports/chess_proof_teaching_case_study.md"
+        },
+        {
+          "line": 24,
+          "missing": "applications/anthropic/README.md"
+        },
+        {
+          "line": 53,
+          "missing": "assets/header.png"
+        },
+        {
+          "line": 243,
+          "missing": "LICENSE"
+        },
+        {
+          "line": 243,
+          "missing": "LICENSE_TR"
+        },
+        {
+          "line": 291,
+          "missing": "README.md"
+        },
+        {
+          "line": 292,
+          "missing": "README_TR.md"
+        },
+        {
+          "line": 293,
+          "missing": "CITATION.cff"
+        },
+        {
+          "line": 294,
+          "missing": "CONTRIBUTING.md"
+        },
+        {
+          "line": 295,
+          "missing": "CONTRIBUTING_TR.md"
+        },
+        {
+          "line": 296,
+          "missing": "README_CHECKLIST.md"
+        },
+        {
+          "line": 297,
+          "missing": "README_CHECKLIST_TR.md"
+        },
+        {
+          "line": 298,
+          "missing": "scripts/README.md"
+        },
+        {
+          "line": 299,
+          "missing": "scripts/README_TR.md"
+        },
+        {
+          "line": 300,
+          "missing": "snake_demo.py"
+        },
+        {
+          "line": 301,
+          "missing": "USAGE_GUIDE.md"
+        },
+        {
+          "line": 302,
+          "missing": "USAGE_GUIDE_TR.md"
+        },
+        {
+          "line": 303,
+          "missing": "TROUBLESHOOTING.md"
+        },
+        {
+          "line": 304,
+          "missing": "TROUBLESHOOTING_TR.md"
+        },
+        {
+          "line": 305,
+          "missing": "MODEL_LICENSE.md"
+        },
+        {
+          "line": 306,
+          "missing": "MODEL_LICENSE_TR.md"
+        },
+        {
+          "line": 307,
+          "missing": ".env.example"
+        },
+        {
+          "line": 308,
+          "missing": "docs/CHAIN_MAP.md"
+        },
+        {
+          "line": 309,
+          "missing": "docs/CHAIN_MAP_TR.md"
+        },
+        {
+          "line": 310,
+          "missing": "reports/commercial_handover/known_issues.md"
+        },
+        {
+          "line": 311,
+          "missing": "reports/commercial_handover/known_issues_TR.md"
+        },
+        {
+          "line": 312,
+          "missing": "reports/commercial_handover/handover_scope.md"
+        },
+        {
+          "line": 313,
+          "missing": "reports/commercial_handover/handover_scope_TR.md"
+        },
+        {
+          "line": 314,
+          "missing": "reports/commercial_handover/ownership_and_role.md"
+        },
+        {
+          "line": 315,
+          "missing": "reports/commercial_handover/ownership_and_role_TR.md"
+        },
+        {
+          "line": 316,
+          "missing": "reports/commercial_handover/sla_kpi_90_180.md"
+        },
+        {
+          "line": 317,
+          "missing": "reports/commercial_handover/sla_kpi_90_180_TR.md"
+        },
+        {
+          "line": 318,
+          "missing": "reports/commercial_handover/contract_terms_checklist.md"
+        },
+        {
+          "line": 319,
+          "missing": "reports/commercial_handover/contract_terms_checklist_TR.md"
+        },
+        {
+          "line": 323,
+          "missing": "mertformer_sdk/"
+        },
+        {
+          "line": 324,
+          "missing": "SDK_GUIDE.md"
+        },
+        {
+          "line": 325,
+          "missing": "SDK_GUIDE_TR.md"
+        },
+        {
+          "line": 329,
+          "missing": "TASK.md"
+        },
+        {
+          "line": 330,
+          "missing": "TASK_TR.md"
+        },
+        {
+          "line": 331,
+          "missing": "IMPLEMENTATION_PLAN.md"
+        },
+        {
+          "line": 332,
+          "missing": "IMPLEMENTATION_PLAN_TR.md"
+        },
+        {
+          "line": 333,
+          "missing": "TRAINING_PLAN.md"
+        },
+        {
+          "line": 334,
+          "missing": "TRAINING_PLAN_TR.md"
+        },
+        {
+          "line": 335,
+          "missing": "CHANGELOG.md"
+        },
+        {
+          "line": 336,
+          "missing": "CHANGELOG_TR.md"
+        },
+        {
+          "line": 340,
+          "missing": "TECHNICAL_REPORT.md"
+        },
+        {
+          "line": 341,
+          "missing": "TECHNICAL_REPORT_TR.md"
+        },
+        {
+          "line": 342,
+          "missing": "WHITE_PAPER_LIQUIDROUTER.md"
+        },
+        {
+          "line": 343,
+          "missing": "WHITE_PAPER_LIQUIDROUTER_TR.md"
+        },
+        {
+          "line": 347,
+          "missing": "INTERNAL_AGI_GAP.md"
+        },
+        {
+          "line": 348,
+          "missing": "INTERNAL_AGI_GAP_TR.md"
+        },
+        {
+          "line": 352,
+          "missing": "reports/report_accuracy_audit.md"
+        },
+        {
+          "line": 353,
+          "missing": "reports/report_accuracy_audit_TR.md"
+        },
+        {
+          "line": 354,
+          "missing": "reports/codex_deep_audit_EN.md"
+        },
+        {
+          "line": 355,
+          "missing": "reports/codex_deep_audit_DE.md"
+        },
+        {
+          "line": 356,
+          "missing": "reports/codex_deep_audit_TR.md"
+        },
+        {
+          "line": 357,
+          "missing": "reports/codex_deep_audit_EN_TR.md"
+        },
+        {
+          "line": 358,
+          "missing": "reports/codex_deep_audit_DE_TR.md"
+        },
+        {
+          "line": 360,
+          "missing": "reports/verified_matrix.md"
+        },
+        {
+          "line": 361,
+          "missing": "reports/verified_matrix_TR.md"
+        },
+        {
+          "line": 362,
+          "missing": "reports/review_checklist.md"
+        },
+        {
+          "line": 363,
+          "missing": "reports/review_checklist_TR.md"
+        },
+        {
+          "line": 364,
+          "missing": "reports/release_snapshot.md"
+        },
+        {
+          "line": 365,
+          "missing": "reports/release_snapshot_TR.md"
+        },
+        {
+          "line": 366,
+          "missing": "reports/final_sync_matrix.md"
+        },
+        {
+          "line": 367,
+          "missing": "reports/final_sync_matrix_TR.md"
+        },
+        {
+          "line": 368,
+          "missing": "reports/go_status_matrix.md"
+        },
+        {
+          "line": 369,
+          "missing": "reports/go_status_matrix_TR.md"
+        },
+        {
+          "line": 370,
+          "missing": "reports/go_nogo_signoff_onepager.md"
+        },
+        {
+          "line": 371,
+          "missing": "reports/go_nogo_signoff_onepager_TR.md"
+        },
+        {
+          "line": 372,
+          "missing": "reports/closure_57_matrix.md"
+        },
+        {
+          "line": 373,
+          "missing": "reports/closure_57_matrix_TR.md"
+        },
+        {
+          "line": 374,
+          "missing": "reports/report_truth_matrix.md"
+        },
+        {
+          "line": 375,
+          "missing": "AGENTS.md"
+        },
+        {
+          "line": 376,
+          "missing": "reports/source_of_truth_map.md"
+        },
+        {
+          "line": 377,
+          "missing": "reports/final_backlog_classification.md"
+        },
+        {
+          "line": 378,
+          "missing": "reports/final_truth_matrix.md"
+        },
+        {
+          "line": 379,
+          "missing": "reports/release_closure_note.md"
+        },
+        {
+          "line": 380,
+          "missing": "reports/kpi_pack_v1.md"
+        },
+        {
+          "line": 381,
+          "missing": "reports/kpi_pack_v1_TR.md"
+        },
+        {
+          "line": 382,
+          "missing": "reports/cleanroom_verification.md"
+        },
+        {
+          "line": 383,
+          "missing": "reports/cleanroom_verification_TR.md"
+        },
+        {
+          "line": 384,
+          "missing": "reports/legal_cleanroom_signoff_internal.md"
+        },
+        {
+          "line": 385,
+          "missing": "reports/teacher_output_license_assessment.md"
+        },
+        {
+          "line": 386,
+          "missing": "reports/contamination_report_build30.md"
+        },
+        {
+          "line": 387,
+          "missing": "reports/kpi_contract_build30.md"
+        },
+        {
+          "line": 388,
+          "missing": "reports/benchmarks/README.md"
+        },
+        {
+          "line": 389,
+          "missing": "reports/benchmarks/README_TR.md"
+        },
+        {
+          "line": 390,
+          "missing": "reports/benchmarks/smoke_train_metrics.json"
+        },
+        {
+          "line": 391,
+          "missing": "reports/strategic_value.md"
+        },
+        {
+          "line": 392,
+          "missing": "reports/strategic_value_TR.md"
+        },
+        {
+          "line": 393,
+          "missing": "reports/efficiency_convergence_analysis.md"
+        },
+        {
+          "line": 394,
+          "missing": "reports/efficiency_convergence_analysis_TR.md"
+        },
+        {
+          "line": 398,
+          "missing": "PITCH.md"
+        },
+        {
+          "line": 399,
+          "missing": "PITCH_TR.md"
+        },
+        {
+          "line": 400,
+          "missing": "reports/investor_deck.pptx"
+        },
+        {
+          "line": 401,
+          "missing": "reports/investor_deck_TR.pptx"
+        },
+        {
+          "line": 402,
+          "missing": "reports/one_pager.md"
+        },
+        {
+          "line": 403,
+          "missing": "reports/one_pager_TR.md"
+        },
+        {
+          "line": 404,
+          "missing": "reports/technical_snapshot.md"
+        },
+        {
+          "line": 405,
+          "missing": "reports/technical_snapshot_TR.md"
+        },
+        {
+          "line": 406,
+          "missing": "reports/asset_stack.md"
+        },
+        {
+          "line": 407,
+          "missing": "reports/asset_stack_TR.md"
+        },
+        {
+          "line": 408,
+          "missing": "assets/snake_demo_proof.mp4"
+        },
+        {
+          "line": 409,
+          "missing": "assets/snake_demo_preview.gif"
+        },
+        {
+          "line": 410,
+          "missing": "assets/sources/README.md"
+        },
+        {
+          "line": 411,
+          "missing": "assets/sources/README_TR.md"
+        },
+        {
+          "line": 413,
+          "missing": "assets/snake_demo_preview.gif"
+        },
+        {
+          "line": 415,
+          "missing": "assets/snake_demo_proof.mp4"
+        },
+        {
+          "line": 416,
+          "missing": "reports/founders_hub_application.md"
+        },
+        {
+          "line": 417,
+          "missing": "reports/founders_hub_application_TR.md"
+        },
+        {
+          "line": 418,
+          "missing": "reports/security_compliance.md"
+        },
+        {
+          "line": 419,
+          "missing": "reports/security_compliance_TR.md"
+        },
+        {
+          "line": 420,
+          "missing": "reports/poc_protocol.md"
+        },
+        {
+          "line": 421,
+          "missing": "reports/poc_protocol_TR.md"
+        },
+        {
+          "line": 422,
+          "missing": "reports/pilot_readiness_kit.md"
+        },
+        {
+          "line": 423,
+          "missing": "reports/pilot_readiness_kit_TR.md"
+        },
+        {
+          "line": 424,
+          "missing": "reports/pilot_offer_packages.md"
+        },
+        {
+          "line": 425,
+          "missing": "reports/pilot_offer_packages_TR.md"
+        },
+        {
+          "line": 426,
+          "missing": "reports/sales_funnel_90d.md"
+        },
+        {
+          "line": 427,
+          "missing": "reports/sales_funnel_90d_TR.md"
+        },
+        {
+          "line": 428,
+          "missing": "reports/drone_sitl_demo.md"
+        },
+        {
+          "line": 429,
+          "missing": "reports/drone_sitl_demo_TR.md"
+        },
+        {
+          "line": 430,
+          "missing": "reports/pilots/README.md"
+        },
+        {
+          "line": 431,
+          "missing": "reports/pilots/README_TR.md"
+        },
+        {
+          "line": 432,
+          "missing": "reports/pilot_acceptance_signoff.md"
+        },
+        {
+          "line": 433,
+          "missing": "reports/pilot_acceptance_signoff_TR.md"
+        },
+        {
+          "line": 434,
+          "missing": "reports/ip_licensing_split.md"
+        },
+        {
+          "line": 435,
+          "missing": "reports/ip_licensing_split_TR.md"
+        },
+        {
+          "line": 436,
+          "missing": "reports/dataset_health.md"
+        },
+        {
+          "line": 437,
+          "missing": "reports/dataset_health_TR.md"
+        },
+        {
+          "line": 438,
+          "missing": "reports/model_health.md"
+        },
+        {
+          "line": 439,
+          "missing": "reports/model_health_TR.md"
+        },
+        {
+          "line": 440,
+          "missing": "reports/system_hardware.md"
+        },
+        {
+          "line": 441,
+          "missing": "reports/system_hardware_TR.md"
+        },
+        {
+          "line": 442,
+          "missing": "reports/cli_smoke_log.md"
+        },
+        {
+          "line": 443,
+          "missing": "reports/cli_smoke_log_TR.md"
+        },
+        {
+          "line": 448,
+          "missing": "MODEL_CARD.md"
+        },
+        {
+          "line": 449,
+          "missing": "MODEL_CARD_TR.md"
+        },
+        {
+          "line": 450,
+          "missing": "USE_POLICY.md"
+        },
+        {
+          "line": 451,
+          "missing": "USE_POLICY_TR.md"
+        },
+        {
+          "line": 452,
+          "missing": "SECURITY.md"
+        },
+        {
+          "line": 453,
+          "missing": "SECURITY_TR.md"
+        },
+        {
+          "line": 454,
+          "missing": "DECISIONS.md"
+        },
+        {
+          "line": 455,
+          "missing": "DECISIONS_TR.md"
+        },
+        {
+          "line": 456,
+          "missing": "datasets/README.md"
+        },
+        {
+          "line": 457,
+          "missing": "datasets/README_TR.md"
+        },
+        {
+          "line": 458,
+          "missing": "datasets/SOURCES.md"
+        },
+        {
+          "line": 459,
+          "missing": "datasets/SOURCES_TR.md"
+        },
+        {
+          "line": 460,
+          "missing": "datasets/LICENSES.md"
+        },
+        {
+          "line": 461,
+          "missing": "datasets/LICENSES_TR.md"
+        },
+        {
+          "line": 462,
+          "missing": "datasets/inventory.md"
+        },
+        {
+          "line": 463,
+          "missing": "datasets/inventory_TR.md"
+        },
+        {
+          "line": 464,
+          "missing": "datasets/inventory.json"
+        },
+        {
+          "line": 465,
+          "missing": "repro/seed_policy.md"
+        },
+        {
+          "line": 466,
+          "missing": "repro/seed_policy_TR.md"
+        },
+        {
+          "line": 467,
+          "missing": "repro/python.md"
+        },
+        {
+          "line": 468,
+          "missing": "repro/python_TR.md"
+        },
+        {
+          "line": 469,
+          "missing": "repro/accelerate_default.yaml"
+        },
+        {
+          "line": 470,
+          "missing": "repro/pip_freeze.txt"
+        },
+        {
+          "line": 471,
+          "missing": "logs/README.md"
+        },
+        {
+          "line": 473,
+          "missing": ".github/workflows/ci.yml"
+        },
+        {
+          "line": 474,
+          "missing": "interfaces/inference_contract.md"
+        },
+        {
+          "line": 475,
+          "missing": "interfaces/inference_contract_TR.md"
+        },
+        {
+          "line": 476,
+          "missing": "interfaces/pilot_report_v1.schema.json"
+        },
+        {
+          "line": 477,
+          "missing": "economics/cost_model.md"
+        },
+        {
+          "line": 478,
+          "missing": "economics/cost_model_TR.md"
+        },
+        {
+          "line": 479,
+          "missing": "economics/efficiency_report.md"
+        },
+        {
+          "line": 480,
+          "missing": "economics/efficiency_report_TR.md"
+        },
+        {
+          "line": 481,
+          "missing": "limits/scaling_breakpoints.md"
+        },
+        {
+          "line": 482,
+          "missing": "limits/scaling_breakpoints_TR.md"
+        },
+        {
+          "line": 483,
+          "missing": "postmortems/README.md"
+        },
+        {
+          "line": 484,
+          "missing": "postmortems/README_TR.md"
+        },
+        {
+          "line": 485,
+          "missing": "postmortems/_template.md"
+        },
+        {
+          "line": 486,
+          "missing": "postmortems/_template_TR.md"
+        },
+        {
+          "line": 487,
+          "missing": "postmortems/example_001.md"
+        },
+        {
+          "line": 488,
+          "missing": "postmortems/example_001_TR.md"
+        },
+        {
+          "line": 489,
+          "missing": "prompts/changelog.md"
+        },
+        {
+          "line": 490,
+          "missing": "prompts/changelog_TR.md"
+        },
+        {
+          "line": 491,
+          "missing": "tokenizer/stats.md"
+        },
+        {
+          "line": 492,
+          "missing": "tokenizer/stats_TR.md"
+        },
+        {
+          "line": 493,
+          "missing": "tokenizer/drift_report.md"
+        },
+        {
+          "line": 494,
+          "missing": "tokenizer/drift_report_TR.md"
+        },
+        {
+          "line": 495,
+          "missing": "tokenizer/tr/README.md"
+        },
+        {
+          "line": 496,
+          "missing": "tokenizer/tr/README_TR.md"
+        },
+        {
+          "line": 497,
+          "missing": "ablations/results.md"
+        },
+        {
+          "line": 498,
+          "missing": "ablations/results_TR.md"
+        },
+        {
+          "line": 499,
+          "missing": "ablations/no_moe/README.md"
+        },
+        {
+          "line": 500,
+          "missing": "ablations/no_moe/README_TR.md"
+        },
+        {
+          "line": 501,
+          "missing": "ablations/no_liquid/README.md"
+        },
+        {
+          "line": 502,
+          "missing": "ablations/no_liquid/README_TR.md"
+        },
+        {
+          "line": 503,
+          "missing": "ablations/dense_only/README.md"
+        },
+        {
+          "line": 504,
+          "missing": "ablations/dense_only/README_TR.md"
+        },
+        {
+          "line": 505,
+          "missing": "ablations/bitlinear_off/README.md"
+        },
+        {
+          "line": 506,
+          "missing": "ablations/bitlinear_off/README_TR.md"
+        },
+        {
+          "line": 507,
+          "missing": "experiments/exp_001_baseline/notes.md"
+        },
+        {
+          "line": 508,
+          "missing": "experiments/exp_001_baseline/notes_TR.md"
+        },
+        {
+          "line": 509,
+          "missing": "tools/abuse_tests.md"
+        },
+        {
+          "line": 510,
+          "missing": "tools/abuse_tests_TR.md"
+        },
+        {
+          "line": 511,
+          "missing": "tools/sandbox/README.md"
+        },
+        {
+          "line": 512,
+          "missing": "tools/sandbox/README_TR.md"
+        },
+        {
+          "line": 513,
+          "missing": "tools/contracts/README.md"
+        },
+        {
+          "line": 514,
+          "missing": "tools/contracts/README_TR.md"
+        },
+        {
+          "line": 515,
+          "missing": "training_dynamics/cold_vs_warm.md"
+        },
+        {
+          "line": 516,
+          "missing": "training_dynamics/cold_vs_warm_TR.md"
+        },
+        {
+          "line": 539,
+          "missing": "docs/CHAIN_MAP_TR.md"
+        },
+        {
+          "line": 784,
+          "missing": "assets/synaptic_map.png"
+        },
+        {
+          "line": 1205,
+          "missing": "config/config.py"
+        },
+        {
+          "line": 2369,
+          "missing": "config/"
+        },
+        {
+          "line": 2369,
+          "missing": "layers/"
+        },
+        {
+          "line": 2369,
+          "missing": "model/"
+        },
+        {
+          "line": 2369,
+          "missing": "train/"
+        },
+        {
+          "line": 2369,
+          "missing": "utils/"
+        },
+        {
+          "line": 2370,
+          "missing": "mertformer_sdk/"
+        },
+        {
+          "line": 2370,
+          "missing": "scripts/"
+        },
+        {
+          "line": 2370,
+          "missing": "run.sh"
+        },
+        {
+          "line": 2371,
+          "missing": "datasets/"
+        },
+        {
+          "line": 2371,
+          "missing": "reports/"
+        },
+        {
+          "line": 2371,
+          "missing": "logs/"
+        },
+        {
+          "line": 2371,
+          "missing": "interfaces/"
+        },
+        {
+          "line": 2372,
+          "missing": "ablations/"
+        },
+        {
+          "line": 2372,
+          "missing": "experiments/"
+        },
+        {
+          "line": 2372,
+          "missing": "orchestrator/"
+        },
+        {
+          "line": 2372,
+          "missing": "economics/"
+        },
+        {
+          "line": 2372,
+          "missing": "limits/"
+        },
+        {
+          "line": 2373,
+          "missing": "README.md"
+        },
+        {
+          "line": 2373,
+          "missing": "README_TR.md"
+        },
+        {
+          "line": 2373,
+          "missing": "USAGE_GUIDE_TR.md"
+        },
+        {
+          "line": 2373,
+          "missing": "SDK_GUIDE_TR.md"
+        },
+        {
+          "line": 2387,
+          "missing": "LICENSE"
+        }
+      ]
+    },
+    {
+      "path": "documents/README_before_final_simplification.md",
+      "missing_links": [
+        {
+          "line": 15,
+          "missing": "START_HERE.md"
+        },
+        {
+          "line": 16,
+          "missing": "docs/PROJECT_MASTER_TRUTH.md"
+        },
+        {
+          "line": 17,
+          "missing": "docs/CHESS_ONEFILE_MASTER_TRUTH.md"
+        },
+        {
+          "line": 18,
+          "missing": "reports/final_truth_matrix.md"
+        },
+        {
+          "line": 19,
+          "missing": "reports/known_limits_v1.md"
+        },
+        {
+          "line": 20,
+          "missing": "reports/systems_performance_case_study.md"
+        },
+        {
+          "line": 21,
+          "missing": "reports/offline_assistant_case_study.md"
+        },
+        {
+          "line": 22,
+          "missing": "reports/chess_proof_teaching_case_study.md"
+        },
+        {
+          "line": 23,
+          "missing": "applications/anthropic/README.md"
+        },
+        {
+          "line": 52,
+          "missing": "assets/header.png"
+        },
+        {
+          "line": 250,
+          "missing": "LICENSE"
+        },
+        {
+          "line": 250,
+          "missing": "LICENSE_TR"
+        },
+        {
+          "line": 298,
+          "missing": "README.md"
+        },
+        {
+          "line": 299,
+          "missing": "README_TR.md"
+        },
+        {
+          "line": 300,
+          "missing": "CITATION.cff"
+        },
+        {
+          "line": 301,
+          "missing": "CONTRIBUTING.md"
+        },
+        {
+          "line": 302,
+          "missing": "CONTRIBUTING_TR.md"
+        },
+        {
+          "line": 303,
+          "missing": "README_CHECKLIST.md"
+        },
+        {
+          "line": 304,
+          "missing": "README_CHECKLIST_TR.md"
+        },
+        {
+          "line": 305,
+          "missing": "scripts/README.md"
+        },
+        {
+          "line": 306,
+          "missing": "scripts/README_TR.md"
+        },
+        {
+          "line": 307,
+          "missing": "snake_demo.py"
+        },
+        {
+          "line": 308,
+          "missing": "USAGE_GUIDE.md"
+        },
+        {
+          "line": 309,
+          "missing": "USAGE_GUIDE_TR.md"
+        },
+        {
+          "line": 310,
+          "missing": "TROUBLESHOOTING.md"
+        },
+        {
+          "line": 311,
+          "missing": "TROUBLESHOOTING_TR.md"
+        },
+        {
+          "line": 312,
+          "missing": "MODEL_LICENSE.md"
+        },
+        {
+          "line": 313,
+          "missing": "MODEL_LICENSE_TR.md"
+        },
+        {
+          "line": 314,
+          "missing": ".env.example"
+        },
+        {
+          "line": 315,
+          "missing": "docs/CHAIN_MAP.md"
+        },
+        {
+          "line": 316,
+          "missing": "docs/CHAIN_MAP_TR.md"
+        },
+        {
+          "line": 317,
+          "missing": "reports/commercial_handover/known_issues.md"
+        },
+        {
+          "line": 318,
+          "missing": "reports/commercial_handover/known_issues_TR.md"
+        },
+        {
+          "line": 319,
+          "missing": "reports/commercial_handover/handover_scope.md"
+        },
+        {
+          "line": 320,
+          "missing": "reports/commercial_handover/handover_scope_TR.md"
+        },
+        {
+          "line": 321,
+          "missing": "reports/commercial_handover/ownership_and_role.md"
+        },
+        {
+          "line": 322,
+          "missing": "reports/commercial_handover/ownership_and_role_TR.md"
+        },
+        {
+          "line": 323,
+          "missing": "reports/commercial_handover/sla_kpi_90_180.md"
+        },
+        {
+          "line": 324,
+          "missing": "reports/commercial_handover/sla_kpi_90_180_TR.md"
+        },
+        {
+          "line": 325,
+          "missing": "reports/commercial_handover/contract_terms_checklist.md"
+        },
+        {
+          "line": 326,
+          "missing": "reports/commercial_handover/contract_terms_checklist_TR.md"
+        },
+        {
+          "line": 330,
+          "missing": "mertformer_sdk/"
+        },
+        {
+          "line": 331,
+          "missing": "SDK_GUIDE.md"
+        },
+        {
+          "line": 332,
+          "missing": "SDK_GUIDE_TR.md"
+        },
+        {
+          "line": 336,
+          "missing": "TASK.md"
+        },
+        {
+          "line": 337,
+          "missing": "TASK_TR.md"
+        },
+        {
+          "line": 338,
+          "missing": "IMPLEMENTATION_PLAN.md"
+        },
+        {
+          "line": 339,
+          "missing": "IMPLEMENTATION_PLAN_TR.md"
+        },
+        {
+          "line": 340,
+          "missing": "TRAINING_PLAN.md"
+        },
+        {
+          "line": 341,
+          "missing": "TRAINING_PLAN_TR.md"
+        },
+        {
+          "line": 342,
+          "missing": "CHANGELOG.md"
+        },
+        {
+          "line": 343,
+          "missing": "CHANGELOG_TR.md"
+        },
+        {
+          "line": 347,
+          "missing": "TECHNICAL_REPORT.md"
+        },
+        {
+          "line": 348,
+          "missing": "TECHNICAL_REPORT_TR.md"
+        },
+        {
+          "line": 349,
+          "missing": "WHITE_PAPER_LIQUIDROUTER.md"
+        },
+        {
+          "line": 350,
+          "missing": "WHITE_PAPER_LIQUIDROUTER_TR.md"
+        },
+        {
+          "line": 354,
+          "missing": "INTERNAL_AGI_GAP.md"
+        },
+        {
+          "line": 355,
+          "missing": "INTERNAL_AGI_GAP_TR.md"
+        },
+        {
+          "line": 359,
+          "missing": "reports/report_accuracy_audit.md"
+        },
+        {
+          "line": 360,
+          "missing": "reports/report_accuracy_audit_TR.md"
+        },
+        {
+          "line": 361,
+          "missing": "reports/codex_deep_audit_EN.md"
+        },
+        {
+          "line": 362,
+          "missing": "reports/codex_deep_audit_DE.md"
+        },
+        {
+          "line": 363,
+          "missing": "reports/codex_deep_audit_TR.md"
+        },
+        {
+          "line": 364,
+          "missing": "reports/codex_deep_audit_EN_TR.md"
+        },
+        {
+          "line": 365,
+          "missing": "reports/codex_deep_audit_DE_TR.md"
+        },
+        {
+          "line": 367,
+          "missing": "reports/verified_matrix.md"
+        },
+        {
+          "line": 368,
+          "missing": "reports/verified_matrix_TR.md"
+        },
+        {
+          "line": 369,
+          "missing": "reports/review_checklist.md"
+        },
+        {
+          "line": 370,
+          "missing": "reports/review_checklist_TR.md"
+        },
+        {
+          "line": 371,
+          "missing": "reports/release_snapshot.md"
+        },
+        {
+          "line": 372,
+          "missing": "reports/release_snapshot_TR.md"
+        },
+        {
+          "line": 373,
+          "missing": "reports/final_sync_matrix.md"
+        },
+        {
+          "line": 374,
+          "missing": "reports/final_sync_matrix_TR.md"
+        },
+        {
+          "line": 375,
+          "missing": "reports/go_status_matrix.md"
+        },
+        {
+          "line": 376,
+          "missing": "reports/go_status_matrix_TR.md"
+        },
+        {
+          "line": 377,
+          "missing": "reports/go_nogo_signoff_onepager.md"
+        },
+        {
+          "line": 378,
+          "missing": "reports/go_nogo_signoff_onepager_TR.md"
+        },
+        {
+          "line": 379,
+          "missing": "reports/closure_57_matrix.md"
+        },
+        {
+          "line": 380,
+          "missing": "reports/closure_57_matrix_TR.md"
+        },
+        {
+          "line": 381,
+          "missing": "reports/report_truth_matrix.md"
+        },
+        {
+          "line": 382,
+          "missing": "AGENTS.md"
+        },
+        {
+          "line": 383,
+          "missing": "reports/source_of_truth_map.md"
+        },
+        {
+          "line": 384,
+          "missing": "reports/final_backlog_classification.md"
+        },
+        {
+          "line": 385,
+          "missing": "reports/final_truth_matrix.md"
+        },
+        {
+          "line": 386,
+          "missing": "reports/release_closure_note.md"
+        },
+        {
+          "line": 387,
+          "missing": "reports/kpi_pack_v1.md"
+        },
+        {
+          "line": 388,
+          "missing": "reports/kpi_pack_v1_TR.md"
+        },
+        {
+          "line": 389,
+          "missing": "reports/cleanroom_verification.md"
+        },
+        {
+          "line": 390,
+          "missing": "reports/cleanroom_verification_TR.md"
+        },
+        {
+          "line": 391,
+          "missing": "reports/legal_cleanroom_signoff_internal.md"
+        },
+        {
+          "line": 392,
+          "missing": "reports/teacher_output_license_assessment.md"
+        },
+        {
+          "line": 393,
+          "missing": "reports/contamination_report_build30.md"
+        },
+        {
+          "line": 394,
+          "missing": "reports/kpi_contract_build30.md"
+        },
+        {
+          "line": 395,
+          "missing": "reports/benchmarks/README.md"
+        },
+        {
+          "line": 396,
+          "missing": "reports/benchmarks/README_TR.md"
+        },
+        {
+          "line": 397,
+          "missing": "reports/benchmarks/smoke_train_metrics.json"
+        },
+        {
+          "line": 398,
+          "missing": "reports/strategic_value.md"
+        },
+        {
+          "line": 399,
+          "missing": "reports/strategic_value_TR.md"
+        },
+        {
+          "line": 400,
+          "missing": "reports/efficiency_convergence_analysis.md"
+        },
+        {
+          "line": 401,
+          "missing": "reports/efficiency_convergence_analysis_TR.md"
+        },
+        {
+          "line": 405,
+          "missing": "PITCH.md"
+        },
+        {
+          "line": 406,
+          "missing": "PITCH_TR.md"
+        },
+        {
+          "line": 407,
+          "missing": "reports/investor_deck.pptx"
+        },
+        {
+          "line": 408,
+          "missing": "reports/investor_deck_TR.pptx"
+        },
+        {
+          "line": 409,
+          "missing": "reports/one_pager.md"
+        },
+        {
+          "line": 410,
+          "missing": "reports/one_pager_TR.md"
+        },
+        {
+          "line": 411,
+          "missing": "reports/technical_snapshot.md"
+        },
+        {
+          "line": 412,
+          "missing": "reports/technical_snapshot_TR.md"
+        },
+        {
+          "line": 413,
+          "missing": "reports/asset_stack.md"
+        },
+        {
+          "line": 414,
+          "missing": "reports/asset_stack_TR.md"
+        },
+        {
+          "line": 415,
+          "missing": "assets/snake_demo_proof.mp4"
+        },
+        {
+          "line": 416,
+          "missing": "assets/snake_demo_preview.gif"
+        },
+        {
+          "line": 417,
+          "missing": "assets/sources/README.md"
+        },
+        {
+          "line": 418,
+          "missing": "assets/sources/README_TR.md"
+        },
+        {
+          "line": 420,
+          "missing": "assets/snake_demo_preview.gif"
+        },
+        {
+          "line": 422,
+          "missing": "assets/snake_demo_proof.mp4"
+        },
+        {
+          "line": 423,
+          "missing": "reports/founders_hub_application.md"
+        },
+        {
+          "line": 424,
+          "missing": "reports/founders_hub_application_TR.md"
+        },
+        {
+          "line": 425,
+          "missing": "reports/security_compliance.md"
+        },
+        {
+          "line": 426,
+          "missing": "reports/security_compliance_TR.md"
+        },
+        {
+          "line": 427,
+          "missing": "reports/poc_protocol.md"
+        },
+        {
+          "line": 428,
+          "missing": "reports/poc_protocol_TR.md"
+        },
+        {
+          "line": 429,
+          "missing": "reports/pilot_readiness_kit.md"
+        },
+        {
+          "line": 430,
+          "missing": "reports/pilot_readiness_kit_TR.md"
+        },
+        {
+          "line": 431,
+          "missing": "reports/pilot_offer_packages.md"
+        },
+        {
+          "line": 432,
+          "missing": "reports/pilot_offer_packages_TR.md"
+        },
+        {
+          "line": 433,
+          "missing": "reports/sales_funnel_90d.md"
+        },
+        {
+          "line": 434,
+          "missing": "reports/sales_funnel_90d_TR.md"
+        },
+        {
+          "line": 435,
+          "missing": "reports/drone_sitl_demo.md"
+        },
+        {
+          "line": 436,
+          "missing": "reports/drone_sitl_demo_TR.md"
+        },
+        {
+          "line": 437,
+          "missing": "reports/pilots/README.md"
+        },
+        {
+          "line": 438,
+          "missing": "reports/pilots/README_TR.md"
+        },
+        {
+          "line": 439,
+          "missing": "reports/pilot_acceptance_signoff.md"
+        },
+        {
+          "line": 440,
+          "missing": "reports/pilot_acceptance_signoff_TR.md"
+        },
+        {
+          "line": 441,
+          "missing": "reports/ip_licensing_split.md"
+        },
+        {
+          "line": 442,
+          "missing": "reports/ip_licensing_split_TR.md"
+        },
+        {
+          "line": 443,
+          "missing": "reports/dataset_health.md"
+        },
+        {
+          "line": 444,
+          "missing": "reports/dataset_health_TR.md"
+        },
+        {
+          "line": 445,
+          "missing": "reports/model_health.md"
+        },
+        {
+          "line": 446,
+          "missing": "reports/model_health_TR.md"
+        },
+        {
+          "line": 447,
+          "missing": "reports/system_hardware.md"
+        },
+        {
+          "line": 448,
+          "missing": "reports/system_hardware_TR.md"
+        },
+        {
+          "line": 449,
+          "missing": "reports/cli_smoke_log.md"
+        },
+        {
+          "line": 450,
+          "missing": "reports/cli_smoke_log_TR.md"
+        },
+        {
+          "line": 455,
+          "missing": "MODEL_CARD.md"
+        },
+        {
+          "line": 456,
+          "missing": "MODEL_CARD_TR.md"
+        },
+        {
+          "line": 457,
+          "missing": "USE_POLICY.md"
+        },
+        {
+          "line": 458,
+          "missing": "USE_POLICY_TR.md"
+        },
+        {
+          "line": 459,
+          "missing": "SECURITY.md"
+        },
+        {
+          "line": 460,
+          "missing": "SECURITY_TR.md"
+        },
+        {
+          "line": 461,
+          "missing": "DECISIONS.md"
+        },
+        {
+          "line": 462,
+          "missing": "DECISIONS_TR.md"
+        },
+        {
+          "line": 463,
+          "missing": "datasets/README.md"
+        },
+        {
+          "line": 464,
+          "missing": "datasets/README_TR.md"
+        },
+        {
+          "line": 465,
+          "missing": "datasets/SOURCES.md"
+        },
+        {
+          "line": 466,
+          "missing": "datasets/SOURCES_TR.md"
+        },
+        {
+          "line": 467,
+          "missing": "datasets/LICENSES.md"
+        },
+        {
+          "line": 468,
+          "missing": "datasets/LICENSES_TR.md"
+        },
+        {
+          "line": 469,
+          "missing": "datasets/inventory.md"
+        },
+        {
+          "line": 470,
+          "missing": "datasets/inventory_TR.md"
+        },
+        {
+          "line": 471,
+          "missing": "datasets/inventory.json"
+        },
+        {
+          "line": 472,
+          "missing": "repro/seed_policy.md"
+        },
+        {
+          "line": 473,
+          "missing": "repro/seed_policy_TR.md"
+        },
+        {
+          "line": 474,
+          "missing": "repro/python.md"
+        },
+        {
+          "line": 475,
+          "missing": "repro/python_TR.md"
+        },
+        {
+          "line": 476,
+          "missing": "repro/accelerate_default.yaml"
+        },
+        {
+          "line": 477,
+          "missing": "repro/pip_freeze.txt"
+        },
+        {
+          "line": 478,
+          "missing": "logs/README.md"
+        },
+        {
+          "line": 480,
+          "missing": ".github/workflows/ci.yml"
+        },
+        {
+          "line": 481,
+          "missing": "interfaces/inference_contract.md"
+        },
+        {
+          "line": 482,
+          "missing": "interfaces/inference_contract_TR.md"
+        },
+        {
+          "line": 483,
+          "missing": "interfaces/pilot_report_v1.schema.json"
+        },
+        {
+          "line": 484,
+          "missing": "economics/cost_model.md"
+        },
+        {
+          "line": 485,
+          "missing": "economics/cost_model_TR.md"
+        },
+        {
+          "line": 486,
+          "missing": "economics/efficiency_report.md"
+        },
+        {
+          "line": 487,
+          "missing": "economics/efficiency_report_TR.md"
+        },
+        {
+          "line": 488,
+          "missing": "limits/scaling_breakpoints.md"
+        },
+        {
+          "line": 489,
+          "missing": "limits/scaling_breakpoints_TR.md"
+        },
+        {
+          "line": 490,
+          "missing": "postmortems/README.md"
+        },
+        {
+          "line": 491,
+          "missing": "postmortems/README_TR.md"
+        },
+        {
+          "line": 492,
+          "missing": "postmortems/_template.md"
+        },
+        {
+          "line": 493,
+          "missing": "postmortems/_template_TR.md"
+        },
+        {
+          "line": 494,
+          "missing": "postmortems/example_001.md"
+        },
+        {
+          "line": 495,
+          "missing": "postmortems/example_001_TR.md"
+        },
+        {
+          "line": 496,
+          "missing": "prompts/changelog.md"
+        },
+        {
+          "line": 497,
+          "missing": "prompts/changelog_TR.md"
+        },
+        {
+          "line": 498,
+          "missing": "tokenizer/stats.md"
+        },
+        {
+          "line": 499,
+          "missing": "tokenizer/stats_TR.md"
+        },
+        {
+          "line": 500,
+          "missing": "tokenizer/drift_report.md"
+        },
+        {
+          "line": 501,
+          "missing": "tokenizer/drift_report_TR.md"
+        },
+        {
+          "line": 502,
+          "missing": "tokenizer/tr/README.md"
+        },
+        {
+          "line": 503,
+          "missing": "tokenizer/tr/README_TR.md"
+        },
+        {
+          "line": 504,
+          "missing": "ablations/results.md"
+        },
+        {
+          "line": 505,
+          "missing": "ablations/results_TR.md"
+        },
+        {
+          "line": 506,
+          "missing": "ablations/no_moe/README.md"
+        },
+        {
+          "line": 507,
+          "missing": "ablations/no_moe/README_TR.md"
+        },
+        {
+          "line": 508,
+          "missing": "ablations/no_liquid/README.md"
+        },
+        {
+          "line": 509,
+          "missing": "ablations/no_liquid/README_TR.md"
+        },
+        {
+          "line": 510,
+          "missing": "ablations/dense_only/README.md"
+        },
+        {
+          "line": 511,
+          "missing": "ablations/dense_only/README_TR.md"
+        },
+        {
+          "line": 512,
+          "missing": "ablations/bitlinear_off/README.md"
+        },
+        {
+          "line": 513,
+          "missing": "ablations/bitlinear_off/README_TR.md"
+        },
+        {
+          "line": 514,
+          "missing": "experiments/exp_001_baseline/notes.md"
+        },
+        {
+          "line": 515,
+          "missing": "experiments/exp_001_baseline/notes_TR.md"
+        },
+        {
+          "line": 516,
+          "missing": "tools/abuse_tests.md"
+        },
+        {
+          "line": 517,
+          "missing": "tools/abuse_tests_TR.md"
+        },
+        {
+          "line": 518,
+          "missing": "tools/sandbox/README.md"
+        },
+        {
+          "line": 519,
+          "missing": "tools/sandbox/README_TR.md"
+        },
+        {
+          "line": 520,
+          "missing": "tools/contracts/README.md"
+        },
+        {
+          "line": 521,
+          "missing": "tools/contracts/README_TR.md"
+        },
+        {
+          "line": 522,
+          "missing": "training_dynamics/cold_vs_warm.md"
+        },
+        {
+          "line": 523,
+          "missing": "training_dynamics/cold_vs_warm_TR.md"
+        },
+        {
+          "line": 546,
+          "missing": "docs/CHAIN_MAP.md"
+        },
+        {
+          "line": 791,
+          "missing": "assets/synaptic_map.png"
+        },
+        {
+          "line": 1209,
+          "missing": "config/config.py"
+        },
+        {
+          "line": 2373,
+          "missing": "config/"
+        },
+        {
+          "line": 2373,
+          "missing": "layers/"
+        },
+        {
+          "line": 2373,
+          "missing": "model/"
+        },
+        {
+          "line": 2373,
+          "missing": "train/"
+        },
+        {
+          "line": 2373,
+          "missing": "utils/"
+        },
+        {
+          "line": 2374,
+          "missing": "mertformer_sdk/"
+        },
+        {
+          "line": 2374,
+          "missing": "scripts/"
+        },
+        {
+          "line": 2374,
+          "missing": "run.sh"
+        },
+        {
+          "line": 2375,
+          "missing": "datasets/"
+        },
+        {
+          "line": 2375,
+          "missing": "reports/"
+        },
+        {
+          "line": 2375,
+          "missing": "logs/"
+        },
+        {
+          "line": 2375,
+          "missing": "interfaces/"
+        },
+        {
+          "line": 2376,
+          "missing": "ablations/"
+        },
+        {
+          "line": 2376,
+          "missing": "experiments/"
+        },
+        {
+          "line": 2376,
+          "missing": "orchestrator/"
+        },
+        {
+          "line": 2376,
+          "missing": "economics/"
+        },
+        {
+          "line": 2376,
+          "missing": "limits/"
+        },
+        {
+          "line": 2377,
+          "missing": "README.md"
+        },
+        {
+          "line": 2377,
+          "missing": "README_TR.md"
+        },
+        {
+          "line": 2377,
+          "missing": "USAGE_GUIDE.md"
+        },
+        {
+          "line": 2377,
+          "missing": "SDK_GUIDE.md"
+        },
+        {
+          "line": 2391,
+          "missing": "LICENSE"
+        }
+      ]
+    }
+  ],
+  "ok": false
 }

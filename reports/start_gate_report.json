@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-04-17T14:35:54.067684+00:00",
+  "generated_utc": "2026-04-17T14:56:32.468524+00:00",
   "ok": true,
   "start_allowed": true,
   "train_allowed": true,
@@ -33,7 +33,7 @@
     "git_status": {
       "cmd": "git status --short --branch",
       "return_code": 0,
-      "stdout_tail": "## main...origin/main\n M README.md\n M README_TR.md\n M START_HERE.md\n M applications/anthropic/README.md\n M applications/anthropic/measured_evidence_summary.md\n M docs/PROJECT_STRUCTURE.md\n M reports/chess_gui_onefile_sync_report.json\n M reports/chess_onefile_extension_report.json\n M reports/chess_teaching_contract_report.json\n M reports/chess_teaching_contract_report.md\n M reports/chess_training_readiness_report.json\n M reports/closure_57_matrix.json\n M reports/code_truth_delta_audit.json\n M reports/code_truth_delta_audit.md\n M reports/duplicate_zip_guard_report.json\n M reports/file_sync_matrix.json\n M reports/final_freeze_manifest.json\n M reports/final_orchestrator_status.json\n M reports/final_orchestrator_status.md\n M reports/one_command_full_sop_summary.md\n M reports/policy_sync_report.json\n M reports/post_train_autorun_status.json\n M reports/post_train_autorun_status.md\n M reports/project_structure_sync_report.json\n M reports/release_manifest.json\n M reports/release_snapshot.md\n M reports/release_snapshot_TR.md\n M reports/repo_external_handoff.md\n M reports/start_gate_operator_decision.json\n M reports/start_gate_operator_decision.md\n M reports/start_gate_report.json\n M reports/target_machine_handoff_manifest.json\n M reports/target_machine_handoff_manifest.md\n M reports/unicode_path_guard_report.json\n M reports/workspace_hygiene_manifest.json\n M run.sh\n M scripts/README.md\n M scripts/post_train_autorun.py\n M scripts/start_gate.py\n M zero_touch_start.sh\n?? launch_mertformer_kaggle_closure.command\n?? reports/outreach/\n?? scripts/kaggle_onefile_closure_build30.py\n?? scripts/macos_keepawake.sh\n?? tests/test_kaggle_onefile_closure_build30.py\n",
+      "stdout_tail": "## main...origin/main\n M reports/chess_gui_onefile_sync_report.json\n M reports/chess_onefile_extension_report.json\n M reports/chess_teaching_contract_report.json\n M reports/chess_teaching_contract_report.md\n M reports/chess_training_readiness_report.json\n M reports/closure_57_matrix.json\n M reports/code_truth_delta_audit.json\n M reports/final_orchestrator_status.json\n M reports/final_orchestrator_status.md\n M reports/post_train_autorun_status.json\n M reports/post_train_autorun_status.md\n M reports/workspace_hygiene_manifest.json\n M scripts/kaggle_onefile_closure_build30.py\n",
       "stderr_tail": "",
       "ok": true
     },

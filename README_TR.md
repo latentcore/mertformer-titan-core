@@ -1836,6 +1836,10 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   │   ├── ownership_and_role_TR.md  # Türkçe doküman karşılığı
 │   │   ├── sla_kpi_90_180.md  # dokümantasyon/rapor dosyası
 │   │   └── sla_kpi_90_180_TR.md  # Türkçe doküman karşılığı
+│   ├── outreach/  # dizin
+│   │   ├── github_release_post.md  # dokümantasyon/rapor dosyası
+│   │   ├── huggingface_launch.md  # dokümantasyon/rapor dosyası
+│   │   └── reddit_post.md  # dokümantasyon/rapor dosyası
 │   ├── pilots/  # dizin
 │   │   ├── README.md  # ana dokümantasyon (EN)
 │   │   └── README_TR.md  # Türkçe doküman karşılığı
@@ -2171,6 +2175,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── golden_score.py  # Python modülü/scripti (golden score için otomasyon scripti)
 │   ├── hardening_bundle.py  # Python modülü/scripti (hardening bundle için otomasyon scripti)
 │   ├── hash_manifest_to_json.py  # Python modülü/scripti (hash manifest to json için otomasyon scripti)
+│   ├── kaggle_onefile_closure_build30.py  # Python modülü/scripti (kaggle onefile closure build30 için otomasyon scripti)
 │   ├── kaggle_onefile_demo_build30.py  # Python modülü/scripti (kaggle onefile demo build30 için otomasyon scripti)
 │   ├── kaggle_onefile_demo_build30_colab_math_fastproof.py  # Python modülü/scripti (kaggle onefile demo build30 colab math fastproof için otomasyon scripti)
 │   ├── kaggle_onefile_demo_build30_text_understanding.py  # Python modülü/scripti (kaggle onefile demo build30 text understanding için otomasyon scripti)
@@ -2178,6 +2183,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── linkcheck_gate.py  # Python modülü/scripti (linkcheck gate için otomasyon scripti)
 │   ├── logbook_build.py  # Python modülü/scripti (logbook build için otomasyon scripti)
 │   ├── mac_simulation.py  # Python modülü/scripti (mac simulation için otomasyon scripti)
+│   ├── macos_keepawake.sh  # kabuk otomasyon scripti
 │   ├── mathfp_interactive_chat.py  # Python modülü/scripti (mathfp interactive chat için otomasyon scripti)
 │   ├── md_build30_sweep.py  # Python modülü/scripti (md build30 sweep için otomasyon scripti)
 │   ├── md_integrity_check.py  # Python modülü/scripti (md integrity check için otomasyon scripti)
@@ -2250,6 +2256,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_export_metadata.py  # Python modülü/scripti (export metadata için otomatik test modülü)
 │   ├── test_final_orchestrator_cli.py  # Python modülü/scripti (final orchestrator cli için otomatik test modülü)
 │   ├── test_kaggle_compare_script.py  # Python modülü/scripti (kaggle compare script için otomatik test modülü)
+│   ├── test_kaggle_onefile_closure_build30.py  # Python modülü/scripti (kaggle onefile closure build30 için otomatik test modülü)
 │   ├── test_kaggle_onefile_colab_math_fastproof.py  # Python modülü/scripti (kaggle onefile colab math fastproof için otomatik test modülü)
 │   ├── test_kaggle_onefile_compile_guard.py  # Python modülü/scripti (kaggle onefile compile guard için otomatik test modülü)
 │   ├── test_kaggle_onefile_config.py  # Python modülü/scripti (kaggle onefile config için otomatik test modülü)
@@ -2363,6 +2370,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── WHITE_PAPER_LIQUIDROUTER.md  # dokümantasyon/rapor dosyası
 ├── WHITE_PAPER_LIQUIDROUTER_TR.md  # Türkçe doküman karşılığı
 ├── conftest.py  # Python modülü/scripti (conftest için modül)
+├── launch_mertformer_kaggle_closure.command  # artefakt
 ├── pyproject.toml  # proje metaverisi
 ├── requirements.txt  # metin artefaktı
 ├── run.sh  # kabuk otomasyon scripti
