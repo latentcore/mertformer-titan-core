@@ -119,7 +119,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `203 passed, 3 skipped` |
+| `python3 -m pytest -q` | `210 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -132,7 +132,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`203 passed, 3 skipped`)
+   - `pytest` passed (`210 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -193,6 +193,14 @@ bash zero_touch_start.sh --check-only
 ```bash
 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
+4b. Canonical terminal-first Kaggle closure lane:
+```bash
+bash zero_touch_start.sh --kaggle-onefile --mode train-end --profile auto
+```
+4c. macOS one-click launcher:
+```bash
+launch_mertformer_kaggle_closure.command
+```
 Optional online teacher lane:
 ```bash
 HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
@@ -204,7 +212,7 @@ HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touc
 6. Dataset manifest policy:
 - Build30 Final Convergence keeps the current dataset manifest pinned (no major dataset expansion in this lock pass).
 7. Legacy helper flows:
-- `run.sh` remains available for `--test`, `--sitl-demo`, and `--cleanroom-verify`, but it is no longer the canonical 45K train-end launcher.
+- `run.sh` remains available for `--test`, `--sitl-demo`, `--cleanroom-verify`, and `--kaggle-onefile`, but it is no longer the canonical 45K train-end launcher outside those helper surfaces.
 
 | Engineering Status | `Pilot-ready pre-training baseline` |
 | :--- | :--- |
@@ -1571,6 +1579,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── applications/  # directory
 │   └── anthropic/  # directory
 │       ├── README.md  # primary documentation (EN)
+│       ├── application_strategy.md  # documentation/report file
 │       ├── interview_prep.md  # documentation/report file
 │       ├── measured_evidence_summary.md  # documentation/report file
 │       ├── performance_engineer_fallback.md  # documentation/report file
@@ -2365,6 +2374,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── V2_BACKLOG_SEED.md  # documentation/report file
 ├── WHITE_PAPER_LIQUIDROUTER.md  # documentation/report file
 ├── WHITE_PAPER_LIQUIDROUTER_TR.md  # Turkish document counterpart
+├── conftest.py  # Python module/script (module for conftest)
 ├── pyproject.toml  # project metadata
 ├── requirements.txt  # text artifact
 ├── run.sh  # shell automation script
@@ -2524,3 +2534,15 @@ The one-file companion at `scripts/kaggle_onefile_demo_build30_colab_math_fastpr
 - Evidence extensions: ownership proof, runtime fingerprint, redacted env snapshot, reproducible command string.
 - Evaluation extensions: unseen-range zero-shot exact-match reporting and interpretability artifacts.
 - Feature tracking: exhaustive `feature_coverage_matrix` with per-feature IDs and completeness percent.
+
+## Build30 Kaggle Canon Addendum (2026-04-17)
+
+The canonical Kaggle one-file lane is now `scripts/kaggle_onefile_closure_build30.py`.
+
+- Single terminal-first modes: `train-end`, `verify`, `resume`, `package-only`, `bench-only`.
+- Auto profile selection prefers `t4x2_dist` for `GPU T4 x2`, `p100_safe` for `GPU P100`, and falls back to `sweetspot`.
+- Canonical checkpoint contract is normalized around `latest.pt`, `best.pt`, `manifest.json`, `public_summary.json`, and `stop_summary.json`.
+- Always-on closure artifacts include a first-100-step loss snapshot, auxiliary compare/text reports, canonical artifact index, sha256 manifest, and canonical evidence bundle zip.
+- Kaggle accelerator quota is treated as floating/account-dependent runtime state rather than a fixed entitlement claim.
+- Legacy/reference one-file surfaces remain available at `scripts/kaggle_onefile_demo_build30.py` and `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`.
+- macOS users can launch the canonical lane via `launch_mertformer_kaggle_closure.command` without typing arguments.

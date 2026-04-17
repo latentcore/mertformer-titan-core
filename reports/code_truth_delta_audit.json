@@ -1,6 +1,6 @@
 {
   "schema": "code_truth_delta_audit_v1",
-  "generated_utc": "2026-04-15T13:02:55Z",
+  "generated_utc": "2026-04-17T14:35:42Z",
   "evidence_contract": {
     "required_columns": [
       "code_path",
@@ -566,6 +566,13 @@
       "summary": "fallback"
     },
     {
+      "path": "scripts/kaggle_onefile_closure_build30.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "scripts/kaggle_onefile_demo_build30.py",
       "markers": [
         "fallback"
@@ -649,6 +656,6 @@
       "tested_fallback": 6,
       "reference_safe": 1
     },
-    "marker_hit_count": 45
+    "marker_hit_count": 46
   }
 }

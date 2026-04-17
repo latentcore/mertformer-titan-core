@@ -34,6 +34,9 @@ MertFormer Titan is an offline-first, auditable AI systems project with three co
 - Verify the repo: `bash scripts/verify_all.sh`
 - Check readiness only: `bash zero_touch_start.sh --check-only`
 - Launch the canonical owned training lane: `bash zero_touch_start.sh`
+- Launch the canonical Kaggle closure lane: `bash zero_touch_start.sh --kaggle-onefile --mode train-end --profile auto`
+- Verify Kaggle wiring only: `bash zero_touch_start.sh --kaggle-onefile --mode verify`
+- macOS one-click launcher: `launch_mertformer_kaggle_closure.command`
 - Refresh closure, artifacts, and hashes: `bash scripts/final_one_shot.sh`
 
 ## Anthropic-Relevant Signals
@@ -53,3 +56,8 @@ The remaining high-value open class is not missing folders or missing scripts. I
 - export/device evidence as a strong plus
 
 Everything else in this closure pack is there to keep that boundary explicit, reviewer-friendly, and hard to overclaim.
+
+## Kaggle Canon Notes
+- The canonical Kaggle one-file surface is `scripts/kaggle_onefile_closure_build30.py`.
+- Legacy/reference lanes remain available in `scripts/kaggle_onefile_demo_build30.py` and `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`.
+- Runtime GPU availability is account-dependent; the canonical lane detects `GPU P100`, `GPU T4 x2`, or fallback hardware at runtime instead of claiming a fixed Kaggle entitlement.

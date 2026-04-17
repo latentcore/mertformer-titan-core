@@ -11,10 +11,17 @@ Conventions:
 If you are unsure, run the single-command verification first: `bash scripts/verify_all.sh`.
 
 ## Canonical One-File Path
-- Official/canonical one-file script: `scripts/kaggle_onefile_demo_build30.py`
-- Colab fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
+- Official/canonical Kaggle closure script: `scripts/kaggle_onefile_closure_build30.py`
+- Legacy/reference one-file trainer: `scripts/kaggle_onefile_demo_build30.py`
+- Legacy/reference fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
 - Text-understanding PoC one-file script: `scripts/kaggle_onefile_demo_build30_text_understanding.py`
 - Windows RTX 5080 chess PoC one-file script: `scripts/chess_5080_onefile.py`
+- Canonical Kaggle entry command: `bash zero_touch_start.sh --kaggle-onefile --mode train-end`
+- Canonical Kaggle verify command: `bash zero_touch_start.sh --kaggle-onefile --mode verify`
+- Canonical Kaggle package command: `bash zero_touch_start.sh --kaggle-onefile --mode package-only`
+- One-click macOS launcher: `launch_mertformer_kaggle_closure.command`
+- Canonical Kaggle profiles: `auto`, `p100_safe`, `t4x2_dist`, `sweetspot`, `mini300m_probe`, `fastproof_math`
+- Runtime accelerator reality: Kaggle GPU type and quota are floating/account-dependent; the canonical script detects runtime hardware instead of hard-coding a fixed entitlement claim.
 - Chess onefile supported modes: `train`, `verify`, `benchmark`, `package`, `resume`, `arena`
 - Chess onefile now supports named feature bundles through `--feature-bundle` plus explicit `--enable-features` / `--disable-features` overrides.
 - Recommended advanced bundle names: `routing_stack`, `liquid_stack`, `memory_attention_stack`, `cognitive_stack`, `objective_stack`, `postrun_analysis_stack`, `all_stable_extensions`, `all_on_experimental`.
@@ -92,6 +99,7 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 - `build_code_truth_audit.py` — Emits the code-truth delta audit with maturity labels, four-column evidence requirements, and marker scan output.
 - `build_workspace_hygiene_manifest.py` — Builds the quarantine-first workspace hygiene manifest; `--apply-quarantine` is opt-in and should only be used after reviewing the generated manifest.
 - `clean_runtime_artifacts.sh` — Cleans runtime artifacts (including root `kaggle_onefile_build30_*.jsonl`).
+- `macos_keepawake.sh` — Process-scoped macOS `caffeinate` wrapper for long verify/train/upload commands without changing global power settings.
 - `run_and_clean_pycache.py` — Runs any command and then guarantees post-run cache cleanup (`--full-clean` includes `.DS_Store`, `.cache`, `.ipynb_checkpoints`, `.tox`, `.nox`, `.hypothesis`, `.vs`; add `--include-venv-caches` to also clean venv caches).
 - `zip_denylist_audit.py` — Audits release zip against denylisted paths and secret patterns.
 - `build_scoped_external_intake_matrix.py` — Hashes and classifies scoped Desktop/Documents/Downloads/Applications project artifacts into a closure intake matrix.
@@ -155,6 +163,36 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 ---
 
 Tip: `run.sh` covers the primary automated path (install + strict preflight + training). For review, prefer `scripts/verify_all.sh`.
+
+## Canonical Kaggle Closure Lane
+
+The repo now keeps a single terminal-first Kaggle closure lane:
+
+```bash
+bash zero_touch_start.sh --kaggle-onefile --mode train-end --profile auto
+```
+
+What it always tries to produce:
+- first-100-step loss snapshot
+- canonical `latest.pt` / `best.pt` / `manifest.json` checkpoint contract
+- tiny compare report
+- text-understanding mini eval
+- canonical artifact index
+- sha256 manifest
+- canonical evidence bundle zip
+
+Helpful local launch wrappers:
+
+```bash
+bash scripts/macos_keepawake.sh --assert-seconds 10800 -- \
+  bash zero_touch_start.sh --kaggle-onefile --mode verify
+```
+
+Or, on macOS, double-click:
+
+```bash
+launch_mertformer_kaggle_closure.command
+```
 
 ## Build30 Colab Math Fastproof V2 (V1 Closure)
 

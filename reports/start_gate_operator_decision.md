@@ -15,6 +15,9 @@ Repo-side gate is green. Allocate or rent the target training machine, transfer 
 ## Required Transfer Files
 - `zero_touch_start.sh`
 - `run.sh`
+- `launch_mertformer_kaggle_closure.command`
+- `scripts/kaggle_onefile_closure_build30.py`
+- `scripts/macos_keepawake.sh`
 - `scripts/final_orchestrator.py`
 - `scripts/start_gate.py`
 - `scripts/build_train_readiness_contract.py`

@@ -19,6 +19,15 @@ RUN_TRAIN_READY=false
 RUN_OFFLINE_4060_DEMO=false
 RUN_CHESS_5080_POC=false
 RUN_CHESS_5080_DELIVERY_EXPORT=false
+RUN_KAGGLE_ONEFILE=false
+KAGGLE_ONEFILE_ARGS=()
+
+if [[ "${1:-}" == "--kaggle-onefile" ]]; then
+    RUN_KAGGLE_ONEFILE=true
+    shift
+    KAGGLE_ONEFILE_ARGS=("$@")
+    echo "🧳 KAGGLE ONEFILE CANON MODE ACTIVE"
+fi
 
 case "${1:-}" in
     --test|--verify)
@@ -177,6 +186,12 @@ if [[ "$RUN_CHESS_5080_DELIVERY_EXPORT" == true ]]; then
     echo "📦 Exporting Windows RTX 5080 delivery build workspace..."
     mkdir -p logs
     exec "$PYTHON_BIN" scripts/export_chess_5080_share.py
+fi
+
+if [[ "$RUN_KAGGLE_ONEFILE" == true ]]; then
+    echo "🧪 Launching canonical Kaggle onefile closure lane..."
+    mkdir -p logs
+    exec "$PYTHON_BIN" scripts/kaggle_onefile_closure_build30.py "${KAGGLE_ONEFILE_ARGS[@]}"
 fi
 
 # Fast path: deterministic SITL proof flow (offline, no training start).

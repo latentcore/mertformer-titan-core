@@ -1,6 +1,6 @@
 {
   "schema": "target_machine_handoff_manifest_v1",
-  "generated_utc": "2026-04-15T13:03:57Z",
+  "generated_utc": "2026-04-17T14:35:54Z",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "train_allowed": true,
   "decision_reason_code": "READY_OFFLINE_CLEAN",
@@ -10,13 +10,28 @@
   "transfer_files": [
     {
       "path": "zero_touch_start.sh",
-      "size_bytes": 854,
-      "sha256": "964e874d2dfcbc00c2de0ca2321125ccb3afeefdcde7cc994fa36a01b905be4a"
+      "size_bytes": 888,
+      "sha256": "bbd1741bed1fc714f79faf47d65d14a452a606711259bb225ad654cb83ed1a7e"
     },
     {
       "path": "run.sh",
-      "size_bytes": 23997,
-      "sha256": "5a66b3f4db9fefb11b76332eb39b39693b230a638f2af4bf4a748cd874f57470"
+      "size_bytes": 24440,
+      "sha256": "aae67b6d2ea0bc7bed6290dbf60d6daff4ee25ee896f83cb0aee6115dd4e2897"
+    },
+    {
+      "path": "launch_mertformer_kaggle_closure.command",
+      "size_bytes": 790,
+      "sha256": "6f3d756beb9bc3f5a4a00921fe71378783e852435921a170b1d625da605ffc0b"
+    },
+    {
+      "path": "scripts/kaggle_onefile_closure_build30.py",
+      "size_bytes": 40382,
+      "sha256": "7bf53c788bb4700894237ddc8cd2433b44ba828a5c900a83f87bcd53e7bc82a0"
+    },
+    {
+      "path": "scripts/macos_keepawake.sh",
+      "size_bytes": 1440,
+      "sha256": "462f7d4e50b6231ebbec4a9d296760212eafc30b3b7e9f55897e08ddbff2b6a9"
     },
     {
       "path": "scripts/final_orchestrator.py",
@@ -25,8 +40,8 @@
     },
     {
       "path": "scripts/start_gate.py",
-      "size_bytes": 8154,
-      "sha256": "bafd1afb61b5f8d02e153cd822ef5b6f3a89f988876fd849df68b803d91c5e55"
+      "size_bytes": 8297,
+      "sha256": "729faad7f598becc926f11e58f1f7db592940dd13c1e8743d129bfd504ea4d55"
     },
     {
       "path": "scripts/build_train_readiness_contract.py",
@@ -45,23 +60,23 @@
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 2813,
-      "sha256": "7577b9709f80a1cb909eb097af650405ee21f4c737d2d267359aebfb534390f7"
+      "size_bytes": 3501,
+      "sha256": "975ee021dbb375696cded721b16ceacda126931a8914734204bed34cee11ac6d"
     },
     {
       "path": "reports/start_gate_operator_decision.json",
-      "size_bytes": 1040,
-      "sha256": "6fdb78e445e45da36bd1f862a03e5899f2f68353a0c7af7089aee4359d08e09c"
+      "size_bytes": 1171,
+      "sha256": "096db420ab8b8604e86bab12ea31c7444c2b61374aa23c899e130279ebfca2dd"
     },
     {
       "path": "reports/start_gate_operator_decision.md",
-      "size_bytes": 902,
-      "sha256": "c898ab513e027883fcb2cf03a94bd270438334007fff3ccc4d82529d7d624d85"
+      "size_bytes": 1024,
+      "sha256": "680ad5a5865ee4168ca83def5330fef2322c35641229864c2b169fe91cc6978b"
     },
     {
       "path": "reports/repo_external_handoff.md",
       "size_bytes": 1468,
-      "sha256": "de1f534185310382012313a55d6336ee5d826561feabb03ee187fcd95dfec7fa"
+      "sha256": "987564481d8a8461da3dd98172e790066775c257d25d6a995cfe42974aef1ceb"
     }
   ],
   "operator_steps": [

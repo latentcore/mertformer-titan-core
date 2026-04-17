@@ -150,6 +150,7 @@ def resolve_checkpoint(root: Path, explicit: str | None) -> Path | None:
     cfg = maybe_cfg(root)
     save_dir = root / "checkpoints"
     model_name = None
+    canonical_kaggle_ckpt_dir = root / "checkpoints" / "kaggle_onefile_build30"
     if cfg is not None:
         save_dir = root / str(getattr(cfg, "save_dir", "checkpoints"))
         model_name = str(getattr(cfg, "model_name", "") or "").strip() or None
@@ -165,6 +166,13 @@ def resolve_checkpoint(root: Path, explicit: str | None) -> Path | None:
         candidates.extend(sorted(save_dir.glob("*_latest.pt"), key=lambda p: p.stat().st_mtime, reverse=True))
         candidates.extend(sorted(save_dir.glob("*_best.pt"), key=lambda p: p.stat().st_mtime, reverse=True))
         candidates.extend(sorted(save_dir.glob("*.pt"), key=lambda p: p.stat().st_mtime, reverse=True))
+
+    candidates.extend(
+        [
+            canonical_kaggle_ckpt_dir / "latest.pt",
+            canonical_kaggle_ckpt_dir / "best.pt",
+        ]
+    )
 
     root_ckpts = root / "checkpoints"
     if root_ckpts.exists() and root_ckpts != save_dir:

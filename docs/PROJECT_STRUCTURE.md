@@ -30,6 +30,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── applications/  # directory
 │   └── anthropic/  # directory
 │       ├── README.md  # primary documentation (EN)
+│       ├── application_strategy.md  # documentation/report file
 │       ├── interview_prep.md  # documentation/report file
 │       ├── measured_evidence_summary.md  # documentation/report file
 │       ├── performance_engineer_fallback.md  # documentation/report file
@@ -824,6 +825,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── V2_BACKLOG_SEED.md  # documentation/report file
 ├── WHITE_PAPER_LIQUIDROUTER.md  # documentation/report file
 ├── WHITE_PAPER_LIQUIDROUTER_TR.md  # Turkish document counterpart
+├── conftest.py  # Python module/script (module for conftest)
 ├── pyproject.toml  # project metadata
 ├── requirements.txt  # text artifact
 ├── run.sh  # shell automation script

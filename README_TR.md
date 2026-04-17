@@ -120,7 +120,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `203 passed, 3 skipped` |
+| `python3 -m pytest -q` | `210 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -133,7 +133,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`203 passed, 3 skipped`)
+   - `pytest` geçti (`210 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -1567,6 +1567,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── applications/  # dizin
 │   └── anthropic/  # dizin
 │       ├── README.md  # ana dokümantasyon (EN)
+│       ├── application_strategy.md  # dokümantasyon/rapor dosyası
 │       ├── interview_prep.md  # dokümantasyon/rapor dosyası
 │       ├── measured_evidence_summary.md  # dokümantasyon/rapor dosyası
 │       ├── performance_engineer_fallback.md  # dokümantasyon/rapor dosyası
@@ -2361,6 +2362,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── V2_BACKLOG_SEED.md  # dokümantasyon/rapor dosyası
 ├── WHITE_PAPER_LIQUIDROUTER.md  # dokümantasyon/rapor dosyası
 ├── WHITE_PAPER_LIQUIDROUTER_TR.md  # Türkçe doküman karşılığı
+├── conftest.py  # Python modülü/scripti (conftest için modül)
 ├── pyproject.toml  # proje metaverisi
 ├── requirements.txt  # metin artefaktı
 ├── run.sh  # kabuk otomasyon scripti

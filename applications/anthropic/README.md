@@ -35,6 +35,7 @@ Optional fallback only if the post-run story hardens materially:
 - Current readiness verdict: `TRAIN_ALLOWED`
 - Current reason code: `READY_OFFLINE_CLEAN`
 - Canonical repo-side lane: `offline-clean`
+- Canonical Kaggle closure lane: `bash zero_touch_start.sh --kaggle-onefile --mode train-end --profile auto`
 - Optional gated blocker only if teacher lane is chosen: `online_teacher:MISSING_HF_TOKEN`
 - Real trained outputs remain post-run evidence and must not be narrated as already complete
 - Exact `45K` is preferred, not mandatory; the real gate is owned training evidence tied to checkpoints
@@ -52,6 +53,7 @@ Optional fallback only if the post-run story hardens materially:
 ## Primary Evidence Only
 - Lead with the documents above plus `applications/anthropic/project_summary.md` and `applications/anthropic/measured_evidence_summary.md`.
 - Do not lead with `TECHNICAL_REPORT.md` or other forecast-heavy supporting material.
+- If using the Kaggle one-file path, disclose it as a `terminal-first closure lane` rather than as frontier-scale training proof by itself.
 
 ## Visa and Relocation Disclosure
 Use the application truthfully:

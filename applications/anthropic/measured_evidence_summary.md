@@ -3,6 +3,7 @@
 ## Repo-Wide Evidence
 - `bash scripts/verify_all.sh` is the canonical repo verification gate.
 - Train readiness reports `TRAIN_ALLOWED` with reason `READY_OFFLINE_CLEAN`.
+- The canonical Kaggle closure lane is `bash zero_touch_start.sh --kaggle-onefile --mode train-end --profile auto`.
 - Claim-critical docs explicitly separate measured, target, and vision surfaces.
 - Closure scripts regenerate reports, hashes, and package artifacts instead of relying on narration.
 
@@ -17,6 +18,7 @@
 - Kernel and dispatcher behavior is covered by targeted tests rather than presented as an unmeasured speed story.
 - Repo-side benchmark artifacts exist for smoke/reference surfaces while trained-checkpoint claims remain open.
 - The repo keeps compute, checkpoint, benchmark, and release evidence tied to manifests and exact artifacts.
+- The Kaggle closure lane packages first-100-step loss evidence, checkpoint manifests, artifact hashes, and auxiliary compare/text runs without turning those surfaces into trained benchmark claims.
 
 ## Product and Assistant Evidence
 - Offline-first is the repo-default operating direction.
