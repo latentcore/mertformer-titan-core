@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-04-17T14:56:32.468524+00:00",
+  "generated_utc": "2026-04-18T22:08:31.944364+00:00",
   "ok": true,
   "start_allowed": true,
   "train_allowed": true,
@@ -33,7 +33,7 @@
     "git_status": {
       "cmd": "git status --short --branch",
       "return_code": 0,
-      "stdout_tail": "## main...origin/main\n M reports/chess_gui_onefile_sync_report.json\n M reports/chess_onefile_extension_report.json\n M reports/chess_teaching_contract_report.json\n M reports/chess_teaching_contract_report.md\n M reports/chess_training_readiness_report.json\n M reports/closure_57_matrix.json\n M reports/code_truth_delta_audit.json\n M reports/final_orchestrator_status.json\n M reports/final_orchestrator_status.md\n M reports/post_train_autorun_status.json\n M reports/post_train_autorun_status.md\n M reports/workspace_hygiene_manifest.json\n M scripts/kaggle_onefile_closure_build30.py\n",
+      "stdout_tail": "## main...origin/main\n M README.md\n M README_TR.md\n M reports/chess_gui_onefile_sync_report.json\n M reports/chess_onefile_extension_report.json\n M reports/chess_teaching_contract_report.json\n M reports/chess_teaching_contract_report.md\n M reports/chess_training_readiness_report.json\n M reports/closure_57_matrix.json\n M reports/code_truth_delta_audit.json\n M reports/code_truth_delta_audit.md\n M reports/final_orchestrator_status.json\n M reports/final_orchestrator_status.md\n M reports/post_train_autorun_status.json\n M reports/post_train_autorun_status.md\n M reports/release_snapshot.md\n M reports/release_snapshot_TR.md\n M reports/workspace_hygiene_manifest.json\n M scripts/README.md\n M scripts/kaggle_onefile_closure_build30.py\n M scripts/one_command_full_sop.sh\n M scripts/post_train_autorun.py\n M scripts/start_gate.py\n M tests/test_kaggle_onefile_closure_build30.py\n?? scripts/kaggle_onecell_t4_build30.py\n",
       "stderr_tail": "",
       "ok": true
     },

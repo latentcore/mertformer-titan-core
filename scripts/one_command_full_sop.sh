@@ -62,6 +62,8 @@ fi
   echo "[run] start_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
   run_step "verify_all" env TITAN_OFFLINE=1 TITAN_WANDB=0 TITAN_PYTHON="$PY_BIN" bash scripts/verify_all.sh
+  run_step "kaggle_onecell_py_compile" "$PY_BIN" -m py_compile scripts/kaggle_onecell_t4_build30.py
+  run_step "kaggle_closure_verify" "$PY_BIN" scripts/kaggle_onefile_closure_build30.py --mode verify --report-out reports/kaggle_onefile_closure_verify.json
   run_step "cfc_moe_tolerance_check" "$PY_BIN" scripts/cfc_moe_tolerance_check.py --out reports/cfc_moe_tolerance_report.json
   run_step "md_quality_all" "$PY_BIN" scripts/md_quality_gate.py --root . --scope all --out reports/md_lint_report.json
   run_step "linkcheck_all" "$PY_BIN" scripts/linkcheck_gate.py --root . --scope all --out reports/linkcheck_report.json

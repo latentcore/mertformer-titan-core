@@ -61,6 +61,7 @@ def transfer_file_candidates() -> list[str]:
         "run.sh",
         "launch_mertformer_kaggle_closure.command",
         "scripts/kaggle_onefile_closure_build30.py",
+        "scripts/kaggle_onecell_t4_build30.py",
         "scripts/macos_keepawake.sh",
         "scripts/final_orchestrator.py",
         "scripts/start_gate.py",

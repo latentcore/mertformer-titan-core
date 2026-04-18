@@ -120,7 +120,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `210 passed, 3 skipped` |
+| `python3 -m pytest -q` | `211 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -133,7 +133,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`210 passed, 3 skipped`)
+   - `pytest` geçti (`211 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -2530,3 +2530,15 @@ Gelecekteki **13B / 70B / 256B** araştırmaları koşullu bir hat olarak ele al
 - Kanit genisletmeleri: ownership proof, runtime fingerprint, redacted env snapshot, reproduce komutu.
 - Eval genisletmeleri: unseen-range zero-shot exact-match raporlama ve interpretability artefaktlari.
 - Ozellik takibi: tum maddeleri kapsayan `feature_coverage_matrix` ve completeness yuzdesi.
+
+## Build30 Kaggle Tek-Hucre Eki (2026-04-19)
+
+Kanonik terminal-oncelikli Kaggle closure lane'i `scripts/kaggle_onefile_closure_build30.py` olarak kalir.
+
+Tek T4 GPU icin kopyala-yapistir, tek-hucre, repo-import'suz Kaggle lane'i ise `scripts/kaggle_onecell_t4_build30.py` dosyasidir.
+
+- Otomatik profil secimi: `GPU T4 x2` icin `t4x2_dist`, tek `T4` icin `onecell_t4_sweetspot`, `GPU P100` icin `p100_safe`, diger durumlarda `sweetspot`.
+- Tek-hucre lane'i varsayilan olarak non-interactive, no-menu, no-input ve single-T4 safe calisir.
+- Lane; `config_snapshot.json`, `runtime_preflight_report.json`, `layer_parity_manifest.json`, `event_manifest.json`, `final_summary.json`, `sha256_manifest.txt` ve fatal durumda `fatal_report.json` uretir.
+- Repo parity acik sekilde beyan edilir: `layers/` kapsami gomulu parity manifest ile, `always_on` / `default_on` / `guarded_off` durumlariyla yazilir.
+- Claim-boundary korunur: checkpoint yoksa egitim/benchmark iddiasi acik sekilde bloklu kalir.

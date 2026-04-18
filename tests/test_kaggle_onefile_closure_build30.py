@@ -32,6 +32,19 @@ def test_choose_profile_auto_t4x2_prefers_dual_t4():
     assert module.choose_profile("auto", runtime) == "t4x2_dist"
 
 
+def test_choose_profile_auto_single_t4_prefers_onecell_lane():
+    module = _load_module()
+    runtime = module.RuntimeMeta(
+        kaggle=True,
+        colab=False,
+        gpu_count=1,
+        gpu_names=("Tesla T4",),
+        gpu_label="Tesla T4",
+        device="cuda",
+    )
+    assert module.choose_profile("auto", runtime) == "onecell_t4_sweetspot"
+
+
 def test_choose_profile_auto_p100_prefers_safe_path():
     module = _load_module()
     runtime = module.RuntimeMeta(
@@ -84,6 +97,7 @@ def test_verify_mode_writes_contract_payload(tmp_path: Path):
     assert payload["status"] == "completed"
     assert "checks" in payload
     assert payload["checks"]["legacy_build30_exists"] is True
+    assert payload["checks"]["legacy_onecell_t4_exists"] is True
     assert payload["checks"]["legacy_fastproof_exists"] is True
 
 

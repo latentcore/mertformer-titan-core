@@ -29,10 +29,15 @@ DEFAULT_LOCAL_ARTIFACT_ROOT = ROOT / "reports" / "benchmarks" / "kaggle_runs"
 DEFAULT_LOCAL_CHECKPOINT_DIR = ROOT / "checkpoints" / "kaggle_onefile_build30"
 DEFAULT_KAGGLE_ARTIFACT_ROOT = Path("/kaggle/working/mertformer_outputs")
 DEFAULT_KAGGLE_CHECKPOINT_DIR = DEFAULT_KAGGLE_ARTIFACT_ROOT / "checkpoints" / "kaggle_onefile_build30"
+DEFAULT_LOCAL_ONECELL_ARTIFACT_ROOT = ROOT / "reports" / "benchmarks" / "kaggle_onecell_runs"
+DEFAULT_LOCAL_ONECELL_CHECKPOINT_DIR = ROOT / "checkpoints" / "kaggle_onecell_t4_build30"
+DEFAULT_KAGGLE_ONECELL_ARTIFACT_ROOT = Path("/kaggle/working/mertformer_onecell_outputs")
+DEFAULT_KAGGLE_ONECELL_CHECKPOINT_DIR = DEFAULT_KAGGLE_ONECELL_ARTIFACT_ROOT / "checkpoints" / "kaggle_onecell_t4_build30"
 SCHEMA = "kaggle_onefile_closure_build30_v1"
 
 LEGACY_SCRIPT_MAP: dict[str, tuple[str, str]] = {
     "build30": ("scripts/kaggle_onefile_demo_build30.py", "kaggle_onefile_demo_build30"),
+    "onecell_t4": ("scripts/kaggle_onecell_t4_build30.py", "kaggle_onecell_t4_build30"),
     "fastproof": (
         "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
         "kaggle_onefile_demo_build30_colab_math_fastproof",
@@ -91,6 +96,21 @@ PROFILE_SPECS: dict[str, dict[str, Any]] = {
             "step_log_interval": 10,
             "max_wall_hours": 10.8,
             "max_steps": 60000,
+        },
+    },
+    "onecell_t4_sweetspot": {
+        "legacy_lane": "onecell_t4",
+        "legacy_profile": "t4_onecell_sweetspot",
+        "description": "Single-T4, single-cell Kaggle lane with structured evidence and guarded repo parity.",
+        "overrides": {
+            "mert_enable_all_extensions": False,
+            "mert_use_qinn": False,
+            "allow_notebook_input": False,
+            "chat_enabled": False,
+            "interactive": False,
+            "interactive_menu": False,
+            "step_log_interval": 10,
+            "max_wall_hours": 5.5,
         },
     },
     "mini300m_probe": {
@@ -271,26 +291,48 @@ def choose_profile(requested: str, runtime: RuntimeMeta) -> str:
     label = runtime.gpu_label.upper()
     if label == "GPU T4 X2":
         return "t4x2_dist"
+    if "T4" in label:
+        return "onecell_t4_sweetspot"
     if "P100" in label:
         return "p100_safe"
     return "sweetspot"
 
 
-def build_paths(runtime: RuntimeMeta, artifact_root_arg: str, checkpoint_dir_arg: str, run_id: str, report_out: str) -> Layout:
+def build_paths(
+    runtime: RuntimeMeta,
+    selected_profile: str,
+    artifact_root_arg: str,
+    checkpoint_dir_arg: str,
+    run_id: str,
+    report_out: str,
+) -> Layout:
+    onecell_profile = selected_profile == "onecell_t4_sweetspot"
     if artifact_root_arg:
         artifact_root = Path(artifact_root_arg).expanduser()
+    elif onecell_profile and runtime.kaggle:
+        artifact_root = DEFAULT_KAGGLE_ONECELL_ARTIFACT_ROOT
+    elif onecell_profile:
+        artifact_root = DEFAULT_LOCAL_ONECELL_ARTIFACT_ROOT
     elif runtime.kaggle:
         artifact_root = DEFAULT_KAGGLE_ARTIFACT_ROOT
     else:
         artifact_root = DEFAULT_LOCAL_ARTIFACT_ROOT
 
     if runtime.kaggle:
-        artifact_root = resolve_writable_dir(artifact_root, [Path("/kaggle/working"), Path.cwd() / "artifacts"])
+        artifact_root = resolve_writable_dir(
+            artifact_root,
+            [Path("/kaggle/working"), Path.cwd() / "artifacts"],
+        )
     else:
-        artifact_root = resolve_writable_dir(artifact_root, [DEFAULT_LOCAL_ARTIFACT_ROOT, ROOT / "artifacts", Path.cwd()])
+        fallback_root = DEFAULT_LOCAL_ONECELL_ARTIFACT_ROOT if onecell_profile else DEFAULT_LOCAL_ARTIFACT_ROOT
+        artifact_root = resolve_writable_dir(artifact_root, [fallback_root, ROOT / "artifacts", Path.cwd()])
 
     if checkpoint_dir_arg:
         checkpoint_dir = Path(checkpoint_dir_arg).expanduser()
+    elif onecell_profile and runtime.kaggle:
+        checkpoint_dir = DEFAULT_KAGGLE_ONECELL_CHECKPOINT_DIR
+    elif onecell_profile:
+        checkpoint_dir = DEFAULT_LOCAL_ONECELL_CHECKPOINT_DIR
     elif runtime.kaggle:
         checkpoint_dir = DEFAULT_KAGGLE_CHECKPOINT_DIR
     else:
@@ -298,7 +340,11 @@ def build_paths(runtime: RuntimeMeta, artifact_root_arg: str, checkpoint_dir_arg
 
     if not checkpoint_dir.is_absolute():
         checkpoint_dir = artifact_root / checkpoint_dir
-    checkpoint_dir = resolve_writable_dir(checkpoint_dir, [artifact_root / "checkpoints" / DEFAULT_LOCAL_CHECKPOINT_DIR.name, ROOT / "checkpoints" / DEFAULT_LOCAL_CHECKPOINT_DIR.name])
+    checkpoint_name = DEFAULT_LOCAL_ONECELL_CHECKPOINT_DIR.name if onecell_profile else DEFAULT_LOCAL_CHECKPOINT_DIR.name
+    checkpoint_dir = resolve_writable_dir(
+        checkpoint_dir,
+        [artifact_root / "checkpoints" / checkpoint_name, ROOT / "checkpoints" / checkpoint_name],
+    )
 
     run_dir = artifact_root / "runs" / run_id if runtime.kaggle else artifact_root / run_id
     closure_dir = run_dir / "closure"
@@ -764,6 +810,7 @@ def verify_mode_payload(requested_profile: str, selected_profile: str, runtime: 
         "artifact_root_writable": probe_writable_dir(layout.artifact_root),
         "checkpoint_dir_writable": probe_writable_dir(layout.checkpoint_dir),
         "legacy_build30_exists": (ROOT / LEGACY_SCRIPT_MAP["build30"][0]).exists(),
+        "legacy_onecell_t4_exists": (ROOT / LEGACY_SCRIPT_MAP["onecell_t4"][0]).exists(),
         "legacy_fastproof_exists": (ROOT / LEGACY_SCRIPT_MAP["fastproof"][0]).exists(),
         "compare_script_exists": (ROOT / "scripts/kaggle_train_compare_build30.py").exists(),
         "text_poc_exists": (ROOT / "scripts/kaggle_onefile_demo_build30_text_understanding.py").exists(),
@@ -783,8 +830,8 @@ def verify_mode_payload(requested_profile: str, selected_profile: str, runtime: 
             "gpu_names": list(runtime.gpu_names),
             "gpu_label": runtime.gpu_label,
         },
-        "artifact_root": str(layout.artifact_root),
-        "checkpoint_dir": str(layout.checkpoint_dir),
+        "artifact_root": sanitize_text(str(layout.artifact_root)),
+        "checkpoint_dir": sanitize_text(str(layout.checkpoint_dir)),
         "checks": checks,
         "claim_boundary": [
             "Verify mode checks runtime and canonical lane wiring only.",
@@ -884,7 +931,7 @@ def main() -> int:
     runtime = detect_runtime()
     selected_profile = choose_profile(args.profile, runtime)
     run_id = args.run_id.strip() or f"canon_{selected_profile}_{local_stamp()}"
-    layout = build_paths(runtime, args.artifact_root, args.checkpoint_dir, run_id, args.report_out)
+    layout = build_paths(runtime, selected_profile, args.artifact_root, args.checkpoint_dir, run_id, args.report_out)
 
     if args.mode == "verify":
         payload = verify_mode_payload(args.profile, selected_profile, runtime, layout)

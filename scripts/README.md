@@ -11,7 +11,8 @@ Conventions:
 If you are unsure, run the single-command verification first: `bash scripts/verify_all.sh`.
 
 ## Canonical One-File Path
-- Official/canonical Kaggle closure script: `scripts/kaggle_onefile_closure_build30.py`
+- Official/canonical Kaggle closure script (terminal-first): `scripts/kaggle_onefile_closure_build30.py`
+- Official/canonical Kaggle one-cell script (single-T4 copy/paste lane): `scripts/kaggle_onecell_t4_build30.py`
 - Legacy/reference one-file trainer: `scripts/kaggle_onefile_demo_build30.py`
 - Legacy/reference fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
 - Text-understanding PoC one-file script: `scripts/kaggle_onefile_demo_build30_text_understanding.py`
@@ -20,7 +21,10 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Canonical Kaggle verify command: `bash zero_touch_start.sh --kaggle-onefile --mode verify`
 - Canonical Kaggle package command: `bash zero_touch_start.sh --kaggle-onefile --mode package-only`
 - One-click macOS launcher: `launch_mertformer_kaggle_closure.command`
-- Canonical Kaggle profiles: `auto`, `p100_safe`, `t4x2_dist`, `sweetspot`, `mini300m_probe`, `fastproof_math`
+- Canonical Kaggle profiles: `auto`, `onecell_t4_sweetspot`, `p100_safe`, `t4x2_dist`, `sweetspot`, `mini300m_probe`, `fastproof_math`
+- Single-T4 support matrix: `onecell_t4_sweetspot` is the preferred auto-selected lane on a single Tesla T4; `t4x2_dist` remains the preferred dual-T4 lane.
+- The one-cell lane is repo-import-free at runtime and is designed for direct Kaggle cell paste plus a single `Run` click.
+- One-cell observability contract: `config_snapshot.json`, `runtime_preflight_report.json`, `layer_parity_manifest.json`, `event_manifest.json`, `final_summary.json`, `sha256_manifest.txt`, and `fatal_report.json` on hard failures.
 - Runtime accelerator reality: Kaggle GPU type and quota are floating/account-dependent; the canonical script detects runtime hardware instead of hard-coding a fixed entitlement claim.
 - Chess onefile supported modes: `train`, `verify`, `benchmark`, `package`, `resume`, `arena`
 - Chess onefile now supports named feature bundles through `--feature-bundle` plus explicit `--enable-features` / `--disable-features` overrides.
@@ -192,6 +196,16 @@ Or, on macOS, double-click:
 
 ```bash
 launch_mertformer_kaggle_closure.command
+```
+
+## Canonical Kaggle One-Cell Lane
+
+For a direct Kaggle notebook cell paste on a single T4 runtime, use:
+
+```python
+# copy/paste the contents of scripts/kaggle_onecell_t4_build30.py into a Kaggle cell
+# default profile: t4_onecell_sweetspot
+# interaction: none, just press Run
 ```
 
 ## Build30 Colab Math Fastproof V2 (V1 Closure)

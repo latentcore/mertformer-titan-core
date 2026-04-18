@@ -106,6 +106,7 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `scripts/chess_5080_onefile.py` | `fallback` |
 | `scripts/generate_bench_reports.py` | `fallback` |
 | `scripts/hardening_bundle.py` | `fallback` |
+| `scripts/kaggle_onecell_t4_build30.py` | `fallback` |
 | `scripts/kaggle_onefile_closure_build30.py` | `fallback` |
 | `scripts/kaggle_onefile_demo_build30.py` | `fallback` |
 | `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` | `fallback` |
