@@ -25,6 +25,12 @@ Optional fallback only if the post-run story hardens materially:
 8. `interview_prep.md`
 9. `performance_engineer_fallback.md`
 
+## Local Packet Artifact
+- Current local packet: `mertformer_anthropic_packet_20260419.zip`
+- SHA256 sidecar: `mertformer_anthropic_packet_20260419.zip.sha256`
+- Git policy: the zip itself is ignored; only pointer and hash metadata should be tracked.
+- Pointer: `PACKET_POINTER_20260419.md`
+
 ## Submission Order
 1. Submit `Research Engineer, Science of Scaling - London` first.
 2. Use `application_strategy.md`, the measured-evidence summary, and strongest stories to keep the application claim-safe.

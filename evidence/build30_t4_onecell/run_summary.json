@@ -1,0 +1,86 @@
+{
+  "schema": "mertformer_build30_t4_onecell_evidence_pointer_v1",
+  "run_id": "run_20260419_140401",
+  "profile": "t4_onecell_sweetspot",
+  "device": "cuda",
+  "model_parameters": 192094232,
+  "tokenizer_backend": "sentencepiece",
+  "vocab_size": 32768,
+  "train_blocks": 53873,
+  "val_blocks": 2836,
+  "checkpoint_path": "/kaggle/working/mertformer_onecell_outputs/checkpoints/kaggle_onecell_t4_build30/step_00003500.pt",
+  "checkpoint_step": 3500,
+  "checkpoint_size_gb": 2.142,
+  "tokens_seen": 9856000,
+  "best_observed_eval": {
+    "step": 3500,
+    "val_loss": 7.990970656275749,
+    "val_ppl": 2954.16
+  },
+  "observed_metrics": [
+    {
+      "step": 1000,
+      "val_loss": 15.4090,
+      "val_ppl": 4921044.20
+    },
+    {
+      "step": 1250,
+      "val_loss": 12.1112,
+      "val_ppl": 181893.71
+    },
+    {
+      "step": 1500,
+      "val_loss": 10.6239,
+      "val_ppl": 41104.33
+    },
+    {
+      "step": 2000,
+      "val_loss": 9.1458,
+      "val_ppl": 9374.54
+    },
+    {
+      "step": 2500,
+      "val_loss": 8.5263,
+      "val_ppl": 5045.54
+    },
+    {
+      "step": 3000,
+      "val_loss": 8.1815,
+      "val_ppl": 3574.31
+    },
+    {
+      "step": 3500,
+      "train_loss": 7.5050,
+      "val_loss": 7.9910,
+      "val_ppl": 2954.16
+    }
+  ],
+  "final_status": {
+    "status": "provisional",
+    "reason": "CUDA OutOfMemory during post-training benchmark suite",
+    "fatal_report_path": "/kaggle/working/mertformer_onecell_outputs/runs/run_20260419_140401/fatal_report.json"
+  },
+  "external_archive": {
+    "drive_path": "/content/drive/MyDrive/mertformer_evidence/mertformer_full_evidence_20260419_182653.zip",
+    "size_gb": 15.713,
+    "sha256": "f56db515c0c242ca4ef7468415596cd290bf5e03d70d14de4b86c262b89e4cc1",
+    "sha256_sidecar": "/content/drive/MyDrive/mertformer_evidence/mertformer_full_evidence_20260419_182653.zip.sha256"
+  },
+  "truth_boundary": {
+    "correct": [
+      "real training run",
+      "checkpoint produced",
+      "loss and validation metrics observed",
+      "external evidence archive backed up",
+      "integrity hash recorded"
+    ],
+    "not_claimed": [
+      "production chatbot",
+      "benchmark-validated model",
+      "final model",
+      "AGI",
+      "ASI",
+      "edge deployment proven"
+    ]
+  }
+}
