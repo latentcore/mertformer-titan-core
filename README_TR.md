@@ -1978,6 +1978,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── investor_deck_TR.pptx  # artefakt
 │   ├── ip_licensing_split.md  # dokümantasyon/rapor dosyası
 │   ├── ip_licensing_split_TR.md  # Türkçe doküman karşılığı
+│   ├── kaggle_onefile_closure_verify.json  # JSON veri artefaktı
 │   ├── kernel_fuzz_report.json  # JSON veri artefaktı
 │   ├── known_limits_v1.md  # dokümantasyon/rapor dosyası
 │   ├── kpi_contract_build30.md  # dokümantasyon/rapor dosyası
@@ -2175,6 +2176,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── golden_score.py  # Python modülü/scripti (golden score için otomasyon scripti)
 │   ├── hardening_bundle.py  # Python modülü/scripti (hardening bundle için otomasyon scripti)
 │   ├── hash_manifest_to_json.py  # Python modülü/scripti (hash manifest to json için otomasyon scripti)
+│   ├── kaggle_onecell_t4_build30.py  # Python modülü/scripti (kaggle onecell t4 build30 için otomasyon scripti)
 │   ├── kaggle_onefile_closure_build30.py  # Python modülü/scripti (kaggle onefile closure build30 için otomasyon scripti)
 │   ├── kaggle_onefile_demo_build30.py  # Python modülü/scripti (kaggle onefile demo build30 için otomasyon scripti)
 │   ├── kaggle_onefile_demo_build30_colab_math_fastproof.py  # Python modülü/scripti (kaggle onefile demo build30 colab math fastproof için otomasyon scripti)

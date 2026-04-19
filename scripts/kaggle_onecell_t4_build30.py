@@ -3078,13 +3078,22 @@ def load_stage_texts(
                     )
                     if load_mode == "direct_fallback":
                         # Worker mode unavailable in current runtime context.
-                        # Continue with bounded direct loader path.
+                        # Continue with bounded direct loader path. Notebook cell
+                        # runtimes can hit this branch, so keep the same timeout
+                        # guarantees here instead of silently streaming forever.
                         ds, load_mode, load_info = _load_hf_candidate_dataset(ds_name, subset, split, cfg)
                         rows = []
                         timed_out = False
                         if ds is not None:
+                            direct_start = time.time()
+                            direct_last_hb = direct_start
                             for item in ds:
+                                direct_elapsed = time.time() - direct_start
                                 if len(rows) >= per_candidate_cap:
+                                    break
+                                if direct_elapsed >= float(cfg.get("hf_candidate_max_seconds", 180)):
+                                    timed_out = True
+                                    load_info = f"{load_info}|direct_timeout_{int(direct_elapsed)}s"
                                     break
                                 raw = _extract_field(item, field)
                                 if not raw:
@@ -3095,6 +3104,14 @@ def load_stage_texts(
                                 ):
                                     continue
                                 rows.append(txt)
+                                now = time.time()
+                                if now - direct_last_hb >= float(cfg.get("hf_candidate_heartbeat_seconds", 15)):
+                                    print(
+                                        f"[data:heartbeat] stage={stage['name']} ds={ds_name} "
+                                        f"direct_kept={len(rows)}/{per_candidate_cap} "
+                                        f"elapsed={now - direct_start:.1f}s"
+                                    )
+                                    direct_last_hb = now
                         else:
                             load_mode = "failed"
                     if timed_out:

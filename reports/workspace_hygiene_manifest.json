@@ -1,6 +1,6 @@
 {
   "schema": "workspace_hygiene_manifest_v1",
-  "generated_utc": "2026-04-18T22:08:21Z",
+  "generated_utc": "2026-04-19T13:48:02Z",
   "mode": "audit_only",
   "workspace_root": "<WORKSPACE_ROOT>",
   "repo_root": "<REPO_ROOT>",
@@ -39,6 +39,27 @@
       "classification": "external_workspace_entry",
       "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
       "restore_target": "<WORKSPACE_ROOT>/anthropic_closure_private",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/codex_chat_extract.py",
+      "classification": "external_workspace_file",
+      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
+      "restore_target": "<WORKSPACE_ROOT>/codex_chat_extract.py",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/codex_chats_found.md",
+      "classification": "external_workspace_file",
+      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
+      "restore_target": "<WORKSPACE_ROOT>/codex_chats_found.md",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/current_codex_chat_transcript.md",
+      "classification": "external_workspace_file",
+      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
+      "restore_target": "<WORKSPACE_ROOT>/current_codex_chat_transcript.md",
       "decision_state": "quarantine_first"
     },
     {

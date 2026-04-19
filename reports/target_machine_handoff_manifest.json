@@ -1,6 +1,6 @@
 {
   "schema": "target_machine_handoff_manifest_v1",
-  "generated_utc": "2026-04-18T22:08:32Z",
+  "generated_utc": "2026-04-19T13:48:13Z",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "train_allowed": true,
   "decision_reason_code": "READY_OFFLINE_CLEAN",
@@ -25,13 +25,13 @@
     },
     {
       "path": "scripts/kaggle_onefile_closure_build30.py",
-      "size_bytes": 42540,
-      "sha256": "5ef3ad7885d0cf540a24a699492c5f35eed337521d2ef007431d2b8c9caa60eb"
+      "size_bytes": 42570,
+      "sha256": "10998a9f432b26ada60276cabbcd84e95bee2c297f4eab52558059cb201690ff"
     },
     {
       "path": "scripts/kaggle_onecell_t4_build30.py",
-      "size_bytes": 285841,
-      "sha256": "4eb8e3303d0af9db5da9551b3882ead3cdfd6d76c2f22e4f53d240c558b4d1ca"
+      "size_bytes": 287066,
+      "sha256": "d7c3d362acfbbd9431e12f2c5b0d2273ac8bab37c080e47b039a19f7b76d1d91"
     },
     {
       "path": "scripts/macos_keepawake.sh",
@@ -56,7 +56,7 @@
     {
       "path": "reports/train_readiness_decision.json",
       "size_bytes": 2943,
-      "sha256": "fae486c7dc7efbdf7f86819e5b3eab2ebbfae26e47fdd5a4734ac8a71b3eb282"
+      "sha256": "7a7be045449b5f194bed6247c84ac0fa9748bc7690f518866bc1ef69c7f73849"
     },
     {
       "path": "reports/train_readiness_decision.md",
@@ -65,13 +65,13 @@
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 2725,
-      "sha256": "0d8cce98bb5ebc36e939e2100c807276449df8e7aa6927faf419d375c173c33f"
+      "size_bytes": 2612,
+      "sha256": "7d11a3d0478b8171a426baaeee73bdbeb0e09340631a8bb23baafc192785d24b"
     },
     {
       "path": "reports/start_gate_operator_decision.json",
       "size_bytes": 1215,
-      "sha256": "7585a4cd81c4915a68eb83eb62124d35e484a93be141803c563b6f9478973d51"
+      "sha256": "235f602eaaa7e891e179976f8321bc101bc40a9ac62984d324e5836ddedecaa9"
     },
     {
       "path": "reports/start_gate_operator_decision.md",
@@ -81,7 +81,7 @@
     {
       "path": "reports/repo_external_handoff.md",
       "size_bytes": 1468,
-      "sha256": "a49e73b9cbc95aa881c9b50d463603203d41694cc7e2ef9ceeb530637fe08272"
+      "sha256": "db17dee966c854de420d3f1a76fc695f558dff021df5d261ccd9d87a70cd4c84"
     }
   ],
   "operator_steps": [

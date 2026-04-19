@@ -441,6 +441,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── investor_deck_TR.pptx  # artifact
 │   ├── ip_licensing_split.md  # documentation/report file
 │   ├── ip_licensing_split_TR.md  # Turkish document counterpart
+│   ├── kaggle_onefile_closure_verify.json  # JSON data artifact
 │   ├── kernel_fuzz_report.json  # JSON data artifact
 │   ├── known_limits_v1.md  # documentation/report file
 │   ├── kpi_contract_build30.md  # documentation/report file
@@ -638,6 +639,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── golden_score.py  # Python module/script (automation script for golden score)
 │   ├── hardening_bundle.py  # Python module/script (automation script for hardening bundle)
 │   ├── hash_manifest_to_json.py  # Python module/script (automation script for hash manifest to json)
+│   ├── kaggle_onecell_t4_build30.py  # Python module/script (automation script for kaggle onecell t4 build30)
 │   ├── kaggle_onefile_closure_build30.py  # Python module/script (automation script for kaggle onefile closure build30)
 │   ├── kaggle_onefile_demo_build30.py  # Python module/script (automation script for kaggle onefile demo build30)
 │   ├── kaggle_onefile_demo_build30_colab_math_fastproof.py  # Python module/script (automation script for kaggle onefile demo build30 colab math fastproof)

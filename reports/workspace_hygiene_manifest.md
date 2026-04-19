@@ -16,6 +16,9 @@ Quarantine-first workspace hygiene report. No repo-tracked path should be moved 
 | `<WORKSPACE_ROOT>/.ruff_cache` | `workspace_cache` | `quarantine_first` | Rebuildable lint cache outside the repo root. Safe candidate for quarantine-first handling. | `<WORKSPACE_ROOT>/.ruff_cache` |
 | `<WORKSPACE_ROOT>/adb_pull` | `external_workspace_entry` | `quarantine_first` | Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first. | `<WORKSPACE_ROOT>/adb_pull` |
 | `<WORKSPACE_ROOT>/anthropic_closure_private` | `external_workspace_entry` | `quarantine_first` | Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first. | `<WORKSPACE_ROOT>/anthropic_closure_private` |
+| `<WORKSPACE_ROOT>/codex_chat_extract.py` | `external_workspace_file` | `quarantine_first` | Top-level file outside the active repo root. Quarantine first instead of deleting in place. | `<WORKSPACE_ROOT>/codex_chat_extract.py` |
+| `<WORKSPACE_ROOT>/codex_chats_found.md` | `external_workspace_file` | `quarantine_first` | Top-level file outside the active repo root. Quarantine first instead of deleting in place. | `<WORKSPACE_ROOT>/codex_chats_found.md` |
+| `<WORKSPACE_ROOT>/current_codex_chat_transcript.md` | `external_workspace_file` | `quarantine_first` | Top-level file outside the active repo root. Quarantine first instead of deleting in place. | `<WORKSPACE_ROOT>/current_codex_chat_transcript.md` |
 | `<REPO_ROOT>` | `project_repo` | `keep` | Active main repository root; never quarantine or delete directly from workspace hygiene. | `<REPO_ROOT>` |
 
 ## Quarantine Moves
