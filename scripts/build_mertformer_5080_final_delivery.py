@@ -48,6 +48,17 @@ ns = {'__name__': '__main__', '__file__': '<mertformer_5080_final_onefile_protec
 exec(compile(code, '<mertformer_5080_final_onefile_protected>', 'exec'), ns)
 """ % payload)
         os.chmod(protected, os.stat(protected).st_mode | stat.S_IXUSR)
+        entry_template = """#!/usr/bin/env python3
+# Practical protected EXE entry. Args are fixed so the receiver can double-click a single EXE.
+import base64, sys, zlib
+sys.argv = [sys.argv[0], "--mode", "run", "--profile", {profile!r}]
+PAYLOAD = {payload!r}
+code = zlib.decompress(base64.b85decode(PAYLOAD.encode("ascii")))
+ns = {{"__name__": "__main__", "__file__": "<mertformer_5080_{profile}_exe>"}}
+exec(compile(code, "<mertformer_5080_{profile}_exe>", "exec"), ns)
+"""
+        _write(staging / 'mertformer_5080_exe_safe.py', entry_template.format(profile='safe_5080', payload=payload))
+        _write(staging / 'mertformer_5080_exe_challenge.py', entry_template.format(profile='challenge_5080', payload=payload))
         _write(staging / 'run_5080_default.bat', '@echo off\r\nset MERTFORMER_SELF_BOOTSTRAP=1\r\npython mertformer_5080_final_onefile_protected.py --mode run --profile safe_5080\r\npause\r\n')
         _write(staging / 'run_5080_challenge.bat', '@echo off\r\nset MERTFORMER_SELF_BOOTSTRAP=1\r\npython mertformer_5080_final_onefile_protected.py --mode run --profile challenge_5080\r\npause\r\n')
         _write(staging / 'run_smoke_test.bat', '@echo off\r\nset MERTFORMER_SELF_BOOTSTRAP=1\r\npython mertformer_5080_final_onefile_protected.py --mode smoke --profile smoke --device auto --no-chat\r\npause\r\n')
@@ -80,13 +91,23 @@ exec(compile(code, '<mertformer_5080_final_onefile_protected>', 'exec'), ns)
                 "--hidden-import", "psutil",
                 "--hidden-import", "cryptography"
             )
-            & $PY -m PyInstaller --clean --noconfirm --onefile --name MertFormer5080Final @collect .\\mertformer_5080_final_onefile_protected.py
-            $EXE = ".\\dist\\MertFormer5080Final.exe"
-            if (-not (Test-Path $EXE)) { throw "EXE build failed: $EXE was not created." }
-            $hash = (Get-FileHash $EXE -Algorithm SHA256).Hash.ToLower()
-            "$hash  MertFormer5080Final.exe" | Out-File -Encoding ascii ".\\dist\\MertFormer5080Final.exe.sha256"
-            Write-Host "[MertFormer] EXE built at dist\\MertFormer5080Final.exe"
-            Write-Host "[MertFormer] SHA256: $hash"
+            $targets = @(
+                @{ Name = "MertFormer5080Safe"; Entry = ".\\mertformer_5080_exe_safe.py" },
+                @{ Name = "MertFormer5080Challenge"; Entry = ".\\mertformer_5080_exe_challenge.py" }
+            )
+            foreach ($target in $targets) {
+                Write-Host "[MertFormer] Building $($target.Name).exe"
+                & $PY -m PyInstaller --clean --noconfirm --onefile --name $target.Name @collect $target.Entry
+                $EXE = ".\\dist\\$($target.Name).exe"
+                if (-not (Test-Path $EXE)) { throw "EXE build failed: $EXE was not created." }
+                $hash = (Get-FileHash $EXE -Algorithm SHA256).Hash.ToLower()
+                "$hash  $($target.Name).exe" | Out-File -Encoding ascii "$EXE.sha256"
+                Write-Host "[MertFormer] EXE built at $EXE"
+                Write-Host "[MertFormer] SHA256: $hash"
+            }
+            Write-Host "[MertFormer] For friend-only delivery, send exactly one EXE:"
+            Write-Host "  Safe first run:      dist\\MertFormer5080Safe.exe"
+            Write-Host "  Overnight challenge: dist\\MertFormer5080Challenge.exe"
         '''))
         _write(staging / 'requirements_5080.txt', textwrap.dedent('''
             numpy
@@ -103,10 +124,13 @@ exec(compile(code, '<mertformer_5080_final_onefile_protected>', 'exec'), ns)
             1. Windows bilgisayarda NVIDIA driver güncel olsun.
             2. EXE üretmek için PowerShell'de:
                `powershell -ExecutionPolicy Bypass -File .\\build_windows_exe.ps1`
-            3. Oluşan dosya: `dist\\MertFormer5080Final.exe`
-            4. Sadece Python ile denemek istersen önce `run_smoke_test.bat`, sonra `run_5080_default.bat` kullan.
-            5. Daha agresif uzun koşu istenirse `run_5080_challenge.bat` ayrı opsiyonel yoldur.
-            6. Çıktılar varsayılan olarak script/exe klasöründeki run/evidence klasörlerine yazılır.
+            3. Oluşan dosyalar:
+               - `dist\\MertFormer5080Safe.exe`: güvenli varsayılan profil.
+               - `dist\\MertFormer5080Challenge.exe`: daha büyük/uzun gece koşusu.
+            4. Arkadaşa sadece bir exe verilecekse, uzun eğitim için `MertFormer5080Challenge.exe` ver.
+            5. Sadece Python ile denemek istersen önce `run_smoke_test.bat`, sonra `run_5080_default.bat` kullan.
+            6. Daha agresif uzun koşu Python yolunda istenirse `run_5080_challenge.bat` ayrı opsiyonel yoldur.
+            7. Çıktılar varsayılan olarak script/exe klasöründeki run/evidence klasörlerine yazılır.
 
             Not: Bu paket pratik korumalıdır, imkansız reverse-engineering garantisi yoktur.
             Kalite iddiası smoke ile değil benchmark ile açılır.
