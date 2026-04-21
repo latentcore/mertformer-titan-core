@@ -73,7 +73,7 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | Path | Markers |
 | --- | --- |
 | `README.md` | `TBD`, `scaffold`, `fallback` |
-| `README_TR.md` | `TBD`, `fallback` |
+| `README_TR.md` | `TBD`, `scaffold`, `fallback` |
 | `datasets/INTERNAL_POLICY.md` | `TBD` |
 | `datasets/INTERNAL_POLICY_TR.md` | `TBD` |
 | `datasets/LICENSES.md` | `TBD` |
@@ -110,6 +110,7 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `scripts/kaggle_onefile_closure_build30.py` | `fallback` |
 | `scripts/kaggle_onefile_demo_build30.py` | `fallback` |
 | `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` | `fallback` |
+| `scripts/mertformer_5080_final_onefile.py` | `scaffold`, `fallback` |
 | `scripts/mobile_export.py` | `fallback` |
 | `scripts/record_dataset_hashes.py` | `fallback` |
 | `scripts/smart_runner.py` | `fallback` |

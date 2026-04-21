@@ -1,6 +1,6 @@
 {
   "schema": "chess_training_readiness_report_v1",
-  "generated_utc": "2026-04-19T13:48:05Z",
+  "generated_utc": "2026-04-21T19:29:22Z",
   "final_status": "READY_FOR_TRAINING",
   "summary": {
     "required_total": 7,

@@ -1,6 +1,6 @@
 {
   "schema": "workspace_hygiene_manifest_v1",
-  "generated_utc": "2026-04-19T13:48:02Z",
+  "generated_utc": "2026-04-21T19:29:20Z",
   "mode": "audit_only",
   "workspace_root": "<WORKSPACE_ROOT>",
   "repo_root": "<REPO_ROOT>",
@@ -68,6 +68,27 @@
       "reason": "Active main repository root; never quarantine or delete directly from workspace hygiene.",
       "restore_target": "<REPO_ROOT>",
       "decision_state": "keep"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420",
+      "classification": "external_workspace_entry",
+      "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
+      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420.zip",
+      "classification": "archive_or_dump",
+      "reason": "Top-level archive or dump outside the main repo. Review and quarantine before any permanent cleanup.",
+      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420.zip",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420.zip.sha256",
+      "classification": "external_workspace_file",
+      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
+      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420.zip.sha256",
+      "decision_state": "quarantine_first"
     }
   ]
 }

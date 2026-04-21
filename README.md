@@ -119,7 +119,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `211 passed, 3 skipped` |
+| `python3 -m pytest -q` | `216 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -132,7 +132,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`211 passed, 3 skipped`)
+   - `pytest` passed (`216 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -1666,6 +1666,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── CHAIN_MAP_TR.md  # Turkish document counterpart
 │   ├── CHESS_ONEFILE_MASTER_TRUTH.md  # documentation/report file
 │   ├── CHESS_ONEFILE_MASTER_TRUTH_TR.md  # Turkish document counterpart
+│   ├── MERTFORMER_5080_FINAL_ONEFILE_TRUTH.md  # documentation/report file
+│   ├── MERTFORMER_5080_FINAL_ONEFILE_TRUTH_TR.md  # Turkish document counterpart
 │   ├── PROJECT_MASTER_TRUTH.md  # documentation/report file
 │   └── PROJECT_MASTER_TRUTH_TR.md  # Turkish document counterpart
 ├── documents/  # directory
@@ -2171,6 +2173,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── build_investor_deck.py  # Python module/script (automation script for build investor deck)
 │   ├── build_master_closure_matrix.py  # Python module/script (automation script for build master closure matrix)
 │   ├── build_max_closure_handoff.py  # Python module/script (automation script for build max closure handoff)
+│   ├── build_mertformer_5080_final_delivery.py  # Python module/script (automation script for build mertformer 5080 final delivery)
 │   ├── build_offline_closure_pack.py  # Python module/script (automation script for build offline closure pack)
 │   ├── build_scoped_external_intake_matrix.py  # Python module/script (automation script for build scoped external intake matrix)
 │   ├── build_summary_pdf.py  # Python module/script (automation script for build summary pdf)
@@ -2192,6 +2195,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── cleanup_scoped_closure_junk.py  # Python module/script (automation script for cleanup scoped closure junk)
 │   ├── data_pipeline.py  # Python module/script (automation script for data pipeline)
 │   ├── dealroom_sync.py  # Python module/script (automation script for dealroom sync)
+│   ├── decrypt_mertformer_result_package.py  # Python module/script (automation script for decrypt mertformer result package)
 │   ├── docs_inventory.py  # Python module/script (markdown inventory and folder policy reporter)
 │   ├── download_tr_tokenizer.py  # Python module/script (automation script for download tr tokenizer)
 │   ├── drone_sitl_demo.py  # Python module/script (automation script for drone sitl demo)
@@ -2223,6 +2227,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── md_build30_sweep.py  # Python module/script (automation script for md build30 sweep)
 │   ├── md_integrity_check.py  # Python module/script (automation script for md integrity check)
 │   ├── md_quality_gate.py  # Python module/script (automation script for md quality gate)
+│   ├── mertformer_5080_final_onefile.py  # Python module/script (automation script for mertformer 5080 final onefile)
 │   ├── mini_titan_poc.py  # Python module/script (automation script for mini titan poc)
 │   ├── mobile_export.py  # Python module/script (automation script for mobile export)
 │   ├── nan_kill_test.py  # Python module/script (automation script for nan kill test)
@@ -2302,6 +2307,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_kpi_report_cli.py  # Python module/script (automated test module for kpi report cli)
 │   ├── test_lifelong_safety.py  # Python module/script (automated test module for lifelong safety)
 │   ├── test_liquid_safeguard.py  # Python module/script (automated test module for liquid safeguard)
+│   ├── test_mertformer_5080_final_onefile.py  # Python module/script (automated test module for mertformer 5080 final onefile)
 │   ├── test_mla_regressions.py  # Python module/script (automated test module for mla regressions)
 │   ├── test_model.py  # Python module/script (automated test module for model)
 │   ├── test_onnx_custom_op_contract.py  # Python module/script (automated test module for onnx custom op contract)

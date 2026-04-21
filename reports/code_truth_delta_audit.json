@@ -1,6 +1,6 @@
 {
   "schema": "code_truth_delta_audit_v1",
-  "generated_utc": "2026-04-19T13:48:02Z",
+  "generated_utc": "2026-04-21T19:29:19Z",
   "evidence_contract": {
     "required_columns": [
       "code_path",
@@ -334,9 +334,10 @@
       "path": "README_TR.md",
       "markers": [
         "TBD",
+        "scaffold",
         "fallback"
       ],
-      "summary": "TBD, fallback"
+      "summary": "TBD, scaffold, fallback"
     },
     {
       "path": "datasets/INTERNAL_POLICY.md",
@@ -594,6 +595,14 @@
       "summary": "fallback"
     },
     {
+      "path": "scripts/mertformer_5080_final_onefile.py",
+      "markers": [
+        "scaffold",
+        "fallback"
+      ],
+      "summary": "scaffold, fallback"
+    },
+    {
       "path": "scripts/mobile_export.py",
       "markers": [
         "fallback"
@@ -663,6 +672,6 @@
       "tested_fallback": 6,
       "reference_safe": 1
     },
-    "marker_hit_count": 47
+    "marker_hit_count": 48
   }
 }

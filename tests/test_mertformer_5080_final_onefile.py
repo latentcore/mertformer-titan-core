@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import os
 import py_compile
 import sys
@@ -43,6 +44,20 @@ def test_parity_report_contains_truth_boundary_fields(tmp_path: Path) -> None:
     assert report['legacy_compat_model_class'] == 'LegacyOnecellMertFormerTiny'
     assert report['experimental_component_policy']['policy'] == 'keep_but_be_honest'
     assert (tmp_path / 'parity_report.json').exists()
+
+
+def test_source_manifest_is_portable_and_ci_safe() -> None:
+    manifest = json.loads(module.MERTFORMER_SOURCE_MANIFEST)
+    serialized = json.dumps(manifest, ensure_ascii=False)
+    forbidden_local_prefix = '/Users/' + 'mertyunlu/Desktop/'
+    assert forbidden_local_prefix not in serialized
+    assert manifest['repo_root'] == '<REPO_ROOT>'
+    assert manifest['canonical_output'] == '<REPO_ROOT>/scripts/mertformer_5080_final_onefile.py'
+    assert all(
+        entry.get('abs_path', '').startswith('<REPO_ROOT>/')
+        for entry in manifest['files']
+        if entry.get('abs_path')
+    )
 
 
 def test_delivery_and_decrypt_helpers_compile() -> None:

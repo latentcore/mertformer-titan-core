@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-04-19T13:48:13.880814+00:00",
+  "generated_utc": "2026-04-21T19:29:31.481043+00:00",
   "ok": true,
   "start_allowed": true,
   "train_allowed": true,
@@ -33,7 +33,7 @@
     "git_status": {
       "cmd": "git status --short --branch",
       "return_code": 0,
-      "stdout_tail": "## main...origin/main\n M reports/chess_gui_onefile_sync_report.json\n M reports/chess_onefile_extension_report.json\n M reports/chess_teaching_contract_report.json\n M reports/chess_teaching_contract_report.md\n M reports/chess_training_readiness_report.json\n M reports/closure_57_matrix.json\n M reports/code_truth_delta_audit.json\n M reports/final_orchestrator_status.json\n M reports/final_orchestrator_status.md\n M reports/post_train_autorun_status.json\n M reports/post_train_autorun_status.md\n M reports/train_readiness_decision.json\n M reports/training_readiness_manifest.json\n M reports/workspace_hygiene_manifest.json\n M reports/workspace_hygiene_manifest.md\n M scripts/kaggle_onecell_t4_build30.py\n M scripts/kaggle_onefile_demo_build30.py\n M scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py\n",
+      "stdout_tail": "## main...origin/main\n M README.md\n M README_TR.md\n M reports/chess_gui_onefile_sync_report.json\n M reports/chess_onefile_extension_report.json\n M reports/chess_teaching_contract_report.json\n M reports/chess_teaching_contract_report.md\n M reports/chess_training_readiness_report.json\n M reports/closure_57_matrix.json\n M reports/code_truth_delta_audit.json\n M reports/code_truth_delta_audit.md\n M reports/final_orchestrator_status.json\n M reports/final_orchestrator_status.md\n M reports/one_command_full_sop_summary.md\n M reports/post_train_autorun_status.json\n M reports/post_train_autorun_status.md\n M reports/release_snapshot.md\n M reports/release_snapshot_TR.md\n M reports/train_readiness_decision.json\n M reports/training_readiness_manifest.json\n M reports/workspace_hygiene_manifest.json\n M reports/workspace_hygiene_manifest.md\n M scripts/mertformer_5080_final_onefile.py\n M tests/test_mertformer_5080_final_onefile.py\n",
       "stderr_tail": "",
       "ok": true
     },

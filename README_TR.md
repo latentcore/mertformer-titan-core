@@ -120,7 +120,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `211 passed, 3 skipped` |
+| `python3 -m pytest -q` | `216 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -133,7 +133,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`211 passed, 3 skipped`)
+   - `pytest` geçti (`216 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -1654,6 +1654,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── CHAIN_MAP_TR.md  # Türkçe doküman karşılığı
 │   ├── CHESS_ONEFILE_MASTER_TRUTH.md  # dokümantasyon/rapor dosyası
 │   ├── CHESS_ONEFILE_MASTER_TRUTH_TR.md  # Türkçe doküman karşılığı
+│   ├── MERTFORMER_5080_FINAL_ONEFILE_TRUTH.md  # dokümantasyon/rapor dosyası
+│   ├── MERTFORMER_5080_FINAL_ONEFILE_TRUTH_TR.md  # Türkçe doküman karşılığı
 │   ├── PROJECT_MASTER_TRUTH.md  # dokümantasyon/rapor dosyası
 │   └── PROJECT_MASTER_TRUTH_TR.md  # Türkçe doküman karşılığı
 ├── documents/  # dizin
@@ -2159,6 +2161,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── build_investor_deck.py  # Python modülü/scripti (build investor deck için otomasyon scripti)
 │   ├── build_master_closure_matrix.py  # Python modülü/scripti (build master closure matrix için otomasyon scripti)
 │   ├── build_max_closure_handoff.py  # Python modülü/scripti (build max closure handoff için otomasyon scripti)
+│   ├── build_mertformer_5080_final_delivery.py  # Python modülü/scripti (build mertformer 5080 final delivery için otomasyon scripti)
 │   ├── build_offline_closure_pack.py  # Python modülü/scripti (build offline closure pack için otomasyon scripti)
 │   ├── build_scoped_external_intake_matrix.py  # Python modülü/scripti (build scoped external intake matrix için otomasyon scripti)
 │   ├── build_summary_pdf.py  # Python modülü/scripti (build summary pdf için otomasyon scripti)
@@ -2180,6 +2183,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── cleanup_scoped_closure_junk.py  # Python modülü/scripti (cleanup scoped closure junk için otomasyon scripti)
 │   ├── data_pipeline.py  # Python modülü/scripti (data pipeline için otomasyon scripti)
 │   ├── dealroom_sync.py  # Python modülü/scripti (dealroom sync için otomasyon scripti)
+│   ├── decrypt_mertformer_result_package.py  # Python modülü/scripti (decrypt mertformer result package için otomasyon scripti)
 │   ├── docs_inventory.py  # Python modülü/scripti (markdown envanteri ve klasör politika raporlayıcısı)
 │   ├── download_tr_tokenizer.py  # Python modülü/scripti (download tr tokenizer için otomasyon scripti)
 │   ├── drone_sitl_demo.py  # Python modülü/scripti (drone sitl demo için otomasyon scripti)
@@ -2211,6 +2215,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── md_build30_sweep.py  # Python modülü/scripti (md build30 sweep için otomasyon scripti)
 │   ├── md_integrity_check.py  # Python modülü/scripti (md integrity check için otomasyon scripti)
 │   ├── md_quality_gate.py  # Python modülü/scripti (md quality gate için otomasyon scripti)
+│   ├── mertformer_5080_final_onefile.py  # Python modülü/scripti (mertformer 5080 final onefile için otomasyon scripti)
 │   ├── mini_titan_poc.py  # Python modülü/scripti (mini titan poc için otomasyon scripti)
 │   ├── mobile_export.py  # Python modülü/scripti (mobile export için otomasyon scripti)
 │   ├── nan_kill_test.py  # Python modülü/scripti (nan kill test için otomasyon scripti)
@@ -2290,6 +2295,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_kpi_report_cli.py  # Python modülü/scripti (kpi report cli için otomatik test modülü)
 │   ├── test_lifelong_safety.py  # Python modülü/scripti (lifelong safety için otomatik test modülü)
 │   ├── test_liquid_safeguard.py  # Python modülü/scripti (liquid safeguard için otomatik test modülü)
+│   ├── test_mertformer_5080_final_onefile.py  # Python modülü/scripti (mertformer 5080 final onefile için otomatik test modülü)
 │   ├── test_mla_regressions.py  # Python modülü/scripti (mla regressions için otomatik test modülü)
 │   ├── test_model.py  # Python modülü/scripti (model için otomatik test modülü)
 │   ├── test_onnx_custom_op_contract.py  # Python modülü/scripti (onnx custom op contract için otomatik test modülü)

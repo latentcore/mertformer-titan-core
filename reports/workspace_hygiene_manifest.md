@@ -20,6 +20,9 @@ Quarantine-first workspace hygiene report. No repo-tracked path should be moved 
 | `<WORKSPACE_ROOT>/codex_chats_found.md` | `external_workspace_file` | `quarantine_first` | Top-level file outside the active repo root. Quarantine first instead of deleting in place. | `<WORKSPACE_ROOT>/codex_chats_found.md` |
 | `<WORKSPACE_ROOT>/current_codex_chat_transcript.md` | `external_workspace_file` | `quarantine_first` | Top-level file outside the active repo root. Quarantine first instead of deleting in place. | `<WORKSPACE_ROOT>/current_codex_chat_transcript.md` |
 | `<REPO_ROOT>` | `project_repo` | `keep` | Active main repository root; never quarantine or delete directly from workspace hygiene. | `<REPO_ROOT>` |
+| `<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420` | `external_workspace_entry` | `quarantine_first` | Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first. | `<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420` |
+| `<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420.zip` | `archive_or_dump` | `quarantine_first` | Top-level archive or dump outside the main repo. Review and quarantine before any permanent cleanup. | `<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420.zip` |
+| `<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420.zip.sha256` | `external_workspace_file` | `quarantine_first` | Top-level file outside the active repo root. Quarantine first instead of deleting in place. | `<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420.zip.sha256` |
 
 ## Quarantine Moves
 - none
