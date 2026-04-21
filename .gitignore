@@ -30,7 +30,12 @@ artifacts/
 # Package dropzone in project root
 /packages/*.zip
 /packages/*.zip.sha256
+/packages/*.mfenc
+/packages/*.mfenc.sha256
 /packages/*.age
+/packages/latest_mertformer_5080_final_delivery.txt
+/private/
+/runs/
 dist/
 build/
 *.egg-info/
