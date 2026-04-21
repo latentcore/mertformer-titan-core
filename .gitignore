@@ -29,6 +29,7 @@ kaggle_onefile_build30_*.jsonl
 artifacts/
 # Package dropzone in project root
 /packages/*.zip
+/packages/*.zip.sha256
 /packages/*.age
 dist/
 build/
