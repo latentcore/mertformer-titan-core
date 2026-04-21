@@ -55,32 +55,63 @@ exec(compile(code, '<mertformer_5080_final_onefile_protected>', 'exec'), ns)
         _write(staging / 'run_5080_challenge.ps1', '$env:MERTFORMER_SELF_BOOTSTRAP="1"\npython .\\mertformer_5080_final_onefile_protected.py --mode run --profile challenge_5080\n')
         _write(staging / 'build_windows_exe.ps1', textwrap.dedent('''
             $ErrorActionPreference = "Stop"
-            python -m pip install --upgrade pyinstaller
-            pyinstaller --onefile --name MertFormer5080Final .\\mertformer_5080_final_onefile_protected.py
-            Write-Host "EXE built at dist\\MertFormer5080Final.exe"
+            Write-Host "[MertFormer] Building a practical single EXE. This can take a long time because PyTorch/CUDA files are large."
+            if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
+                throw "Python was not found. Install Python 3.11+ for your user, then rerun this script."
+            }
+            python -m venv .venv_build
+            $PY = ".\\.venv_build\\Scripts\\python.exe"
+            & $PY -m pip install --upgrade pip wheel setuptools
+            & $PY -m pip install --upgrade torch --index-url https://download.pytorch.org/whl/cu128
+            & $PY -m pip install --upgrade -r .\\requirements_5080.txt
+            $env:MERTFORMER_SELF_BOOTSTRAP = "0"
+            $collect = @(
+                "--collect-all", "torch",
+                "--collect-all", "numpy",
+                "--collect-all", "datasets",
+                "--collect-all", "tokenizers",
+                "--collect-all", "safetensors",
+                "--collect-all", "psutil",
+                "--collect-all", "cryptography",
+                "--hidden-import", "torch",
+                "--hidden-import", "datasets",
+                "--hidden-import", "tokenizers",
+                "--hidden-import", "safetensors",
+                "--hidden-import", "psutil",
+                "--hidden-import", "cryptography"
+            )
+            & $PY -m PyInstaller --clean --noconfirm --onefile --name MertFormer5080Final @collect .\\mertformer_5080_final_onefile_protected.py
+            $EXE = ".\\dist\\MertFormer5080Final.exe"
+            if (-not (Test-Path $EXE)) { throw "EXE build failed: $EXE was not created." }
+            $hash = (Get-FileHash $EXE -Algorithm SHA256).Hash.ToLower()
+            "$hash  MertFormer5080Final.exe" | Out-File -Encoding ascii ".\\dist\\MertFormer5080Final.exe.sha256"
+            Write-Host "[MertFormer] EXE built at dist\\MertFormer5080Final.exe"
+            Write-Host "[MertFormer] SHA256: $hash"
         '''))
         _write(staging / 'requirements_5080.txt', textwrap.dedent('''
-            --index-url https://download.pytorch.org/whl/cu128
-            torch
             numpy
             datasets
             tokenizers
             safetensors
             psutil
             cryptography
+            pyinstaller
         '''))
         _write(staging / 'README_FRIEND_TR.md', textwrap.dedent('''
             # MertFormer 5080 Friend Run
 
             1. Windows bilgisayarda NVIDIA driver güncel olsun.
-            2. `run_smoke_test.bat` ile önce küçük test çalıştır.
-            3. Sorun yoksa önce `run_5080_default.bat` ile güvenli profili çalıştır.
-            4. Daha agresif uzun koşu istenirse `run_5080_challenge.bat` ayrı opsiyonel yoldur.
-            5. Çıktılar varsayılan olarak script klasöründeki run/evidence klasörlerine yazılır.
+            2. EXE üretmek için PowerShell'de:
+               `powershell -ExecutionPolicy Bypass -File .\\build_windows_exe.ps1`
+            3. Oluşan dosya: `dist\\MertFormer5080Final.exe`
+            4. Sadece Python ile denemek istersen önce `run_smoke_test.bat`, sonra `run_5080_default.bat` kullan.
+            5. Daha agresif uzun koşu istenirse `run_5080_challenge.bat` ayrı opsiyonel yoldur.
+            6. Çıktılar varsayılan olarak script/exe klasöründeki run/evidence klasörlerine yazılır.
 
             Not: Bu paket pratik korumalıdır, imkansız reverse-engineering garantisi yoktur.
             Kalite iddiası smoke ile değil benchmark ile açılır.
             `safe_5080` ana önerilen teslim profilidir; `challenge_5080` deneysel-güç odaklı ikinci yoldur.
+            Tek EXE hedefi pratik olarak desteklenir, ancak NVIDIA driver ve Windows güvenlik izinleri sistemde hazır olmalıdır.
         '''))
         manifest = {
             'created_at': dt.datetime.now(dt.timezone.utc).isoformat(),
