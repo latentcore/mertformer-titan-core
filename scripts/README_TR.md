@@ -15,6 +15,9 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - Colab fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
 - Text-understanding PoC one-file script: `scripts/kaggle_onefile_demo_build30_text_understanding.py`
 - Windows RTX 5080 satranç PoC one-file script: `scripts/chess_5080_onefile.py`
+- Kanonik genel 5080 final one-file scripti: `scripts/mertformer_5080_final_onefile.py`
+- Genel 5080 delivery builder: `scripts/build_mertformer_5080_final_delivery.py`
+- Genel 5080 decrypt helper: `scripts/decrypt_mertformer_result_package.py`
 - Satranç one-file desteklenen modlar: `train`, `verify`, `benchmark`, `package`, `resume`, `arena`
 - Satranç one-file artık isimli feature bundle desteği taşır: `--feature-bundle` ve bunun üstüne `--enable-features` / `--disable-features` override’ları kullanılabilir.
 - Önerilen ileri bundle adları: `routing_stack`, `liquid_stack`, `memory_attention_stack`, `cognitive_stack`, `objective_stack`, `postrun_analysis_stack`, `all_stable_extensions`, `all_on_experimental`.
@@ -50,6 +53,7 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - Fatal runtime hatalarının hem `logs/run_log.jsonl` içindeki `fatal_exception` event'inde hem de Desktop tarafındaki `*_FAILED_*.json` artefaktında görünmesi beklenir.
 - Windows builder/export akışı artık `MERTFORMER_CHESS_ARCHIVE_PASSWORD` değerini derlenmiş launcher içine gömmez; şifreli çıktı gerekiyorsa final EXE çalıştırılmadan önce hedef makinede ortam değişkeni olarak verin.
 - Windows RTX 5080 share/export builder: `scripts/export_chess_5080_share.py`
+- Genel 5080 final truth boundary: `docs/MERTFORMER_5080_FINAL_ONEFILE_TRUTH_TR.md`
 - Repo dışı one-file kopyaları desteklenmez ve drift kaynağı sayılır.
 
 ### Satranç Onefile Bundle Örnekleri

@@ -23,6 +23,7 @@ It intentionally separates:
 | `governance_and_repo_contracts` | `repo-side strong` | `true` | Governance, scorecards, runbooks, ADRs, truth docs, and closure reports exist, but governance closure is not the same as final shipped capability. |
 | `train_readiness_45k` | `repo-side strong` | `true` | Readiness and preflight evidence exist, but the real long run and trained benchmark outputs still do not exist in this repo state. |
 | `chess_onefile_closure` | `repo-side strong` | `true` | The chess onefile lane now has extensive internal closure, but final strength proof, external reproduction, and release-grade evidence are still missing. |
+| `general_5080_final_onefile` | `repo-side strong` | `true` | The promoted general 5080 onefile lane now exists with tests, delivery helpers, and truth docs, but measured long-run quality and benchmark proof are still pending. |
 | `release_process_integrity` | `repo-side strong` | `true` | One-shot closure scripts, manifests, and freeze documents exist, but final RC/golden/1.0.0 still require real trained artifacts and sign-off. |
 | `kernel_and_runtime_paths` | `repo-side strong` | `true` | CUDA/Triton/CPU paths and tests exist, but measured end-to-end training and device-truth closure are still pending. |
 | `product_modes_offline_rag_assistant` | `repo-side partial` | `true` | The repo has product-oriented surfaces and positioning, but full offline assistant + RAG + operator product closure is still incomplete. |
@@ -37,6 +38,7 @@ It intentionally separates:
 - Canonical train-readiness and one-shot closure entrypoints
 - Strong test and verification surface
 - Chess onefile feature-flag, profile, auxiliary-head, and closure framework
+- General 5080 final onefile lane with repo-backed parity and claim-safe delivery helpers
 - Evidence, release, knowledge, checklist, and runbook surfaces
 - Claim-safe reporting and truth-registry surfaces
 

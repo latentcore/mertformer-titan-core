@@ -23,6 +23,7 @@ Bilerek şu ayrımı korur:
 | `governance_and_repo_contracts` | `repo-side strong` | `true` | Governance, scorecard, runbook, ADR, truth docs ve closure raporları var; ama governance kapanışı tek başına final ürün kabiliyeti değildir. |
 | `train_readiness_45k` | `repo-side strong` | `true` | Readiness ve preflight kanıtları var; ama gerçek uzun koşu ve trained benchmark çıktıları bu repo durumunda hâlâ yok. |
 | `chess_onefile_closure` | `repo-side strong` | `true` | Chess onefile hattında geniş iç kapanış var; ama final güç kanıtı, harici reproducibility ve release-grade evidence hâlâ eksik. |
+| `general_5080_final_onefile` | `repo-side strong` | `true` | Promote edilen genel 5080 onefile hattı artık test, delivery helper ve truth dokümanlarıyla repo içinde var; ama ölçülmüş uzun koşu kalitesi ve benchmark kanıtı hâlâ eksik. |
 | `release_process_integrity` | `repo-side strong` | `true` | One-shot closure script’leri, manifest’ler ve freeze dokümanları var; ama gerçek RC/golden/1.0.0 için trained artefakt ve imza gerekir. |
 | `kernel_and_runtime_paths` | `repo-side strong` | `true` | CUDA/Triton/CPU yolları ve testler var; ama ölçülmüş uçtan uca eğitim ve device-truth kapanışı hâlâ bekliyor. |
 | `product_modes_offline_rag_assistant` | `repo-side partial` | `true` | Repo’da ürün odaklı yüzeyler ve konumlandırma var; ama tam offline assistant + RAG + operatör ürün kapanışı tamam değil. |
@@ -37,6 +38,7 @@ Bilerek şu ayrımı korur:
 - Kanonik train-readiness ve one-shot closure giriş noktaları
 - Güçlü test ve verification yüzeyi
 - Chess onefile feature-flag, profil, auxiliary-head ve closure framework
+- Repo-backed parity ve claim-safe delivery helper'ları ile genel 5080 final onefile hattı
 - Evidence, release, knowledge, checklist ve runbook yüzeyleri
 - Claim-safe reporting ve truth-registry yüzeyleri
 

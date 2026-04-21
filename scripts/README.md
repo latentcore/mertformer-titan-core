@@ -17,6 +17,9 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Legacy/reference fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
 - Text-understanding PoC one-file script: `scripts/kaggle_onefile_demo_build30_text_understanding.py`
 - Windows RTX 5080 chess PoC one-file script: `scripts/chess_5080_onefile.py`
+- Canonical general 5080 final one-file script: `scripts/mertformer_5080_final_onefile.py`
+- General 5080 delivery builder: `scripts/build_mertformer_5080_final_delivery.py`
+- General 5080 decrypt helper: `scripts/decrypt_mertformer_result_package.py`
 - Canonical Kaggle entry command: `bash zero_touch_start.sh --kaggle-onefile --mode train-end`
 - Canonical Kaggle verify command: `bash zero_touch_start.sh --kaggle-onefile --mode verify`
 - Canonical Kaggle package command: `bash zero_touch_start.sh --kaggle-onefile --mode package-only`
@@ -61,6 +64,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Fatal runtime failures are expected to appear both in `logs/run_log.jsonl` (`fatal_exception`) and in the Desktop-side `*_FAILED_*.json` artifact.
 - The Windows builder/export flow no longer embeds `MERTFORMER_CHESS_ARCHIVE_PASSWORD` into the compiled launcher; provide it on the target machine before running the final EXE when encrypted output is required.
 - Windows RTX 5080 share/export builder: `scripts/export_chess_5080_share.py`
+- General 5080 final truth boundary: `docs/MERTFORMER_5080_FINAL_ONEFILE_TRUTH.md`
 - Repo-external copies are unsupported and treated as drift sources.
 
 ### Chess Onefile Bundle Examples

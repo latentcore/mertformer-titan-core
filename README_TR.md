@@ -719,6 +719,18 @@ bash zero_touch_start.sh --check-only
 python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
 ```
 
+### Genel 5080 Final Onefile Yolu
+`scripts/mertformer_5080_final_onefile.py`, dış lab'den promote edilmiş kanonik genel amaçlı 5080 teslim hattıdır.
+
+- Varsayılan operatör profili: `safe_5080`
+- Opsiyonel agresif profil: `challenge_5080`
+- Desteklenen modlar: `run`, `verify`, `smoke`, `benchmark`, `package`, `chat`
+- Aktif çalışma zamanı model sınıfı: `RepoParityMertFormerModel`
+- Legacy scaffold compatibility sınıfı: `LegacyOnecellMertFormerTiny`
+- Delivery helper: `python3 scripts/build_mertformer_5080_final_delivery.py`
+- Truth boundary referansı: `docs/MERTFORMER_5080_FINAL_ONEFILE_TRUTH_TR.md`
+- Claim kuralı: ölçülmüş benchmark kanıtı olmadan Gemma-2B üstünlüğü iddiası açılmaz
+
 ```text
       ╔═══════════════════════════════════════════════════════════════════════════╗
       ║  M E R T F O R M E R   T I T A N   (O N Y X   S T O R M)                  ║
@@ -1566,10 +1578,12 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   └── ADR-0003-chess-oneclick-delivery-runtime-contract.md  # dokümantasyon/rapor dosyası
 ├── applications/  # dizin
 │   └── anthropic/  # dizin
+│       ├── PACKET_POINTER_20260419.md  # dokümantasyon/rapor dosyası
 │       ├── README.md  # ana dokümantasyon (EN)
 │       ├── application_strategy.md  # dokümantasyon/rapor dosyası
 │       ├── interview_prep.md  # dokümantasyon/rapor dosyası
 │       ├── measured_evidence_summary.md  # dokümantasyon/rapor dosyası
+│       ├── mertformer_anthropic_packet_20260419.zip.sha256  # artefakt sağlama toplamı
 │       ├── performance_engineer_fallback.md  # dokümantasyon/rapor dosyası
 │       ├── project_summary.md  # dokümantasyon/rapor dosyası
 │       ├── science_of_scaling_cv_seed.md  # dokümantasyon/rapor dosyası
@@ -1660,6 +1674,11 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── humaneval.py  # Python modülü/scripti (humaneval için değerlendirme rutini)
 │   └── report_builder.py  # Python modülü/scripti (report builder için değerlendirme rutini)
 ├── evidence/  # dizin
+│   ├── build30_t4_onecell/  # dizin
+│   │   ├── EVIDENCE_POINTER.md  # dokümantasyon/rapor dosyası
+│   │   ├── run_summary.json  # JSON veri artefaktı
+│   │   ├── sha256.txt  # metin artefaktı
+│   │   └── smoke_test_result.md  # dokümantasyon/rapor dosyası
 │   ├── README.md  # ana dokümantasyon (EN)
 │   └── chess_evidence_contract.md  # dokümantasyon/rapor dosyası
 ├── experiments/  # dizin
@@ -1760,6 +1779,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── tool_registry.py  # Python modülü/scripti (tool registry için orkestratör runtime bileşeni)
 │   ├── verifier.py  # Python modülü/scripti (verifier için orkestratör runtime bileşeni)
 │   └── web_sense.py  # Python modülü/scripti (web sense için orkestratör runtime bileşeni)
+├── packages/  # dizin
+│   └── MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256  # artefakt sağlama toplamı
 ├── policy/  # dizin
 │   └── allow_deny_policy.yaml  # YAML yapılandırma dosyası
 ├── postmortems/  # dizin
