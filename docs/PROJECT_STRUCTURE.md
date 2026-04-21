@@ -29,10 +29,12 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── ADR-0003-chess-oneclick-delivery-runtime-contract.md  # documentation/report file
 ├── applications/  # directory
 │   └── anthropic/  # directory
+│       ├── PACKET_POINTER_20260419.md  # documentation/report file
 │       ├── README.md  # primary documentation (EN)
 │       ├── application_strategy.md  # documentation/report file
 │       ├── interview_prep.md  # documentation/report file
 │       ├── measured_evidence_summary.md  # documentation/report file
+│       ├── mertformer_anthropic_packet_20260419.zip.sha256  # artifact checksum
 │       ├── performance_engineer_fallback.md  # documentation/report file
 │       ├── project_summary.md  # documentation/report file
 │       ├── science_of_scaling_cv_seed.md  # documentation/report file
@@ -123,6 +125,11 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── humaneval.py  # Python module/script (evaluation routine for humaneval)
 │   └── report_builder.py  # Python module/script (evaluation routine for report builder)
 ├── evidence/  # directory
+│   ├── build30_t4_onecell/  # directory
+│   │   ├── EVIDENCE_POINTER.md  # documentation/report file
+│   │   ├── run_summary.json  # JSON data artifact
+│   │   ├── sha256.txt  # text artifact
+│   │   └── smoke_test_result.md  # documentation/report file
 │   ├── README.md  # primary documentation (EN)
 │   └── chess_evidence_contract.md  # documentation/report file
 ├── experiments/  # directory
@@ -223,6 +230,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── tool_registry.py  # Python module/script (orchestrator runtime component for tool registry)
 │   ├── verifier.py  # Python module/script (orchestrator runtime component for verifier)
 │   └── web_sense.py  # Python module/script (orchestrator runtime component for web sense)
+├── packages/  # directory
+│   └── MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256  # artifact checksum
 ├── policy/  # directory
 │   └── allow_deny_policy.yaml  # YAML configuration file
 ├── postmortems/  # directory
