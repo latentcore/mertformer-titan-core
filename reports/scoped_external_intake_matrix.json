@@ -4,15 +4,6 @@
   "entry_count": 10,
   "entries": [
     {
-      "path": "<HOME>/Desktop/MertFormer_45K_Launch_Bundle_20260401_2130.zip",
-      "kind": "file",
-      "exists": true,
-      "size_bytes": 210165595,
-      "sha256": "44002da4c64040ca5c39c4c686d7580dcc97362dde181460f869e0153c7fcfcf",
-      "duplicate_rank": 1,
-      "disposition": "archive_into_closure_pack"
-    },
-    {
       "path": "<HOME>/Desktop/MertFormer_45K_Launch_Bundle_20260401_2130.zip.sha256",
       "kind": "file",
       "exists": true,
@@ -90,6 +81,15 @@
       "exists": true,
       "size_bytes": null,
       "sha256": null,
+      "duplicate_rank": 1,
+      "disposition": "keep_as_external_artifact"
+    },
+    {
+      "path": "/Applications/mertformer-titan-core.zip",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 1262108871,
+      "sha256": "c5035e3b18c479d528faee1e785e2d1d750b1a635ce8808c7ce86224e0acdaed",
       "duplicate_rank": 1,
       "disposition": "keep_as_external_artifact"
     }

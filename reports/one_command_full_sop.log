@@ -1,4 +1,4 @@
-[run] start_utc=2026-04-19T13:45:57Z
+[run] start_utc=2026-04-26T17:02:03Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
@@ -6,8 +6,9 @@
 OK: no secret patterns detected in tracked files.
 [verify] Pytest ...
 ........................................................................ [ 33%]
-...............................s........................................ [ 67%]
-.............s.......................................................    [100%]
+...............................s........................................ [ 66%]
+.............s.......................................................... [ 99%]
+..                                                                       [100%]
 =============================== warnings summary ===============================
 <frozen importlib._bootstrap>:241
   <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
@@ -20,7 +21,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-211 passed, 3 skipped, 3 warnings in 61.34s (0:01:01)
+216 passed, 3 skipped, 3 warnings in 32.13s
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -59,7 +60,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <REPO_ROOT>/temp_preflight_data
 ✈️ Removed <REPO_ROOT>/temp_preflight_logits
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 26.51s
+✈️ Preflight Duration: 3.50s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
@@ -104,7 +105,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 14.371442079544067,
+  "elapsed_sec": 7.23371696472168,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -130,9 +131,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-04-19T13:47:48Z",
-        "cpu_percent": 24.3,
-        "ram_used_gb": 7.4612274169921875,
+        "timestamp_utc": "2026-04-26T17:02:51Z",
+        "cpu_percent": 13.4,
+        "ram_used_gb": 6.8489837646484375,
         "ram_total_gb": 16.0
       }
     },
@@ -169,7 +170,7 @@ OK: workspace hygiene manifest refreshed
  - reports/workspace_hygiene_manifest.md
  - reports/workspace_hygiene_manifest.json
 [verify] Chess GUI onefile sync check ...
-{"schema": "chess_gui_onefile_sync_report_v1", "generated_utc": "2026-04-19T13:48:02Z", "canonical_onefile": "<REPO_ROOT>/scripts/chess_5080_onefile.py", "gui_dir": "<REPO_ROOT>/apps/chess_gui", "gui_onefile": "<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py", "status": "canonical_fallback_ready", "reason": "local_copy_missing_repo_canonical_fallback_available", "copied": false, "local_copy_present": false, "canonical_sha256": "f4286998b4382ac7ed86c0035e40de1f5c07aef400b33c09ee97639cafd0e49f", "gui_sha256": "", "hashes_match": false}
+{"schema": "chess_gui_onefile_sync_report_v1", "generated_utc": "2026-04-26T17:02:58Z", "canonical_onefile": "<REPO_ROOT>/scripts/chess_5080_onefile.py", "gui_dir": "<REPO_ROOT>/apps/chess_gui", "gui_onefile": "<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py", "status": "canonical_fallback_ready", "reason": "local_copy_missing_repo_canonical_fallback_available", "copied": false, "local_copy_present": false, "canonical_sha256": "f4286998b4382ac7ed86c0035e40de1f5c07aef400b33c09ee97639cafd0e49f", "gui_sha256": "", "hashes_match": false}
 [verify] Chess teaching contract smoke report ...
 {"case_total": 5, "case_pass": 5, "mode_total": 5, "mode_pass": 5, "level_monotonic_non_decreasing": true, "all_green": true}
 [verify] Chess onefile extension report ...
@@ -214,9 +215,9 @@ OK: closure governance pack refreshed
 [verify] Unicode path guard gate ...
 OK: unicode path guard; hits=0
 [verify] Duplicate zip guard gate ...
-OK: duplicate zip guard; groups=0
+OK: duplicate zip guard; groups=3
 [verify] Manifest sync gate ...
-{"manifest_entries": 760, "ok": true}
+{"manifest_entries": 775, "ok": true}
 [verify] OK
 [run] step=kaggle_onecell_py_compile
 [run] step=kaggle_closure_verify
@@ -224,19 +225,19 @@ OK: duplicate zip guard; groups=0
 [run] step=cfc_moe_tolerance_check
 [tolerance] PASS (max_diff_moe=0.000000 max_diff_cfc=0.000014)
 [run] step=md_quality_all
-md_quality: scope=all files=415 errors=0 warnings=0
+md_quality: scope=all files=422 errors=0 warnings=0
 [run] step=linkcheck_all
-linkcheck: scope=all files=415 missing=475
+linkcheck: scope=all files=422 missing=475
 [run] step=docs_inventory
-{"ok": true, "md_files": 417, "dup_groups": 25}
+{"ok": true, "md_files": 424, "dup_groups": 25}
 [run] step=sync_manifest
-{"manifest_entries": 760, "ok": true}
+{"manifest_entries": 775, "ok": true}
 [run] step=dealroom_sync
 {"ok": true}
 [run] step=unicode_path_guard
 OK: unicode path guard; hits=0
 [run] step=duplicate_zip_guard
-OK: duplicate zip guard; groups=0
+OK: duplicate zip guard; groups=3
 [run] step=scoped_external_intake_matrix
 {
   "json": "<REPO_ROOT>/reports/scoped_external_intake_matrix.json",
@@ -246,8 +247,8 @@ OK: duplicate zip guard; groups=0
 [run] step=scoped_cleanup_apply
 {
   "report": "<REPO_ROOT>/reports/cleanup_scoped_closure_junk_report.json",
-  "found": 600,
-  "removed": 600
+  "found": 592,
+  "removed": 592
 }
 [run] step=intermediate_cache_cleanup
 [runner] cmd=bash -lc true
@@ -272,7 +273,7 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip
-release_sha256=4f753c5cbb3e82a1778f31d590865020c607cbac6f5eb095143e843f266ed621
+release_sha256=cc6ca3baf7cf5f65ff9df2f105d92957806cef9101466d3d77765685865a86f8
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=artifact_release_zip
@@ -287,4 +288,4 @@ locked_sha256=
 }
 [run] step=secret_scan
 OK: no secret patterns detected in tracked files.
-[run] end_utc=2026-04-19T13:49:32Z
+[run] end_utc=2026-04-26T17:03:24Z

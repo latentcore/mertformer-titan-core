@@ -66,6 +66,7 @@ Generated automatically.
 - `adr/ADR-0001-source-of-truth-and-claim-boundary.md`
 - `adr/ADR-0002-change-control-and-closure-governance.md`
 - `adr/ADR-0003-chess-oneclick-delivery-runtime-contract.md`
+- `applications/anthropic/PACKET_POINTER_20260419.md`
 - `applications/anthropic/README.md`
 - `applications/anthropic/application_strategy.md`
 - `applications/anthropic/interview_prep.md`
@@ -111,6 +112,9 @@ Generated automatically.
 - `docs/CHAIN_MAP_TR.md`
 - `docs/CHESS_ONEFILE_MASTER_TRUTH.md`
 - `docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md`
+- `docs/MERTFORMER_5080_ARTIFACT_INTAKE_CHECKLIST_TR.md`
+- `docs/MERTFORMER_5080_FINAL_ONEFILE_TRUTH.md`
+- `docs/MERTFORMER_5080_FINAL_ONEFILE_TRUTH_TR.md`
 - `docs/PROJECT_MASTER_TRUTH.md`
 - `docs/PROJECT_MASTER_TRUTH_TR.md`
 - `docs/PROJECT_STRUCTURE.md`
@@ -122,6 +126,8 @@ Generated automatically.
 - `economics/efficiency_report.md`
 - `economics/efficiency_report_TR.md`
 - `evidence/README.md`
+- `evidence/build30_t4_onecell/EVIDENCE_POINTER.md`
+- `evidence/build30_t4_onecell/smoke_test_result.md`
 - `evidence/chess_evidence_contract.md`
 - `experiments/exp_001_baseline/notes.md`
 - `experiments/exp_001_baseline/notes_TR.md`
@@ -387,6 +393,7 @@ Generated automatically.
 - `reports/test_verification_matrix.md`
 - `reports/tokenizer_sync_final_report.md`
 - `reports/train_readiness_decision.md`
+- `reports/turk_telekom_call_faq.md`
 - `reports/update_first_policy.md`
 - `reports/verified_matrix.md`
 - `reports/verified_matrix_TR.md`

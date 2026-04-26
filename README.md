@@ -1666,6 +1666,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── CHAIN_MAP_TR.md  # Turkish document counterpart
 │   ├── CHESS_ONEFILE_MASTER_TRUTH.md  # documentation/report file
 │   ├── CHESS_ONEFILE_MASTER_TRUTH_TR.md  # Turkish document counterpart
+│   ├── MERTFORMER_5080_ARTIFACT_INTAKE_CHECKLIST_TR.md  # Turkish document counterpart
 │   ├── MERTFORMER_5080_FINAL_ONEFILE_TRUTH.md  # documentation/report file
 │   ├── MERTFORMER_5080_FINAL_ONEFILE_TRUTH_TR.md  # Turkish document counterpart
 │   ├── PROJECT_MASTER_TRUTH.md  # documentation/report file
@@ -2122,6 +2123,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── train_readiness_decision.json  # JSON data artifact
 │   ├── train_readiness_decision.md  # documentation/report file
 │   ├── training_readiness_manifest.json  # JSON data artifact
+│   ├── turk_telekom_call_faq.md  # documentation/report file
 │   ├── unicode_path_guard_report.json  # JSON data artifact
 │   ├── update_first_policy.md  # documentation/report file
 │   ├── verified_matrix.md  # documentation/report file

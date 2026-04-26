@@ -7,6 +7,18 @@
 - Quantization: BitNet 1.58-bit for weights.
 - Routing: LiquidRouter MoE with temporal dynamics.
 - Attention: MLA-labeled GQA attention (current implementation) with long-context readiness.
+- QINN: present as an experimental path, disabled by default in the current baseline configuration.
+
+## Active Runtime Components
+- Core tokenizer path: Llama-family tokenizer setup for the current LM baseline.
+- Core token embeddings: learned inside the model during training.
+- Orchestrator text embeddings: `sentence-transformers/all-MiniLM-L6-v2`.
+- Orchestrator vision embeddings: `openai/clip-vit-base-patch32`.
+
+## Activations
+- MoE experts: `BitSwiGLU`.
+- Router fluid path: `SiLU`.
+- Liquid / CfC dynamics: `softplus` and `tanh`.
 
 ## Training Pipeline
 - Distillation pipeline with offline logits support.

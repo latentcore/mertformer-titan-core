@@ -1654,6 +1654,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── CHAIN_MAP_TR.md  # Türkçe doküman karşılığı
 │   ├── CHESS_ONEFILE_MASTER_TRUTH.md  # dokümantasyon/rapor dosyası
 │   ├── CHESS_ONEFILE_MASTER_TRUTH_TR.md  # Türkçe doküman karşılığı
+│   ├── MERTFORMER_5080_ARTIFACT_INTAKE_CHECKLIST_TR.md  # Türkçe doküman karşılığı
 │   ├── MERTFORMER_5080_FINAL_ONEFILE_TRUTH.md  # dokümantasyon/rapor dosyası
 │   ├── MERTFORMER_5080_FINAL_ONEFILE_TRUTH_TR.md  # Türkçe doküman karşılığı
 │   ├── PROJECT_MASTER_TRUTH.md  # dokümantasyon/rapor dosyası
@@ -2110,6 +2111,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── train_readiness_decision.json  # JSON veri artefaktı
 │   ├── train_readiness_decision.md  # dokümantasyon/rapor dosyası
 │   ├── training_readiness_manifest.json  # JSON veri artefaktı
+│   ├── turk_telekom_call_faq.md  # dokümantasyon/rapor dosyası
 │   ├── unicode_path_guard_report.json  # JSON veri artefaktı
 │   ├── update_first_policy.md  # dokümantasyon/rapor dosyası
 │   ├── verified_matrix.md  # dokümantasyon/rapor dosyası
