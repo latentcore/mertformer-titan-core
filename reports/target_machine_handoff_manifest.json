@@ -1,6 +1,6 @@
 {
   "schema": "target_machine_handoff_manifest_v1",
-  "generated_utc": "2026-04-26T17:03:03Z",
+  "generated_utc": "2026-04-27T06:19:39Z",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "train_allowed": true,
   "decision_reason_code": "READY_OFFLINE_CLEAN",
@@ -10,8 +10,8 @@
   "transfer_files": [
     {
       "path": "zero_touch_start.sh",
-      "size_bytes": 888,
-      "sha256": "bbd1741bed1fc714f79faf47d65d14a452a606711259bb225ad654cb83ed1a7e"
+      "size_bytes": 2900,
+      "sha256": "89f001ac1bcc3fc6b08dc03395b10db40b0a6a45cf021c481c5b4d1317d8d0cb"
     },
     {
       "path": "run.sh",
@@ -56,7 +56,7 @@
     {
       "path": "reports/train_readiness_decision.json",
       "size_bytes": 2943,
-      "sha256": "cd63cc634b9c140e7f5e2516bfec5bbca907751a96641e3e50444578cd22e522"
+      "sha256": "2743b702ed0889d3664fc6252768e36550000ea8182e62454284f7ad4ac4ac51"
     },
     {
       "path": "reports/train_readiness_decision.md",
@@ -65,13 +65,13 @@
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 3807,
-      "sha256": "298ba4acae313dc4cb1156f8565f39052def81363e742536b4fef78d63ae528b"
+      "size_bytes": 3688,
+      "sha256": "31a9ca9dcdb89039aa1cfbed26a570c71cb08c6603e2f4eb9e1c41e36882f8e5"
     },
     {
       "path": "reports/start_gate_operator_decision.json",
       "size_bytes": 1215,
-      "sha256": "8ccfae6e893292f75ccdad073c75b9a153186a3fd9f046994144ed9dca3313b0"
+      "sha256": "8e9dbc0ffac4f64be8d828256d92083483f9d459ce451b5af67479ba4cb75ce0"
     },
     {
       "path": "reports/start_gate_operator_decision.md",
@@ -81,7 +81,7 @@
     {
       "path": "reports/repo_external_handoff.md",
       "size_bytes": 1468,
-      "sha256": "1065d350d16c040f50f0e2048082e807bc233fceef2953339f4e30ca5d32fc13"
+      "sha256": "7f8d79198c555964dcb9249c9f3c20d2fafdd878682b21cff49570088b1bfd6f"
     }
   ],
   "operator_steps": [

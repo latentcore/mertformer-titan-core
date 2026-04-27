@@ -38,6 +38,12 @@ MertFormer Titan is an offline-first, auditable AI systems project with three co
 - Verify Kaggle wiring only: `bash zero_touch_start.sh --kaggle-onefile --mode verify`
 - macOS one-click launcher: `launch_mertformer_kaggle_closure.command`
 - Refresh closure, artifacts, and hashes: `bash scripts/final_one_shot.sh`
+- Optional Phase-0 helper: `python3 scripts/precompute_logits_topk.py --all-stages`
+
+## Phase-0 Note
+- `zero_touch_start.sh` now skips optional Phase-0 precompute for `--plan-only`, `--dry-run`, `--check-only`, and post-only invocations.
+- Real training invocations may auto-start Top-K teacher logit precompute when stage datasets exist and `HF_TOKEN` is supplied.
+- Override knobs: `TITAN_SKIP_PHASE0=1`, `TITAN_TOP_K=<n>`, `TITAN_PRECOMPUTE_BATCH=<n>`.
 
 ## Anthropic-Relevant Signals
 - explicit measured vs unmeasured claim boundary

@@ -1,6 +1,6 @@
 {
   "schema": "code_truth_delta_audit_v1",
-  "generated_utc": "2026-04-26T17:02:58Z",
+  "generated_utc": "2026-04-27T06:19:32Z",
   "evidence_contract": {
     "required_columns": [
       "code_path",
@@ -610,6 +610,13 @@
       "summary": "fallback"
     },
     {
+      "path": "scripts/precompute_logits_topk.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "scripts/record_dataset_hashes.py",
       "markers": [
         "fallback"
@@ -672,6 +679,6 @@
       "tested_fallback": 6,
       "reference_safe": 1
     },
-    "marker_hit_count": 48
+    "marker_hit_count": 49
   }
 }

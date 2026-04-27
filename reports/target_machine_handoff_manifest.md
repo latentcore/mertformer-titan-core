@@ -18,7 +18,7 @@
 
 ## Transfer Files
 
-- `zero_touch_start.sh` · `888` bytes · sha256=`bbd1741bed1fc714f79faf47d65d14a452a606711259bb225ad654cb83ed1a7e`
+- `zero_touch_start.sh` · `2900` bytes · sha256=`89f001ac1bcc3fc6b08dc03395b10db40b0a6a45cf021c481c5b4d1317d8d0cb`
 - `run.sh` · `24440` bytes · sha256=`aae67b6d2ea0bc7bed6290dbf60d6daff4ee25ee896f83cb0aee6115dd4e2897`
 - `launch_mertformer_kaggle_closure.command` · `790` bytes · sha256=`6f3d756beb9bc3f5a4a00921fe71378783e852435921a170b1d625da605ffc0b`
 - `scripts/kaggle_onefile_closure_build30.py` · `42570` bytes · sha256=`10998a9f432b26ada60276cabbcd84e95bee2c297f4eab52558059cb201690ff`
@@ -27,9 +27,9 @@
 - `scripts/final_orchestrator.py` · `24901` bytes · sha256=`bd62e06d4be1f262c5748e1139555e945417577e19e1e872f22fd6c777feb840`
 - `scripts/start_gate.py` · `8345` bytes · sha256=`30c44468ec976d451abcf5b9aad127c2f35bdf797e66340882938d165610903e`
 - `scripts/build_train_readiness_contract.py` · `5746` bytes · sha256=`0b7a89c5ed289814b9d962713caa901d348ba7dde3dd7f6dfa64794ff77e74bb`
-- `reports/train_readiness_decision.json` · `2943` bytes · sha256=`cd63cc634b9c140e7f5e2516bfec5bbca907751a96641e3e50444578cd22e522`
+- `reports/train_readiness_decision.json` · `2943` bytes · sha256=`2743b702ed0889d3664fc6252768e36550000ea8182e62454284f7ad4ac4ac51`
 - `reports/train_readiness_decision.md` · `553` bytes · sha256=`a442f9f895d0fda9e30b149b22666a1f36db187ce35acca82eb869345dca1e76`
-- `reports/start_gate_report.json` · `3807` bytes · sha256=`298ba4acae313dc4cb1156f8565f39052def81363e742536b4fef78d63ae528b`
-- `reports/start_gate_operator_decision.json` · `1215` bytes · sha256=`8ccfae6e893292f75ccdad073c75b9a153186a3fd9f046994144ed9dca3313b0`
+- `reports/start_gate_report.json` · `3688` bytes · sha256=`31a9ca9dcdb89039aa1cfbed26a570c71cb08c6603e2f4eb9e1c41e36882f8e5`
+- `reports/start_gate_operator_decision.json` · `1215` bytes · sha256=`8e9dbc0ffac4f64be8d828256d92083483f9d459ce451b5af67479ba4cb75ce0`
 - `reports/start_gate_operator_decision.md` · `1065` bytes · sha256=`754a9b0096ad49d04d8610655145d6ef5f2448a07bb6f28dd8851d6476e51eae`
-- `reports/repo_external_handoff.md` · `1468` bytes · sha256=`1065d350d16c040f50f0e2048082e807bc233fceef2953339f4e30ca5d32fc13`
+- `reports/repo_external_handoff.md` · `1468` bytes · sha256=`7f8d79198c555964dcb9249c9f3c20d2fafdd878682b21cff49570088b1bfd6f`

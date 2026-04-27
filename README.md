@@ -34,6 +34,7 @@ Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_OFFLINE_CL
 - Check readiness only: `bash zero_touch_start.sh --check-only`
 - Launch the canonical owned training lane: `bash zero_touch_start.sh`
 - Refresh final sync, release artifacts, and hashes: `bash scripts/final_one_shot.sh`
+- Optional Phase-0 helper: `scripts/precompute_logits_topk.py` (offline teacher Top-K shard builder; not required for the teacher-free offline-clean lane).
 
 ### Truth Boundary
 - `measured` / `target` / `vision` are distinct claim labels.
@@ -119,7 +120,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `216 passed, 3 skipped` |
+| `python3 -m pytest -q` | `218 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -132,7 +133,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`216 passed, 3 skipped`)
+   - `pytest` passed (`218 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -158,6 +159,8 @@ This repository is no longer in idea/prototype-only state. The current working t
 - Full training run and benchmark outputs will be recorded only after those prerequisites.
 - Token budget (V2): default `TITAN_TOKEN_BUDGET_MODE=fixed_steps`, `TITAN_MAX_STEPS=45000`, `TITAN_TARGET_TOKENS_MIN=23.6B`.
 - Precomputed logits path: `TITAN_LOGITS_PATH` (default `./datasets/logits/`).
+- `zero_touch_start.sh` now attempts optional Phase-0 Top-K precompute only for real training invocations; `--plan-only`, `--dry-run`, `--check-only`, and post-only modes skip it.
+- Optional Phase-0 tuning envs: `TITAN_SKIP_PHASE0=1`, `TITAN_TOP_K=<n>`, `TITAN_PRECOMPUTE_BATCH=<n>`.
 - Default token budget now uses `fixed_steps` (45K). Use `TITAN_TOKEN_BUDGET_MODE=open_ended` only with an explicit target override.
 - Accelerate config must match GPU count (set `TITAN_FORCE_ACCELERATE_RECONF=1` to regenerate).
 - `cuda.lock` must be created on the target training hardware.

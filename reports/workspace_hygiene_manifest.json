@@ -1,6 +1,6 @@
 {
   "schema": "workspace_hygiene_manifest_v1",
-  "generated_utc": "2026-04-26T17:02:58Z",
+  "generated_utc": "2026-04-27T06:19:33Z",
   "mode": "audit_only",
   "workspace_root": "<WORKSPACE_ROOT>",
   "repo_root": "<REPO_ROOT>",
@@ -19,6 +19,13 @@
       "reason": "IDE workspace metadata outside the repo root. Keep unless a human explicitly retires the workspace.",
       "restore_target": "<WORKSPACE_ROOT>/.idea",
       "decision_state": "keep"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/.pass_backups",
+      "classification": "external_workspace_entry",
+      "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
+      "restore_target": "<WORKSPACE_ROOT>/.pass_backups",
+      "decision_state": "quarantine_first"
     },
     {
       "path": "<WORKSPACE_ROOT>/adb_pull",

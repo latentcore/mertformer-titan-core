@@ -291,6 +291,42 @@ def _part_index(name: str) -> int:
         return 0
 
 
+def _resolve_vocab_size(default: int = 128256) -> int:
+    """
+    Resolve vocab size lazily to avoid import-time config coupling.
+    Falls back to a Llama-compatible default when config is unavailable.
+    """
+    try:
+        from config.config import cfg as _cfg
+        return int(getattr(_cfg, "vocab_size", default))
+    except Exception:
+        return int(default)
+
+
+def _reconstruct_dense_from_topk(
+    item: dict,
+    vocab_size: int,
+    fill_value: float = -1e4,
+) -> torch.Tensor:
+    """
+    Reconstruct a dense [seq, vocab] tensor from Top-K sparse teacher logits.
+
+    Non-top-k positions are filled with a large negative finite value so the
+    downstream KD softmax behaves like zero probability without `-inf` NaNs.
+    """
+    indices = item["indices"].long()
+    values = item["values"].float()
+    seq_len, _ = indices.shape
+
+    dense = torch.full(
+        (seq_len, vocab_size),
+        fill_value=fill_value,
+        dtype=torch.float32,
+    )
+    dense.scatter_(dim=1, index=indices, src=values)
+    return dense
+
+
 class PrecomputedLogitsIterable(IterableDataset):
     """
     Sequential iterator over precomputed logits shards.
@@ -313,14 +349,25 @@ class PrecomputedLogitsIterable(IterableDataset):
                 f"(subset={self.subset}) in {self.logits_dir}"
             )
         for file in self.files:
-            chunk = torch.load(file, map_location="cpu")
-            # Support list or dict payloads
-            if isinstance(chunk, dict) and "logits" in chunk:
+            chunk = torch.load(file, map_location="cpu", weights_only=False)
+            vocab_size = _resolve_vocab_size()
+            # Support dict wrapper payloads with optional metadata
+            if isinstance(chunk, dict):
+                if "logits" not in chunk:
+                    raise RuntimeError(f"Invalid logits shard wrapper: {file}")
+                vocab_size = int(chunk.get("vocab_size", vocab_size))
                 chunk = chunk["logits"]
             if not isinstance(chunk, (list, tuple)):
                 raise RuntimeError(f"Invalid logits shard format: {file}")
-            for logits in chunk:
-                yield logits
+            for item in chunk:
+                if isinstance(item, dict) and "indices" in item and "values" in item:
+                    yield _reconstruct_dense_from_topk(item, vocab_size)
+                elif isinstance(item, torch.Tensor):
+                    yield item
+                else:
+                    raise RuntimeError(
+                        f"Unknown logits item type: {type(item)} in {file}"
+                    )
 
 if __name__ == "__main__":
     import argparse
