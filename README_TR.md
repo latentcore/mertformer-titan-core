@@ -120,7 +120,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `218 passed, 3 skipped` |
+| `python3 -m pytest -q` | `220 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -133,7 +133,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`218 passed, 3 skipped`)
+   - `pytest` geçti (`220 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -2227,6 +2227,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── overfit_gate.py  # Python modülü/scripti (overfit gate için otomasyon scripti)
 │   ├── plot_training_log.py  # Python modülü/scripti (plot training log için otomasyon scripti)
 │   ├── post_train_autorun.py  # Python modülü/scripti (post train autorun için otomasyon scripti)
+│   ├── precompute_logits_topk.py  # Python modülü/scripti (precompute logits topk için otomasyon scripti)
 │   ├── ram_guard.py  # Python modülü/scripti (ram guard için otomasyon scripti)
 │   ├── record_dataset_hashes.py  # Python modülü/scripti (record dataset hashes için otomasyon scripti)
 │   ├── release_build30.sh  # kabuk otomasyon scripti
@@ -2280,6 +2281,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_continual_adapter.py  # Python modülü/scripti (continual adapter için otomatik test modülü)
 │   ├── test_cpp_kernel_loader.py  # Python modülü/scripti (cpp kernel loader için otomatik test modülü)
 │   ├── test_dispatcher_extended.py  # Python modülü/scripti (dispatcher extended için otomatik test modülü)
+│   ├── test_distillation_topk.py  # Python modülü/scripti (distillation topk için otomatik test modülü)
 │   ├── test_drone_sitl_demo.py  # Python modülü/scripti (drone sitl demo için otomatik test modülü)
 │   ├── test_eval_suites.py  # Python modülü/scripti (eval suites için otomatik test modülü)
 │   ├── test_export_chess_5080_share.py  # Python modülü/scripti (export chess 5080 share için otomatik test modülü)

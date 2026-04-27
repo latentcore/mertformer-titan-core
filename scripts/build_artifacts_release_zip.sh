@@ -56,7 +56,10 @@ run_zip_with_tolerance "$ZIP_PATH" . \
      "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256" \
      "apps/chess_gui/logs/*" "apps/chess_gui/checkpoints/*" "apps/chess_gui/assets/*" "apps/chess_gui/chess_5080_onefile.py"
 
-shasum -a 256 "$ZIP_PATH" > "$SHA_PATH"
+(
+  cd "$ART_DIR"
+  shasum -a 256 "$(basename "$ZIP_PATH")" > "$(basename "$SHA_PATH")"
+)
 
 "$PY_BIN" "$ROOT_DIR/scripts/zip_denylist_audit.py" --zip "$ZIP_PATH" \
   | tee "$REPORT_A" > "$REPORT_B"

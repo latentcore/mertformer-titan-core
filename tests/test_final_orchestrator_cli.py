@@ -83,3 +83,88 @@ def test_build_training_env_prefers_offline_clean_lane():
     assert env["TITAN_OFFLINE"] == "1"
     assert env["TITAN_REQUIRE_GATED_TEACHER"] == "0"
     assert env["TITAN_USE_TR_TOKENIZER"] == "1"
+
+
+def test_run_start_gate_can_skip_verify_all(tmp_path: Path):
+    module = _load_final_orchestrator_module()
+    calls: dict[str, object] = {}
+
+    def fake_run_command(root, cmd, env=None):
+        calls["cmd"] = cmd
+        out_path = tmp_path / "start_gate_report.json"
+        out_path.write_text(
+            json.dumps(
+                {
+                    "train_allowed": True,
+                    "train_readiness_status": "TRAIN_ALLOWED",
+                    "decision_reason_code": "READY_OFFLINE_CLEAN",
+                    "recommended_path": "offline_clean",
+                }
+            ),
+            encoding="utf-8",
+        )
+        return {"cmd": " ".join(cmd), "return_code": 0, "ok": True, "stdout_tail": "", "stderr_tail": ""}
+
+    module.run_command = fake_run_command
+    result, payload = module.run_start_gate(ROOT, sys.executable, tmp_path, skip_verify_all=True)
+    assert result["ok"] is True
+    assert payload["train_allowed"] is True
+    assert "--skip-verify-all" in calls["cmd"]
+
+
+def test_final_orchestrator_check_only_releases_lock_and_stays_fast(tmp_path: Path, monkeypatch):
+    module = _load_final_orchestrator_module()
+    report_out = tmp_path / "final_orchestrator_status.json"
+    calls: dict[str, object] = {}
+
+    def fake_build_contract_outputs(root, reports_dir):
+        (reports_dir / "run_contract.md").write_text("contract\n", encoding="utf-8")
+        (reports_dir / "expected_artifacts_list.md").write_text("artifacts\n", encoding="utf-8")
+        (reports_dir / "exit_code_standard.md").write_text("codes\n", encoding="utf-8")
+        (root / "interfaces").mkdir(parents=True, exist_ok=True)
+        (root / "interfaces" / "run_manifest_v1.schema.json").write_text("{}", encoding="utf-8")
+
+    def fake_run_post_plan(root, py, reports_dir):
+        (reports_dir / "post_train_automation_contract.md").write_text("pta\n", encoding="utf-8")
+        (reports_dir / "post_train_state_machine.md").write_text("pts\n", encoding="utf-8")
+        return {"cmd": "post-plan", "return_code": 0, "ok": True, "stdout_tail": "planned", "stderr_tail": ""}
+
+    def fake_run_start_gate(root, py, reports_dir, *, skip_verify_all=False):
+        calls["skip_verify_all"] = skip_verify_all
+        return (
+            {"cmd": "start-gate", "return_code": 0, "ok": True, "stdout_tail": "", "stderr_tail": ""},
+            {
+                "train_allowed": True,
+                "train_readiness_status": "TRAIN_ALLOWED",
+                "decision_reason_code": "READY_OFFLINE_CLEAN",
+                "recommended_path": "offline_clean",
+            },
+        )
+
+    monkeypatch.setattr(module, "build_contract_outputs", fake_build_contract_outputs)
+    monkeypatch.setattr(module, "run_post_plan", fake_run_post_plan)
+    monkeypatch.setattr(module, "run_start_gate", fake_run_start_gate)
+    monkeypatch.setattr(module, "detect_python", lambda root, bootstrap: sys.executable)
+    monkeypatch.setattr(module, "build_train_command", lambda py, port: [py, "train/train.py"])
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "final_orchestrator.py",
+            "--check-only",
+            "--reports-dir",
+            str(tmp_path),
+            "--report-out",
+            str(report_out),
+        ],
+    )
+
+    rc = module.main()
+    assert rc == module.EXIT_OK
+    assert calls["skip_verify_all"] is True
+    assert not (tmp_path / "final_orchestrator.lock.json").exists()
+
+    payload = json.loads(report_out.read_text(encoding="utf-8"))
+    assert payload["mode"] == "check-only"
+    assert payload["status"] == "completed"
+    assert payload["decision_reason_code"] == "READY_OFFLINE_CLEAN"

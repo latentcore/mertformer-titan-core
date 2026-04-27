@@ -219,7 +219,7 @@ def build_run_contract() -> str:
         - `bash zero_touch_start.sh`
 
         ## Modes
-        - `--check-only`: run the closure start gate and exact readiness contract without launching training.
+        - `--check-only`: run the fast target-machine start gate and exact readiness contract without launching training.
         - `--plan-only`: emit the contracts and planned steps only.
         - `--dry-run`: emit the plan plus resolved train command, but do not launch training.
         - `--post-only`: skip training and run the post-train state machine.
@@ -229,6 +229,7 @@ def build_run_contract() -> str:
         ## Start Rules
         - Training start is allowed only when `reports/train_readiness_decision.json` says `TRAIN_ALLOWED`.
         - The start gate must produce exact blocker reason codes before any full training launch.
+        - `--check-only` intentionally skips the heavyweight `verify_all.sh` sweep and behaves as a target-machine readiness gate.
         - This orchestrator uses a JSON lock file to prevent overlapping train-end launches.
 
         ## Resume Rules
@@ -365,19 +366,22 @@ def build_contract_outputs(root: Path, reports_dir: Path) -> None:
     write_json(root / "interfaces" / "run_manifest_v1.schema.json", build_run_manifest_schema())
 
 
-def run_start_gate(root: Path, py: str, reports_dir: Path) -> tuple[dict, dict]:
+def run_start_gate(root: Path, py: str, reports_dir: Path, *, skip_verify_all: bool = False) -> tuple[dict, dict]:
     out_path = reports_dir / "start_gate_report.json"
+    cmd = [
+        py,
+        "scripts/start_gate.py",
+        "--python",
+        py,
+        "--report-out",
+        str(out_path),
+        "--allow-not-ready",
+    ]
+    if skip_verify_all:
+        cmd.append("--skip-verify-all")
     result = run_command(
         root,
-        [
-            py,
-            "scripts/start_gate.py",
-            "--python",
-            py,
-            "--report-out",
-            str(out_path),
-            "--allow-not-ready",
-        ],
+        cmd,
     )
     return result, load_json(out_path)
 
@@ -560,7 +564,12 @@ def main() -> int:
             return exit_code
 
         if mode in {"full", "check-only"}:
-            start_gate_result, start_gate_payload = run_start_gate(root, py, reports_dir)
+            start_gate_result, start_gate_payload = run_start_gate(
+                root,
+                py,
+                reports_dir,
+                skip_verify_all=(mode == "check-only"),
+            )
             payload["train_readiness_status"] = start_gate_payload.get("train_readiness_status")
             payload["decision_reason_code"] = start_gate_payload.get("decision_reason_code")
             payload["training_lane"] = resolve_training_lane(start_gate_payload)

@@ -8,7 +8,9 @@ REPORT_TR="$ROOT_DIR/reports/release_snapshot_TR.md"
 PY="$ROOT_DIR/.titan-venv/bin/python"
 
 REL_ZIP="$PKG_DIR/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip"
+REL_SHA_FILE="$REL_ZIP.sha256"
 LOCKED_AGE="$PKG_DIR/MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age"
+LOCKED_SHA_FILE="$LOCKED_AGE.sha256"
 
 mkdir -p "$PKG_DIR"
 
@@ -35,7 +37,7 @@ fi
 
 "$PY" "$ROOT_DIR/scripts/check_tokenizer_sync.py"
 
-rm -f "$REL_ZIP" "$LOCKED_AGE"
+rm -f "$REL_ZIP" "$REL_SHA_FILE" "$LOCKED_AGE" "$LOCKED_SHA_FILE"
 
 (
   cd "$ROOT_DIR"
@@ -74,10 +76,12 @@ else
 fi
 
 rel_sha="$(shasum -a 256 "$REL_ZIP" | awk '{print $1}')"
+printf '%s  %s\n' "$rel_sha" "$(basename "$REL_ZIP")" > "$REL_SHA_FILE"
 locked_sha=""
 lock_status="skipped (expected: AGE_RECIPIENT_FILE missing)"
 if [[ -s "$LOCKED_AGE" ]]; then
   locked_sha="$(shasum -a 256 "$LOCKED_AGE" | awk '{print $1}')"
+  printf '%s  %s\n' "$locked_sha" "$(basename "$LOCKED_AGE")" > "$LOCKED_SHA_FILE"
   lock_status="generated"
 fi
 

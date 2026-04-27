@@ -120,7 +120,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `218 passed, 3 skipped` |
+| `python3 -m pytest -q` | `220 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -133,7 +133,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`218 passed, 3 skipped`)
+   - `pytest` passed (`220 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -2242,6 +2242,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── overfit_gate.py  # Python module/script (automation script for overfit gate)
 │   ├── plot_training_log.py  # Python module/script (automation script for plot training log)
 │   ├── post_train_autorun.py  # Python module/script (automation script for post train autorun)
+│   ├── precompute_logits_topk.py  # Python module/script (automation script for precompute logits topk)
 │   ├── ram_guard.py  # Python module/script (automation script for ram guard)
 │   ├── record_dataset_hashes.py  # Python module/script (automation script for record dataset hashes)
 │   ├── release_build30.sh  # shell automation script
@@ -2295,6 +2296,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_continual_adapter.py  # Python module/script (automated test module for continual adapter)
 │   ├── test_cpp_kernel_loader.py  # Python module/script (automated test module for cpp kernel loader)
 │   ├── test_dispatcher_extended.py  # Python module/script (automated test module for dispatcher extended)
+│   ├── test_distillation_topk.py  # Python module/script (automated test module for distillation topk)
 │   ├── test_drone_sitl_demo.py  # Python module/script (automated test module for drone sitl demo)
 │   ├── test_eval_suites.py  # Python module/script (automated test module for eval suites)
 │   ├── test_export_chess_5080_share.py  # Python module/script (automated test module for export chess 5080 share)

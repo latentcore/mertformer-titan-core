@@ -1,11 +1,11 @@
 {
   "schema": "final_artifact_manifest_v1",
-  "generated_utc": "2026-04-27T06:20:32Z",
+  "generated_utc": "2026-04-27T21:41:13Z",
   "entries": [
     {
       "path": "artifacts/mertformer_release.zip",
-      "size_bytes": 107160204,
-      "sha256": "fd15e90a1f8354bd5edc3d3658e5917293bd78f941080caa2ad3f3ed0ae61e55",
+      "size_bytes": 107159155,
+      "sha256": "5a6070b5db9e0bda6b86d1ade38f1b784c1c58a85fe1004e02ca345f417212ca",
       "members": 1003,
       "contains_env": false,
       "contains_logs": false
@@ -52,8 +52,8 @@
     },
     {
       "path": "packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip",
-      "size_bytes": 52252240,
-      "sha256": "1f316d7b5d4c832f6db97a1f589d7313a40398ffbe2f10482dbac509ecb7d3e6",
+      "size_bytes": 52246078,
+      "sha256": "f523f6fcf5dc668c90d4200119ba8a982b158ae58c87219f0c51496c13581b86",
       "members": 971,
       "contains_env": false,
       "contains_logs": false

@@ -73,6 +73,8 @@ def test_build_target_machine_handoff_bundle_outputs_zip_and_manifest(tmp_path: 
     assert module.MANIFEST_MD.exists()
     assert module.BUNDLE_ZIP.exists()
     assert module.BUNDLE_SHA256.exists()
+    sha_line = module.BUNDLE_SHA256.read_text(encoding="utf-8").strip()
+    assert sha_line.endswith("  target_machine_handoff_bundle.zip")
 
     manifest = json.loads(module.MANIFEST_JSON.read_text(encoding="utf-8"))
     assert manifest["next_action"] == "ALLOCATE_TARGET_MACHINE_AND_START"

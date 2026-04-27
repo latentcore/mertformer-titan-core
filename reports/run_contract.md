@@ -6,7 +6,7 @@ This file is the canonical runtime contract for the current 45K closure path.
 - `bash zero_touch_start.sh`
 
 ## Modes
-- `--check-only`: run the closure start gate and exact readiness contract without launching training.
+- `--check-only`: run the fast target-machine start gate and exact readiness contract without launching training.
 - `--plan-only`: emit the contracts and planned steps only.
 - `--dry-run`: emit the plan plus resolved train command, but do not launch training.
 - `--post-only`: skip training and run the post-train state machine.
@@ -16,6 +16,7 @@ This file is the canonical runtime contract for the current 45K closure path.
 ## Start Rules
 - Training start is allowed only when `reports/train_readiness_decision.json` says `TRAIN_ALLOWED`.
 - The start gate must produce exact blocker reason codes before any full training launch.
+- `--check-only` intentionally skips the heavyweight `verify_all.sh` sweep and behaves as a target-machine readiness gate.
 - This orchestrator uses a JSON lock file to prevent overlapping train-end launches.
 
 ## Resume Rules

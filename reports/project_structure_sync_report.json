@@ -1,14 +1,14 @@
 {
-  "generated_utc": "2026-04-27T06:19:55.757734+00:00",
+  "generated_utc": "2026-04-27T21:46:15.188283+00:00",
   "ok": true,
   "readme_sync": {
     "README.md": true,
     "README_TR.md": true
   },
   "details": {
-    "generated_utc": "2026-04-27T06:19:55.757584+00:00",
-    "manifest_count": 775,
-    "structure_count": 775,
+    "generated_utc": "2026-04-27T21:46:15.188115+00:00",
+    "manifest_count": 777,
+    "structure_count": 777,
     "missing_in_structure": [],
     "missing_in_manifest": [],
     "ok": true
