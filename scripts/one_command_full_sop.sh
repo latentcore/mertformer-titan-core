@@ -78,6 +78,7 @@ fi
   run_step "clean_runtime_artifacts_check" bash scripts/clean_runtime_artifacts.sh --check
   run_step "release_build30" bash scripts/release_build30.sh
   run_step "artifact_release_zip" bash scripts/build_artifacts_release_zip.sh
+  run_step "training_outputs_bundle" "$PY_BIN" scripts/build_training_outputs_bundle.py
   if [[ "${SOP_PLOT_TRAINING_LOG:-0}" == "1" ]]; then
     LOG_PATH_CAND="${SOP_TRAINING_LOG:-}"
     if [[ -z "$LOG_PATH_CAND" ]]; then

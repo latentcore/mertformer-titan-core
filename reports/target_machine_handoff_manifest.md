@@ -1,9 +1,9 @@
 # Target Machine Handoff Manifest
 
-- next_action: `ALLOCATE_TARGET_MACHINE_AND_START`
-- train_allowed: `True`
-- decision_reason_code: `READY_OFFLINE_CLEAN`
-- recommended_path: `offline_clean`
+- next_action: `DO_NOT_RENT_YET_FIX_REPO_BLOCKERS`
+- train_allowed: `False`
+- decision_reason_code: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE__online_teacher:MISSING_HF_TOKEN`
+- recommended_path: `none`
 - bundle_path: `target_machine_handoff_bundle.zip`
 - bundle_sha256_path: `target_machine_handoff_bundle.zip.sha256`
 
@@ -18,18 +18,14 @@
 
 ## Transfer Files
 
-- `zero_touch_start.sh` · `2900` bytes · sha256=`89f001ac1bcc3fc6b08dc03395b10db40b0a6a45cf021c481c5b4d1317d8d0cb`
+- `zero_touch_start.sh` · `2934` bytes · sha256=`e444192201d64b1bc6ba161c31f79f3c6b34a00097a77b7930114ba80080315a`
 - `run.sh` · `24440` bytes · sha256=`aae67b6d2ea0bc7bed6290dbf60d6daff4ee25ee896f83cb0aee6115dd4e2897`
-- `launch_mertformer_kaggle_closure.command` · `790` bytes · sha256=`6f3d756beb9bc3f5a4a00921fe71378783e852435921a170b1d625da605ffc0b`
-- `scripts/kaggle_onefile_closure_build30.py` · `42570` bytes · sha256=`10998a9f432b26ada60276cabbcd84e95bee2c297f4eab52558059cb201690ff`
-- `scripts/kaggle_onecell_t4_build30.py` · `287066` bytes · sha256=`d7c3d362acfbbd9431e12f2c5b0d2273ac8bab37c080e47b039a19f7b76d1d91`
-- `scripts/macos_keepawake.sh` · `1440` bytes · sha256=`462f7d4e50b6231ebbec4a9d296760212eafc30b3b7e9f55897e08ddbff2b6a9`
-- `scripts/final_orchestrator.py` · `25243` bytes · sha256=`ef299cc26a744cd8728706cd8afc85529adc179d966eada032fe24305cddd2ab`
+- `scripts/final_orchestrator.py` · `26068` bytes · sha256=`b205bd90b092625346a4cadd7f54b1e1ef1a927451c6edb4edab4c6218ae0968`
 - `scripts/start_gate.py` · `8345` bytes · sha256=`30c44468ec976d451abcf5b9aad127c2f35bdf797e66340882938d165610903e`
-- `scripts/build_train_readiness_contract.py` · `5746` bytes · sha256=`0b7a89c5ed289814b9d962713caa901d348ba7dde3dd7f6dfa64794ff77e74bb`
-- `reports/train_readiness_decision.json` · `2943` bytes · sha256=`fae486c7dc7efbdf7f86819e5b3eab2ebbfae26e47fdd5a4734ac8a71b3eb282`
-- `reports/train_readiness_decision.md` · `553` bytes · sha256=`a442f9f895d0fda9e30b149b22666a1f36db187ce35acca82eb869345dca1e76`
-- `reports/start_gate_report.json` · `4355` bytes · sha256=`4d8d1b1b2109d42d1221cdf0e8e18149cdf827bd0d5d54d3563a26a939b7d4b2`
-- `reports/start_gate_operator_decision.json` · `1215` bytes · sha256=`9d1df1728beedb49255691795094c17fa159ce866a338ea71c1266e1f2906874`
-- `reports/start_gate_operator_decision.md` · `1065` bytes · sha256=`754a9b0096ad49d04d8610655145d6ef5f2448a07bb6f28dd8851d6476e51eae`
-- `reports/repo_external_handoff.md` · `1468` bytes · sha256=`91ae3212f882371204927c4e58450cafe4653d26f2fc2fe256a1771b20e26c2d`
+- `scripts/build_train_readiness_contract.py` · `5974` bytes · sha256=`3c1a8b90842612a03f8ce1c66a945d971c72f51909000893f9515bb78927a420`
+- `reports/train_readiness_decision.json` · `5207` bytes · sha256=`7cbd3a53076f70c8e4f6aa832ef240376cc54e3190ed912934419bcd114d1e66`
+- `reports/train_readiness_decision.md` · `828` bytes · sha256=`b64a32ac5fb3b4fb422f74a9b69d12829d89c87fad09a3eeaf22130e8fa47bd9`
+- `reports/start_gate_report.json` · `5350` bytes · sha256=`783ca12707fea3ae8ef09f46a3e53ea70cc05ef989311911092b80d34d515c2d`
+- `reports/start_gate_operator_decision.json` · `710` bytes · sha256=`bdd86d11980e45f76022fb81c9f43e0e57d1c006af65a0ca2567dfa02aa9937b`
+- `reports/start_gate_operator_decision.md` · `613` bytes · sha256=`e0894ba2ce8f6b9353cde2284d7de8d5f2707588c87b52c433fc322e4bdd6684`
+- `reports/repo_external_handoff.md` · `1537` bytes · sha256=`cc3ca504b9e0b51413d4ebb01f7d45225bdbd177cb5192e91ecfa56fbe686196`

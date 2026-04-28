@@ -1003,7 +1003,7 @@ def load_teacher_tokenizer(prefer_local: bool = False):
         except Exception as local_exc:
             if os.environ.get("TITAN_OFFLINE", "1") == "1":
                 raise RuntimeError(
-                    "Teacher tokenizer load failed and no local tokenizer is available for offline teacherless mode."
+                    "Teacher tokenizer load failed and no local tokenizer is available for offline precomputed-KD mode."
                 ) from local_exc
             print(f"⚠️ Teacher tokenizer load failed: {e}. Falling back to gpt2.")
             tok = AutoTokenizer.from_pretrained("gpt2")
@@ -1247,22 +1247,11 @@ def train():
     if use_offline_logits:
         stage_names = [name for name, _ in stage_info]
         if not distill_manager.has_precomputed_logits(stage_names):
-            teacherless_allowed = not bool(getattr(cfg, "require_gated_teacher", False))
             if offline_mode:
-                if teacherless_allowed:
-                    print(
-                        "⚠️ Precomputed logits missing while TITAN_OFFLINE=1. "
-                        "Continuing teacher-free because require_gated_teacher=false."
-                    )
-                    cfg.distill_alpha = 0.0
-                    use_offline_logits = False
-                    distill_manager = None
-                    teacher = None
-                else:
-                    raise RuntimeError(
-                        "Precomputed logits are missing while TITAN_OFFLINE=1. "
-                            "Offline mode cannot fall back to online teacher."
-                    )
+                raise RuntimeError(
+                    "Precomputed logits are missing or incomplete while TITAN_OFFLINE=1. "
+                    "Canonical offline_clean requires completed Phase-0 logits shards before training."
+                )
             else:
                 if bool(getattr(cfg, "require_gated_teacher", False)):
                     print(

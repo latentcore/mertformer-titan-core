@@ -21,6 +21,9 @@ PROFILES = [
         'profile': 'strict_offline_training_readiness',
         'env': {
             'TITAN_OFFLINE': '1',
+            'TITAN_REQUIRE_GATED_TEACHER': '1',
+            'TITAN_USE_PRECOMPUTED_LOGITS': '1',
+            'TITAN_USE_TR_TOKENIZER': '1',
             'TITAN_PREFLIGHT_ALLOW_MISSING_STAGE_JSONL': '0',
             'TITAN_PREFLIGHT_REQUIRE_STAGE_JSONL': '1',
         },
@@ -142,7 +145,7 @@ def main() -> int:
         'final_status': final_status,
         'decision_reason_code': decision_reason_code,
         'recommended_path': recommended_path,
-        'guardrail': 'At least one readiness path must pass cleanly before TRAIN_ALLOWED is granted.',
+        'guardrail': 'At least one readiness path must pass cleanly before TRAIN_ALLOWED is granted; offline_clean is canonical only when strict precomputed KD prerequisites are satisfied.',
         'paths': results,
         'blockers': blockers,
     }

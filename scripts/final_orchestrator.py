@@ -229,6 +229,7 @@ def build_run_contract() -> str:
         ## Start Rules
         - Training start is allowed only when `reports/train_readiness_decision.json` says `TRAIN_ALLOWED`.
         - The start gate must produce exact blocker reason codes before any full training launch.
+        - The canonical `offline_clean` lane is strict precomputed KD and keeps `meta-llama/Llama-3.3-70B-Instruct` as the fixed teacher surface.
         - `--check-only` intentionally skips the heavyweight `verify_all.sh` sweep and behaves as a target-machine readiness gate.
         - This orchestrator uses a JSON lock file to prevent overlapping train-end launches.
 
@@ -239,6 +240,7 @@ def build_run_contract() -> str:
 
         ## Post-Train Rule
         - Post-train closeout is delegated to `scripts/post_train_autorun.py`.
+        - Post-train closeout now refreshes both release-side zips and the dedicated training outputs bundle zip for target-machine retrieval.
         - No trained evidence claim becomes true unless a real checkpoint is resolved and the downstream artifacts are refreshed from that checkpoint.
         """
     ).strip()
@@ -270,13 +272,21 @@ def build_expected_artifacts() -> str:
         - refreshed readiness/runtime manifests from the training path
         - `reports/post_train_autorun_status.json`
         - `reports/demo_bundle_manifest.json`
+        - `reports/training_outputs_bundle_manifest.json`
+        - `reports/training_outputs_bundle_manifest.md`
         - `reports/final_evidence_pack.md`
+        - `artifacts/mertformer_training_outputs_bundle.zip`
+        - `artifacts/mertformer_training_outputs_bundle.zip.sha256`
 
         ## Post-Only Path
         - `reports/post_train_autorun_status.json`
         - `reports/demo_bundle_manifest.json`
         - `reports/demo_bundle.md`
+        - `reports/training_outputs_bundle_manifest.json`
+        - `reports/training_outputs_bundle_manifest.md`
         - `reports/final_evidence_pack.md`
+        - `artifacts/mertformer_training_outputs_bundle.zip`
+        - `artifacts/mertformer_training_outputs_bundle.zip.sha256`
         """
     ).strip()
 
@@ -401,7 +411,8 @@ def build_training_env(resume_policy: str, start_gate_payload: dict | None = Non
 
     if resolve_training_lane(start_gate_payload) == "offline_clean":
         env["TITAN_OFFLINE"] = "1"
-        env["TITAN_REQUIRE_GATED_TEACHER"] = "0"
+        env["TITAN_REQUIRE_GATED_TEACHER"] = "1"
+        env["TITAN_USE_PRECOMPUTED_LOGITS"] = "1"
         env["TITAN_USE_TR_TOKENIZER"] = "1"
 
     if resume_policy == "off":

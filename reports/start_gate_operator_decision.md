@@ -1,30 +1,17 @@
 # Start Gate Operator Decision
 
-- next_action: `ALLOCATE_TARGET_MACHINE_AND_START`
-- train_allowed: `True`
+- next_action: `DO_NOT_RENT_YET_FIX_REPO_BLOCKERS`
+- train_allowed: `False`
 - structural_ok: `True`
-- recommended_path: `offline_clean`
-- decision_reason_code: `READY_OFFLINE_CLEAN`
+- recommended_path: `none`
+- decision_reason_code: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE__online_teacher:MISSING_HF_TOKEN`
 
 ## Operator Message
-Repo-side gate is green. Allocate or rent the target training machine, transfer the canonical files, rerun `bash zero_touch_start.sh --check-only` there, and start training immediately if it remains green.
+Do not rent or allocate the expensive machine yet. Fix the exact repo-side blockers first, keep this decision log, then rerun the canonical start gate.
 
 ## Blockers
+- `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`
 - `online_teacher:MISSING_HF_TOKEN`
 
 ## Required Transfer Files
-- `zero_touch_start.sh`
-- `run.sh`
-- `launch_mertformer_kaggle_closure.command`
-- `scripts/kaggle_onefile_closure_build30.py`
-- `scripts/kaggle_onecell_t4_build30.py`
-- `scripts/macos_keepawake.sh`
-- `scripts/final_orchestrator.py`
-- `scripts/start_gate.py`
-- `scripts/build_train_readiness_contract.py`
-- `reports/train_readiness_decision.json`
-- `reports/train_readiness_decision.md`
-- `reports/start_gate_report.json`
-- `reports/start_gate_operator_decision.json`
-- `reports/start_gate_operator_decision.md`
-- `reports/repo_external_handoff.md`
+- none

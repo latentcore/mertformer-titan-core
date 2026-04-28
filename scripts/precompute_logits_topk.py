@@ -2,10 +2,10 @@
 """
 MertFormer Titan Phase-0 offline teacher logit precomputation.
 
-This optional lane computes Top-K teacher logits once, stores them in compact
+This Phase-0 lane computes Top-K teacher logits once, stores them in compact
 shards, and lets the training path reconstruct dense tensors lazily during KD.
-The canonical offline-clean lane still remains valid without this optimization
-when training policy allows teacher-free fallback.
+The canonical offline_clean lane depends on these shards unless a separate
+gated-teacher run is intentionally chosen.
 """
 from __future__ import annotations
 
@@ -46,8 +46,8 @@ STAGE_FILES = {
     1: _ROOT / "datasets" / "stage1" / "stage1_data.jsonl",
     2: _ROOT / "datasets" / "stage2" / "stage2_data.jsonl",
     3: _ROOT / "datasets" / "stage3" / "stage3_data.jsonl",
-    4: _ROOT / "datasets" / "stage4" / "stage4_data.jsonl",
-    5: _ROOT / "datasets" / "stage5" / "stage5_data.jsonl",
+    4: _ROOT / "datasets" / "stage4_soul" / "stage4_data.jsonl",
+    5: _ROOT / "datasets" / "stage5_tools" / "stage5_data.jsonl",
 }
 
 DEFAULT_TOP_K = 256

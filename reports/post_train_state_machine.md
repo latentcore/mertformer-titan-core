@@ -12,4 +12,5 @@
 | 8 | `closure_governance_pack` | `command` | `false` | Refresh grouped closure and truth reports. |
 | 9 | `release_build30` | `command` | `false` | Refresh release zip package and release snapshot. |
 | 10 | `artifact_release_zip` | `command` | `false` | Refresh tracked artifact release zip. |
-| 11 | `evidence_pack` | `internal` | `false` | Write the current evidence pack summary. |
+| 11 | `training_outputs_bundle` | `command` | `false` | Build the downloadable training outputs bundle zip plus manifest. |
+| 12 | `evidence_pack` | `internal` | `false` | Write the current evidence pack summary. |

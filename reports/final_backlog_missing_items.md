@@ -3,6 +3,7 @@
 Items still open after the current governance checkpoint.
 
 ## Current Exact Blockers
+- `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`
 - `online_teacher:MISSING_HF_TOKEN`
 
 ## required before a real main run

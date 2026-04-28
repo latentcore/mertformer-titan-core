@@ -1,10 +1,10 @@
 # Logits Integrity Report
 
-- generated_utc: `2026-04-27T21:41:13Z`
+- generated_utc: `2026-04-28T00:13:06Z`
 - logits_root: `datasets/logits`
 - shard_count: `0`
 
 ## Result
 
-- Precomputed logits are not required for the current offline-clean teacherless lane.
-- If online-teacher distillation is requested later, this report must be refreshed with real shard counts and dataset alignment evidence.
+- Precomputed logits are the canonical requirement for the offline-clean lane in this closure pass.
+- If shard coverage is incomplete, `HF_TOKEN` plus a successful Phase-0 precompute remains the only claim-safe path back to green.

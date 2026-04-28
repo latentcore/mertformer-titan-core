@@ -373,13 +373,13 @@ class MertFormerConfig:
     allow_optional_sources: bool = os.environ.get("TITAN_ALLOW_OPTIONAL_SOURCES", "0") == "1"
     token_probe_samples: int = int(os.environ.get("TITAN_TOKEN_PROBE_SAMPLES", 64))
 
-    # Distillation policy: teacher access must be valid on gated model.
+    # Distillation policy: canonical offline_clean lane is strict precomputed KD.
     require_gated_teacher: bool = os.environ.get("TITAN_REQUIRE_GATED_TEACHER", "1") == "1"
 
     # -------------------------------------------------------------------------
     # [USER OVERRIDE] Teacher Model configuration
     # User confirmed usage of Llama 3.3 70B (assumes A100/H100 or multi-gpu setup)
-    teacher_model_id: str = "meta-llama/Llama-3.3-70B-Instruct"
+    teacher_model_id: str = os.environ.get("TITAN_TEACHER_MODEL_ID", "meta-llama/Llama-3.3-70B-Instruct")
     distill_alpha: float = 0.8 # [USER OPTIMIZATION] Teacher'a %80 güven
     distill_intermediate_layers: bool = True
 
@@ -397,7 +397,7 @@ class MertFormerConfig:
     teacher_temp: float = 1.0
     
     # [V27.0] Distillation Optimization
-    use_precomputed_logits: bool = True  # Utilize offline logits to save VRAM
+    use_precomputed_logits: bool = os.environ.get("TITAN_USE_PRECOMPUTED_LOGITS", "1") == "1"
     # [TITAN PREFLIGHT] Support override for testing
     precomputed_logits_path: str = os.environ.get("TITAN_LOGITS_PATH", "./datasets/logits/")
     
@@ -419,6 +419,7 @@ class MertFormerConfig:
             auto_micro, auto_accum = auto_configure_batch_size(target_global_batch=self.batch_size, conf=self)
             if self.micro_batch_size is None:
                 self.micro_batch_size = auto_micro
+            if self.grad_accum_steps is None:
                 self.grad_accum_steps = auto_accum
         
         # [TITAN AUTO-TUNE] Adjust workers based on CPU cores

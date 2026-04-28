@@ -16,6 +16,7 @@ This file is the canonical runtime contract for the current 45K closure path.
 ## Start Rules
 - Training start is allowed only when `reports/train_readiness_decision.json` says `TRAIN_ALLOWED`.
 - The start gate must produce exact blocker reason codes before any full training launch.
+- The canonical `offline_clean` lane is strict precomputed KD and keeps `meta-llama/Llama-3.3-70B-Instruct` as the fixed teacher surface.
 - `--check-only` intentionally skips the heavyweight `verify_all.sh` sweep and behaves as a target-machine readiness gate.
 - This orchestrator uses a JSON lock file to prevent overlapping train-end launches.
 
@@ -26,4 +27,5 @@ This file is the canonical runtime contract for the current 45K closure path.
 
 ## Post-Train Rule
 - Post-train closeout is delegated to `scripts/post_train_autorun.py`.
+- Post-train closeout now refreshes both release-side zips and the dedicated training outputs bundle zip for target-machine retrieval.
 - No trained evidence claim becomes true unless a real checkpoint is resolved and the downstream artifacts are refreshed from that checkpoint.

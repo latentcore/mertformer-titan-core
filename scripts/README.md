@@ -91,12 +91,13 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 ## Core Pipelines
 - `smart_runner.py` — Master orchestrator: data → distill → train.
 - `data_pipeline.py` — Dataset preparation (5-stage curriculum).
-- `precompute_logits_topk.py` — Optional Phase-0 offline teacher Top-K logit shard builder for KD acceleration.
+- `precompute_logits_topk.py` — Phase-0 offline teacher Top-K logit shard builder for the strict precomputed-KD lane.
 - `titan_preflight.py` — End-to-end preflight verification.
 - `operator_mode_gate.py` — Single-entry ops gate (safety + sanity checks).
 - `overfit_gate.py` — 1MB overfit gate (safe/full modes).
 - `train_smoke.py` — Tiny offline training sanity loop (CPU/MPS).
 - `cfc_moe_tolerance_check.py` — CfC/MoE loss tolerance check (<=1% diff).
+- `build_training_outputs_bundle.py` — Builds the canonical downloadable training outputs bundle zip + SHA256 + manifests.
 
 ## Review-Ready Tooling
 - `bootstrap_venv.sh` — Creates `.titan-venv` (Python 3.11 baseline). Use `--demo` to install `pygame`.
@@ -114,7 +115,7 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 - `build_scoped_external_intake_matrix.py` — Hashes and classifies scoped Desktop/Documents/Downloads/Applications project artifacts into a closure intake matrix.
 - `cleanup_scoped_closure_junk.py` — Removes scoped closure junk (`__pycache__`, `.pyc`, duplicate stale zips) from repo + scoped external directories.
 
-## SOP Outputs
+## SOP (Standard Operating Procedure) Outputs
 - `reports/one_command_full_sop_summary.md` — Consolidated single-document summary for the full one-command SOP run.
 - `reports/one_command_full_sop.log` — Raw full log for the same run.
 - Both artifacts are refreshed/overwritten on each full SOP run.

@@ -14,6 +14,7 @@ MertFormer Titan is an offline-first, auditable AI systems project with three co
 - Current readiness reason code: `READY_OFFLINE_CLEAN`
 - Preferred serious validation target: `45K`
 - Exact `45K` is not the only acceptable application threshold
+- Canonical `offline_clean` semantics: strict precomputed KD with fixed teacher surface `meta-llama/Llama-3.3-70B-Instruct`
 - Real owned training run + checkpoint-bound evidence are still required for application readiness
 - Optional gated blocker only if teacher lane is chosen: `online_teacher:MISSING_HF_TOKEN`
 - Real trained checkpoints, benchmark outputs, trained demo bundles, and trained export measurements remain post-run evidence
@@ -38,11 +39,13 @@ MertFormer Titan is an offline-first, auditable AI systems project with three co
 - Verify Kaggle wiring only: `bash zero_touch_start.sh --kaggle-onefile --mode verify`
 - macOS one-click launcher: `launch_mertformer_kaggle_closure.command`
 - Refresh closure, artifacts, and hashes: `bash scripts/final_one_shot.sh`
+- One-command closure flow (`SOP` = `Standard Operating Procedure`): `bash scripts/one_command_full_sop.sh`
 - Optional Phase-0 helper: `python3 scripts/precompute_logits_topk.py --all-stages`
 
 ## Phase-0 Note
 - `zero_touch_start.sh` now skips optional Phase-0 precompute for `--plan-only`, `--dry-run`, `--check-only`, and post-only invocations.
 - Real training invocations may auto-start Top-K teacher logit precompute when stage datasets exist and `HF_TOKEN` is supplied.
+- Canonical `offline_clean` does not silently fall back to teacherless mode; if logits are still incomplete and Phase-0 is not actionable, the lane stays blocked.
 - Override knobs: `TITAN_SKIP_PHASE0=1`, `TITAN_TOP_K=<n>`, `TITAN_PRECOMPUTE_BATCH=<n>`.
 
 ## Anthropic-Relevant Signals
@@ -60,6 +63,7 @@ The remaining high-value open class is not missing folders or missing scripts. I
 - checkpoint-bound benchmark outputs
 - trained demo bundle
 - export/device evidence as a strong plus
+- downloadable `artifacts/mertformer_training_outputs_bundle.zip` from a real target-machine run
 
 Everything else in this closure pack is there to keep that boundary explicit, reviewer-friendly, and hard to overclaim.
 

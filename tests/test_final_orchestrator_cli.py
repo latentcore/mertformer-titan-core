@@ -81,7 +81,8 @@ def test_build_training_env_prefers_offline_clean_lane():
         },
     )
     assert env["TITAN_OFFLINE"] == "1"
-    assert env["TITAN_REQUIRE_GATED_TEACHER"] == "0"
+    assert env["TITAN_REQUIRE_GATED_TEACHER"] == "1"
+    assert env["TITAN_USE_PRECOMPUTED_LOGITS"] == "1"
     assert env["TITAN_USE_TR_TOKENIZER"] == "1"
 
 

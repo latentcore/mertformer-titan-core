@@ -80,11 +80,12 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 ## Çekirdek Akışlar
 - `smart_runner.py` — Ana orkestratör: veri → distill → eğitim.
 - `data_pipeline.py` — Veri hazırlama (5 aşamalı müfredat).
-- `precompute_logits_topk.py` — KD hızlandırması için opsiyonel Phase-0 offline teacher Top-K logit shard üreticisi.
+- `precompute_logits_topk.py` — Katı precomputed-KD yolu için Phase-0 offline teacher Top-K logit shard üreticisi.
 - `titan_preflight.py` — Uçtan uca preflight doğrulama.
 - `operator_mode_gate.py` — Tek girişli ops gate (güvenlik + sanity checks).
 - `overfit_gate.py` — 1MB overfit gate (safe/full mod).
 - `train_smoke.py` — Küçük offline training sanity loop (CPU/MPS).
+- `build_training_outputs_bundle.py` — Kanonik indirilebilir training outputs bundle zip + SHA256 + manifest üreticisi.
 
 ## Review-Ready Araçlar
 - `bootstrap_venv.sh` — `.titan-venv` üretir (Python 3.11 baseline). Demo için `--demo` ile `pygame` kurar.
@@ -101,7 +102,7 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 - `build_scoped_external_intake_matrix.py` — Scoped Desktop/Documents/Downloads/Applications proje artefaktlarını hash'leyip closure intake matrix'ine sınıflandırır.
 - `cleanup_scoped_closure_junk.py` — Repo + scoped external dizinlerde closure artığı çöpü (`__pycache__`, `.pyc`, stale duplicate zip) temizler.
 
-## SOP Çıktıları
+## SOP (Standard Operating Procedure) Çıktıları
 - `reports/one_command_full_sop_summary.md` — Full tek-komut SOP koşusunun tek belgede konsolide özeti.
 - `reports/one_command_full_sop.log` — Aynı koşunun ham tam logu.
 - Her full SOP koşusunda iki artefakt da güncellenir/üzerine yazılır.

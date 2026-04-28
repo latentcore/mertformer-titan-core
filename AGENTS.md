@@ -19,6 +19,7 @@ Project closure constitution for contributors and coding agents.
 - Preserve the MoE 8e2 decision unless a verified blocker explicitly requires a change.
 - Keep experimental feature flags off on the main 45K path unless evidence and tests justify otherwise.
 - Do not silently change teacher, tokenizer, or dataset policy.
+- Keep `prompts/system_v1.txt` as the frozen canonical system prompt surface during closure; do not widen prompt surfaces before post-training behavioral evidence exists.
 
 ## Canonical Commands
 - Verification gate: `bash scripts/verify_all.sh`
@@ -60,6 +61,7 @@ Historical snapshots, archived reports, and legacy audits are supporting context
 - Do not say `45K-ready` unless `reports/train_readiness_decision.md` is `TRAIN_ALLOWED`.
 - Do not say `trained`, `benchmark-verified`, `mobile-ready`, `production-ready`, or `secure` unless there is direct evidence for that exact claim.
 - Do not collapse planned work, scaffolds, or placeholders into completed work.
+- Do not reopen teacherless fallback on the canonical `offline_clean` lane without a new explicit decision and matching evidence/tests.
 
 ## Files To Avoid Touching Without Need
 - `reports/snapshots/`

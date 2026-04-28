@@ -78,22 +78,23 @@ run_step "max_closure_handoff" .titan-venv/bin/python scripts/build_max_closure_
 run_step "chess_5080_share_export" .titan-venv/bin/python scripts/export_chess_5080_share.py
 
 # Ensure writable artifacts before regeneration
-chflags nouchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 2>/dev/null || true
-chmod u+w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 2>/dev/null || true
+chflags nouchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 artifacts/mertformer_training_outputs_bundle.zip artifacts/mertformer_training_outputs_bundle.zip.sha256 2>/dev/null || true
+chmod u+w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 artifacts/mertformer_training_outputs_bundle.zip artifacts/mertformer_training_outputs_bundle.zip.sha256 2>/dev/null || true
 
 # Release artifact
-rm -f artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256
+rm -f artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 artifacts/mertformer_training_outputs_bundle.zip artifacts/mertformer_training_outputs_bundle.zip.sha256
 run_zip_with_tolerance artifacts/mertformer_release.zip . -x ".git/*" "*/.git/*" "*.pyc" "*__pycache__*" ".titan-venv/*" ".lint-venv/*" ".venv/*" ".idea/*" ".pytest_cache/*" ".ruff_cache/*" ".mypy_cache/*" ".env" ".env.*" "logs/*" "checkpoints/*" "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256" "apps/chess_gui/logs/*" "apps/chess_gui/checkpoints/*" "apps/chess_gui/assets/*" "apps/chess_gui/chess_5080_onefile.py"
 (
   cd artifacts
   shasum -a 256 mertformer_release.zip > mertformer_release.zip.sha256
 )
 run_step "zip_denylist_audit_artifact" bash -lc '.titan-venv/bin/python scripts/zip_denylist_audit.py --zip artifacts/mertformer_release.zip > reports/artifacts_zip_denylist_audit.json'
+run_step "training_outputs_bundle" .titan-venv/bin/python scripts/build_training_outputs_bundle.py
 
 # Immutable lock best effort
-chmod -w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 || true
+chmod -w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 artifacts/mertformer_training_outputs_bundle.zip artifacts/mertformer_training_outputs_bundle.zip.sha256 || true
 chmod -w "$IMMUTABLE_ZIP" "$IMMUTABLE_ZIP.sha256" 2>/dev/null || true
-chflags uchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 2>/dev/null || true
+chflags uchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 artifacts/mertformer_training_outputs_bundle.zip artifacts/mertformer_training_outputs_bundle.zip.sha256 2>/dev/null || true
 chflags uchg "$IMMUTABLE_ZIP" "$IMMUTABLE_ZIP.sha256" 2>/dev/null || true
 
 # GitHub policy and closure lock (best effort, does not fail one-shot)

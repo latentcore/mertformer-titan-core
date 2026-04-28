@@ -9,6 +9,19 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
+def sanitize_path(path: Path, repo_root: Path, documents_root: Path) -> str:
+    text = str(path)
+    try:
+        text = text.replace(str(repo_root.resolve()), "<REPO_ROOT>")
+    except Exception:
+        pass
+    try:
+        text = text.replace(str(documents_root.resolve()), "<DOCUMENTS_PATH>")
+    except Exception:
+        pass
+    return text
+
+
 def sha256(path: Path) -> str:
     h = hashlib.sha256()
     with path.open("rb") as f:
@@ -18,8 +31,10 @@ def sha256(path: Path) -> str:
 
 
 def main() -> int:
+    repo_root = Path.cwd()
+    documents_root = Path.home() / "Documents"
     ap = argparse.ArgumentParser(description="Detect duplicate zip files by sha256")
-    ap.add_argument("--root", action="append", default=["packages", "artifacts", str(Path.home() / "Documents")])
+    ap.add_argument("--root", action="append", default=["packages", "artifacts", str(documents_root)])
     ap.add_argument("--out", default="reports/duplicate_zip_guard_report.json")
     ap.add_argument("--fail-on-duplicates", action="store_true")
     args = ap.parse_args()
@@ -35,7 +50,7 @@ def main() -> int:
     digest_map: dict[str, list[str]] = {}
     for z in sorted(set(zips)):
         d = sha256(z)
-        digest_map.setdefault(d, []).append(str(z))
+        digest_map.setdefault(d, []).append(sanitize_path(z, repo_root, documents_root))
 
     duplicates = {d: ps for d, ps in digest_map.items() if len(ps) > 1}
     payload = {

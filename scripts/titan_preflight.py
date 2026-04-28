@@ -149,6 +149,44 @@ def _count_jsonl_rows(path: Path) -> int:
     return count
 
 
+def _precompute_state_path(logits_root: Path, stage_name: str) -> Path:
+    return logits_root / f"{stage_name}_train_topk_state.json"
+
+
+def _precompute_done_samples(logits_root: Path, stage_name: str) -> int:
+    state_path = _precompute_state_path(logits_root, stage_name)
+    if not state_path.exists():
+        return 0
+    try:
+        payload = json.loads(state_path.read_text(encoding="utf-8"))
+    except Exception:
+        return 0
+    return int(payload.get("done_samples", 0) or 0)
+
+
+def _offline_precompute_stage_status(logits_root: Path) -> dict[str, Any]:
+    stages: dict[str, Any] = {}
+    all_complete = True
+    for stage_name, stage_path in _stage_jsonl_paths().items():
+        total_rows = _count_jsonl_rows(stage_path)
+        shard_count = len(list(logits_root.glob(f"{stage_name}_train_part_*.pt")))
+        done_samples = _precompute_done_samples(logits_root, stage_name)
+        complete = total_rows > 0 and shard_count > 0 and done_samples >= total_rows
+        stages[stage_name] = {
+            "dataset_path": str(stage_path),
+            "total_rows": total_rows,
+            "done_samples": done_samples,
+            "shard_count": shard_count,
+            "complete": complete,
+            "state_path": str(_precompute_state_path(logits_root, stage_name)),
+        }
+        all_complete = all_complete and complete
+    return {
+        "all_complete": all_complete,
+        "stages": stages,
+    }
+
+
 def _local_tokenizer_ready() -> tuple[bool, str]:
     tokenizer_meta = PROJECT_ROOT / "tokenizer" / "tokenizer.json"
     if not tokenizer_meta.exists():
@@ -404,8 +442,8 @@ def strict_training_readiness_profile() -> int:
 def strict_offline_training_readiness_profile() -> int:
     """
     Strict offline-clean readiness profile.
-    This path must prove that the repository can launch a no-network 45K pass
-    without relying on gated teacher access.
+    This path must prove that the repository can launch the canonical strict
+    precomputed-KD 45K pass without any teacherless fallback.
     """
     started_at = time.time()
     checks: Dict[str, Any] = {}
@@ -456,6 +494,21 @@ def strict_offline_training_readiness_profile() -> int:
             reason_code = "LOCAL_TOKENIZER_UNAVAILABLE"
             raise RuntimeError(tokenizer_detail)
 
+        strict_precompute = bool(getattr(cfg, "use_precomputed_logits", False))
+        strict_teacher = bool(getattr(cfg, "require_gated_teacher", False))
+        checks["strict_precompute_policy"] = {
+            "status": "PASS" if strict_precompute and strict_teacher else "FAIL",
+            "use_precomputed_logits": strict_precompute,
+            "require_gated_teacher": strict_teacher,
+            "teacher_model_id": str(getattr(cfg, "teacher_model_id", "")),
+        }
+        if not strict_precompute:
+            reason_code = "PRECOMPUTED_LOGITS_DISABLED"
+            raise RuntimeError("offline_clean canonical lane requires TITAN_USE_PRECOMPUTED_LOGITS=1")
+        if not strict_teacher:
+            reason_code = "STRICT_GATED_TEACHER_DISABLED"
+            raise RuntimeError("offline_clean canonical lane requires TITAN_REQUIRE_GATED_TEACHER=1")
+
         required_paths = [
             PROJECT_ROOT / "datasets",
             PROJECT_ROOT / cfg.save_dir,
@@ -475,13 +528,27 @@ def strict_offline_training_readiness_profile() -> int:
             raise RuntimeError(f"offline write permission checks failed: {failing_paths}")
 
         logits_root = Path(cfg.precomputed_logits_path)
-        shard_count = len(list(logits_root.glob("stage*_train_part_*.pt")))
+        precompute_status = _offline_precompute_stage_status(logits_root)
+        hf_token = os.environ.get("HF_TOKEN", "").strip()
+        actionable_phase0 = bool(hf_token) and bool(str(getattr(cfg, "teacher_model_id", "")).strip())
+        existing_shards = sum(stage["shard_count"] for stage in precompute_status["stages"].values())
         checks["distillation_paths"] = {
-            "status": "PASS" if shard_count > 0 else "WARN",
+            "status": "PASS" if precompute_status["all_complete"] or actionable_phase0 else "FAIL",
             "logits_dir": str(logits_root),
-            "existing_shards": shard_count,
-            "policy": "offline clean path can proceed only if training mode is explicitly teacherless or precomputed logits are available",
+            "existing_shards": existing_shards,
+            "all_complete": precompute_status["all_complete"],
+            "actionable_phase0_precompute": actionable_phase0,
+            "hf_token_present": bool(hf_token),
+            "policy": "offline_clean canonical lane requires either complete precomputed logits shards or actionable Phase-0 precompute with valid gated teacher access",
+            "stages": precompute_status["stages"],
         }
+        if not precompute_status["all_complete"] and not actionable_phase0:
+            reason_code = (
+                "PRECOMPUTED_LOGITS_INCOMPLETE_AND_PHASE0_NOT_ACTIONABLE"
+                if existing_shards > 0
+                else "PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE"
+            )
+            raise RuntimeError("offline_clean strict precompute requirements are not satisfied")
 
         strict_cuda_lock = os.environ.get("TITAN_PREFLIGHT_STRICT_CUDA_LOCK", "0") == "1"
         cuda_ok = check_cuda_lock(strict=strict_cuda_lock)
@@ -492,8 +559,8 @@ def strict_offline_training_readiness_profile() -> int:
         }
 
         status = "PASS"
-        reason_code = "READY"
-        print("TRAIN_READY:PASS reason_code=READY")
+        reason_code = "READY_PRECOMPUTED_LOGITS_COMPLETE" if precompute_status["all_complete"] else "READY_ACTIONABLE_PHASE0_PRECOMPUTE"
+        print(f"TRAIN_READY:PASS reason_code={reason_code}")
         return_code = 0
     except Exception as exc:
         if reason_code == "UNKNOWN_ERROR":

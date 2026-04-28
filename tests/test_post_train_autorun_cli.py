@@ -27,6 +27,7 @@ def test_post_train_autorun_plan_only_writes_contracts(tmp_path: Path):
     payload = json.loads(report_out.read_text(encoding="utf-8"))
     assert payload["mode"] == "plan-only"
     assert payload["status"] == "planned"
+    assert any(step["name"] == "training_outputs_bundle" for step in payload["steps"])
     assert (tmp_path / "post_train_automation_contract.md").exists()
     assert (tmp_path / "post_train_state_machine.md").exists()
 

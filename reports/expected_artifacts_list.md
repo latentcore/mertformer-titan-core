@@ -21,10 +21,18 @@
 - refreshed readiness/runtime manifests from the training path
 - `reports/post_train_autorun_status.json`
 - `reports/demo_bundle_manifest.json`
+- `reports/training_outputs_bundle_manifest.json`
+- `reports/training_outputs_bundle_manifest.md`
 - `reports/final_evidence_pack.md`
+- `artifacts/mertformer_training_outputs_bundle.zip`
+- `artifacts/mertformer_training_outputs_bundle.zip.sha256`
 
 ## Post-Only Path
 - `reports/post_train_autorun_status.json`
 - `reports/demo_bundle_manifest.json`
 - `reports/demo_bundle.md`
+- `reports/training_outputs_bundle_manifest.json`
+- `reports/training_outputs_bundle_manifest.md`
 - `reports/final_evidence_pack.md`
+- `artifacts/mertformer_training_outputs_bundle.zip`
+- `artifacts/mertformer_training_outputs_bundle.zip.sha256`

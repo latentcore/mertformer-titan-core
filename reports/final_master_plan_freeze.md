@@ -15,9 +15,9 @@
 - ADR chain and verification matrix
 
 ## Current Readiness Snapshot
-- final_status: `TRAIN_ALLOWED`
-- recommended_path: `offline_clean`
-- blockers: `online_teacher:MISSING_HF_TOKEN`
+- final_status: `NOT_ALLOWED`
+- recommended_path: `none`
+- blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE, online_teacher:MISSING_HF_TOKEN`
 
 ## Freeze Rule
 - Repo-side governance closure is now execution-first.

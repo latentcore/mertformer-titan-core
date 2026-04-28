@@ -4,7 +4,7 @@ This contract is the canonical post-train closure state machine for the current 
 
 ## Modes
 
-- `full`: benchmark -> golden eval -> demo manifest -> export -> logbook -> docs sync -> governance pack -> release zip -> evidence pack.
+- `full`: benchmark -> golden eval -> demo manifest -> export -> logbook -> docs sync -> governance pack -> release zip -> training outputs bundle -> evidence pack.
 - `bench-only`: checkpoint resolution plus benchmark and golden eval.
 - `export-only`: checkpoint resolution plus export refresh.
 - `demo-only`: checkpoint resolution plus demo manifest and evidence pack summary.

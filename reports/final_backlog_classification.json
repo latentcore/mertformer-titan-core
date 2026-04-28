@@ -20,8 +20,9 @@
     "external": 1,
     "rejected-with-reason": 1
   },
-  "current_readiness_status": "TRAIN_ALLOWED",
+  "current_readiness_status": "NOT_ALLOWED",
   "current_readiness_blockers": [
+    "offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE",
     "online_teacher:MISSING_HF_TOKEN"
   ],
   "groups": [
@@ -180,7 +181,7 @@
       "status": "DONE_NOW",
       "timing_bucket": "required before a real main run",
       "plan_covered": true,
-      "blocks_45k_readiness": false,
+      "blocks_45k_readiness": true,
       "mapped_categories": [
         "training_readiness"
       ],
@@ -201,7 +202,7 @@
       "status": "DONE_NOW",
       "timing_bucket": "required before a real main run",
       "plan_covered": true,
-      "blocks_45k_readiness": false,
+      "blocks_45k_readiness": true,
       "mapped_categories": [
         "data_contract",
         "training_readiness"
@@ -211,7 +212,7 @@
         "scripts/data_pipeline.py",
         "datasets/hashes.json"
       ],
-      "what_is_done": "The stage1..stage5 JSONL files exist, the offline tokenizer cache is accepted, and the offline-clean data path is green.",
+      "what_is_done": "The code path now carries optional-source handling, token-probe settings, and provenance-aware data controls.",
       "still_missing": "Claim-grade corpus lineage, large-scale provenance, and the real owned training-run consumption journal remain post-run evidence.",
       "raw_item_count": 2
     },

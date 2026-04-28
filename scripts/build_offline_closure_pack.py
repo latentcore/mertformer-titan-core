@@ -344,7 +344,7 @@ def build_teacher_tokenizer_data_reports(summary: dict) -> None:
             '',
             '- The current repo-side recommended path is the offline-clean lane.',
             '- The online teacher lane remains available only when `HF_TOKEN` and gated access are intentionally supplied.',
-            '- The canonical launcher may proceed teacher-free when the offline-clean path is selected and precomputed logits are unavailable.',
+            '- The canonical offline-clean launcher is now strict precomputed KD: completed logits shards or actionable Phase-0 precompute are required before start.',
             '',
             '## Policy Boundary',
             '',
@@ -391,8 +391,8 @@ def build_teacher_tokenizer_data_reports(summary: dict) -> None:
             '',
             '## Result',
             '',
-            '- Precomputed logits are not required for the current offline-clean teacherless lane.',
-            '- If online-teacher distillation is requested later, this report must be refreshed with real shard counts and dataset alignment evidence.',
+            '- Precomputed logits are the canonical requirement for the offline-clean lane in this closure pass.',
+            '- If shard coverage is incomplete, `HF_TOKEN` plus a successful Phase-0 precompute remains the only claim-safe path back to green.',
         ])
     )
 
@@ -519,7 +519,7 @@ def build_architecture_reports() -> None:
             '',
             '- `zero_touch_start.sh` -> `scripts/final_orchestrator.py`',
             '- Recommended training lane for this pass: `offline_clean`',
-            '- `TITAN_REQUIRE_GATED_TEACHER=0` and `TITAN_USE_TR_TOKENIZER=1` define the teacher-free offline-clean lane when no HF credential is supplied.',
+            '- `TITAN_REQUIRE_GATED_TEACHER=1`, `TITAN_USE_PRECOMPUTED_LOGITS=1`, and `TITAN_USE_TR_TOKENIZER=1` define the strict offline-clean lane.',
             '',
             '## Non-Canonical / Deferred',
             '',

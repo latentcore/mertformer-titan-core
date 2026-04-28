@@ -8,6 +8,7 @@ Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_OFFLINE_CLEAN`.
 - Başvuru açısından ana kapı: gerçek owned training run + checkpoint-bound evidence.
 - Exact `45K`, tercih edilen ciddi doğrulama hedefidir; tek kabul edilebilir başvuru eşiği değildir.
 - Kanonik repo-side lane: `offline-clean`.
+- Kanonik `offline_clean` semantiği: sabit öğretmen `meta-llama/Llama-3.3-70B-Instruct` ile strict precomputed KD.
 - Opsiyonel gated blocker: `online_teacher:MISSING_HF_TOKEN`.
 - Hâlâ açık olan post-run evidence sınıfı: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle ve trained export/device measurements.
 
@@ -34,7 +35,9 @@ Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_OFFLINE_CLEAN`.
 - Repo doğrulaması: `bash scripts/verify_all.sh`
 - Sadece readiness kontrolü: `bash zero_touch_start.sh --check-only`
 - Kanonik owned training lane başlatma: `bash zero_touch_start.sh`
+- Tek-komut closure akışı (`SOP` = `Standard Operating Procedure`): `bash scripts/one_command_full_sop.sh`
 - Final sync, release artifacts ve hash yenileme: `bash scripts/final_one_shot.sh`
+- Opsiyonel Phase-0 yardımcı yüzeyi: `scripts/precompute_logits_topk.py` (strict precomputed-KD yolu için offline teacher Top-K shard üreticisi)
 
 ### Doğruluk Sınırı
 - `measured` / `target` / `vision` ayrı claim etiketleridir.
@@ -48,6 +51,7 @@ Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_OFFLINE_CLEAN`.
 ### Açık Teknik Notlar
 - `MLA etiketli GQA dikkat bloğu (mevcut implementasyon)`
 - `Yönlendirme politikası: token-choice top-k.`
+- `prompts/system_v1.txt`, bu closure turunda tek kanonik system prompt yüzeyi olarak kilitli kalır.
 - Closure-57 şeffaflık notu: `out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]`
 
 ![MertFormer Titan Header](assets/header.png)
@@ -120,7 +124,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `220 passed, 3 skipped` |
+| `python3 -m pytest -q` | `227 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -133,7 +137,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`220 passed, 3 skipped`)
+   - `pytest` geçti (`227 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -149,6 +153,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 ### Güncel Exact Boundary
 - Kanonik repo-side yol: `offline_clean`
 - Exact readiness verdict: `TRAIN_ALLOWED` / `READY_OFFLINE_CLEAN`
+- Kanonik offline-clean kuralı: ya complete precomputed logits ya da actionable Phase-0 precompute; 45K yolunda teacherless fallback yok
 - Kalan exact blocker: `online_teacher:MISSING_HF_TOKEN` (yalnızca opsiyonel gated teacher yolu için)
 
 ### Uzun eğitim koşusundan önce son önkoşullar
@@ -158,6 +163,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 - Dataset lisans/hash iş akışı uyumlu kalmalıdır.
 - Tam eğitim koşusu ve benchmark çıktıları bu önkoşullardan sonra kayda alınır.
 - Varsayılan token bütçesi artık `fixed_steps` (45K). `open_ended` yalnızca açık hedef override ile kullanılmalıdır.
+- Başarılı post-train closeout artık hedef makineden toplu indirme için `artifacts/mertformer_training_outputs_bundle.zip` + SHA256 + manifest üretir.
 - `cuda.lock` hedef eğitim makinesinde üretilmelidir.
 
 ### Kanonik readiness kapısı

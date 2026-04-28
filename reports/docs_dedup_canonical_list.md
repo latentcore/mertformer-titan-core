@@ -393,6 +393,7 @@ Generated automatically.
 - `reports/test_verification_matrix.md`
 - `reports/tokenizer_sync_final_report.md`
 - `reports/train_readiness_decision.md`
+- `reports/training_outputs_bundle_manifest.md`
 - `reports/turk_telekom_call_faq.md`
 - `reports/update_first_policy.md`
 - `reports/verified_matrix.md`

@@ -1,12 +1,12 @@
 # Feature Flag Governance
 
-- generated_utc: `2026-04-27T21:41:13Z`
+- generated_utc: `2026-04-28T00:13:06Z`
 
 ## Canonical Main Path
 
 - `zero_touch_start.sh` -> `scripts/final_orchestrator.py`
 - Recommended training lane for this pass: `offline_clean`
-- `TITAN_REQUIRE_GATED_TEACHER=0` and `TITAN_USE_TR_TOKENIZER=1` define the teacher-free offline-clean lane when no HF credential is supplied.
+- `TITAN_REQUIRE_GATED_TEACHER=1`, `TITAN_USE_PRECOMPUTED_LOGITS=1`, and `TITAN_USE_TR_TOKENIZER=1` define the strict offline-clean lane.
 
 ## Non-Canonical / Deferred
 

@@ -2,8 +2,8 @@
 
 - official_product_sentence: Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre edilebilir zeka altyapısı.
 - risk_ceiling: `Medium Refine`
-- readiness_final_status: `TRAIN_ALLOWED`
-- recommended_path: `offline_clean`
+- readiness_final_status: `NOT_ALLOWED`
+- recommended_path: `none`
 
 ## Freeze State
 

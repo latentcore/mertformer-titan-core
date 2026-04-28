@@ -49,7 +49,9 @@
 - `bash zero_touch_start.sh --check-only`
 
 ## Main-Run Readiness Rule
-The current repo-side readiness verdict is `TRAIN_ALLOWED` via the offline-clean lane. The remaining exact blocker is the optional `online_teacher:MISSING_HF_TOKEN` lane when gated teacher access is intentionally requested.
+The repo is not genuinely main-run-ready while either of the current blockers remains active:
+- `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`
+- `online_teacher:MISSING_HF_TOKEN`
 
 ## Post-Run Rule
 Trained weights, checkpoints, benchmark summaries, demo bundle, checkpoint-bound evidence pack, and measured deployment outputs are not current facts until the real owned training run produces them.

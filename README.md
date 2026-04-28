@@ -8,6 +8,7 @@ Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_OFFLINE_CL
 - Application-relevant gate: a real owned training run plus checkpoint-bound evidence.
 - Exact `45K` is the preferred serious validation target, not the only acceptable application threshold.
 - Canonical repo-side lane: `offline-clean`.
+- Canonical `offline_clean` semantics: strict precomputed KD with fixed teacher `meta-llama/Llama-3.3-70B-Instruct`.
 - Optional gated blocker: `online_teacher:MISSING_HF_TOKEN`.
 - Missing post-run evidence remains: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle, and trained export/device measurements.
 
@@ -33,8 +34,9 @@ Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_OFFLINE_CL
 - Verify the repo: `bash scripts/verify_all.sh`
 - Check readiness only: `bash zero_touch_start.sh --check-only`
 - Launch the canonical owned training lane: `bash zero_touch_start.sh`
+- One-command closure flow (`SOP` = `Standard Operating Procedure`): `bash scripts/one_command_full_sop.sh`
 - Refresh final sync, release artifacts, and hashes: `bash scripts/final_one_shot.sh`
-- Optional Phase-0 helper: `scripts/precompute_logits_topk.py` (offline teacher Top-K shard builder; not required for the teacher-free offline-clean lane).
+- Optional Phase-0 helper: `scripts/precompute_logits_topk.py` (offline teacher Top-K shard builder for the strict precomputed-KD lane).
 
 ### Truth Boundary
 - `measured` / `target` / `vision` are distinct claim labels.
@@ -48,6 +50,7 @@ Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_OFFLINE_CL
 ### Explicit Implementation Notes
 - `MLA-labeled GQA attention (current implementation)`
 - `Routing policy: token-choice top-k.`
+- `prompts/system_v1.txt` remains the only canonical system prompt surface in this closure pass.
 - Closure-57 transparency note: `out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]`
 
 ![MertFormer Titan Header](assets/header.png)
@@ -120,7 +123,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `220 passed, 3 skipped` |
+| `python3 -m pytest -q` | `227 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -133,7 +136,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`220 passed, 3 skipped`)
+   - `pytest` passed (`227 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -149,6 +152,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 ### Current Exact Boundary
 - Canonical repo-side lane: `offline_clean`
 - Exact readiness verdict: `TRAIN_ALLOWED` / `READY_OFFLINE_CLEAN`
+- Canonical offline-clean rule: complete precomputed logits or actionable Phase-0 precompute; no teacherless fallback on the 45K lane
 - Remaining exact blocker: `online_teacher:MISSING_HF_TOKEN` (only for the optional gated teacher lane)
 
 ### Final prerequisites before long-run training
@@ -161,6 +165,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 - Precomputed logits path: `TITAN_LOGITS_PATH` (default `./datasets/logits/`).
 - `zero_touch_start.sh` now attempts optional Phase-0 Top-K precompute only for real training invocations; `--plan-only`, `--dry-run`, `--check-only`, and post-only modes skip it.
 - Optional Phase-0 tuning envs: `TITAN_SKIP_PHASE0=1`, `TITAN_TOP_K=<n>`, `TITAN_PRECOMPUTE_BATCH=<n>`.
+- Successful post-train closeout now produces `artifacts/mertformer_training_outputs_bundle.zip` plus SHA256 and manifests for target-machine retrieval.
 - Default token budget now uses `fixed_steps` (45K). Use `TITAN_TOKEN_BUDGET_MODE=open_ended` only with an explicit target override.
 - Accelerate config must match GPU count (set `TITAN_FORCE_ACCELERATE_RECONF=1` to regenerate).
 - `cuda.lock` must be created on the target training hardware.

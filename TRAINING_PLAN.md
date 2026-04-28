@@ -11,6 +11,16 @@ Principles:
 - Python **3.11** (see `repro/python.md`)
 - Local venv: `.titan-venv` (created via `scripts/bootstrap_venv.sh`)
 
+## Closure Decisions
+- Canonical external lane name remains `offline_clean`.
+- Canonical internal behavior for `offline_clean` is now **strict precomputed KD**.
+- Fixed teacher surface: `meta-llama/Llama-3.3-70B-Instruct`.
+- `teacherless` is no longer a canonical fallback for the 45K `offline_clean` run.
+- If logits shards are not complete, the claim-safe recovery path is Phase-0 precompute with valid `HF_TOKEN`; otherwise the lane stays blocked.
+- Post-train retrieval now uses a dual-bundle strategy:
+  - release/repo zips stay as closure artifacts
+  - real run outputs are collected separately in `artifacts/mertformer_training_outputs_bundle.zip`
+
 ## Phase 0: Offline Verification (Must Pass)
 
 Run the offline verify-all pipeline:
@@ -56,7 +66,7 @@ python3 scripts/record_dataset_hashes.py
 
 Required:
 - Training hardware (e.g., multi-GPU Linux host) and a stable CUDA toolchain
-- `HF_TOKEN` available only if the online teacher lane is intentionally selected
+- `HF_TOKEN` available if the online teacher lane is intentionally selected, or if the canonical `offline_clean` lane still needs Phase-0 logits precompute
 - Optional: `WANDB_API_KEY` if experiment tracking is enabled
 - Current repo-side lane is already green:
   - `TRAIN_ALLOWED`
@@ -78,6 +88,11 @@ Recommended execution (canonical offline-clean lane on target hardware):
 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
 
+Canonical offline-clean truth boundary:
+- use precomputed logits if they are already complete
+- otherwise allow Phase-0 to build them when `HF_TOKEN` is available
+- otherwise do not start the long run
+
 Optional online teacher execution:
 
 ```bash
@@ -89,6 +104,7 @@ Notes:
 - Logs are written under `logs/` and are **gitignored artifacts**. Treat them as evidence attachments, not commits.
 - `zero_touch_start.sh` is the canonical 45K launcher. `run.sh` remains available for legacy helper flows such as `--test`, `--sitl-demo`, and `--cleanroom-verify`.
 - Use `bash zero_touch_start.sh --plan-only` or `--dry-run` before a handoff if you want the exact orchestrator contract without starting training.
+- Successful post-train closeout now refreshes both the release-side packages and `artifacts/mertformer_training_outputs_bundle.zip` for target-machine download.
 
 ## Phase 2: Agent Integration (Optional / Post-Foundation)
 

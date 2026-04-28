@@ -1,14 +1,14 @@
 {
   "schema": "train_readiness_decision_v1",
-  "final_status": "TRAIN_ALLOWED",
-  "decision_reason_code": "READY_OFFLINE_CLEAN",
-  "recommended_path": "offline_clean",
-  "guardrail": "At least one readiness path must pass cleanly before TRAIN_ALLOWED is granted.",
+  "final_status": "NOT_ALLOWED",
+  "decision_reason_code": "offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE__online_teacher:MISSING_HF_TOKEN",
+  "recommended_path": null,
+  "guardrail": "At least one readiness path must pass cleanly before TRAIN_ALLOWED is granted; offline_clean is canonical only when strict precomputed KD prerequisites are satisfied.",
   "paths": [
     {
       "profile": "strict_offline_training_readiness",
-      "status": "PASS",
-      "reason_code": "READY",
+      "status": "FAIL",
+      "reason_code": "PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE",
       "checks": {
         "stage_jsonl": {
           "status": "PASS",
@@ -28,6 +28,12 @@
           "status": "PASS",
           "detail": "ok (local tokenizer cache: data/tokenizer/tr)"
         },
+        "strict_precompute_policy": {
+          "status": "PASS",
+          "use_precomputed_logits": true,
+          "require_gated_teacher": true,
+          "teacher_model_id": "meta-llama/Llama-3.3-70B-Instruct"
+        },
         "write_permissions": {
           "status": "PASS",
           "paths": {
@@ -46,22 +52,62 @@
           }
         },
         "distillation_paths": {
-          "status": "WARN",
+          "status": "FAIL",
           "logits_dir": "datasets/logits",
           "existing_shards": 0,
-          "policy": "offline clean path can proceed only if training mode is explicitly teacherless or precomputed logits are available"
-        },
-        "cuda_lock": {
-          "status": "PASS",
-          "strict": false,
-          "path": "<repo>/repro/cuda.lock"
+          "all_complete": false,
+          "actionable_phase0_precompute": false,
+          "hf_token_present": false,
+          "policy": "offline_clean canonical lane requires either complete precomputed logits shards or actionable Phase-0 precompute with valid gated teacher access",
+          "stages": {
+            "stage1": {
+              "dataset_path": "<repo>/datasets/stage1/stage1_data.jsonl",
+              "total_rows": 41,
+              "done_samples": 0,
+              "shard_count": 0,
+              "complete": false,
+              "state_path": "datasets/logits/stage1_train_topk_state.json"
+            },
+            "stage2": {
+              "dataset_path": "<repo>/datasets/stage2/stage2_data.jsonl",
+              "total_rows": 30,
+              "done_samples": 0,
+              "shard_count": 0,
+              "complete": false,
+              "state_path": "datasets/logits/stage2_train_topk_state.json"
+            },
+            "stage3": {
+              "dataset_path": "<repo>/datasets/stage3/stage3_data.jsonl",
+              "total_rows": 8,
+              "done_samples": 0,
+              "shard_count": 0,
+              "complete": false,
+              "state_path": "datasets/logits/stage3_train_topk_state.json"
+            },
+            "stage4": {
+              "dataset_path": "<repo>/datasets/stage4_soul/stage4_data.jsonl",
+              "total_rows": 8,
+              "done_samples": 0,
+              "shard_count": 0,
+              "complete": false,
+              "state_path": "datasets/logits/stage4_train_topk_state.json"
+            },
+            "stage5": {
+              "dataset_path": "<repo>/datasets/stage5_tools/stage5_data.jsonl",
+              "total_rows": 12,
+              "done_samples": 0,
+              "shard_count": 0,
+              "complete": false,
+              "state_path": "datasets/logits/stage5_train_topk_state.json"
+            }
+          }
         }
       },
-      "elapsed_s": 0.007,
+      "elapsed_s": 0.01,
       "path_name": "offline_clean",
-      "exit_code": 0,
-      "stdout_tail": "TRAIN_READY:PASS reason_code=READY\n",
-      "stderr_tail": "\u26a0\ufe0f .env file not found, skipping local load.\n\u26a0\ufe0f CUDA lock missing or unknown (run scripts/write_cuda_lock.py on training hardware).\n\u2708\ufe0f Train-ready report: logs/preflight/train_ready_status.strict_offline_training_readiness.json\n"
+      "exit_code": 1,
+      "stdout_tail": "TRAIN_READY:FAIL reason_code=PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE\n",
+      "stderr_tail": "\u26a0\ufe0f .env file not found, skipping local load.\n\u274c STRICT OFFLINE TRAIN-READINESS FAIL [PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE]: offline_clean strict precompute requirements are not satisfied\n\u2708\ufe0f Train-ready report: logs/preflight/train_ready_status.strict_offline_training_readiness.json\n"
     },
     {
       "profile": "strict_online_training_readiness",
@@ -81,6 +127,7 @@
     }
   ],
   "blockers": [
+    "offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE",
     "online_teacher:MISSING_HF_TOKEN"
   ]
 }

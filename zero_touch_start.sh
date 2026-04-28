@@ -54,7 +54,7 @@ else
       echo "[phase-0] offline teacher logits already complete."
     elif [[ -z "${HF_TOKEN:-}" ]]; then
       echo "[phase-0] HF_TOKEN missing; optional offline teacher precompute skipped."
-      echo "[phase-0] final orchestrator / training policy will decide teacher-free vs gated-teacher behavior."
+      echo "[phase-0] final orchestrator / readiness policy will block canonical offline_clean until logits exist or Phase-0 becomes actionable."
     else
       echo "[phase-0] launching offline teacher logits precompute ..."
       precompute_cmd=( "${phase0_base[@]}" )

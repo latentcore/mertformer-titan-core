@@ -1,6 +1,6 @@
 # Final Evidence Pack
 
-- generated_utc: `2026-04-27T21:41:13.313801+00:00`
+- generated_utc: `2026-04-28T00:13:06.267211+00:00`
 - mode: `demo-only`
 - checkpoint: `none`
 
@@ -10,6 +10,7 @@
 - `reports/final_truth_matrix.md`
 - `reports/final_backlog_classification.md`
 - `reports/demo_bundle_manifest.json`
+- `reports/training_outputs_bundle_manifest.json`
 - `reports/release_manifest.json`
 - `reports/one_command_full_sop_summary.md`
 

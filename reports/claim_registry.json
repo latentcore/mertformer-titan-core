@@ -3,13 +3,13 @@
     "claim_id": "claim.repo_45k_ready_now",
     "claim": "The repo is genuinely main-run-ready right now.",
     "mode": "measured",
-    "status": "verified",
+    "status": "blocked",
     "evidence": [
       "reports/train_readiness_decision.md",
       "reports/training_readiness_manifest.json",
       "reports/start_gate_report.json"
     ],
-    "still_missing": "Repo-side readiness is green on the offline-clean lane. Real trained outputs remain post-run evidence, and the online teacher lane still requires optional gated credentials."
+    "still_missing": "Exact blockers remain: offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE, online_teacher:MISSING_HF_TOKEN."
   },
   {
     "claim_id": "claim.first_serious_validation_run_positioning",
@@ -47,7 +47,7 @@
       "reports/train_readiness_decision.json",
       "reports/training_readiness_manifest.json"
     ],
-    "still_missing": "The repo-side verdict is TRAIN_ALLOWED via offline_clean; the remaining exact reason-coded blocker is the optional online_teacher lane without HF_TOKEN."
+    "still_missing": "Exact blockers must still be cleared before TRAIN_ALLOWED can be granted."
   },
   {
     "claim_id": "claim.canonical_closure_flow_exists",

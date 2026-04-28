@@ -52,6 +52,7 @@ FULL_STEPS = [
     Step("closure_governance_pack", "command", "Refresh grouped closure and truth reports.", checkpoint_required=False),
     Step("release_build30", "command", "Refresh release zip package and release snapshot.", checkpoint_required=False),
     Step("artifact_release_zip", "command", "Refresh tracked artifact release zip.", checkpoint_required=False),
+    Step("training_outputs_bundle", "command", "Build the downloadable training outputs bundle zip plus manifest.", checkpoint_required=False),
     Step("evidence_pack", "internal", "Write the current evidence pack summary.", checkpoint_required=False),
 ]
 
@@ -205,7 +206,7 @@ def build_contract_text() -> str:
 
         ## Modes
 
-        - `full`: benchmark -> golden eval -> demo manifest -> export -> logbook -> docs sync -> governance pack -> release zip -> evidence pack.
+        - `full`: benchmark -> golden eval -> demo manifest -> export -> logbook -> docs sync -> governance pack -> release zip -> training outputs bundle -> evidence pack.
         - `bench-only`: checkpoint resolution plus benchmark and golden eval.
         - `export-only`: checkpoint resolution plus export refresh.
         - `demo-only`: checkpoint resolution plus demo manifest and evidence pack summary.
@@ -290,6 +291,7 @@ def build_evidence_pack(root: Path, reports_dir: Path, checkpoint: Path | None, 
         "reports/final_truth_matrix.md",
         "reports/final_backlog_classification.md",
         "reports/demo_bundle_manifest.json",
+        "reports/training_outputs_bundle_manifest.json",
         "reports/release_manifest.json",
         "reports/one_command_full_sop_summary.md",
     ]
@@ -355,6 +357,7 @@ def command_builders(root: Path, py: str, checkpoint: Path | None) -> dict[str, 
         "closure_governance_pack": lambda: run_command(root, [py, "scripts/build_closure_governance_pack.py"], env=env),
         "release_build30": lambda: run_command(root, ["bash", "scripts/release_build30.sh"], env=env),
         "artifact_release_zip": lambda: run_command(root, ["bash", "scripts/build_artifacts_release_zip.sh"], env=env),
+        "training_outputs_bundle": lambda: run_command(root, [py, "scripts/build_training_outputs_bundle.py"], env=env),
     }
 
 
