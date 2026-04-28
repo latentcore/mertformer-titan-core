@@ -1,6 +1,6 @@
 {
   "schema": "target_machine_handoff_manifest_v1",
-  "generated_utc": "2026-04-28T00:10:54Z",
+  "generated_utc": "2026-04-28T01:17:06Z",
   "next_action": "DO_NOT_RENT_YET_FIX_REPO_BLOCKERS",
   "train_allowed": false,
   "decision_reason_code": "offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE__online_teacher:MISSING_HF_TOKEN",
@@ -45,13 +45,13 @@
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 5350,
-      "sha256": "783ca12707fea3ae8ef09f46a3e53ea70cc05ef989311911092b80d34d515c2d"
+      "size_bytes": 3792,
+      "sha256": "fbe1b5c7eb33b708a402212caffafca9a0af00f126bec78e6434099177129e35"
     },
     {
       "path": "reports/start_gate_operator_decision.json",
       "size_bytes": 710,
-      "sha256": "bdd86d11980e45f76022fb81c9f43e0e57d1c006af65a0ca2567dfa02aa9937b"
+      "sha256": "37fd924ed268fbf3a15b0dcef47f08c749e2079431254a6a50b0cef5305630e9"
     },
     {
       "path": "reports/start_gate_operator_decision.md",
@@ -61,7 +61,7 @@
     {
       "path": "reports/repo_external_handoff.md",
       "size_bytes": 1537,
-      "sha256": "cc3ca504b9e0b51413d4ebb01f7d45225bdbd177cb5192e91ecfa56fbe686196"
+      "sha256": "763d53fdb2fb0213774da89efc3aa5f323f5740cef769992db8ce7c80861fed7"
     }
   ],
   "operator_steps": [

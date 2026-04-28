@@ -124,7 +124,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `227 passed, 3 skipped` |
+| `python3 -m pytest -q` | `228 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -137,7 +137,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`227 passed, 3 skipped`)
+   - `pytest` geçti (`228 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -2116,6 +2116,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── tokenizer_sync_final_report.md  # dokümantasyon/rapor dosyası
 │   ├── train_readiness_decision.json  # JSON veri artefaktı
 │   ├── train_readiness_decision.md  # dokümantasyon/rapor dosyası
+│   ├── training_outputs_bundle_manifest.json  # JSON veri artefaktı
+│   ├── training_outputs_bundle_manifest.md  # dokümantasyon/rapor dosyası
 │   ├── training_readiness_manifest.json  # JSON veri artefaktı
 │   ├── turk_telekom_call_faq.md  # dokümantasyon/rapor dosyası
 │   ├── unicode_path_guard_report.json  # JSON veri artefaktı
@@ -2175,6 +2177,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── build_summary_pdf.py  # Python modülü/scripti (build summary pdf için otomasyon scripti)
 │   ├── build_target_machine_handoff_bundle.py  # Python modülü/scripti (build target machine handoff bundle için otomasyon scripti)
 │   ├── build_train_readiness_contract.py  # Python modülü/scripti (build train readiness contract için otomasyon scripti)
+│   ├── build_training_outputs_bundle.py  # Python modülü/scripti (build training outputs bundle için otomasyon scripti)
 │   ├── build_validation_set.py  # Python modülü/scripti (build validation set için otomasyon scripti)
 │   ├── build_workspace_hygiene_manifest.py  # Python modülü/scripti (build workspace hygiene manifest için otomasyon scripti)
 │   ├── cfc_moe_tolerance_check.py  # Python modülü/scripti (cfc moe tolerance check için otomasyon scripti)
@@ -2277,6 +2280,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_build_code_truth_audit.py  # Python modülü/scripti (build code truth audit için otomatik test modülü)
 │   ├── test_build_max_closure_handoff.py  # Python modülü/scripti (build max closure handoff için otomatik test modülü)
 │   ├── test_build_target_machine_handoff_bundle.py  # Python modülü/scripti (build target machine handoff bundle için otomatik test modülü)
+│   ├── test_build_training_outputs_bundle.py  # Python modülü/scripti (build training outputs bundle için otomatik test modülü)
 │   ├── test_build_workspace_hygiene_manifest.py  # Python modülü/scripti (build workspace hygiene manifest için otomatik test modülü)
 │   ├── test_check_doc_claim_consistency.py  # Python modülü/scripti (check doc claim consistency için otomatik test modülü)
 │   ├── test_chess_5080_onefile.py  # Python modülü/scripti (chess 5080 onefile için otomatik test modülü)
@@ -2284,11 +2288,13 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_chess_onefile_curated_suites.py  # Python modülü/scripti (chess onefile curated suites için otomatik test modülü)
 │   ├── test_cognitive_extensions.py  # Python modülü/scripti (cognitive extensions için otomatik test modülü)
 │   ├── test_comprehensive.py  # Python modülü/scripti (comprehensive için otomatik test modülü)
+│   ├── test_config_contract.py  # Python modülü/scripti (config contract için otomatik test modülü)
 │   ├── test_continual_adapter.py  # Python modülü/scripti (continual adapter için otomatik test modülü)
 │   ├── test_cpp_kernel_loader.py  # Python modülü/scripti (cpp kernel loader için otomatik test modülü)
 │   ├── test_dispatcher_extended.py  # Python modülü/scripti (dispatcher extended için otomatik test modülü)
 │   ├── test_distillation_topk.py  # Python modülü/scripti (distillation topk için otomatik test modülü)
 │   ├── test_drone_sitl_demo.py  # Python modülü/scripti (drone sitl demo için otomatik test modülü)
+│   ├── test_duplicate_zip_guard.py  # Python modülü/scripti (duplicate zip guard için otomatik test modülü)
 │   ├── test_eval_suites.py  # Python modülü/scripti (eval suites için otomatik test modülü)
 │   ├── test_export_chess_5080_share.py  # Python modülü/scripti (export chess 5080 share için otomatik test modülü)
 │   ├── test_export_metadata.py  # Python modülü/scripti (export metadata için otomatik test modülü)

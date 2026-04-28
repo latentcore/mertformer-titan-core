@@ -1,6 +1,6 @@
 {
   "schema": "start_gate_operator_decision_v1",
-  "generated_utc": "2026-04-28T00:11:00.492658+00:00",
+  "generated_utc": "2026-04-28T01:17:06.072326+00:00",
   "next_action": "DO_NOT_RENT_YET_FIX_REPO_BLOCKERS",
   "operator_message": "Do not rent or allocate the expensive machine yet. Fix the exact repo-side blockers first, keep this decision log, then rerun the canonical start gate.",
   "train_allowed": false,

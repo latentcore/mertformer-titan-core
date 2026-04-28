@@ -561,6 +561,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── tokenizer_sync_final_report.md  # documentation/report file
 │   ├── train_readiness_decision.json  # JSON data artifact
 │   ├── train_readiness_decision.md  # documentation/report file
+│   ├── training_outputs_bundle_manifest.json  # JSON data artifact
+│   ├── training_outputs_bundle_manifest.md  # documentation/report file
 │   ├── training_readiness_manifest.json  # JSON data artifact
 │   ├── turk_telekom_call_faq.md  # documentation/report file
 │   ├── unicode_path_guard_report.json  # JSON data artifact
@@ -620,6 +622,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── build_summary_pdf.py  # Python module/script (automation script for build summary pdf)
 │   ├── build_target_machine_handoff_bundle.py  # Python module/script (automation script for build target machine handoff bundle)
 │   ├── build_train_readiness_contract.py  # Python module/script (automation script for build train readiness contract)
+│   ├── build_training_outputs_bundle.py  # Python module/script (automation script for build training outputs bundle)
 │   ├── build_validation_set.py  # Python module/script (automation script for build validation set)
 │   ├── build_workspace_hygiene_manifest.py  # Python module/script (automation script for build workspace hygiene manifest)
 │   ├── cfc_moe_tolerance_check.py  # Python module/script (automation script for cfc moe tolerance check)
@@ -722,6 +725,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_build_code_truth_audit.py  # Python module/script (automated test module for build code truth audit)
 │   ├── test_build_max_closure_handoff.py  # Python module/script (automated test module for build max closure handoff)
 │   ├── test_build_target_machine_handoff_bundle.py  # Python module/script (automated test module for build target machine handoff bundle)
+│   ├── test_build_training_outputs_bundle.py  # Python module/script (automated test module for build training outputs bundle)
 │   ├── test_build_workspace_hygiene_manifest.py  # Python module/script (automated test module for build workspace hygiene manifest)
 │   ├── test_check_doc_claim_consistency.py  # Python module/script (automated test module for check doc claim consistency)
 │   ├── test_chess_5080_onefile.py  # Python module/script (automated test module for chess 5080 onefile)
@@ -729,11 +733,13 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_chess_onefile_curated_suites.py  # Python module/script (automated test module for chess onefile curated suites)
 │   ├── test_cognitive_extensions.py  # Python module/script (automated test module for cognitive extensions)
 │   ├── test_comprehensive.py  # Python module/script (automated test module for comprehensive)
+│   ├── test_config_contract.py  # Python module/script (automated test module for config contract)
 │   ├── test_continual_adapter.py  # Python module/script (automated test module for continual adapter)
 │   ├── test_cpp_kernel_loader.py  # Python module/script (automated test module for cpp kernel loader)
 │   ├── test_dispatcher_extended.py  # Python module/script (automated test module for dispatcher extended)
 │   ├── test_distillation_topk.py  # Python module/script (automated test module for distillation topk)
 │   ├── test_drone_sitl_demo.py  # Python module/script (automated test module for drone sitl demo)
+│   ├── test_duplicate_zip_guard.py  # Python module/script (automated test module for duplicate zip guard)
 │   ├── test_eval_suites.py  # Python module/script (automated test module for eval suites)
 │   ├── test_export_chess_5080_share.py  # Python module/script (automated test module for export chess 5080 share)
 │   ├── test_export_metadata.py  # Python module/script (automated test module for export metadata)

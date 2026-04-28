@@ -1,16 +1,16 @@
 # Training Outputs Bundle Manifest
 
-- generated_utc: `2026-04-28T00:15:31.324120+00:00`
+- generated_utc: `2026-04-28T01:18:21.165348+00:00`
 - project_root: `<REPO_ROOT>`
 - bundle_zip: `artifacts/mertformer_training_outputs_bundle.zip`
 - bundle_sha256_file: `artifacts/mertformer_training_outputs_bundle.zip.sha256`
-- bundle_sha256: `ae65c67b3bbcf36e23adb65e2937d26ba71941f08c7312722040320b06471144`
-- included_files: `753`
+- bundle_sha256: `00f1ccdc037a552fcc81148f88961cd51fc05fbc831bcaf53d5f992053ec6dea`
+- included_files: `759`
 - missing_roots: `0`
 
 ## Root Coverage
 
-- `logs` | exists=`True` | kind=`dir` | included_files=`419` | training and runtime logs
+- `logs` | exists=`True` | kind=`dir` | included_files=`425` | training and runtime logs
 - `checkpoints` | exists=`True` | kind=`dir` | included_files=`0` | generated checkpoints
 - `reports` | exists=`True` | kind=`dir` | included_files=`319` | generated reports and evidence documents
 - `artifacts` | exists=`True` | kind=`dir` | included_files=`4` | artifact-side release outputs
@@ -30,14 +30,14 @@
 
 ## Included Files
 
-- `artifacts/mertformer_release.zip` | size_bytes=`107268328` | sha256=`1301b646b6c824798ea6a2549d619220eeb7ab2c4a18e43bc37143c08f8b686f`
-- `artifacts/mertformer_release.zip.sha256` | size_bytes=`89` | sha256=`d0a8e88f501662220836930dfc393317dcf85ed5874965c2f912976321bd01ad`
-- `artifacts/target_machine_handoff_bundle.zip` | size_bytes=`29628` | sha256=`8af2c5b45610144b795c8f56e5f6ff13dea6b76c40bbd1f50009ca3617db10d3`
-- `artifacts/target_machine_handoff_bundle.zip.sha256` | size_bytes=`100` | sha256=`708632ccf1c1fc5d647e4a6518a03579766b99f045e24f5113b51b53b752f385`
+- `artifacts/mertformer_release.zip` | size_bytes=`717546681` | sha256=`f64de89213e83c0da2bde8e723fdf2f65f91a45297ec5572c5f5137d1b4b6baf`
+- `artifacts/mertformer_release.zip.sha256` | size_bytes=`89` | sha256=`0bd65d6ba3f7346d97d0e06257f9c6e733c17925be6e441c878a29455bd31022`
+- `artifacts/target_machine_handoff_bundle.zip` | size_bytes=`29281` | sha256=`a39609eef727220d19b8c481e6d79405b6bac62caa2f9690fa794aac92a5a547`
+- `artifacts/target_machine_handoff_bundle.zip.sha256` | size_bytes=`100` | sha256=`a8cb7f30e5853b515c1553022f56566277dc468ef0a0fc9a44a4f1a319a76ff4`
 - `logs/ALL_LOGS.jsonl` | size_bytes=`6041` | sha256=`d89ddbe80e52e20497fa1bda374092f451f2638ee91e2b7ba3b1bc3b9c46f242`
 - `logs/README.md` | size_bytes=`1002` | sha256=`bc8e42d7dc32d1e784c16ec7f306cc4859b753b8facfa3c0f2e04326e6b82b87`
 - `logs/README_TR.md` | size_bytes=`1119` | sha256=`86656c18cde23948400b9b90f75e66e3834aa3a8e921b76c626780f379daaf6d`
-- `logs/operator_mode/ALL_LOGS.jsonl` | size_bytes=`2432947` | sha256=`1140f73bb33bdc44e69c01e8ea416b3080f73744765004f8e082943263e0e073`
+- `logs/operator_mode/ALL_LOGS.jsonl` | size_bytes=`2473012` | sha256=`3e2e9ac572cc84cc572c4e41866cd0c0e50ddd508e1033401aa572dd8eae8f6e`
 - `logs/operator_mode/operator_2026-03-07_04-39-10.jsonl` | size_bytes=`8707` | sha256=`8a3d7c2340d77e99ab79bb1dfe1ee204b77cf0438768f7e2e0da39d55c588da6`
 - `logs/operator_mode/operator_2026-03-07_04-39-10.manifest.json` | size_bytes=`1358` | sha256=`219cd37be0eded592ec0236ff4311a877f71500c7b13da68f1f6bf3f8b53e940`
 - `logs/operator_mode/operator_2026-03-07_04-44-20.jsonl` | size_bytes=`8708` | sha256=`19461e66fe2157f1f9979f50311c818cd16c0a9100e52d6154e4fff0b59ac65f`
@@ -444,13 +444,19 @@
 - `logs/operator_mode/operator_2026-04-28_03-05-50.manifest.json` | size_bytes=`1371` | sha256=`59032c9689e705ad1556b5160e32148dc32805d73d9134c083e98bb515d5ad74`
 - `logs/operator_mode/operator_2026-04-28_03-09-43.jsonl` | size_bytes=`12432` | sha256=`120e94bdc37e37e611a24203f29faa3453a32d8fac93e4e33524c1bffa25bb40`
 - `logs/operator_mode/operator_2026-04-28_03-09-43.manifest.json` | size_bytes=`1372` | sha256=`c6268cf16acb092823cb588bc67d53d3720a3d2802ddf2667725923658d80e7f`
-- `logs/preflight/titan_preflight.log` | size_bytes=`293` | sha256=`f543e099e95f781d72adb5025443d409fdae03f18796f0df461d8ec9527f5cb7`
-- `logs/preflight/train_ready_status.json` | size_bytes=`5206` | sha256=`e039b7ba60609ce4950b53b77549a79f2d4825de6d887c9af64291f9585e7331`
-- `logs/preflight/train_ready_status.strict_offline_training_readiness.json` | size_bytes=`3601` | sha256=`2446bfb96c0405ea8d4e7e9b3eb642dd502eaed42c7cd79b70843c07afed6bdd`
+- `logs/operator_mode/operator_2026-04-28_04-10-18.jsonl` | size_bytes=`12430` | sha256=`b1e3b022a58e6f4cd646166ee9cbd0b86bf6eea3c3f056a9f6b87370b5a287ed`
+- `logs/operator_mode/operator_2026-04-28_04-10-18.manifest.json` | size_bytes=`1370` | sha256=`5012bfaeff2dcbdf28ab5cf90a0ee05e18a0149e7b01be16071ab305b2ad81ad`
+- `logs/operator_mode/operator_2026-04-28_04-12-33.jsonl` | size_bytes=`12431` | sha256=`abc4441f996de4947a8a97c0461500922c7807e28632090a03bf881e9c7800bb`
+- `logs/operator_mode/operator_2026-04-28_04-12-33.manifest.json` | size_bytes=`1371` | sha256=`104e0fb082462ac06a107729a5d6ce9844832d7f029f0dba73ee63953684d77c`
+- `logs/operator_mode/operator_2026-04-28_04-16-32.jsonl` | size_bytes=`12432` | sha256=`b5c409c4a25505ff553b9ee1c9be285f4578a44bd65e16a8a02829aded0b3ddb`
+- `logs/operator_mode/operator_2026-04-28_04-16-32.manifest.json` | size_bytes=`1372` | sha256=`bb0f2b4a5fb52bab462b76f4960735b6452217a8bcca2215b71db880a0358f07`
+- `logs/preflight/titan_preflight.log` | size_bytes=`293` | sha256=`f41277ce74add095f32e124b8b830c132bd19bb62a58caba01213b2b215df344`
+- `logs/preflight/train_ready_status.json` | size_bytes=`5207` | sha256=`7cbd3a53076f70c8e4f6aa832ef240376cc54e3190ed912934419bcd114d1e66`
+- `logs/preflight/train_ready_status.strict_offline_training_readiness.json` | size_bytes=`3602` | sha256=`ebdbedfb77f87ae3262b5f0ebf49ddfbed6faa745b0616c2015609e7ad9b8fe6`
 - `logs/preflight/train_ready_status.strict_online_training_readiness.json` | size_bytes=`230` | sha256=`6588d06f0751fd0c5ab322ba601caeaee4188b25a54353191fe0e96afea6486e`
 - `logs/run_2026-03-31_22-20-20.csv` | size_bytes=`0` | sha256=`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 - `logs/run_2026-03-31_22-20-20.jsonl` | size_bytes=`5243` | sha256=`cd9a48b3c4905c5b93dadb41388d8f06d9ee0dc06db7b0b83e7cbdb144e0ccf6`
-- `logs/verify/closure_57_matrix.verify.json` | size_bytes=`16384` | sha256=`d6521f23f1514e2dd2cde8e406868a03f1353cdf5ee043d8a349e00cf35ad23b`
+- `logs/verify/closure_57_matrix.verify.json` | size_bytes=`16384` | sha256=`5782a7349e753ff7fdc4e69b5b1f6d5cbe821145634e4fdacbe582d6043d5c61`
 - `logs/verify/closure_57_matrix.verify.md` | size_bytes=`4454` | sha256=`17771cb0fe1fe58db074e0078e0e6c9ca1c46753aadbfb9cf583f63548b89b60`
 - `logs/verify/closure_57_matrix.verify_TR.md` | size_bytes=`4495` | sha256=`b9dddfaf6425859145f392e6420b190a4f7f29c2bf1d7d51c4d4063629103c0a`
 - `packages/MertFormer_5080_Final_Delivery_20260421_213941.zip` | size_bytes=`122233` | sha256=`c9bc642eb794ca6d6f2587c54c93cea20ad3e64ac12f4705452860e11009604d`
@@ -461,8 +467,8 @@
 - `packages/MertFormer_5080_Final_Delivery_20260421_221919.zip.sha256` | size_bytes=`117` | sha256=`db493e9056ed3cb8fe36260286b14513eac6da8e23fcfede63a93e312dffe804`
 - `packages/MertFormer_5080_Final_Delivery_20260421_222608.zip` | size_bytes=`362057` | sha256=`f1282ced806c3168900e976826039ad25606c0135950fce6eb6e5215b7ce6bcc`
 - `packages/MertFormer_5080_Final_Delivery_20260421_222608.zip.sha256` | size_bytes=`117` | sha256=`cf7715d0cac26de13501c8a1090a39271e3e80c02914dfdccb122274ec4e32e2`
-- `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip` | size_bytes=`52343392` | sha256=`0917017fcb25fc5197d053feac098c0d85fd1df237dd04c2f8ccd8b7e3f0eb4e`
-- `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256` | size_bytes=`114` | sha256=`fdd5de4a84fdb048a7757435209e60cb63aca321cc971ef1a2f9af578fe21254`
+- `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip` | size_bytes=`52345527` | sha256=`eb7a8501cc5f6fc116761858a14876483aea9cb7b973401dbe39b390a04d5331`
+- `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256` | size_bytes=`114` | sha256=`03009d74a0f18318bd86858721cdb11d20d83e90ac56dba9180d7a88cd79c602`
 - `reports/adr_index.md` | size_bytes=`565` | sha256=`1bc2f8b686e9e5368e712ef17aea5f9840fd1dcc7c2687d10911f20d2eaa8916`
 - `reports/architecture_honesty_audit.md` | size_bytes=`540` | sha256=`c52516bd640bca7278479d177733c648798a2b96f48233885a33995de37a848c`
 - `reports/artifacts_zip_denylist_audit.json` | size_bytes=`147` | sha256=`97132cd397a8e2e1d83c39627441dd846b932577f91f0a95a0fc5f4f7cebef78`
@@ -522,35 +528,35 @@
 - `reports/benchmarks/text_understanding/run_20260315_180151_run_log.jsonl` | size_bytes=`239` | sha256=`67c803f4a26b4dec73474a7133c6e43e4e77a6908f3462349aea24d99ba208b1`
 - `reports/benchmarks/text_understanding/run_20260315_180151_summary.json` | size_bytes=`545` | sha256=`b28a06741a7205ce7b85327dce29f9b6c2ad5d5e8d3878934ee175a637daaa08`
 - `reports/canonical_entrypoint.md` | size_bytes=`1021` | sha256=`95a5eb18c469311588ef97c7bdc59049195a8a2124b2ca91cf254504efb8d916`
-- `reports/cfc_moe_tolerance_report.json` | size_bytes=`1447` | sha256=`3d4446267c1e11867081ffabbe2600eef64189a85122a23851f6f49b889f5e0d`
+- `reports/cfc_moe_tolerance_report.json` | size_bytes=`1447` | sha256=`5c84462cab3958bec7166bdc10946c3a4ea4ef83ff98356492bf0dcee4ea3036`
 - `reports/change_control_sop.md` | size_bytes=`664` | sha256=`aad8f64de40fb766a9697aca915daebbf6dffbbfb3d8d5cd8791b2cebda8588a`
 - `reports/checkpoint_contract.md` | size_bytes=`535` | sha256=`90576cf72e00f66a856110c7b04588a9688bb5f73fc758d56816e64de88ede75`
 - `reports/checkpoint_hash_manifest.json` | size_bytes=`223` | sha256=`c0060428c59f951f0d70706bb98480324ab41f00565553f29e66f4b8893b7689`
 - `reports/checkpoint_restore_report.json` | size_bytes=`267` | sha256=`7419e6611ab3103b03cecef812286d7a522328282c6962411bbdf9be57b1e902`
-- `reports/chess_gui_onefile_sync_report.json` | size_bytes=`567` | sha256=`0cfa0cce5caab237fa0bb76e3534dff831a60ee33985f77fbad7fbf7d864703c`
+- `reports/chess_gui_onefile_sync_report.json` | size_bytes=`567` | sha256=`1b0cae3e410a9c20f5cf16e1055fe348cbad5f6883e290535e68db9c483c705f`
 - `reports/chess_gui_onefile_sync_report.md` | size_bytes=`449` | sha256=`907a959f4bdbd7adefb52564bd27902b6d91a7acec6caab928683078cfc1135a`
-- `reports/chess_onefile_extension_report.json` | size_bytes=`6304` | sha256=`9e8e49af801880c2de6f478b2a3650cd6dc4becd0c6786f964688120f71b55f6`
+- `reports/chess_onefile_extension_report.json` | size_bytes=`6304` | sha256=`acee619a2dfb19c6fb8d2f174e1421ff9169413631ee787d755d6d6e81bb778b`
 - `reports/chess_onefile_extension_report.md` | size_bytes=`431` | sha256=`7402fc1acadd8a8013669dc1441d38a04fc378515b68ed27fd05e3f33c3360b8`
 - `reports/chess_proof_teaching_case_study.md` | size_bytes=`3604` | sha256=`91cc0a2773cee66a02d0a34eed90451721c95691bd6b53ef10cb9b7ffa8f658b`
-- `reports/chess_teaching_contract_report.json` | size_bytes=`7622` | sha256=`44df0a600726d625653da2f39a9b798e6eadd4f2e0c2976db05dd0b23a2dec3f`
-- `reports/chess_teaching_contract_report.md` | size_bytes=`1855` | sha256=`4057e194397f7a502d433531caa511d6ff6255b7415b28e226ff91ba6ef0dfd1`
-- `reports/chess_training_readiness_report.json` | size_bytes=`1891` | sha256=`c3a2a97225134efd131c6b9d83d5e9d0fe28d89063c396401f8d063d2aa447c2`
+- `reports/chess_teaching_contract_report.json` | size_bytes=`7622` | sha256=`b7f6e57ce583c6c2e4ab07ce5c065e5bc03f43cc87a12e06ef8a9bcff55e5781`
+- `reports/chess_teaching_contract_report.md` | size_bytes=`1855` | sha256=`5ff2aa3eb53bce20dc748d53d284ac050fda21e27abbd7fae5b84835d4893eae`
+- `reports/chess_training_readiness_report.json` | size_bytes=`1891` | sha256=`1d2af6fe7ac99423fb9ff271448a6a13db04ff50552340c0d2c04c5083862cc0`
 - `reports/chess_training_readiness_report.md` | size_bytes=`1254` | sha256=`296206597c19dea3762e1251cb19fbe4d465fc97ea4f6d9b10ef36da7a9ead17`
 - `reports/claim_number_audit.json` | size_bytes=`7851` | sha256=`feaa90b06d7e7b70eebdf2f9bf7754c312af4d57aeb4d2bfd3e323cacda3234f`
 - `reports/claim_registry.json` | size_bytes=`7423` | sha256=`2075bf85a88734622afce75b58468f29fef62cab008ee2839be87a584ee5fb6b`
 - `reports/cleanroom_verification.md` | size_bytes=`1141` | sha256=`c42ef23655857b229a95f699faf3f7f37cf0378be9537fb17915affa7cade91c`
 - `reports/cleanroom_verification_TR.md` | size_bytes=`1183` | sha256=`dae8960d4685b6c60613d137f558b3caaae2758f569f7b3b85944ef10932f4ef`
-- `reports/cleanup_scoped_closure_junk_report.json` | size_bytes=`113417` | sha256=`ee79ed6a01934021e0a3db0a36d6351c688ac8bf51402e224c7fa9b0865d45bc`
+- `reports/cleanup_scoped_closure_junk_report.json` | size_bytes=`108451` | sha256=`9e179e6d939c96b3db55a2e10aa1e05fa146c8746b662931ea8197793780b469`
 - `reports/cli_smoke_log.md` | size_bytes=`613` | sha256=`084dac9dbb7db3876614e4ad5a1a2edaef54a0e60617a79c174acba40f6920a1`
 - `reports/cli_smoke_log_TR.md` | size_bytes=`587` | sha256=`8efa43b956f7ece7b7b8d38faeb1742a6d0f321bfddb89e120b409308ff7c999`
-- `reports/closure_57_matrix.json` | size_bytes=`16384` | sha256=`845cb47a9d5aefd3efb8fde80a4e2988f8d36b43e92b46a4faae81076e852c2b`
+- `reports/closure_57_matrix.json` | size_bytes=`16384` | sha256=`3b3f09dabaaa5770cc9164e73ad1e8109487f104e3b49597f3ad8719334d489d`
 - `reports/closure_57_matrix.md` | size_bytes=`4454` | sha256=`17771cb0fe1fe58db074e0078e0e6c9ca1c46753aadbfb9cf583f63548b89b60`
 - `reports/closure_57_matrix_TR.md` | size_bytes=`4495` | sha256=`b9dddfaf6425859145f392e6420b190a4f7f29c2bf1d7d51c4d4063629103c0a`
 - `reports/closure_report_build30_v2.md` | size_bytes=`2386` | sha256=`1a78379f2273ce6ef96237ef9c79e850ec634e72c6af4169160b73c42f29f22d`
 - `reports/closure_risk_register.md` | size_bytes=`775` | sha256=`3bc0fbe889f545a4d23cb670f6f28d9962740c126e03d08aeeccb3ddbced6e52`
 - `reports/cloud_readiness_report.md` | size_bytes=`328` | sha256=`8fc02d3d00216ac4f647e4a0de034f57e039b571f608592e4ff17e6d029a4a7b`
 - `reports/code_truth_contract.md` | size_bytes=`1111` | sha256=`e4d670c6df47492a2b62dbaf187b13e31824cf52ebe7710f79ad165dbf3c1567`
-- `reports/code_truth_delta_audit.json` | size_bytes=`17283` | sha256=`eb65a84191f4e087f432fd4fa91b93f3c318d8b161d298e0b13af8084374c5d6`
+- `reports/code_truth_delta_audit.json` | size_bytes=`17283` | sha256=`cdf8b8f63a59f7e44ab440ecd23f9d20cc2ed92fbbcab5dcdad4ce3a8265637b`
 - `reports/code_truth_delta_audit.md` | size_bytes=`7397` | sha256=`a0b781c5ec91e65cb3b63cbf2749b8e6ae0deae61a5bc2f3a1ea3bd37b25146f`
 - `reports/codex_deep_audit_DE.md` | size_bytes=`13728` | sha256=`2445f17fe10688255196e883649e22ba79bf4ac0cfa5aad3304d24bab1d9fc7f`
 - `reports/codex_deep_audit_DE_TR.md` | size_bytes=`388` | sha256=`48b7034c7d38266abc77f3095f4e44bd04a31d868f690c2d06d8dea4bae28203`
@@ -577,7 +583,7 @@
 - `reports/dataset_health_TR.md` | size_bytes=`2027` | sha256=`3e7c24d7733ea8bbb3b8e208a3d28d1282c4ea86ea69c03d3dfd854cda071a3a`
 - `reports/dataset_health_final.md` | size_bytes=`647` | sha256=`cd382053bb1d6254ebf5d564814068811bec419dcc34a94220e8fcfe08fd8737`
 - `reports/dataset_lineage_final.json` | size_bytes=`989` | sha256=`16537b495613660950177661b5eb8f31e16cccc05ca898ce2f1b2ccee8030de5`
-- `reports/dealroom_reference.json` | size_bytes=`425` | sha256=`a360e804ebee18d3708c6306579389cfd908e936c238b6b8009c2acd26643029`
+- `reports/dealroom_reference.json` | size_bytes=`425` | sha256=`3c16a196ee6000692f033886a2adc969ef194e8c79a5f70dca9152eadf20754e`
 - `reports/demo_bundle.md` | size_bytes=`538` | sha256=`02c9060874f9e01c19b3b5f432be3ecfab7b991fbb14dc497de21160c6429f5a`
 - `reports/demo_bundle_manifest.json` | size_bytes=`735` | sha256=`17d260765d5cc268365bbcd81f103a8e6d5dcd0aaf49f79c9a937783bab9f4c6`
 - `reports/deprecated_surface_report.md` | size_bytes=`314` | sha256=`615e51d5cf84f630e2ca4c5f6dbe37086654735e051e59686bcdf4d7a0dbb965`
@@ -593,7 +599,7 @@
 - `reports/dry_run_report.json` | size_bytes=`1724` | sha256=`c057aad7f3523e35b6bc9043d8b75227eba9a516b78b2ffa33dc1bb8e627d1d3`
 - `reports/dry_run_report.md` | size_bytes=`1064` | sha256=`01b328264a532d8722a7e7d023d67a9b95dc392d8e1acc92a7e05bdae8bf9744`
 - `reports/duplicate_source_of_truth_report.md` | size_bytes=`528` | sha256=`388896d5064d521765f6fd79cfe17f3d0a0fb41e9726832724bf26c736520209`
-- `reports/duplicate_zip_guard_report.json` | size_bytes=`1593` | sha256=`0fb37958e96b8e2ec5d4695f1116d5eafb16ccdb3bd7286b10086f4153f0e224`
+- `reports/duplicate_zip_guard_report.json` | size_bytes=`1523` | sha256=`9b7d46f8108d3183281fd55d9873491fc6f78b8d220b702103654ffb0d0b5f70`
 - `reports/edge_readiness_plan.md` | size_bytes=`407` | sha256=`52bd5328db938c7bd09b488a2ed8919740604befdee518a53b2afcb9a3e348e1`
 - `reports/efficiency_convergence_analysis.md` | size_bytes=`3743` | sha256=`7dd0e6a4fa812fddf43cd871b1caf1e29c207823996e8f2e81be11471a3e9909`
 - `reports/efficiency_convergence_analysis_TR.md` | size_bytes=`3711` | sha256=`d8ca2dde17765e0ce2916ded7d1d3bfaeec4b1f5f045d4dda9a548d80fc4d9a3`
@@ -607,7 +613,7 @@
 - `reports/fallback_policy_report.json` | size_bytes=`108` | sha256=`49242e93855e0c97549255b4e80a8dadfaa78b0108bcbe5568b9c74763047bd3`
 - `reports/feature_flag_governance.md` | size_bytes=`536` | sha256=`a31c7cb4ae7fa8063e3727e410a9b8d2ceb9ce87fcf8954462f27d45a267a771`
 - `reports/file_state_inventory.json` | size_bytes=`15880` | sha256=`ec311d3004b5b077fb18eee0c84a89eae588c89019f1f0f46572fb3382eb8a6d`
-- `reports/file_sync_matrix.json` | size_bytes=`181` | sha256=`0455c979474ac1b103d0a7585f4230b90f58ddcfa7c9b669be06bb5f42bbf835`
+- `reports/file_sync_matrix.json` | size_bytes=`181` | sha256=`69b8b8436be807f36e98bf763570e851f7a5f1f78f3607abe95f646af3cd0f75`
 - `reports/final_artifact_manifest.json` | size_bytes=`2308` | sha256=`074bd60993219263e7b59e2ea90d07b6072cfffee5895d4bbfd61d17205499be`
 - `reports/final_backlog_classification.json` | size_bytes=`12553` | sha256=`ecc4ff9aed5de3ead727c99922d1371cef6bad39aadb79fb7522bf8cc9a68935`
 - `reports/final_backlog_classification.md` | size_bytes=`6309` | sha256=`752877febbdf5c947de1c1920bbcdef35de7d75594d56f1fd154cbe870865b95`
@@ -616,17 +622,17 @@
 - `reports/final_checksum_manifest.json` | size_bytes=`1434` | sha256=`a0ba687bcb75a68e172971fec64239fb66ebb9ebfc0215afea685ca76ee7e921`
 - `reports/final_commands.md` | size_bytes=`802` | sha256=`d725014c4cdf11fa4586698cadb1ff6eab216b240464082dfb49e81956f01b78`
 - `reports/final_evidence_pack.md` | size_bytes=`561` | sha256=`401672767835534fc779cd1edd9d477498ca07e748780e80b4569a33364d9d89`
-- `reports/final_freeze_manifest.json` | size_bytes=`826` | sha256=`b98711d4fd8ece41776665d71e2b1dad265968795b131fad53c9996635b653b5`
+- `reports/final_freeze_manifest.json` | size_bytes=`826` | sha256=`576dec4a9de1597d34ae9028e4af982efb2d60d301c1d321be6688abcd786a75`
 - `reports/final_freeze_manifest.md` | size_bytes=`728` | sha256=`425f4aa5813f075be39edf6c199db534631ca873e44149856bef814f53bb28b2`
 - `reports/final_master_plan_freeze.md` | size_bytes=`1063` | sha256=`194383191836ba05b7fb3c5e9d85d6137e5ac3973acab8e7069c363ef15067b6`
-- `reports/final_orchestrator_status.json` | size_bytes=`1726` | sha256=`6e2a71e39b5366ce0f53f378418b40a07ca2c9a2b10f32e17cd76fcc051d4874`
-- `reports/final_orchestrator_status.md` | size_bytes=`1066` | sha256=`877615110ad4a2933730bd6f5391b401fd12ea0dc077cd0571b632f6bf833700`
+- `reports/final_orchestrator_status.json` | size_bytes=`1726` | sha256=`a8fb09e5223c17c27328f62fee2ecaf67a0ec49610c536052e6ab100e4afc2e7`
+- `reports/final_orchestrator_status.md` | size_bytes=`1066` | sha256=`68e58cccd9f9714a86f1f8f39f8756e1acd15a21066064c8b9bf756510d17562`
 - `reports/final_repo_audit.md` | size_bytes=`1442` | sha256=`dcd80c9eef96bb92dec5a22d9d2c0d3123cb6d31cea346d53418e7151c350c54`
 - `reports/final_sync_matrix.md` | size_bytes=`2672` | sha256=`15476ffb2254ec7b70e911d431a87baa22810d3494f1d676c85766f12d583981`
 - `reports/final_sync_matrix_TR.md` | size_bytes=`2851` | sha256=`466dd4cc8144e8012784180de25d6bc295bd2272feb848f9f7ffd8216d0e6442`
 - `reports/final_truth_constitution.md` | size_bytes=`3303` | sha256=`477d5c8388d921d8c1f3ef9da0085c13b09a0969406bf004c90c83121e75523e`
 - `reports/final_truth_matrix.md` | size_bytes=`5725` | sha256=`0168a0c199f33db4f7263c9164cd143178f0b5d637b5440b43ce4e53ae27b5d9`
-- `reports/folder_drift_report.json` | size_bytes=`5878` | sha256=`791769cc025f877ca063de84df34ec233230ccb66ffb15cff27743777ef7fde3`
+- `reports/folder_drift_report.json` | size_bytes=`5878` | sha256=`d93b251289a65aab8c135ef39c7ea61d43764d8a3e4a6919388ceed69cb67f5b`
 - `reports/folder_structure_policy.md` | size_bytes=`274` | sha256=`ccac9a74cb638146dc0b0c9396e0a254fc42ad31aba643b73cb8afc25e446157`
 - `reports/founders_hub_application.md` | size_bytes=`1769` | sha256=`fd3779035e3b51fd54757b5021ee700f250058871267dc47ec2dbe8576a49e70`
 - `reports/founders_hub_application_TR.md` | size_bytes=`1800` | sha256=`677aaef6f4e9c4a7f9f509eeb34b360a9b6ed9f6159d2fe25b30d5f3d559d42a`
@@ -642,7 +648,7 @@
 - `reports/investor_deck_TR.pptx` | size_bytes=`21963` | sha256=`6bccdc02b82b512fafad8b6e4c155c4cce1df715bc926c1ade107cb08c2ec403`
 - `reports/ip_licensing_split.md` | size_bytes=`2316` | sha256=`1cda7347eecd26e90b0227f2eff18ca576630ac598b207916ba902f0226b4faf`
 - `reports/ip_licensing_split_TR.md` | size_bytes=`2425` | sha256=`19c4c67639498c1b7d84ce846020a85a5328b750a7f573dc74000e3881b9b785`
-- `reports/kaggle_onefile_closure_verify.json` | size_bytes=`909` | sha256=`7833af0cdc020f6fcfab2828fba228a498cb1c9f31a86e831b251defd0d82327`
+- `reports/kaggle_onefile_closure_verify.json` | size_bytes=`909` | sha256=`dd1d42d9bfc36a8c9e8c343805eef4b7e0416622a7adcd79906639df64370fb4`
 - `reports/kernel_fuzz_report.json` | size_bytes=`107` | sha256=`297b020d351696effcece913068cbe49ff6650910f13c38bb049d7e3185c2288`
 - `reports/known_limits_v1.md` | size_bytes=`1314` | sha256=`68a641b2db5a3f871a33f1be61b006a7713cc62d43b70f93d7f2eed4d180dcce`
 - `reports/kpi_contract_build30.md` | size_bytes=`1713` | sha256=`dc40358f76b727c973fefe21958c28df2083a02051e7f80166ef2dcbcd6e296d`
@@ -653,27 +659,27 @@
 - `reports/legal_cleanroom_signoff_internal.md` | size_bytes=`2027` | sha256=`d9866746520ed9a53ab8c813ca52c2dbbd25796c5e74118239e8369509307de5`
 - `reports/legal_ip_pack.md` | size_bytes=`346` | sha256=`cb604eca40fc0533dad71de3fb308d0ee3cda7610682803774fba6d01d1482ce`
 - `reports/license_gate_report.json` | size_bytes=`121` | sha256=`ae632e6e0db6f9910c65a08e2d1c5cad090b71fbc465616a0a978d61d9596653`
-- `reports/linkcheck_report.json` | size_bytes=`181` | sha256=`7cc1e93ec77c1a827cdab6f57c588ad28ff6c22867aaa0474c7bd374bcba46e8`
+- `reports/linkcheck_report.json` | size_bytes=`44507` | sha256=`8cdeddf859e4ef33ca43908c4a9af90d3cc933fce82ce0366a1bb861d361954c`
 - `reports/local_50step_proof_report.json` | size_bytes=`886` | sha256=`9459b0605205d741763520217af05acd3b984abf3853c300851a0778bb98b83e`
 - `reports/logger_contract.md` | size_bytes=`493` | sha256=`886c11bc4ba38d796ec64151883859b1681efed9d0c438d9ffe1f8221340de16`
 - `reports/logits_integrity_report.md` | size_bytes=`362` | sha256=`86f6e8f4328cd9769e44a56c2ce430f45661476f751f754d7a35ff74a6536237`
 - `reports/master_closure_matrix.json` | size_bytes=`8443` | sha256=`003282ce3029d830a8eeb3997cd4bc569fabe7d11f7370be9df97839ea2cd9b0`
 - `reports/master_closure_matrix.md` | size_bytes=`4247` | sha256=`ec6a076a34c1fd1cd595a5eb3f32330fadf4afba52bc6ff16c6e492a9709d6b1`
 - `reports/master_operating_plan.md` | size_bytes=`682` | sha256=`7da470c2ad3adf07e7a0dae175bb5143e3e09b00e11bf5bf18f374e2f173c49a`
-- `reports/md_lint_report.json` | size_bytes=`1801` | sha256=`c6c0a2cfdfb41aa9f76b37eda457f905fdcbb86395b501aef7fd9c02db7a0bdf`
+- `reports/md_lint_report.json` | size_bytes=`47246` | sha256=`3e748892e7e34c320d98117920991f8f870edf2bb3b917050a6f0957d445b155`
 - `reports/model_health.md` | size_bytes=`477` | sha256=`71f44084c64241f868d01f6b977205727a34c9cd6ed4fcd6472ca2b4a302b62f`
 - `reports/model_health_TR.md` | size_bytes=`594` | sha256=`0201a031ae539ec9eaa0fc8b188fdf9111f713bd1d7ee0b854330265c794036c`
 - `reports/model_health_final.md` | size_bytes=`487` | sha256=`b488a2a8b2f5014b3d06afbf1738d9c687df1a067a2a05ffb2a50aa73cb5b6a9`
 - `reports/offline_assistant_case_study.md` | size_bytes=`3204` | sha256=`3197ba02b6783484a2b54964e8479f0b558d61c1d907ebfe10274429f33b4cea`
 - `reports/one_command_full_sop.log` | size_bytes=`12682` | sha256=`4bd751969dc14626765c11163b3e79f5e5ca3c17ca061a6bdab44caf1c6907ce`
-- `reports/one_command_full_sop_summary.md` | size_bytes=`747` | sha256=`4a60f713a28d6a938000f3e78b67e5fb51f5fd926b5846018fe936147e277a73`
+- `reports/one_command_full_sop_summary.md` | size_bytes=`747` | sha256=`30443c2b9979541a1fedad5abc39b00d0d7f4ce30d0172915beffe766c00abe3`
 - `reports/one_pager.md` | size_bytes=`1655` | sha256=`47eeeddd1d36ecec9b1e8c61d439580498e23284726ba4b7fe5ae3d4ca1f2ab4`
 - `reports/one_pager_TR.md` | size_bytes=`1470` | sha256=`f82e32edb2dd1080f9fea760e1876edb5d4be85a731bd0a7cc9bb02a2aa2a5fc`
 - `reports/outreach/github_release_post.md` | size_bytes=`908` | sha256=`98ae39fdb08a0e7810b38322f39ec8483dad5da6b4b43f3269409691032602b5`
 - `reports/outreach/huggingface_launch.md` | size_bytes=`884` | sha256=`97a42722e82e8ceb689ef5f2341b981967f6d07e4e10d18aeab154e129a21ca7`
 - `reports/outreach/reddit_post.md` | size_bytes=`801` | sha256=`71fb31c6e373c9935131357ceb07793146f075150a33ad449ab4b35db887d5d3`
 - `reports/owner_matrix.md` | size_bytes=`262` | sha256=`69ebbd1790692e1f8c5420ff30e0fcb698e5917705a97faec09689d520dc9ad9`
-- `reports/ownership_proof_bundle.json` | size_bytes=`563` | sha256=`24d48b2eff86d7ec332bf757cacb633b495ebfccbf2215e1861c6313cfaefd71`
+- `reports/ownership_proof_bundle.json` | size_bytes=`563` | sha256=`9a9531343a7f3a636ca9ce348cdfb178e0ded9370ac98f8d77bab9148d54713e`
 - `reports/package_smoke_report.json` | size_bytes=`2327` | sha256=`594c3f170bdae9ee85ba04d32f0f5fa44fe0e6f50d647d1c0dfd4d5095006880`
 - `reports/package_validation_report.md` | size_bytes=`1522` | sha256=`8dac60a91891fa628e66ba1272a2ddf2f7c9429e0fb1219aa6d6240cde6f7a50`
 - `reports/param_accounting_report.md` | size_bytes=`514` | sha256=`31dee8a9c490abe3b0a75676635ee66ce354a2d29b874a88d46d18682c27bd94`
@@ -695,28 +701,28 @@
 - `reports/plot_contract.md` | size_bytes=`325` | sha256=`0155c8ac78430465eb0bd720dee04d19841054a8660d2e3e15c491844bdfe894`
 - `reports/poc_protocol.md` | size_bytes=`1311` | sha256=`0c589647d2e77620c6f6158c2ff96e5884371438301e224b55a9fe77dbd2e49f`
 - `reports/poc_protocol_TR.md` | size_bytes=`1347` | sha256=`9e7d4eda310a3661201ba88509b1a466610ca82f4ddf0a1ad883523d8b10316c`
-- `reports/policy_sync_report.json` | size_bytes=`146` | sha256=`99b3187c5d82c496498032e7c4ba107b932edfb505052ce84b2dfc8fe37efb95`
+- `reports/policy_sync_report.json` | size_bytes=`146` | sha256=`cef52709099eb6a053001314819d95177e88c63cd9e0c8ed2eb6a580cf3623e8`
 - `reports/post_45k_decision_tree.md` | size_bytes=`441` | sha256=`80cded8de1a2262893133c08a334f062d53452abe1d56d5431a3e79d02e67816`
 - `reports/post_train_automation_contract.md` | size_bytes=`1341` | sha256=`2e214bd74ed923c701190cc4c8cefe5581f208b23bf7b530397aa2ae55f924dc`
-- `reports/post_train_autorun_status.json` | size_bytes=`925` | sha256=`6e4bd1dce7af79f82264a31a2891d037b33da873de9aa67d07a8b466efe291d0`
-- `reports/post_train_autorun_status.md` | size_bytes=`639` | sha256=`8fa7c0728d92c0cfb7a2f4e10a52bdbba5ea51dc6575db2564103cd8b3d0a010`
+- `reports/post_train_autorun_status.json` | size_bytes=`2322` | sha256=`17762062d3277bee342f8bfa0a4bb4480117adab95fc311639a03bf4cf03585a`
+- `reports/post_train_autorun_status.md` | size_bytes=`1387` | sha256=`a7451f601877c8886d78c8998824fb84b89958bc3069113a28efb6b31a99a1bf`
 - `reports/post_train_state_machine.md` | size_bytes=`1318` | sha256=`49305c5cc3424b2e4485e1645804a35c26786203e4e726709caab1b809786e4e`
 - `reports/presentation_readiness_final.md` | size_bytes=`3004` | sha256=`a462f51f278333863abce4a3f9a4c83dc1e04137116e928fb4daeb7bf3a6ecbe`
 - `reports/proje_zip_rebuild_manifest_v2.json` | size_bytes=`11202` | sha256=`011f2b8da7fecb5d9fcfb2871e4da3018647e4aba6f351c0a7898e1f8cb59ba2`
 - `reports/proje_zip_rebuild_manifest_v2.md` | size_bytes=`320` | sha256=`67b4fc3520b4fc4ac821e02da2908833d949c7c53f8f0ed8fdb2da61fb44f823`
-- `reports/project_structure_sync_report.json` | size_bytes=`353` | sha256=`3cb2624af02d992e5c7aa03fa27a3fdc94852c770453e4a4aa5c0d6cc15b24e7`
+- `reports/project_structure_sync_report.json` | size_bytes=`353` | sha256=`7fa0405e40a3356f5695cd5769b96d6ad897c7b76c36c39ddd9b8c4a93863b8d`
 - `reports/quality_gate_matrix.md` | size_bytes=`1049` | sha256=`5a52b38214fffb2fc8bfb8598dde3a9635df19cb8d56729448839714347b873b`
 - `reports/ram_guard_report.json` | size_bytes=`656` | sha256=`39ba83d6fd2b7d5ba7bf93913625a1a477edf922536a65ee5eff2c061ad953f1`
 - `reports/release_closure_lock_report.json` | size_bytes=`68` | sha256=`ac9af75a88c8c98fba5c4d5ec8febd82403d3100bb5636194857eb7de3b23763`
 - `reports/release_closure_note.md` | size_bytes=`133` | sha256=`175ba1e95aad9bca99eac38c3467456d4df70b074fe49a90438ca364a8c3ffd4`
-- `reports/release_manifest.json` | size_bytes=`173980` | sha256=`64d9c618934cadbc2e51d5fc2a1ef1c84e7019920f13da0397bf60316e1c03a4`
-- `reports/release_snapshot.md` | size_bytes=`3139` | sha256=`b337dc3539830f55542fb3cdee5bc8ec941dbeace25bb8d7a4a8c9154350ef98`
-- `reports/release_snapshot_TR.md` | size_bytes=`3285` | sha256=`194b484ab4488abde01c068352dcb5601bec0a6189b08f088cb931a4e3aa84a3`
+- `reports/release_manifest.json` | size_bytes=`175396` | sha256=`0f62649cbc53bfa6cfbaac926a2de4f4c414e5c6b71be7f39d74388c2cfe7804`
+- `reports/release_snapshot.md` | size_bytes=`3139` | sha256=`0233812d78b1adcab22a1cb91b48f76414e3462d6c96548d12cb3dc1de90f64e`
+- `reports/release_snapshot_TR.md` | size_bytes=`3285` | sha256=`e793a1c8128ec078d4dfde4f6a59ca2a51230d24a22e11223d488660ade3ad62`
 - `reports/rented_machine_bringup.md` | size_bytes=`389` | sha256=`3ae388715fbdfc4f4abdec89e79f18855991921d2f15521115ce5d49534ae285`
 - `reports/repo_closure_scorecard.json` | size_bytes=`6452` | sha256=`16892ea368e369e44a58a8f4e0fcd1f7b092f4db782627f1a02d3e41cb7d4e76`
 - `reports/repo_closure_scorecard.md` | size_bytes=`3349` | sha256=`c0873b19e4a38f3443827a0e26416d97216ec94d4c0539a7f26234c80b8bca6e`
 - `reports/repo_directory_contract.md` | size_bytes=`1142` | sha256=`0a4c4baf969d10b4963910224661d0dad670f42f3e92933927a4194e5b90ff77`
-- `reports/repo_external_handoff.md` | size_bytes=`1537` | sha256=`398a18788ffc978c14f2303c2d3d00b5d7e40deb1d7dcd69b48e6363cdc46553`
+- `reports/repo_external_handoff.md` | size_bytes=`1537` | sha256=`b80bfb9e2e9e003780ad7df9e2d2e3e98c82d48ff34187693c5c19c07e5d40e2`
 - `reports/report_accuracy_audit.md` | size_bytes=`2135` | sha256=`0daaa67e873c96dd5cca346a2650805e0bef7b74109f749ed6136aa8efa3e5eb`
 - `reports/report_accuracy_audit_TR.md` | size_bytes=`2134` | sha256=`baa9c87247e214bea45e077872866f0d61b4edd7c9f9eec2f0152aa250abdfe4`
 - `reports/report_truth_matrix.md` | size_bytes=`3665` | sha256=`0d865d20a6fd44e7699d4ec81e8ad7dd1ebf34a80e968d2262a0ddc0b2482834`
@@ -746,9 +752,9 @@
 - `reports/snapshots/2026-02-24/web_validation_sources_2026-02-24.md` | size_bytes=`3286` | sha256=`6ceb1c1606f3ab888106ae36d5bc08dc4ab62a0b0cb12337cc9a40e0309e603d`
 - `reports/source_of_truth_map.md` | size_bytes=`13195` | sha256=`e823f1c2118410fe37c53868bb83f0c65c7766b95617f892b429033d99cadf0b`
 - `reports/stale_script_report.md` | size_bytes=`523` | sha256=`000efe0211f1421c322ce551c24b7326a7ef4b49392c1e8ab582579c2c36e167`
-- `reports/start_gate_operator_decision.json` | size_bytes=`710` | sha256=`d63aa9d51889d90d814ad2539e268d101bb28b8796c542d28d350d8202d91770`
+- `reports/start_gate_operator_decision.json` | size_bytes=`710` | sha256=`37fd924ed268fbf3a15b0dcef47f08c749e2079431254a6a50b0cef5305630e9`
 - `reports/start_gate_operator_decision.md` | size_bytes=`613` | sha256=`e0894ba2ce8f6b9353cde2284d7de8d5f2707588c87b52c433fc322e4bdd6684`
-- `reports/start_gate_report.json` | size_bytes=`11954` | sha256=`fd4bdc88e950e6fc25004bffbc3593566fe9b37cce90b0c68e7efa58ff24ad09`
+- `reports/start_gate_report.json` | size_bytes=`3792` | sha256=`fbe1b5c7eb33b708a402212caffafca9a0af00f126bec78e6434099177129e35`
 - `reports/startup_selfcheck_report.json` | size_bytes=`88` | sha256=`5834acc0f948ba7636d8a4cc07aac1a698e764a0903e0d7306298e9759eea81d`
 - `reports/static_analysis_report.json` | size_bytes=`171` | sha256=`cd182af3f234ab579edebf2ea22dac46e2550dcada3ce543a42d9c696d42fa41`
 - `reports/strategic_value.md` | size_bytes=`900` | sha256=`fd461eec9900afebfa0ce5d92023a9748bc0d8179dc5cba8e7203bcf897cbcc7`
@@ -760,8 +766,8 @@
 - `reports/system_memory_policy.md` | size_bytes=`533` | sha256=`e4d355bf2e5975976c6c59594407f541b5540991efdfff68ce22eec97cd5f4ad`
 - `reports/system_stats.jsonl` | size_bytes=`6532` | sha256=`51c7706575043d3fbe24de9c6eb1e5f948fe1fc4584329b7859039e27db97364`
 - `reports/systems_performance_case_study.md` | size_bytes=`4715` | sha256=`ff3fcd4cf1a7522448127ba7fd92e401c87d55e7421bf40602a12f5f40b2ea68`
-- `reports/target_machine_handoff_manifest.json` | size_bytes=`2967` | sha256=`5815bb288a4bfe951ffd38274e9a9dcdb2643e69ac9b0b70f5ee3c1456014537`
-- `reports/target_machine_handoff_manifest.md` | size_bytes=`2350` | sha256=`7f5f1d6174e6ee89071fabb7e2fade44f644099f5e30538e68a150d8d6cf466c`
+- `reports/target_machine_handoff_manifest.json` | size_bytes=`2967` | sha256=`424c6512c9450b22b1591c999031324619529227bd83d13d4de813987d1df504`
+- `reports/target_machine_handoff_manifest.md` | size_bytes=`2350` | sha256=`acfea80d62d686e55b2459c8c506528424fba7cea32964f38a715af98d7c2659`
 - `reports/teacher_decision_record.md` | size_bytes=`1016` | sha256=`eb3df88c31454b857234c0f7bf886e171a9e36e2e14c43afc7517653ad567124`
 - `reports/teacher_output_license_assessment.md` | size_bytes=`1580` | sha256=`7578fa879f9191d9f5c242868c15fbfd364405b210375b9ad0276b43765c7fd8`
 - `reports/technical_snapshot.md` | size_bytes=`1953` | sha256=`62ff2e41619b05f9c0d3bde8bd154542ffe89334608faa99c03fe6a9f9964961`
@@ -769,15 +775,15 @@
 - `reports/test_verification_matrix.md` | size_bytes=`1167` | sha256=`c28c7ddb02a69d36e1ea3eb6a74358857a502678c568c34b0553224b62576472`
 - `reports/thermal_baseline.json` | size_bytes=`85` | sha256=`06d99aba28780e40e851c2bde712e18dd9f33a77e7cd4df7a8757f61968947b1`
 - `reports/tokenizer_sync_final_report.md` | size_bytes=`507` | sha256=`e2a0c984fde4eeab95b22c56a0d1f9f1d5bc3e606686de7db396f36b3942b6f6`
-- `reports/train_readiness_decision.json` | size_bytes=`5206` | sha256=`e039b7ba60609ce4950b53b77549a79f2d4825de6d887c9af64291f9585e7331`
+- `reports/train_readiness_decision.json` | size_bytes=`5207` | sha256=`7cbd3a53076f70c8e4f6aa832ef240376cc54e3190ed912934419bcd114d1e66`
 - `reports/train_readiness_decision.md` | size_bytes=`828` | sha256=`b64a32ac5fb3b4fb422f74a9b69d12829d89c87fad09a3eeaf22130e8fa47bd9`
-- `reports/training_readiness_manifest.json` | size_bytes=`5206` | sha256=`e039b7ba60609ce4950b53b77549a79f2d4825de6d887c9af64291f9585e7331`
+- `reports/training_readiness_manifest.json` | size_bytes=`5207` | sha256=`7cbd3a53076f70c8e4f6aa832ef240376cc54e3190ed912934419bcd114d1e66`
 - `reports/turk_telekom_call_faq.md` | size_bytes=`2334` | sha256=`39c4bcd7e310267639160758177ecdd2d1228255d5fead4dcffd9862dc386d4b`
-- `reports/unicode_path_guard_report.json` | size_bytes=`135` | sha256=`24cd5f08c797ea1c1d9d7b862792b92814e812d9009e40343686f11ed6eab6ba`
+- `reports/unicode_path_guard_report.json` | size_bytes=`135` | sha256=`de49c2c12cb5803e062be5424221a948f08135fc334ebbe1d9be6185cfee003a`
 - `reports/update_first_policy.md` | size_bytes=`747` | sha256=`2bd38f76d8b286bd195dcf05264b073111db00ee1ab0d5a9f085f2e558371229`
 - `reports/verified_matrix.md` | size_bytes=`2795` | sha256=`ef68dd755c3c8ed14b48d601007f3ef82f4fae8c912781a1f9ab0430d716b333`
 - `reports/verified_matrix_TR.md` | size_bytes=`2839` | sha256=`3fcf43242a52376de377bbc939827f7ab9c00ca643e1de9888d87ca473fdfb69`
-- `reports/workspace_hygiene_manifest.json` | size_bytes=`8642` | sha256=`3cc2ca949f96dab82e3b1f3fae45b13c2d3600a163c7de481aa7a4aa20572b6d`
+- `reports/workspace_hygiene_manifest.json` | size_bytes=`8642` | sha256=`349a08c994480bfc4eb50da55dea5c6a89338e5922df45369554b8d49295d233`
 - `reports/workspace_hygiene_manifest.md` | size_bytes=`6398` | sha256=`a253910c847fcf0c179cdea5f96c7d90c3363c78fc6e2c52d5dd6d516448127d`
 - `reports/xla_smoke_report.json` | size_bytes=`224` | sha256=`e4c0a96448b63cedbf4af5059a0c4a9a3bd58ab34c46f5f5c57a8af09e1ffdde`
 - `reports/zip_audit_artifacts.json` | size_bytes=`147` | sha256=`97132cd397a8e2e1d83c39627441dd846b932577f91f0a95a0fc5f4f7cebef78`
