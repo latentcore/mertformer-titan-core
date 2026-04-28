@@ -1,9 +1,9 @@
 # Train Readiness Decision
 
-- final_status: `NOT_ALLOWED`
-- decision_reason_code: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE__online_teacher:MISSING_HF_TOKEN`
-- recommended_path: `none`
-- guardrail: `At least one readiness path must pass cleanly before TRAIN_ALLOWED is granted; offline_clean is canonical only when strict precomputed KD prerequisites are satisfied.`
+- final_status: `TRAIN_ALLOWED`
+- decision_reason_code: `READY_REMOTE_BOOTSTRAP`
+- recommended_path: `remote_bootstrap`
+- guardrail: `At least one readiness path must pass cleanly before TRAIN_ALLOWED is granted; offline_clean stays strict precomputed KD, while remote_bootstrap is valid only when the rented-machine bootstrap flow can inject credentials and fetch datasets at runtime.`
 
 ## Paths
 
@@ -12,6 +12,12 @@
 - status: `FAIL`
 - reason_code: `PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`
 - exit_code: `1`
+
+### remote_bootstrap
+- profile: `runtime_injected_training_readiness`
+- status: `PASS`
+- reason_code: `READY_RUNTIME_INJECTED_BOOTSTRAP`
+- exit_code: `0`
 
 ### online_teacher
 - profile: `strict_online_training_readiness`

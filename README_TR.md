@@ -2,14 +2,14 @@
 
 Kontrollü yerel dağıtım ve dürüst ML systems kanıtı için offline-first, denetlenebilir yapay zeka altyapısı.
 Mevcut olgunluk: **pilota hazır eğitim öncesi baseline**.
-Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_OFFLINE_CLEAN`.
+Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_REMOTE_BOOTSTRAP`.
 
 ### İlk Bakışta Bilinmesi Gerekenler
 - Başvuru açısından ana kapı: gerçek owned training run + checkpoint-bound evidence.
 - Exact `45K`, tercih edilen ciddi doğrulama hedefidir; tek kabul edilebilir başvuru eşiği değildir.
-- Kanonik repo-side lane: `offline-clean`.
-- Kanonik `offline_clean` semantiği: sabit öğretmen `meta-llama/Llama-3.3-70B-Instruct` ile strict precomputed KD.
-- Opsiyonel gated blocker: `online_teacher:MISSING_HF_TOKEN`.
+- Kiralık makinede önerilen repo-side lane: `remote_bootstrap`.
+- Sıkı yerel lane: `offline_clean` (sabit öğretmen `meta-llama/Llama-3.3-70B-Instruct` ile strict precomputed KD).
+- Kalan non-winning blocker'lar: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
 - Hâlâ açık olan post-run evidence sınıfı: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle ve trained export/device measurements.
 
 ### En Kısa Doğru Okuma Sırası
@@ -124,7 +124,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `228 passed, 3 skipped` |
+| `python3 -m pytest -q` | `231 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -133,11 +133,11 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 
 **Öne çıkan özellik:** kanonik 45K yolu artık `bash zero_touch_start.sh`; exact readiness verdict, run lock, resume policy ve post-train autorun sözleşmesi bu katmanda toplanır.
 
-Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree, kanonik `offline_clean` yolu üzerinde repo-side 45K-ready durumundadır; fakat gerçek uzun koşu hedef donanımda henüz çalışmadığı için trained çıktılar henüz yoktur.
+Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree, `remote_bootstrap` lane üzerinden repo-side 45K-start-ready durumundadır; fakat gerçek uzun koşu hedef donanımda henüz çalışmadığı için trained çıktılar henüz yoktur. Sıkı yerel `offline_clean` lane ise, yerel logits veya yerel actionable Phase-0 olmadan hâlâ blokludur.
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`228 passed, 3 skipped`)
+   - `pytest` geçti (`231 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -151,15 +151,15 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
    - `reports/final_truth_matrix.md`
 
 ### Güncel Exact Boundary
-- Kanonik repo-side yol: `offline_clean`
-- Exact readiness verdict: `TRAIN_ALLOWED` / `READY_OFFLINE_CLEAN`
-- Kanonik offline-clean kuralı: ya complete precomputed logits ya da actionable Phase-0 precompute; 45K yolunda teacherless fallback yok
-- Kalan exact blocker: `online_teacher:MISSING_HF_TOKEN` (yalnızca opsiyonel gated teacher yolu için)
+- Önerilen repo-side yol: `remote_bootstrap`
+- Exact readiness verdict: `TRAIN_ALLOWED` / `READY_REMOTE_BOOTSTRAP`
+- Sıkı yerel offline-clean kuralı: ya complete precomputed logits ya da actionable Phase-0 precompute; 45K yolunda teacherless fallback yok
+- Kalan non-winning blocker'lar: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`
 
 ### Uzun eğitim koşusundan önce son önkoşullar
 - Hedef donanım (GPU/edge) kaynağı ayrılmış olmalıdır.
 - Repo/package artefaktları gerçek eğitim makinesine taşınmalı ve kanonik start gate orada yeniden koşturulmalıdır.
-- `HF_TOKEN`, yalnızca online teacher/gated access yolu özellikle seçilecekse gereklidir.
+- `HF_TOKEN`, önerilen `remote_bootstrap` lane için hedef makinede enjekte edilmelidir; explicit online teacher lane için de gereklidir.
 - Dataset lisans/hash iş akışı uyumlu kalmalıdır.
 - Tam eğitim koşusu ve benchmark çıktıları bu önkoşullardan sonra kayda alınır.
 - Varsayılan token bütçesi artık `fixed_steps` (45K). `open_ended` yalnızca açık hedef override ile kullanılmalıdır.
@@ -173,7 +173,7 @@ bash zero_touch_start.sh --check-only
 
 ### Hedef eğitim donanımında başlatma komutu
 ```bash
-TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
+HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
 
 ### Taşınabilir Eğitim Hazırlık Checklist'i (Zip/Taşı/Çalıştır)
@@ -186,11 +186,11 @@ bash zero_touch_start.sh --plan-only
 bash zero_touch_start.sh --check-only
 ```
 3. Gerekli ortam değişkenleri:
-- `HF_TOKEN` (yalnızca opsiyonel gated teacher + online dataset yolu için zorunlu)
+- `HF_TOKEN` (önerilen `remote_bootstrap` lane için hedef makinede zorunlu)
 - `WANDB_API_KEY` (opsiyonel)
 4. Transfer/unzip sonrası tek-komut eğitim başlatma:
 ```bash
-TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
+HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
 Opsiyonel online teacher yolu:
 ```bash
@@ -207,7 +207,7 @@ HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touc
 
 | Mühendislik Durumu | `Pilota hazır eğitim öncesi baseline` |
 | :--- | :--- |
-| **Eğitim Başlatma Hazırlığı** | ✅ TRAIN_ALLOWED (`READY_OFFLINE_CLEAN`; opsiyonel online teacher yolu `HF_TOKEN` olmadan bloklu kalır) |
+| **Eğitim Başlatma Hazırlığı** | ✅ TRAIN_ALLOWED (`READY_REMOTE_BOOTSTRAP`; sıkı yerel offline_clean logits/yerel Phase-0 olmadan bloklu, online_teacher `HF_TOKEN` olmadan bloklu) |
 | **Kod Tabanı** | ✅ Uygulandı (testler + offline preflight geçiyor) |
 | **Offline Doğrulama** | ✅ PASS (`bash scripts/verify_all.sh`) |
 | **Dataset Uyumu** | ✅ Offline-clean için hazır (`lisans/hash iş akışı aktif; stage JSONL dosyaları mevcut working tree’de mevcut`) |

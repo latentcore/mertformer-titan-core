@@ -12,7 +12,8 @@ Principles:
 - Local venv: `.titan-venv` (created via `scripts/bootstrap_venv.sh`)
 
 ## Closure Decisions
-- Canonical external lane name remains `offline_clean`.
+- Recommended external start lane is `remote_bootstrap`.
+- Strict local lane remains `offline_clean`.
 - Canonical internal behavior for `offline_clean` is now **strict precomputed KD**.
 - Fixed teacher surface: `meta-llama/Llama-3.3-70B-Instruct`.
 - `teacherless` is no longer a canonical fallback for the 45K `offline_clean` run.
@@ -66,12 +67,13 @@ python3 scripts/record_dataset_hashes.py
 
 Required:
 - Training hardware (e.g., multi-GPU Linux host) and a stable CUDA toolchain
-- `HF_TOKEN` available if the online teacher lane is intentionally selected, or if the canonical `offline_clean` lane still needs Phase-0 logits precompute
+- `HF_TOKEN` injected on the target machine for the recommended `remote_bootstrap` lane, or available locally if the strict `offline_clean` lane still needs Phase-0 logits precompute
 - Optional: `WANDB_API_KEY` if experiment tracking is enabled
 - Current repo-side lane is already green:
   - `TRAIN_ALLOWED`
-  - `READY_OFFLINE_CLEAN`
-- Remaining optional blocker:
+  - `READY_REMOTE_BOOTSTRAP`
+- Remaining non-winning blockers:
+  - `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`
   - `online_teacher:MISSING_HF_TOKEN`
 
 Canonical readiness gate:
@@ -82,10 +84,10 @@ bash zero_touch_start.sh --check-only
 
 This 45K run is the first serious architecture validation run, not the final capability ceiling.
 
-Recommended execution (canonical offline-clean lane on target hardware):
+Recommended execution (remote-bootstrap lane on target hardware):
 
 ```bash
-TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
+HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
 
 Canonical offline-clean truth boundary:

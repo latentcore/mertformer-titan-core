@@ -3,7 +3,7 @@
 ## Current Measured Truth
 - Repo-side verification, truth-sync, and governance surfaces are active.
 - Chess onefile delivery, runtime containment, and Stockfish auto-fetch are implemented.
-- Repo-side training readiness is currently `NOT_ALLOWED` with blockers `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE, online_teacher:MISSING_HF_TOKEN`.
+- Repo-side training readiness is currently `TRAIN_ALLOWED` with blockers `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE, online_teacher:MISSING_HF_TOKEN`.
 - Exact `45K` remains the preferred main-run target, but application readiness is gated by a real owned training run plus checkpoint-bound evidence rather than the exact step count alone.
 - Costly large-scale compute is not a personal-funding requirement; truthful verified evidence is the actual gate.
 

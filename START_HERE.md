@@ -11,12 +11,13 @@ MertFormer Titan is an offline-first, auditable AI systems project with three co
 ## Current Exact Status
 - Current maturity: `pilot-ready pre-training baseline`
 - Current repo-side readiness: `TRAIN_ALLOWED`
-- Current readiness reason code: `READY_OFFLINE_CLEAN`
+- Current readiness reason code: `READY_REMOTE_BOOTSTRAP`
 - Preferred serious validation target: `45K`
 - Exact `45K` is not the only acceptable application threshold
-- Canonical `offline_clean` semantics: strict precomputed KD with fixed teacher surface `meta-llama/Llama-3.3-70B-Instruct`
+- Recommended rented-machine semantics: `remote_bootstrap` with runtime-injected `HF_TOKEN` and target-machine dataset/bootstrap flow
+- Strict local `offline_clean` semantics: strict precomputed KD with fixed teacher surface `meta-llama/Llama-3.3-70B-Instruct`
 - Real owned training run + checkpoint-bound evidence are still required for application readiness
-- Optional gated blocker only if teacher lane is chosen: `online_teacher:MISSING_HF_TOKEN`
+- Remaining non-winning blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`
 - Real trained checkpoints, benchmark outputs, trained demo bundles, and trained export measurements remain post-run evidence
 
 ## What To Read In Order

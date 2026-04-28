@@ -1,6 +1,6 @@
 # Dataset Health Final
 
-- generated_utc: `2026-04-28T00:13:06Z`
+- generated_utc: `2026-04-28T06:32:29Z`
 - validation_rows: `1500`
 
 ## Stage Health
@@ -13,5 +13,5 @@
 
 ## Risk Boundary
 
-- Dataset presence and parse health are green for the offline-clean lane.
+- Dataset presence and parse health are green for the remote-bootstrap lane when its contract passes.
 - Claim-grade dataset lineage, large-scale provenance, and post-run consumption journals remain post-run evidence.

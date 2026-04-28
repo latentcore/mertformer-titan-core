@@ -29,6 +29,14 @@ PROFILES = [
         },
     },
     {
+        'name': 'remote_bootstrap',
+        'profile': 'runtime_injected_training_readiness',
+        'env': {
+            'TITAN_OFFLINE': '0',
+            'TITAN_PREFLIGHT_REQUIRE_STAGE_JSONL': '0',
+        },
+    },
+    {
         'name': 'online_teacher',
         'profile': 'strict_online_training_readiness',
         'env': {
@@ -36,6 +44,14 @@ PROFILES = [
         },
     },
 ]
+
+READY_CODES = {
+    'offline_clean': 'READY_OFFLINE_CLEAN',
+    'remote_bootstrap': 'READY_REMOTE_BOOTSTRAP',
+    'online_teacher': 'READY_ONLINE_TEACHER',
+}
+
+PREFERRED_PATH_ORDER = ('offline_clean', 'remote_bootstrap', 'online_teacher')
 
 
 def load_json(path: Path) -> dict:
@@ -87,14 +103,12 @@ def run_profile(py: str, entry: dict) -> dict:
 
 
 def choose_decision(results: list[dict]) -> tuple[str, str, str | None, list[str]]:
-    passing = [r for r in results if r.get('status') == 'PASS']
     blockers = [f"{r.get('path_name')}:{r.get('reason_code', 'UNKNOWN')}" for r in results if r.get('status') != 'PASS']
-    if len(passing) == 2:
-        return 'TRAIN_ALLOWED', 'READY_DUAL_PATH', 'offline_clean', blockers
-    if len(passing) == 1:
-        winner = passing[0]
-        code = 'READY_OFFLINE_CLEAN' if winner.get('path_name') == 'offline_clean' else 'READY_ONLINE_TEACHER'
-        return 'TRAIN_ALLOWED', code, winner.get('path_name'), blockers
+    by_name = {row.get('path_name'): row for row in results}
+    for name in PREFERRED_PATH_ORDER:
+        row = by_name.get(name)
+        if row and row.get('status') == 'PASS':
+            return 'TRAIN_ALLOWED', READY_CODES[name], name, blockers
     return 'NOT_ALLOWED', '__'.join(blockers) if blockers else 'NO_READY_PATH', None, blockers
 
 
@@ -145,7 +159,7 @@ def main() -> int:
         'final_status': final_status,
         'decision_reason_code': decision_reason_code,
         'recommended_path': recommended_path,
-        'guardrail': 'At least one readiness path must pass cleanly before TRAIN_ALLOWED is granted; offline_clean is canonical only when strict precomputed KD prerequisites are satisfied.',
+        'guardrail': 'At least one readiness path must pass cleanly before TRAIN_ALLOWED is granted; offline_clean stays strict precomputed KD, while remote_bootstrap is valid only when the rented-machine bootstrap flow can inject credentials and fetch datasets at runtime.',
         'paths': results,
         'blockers': blockers,
     }

@@ -34,5 +34,5 @@ python3 scripts/build_target_machine_handoff_bundle.py
 python3 scripts/build_max_closure_handoff.py
 ```
 
-Current readiness status: `NOT_ALLOWED`
-Recommended path: `none`
+Current readiness status: `TRAIN_ALLOWED`
+Recommended path: `remote_bootstrap`

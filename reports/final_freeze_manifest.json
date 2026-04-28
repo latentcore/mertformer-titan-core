@@ -1,6 +1,6 @@
 {
   "schema": "final_freeze_manifest_v1",
-  "generated_utc": "2026-04-28T01:17:06Z",
+  "generated_utc": "2026-04-28T06:31:41Z",
   "official_product_sentence": "Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre edilebilir zeka altyapısı.",
   "risk_ceiling": "Medium Refine",
   "guardrail": "If any task increases risk to 45K readiness, reproducibility, or closure confidence, demote it to phase-2.",
@@ -12,6 +12,6 @@
     "teacher_logits_decision": "dual_path_contract"
   },
   "training_positioning": "45K is the first serious architecture validation run, not the final capability ceiling.",
-  "readiness_final_status": "NOT_ALLOWED",
-  "recommended_path": null
+  "readiness_final_status": "TRAIN_ALLOWED",
+  "recommended_path": "remote_bootstrap"
 }

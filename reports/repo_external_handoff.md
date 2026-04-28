@@ -1,11 +1,11 @@
 # MertFormer Build 30 Max Closure Handoff
 
-- generated_utc: `2026-04-28T01:17:06Z`
+- generated_utc: `2026-04-28T06:31:41Z`
 - product_sentence: Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre edilebilir zeka altyapısı.
 - canonical_closure_entrypoint: `bash scripts/final_one_shot.sh`
-- train_readiness_status: `NOT_ALLOWED`
-- train_readiness_reason: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE__online_teacher:MISSING_HF_TOKEN`
-- recommended_path: `none`
+- train_readiness_status: `TRAIN_ALLOWED`
+- train_readiness_reason: `READY_REMOTE_BOOTSTRAP`
+- recommended_path: `remote_bootstrap`
 - desktop_copy_status: `written`
 - desktop_copy_path: `<DESKTOP_PATH>/MertFormer_Build30_Max_Closure_Handoff.md`
 - desktop_copy_reason: `desktop copy refreshed`

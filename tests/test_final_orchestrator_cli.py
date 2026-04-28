@@ -86,6 +86,19 @@ def test_build_training_env_prefers_offline_clean_lane():
     assert env["TITAN_USE_TR_TOKENIZER"] == "1"
 
 
+def test_build_training_env_supports_remote_bootstrap_lane():
+    module = _load_final_orchestrator_module()
+    env = module.build_training_env(
+        "auto",
+        {
+            "decision_reason_code": "READY_REMOTE_BOOTSTRAP",
+            "recommended_path": "remote_bootstrap",
+        },
+    )
+    assert env["TITAN_OFFLINE"] == "0"
+    assert env["TITAN_RUNTIME_INJECTED_BOOTSTRAP"] == "1"
+
+
 def test_run_start_gate_can_skip_verify_all(tmp_path: Path):
     module = _load_final_orchestrator_module()
     calls: dict[str, object] = {}

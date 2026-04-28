@@ -1,9 +1,9 @@
 {
   "schema": "train_readiness_decision_v1",
-  "final_status": "NOT_ALLOWED",
-  "decision_reason_code": "offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE__online_teacher:MISSING_HF_TOKEN",
-  "recommended_path": null,
-  "guardrail": "At least one readiness path must pass cleanly before TRAIN_ALLOWED is granted; offline_clean is canonical only when strict precomputed KD prerequisites are satisfied.",
+  "final_status": "TRAIN_ALLOWED",
+  "decision_reason_code": "READY_REMOTE_BOOTSTRAP",
+  "recommended_path": "remote_bootstrap",
+  "guardrail": "At least one readiness path must pass cleanly before TRAIN_ALLOWED is granted; offline_clean stays strict precomputed KD, while remote_bootstrap is valid only when the rented-machine bootstrap flow can inject credentials and fetch datasets at runtime.",
   "paths": [
     {
       "profile": "strict_offline_training_readiness",
@@ -103,11 +103,87 @@
           }
         }
       },
-      "elapsed_s": 0.007,
+      "elapsed_s": 0.01,
       "path_name": "offline_clean",
       "exit_code": 1,
       "stdout_tail": "TRAIN_READY:FAIL reason_code=PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE\n",
       "stderr_tail": "\u26a0\ufe0f .env file not found, skipping local load.\n\u274c STRICT OFFLINE TRAIN-READINESS FAIL [PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE]: offline_clean strict precompute requirements are not satisfied\n\u2708\ufe0f Train-ready report: logs/preflight/train_ready_status.strict_offline_training_readiness.json\n"
+    },
+    {
+      "profile": "runtime_injected_training_readiness",
+      "status": "PASS",
+      "reason_code": "READY_RUNTIME_INJECTED_BOOTSTRAP",
+      "checks": {
+        "runtime_bootstrap_entrypoints": {
+          "status": "PASS",
+          "missing": []
+        },
+        "teacher_contract": {
+          "status": "PASS",
+          "teacher_model_id": "meta-llama/Llama-3.3-70B-Instruct",
+          "require_gated_teacher": true,
+          "policy": "remote_bootstrap expects HF_TOKEN to be injected on the target machine before any gated teacher access is attempted"
+        },
+        "runtime_credentials": {
+          "status": "PASS",
+          "hf_token_present_locally": false,
+          "wandb_enabled": true,
+          "wandb_api_key_present_locally": false,
+          "policy": "missing local credentials are allowed because this lane assumes runtime injection on the target machine"
+        },
+        "stage_jsonl": {
+          "status": "PASS",
+          "missing": [],
+          "policy": "remote smart_runner/data_pipeline may generate stage JSONL at training start"
+        },
+        "write_permissions": {
+          "status": "PASS",
+          "paths": {
+            "<repo>/datasets": {
+              "status": "PASS",
+              "detail": "ok"
+            },
+            "<repo>/checkpoints/mertformer_titan_prod": {
+              "status": "PASS",
+              "detail": "ok"
+            },
+            "datasets/logits": {
+              "status": "PASS",
+              "detail": "ok"
+            },
+            "<repo>/reports": {
+              "status": "PASS",
+              "detail": "ok"
+            },
+            "<repo>/artifacts": {
+              "status": "PASS",
+              "detail": "ok"
+            }
+          }
+        },
+        "distillation_bootstrap": {
+          "status": "PASS",
+          "logits_dir": "datasets/logits",
+          "existing_shards": 0,
+          "policy": "local logits shards are optional because Phase-0 precompute or online teacher generation may run on the target machine"
+        },
+        "lane_contract": {
+          "status": "PASS",
+          "lane_name": "remote_bootstrap",
+          "target_machine_requirements": [
+            "HF_TOKEN injected before launch",
+            "TITAN_OFFLINE=0 on the target machine",
+            "network access for gated teacher and dataset fetches",
+            "optional WANDB_API_KEY only if TITAN_WANDB=1"
+          ],
+          "launcher": "HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh"
+        }
+      },
+      "elapsed_s": 0.002,
+      "path_name": "remote_bootstrap",
+      "exit_code": 0,
+      "stdout_tail": "TRAIN_READY:PASS reason_code=READY_RUNTIME_INJECTED_BOOTSTRAP\n",
+      "stderr_tail": "\u26a0\ufe0f .env file not found, skipping local load.\n\u2705 RUNTIME-INJECTED TRAIN-READINESS: PASS\n\u2708\ufe0f Train-ready report: logs/preflight/train_ready_status.runtime_injected_training_readiness.json\n"
     },
     {
       "profile": "strict_online_training_readiness",

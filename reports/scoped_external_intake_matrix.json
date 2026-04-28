@@ -88,8 +88,8 @@
       "path": "/Applications/mertformer-titan-core.zip",
       "kind": "file",
       "exists": true,
-      "size_bytes": 1262108871,
-      "sha256": "c5035e3b18c479d528faee1e785e2d1d750b1a635ce8808c7ce86224e0acdaed",
+      "size_bytes": 2689065154,
+      "sha256": "f776385bb42f1801f7894d98b836a78ffccb294c57ae774f89cd303535b643e6",
       "duplicate_rank": 1,
       "disposition": "keep_as_external_artifact"
     }

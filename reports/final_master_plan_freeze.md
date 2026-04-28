@@ -15,8 +15,8 @@
 - ADR chain and verification matrix
 
 ## Current Readiness Snapshot
-- final_status: `NOT_ALLOWED`
-- recommended_path: `none`
+- final_status: `TRAIN_ALLOWED`
+- recommended_path: `remote_bootstrap`
 - blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE, online_teacher:MISSING_HF_TOKEN`
 
 ## Freeze Rule

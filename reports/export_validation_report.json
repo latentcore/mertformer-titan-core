@@ -1,6 +1,6 @@
 {
   "schema": "export_validation_report_v1",
-  "generated_utc": "2026-04-28T00:13:06Z",
+  "generated_utc": "2026-04-28T06:32:29Z",
   "status": "NOT_RUN",
   "reason": "No trained checkpoint is available in the current working tree.",
   "canonical_entrypoint": "scripts/mobile_export.py"

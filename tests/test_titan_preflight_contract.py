@@ -128,3 +128,46 @@ def test_strict_offline_readiness_passes_with_actionable_phase0(monkeypatch, tmp
         )
     )
     assert payload["reason_code"] == "READY_ACTIONABLE_PHASE0_PRECOMPUTE"
+
+
+def test_runtime_injected_readiness_passes_without_local_hf_or_stage(monkeypatch, tmp_path: Path):
+    project_root = tmp_path / "repo"
+    (project_root / "scripts").mkdir(parents=True, exist_ok=True)
+    (project_root / "train").mkdir(parents=True, exist_ok=True)
+    (project_root / "reports").mkdir(parents=True, exist_ok=True)
+    (project_root / "artifacts").mkdir(parents=True, exist_ok=True)
+    (project_root / "datasets").mkdir(parents=True, exist_ok=True)
+    (project_root / "checkpoints" / "mertformer_titan_prod").mkdir(parents=True, exist_ok=True)
+    (project_root / "logs" / "preflight").mkdir(parents=True, exist_ok=True)
+    for rel in (
+        "zero_touch_start.sh",
+        "run.sh",
+        "scripts/smart_runner.py",
+        "scripts/data_pipeline.py",
+        "scripts/precompute_logits_topk.py",
+        "scripts/final_orchestrator.py",
+        "train/train.py",
+    ):
+        path = project_root / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("stub\n", encoding="utf-8")
+
+    monkeypatch.setattr(titan_preflight, "PROJECT_ROOT", project_root)
+    monkeypatch.setattr(titan_preflight, "LOG_DIR", project_root / "logs" / "preflight")
+    monkeypatch.setattr(titan_preflight.cfg, "save_dir", "./checkpoints/mertformer_titan_prod")
+    monkeypatch.setattr(titan_preflight.cfg, "precomputed_logits_path", str(project_root / "datasets" / "logits"))
+    monkeypatch.setattr(titan_preflight.cfg, "require_gated_teacher", True)
+    monkeypatch.setattr(titan_preflight.cfg, "teacher_model_id", "meta-llama/Llama-3.3-70B-Instruct")
+    monkeypatch.delenv("HF_TOKEN", raising=False)
+    monkeypatch.delenv("WANDB_API_KEY", raising=False)
+
+    rc = titan_preflight.runtime_injected_training_readiness_profile()
+
+    assert rc == 0
+    payload = titan_preflight.json.loads(
+        (project_root / "logs" / "preflight" / "train_ready_status.runtime_injected_training_readiness.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert payload["reason_code"] == "READY_RUNTIME_INJECTED_BOOTSTRAP"
+    assert payload["checks"]["runtime_credentials"]["hf_token_present_locally"] is False

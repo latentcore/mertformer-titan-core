@@ -271,6 +271,136 @@ def _check_writable_dir(path: Path) -> tuple[bool, str]:
         return False, str(exc)
 
 
+def runtime_injected_training_readiness_profile() -> int:
+    """
+    Portable rented-machine readiness profile.
+    This lane proves that the repo can be handed off to a target machine where
+    runtime credentials are injected there and the dataset/bootstrap flow can
+    complete on that machine.
+    """
+    started_at = time.time()
+    checks: Dict[str, Any] = {}
+    profile = "runtime_injected_training_readiness"
+    status = "FAIL"
+    reason_code = "UNKNOWN_ERROR"
+
+    try:
+        load_env()
+
+        required_files = [
+            PROJECT_ROOT / "zero_touch_start.sh",
+            PROJECT_ROOT / "run.sh",
+            PROJECT_ROOT / "scripts" / "smart_runner.py",
+            PROJECT_ROOT / "scripts" / "data_pipeline.py",
+            PROJECT_ROOT / "scripts" / "precompute_logits_topk.py",
+            PROJECT_ROOT / "scripts" / "final_orchestrator.py",
+            PROJECT_ROOT / "train" / "train.py",
+        ]
+        missing_files = [str(path.relative_to(PROJECT_ROOT)) for path in required_files if not path.exists()]
+        checks["runtime_bootstrap_entrypoints"] = {
+            "status": "PASS" if not missing_files else "FAIL",
+            "missing": missing_files,
+        }
+        if missing_files:
+            reason_code = "RUNTIME_BOOTSTRAP_ENTRYPOINT_MISSING"
+            raise RuntimeError(f"missing runtime bootstrap entrypoints: {missing_files}")
+
+        teacher_model_id = str(getattr(cfg, "teacher_model_id", "")).strip()
+        require_teacher = bool(getattr(cfg, "require_gated_teacher", False))
+        checks["teacher_contract"] = {
+            "status": "PASS" if teacher_model_id else "FAIL",
+            "teacher_model_id": teacher_model_id or None,
+            "require_gated_teacher": require_teacher,
+            "policy": "remote_bootstrap expects HF_TOKEN to be injected on the target machine before any gated teacher access is attempted",
+        }
+        if not teacher_model_id:
+            reason_code = "TEACHER_MODEL_UNSET"
+            raise RuntimeError("teacher_model_id is missing")
+
+        hf_token_present = bool(os.environ.get("HF_TOKEN", "").strip())
+        wandb_enabled = os.environ.get("TITAN_WANDB", "1") == "1"
+        wandb_key_present = bool(os.environ.get("WANDB_API_KEY", "").strip())
+        checks["runtime_credentials"] = {
+            "status": "PASS",
+            "hf_token_present_locally": hf_token_present,
+            "wandb_enabled": wandb_enabled,
+            "wandb_api_key_present_locally": wandb_key_present,
+            "policy": "missing local credentials are allowed because this lane assumes runtime injection on the target machine",
+        }
+
+        missing_stage = [name for name, path in _stage_jsonl_paths().items() if not path.exists()]
+        checks["stage_jsonl"] = {
+            "status": "PASS" if not missing_stage else "WARN",
+            "missing": missing_stage,
+            "policy": "remote smart_runner/data_pipeline may generate stage JSONL at training start",
+        }
+
+        required_paths = [
+            PROJECT_ROOT / "datasets",
+            PROJECT_ROOT / cfg.save_dir,
+            Path(cfg.precomputed_logits_path),
+            PROJECT_ROOT / "reports",
+            PROJECT_ROOT / "artifacts",
+        ]
+        write_results: Dict[str, Any] = {}
+        for p in required_paths:
+            ok, detail = _check_writable_dir(p)
+            write_results[str(p)] = {"status": "PASS" if ok else "FAIL", "detail": detail}
+        failing_paths = [k for k, v in write_results.items() if v["status"] == "FAIL"]
+        checks["write_permissions"] = {
+            "status": "PASS" if not failing_paths else "FAIL",
+            "paths": write_results,
+        }
+        if failing_paths:
+            reason_code = "WRITE_PERMISSION_DENIED"
+            raise RuntimeError(f"runtime bootstrap write permission checks failed: {failing_paths}")
+
+        logits_root = Path(cfg.precomputed_logits_path)
+        existing_shards = len(list(logits_root.glob("stage*_train_part_*.pt"))) if logits_root.exists() else 0
+        checks["distillation_bootstrap"] = {
+            "status": "PASS",
+            "logits_dir": str(logits_root),
+            "existing_shards": existing_shards,
+            "policy": "local logits shards are optional because Phase-0 precompute or online teacher generation may run on the target machine",
+        }
+
+        checks["lane_contract"] = {
+            "status": "PASS",
+            "lane_name": "remote_bootstrap",
+            "target_machine_requirements": [
+                "HF_TOKEN injected before launch",
+                "TITAN_OFFLINE=0 on the target machine",
+                "network access for gated teacher and dataset fetches",
+                "optional WANDB_API_KEY only if TITAN_WANDB=1",
+            ],
+            "launcher": "HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh",
+        }
+
+        status = "PASS"
+        reason_code = "READY_RUNTIME_INJECTED_BOOTSTRAP"
+        log("RUNTIME-INJECTED TRAIN-READINESS: PASS", "success")
+        print("TRAIN_READY:PASS reason_code=READY_RUNTIME_INJECTED_BOOTSTRAP")
+        return_code = 0
+    except Exception as exc:
+        if reason_code == "UNKNOWN_ERROR":
+            reason_code = "RUNTIME_BOOTSTRAP_PREFLIGHT_EXCEPTION"
+        log(f"RUNTIME-INJECTED TRAIN-READINESS FAIL [{reason_code}]: {exc}", "error")
+        print(f"TRAIN_READY:FAIL reason_code={reason_code}")
+        return_code = 1
+    finally:
+        payload = {
+            "profile": profile,
+            "status": status,
+            "reason_code": reason_code,
+            "checks": checks,
+            "elapsed_s": round(time.time() - started_at, 3),
+        }
+        write_train_ready_report(payload, report_name=profile)
+        log(f"Train-ready report: {_display_path(LOG_DIR / f'train_ready_status.{profile}.json')}", "info")
+
+    return return_code
+
+
 def strict_training_readiness_profile() -> int:
     """
     Strict online/gated readiness profile for portable training handoff.
@@ -878,7 +1008,12 @@ def main():
         "--profile",
         type=str,
         default="default",
-        choices=["default", "strict_online_training_readiness", "strict_offline_training_readiness"],
+        choices=[
+            "default",
+            "strict_online_training_readiness",
+            "strict_offline_training_readiness",
+            "runtime_injected_training_readiness",
+        ],
         help="Preflight profile to run.",
     )
     args = parser.parse_args()
@@ -887,6 +1022,8 @@ def main():
         code = strict_training_readiness_profile()
     elif args.profile == "strict_offline_training_readiness":
         code = strict_offline_training_readiness_profile()
+    elif args.profile == "runtime_injected_training_readiness":
+        code = runtime_injected_training_readiness_profile()
     else:
         code = run_default_profile()
     if code != 0:

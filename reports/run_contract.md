@@ -17,6 +17,7 @@ This file is the canonical runtime contract for the current 45K closure path.
 - Training start is allowed only when `reports/train_readiness_decision.json` says `TRAIN_ALLOWED`.
 - The start gate must produce exact blocker reason codes before any full training launch.
 - The canonical `offline_clean` lane is strict precomputed KD and keeps `meta-llama/Llama-3.3-70B-Instruct` as the fixed teacher surface.
+- The `remote_bootstrap` lane is valid when the repo-side contract proves that the rented machine can inject `HF_TOKEN` at runtime and generate missing stage data or teacher artifacts there.
 - `--check-only` intentionally skips the heavyweight `verify_all.sh` sweep and behaves as a target-machine readiness gate.
 - This orchestrator uses a JSON lock file to prevent overlapping train-end launches.
 

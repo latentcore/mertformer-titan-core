@@ -35,18 +35,19 @@ Use this command before any real 45K training attempt. It refreshes the exact re
 Treat the 45K run as the first serious architecture validation run, not the final capability ceiling.
 
 Current repo-side state:
-- `TRAIN_ALLOWED` via `offline_clean`
-- remaining optional blocker: `online_teacher:MISSING_HF_TOKEN`
+- `TRAIN_ALLOWED` via `remote_bootstrap`
+- strict local `offline_clean` remains blocked without local logits or local actionable Phase-0
+- remaining non-winning blocker: `online_teacher:MISSING_HF_TOKEN`
 
 ## 4) Canonical 45K Launcher
 
 ```bash
-TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
+HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
 
-Optional online teacher lane:
+Strict local offline-clean lane (only when logits or local Phase-0 are satisfied):
 ```bash
-HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
+TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
 
 Common control flags:
@@ -102,8 +103,9 @@ Generate 30s proof video (headless):
 - `onnx export fail` on newer Torch/Python:
   - Use updated exporter path in `scripts/test_onnx_export.py` (already guarded for dynamo/legacy compatibility).
 - `wandb/hf token missing`:
-  - In the recommended offline-clean lane this is expected and non-blocking.
-  - `HF_TOKEN` is required only if you intentionally choose the online teacher lane.
+  - On a local review machine this can be expected.
+  - On the recommended `remote_bootstrap` target-machine lane, `HF_TOKEN` must be injected before launch.
+  - The strict local `offline_clean` lane can remain green only when logits already exist locally or local Phase-0 is actionable.
 - `venv command path mismatch`:
   - Use module style commands: `.titan-venv/bin/python -m ...`
 

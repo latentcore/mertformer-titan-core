@@ -2,14 +2,14 @@
 
 Offline-first, auditable AI systems infrastructure for controlled local deployment and truthful ML systems evidence.
 Current maturity: **pilot-ready pre-training baseline**.
-Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_OFFLINE_CLEAN`.
+Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_REMOTE_BOOTSTRAP`.
 
 ### What Matters First
 - Application-relevant gate: a real owned training run plus checkpoint-bound evidence.
 - Exact `45K` is the preferred serious validation target, not the only acceptable application threshold.
-- Canonical repo-side lane: `offline-clean`.
-- Canonical `offline_clean` semantics: strict precomputed KD with fixed teacher `meta-llama/Llama-3.3-70B-Instruct`.
-- Optional gated blocker: `online_teacher:MISSING_HF_TOKEN`.
+- Recommended repo-side lane for rented-machine start: `remote_bootstrap`.
+- Strict local lane: `offline_clean` (strict precomputed KD with fixed teacher `meta-llama/Llama-3.3-70B-Instruct`).
+- Remaining non-winning blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
 - Missing post-run evidence remains: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle, and trained export/device measurements.
 
 ### Shortest Truthful Review Path
@@ -123,7 +123,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `228 passed, 3 skipped` |
+| `python3 -m pytest -q` | `231 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -132,11 +132,11 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 
 **Feature highlight:** the canonical 45K path is now `bash zero_touch_start.sh`, which owns the exact readiness verdict, run lock, resume policy, and post-train autorun contract.
 
-This repository is no longer in idea/prototype-only state. The current working tree is repo-side 45K-ready on the canonical `offline_clean` lane; trained outputs are still absent because the real long run has not been executed on the target hardware yet.
+This repository is no longer in idea/prototype-only state. The current working tree is repo-side 45K-start-ready through the `remote_bootstrap` lane; trained outputs are still absent because the real long run has not been executed on the target hardware yet. The strict local `offline_clean` lane remains blocked until precomputed logits exist locally or local Phase-0 precompute becomes actionable.
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`228 passed, 3 skipped`)
+   - `pytest` passed (`231 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -150,15 +150,15 @@ This repository is no longer in idea/prototype-only state. The current working t
    - `reports/final_truth_matrix.md`
 
 ### Current Exact Boundary
-- Canonical repo-side lane: `offline_clean`
-- Exact readiness verdict: `TRAIN_ALLOWED` / `READY_OFFLINE_CLEAN`
-- Canonical offline-clean rule: complete precomputed logits or actionable Phase-0 precompute; no teacherless fallback on the 45K lane
-- Remaining exact blocker: `online_teacher:MISSING_HF_TOKEN` (only for the optional gated teacher lane)
+- Recommended repo-side lane: `remote_bootstrap`
+- Exact readiness verdict: `TRAIN_ALLOWED` / `READY_REMOTE_BOOTSTRAP`
+- Strict local offline-clean rule: complete precomputed logits or actionable Phase-0 precompute; no teacherless fallback on the 45K lane
+- Remaining non-winning blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`
 
 ### Final prerequisites before long-run training
 - Target hardware allocation (GPU/edge) must be reserved.
 - Transfer the repo/package artifacts to the real training machine and rerun the canonical start gate there.
-- `HF_TOKEN` is required only if you intentionally choose the online teacher/gated-access path.
+- `HF_TOKEN` must be injected on the target machine for the recommended `remote_bootstrap` lane and for the explicit online teacher lane.
 - Dataset license/hash workflow must remain compliant.
 - Full training run and benchmark outputs will be recorded only after those prerequisites.
 - Token budget (V2): default `TITAN_TOKEN_BUDGET_MODE=fixed_steps`, `TITAN_MAX_STEPS=45000`, `TITAN_TARGET_TOKENS_MIN=23.6B`.
@@ -181,7 +181,7 @@ bash zero_touch_start.sh --check-only
 
 ### Start command on the target training hardware
 ```bash
-TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
+HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
 
 ### Portable Train-Ready Checklist (Zip/Transfer Workflow)
@@ -194,12 +194,12 @@ bash zero_touch_start.sh --plan-only
 bash zero_touch_start.sh --check-only
 ```
 3. Required environment variables:
-- `HF_TOKEN` (required only for the optional gated teacher + online datasets lane)
+- `HF_TOKEN` (required for the recommended `remote_bootstrap` lane on the target machine)
 - `WANDB_API_KEY` (optional)
 - See `.env.example` for the full list.
 4. One-command training start after transfer/unzip:
 ```bash
-TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
+HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
 4b. Canonical terminal-first Kaggle closure lane:
 ```bash
@@ -224,7 +224,7 @@ HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touc
 
 | Engineering Status | `Pilot-ready pre-training baseline` |
 | :--- | :--- |
-| **Training Start Readiness** | ✅ TRAIN_ALLOWED (`READY_OFFLINE_CLEAN`; optional online teacher lane remains blocked without `HF_TOKEN`) |
+| **Training Start Readiness** | ✅ TRAIN_ALLOWED (`READY_REMOTE_BOOTSTRAP`; strict local offline_clean remains blocked without logits/local Phase-0, online_teacher remains blocked without `HF_TOKEN`) |
 | **Codebase** | ✅ Implemented (tests + offline preflight passing) |
 | **Offline Verification** | ✅ PASS (`bash scripts/verify_all.sh`) |
 | **Dataset Compliance** | ✅ Ready for offline-clean (`license/hash workflow active; stage JSONL files exist in the current working tree`) |

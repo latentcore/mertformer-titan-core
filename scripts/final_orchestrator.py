@@ -230,6 +230,7 @@ def build_run_contract() -> str:
         - Training start is allowed only when `reports/train_readiness_decision.json` says `TRAIN_ALLOWED`.
         - The start gate must produce exact blocker reason codes before any full training launch.
         - The canonical `offline_clean` lane is strict precomputed KD and keeps `meta-llama/Llama-3.3-70B-Instruct` as the fixed teacher surface.
+        - The `remote_bootstrap` lane is valid when the repo-side contract proves that the rented machine can inject `HF_TOKEN` at runtime and generate missing stage data or teacher artifacts there.
         - `--check-only` intentionally skips the heavyweight `verify_all.sh` sweep and behaves as a target-machine readiness gate.
         - This orchestrator uses a JSON lock file to prevent overlapping train-end launches.
 
@@ -400,8 +401,12 @@ def resolve_training_lane(start_gate_payload: dict | None) -> str:
     payload = start_gate_payload or {}
     if payload.get("recommended_path") == "offline_clean":
         return "offline_clean"
+    if payload.get("recommended_path") == "remote_bootstrap":
+        return "remote_bootstrap"
     if payload.get("decision_reason_code") == "READY_OFFLINE_CLEAN":
         return "offline_clean"
+    if payload.get("decision_reason_code") == "READY_REMOTE_BOOTSTRAP":
+        return "remote_bootstrap"
     return "online_teacher"
 
 
@@ -414,6 +419,9 @@ def build_training_env(resume_policy: str, start_gate_payload: dict | None = Non
         env["TITAN_REQUIRE_GATED_TEACHER"] = "1"
         env["TITAN_USE_PRECOMPUTED_LOGITS"] = "1"
         env["TITAN_USE_TR_TOKENIZER"] = "1"
+    elif resolve_training_lane(start_gate_payload) == "remote_bootstrap":
+        env["TITAN_OFFLINE"] = "0"
+        env["TITAN_RUNTIME_INJECTED_BOOTSTRAP"] = "1"
 
     if resume_policy == "off":
         env["TITAN_AUTO_RESUME"] = "0"

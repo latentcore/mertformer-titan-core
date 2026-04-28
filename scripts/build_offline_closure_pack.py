@@ -90,6 +90,21 @@ def file_size_bytes(path: Path) -> int:
     return path.stat().st_size if path.exists() else 0
 
 
+def readiness_lane(readiness: dict) -> str:
+    return str(readiness.get('recommended_path') or 'none')
+
+
+def readiness_lane_phrase(readiness: dict) -> str:
+    lane = readiness_lane(readiness)
+    if lane == 'offline_clean':
+        return 'the offline-clean lane'
+    if lane == 'remote_bootstrap':
+        return 'the remote-bootstrap lane'
+    if lane == 'online_teacher':
+        return 'the online-teacher lane'
+    return 'no active lane'
+
+
 def git_output(*args: str) -> str:
     proc = subprocess.run(['git', *args], cwd=ROOT, capture_output=True, text=True, check=False)
     return proc.stdout.strip()
@@ -307,7 +322,8 @@ def build_repo_audit(summary: dict) -> None:
         '## Current Closure Boundary',
         '',
         '- Zero-touch orchestration is implemented.',
-        '- Offline-clean readiness is green.',
+        f"- Current repo-side recommended lane: `{readiness_lane(summary['readiness'])}`.",
+        '- Offline-clean remains the strict local path; remote-bootstrap remains the rented-machine runtime-injected path.',
         '- Online teacher remains an alternate lane with external credential dependency when explicitly requested.',
         '- Real 45K outputs remain post-run evidence, not current fact.',
         '',
@@ -322,6 +338,7 @@ def build_repo_audit(summary: dict) -> None:
 def build_teacher_tokenizer_data_reports(summary: dict) -> None:
     readiness = summary['readiness']
     offline = next((row for row in readiness.get('paths', []) if row.get('path_name') == 'offline_clean'), {})
+    remote = next((row for row in readiness.get('paths', []) if row.get('path_name') == 'remote_bootstrap'), {})
     online = next((row for row in readiness.get('paths', []) if row.get('path_name') == 'online_teacher'), {})
 
     tokenizer_spec = ROOT / 'interfaces' / 'tokenizer_spec.json'
@@ -336,15 +353,17 @@ def build_teacher_tokenizer_data_reports(summary: dict) -> None:
             '',
             f"- generated_utc: `{utc_now()}`",
             '- canonical_training_lane: `offline_clean`',
+            '- remote_handoff_lane: `remote_bootstrap`',
             '- alternate_lane: `online_teacher`',
             f"- readiness_final_status: `{readiness.get('final_status', 'UNKNOWN')}`",
             f"- readiness_reason_code: `{readiness.get('decision_reason_code', 'UNKNOWN')}`",
             '',
             '## Decision',
             '',
-            '- The current repo-side recommended path is the offline-clean lane.',
+            f"- The current repo-side recommended path is {readiness_lane_phrase(readiness)}.",
             '- The online teacher lane remains available only when `HF_TOKEN` and gated access are intentionally supplied.',
             '- The canonical offline-clean launcher is now strict precomputed KD: completed logits shards or actionable Phase-0 precompute are required before start.',
+            '- The remote-bootstrap lane is allowed when the target machine will inject `HF_TOKEN` and run dataset/bootstrap steps there.',
             '',
             '## Policy Boundary',
             '',
@@ -355,6 +374,7 @@ def build_teacher_tokenizer_data_reports(summary: dict) -> None:
             '## Current Lane Status',
             '',
             f"- offline_clean: `{offline.get('status', 'UNKNOWN')}` / `{offline.get('reason_code', 'UNKNOWN')}`",
+            f"- remote_bootstrap: `{remote.get('status', 'UNKNOWN')}` / `{remote.get('reason_code', 'UNKNOWN')}`",
             f"- online_teacher: `{online.get('status', 'UNKNOWN')}` / `{online.get('reason_code', 'UNKNOWN')}`",
         ])
     )
@@ -437,7 +457,7 @@ def build_teacher_tokenizer_data_reports(summary: dict) -> None:
             '# Data Pipeline Contract',
             '',
             f'- generated_utc: `{utc_now()}`',
-            '- current_training_lane: `offline_clean`',
+            f"- current_training_lane: `{readiness_lane(readiness)}`",
             '- stage_contract: `stage1..stage5 JSONL must exist before claim-grade training`',
             '- validation_contract: `datasets/validation.jsonl` must remain parseable and above the minimum sample gate',
             '',
@@ -467,13 +487,13 @@ def build_teacher_tokenizer_data_reports(summary: dict) -> None:
             '',
             '## Risk Boundary',
             '',
-            '- Dataset presence and parse health are green for the offline-clean lane.',
+            f"- Dataset presence and parse health are green for {readiness_lane_phrase(readiness)} when its contract passes.",
             '- Claim-grade dataset lineage, large-scale provenance, and post-run consumption journals remain post-run evidence.',
         ])
     )
 
 
-def build_architecture_reports() -> None:
+def build_architecture_reports(summary: dict) -> None:
     write_text(
         REPORTS / 'architecture_honesty_audit.md',
         '\n'.join([
@@ -518,8 +538,9 @@ def build_architecture_reports() -> None:
             '## Canonical Main Path',
             '',
             '- `zero_touch_start.sh` -> `scripts/final_orchestrator.py`',
-            '- Recommended training lane for this pass: `offline_clean`',
+            f"- Recommended training lane for this pass: `{readiness_lane(summary['readiness'])}`",
             '- `TITAN_REQUIRE_GATED_TEACHER=1`, `TITAN_USE_PRECOMPUTED_LOGITS=1`, and `TITAN_USE_TR_TOKENIZER=1` define the strict offline-clean lane.',
+            '- `remote_bootstrap` keeps `TITAN_OFFLINE=0` and assumes runtime credential injection plus target-machine dataset/bootstrap execution.',
             '',
             '## Non-Canonical / Deferred',
             '',
@@ -757,35 +778,35 @@ def build_doc_alignment_report(summary: dict) -> None:
             'launcher_required': True,
             'first_serious_needles': ['first serious architecture validation run'],
             'ceiling_needles': ['final capability ceiling'],
-            'offline_needles': ['READY_OFFLINE_CLEAN', 'offline_clean'],
+            'offline_needles': ['READY_OFFLINE_CLEAN', 'READY_REMOTE_BOOTSTRAP', 'offline_clean', 'remote_bootstrap'],
         },
         {
             'path': ROOT / 'README_TR.md',
             'launcher_required': True,
             'first_serious_needles': ['ilk ciddi mimari doğrulama koşusu', 'first serious architecture validation run'],
             'ceiling_needles': ['nihai kabiliyet tavan', 'final capability ceiling', 'final ceiling'],
-            'offline_needles': ['READY_OFFLINE_CLEAN', 'offline_clean'],
+            'offline_needles': ['READY_OFFLINE_CLEAN', 'READY_REMOTE_BOOTSTRAP', 'offline_clean', 'remote_bootstrap'],
         },
         {
             'path': ROOT / 'USAGE_GUIDE.md',
             'launcher_required': True,
             'first_serious_needles': ['first serious architecture validation run'],
             'ceiling_needles': ['final capability ceiling'],
-            'offline_needles': ['READY_OFFLINE_CLEAN', 'offline_clean'],
+            'offline_needles': ['READY_OFFLINE_CLEAN', 'READY_REMOTE_BOOTSTRAP', 'offline_clean', 'remote_bootstrap'],
         },
         {
             'path': ROOT / 'TRAINING_PLAN.md',
             'launcher_required': True,
             'first_serious_needles': ['first serious architecture validation run'],
             'ceiling_needles': ['final capability ceiling'],
-            'offline_needles': ['READY_OFFLINE_CLEAN', 'offline_clean'],
+            'offline_needles': ['READY_OFFLINE_CLEAN', 'READY_REMOTE_BOOTSTRAP', 'offline_clean', 'remote_bootstrap'],
         },
         {
             'path': ROOT / 'MODEL_CARD.md',
             'launcher_required': False,
             'first_serious_needles': ['first serious architecture validation run'],
             'ceiling_needles': ['final capability ceiling'],
-            'offline_needles': ['READY_OFFLINE_CLEAN', 'offline_clean', 'TRAIN_ALLOWED'],
+            'offline_needles': ['READY_OFFLINE_CLEAN', 'READY_REMOTE_BOOTSTRAP', 'offline_clean', 'remote_bootstrap', 'TRAIN_ALLOWED'],
         },
     ]
     for rule in rules:
@@ -821,7 +842,7 @@ def build_operating_docs(summary: dict) -> None:
             '# Commercial Handover Pack',
             '',
             '- current_product_sentence: Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre edilebilir zeka altyapısı.',
-            '- current_repo_state: pre-training closure-complete on the offline-clean lane; trained evidence pending the real 45K run.',
+            f"- current_repo_state: pre-training closure-complete on {readiness_lane_phrase(summary['readiness'])}; trained evidence pending the real 45K run.",
             '- customer delivery boundary: no trained-model claim until trained checkpoint + benchmark + demo + evidence pack exist.',
             '- supporting details: `reports/commercial_handover/`',
         ])
@@ -951,7 +972,7 @@ def main() -> int:
 
     build_repo_audit(summary)
     build_teacher_tokenizer_data_reports(summary)
-    build_architecture_reports()
+    build_architecture_reports(summary)
     build_runtime_reports(summary)
     build_benchmark_and_demo_reports(summary)
     build_package_reports()

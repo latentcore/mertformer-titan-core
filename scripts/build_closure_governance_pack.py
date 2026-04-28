@@ -1036,6 +1036,28 @@ def repo_side_train_allowed(readiness: dict) -> bool:
     return readiness.get("final_status") == "TRAIN_ALLOWED"
 
 
+def readiness_lane(readiness: dict) -> str:
+    return str(readiness.get("recommended_path") or "none")
+
+
+def readiness_lane_phrase(readiness: dict) -> str:
+    lane = readiness_lane(readiness)
+    if lane == "offline_clean":
+        return "the offline-clean lane"
+    if lane == "remote_bootstrap":
+        return "the remote-bootstrap lane"
+    if lane == "online_teacher":
+        return "the online-teacher lane"
+    return "no active lane"
+
+
+def readiness_green_remainder(readiness: dict) -> str:
+    blockers = list(readiness.get("blockers", []))
+    if not blockers:
+        return "No remaining exact blocker is active in the current repo-side contract."
+    return f"Remaining non-winning exact blockers: {', '.join(blockers)}."
+
+
 def current_claims(readiness: dict) -> list[dict]:
     ready = zero_touch_ready()
     train_allowed = repo_side_train_allowed(readiness)
@@ -1045,12 +1067,12 @@ def current_claims(readiness: dict) -> list[dict]:
         if claim["claim_id"] == "claim.repo_45k_ready_now":
             claim["status"] = "verified" if train_allowed else "blocked"
             if train_allowed:
-                claim["still_missing"] = "Repo-side readiness is green on the offline-clean lane. Real trained outputs remain post-run evidence, and the online teacher lane still requires optional gated credentials."
+                claim["still_missing"] = f"Repo-side readiness is green on {readiness_lane_phrase(readiness)}. Real trained outputs remain post-run evidence. {readiness_green_remainder(readiness)}"
             else:
                 claim["still_missing"] = f"Exact blockers remain: {', '.join(blockers) or 'unknown'}."
         if claim["claim_id"] == "claim.training_readiness_reason_codes":
             if train_allowed:
-                claim["still_missing"] = "The repo-side verdict is TRAIN_ALLOWED via offline_clean; the remaining exact reason-coded blocker is the optional online_teacher lane without HF_TOKEN."
+                claim["still_missing"] = f"The repo-side verdict is TRAIN_ALLOWED via {readiness_lane(readiness)}. {readiness_green_remainder(readiness)}"
             else:
                 claim["still_missing"] = "Exact blockers must still be cleared before TRAIN_ALLOWED can be granted."
         if claim["claim_id"] == "claim.canonical_closure_flow_exists" and ready:
@@ -1110,7 +1132,7 @@ def current_backlog_groups(readiness: dict) -> list[dict]:
             group["still_missing"] = "Real-run evidence remains separate from the command ladder and will appear only after the actual owned training run."
         if group["group_id"] == "readiness_gate" and train_allowed:
             group["blocks_45k_readiness"] = False
-            group["still_missing"] = "Repo-side readiness is green via offline_clean. The remaining exact blocker is the optional online_teacher lane without HF_TOKEN."
+            group["still_missing"] = f"Repo-side readiness is green via {readiness_lane(readiness)}. {readiness_green_remainder(readiness)}"
         if group["group_id"] == "data_contract" and train_allowed:
             group["blocks_45k_readiness"] = False
             group["what_is_done"] = "The stage1..stage5 JSONL files exist, the offline tokenizer cache is accepted, and the offline-clean data path is green."
@@ -1199,7 +1221,7 @@ def build_truth_constitution(readiness: dict) -> str:
     train_allowed = repo_side_train_allowed(readiness)
     blockers = list(readiness.get("blockers", []))
     if train_allowed:
-        readiness_rule = "The current repo-side readiness verdict is `TRAIN_ALLOWED` via the offline-clean lane. The remaining exact blocker is the optional `online_teacher:MISSING_HF_TOKEN` lane when gated teacher access is intentionally requested."
+        readiness_rule = f"The current repo-side readiness verdict is `TRAIN_ALLOWED` via {readiness_lane_phrase(readiness)}. {readiness_green_remainder(readiness)}"
     else:
         blocker_lines = "\n".join(f"- `{blocker}`" for blocker in blockers or ["unknown"])
         readiness_rule = f"The repo is not genuinely main-run-ready while either of the current blockers remains active:\n{blocker_lines}"

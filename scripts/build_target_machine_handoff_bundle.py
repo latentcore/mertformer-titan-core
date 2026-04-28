@@ -76,14 +76,21 @@ def resolve_transfer_files() -> list[str]:
 
 
 def build_operator_steps(decision: dict) -> list[str]:
-    recommended_path = str(decision.get("recommended_path") or "offline_clean")
+    recommended_path = str(decision.get("recommended_path") or "none")
     online_hint = "HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh"
+    offline_hint = "TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh"
+    if recommended_path == "remote_bootstrap":
+        launcher_line = f"Recommended rented-machine launcher: `{online_hint}`"
+        policy_line = "If stage JSONL or logits are absent locally, the rented machine may generate them there after runtime credential injection."
+    else:
+        launcher_line = f"Canonical offline-clean launcher: `{offline_hint}`"
+        policy_line = f"Optional online teacher lane only if intentionally chosen: `{online_hint}`"
     return [
         "Copy or extract this bundle onto the target training machine.",
         "Run `bash zero_touch_start.sh --check-only` first.",
         "If the target machine start gate remains green, launch the canonical path immediately.",
-        f"Canonical offline-clean launcher: `TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh`",
-        f"Optional online teacher lane only if intentionally chosen: `{online_hint}`",
+        launcher_line,
+        policy_line,
         f"Current repo-side recommended_path is `{recommended_path}`.",
     ]
 

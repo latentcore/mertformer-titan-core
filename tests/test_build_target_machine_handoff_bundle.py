@@ -90,3 +90,55 @@ def test_build_target_machine_handoff_bundle_outputs_zip_and_manifest(tmp_path: 
     assert "TARGET_MACHINE_README.md" in names
     assert "reports/target_machine_handoff_manifest.json" in names
     assert "reports/target_machine_handoff_manifest.md" in names
+
+
+def test_build_target_machine_handoff_bundle_remote_bootstrap_steps(tmp_path: Path, monkeypatch) -> None:
+    module = _load_module()
+
+    root = tmp_path / "repo"
+    reports = root / "reports"
+    artifacts = root / "artifacts"
+    reports.mkdir(parents=True, exist_ok=True)
+    artifacts.mkdir(parents=True, exist_ok=True)
+
+    for rel, body in {
+        "zero_touch_start.sh": "#!/usr/bin/env bash\necho ok\n",
+        "run.sh": "#!/usr/bin/env bash\necho run\n",
+        "scripts/final_orchestrator.py": "print('plan')\n",
+        "reports/train_readiness_decision.json": json.dumps({"final_status": "TRAIN_ALLOWED"}),
+        "reports/train_readiness_decision.md": "# ready\n",
+        "reports/start_gate_report.json": json.dumps({"ok": True}),
+        "reports/start_gate_operator_decision.json": json.dumps(
+            {
+                "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
+                "train_allowed": True,
+                "decision_reason_code": "READY_REMOTE_BOOTSTRAP",
+                "recommended_path": "remote_bootstrap",
+                "required_transfer_files": [
+                    "zero_touch_start.sh",
+                    "run.sh",
+                    "scripts/final_orchestrator.py",
+                ],
+            }
+        ),
+        "reports/start_gate_operator_decision.md": "# decision\n",
+        "reports/repo_external_handoff.md": "# handoff\n",
+    }.items():
+        path = root / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(body, encoding="utf-8")
+
+    monkeypatch.setattr(module, "ROOT", root)
+    monkeypatch.setattr(module, "REPORTS", reports)
+    monkeypatch.setattr(module, "ARTIFACTS", artifacts)
+    monkeypatch.setattr(module, "MANIFEST_JSON", reports / "target_machine_handoff_manifest.json")
+    monkeypatch.setattr(module, "MANIFEST_MD", reports / "target_machine_handoff_manifest.md")
+    monkeypatch.setattr(module, "BUNDLE_ZIP", artifacts / "target_machine_handoff_bundle.zip")
+    monkeypatch.setattr(module, "BUNDLE_SHA256", artifacts / "target_machine_handoff_bundle.zip.sha256")
+
+    rc = module.main()
+
+    assert rc == 0
+    manifest = json.loads(module.MANIFEST_JSON.read_text(encoding="utf-8"))
+    assert manifest["recommended_path"] == "remote_bootstrap"
+    assert any("HF_TOKEN=..." in step for step in manifest["operator_steps"])

@@ -60,6 +60,9 @@ def transfer_file_candidates() -> list[str]:
         "zero_touch_start.sh",
         "run.sh",
         "launch_mertformer_kaggle_closure.command",
+        "scripts/data_pipeline.py",
+        "scripts/smart_runner.py",
+        "scripts/precompute_logits_topk.py",
         "scripts/kaggle_onefile_closure_build30.py",
         "scripts/kaggle_onecell_t4_build30.py",
         "scripts/macos_keepawake.sh",
@@ -88,10 +91,17 @@ def build_operator_decision(structural_ok: bool, train_allowed: bool, readiness:
 
     if structural_ok and train_allowed:
         next_action = "ALLOCATE_TARGET_MACHINE_AND_START"
-        operator_message = (
-            "Repo-side gate is green. Allocate or rent the target training machine, transfer the canonical files, "
-            "rerun `bash zero_touch_start.sh --check-only` there, and start training immediately if it remains green."
-        )
+        if recommended_path == "remote_bootstrap":
+            operator_message = (
+                "Repo-side gate is green via the rented-machine bootstrap lane. Allocate or rent the target training machine, "
+                "inject `HF_TOKEN` there (and `WANDB_API_KEY` only if needed), rerun `bash zero_touch_start.sh --check-only`, "
+                "and start immediately if the target-machine gate remains green."
+            )
+        else:
+            operator_message = (
+                "Repo-side gate is green. Allocate or rent the target training machine, transfer the canonical files, "
+                "rerun `bash zero_touch_start.sh --check-only` there, and start training immediately if it remains green."
+            )
     elif train_allowed and not verify_ok:
         next_action = "DO_NOT_RENT_YET_FIX_START_GATE"
         operator_message = (

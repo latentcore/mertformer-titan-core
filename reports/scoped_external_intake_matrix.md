@@ -11,4 +11,4 @@
 | `<HOME>/Downloads/MertOS_Core/mertformer_cleanup_20260110_015202.log` | `file` | `archive_into_closure_pack` | `110634` | `9fe65613405cb9d2dc6dfe5908aadc832ad5f455dabe6867610e25d6fa172e88` |
 | `<HOME>/Downloads/MertOS_Core/mertformer_cleanup_20260110_015332.log` | `file` | `archive_into_closure_pack` | `362` | `04ab007c5adcf3f2e857aa3be096c493f6d6c26d9fb868feb670726e364704bb` |
 | `<HOME>/Downloads/content/mertformer_outputs` | `dir` | `keep_as_external_artifact` | `` | `` |
-| `/Applications/mertformer-titan-core.zip` | `file` | `keep_as_external_artifact` | `1262108871` | `c5035e3b18c479d528faee1e785e2d1d750b1a635ce8808c7ce86224e0acdaed` |
+| `/Applications/mertformer-titan-core.zip` | `file` | `keep_as_external_artifact` | `2689065154` | `f776385bb42f1801f7894d98b836a78ffccb294c57ae774f89cd303535b643e6` |
