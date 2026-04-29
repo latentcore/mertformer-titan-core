@@ -307,6 +307,7 @@ Generated automatically.
 - `reports/go_status_matrix.md`
 - `reports/go_status_matrix_TR.md`
 - `reports/gtm_master_plan.md`
+- `reports/immutable_evidence_register.md`
 - `reports/investable_definition.md`
 - `reports/ip_licensing_split.md`
 - `reports/ip_licensing_split_TR.md`

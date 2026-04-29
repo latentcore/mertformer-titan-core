@@ -1,43 +1,65 @@
-# Dahili AGI Boşluk Haritası (v1.0 (Build 30))
+# Dahili AGI Boşluk Haritası (Build 30 V2)
 
-Bu doküman, **AGI-turu yetenek alanlarını** MertFormer v1.0 (Build 30) durumuyla eslestiren dahili bir gerçeklik kontroludur.
-**Kamusal bir iddia değildir** ve dahili yol haritası referansı olarak tutulmalıdır.
+Bu belge dahili çözülememiş-problemler kaydıdır. Kamusal AGI iddiası değildir ve repo readiness durumunu yetenek kanıtına yükseltmez.
 
-Gösterge:
-- ✅ Var
-- 🟡 Kısmı / altyapı var
-- 🔴 Yok / plan aşamasinda
+## Güncel Truth Sınırı
+- Güncel repo-side readiness verdict: `TRAIN_ALLOWED`
+- Güncel repo-side reason code: `READY_REMOTE_BOOTSTRAP`
+- Güncel önerilen aktif lane: `remote_bootstrap`
+- Sıkı yerel lane: `offline_clean`
+- Kalan non-winning blocker'lar: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`
+- En önemli eksik evidence sınıfı: gerçek owned training run, trained checkpoint'ler, checkpoint-bound benchmark'lar, trained demo bundle ve trained export/device measurements
 
-## MertFormer v1.0 (Build 30) vs. AGI Yetenek Haritası
+## Durum Göstergesi
+- `implemented_scaffold`: kod yüzeyi var, fakat claim-grade kanıt yok
+- `partial_research`: bazı bileşenler var, ama çekirdek problem hâlâ açık
+- `open_problem`: bugün ikna edici bir kapanış yok
 
-| Alan | AGI Hedefi | MertFormer v1.0 (Build 30) | Kanıt | Boşluk / Risk | Sonraki Adım |
-| --- | --- | --- | --- | --- | --- |
-| Genel akıl yürütme | Alanlar arası transfer | 🟡 Mimari hazır, eğitim kanıtı yok | README, config | Gerçek run yok | Master Run + bench |
-| Uzun süreli bellek | Kalıcı geri çağırma | 🟡 Orchestrator memory var | orchestrator/memory.py | Üretim kanıtı yok | Retrieval demo |
-| Grounding | Gerçek dünya etkileşimi | 🔴 Metin ağırlıklı | - | Çevre döngüsü yok | Offline agent demo |
-| Planlama | Çok adimli hedef tutarlılığı | 🟡 Orchestrator core var | orchestrator/core.py | Stres testi yok | Task runner demo |
-| Self-audit | Çıktı doğrulama | 🔴 Yok | - | Halüsinasyon riski | Verifier head |
-| Belirsizlik | Güven kalibrasyonu | 🔴 Yok | - | Güven riski | Uncertainty head |
-| Tool-use güvenliği | Güvenli araç kullanımi | 🟡 Sensing modülleri var | orchestrator/*_sense.py | Sandbox/contract yok | Tool contracts |
-| MoE adaptivligi | Dinamik uzman dengesi | 🟡 Var ama sabit | layers/moe.py | Adaptif değil | Adaptive MoE |
-| Online learning | Güvenli sürekli öğrenme | 🔴 Yok | - | Stabilite/gvenlik riski | Controlled updates |
-| Transfer | Hızlı adaptasyon | 🟡 Distill + curriculum | scripts/data_pipeline.py | Gerçek eval yok | Bench outputs |
-| Alignment | Güvenli kullanım sınırı | 🟡 Kill switch + gate | scripts/operator_mode_gate.py | Red-team yok | Red-team tests |
-| Robustness | Stres altında stabilite | 🟡 Failure budget | orchestrator/failure_budget.py | Scale testi yok | Stress tests |
-| Evaluation | Ölçülmüş performans | 🟡 Runner var | scripts/benchmarks_internal.py | Gerçek çıktı yok | HumanEval/MBPP |
-| Edge operasyonu | Offline / cihaz içi | 🟡 Hedef var | README, export scripts | Cihaz kanıtı yok | Device demo |
-| Verimlilik | Düşük enerji/bellek | 🟡 BitNet sim | layers/bitlinear.py | Kernel yok | Low-bit inference |
-| Swarm çalışma | Çok ajanli koordinasyon | 🟡 Hedef mimari | README Ek v5.2 | Uygulama yok | Small swarm demo |
-| Self-improvement | Hatadan öğrenme | 🟡 SAGE vizyonu | README Swarm v5.2 | Uygulama yok | Post-mortem loop |
-| Ethics / use policy | Açık kullanım sınırı | 🟡 Lisans | LICENSE | Politika eksik | USE_POLICY |
-| Data lineage | Kaynak izi | 🟡 Kısmı doküman | datasets/README.md | Tam manifest yok | Dataset manifests |
-| Reproducibility | Tam tekrar üretim | 🟡 Sablonlar | repro/* | Gerçek CUDA lock yok | write_cuda_lock |
+## Çözülememiş Matematik + Sistem Register'ı
 
-## Özet (Dahili)
-- AGI yakınlığı: **uzak**
-- Sistem prototip olgunlugu: **yüksek**
-- En kritik kanıt eksiği: **gerçek eğitim + benchmark + demo**
-- En kritik yetenek boşlukları: **grounding, self-audit, belirsizlik, güvenilir uzun bellek**
+| Problem Sınıfı | Neden Hâlâ Açık | Mevcut Repo Scaffold | Durum | Gerçek İlerleme Sayılacak Şey |
+| --- | --- | --- | --- | --- |
+| Quadratic veya subquadratic context scaling | Uzun bağlam maliyeti ve bellek büyümesi pratik ölçeklemeyi hâlâ zorluyor. | `layers/mla.py`, long-context konumlandırması, runtime notları | `partial_research` | Uzun bağlamda sürdürülebilir kalite ve sınırlı maliyet ile ölçülmüş eğitim/inference kanıtı |
+| Memory wall ve host-device bandwidth | Low-bit ağırlıklar activation, cache ve transfer darboğazlarını tek başına kaldırmıyor. | BitNet tarzı katmanlar, export/runtime notları, benchmark scaffold'ları | `partial_research` | Ölçülmüş bandwidth profili, cache politikası kanıtı ve trained checkpoint üstünde uçtan uca throughput kazancı |
+| Low-bit ve sparse training stability | Sparse routing ve low-bit matematik gradient, routing veya convergence tarafını bozabilir. | `layers/bitlinear.py`, `layers/moe.py`, `scripts/titan_preflight.py`, güvenlik korumaları | `partial_research` | Uzun koşu convergence kanıtı ve dense/yüksek hassasiyet baseline'larına karşı ablation |
+| Router collapse ve expert load balance | MoE'nin faydası, zaman içinde sağlıklı expert kullanımı gerektirir. | `layers/moe.py`, router health sinyalleri, tolerance check'leri | `partial_research` | Gerçek koşu telemetrisi ile kararlı expert kullanımı ve collapse olmadan kalite kazancı |
+| Continual learning ve catastrophic forgetting | Yeni yeteneği öğrenirken eski yeteneği korumak hâlâ çözülememiş alandır. | `train/continual_adapter.py`, feature flag'ler, roadmap dokümanları | `implemented_scaffold` | Ardışık görevlerde eski yeteneğin korunduğunu gösteren ölçülmüş kanıt |
+| Calibrated uncertainty ve abstention | Modelin ne zaman “bilmiyorum” demesi gerektiği çözülmüş değil. | Governance ve verification yüzeyleri var, ama calibrated uncertainty katmanı yok | `open_problem` | Confidence calibration benchmark'ları, abstention policy ve ölçülmüş truthfulness artışı |
+| Long-horizon credit assignment | Uzun zincirli planlama, yerel next-token tahminden çok daha zordur. | Orchestrator planner, verifier ve runtime scaffold'ları | `implemented_scaffold` | Doğrulanmış görev tamamlama ile kararlı çok adımlı planlama benchmark'ları |
+| Causal abstraction ve counterfactual reasoning | Örüntü tamamlama, güvenilir neden-sonuç akıl yürütmenin yerine geçmez. | World-model ve cognitive-extension scaffold'ları | `implemented_scaffold` | Intervention veya counterfactual değerlendirmeli kontrollü causal görevler |
+| World modeling ve partial observability | Belirsizlik altında güvenilir latent world state burada çözülmüş değil. | `layers/world_model_head.py`, orchestrator sensing modülleri | `implemented_scaffold` | Interactive veya simüle ortamlarda ölçülmüş prediction kalitesi |
+| Tool-grounded planning reliability | Tool use ancak araç çıktıları doğrulanıp güvenli recovery yapılabiliyorsa değerlidir. | `orchestrator/tool_executor.py`, governance, verifier, swarm runtime | `implemented_scaffold` | Safety check, verification ve düşük failure rate ile tool-use benchmark'ları |
+| Mechanistic interpretability'den intervention'a geçiş | İç yapıyı okumak yetmez; steering/intervention kanıtı eksik. | Audit ve verifier yüzeyleri, raporlama disiplini | `open_problem` | Kaliteyi bozmadan davranışı öngörülebilir biçimde değiştiren intervention kanıtı |
+| Adversarial robustness ve auditability | Güçlü sistemler, prompt saldırıları ve misuse altında da güvenilir ölçüm ister. | Policy'ler, governance dokümanları, failure-budget mantığı, tool-abuse notları | `partial_research` | Bağımsız red-team sonuçları, jailbreak direnci kanıtı ve audit-grade trace'ler |
+
+## Repo Closure Sonrası da Açık Kalan Yetenek Boşlukları
+- İnsan seviyesinde novel problem solving
+- Dar prompt hileleri olmadan alanlar arası transferable planning
+- Uzun süren agent iş yüklerinde memory reliability
+- Gerçek görevlere bağlı grounded multimodal understanding
+- Baskı, belirsizlik ve adversarial prompting altında robust truthfulness
+- Sınırları belirli failure mode'larla safe tool-grounded execution
+- Dış inceleme karşısında ayakta kalan auditability standartları
+
+## Bugün Ne Var, Ne Yok
+
+### Anlamlı implemented scaffold'lar
+- Memory, planner, verifier, governance, self-audit ve swarm runtime yüzeyleri kodda mevcut.
+- Zero-touch training ve post-train orchestration yüzeyleri mevcut.
+- Readiness, freeze, manifest ve claim-boundary governance alışılmadık derecede açık.
+
+### Hâlâ evidence olarak var olmayan şeyler
+- Gerçek uzun training run
+- Trained checkpoint hikâyesi
+- Checkpoint-bound benchmark kanıtı
+- Trained artifact üstünde ölçülmüş device/runtime kanıtı
+- AGI dili için herhangi bir bağımsız dayanak
+
+## Dahili Özet
+- AGI yakınlığı: uzak
+- Repo-side engineering closure: güçlü
+- Daha güçlü claim'lerin önündeki ana engel: klasör sayısı değil evidence eksikliği
+- En önemli sonraki adım: owned run + checkpoint-bound ölçüm
 
 ## Politika Notu
-Bu doküman dahili kullanıma yöneliktir. AGI iddiası değildir.
+Bu dosya dahili kullanıma yöneliktir. Yetkinlik iddiası değil, çözülememiş matematik ve sistem problemleri kaydıdır.

@@ -1,6 +1,6 @@
 {
   "schema": "workspace_hygiene_manifest_v1",
-  "generated_utc": "2026-04-28T06:30:15Z",
+  "generated_utc": "2026-04-29T01:13:11Z",
   "mode": "audit_only",
   "workspace_root": "<WORKSPACE_ROOT>",
   "repo_root": "<REPO_ROOT>",
@@ -126,13 +126,6 @@
       "decision_state": "quarantine_first"
     },
     {
-      "path": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_v3_logged_20260422_190808.zip",
-      "classification": "archive_or_dump",
-      "reason": "Top-level archive or dump outside the main repo. Review and quarantine before any permanent cleanup.",
-      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_v3_logged_20260422_190808.zip",
-      "decision_state": "quarantine_first"
-    },
-    {
       "path": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_v3_logged_20260422_190808.zip.sha256",
       "classification": "external_workspace_file",
       "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
@@ -144,13 +137,6 @@
       "classification": "external_workspace_entry",
       "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
       "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420",
-      "decision_state": "quarantine_first"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420.zip",
-      "classification": "archive_or_dump",
-      "reason": "Top-level archive or dump outside the main repo. Review and quarantine before any permanent cleanup.",
-      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420.zip",
       "decision_state": "quarantine_first"
     },
     {

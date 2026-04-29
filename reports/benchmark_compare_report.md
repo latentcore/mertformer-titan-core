@@ -1,6 +1,6 @@
 # Benchmark Compare Report
 
-- generated_utc: `2026-04-28T06:32:29Z`
+- generated_utc: `2026-04-29T01:14:53Z`
 - status: `ready`
 - scope: smoke/pre-training compare only; trained-checkpoint compare remains post-run.
 

@@ -1,41 +1,56 @@
 {
   "schema": "doc_alignment_report_v1",
-  "generated_utc": "2026-04-28T06:32:29Z",
+  "generated_utc": "2026-04-29T01:14:53Z",
   "checks": [
     {
       "path": "README.md",
       "has_canonical_launcher": true,
       "mentions_first_serious_run": false,
       "mentions_final_ceiling": false,
-      "mentions_ready_offline_clean": true
+      "mentions_current_reason": true,
+      "mentions_current_path": true,
+      "mentions_all_blockers": true,
+      "mentions_stale_active_reason": false
     },
     {
       "path": "README_TR.md",
       "has_canonical_launcher": true,
       "mentions_first_serious_run": false,
       "mentions_final_ceiling": false,
-      "mentions_ready_offline_clean": true
+      "mentions_current_reason": true,
+      "mentions_current_path": true,
+      "mentions_all_blockers": true,
+      "mentions_stale_active_reason": false
     },
     {
       "path": "USAGE_GUIDE.md",
       "has_canonical_launcher": true,
       "mentions_first_serious_run": true,
       "mentions_final_ceiling": true,
-      "mentions_ready_offline_clean": true
+      "mentions_current_reason": false,
+      "mentions_current_path": true,
+      "mentions_all_blockers": false,
+      "mentions_stale_active_reason": false
     },
     {
       "path": "TRAINING_PLAN.md",
       "has_canonical_launcher": true,
       "mentions_first_serious_run": true,
       "mentions_final_ceiling": true,
-      "mentions_ready_offline_clean": true
+      "mentions_current_reason": true,
+      "mentions_current_path": true,
+      "mentions_all_blockers": true,
+      "mentions_stale_active_reason": false
     },
     {
       "path": "MODEL_CARD.md",
       "has_canonical_launcher": true,
       "mentions_first_serious_run": true,
       "mentions_final_ceiling": true,
-      "mentions_ready_offline_clean": true
+      "mentions_current_reason": true,
+      "mentions_current_path": true,
+      "mentions_all_blockers": true,
+      "mentions_stale_active_reason": false
     }
   ]
 }

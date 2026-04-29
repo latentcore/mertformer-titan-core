@@ -17,6 +17,9 @@ Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre ed
 - Runtime toplamı: repo artefaktlarında ölçülmüş durumda
 - Benchmark uygunluğu: eğitimli checkpoint olmadan `NOT ELIGIBLE FOR CLAIM`
 - 45K koşusu: ilk ciddi mimari doğrulama koşusu, nihai kapasite tavanı değil
+- Readiness duruşu: repo-side start gate `remote_bootstrap` lane üzerinde yeşildir (`TRAIN_ALLOWED` / `READY_REMOTE_BOOTSTRAP`)
+- Sıkı yerel sınır: `offline_clean`, strict precomputed-KD lane olarak kalır ve yerel logits veya yerel actionable Phase-0 olmadan bloklu durur
+- Kalan non-winning blocker'lar: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`
 
 ## Amaçlanan Kullanım
 - Offline-first ve edge-native deneyler

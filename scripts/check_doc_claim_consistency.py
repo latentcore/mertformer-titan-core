@@ -22,9 +22,18 @@ SECURITY_EN = ROOT / "SECURITY.md"
 SECURITY_TR = ROOT / "SECURITY_TR.md"
 MODEL_CARD_EN = ROOT / "MODEL_CARD.md"
 MODEL_CARD_TR = ROOT / "MODEL_CARD_TR.md"
+README_SUMMARY_EN = ROOT / "README_SUMMARY.md"
+README_SUMMARY_TR = ROOT / "README_SUMMARY_TR.md"
+DOC_README_EN = ROOT / "documents" / "README_before_final_simplification.md"
+DOC_README_TR = ROOT / "documents" / "README_TR_before_final_simplification.md"
+ANTHROPIC_README = ROOT / "applications" / "anthropic" / "README.md"
+ANTHROPIC_PROJECT_SUMMARY = ROOT / "applications" / "anthropic" / "project_summary.md"
+ANTHROPIC_MEASURED_SUMMARY = ROOT / "applications" / "anthropic" / "measured_evidence_summary.md"
+ANTHROPIC_INTERVIEW_PREP = ROOT / "applications" / "anthropic" / "interview_prep.md"
 SYSTEM_PROMPT = ROOT / "prompts/system_v1.txt"
 SOP_SUMMARY = ROOT / "reports" / "one_command_full_sop_summary.md"
 START_GATE_REPORT = ROOT / "reports" / "start_gate_report.json"
+READINESS_JSON = ROOT / "reports" / "train_readiness_decision.json"
 
 TEST_STAT_RE = re.compile(r"(\d+\s+passed,\s*\d+\s+skipped)")
 
@@ -104,6 +113,21 @@ def accepted_test_stats(expected_test_stat: str) -> set[str]:
     return accepted
 
 
+def load_readiness_truth() -> dict:
+    if not READINESS_JSON.exists():
+        raise RuntimeError(f"missing readiness truth file: {READINESS_JSON}")
+    return json.loads(read_text(READINESS_JSON))
+
+
+def check_readiness_surface(name: str, text: str, required: list[str], forbidden: list[str], errors: list[str]) -> None:
+    for needle in required:
+        if needle not in text:
+            errors.append(f"missing readiness truth in {name}: {needle}")
+    for needle in forbidden:
+        if needle and needle in text:
+            errors.append(f"stale readiness truth in {name}: {needle}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check documentation claim/evidence consistency.")
     parser.add_argument("--expected-test-stat", default="auto")
@@ -125,7 +149,20 @@ def main() -> int:
     security_tr = read_text(SECURITY_TR)
     model_card_en = read_text(MODEL_CARD_EN)
     model_card_tr = read_text(MODEL_CARD_TR)
+    summary_en = read_text(README_SUMMARY_EN)
+    summary_tr = read_text(README_SUMMARY_TR)
+    doc_readme_en = read_text(DOC_README_EN)
+    doc_readme_tr = read_text(DOC_README_TR)
+    anthropic_readme = read_text(ANTHROPIC_README)
+    anthropic_project_summary = read_text(ANTHROPIC_PROJECT_SUMMARY)
+    anthropic_measured_summary = read_text(ANTHROPIC_MEASURED_SUMMARY)
+    anthropic_interview_prep = read_text(ANTHROPIC_INTERVIEW_PREP)
     system_prompt = read_text(SYSTEM_PROMPT)
+    readiness = load_readiness_truth()
+    current_reason = str(readiness.get("decision_reason_code") or "UNKNOWN")
+    current_path = str(readiness.get("recommended_path") or "none")
+    blockers = [str(item) for item in readiness.get("blockers", []) if str(item).strip()]
+    stale_reason = "READY_OFFLINE_CLEAN" if current_reason != "READY_OFFLINE_CLEAN" else ""
 
     required_pairs = [
         ("README.md", en, "NOT ELIGIBLE FOR CLAIM"),
@@ -193,6 +230,23 @@ def main() -> int:
         errors.append(
             "release_snapshot_TR.md must explicitly mark audit EN_TR/DE_TR docs as pointer files"
         )
+
+    readiness_rules = [
+        ("README.md", en, [current_reason, current_path, *blockers], [stale_reason]),
+        ("README_TR.md", tr, [current_reason, current_path, *blockers], [stale_reason]),
+        ("MODEL_CARD.md", model_card_en, [current_path, *blockers], [stale_reason]),
+        ("MODEL_CARD_TR.md", model_card_tr, [current_path], [stale_reason]),
+        ("README_SUMMARY.md", summary_en, [current_reason, current_path, *blockers], [stale_reason]),
+        ("README_SUMMARY_TR.md", summary_tr, [current_reason, current_path, *blockers], [stale_reason]),
+        ("documents/README_before_final_simplification.md", doc_readme_en, [current_reason, current_path, *blockers], [stale_reason]),
+        ("documents/README_TR_before_final_simplification.md", doc_readme_tr, [current_reason, current_path, *blockers], [stale_reason]),
+        ("applications/anthropic/README.md", anthropic_readme, [current_reason, current_path, *blockers], [stale_reason]),
+        ("applications/anthropic/project_summary.md", anthropic_project_summary, [current_reason, current_path], [stale_reason]),
+        ("applications/anthropic/measured_evidence_summary.md", anthropic_measured_summary, [current_reason, current_path], [stale_reason]),
+        ("applications/anthropic/interview_prep.md", anthropic_interview_prep, [current_reason, current_path], [stale_reason]),
+    ]
+    for name, text, required, forbidden in readiness_rules:
+        check_readiness_surface(name, text, required, forbidden, errors)
 
     for md_path in iter_public_markdown():
         text = read_text(md_path)

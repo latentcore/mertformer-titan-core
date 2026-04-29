@@ -42,8 +42,8 @@ def test_main_succeeds_without_desktop_directory(tmp_path: Path, monkeypatch):
         json.dumps(
             {
                 "final_status": "TRAIN_ALLOWED",
-                "decision_reason_code": "READY_OFFLINE_CLEAN",
-                "recommended_path": "offline_clean",
+                "decision_reason_code": "READY_REMOTE_BOOTSTRAP",
+                "recommended_path": "remote_bootstrap",
             }
         ),
         encoding="utf-8",

@@ -66,17 +66,20 @@ fi
   run_step "kaggle_closure_verify" "$PY_BIN" scripts/kaggle_onefile_closure_build30.py --mode verify --report-out reports/kaggle_onefile_closure_verify.json
   run_step "cfc_moe_tolerance_check" "$PY_BIN" scripts/cfc_moe_tolerance_check.py --out reports/cfc_moe_tolerance_report.json
   run_step "md_quality_all" "$PY_BIN" scripts/md_quality_gate.py --root . --scope all --out reports/md_lint_report.json
+  run_step "md_integrity_all" "$PY_BIN" scripts/md_integrity_check.py --root .
   run_step "linkcheck_all" "$PY_BIN" scripts/linkcheck_gate.py --root . --scope all --out reports/linkcheck_report.json
   run_step "docs_inventory" "$PY_BIN" scripts/docs_inventory.py
   run_step "sync_manifest" "$PY_BIN" scripts/sync_manifest.py --root . --manifest reports/release_manifest.json --structure docs/PROJECT_STRUCTURE.md --matrix reports/file_sync_matrix.json --sync-report reports/project_structure_sync_report.json --policy-report reports/policy_sync_report.json
   run_step "dealroom_sync" "$PY_BIN" scripts/dealroom_sync.py
   run_step "unicode_path_guard" "$PY_BIN" scripts/unicode_path_guard.py --root . --out reports/unicode_path_guard_report.json --fail-on-hit
   run_step "duplicate_zip_guard" "$PY_BIN" scripts/duplicate_zip_guard.py --root packages --root artifacts --out reports/duplicate_zip_guard_report.json
-  run_step "scoped_external_intake_matrix" "$PY_BIN" scripts/build_scoped_external_intake_matrix.py
+  run_step "scoped_external_intake_matrix" "$PY_BIN" scripts/build_scoped_external_intake_matrix.py --sync-mode audit
   run_step "scoped_cleanup_apply" "$PY_BIN" scripts/cleanup_scoped_closure_junk.py --apply --delete-stale-zips
   run_step "intermediate_cache_cleanup" "$PY_BIN" scripts/run_and_clean_pycache.py --root . --include-tool-caches --full-clean --include-venv-caches -- bash -lc true
   run_step "clean_runtime_artifacts_check" bash scripts/clean_runtime_artifacts.sh --check
+  run_step "pre_zip_cache_cleanup" "$PY_BIN" scripts/run_and_clean_pycache.py --root . --include-tool-caches --full-clean --include-venv-caches -- bash -lc true
   run_step "release_build30" bash scripts/release_build30.sh
+  run_step "unlock_artifacts" bash -lc 'chflags nouchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 artifacts/mertformer_training_outputs_bundle.zip artifacts/mertformer_training_outputs_bundle.zip.sha256 2>/dev/null || true; chmod u+w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 artifacts/mertformer_training_outputs_bundle.zip artifacts/mertformer_training_outputs_bundle.zip.sha256 2>/dev/null || true'
   run_step "artifact_release_zip" bash scripts/build_artifacts_release_zip.sh
   run_step "training_outputs_bundle" "$PY_BIN" scripts/build_training_outputs_bundle.py
   if [[ "${SOP_PLOT_TRAINING_LOG:-0}" == "1" ]]; then
@@ -124,6 +127,7 @@ start_utc = ""
 end_utc = ""
 pytest_line = ""
 md_quality_line = ""
+md_integrity_line = ""
 linkcheck_line = ""
 unicode_ok = False
 duplicate_ok = False
@@ -145,6 +149,8 @@ for line in clean.splitlines():
         pytest_line = line.strip()
     elif line.startswith("md_quality: "):
         md_quality_line = line.strip()
+    elif line.startswith("md_integrity_check scanned="):
+        md_integrity_line = line.strip()
     elif line.startswith("linkcheck: "):
         linkcheck_line = line.strip()
     elif line.startswith("OK: unicode path guard"):
@@ -179,6 +185,7 @@ summary = "\n".join(
         f"- end_utc: {end_utc}",
         f"- pytest: {pytest_line or 'not_found'}",
         f"- md_quality_all: {md_quality_line or 'not_found'}",
+        f"- md_integrity_all: {md_integrity_line or 'not_found'}",
         f"- linkcheck_all: {linkcheck_line or 'not_found'}",
         f"- unicode_path_guard: {'PASS' if unicode_ok else 'FAIL'}",
         f"- duplicate_zip_guard: {'PASS' if duplicate_ok else 'FAIL'}",

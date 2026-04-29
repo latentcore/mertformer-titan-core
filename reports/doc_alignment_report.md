@@ -1,11 +1,14 @@
 # Document Alignment Report
 
-- generated_utc: `2026-04-28T06:32:29Z`
+- generated_utc: `2026-04-29T01:14:53Z`
+- current_reason: `READY_REMOTE_BOOTSTRAP`
+- current_path: `remote_bootstrap`
+- blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE, online_teacher:MISSING_HF_TOKEN`
 
-| Path | Canonical Launcher | First Serious Run | Final Ceiling Boundary | Offline-Clean Mention |
-| --- | --- | --- | --- | --- |
-| `README.md` | `true` | `false` | `false` | `true` |
-| `README_TR.md` | `true` | `false` | `false` | `true` |
-| `USAGE_GUIDE.md` | `true` | `true` | `true` | `true` |
-| `TRAINING_PLAN.md` | `true` | `true` | `true` | `true` |
-| `MODEL_CARD.md` | `true` | `true` | `true` | `true` |
+| Path | Canonical Launcher | First Serious Run | Final Ceiling Boundary | Current Reason | Current Path | Blockers | Stale Active Reason |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `README.md` | `true` | `false` | `false` | `true` | `true` | `true` | `false` |
+| `README_TR.md` | `true` | `false` | `false` | `true` | `true` | `true` | `false` |
+| `USAGE_GUIDE.md` | `true` | `true` | `true` | `false` | `true` | `false` | `false` |
+| `TRAINING_PLAN.md` | `true` | `true` | `true` | `true` | `true` | `true` | `false` |
+| `MODEL_CARD.md` | `true` | `true` | `true` | `true` | `true` | `true` | `false` |

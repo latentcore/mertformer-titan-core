@@ -17,7 +17,9 @@ Turkey-serving, offline-first, edge-native, locally integrable intelligence infr
 - Runtime total: measured in repo artifacts
 - Benchmark eligibility: `NOT ELIGIBLE FOR CLAIM` without a trained checkpoint
 - 45K run: first serious architecture validation run, not the final capability ceiling
-- Readiness posture: repo-side start gate is green on `offline_clean` (`TRAIN_ALLOWED` / `READY_OFFLINE_CLEAN`)
+- Readiness posture: repo-side start gate is green on `remote_bootstrap` (`TRAIN_ALLOWED` / `READY_REMOTE_BOOTSTRAP`)
+- Strict local boundary: `offline_clean` remains the strict precomputed-KD lane and stays blocked without local logits or actionable local Phase-0
+- Remaining non-winning blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`
 
 ## Intended Use
 - Offline-first and edge-native experimentation

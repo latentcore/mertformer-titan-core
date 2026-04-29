@@ -2,7 +2,9 @@
 
 ## Repo-Wide Evidence
 - `bash scripts/verify_all.sh` is the canonical repo verification gate.
-- Train readiness reports `TRAIN_ALLOWED` with reason `READY_OFFLINE_CLEAN`.
+- Train readiness reports `TRAIN_ALLOWED` with reason `READY_REMOTE_BOOTSTRAP`.
+- The recommended repo-side lane is `remote_bootstrap`; the strict local lane remains `offline_clean`.
+- Remaining non-winning blockers are `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE` and `online_teacher:MISSING_HF_TOKEN`.
 - The canonical Kaggle closure lane is `bash zero_touch_start.sh --kaggle-onefile --mode train-end --profile auto`.
 - Claim-critical docs explicitly separate measured, target, and vision surfaces.
 - Closure scripts regenerate reports, hashes, and package artifacts instead of relying on narration.

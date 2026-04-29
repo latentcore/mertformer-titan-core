@@ -12,10 +12,12 @@ MertFormer Titan is an offline-first, auditable AI systems repository built arou
 ## Current Exact State
 - Stage: `pilot-ready pre-training baseline`
 - Repo-side readiness: `TRAIN_ALLOWED`
-- Exact reason code: `READY_OFFLINE_CLEAN`
+- Exact reason code: `READY_REMOTE_BOOTSTRAP`
+- Recommended repo-side lane: `remote_bootstrap`
+- Strict local lane: `offline_clean`
 - Preferred serious validation target: `45K`
 - Application gate: real owned training run + checkpoint-bound evidence
-- Optional gated blocker only if teacher lane is chosen: `online_teacher:MISSING_HF_TOKEN`
+- Remaining non-winning blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`
 
 ## What Matters For Review
 - No trained checkpoint claims are made yet.

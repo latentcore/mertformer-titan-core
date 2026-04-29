@@ -60,7 +60,8 @@ def collect_roots(intake_path: Path) -> List[Path]:
         payload = json.loads(intake_path.read_text(encoding="utf-8"))
         for entry in payload.get("entries", []):
             path = resolve_sanitized_path(str(entry.get("path", "")))
-            if path.exists() and path.is_dir():
+            mutation_policy = str(entry.get("mutation_policy") or "")
+            if path.exists() and path.is_dir() and mutation_policy in {"project_safe_cleanup", "project_sync"}:
                 roots.append(path)
     deduped = []
     seen = set()
@@ -102,6 +103,8 @@ def main() -> int:
         payload = json.loads(intake_path.read_text(encoding="utf-8"))
         for entry in payload.get("entries", []):
             if entry.get("disposition") != "delete_as_stale_generated":
+                continue
+            if entry.get("mutation_policy") not in {"project_safe_cleanup", "project_sync"}:
                 continue
             path = resolve_sanitized_path(str(entry.get("path", "")))
             if path.exists() and path.is_file():

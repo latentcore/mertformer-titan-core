@@ -39,10 +39,11 @@ Optional fallback only if the post-run story hardens materially:
 
 ## Current Disclosure Boundary
 - Current readiness verdict: `TRAIN_ALLOWED`
-- Current reason code: `READY_OFFLINE_CLEAN`
-- Canonical repo-side lane: `offline-clean`
+- Current reason code: `READY_REMOTE_BOOTSTRAP`
+- Recommended repo-side lane: `remote_bootstrap`
+- Strict local lane: `offline_clean`
 - Canonical Kaggle closure lane: `bash zero_touch_start.sh --kaggle-onefile --mode train-end --profile auto`
-- Optional gated blocker only if teacher lane is chosen: `online_teacher:MISSING_HF_TOKEN`
+- Remaining non-winning blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`
 - Real trained outputs remain post-run evidence and must not be narrated as already complete
 - Exact `45K` is preferred, not mandatory; the real gate is owned training evidence tied to checkpoints
 

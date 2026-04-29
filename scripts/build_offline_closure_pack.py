@@ -772,41 +772,41 @@ def build_package_reports() -> None:
 
 def build_doc_alignment_report(summary: dict) -> None:
     checks = []
+    readiness = summary.get('readiness', {})
+    current_reason = str(readiness.get('decision_reason_code') or 'UNKNOWN')
+    current_path = str(readiness.get('recommended_path') or 'none')
+    blockers = [str(item) for item in readiness.get('blockers', []) if str(item).strip()]
+    stale_reason = 'READY_OFFLINE_CLEAN' if current_reason != 'READY_OFFLINE_CLEAN' else ''
     rules = [
         {
             'path': ROOT / 'README.md',
             'launcher_required': True,
             'first_serious_needles': ['first serious architecture validation run'],
             'ceiling_needles': ['final capability ceiling'],
-            'offline_needles': ['READY_OFFLINE_CLEAN', 'READY_REMOTE_BOOTSTRAP', 'offline_clean', 'remote_bootstrap'],
         },
         {
             'path': ROOT / 'README_TR.md',
             'launcher_required': True,
             'first_serious_needles': ['ilk ciddi mimari doğrulama koşusu', 'first serious architecture validation run'],
             'ceiling_needles': ['nihai kabiliyet tavan', 'final capability ceiling', 'final ceiling'],
-            'offline_needles': ['READY_OFFLINE_CLEAN', 'READY_REMOTE_BOOTSTRAP', 'offline_clean', 'remote_bootstrap'],
         },
         {
             'path': ROOT / 'USAGE_GUIDE.md',
             'launcher_required': True,
             'first_serious_needles': ['first serious architecture validation run'],
             'ceiling_needles': ['final capability ceiling'],
-            'offline_needles': ['READY_OFFLINE_CLEAN', 'READY_REMOTE_BOOTSTRAP', 'offline_clean', 'remote_bootstrap'],
         },
         {
             'path': ROOT / 'TRAINING_PLAN.md',
             'launcher_required': True,
             'first_serious_needles': ['first serious architecture validation run'],
             'ceiling_needles': ['final capability ceiling'],
-            'offline_needles': ['READY_OFFLINE_CLEAN', 'READY_REMOTE_BOOTSTRAP', 'offline_clean', 'remote_bootstrap'],
         },
         {
             'path': ROOT / 'MODEL_CARD.md',
             'launcher_required': False,
             'first_serious_needles': ['first serious architecture validation run'],
             'ceiling_needles': ['final capability ceiling'],
-            'offline_needles': ['READY_OFFLINE_CLEAN', 'READY_REMOTE_BOOTSTRAP', 'offline_clean', 'remote_bootstrap', 'TRAIN_ALLOWED'],
         },
     ]
     for rule in rules:
@@ -817,20 +817,26 @@ def build_doc_alignment_report(summary: dict) -> None:
             'has_canonical_launcher': (not rule['launcher_required']) or 'zero_touch_start.sh' in text,
             'mentions_first_serious_run': any(needle in text for needle in rule['first_serious_needles']),
             'mentions_final_ceiling': any(needle in text for needle in rule['ceiling_needles']),
-            'mentions_ready_offline_clean': any(needle in text for needle in rule['offline_needles']),
+            'mentions_current_reason': current_reason in text,
+            'mentions_current_path': current_path in text,
+            'mentions_all_blockers': all(blocker in text for blocker in blockers) if blockers else True,
+            'mentions_stale_active_reason': bool(stale_reason and stale_reason in text),
         })
     write_json(REPORTS / 'doc_alignment_report.json', {'schema': 'doc_alignment_report_v1', 'generated_utc': utc_now(), 'checks': checks})
     lines = [
         '# Document Alignment Report',
         '',
         f'- generated_utc: `{utc_now()}`',
+        f'- current_reason: `{current_reason}`',
+        f'- current_path: `{current_path}`',
+        f"- blockers: `{', '.join(blockers) if blockers else 'none'}`",
         '',
-        '| Path | Canonical Launcher | First Serious Run | Final Ceiling Boundary | Offline-Clean Mention |',
-        '| --- | --- | --- | --- | --- |',
+        '| Path | Canonical Launcher | First Serious Run | Final Ceiling Boundary | Current Reason | Current Path | Blockers | Stale Active Reason |',
+        '| --- | --- | --- | --- | --- | --- | --- | --- |',
     ]
     for row in checks:
         lines.append(
-            f"| `{row['path']}` | `{str(row['has_canonical_launcher']).lower()}` | `{str(row['mentions_first_serious_run']).lower()}` | `{str(row['mentions_final_ceiling']).lower()}` | `{str(row['mentions_ready_offline_clean']).lower()}` |"
+            f"| `{row['path']}` | `{str(row['has_canonical_launcher']).lower()}` | `{str(row['mentions_first_serious_run']).lower()}` | `{str(row['mentions_final_ceiling']).lower()}` | `{str(row['mentions_current_reason']).lower()}` | `{str(row['mentions_current_path']).lower()}` | `{str(row['mentions_all_blockers']).lower()}` | `{str(row['mentions_stale_active_reason']).lower()}` |"
         )
     write_text(REPORTS / 'doc_alignment_report.md', '\n'.join(lines))
 

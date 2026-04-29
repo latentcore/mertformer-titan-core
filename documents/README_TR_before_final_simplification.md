@@ -2,26 +2,27 @@
 
 Kontrollü yerel dağıtım ve dürüst ML systems kanıtı için offline-first, denetlenebilir yapay zeka altyapısı.
 Mevcut olgunluk: **pilota hazır eğitim öncesi baseline**.
-Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_OFFLINE_CLEAN`.
+Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_REMOTE_BOOTSTRAP`.
 
 ### İlk Bakışta Bilinmesi Gerekenler
 - Başvuru açısından ana kapı: gerçek owned training run + checkpoint-bound evidence.
 - Exact `45K`, tercih edilen ciddi doğrulama hedefidir; tek kabul edilebilir başvuru eşiği değildir.
-- Kanonik repo-side lane: `offline-clean`.
-- Opsiyonel gated blocker: `online_teacher:MISSING_HF_TOKEN`.
+- Önerilen repo-side lane: `remote_bootstrap`.
+- Sıkı yerel lane: `offline_clean`.
+- Kalan non-winning blocker'lar: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
 - Hâlâ açık olan post-run evidence sınıfı: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle ve trained export/device measurements.
 
 ### En Kısa Doğru Okuma Sırası
-1. [START_HERE.md](START_HERE.md)
-2. [docs/PROJECT_MASTER_TRUTH.md](docs/PROJECT_MASTER_TRUTH.md)
-3. [docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md](docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md)
-4. [docs/PROJECT_MASTER_TRUTH_TR.md](docs/PROJECT_MASTER_TRUTH_TR.md)
-5. [reports/final_truth_matrix.md](reports/final_truth_matrix.md)
-6. [reports/known_limits_v1.md](reports/known_limits_v1.md)
-7. [reports/systems_performance_case_study.md](reports/systems_performance_case_study.md)
-8. [reports/offline_assistant_case_study.md](reports/offline_assistant_case_study.md)
-9. [reports/chess_proof_teaching_case_study.md](reports/chess_proof_teaching_case_study.md)
-10. [applications/anthropic/README.md](applications/anthropic/README.md)
+1. [START_HERE.md](../START_HERE.md)
+2. [docs/PROJECT_MASTER_TRUTH.md](../docs/PROJECT_MASTER_TRUTH.md)
+3. [docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md](../docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md)
+4. [docs/PROJECT_MASTER_TRUTH_TR.md](../docs/PROJECT_MASTER_TRUTH_TR.md)
+5. [reports/final_truth_matrix.md](../reports/final_truth_matrix.md)
+6. [reports/known_limits_v1.md](../reports/known_limits_v1.md)
+7. [reports/systems_performance_case_study.md](../reports/systems_performance_case_study.md)
+8. [reports/offline_assistant_case_study.md](../reports/offline_assistant_case_study.md)
+9. [reports/chess_proof_teaching_case_study.md](../reports/chess_proof_teaching_case_study.md)
+10. [applications/anthropic/README.md](../applications/anthropic/README.md)
 
 ### Anthropic İçin Yüksek-Sinyal Noktalar
 - training efficiency ve systems debugging disiplini
@@ -50,7 +51,7 @@ Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_OFFLINE_CLEAN`.
 - `Yönlendirme politikası: token-choice top-k.`
 - Closure-57 şeffaflık notu: `out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]`
 
-![MertFormer Titan Header](assets/header.png)
+![MertFormer Titan Header](../assets/header.png)
 
 <div align="center">
   <a href="README.md">🇬🇧 English</a> | <a href="README_TR.md">🇹🇷 Türkçe</a>
@@ -129,7 +130,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 
 **Öne çıkan özellik:** kanonik 45K yolu artık `bash zero_touch_start.sh`; exact readiness verdict, run lock, resume policy ve post-train autorun sözleşmesi bu katmanda toplanır.
 
-Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree, kanonik `offline_clean` yolu üzerinde repo-side 45K-ready durumundadır; fakat gerçek uzun koşu hedef donanımda henüz çalışmadığı için trained çıktılar henüz yoktur.
+Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree, `remote_bootstrap` lane üzerinden repo-side 45K-start-ready durumundadır; fakat gerçek uzun koşu hedef donanımda henüz çalışmadığı için trained çıktılar henüz yoktur. Sıkı yerel `offline_clean` lane ise, yerel logits veya yerel actionable Phase-0 olmadan hâlâ blokludur.
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
@@ -147,9 +148,10 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
    - `reports/final_truth_matrix.md`
 
 ### Güncel Exact Boundary
-- Kanonik repo-side yol: `offline_clean`
-- Exact readiness verdict: `TRAIN_ALLOWED` / `READY_OFFLINE_CLEAN`
-- Kalan exact blocker: `online_teacher:MISSING_HF_TOKEN` (yalnızca opsiyonel gated teacher yolu için)
+- Önerilen repo-side yol: `remote_bootstrap`
+- Exact readiness verdict: `TRAIN_ALLOWED` / `READY_REMOTE_BOOTSTRAP`
+- Sıkı yerel offline-clean kuralı: yerel precomputed logits tamamlanmalı veya yerel Phase-0 actionable olmalı; 45K lane üzerinde teacherless fallback yoktur
+- Kalan non-winning blocker'lar: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`
 
 ### Uzun eğitim koşusundan önce son önkoşullar
 - Hedef donanım (GPU/edge) kaynağı ayrılmış olmalıdır.
@@ -201,7 +203,7 @@ HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touc
 
 | Mühendislik Durumu | `Pilota hazır eğitim öncesi baseline` |
 | :--- | :--- |
-| **Eğitim Başlatma Hazırlığı** | ✅ TRAIN_ALLOWED (`READY_OFFLINE_CLEAN`; opsiyonel online teacher yolu `HF_TOKEN` olmadan bloklu kalır) |
+| **Eğitim Başlatma Hazırlığı** | ✅ TRAIN_ALLOWED (`READY_REMOTE_BOOTSTRAP`; sıkı yerel offline_clean logits/yerel Phase-0 olmadan bloklu, online_teacher `HF_TOKEN` olmadan bloklu) |
 | **Kod Tabanı** | ✅ Uygulandı (testler + offline preflight geçiyor) |
 | **Offline Doğrulama** | ✅ PASS (`bash scripts/verify_all.sh`) |
 | **Dataset Uyumu** | ✅ Offline-clean için hazır (`lisans/hash iş akışı aktif; stage JSONL dosyaları mevcut working tree’de mevcut`) |
@@ -240,7 +242,7 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 - Bu depo **özel ve gizlidir**.
 - Kaynak kod, varlıklar ve yöntemler yalnızca açık yazılı sözleşme veya iş ilişkisi kapsamında kullanılabilir.
 - Gizli teknik detayların üçüncü taraflarla paylaşımı, imzalı NDA şartlarına tabidir.
-- Tam hukuki çerçeve için [`LICENSE`](LICENSE) ve [`LICENSE_TR`](LICENSE_TR) dosyaları geçerlidir.
+- Tam hukuki çerçeve için [`LICENSE`](../LICENSE) ve [`LICENSE_TR`](../LICENSE_TR) dosyaları geçerlidir.
 
 ---
 
@@ -288,232 +290,232 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 
 **Çekirdek**
 Ana giriş dokümanları ve checklistler.
-- [README.md](README.md) — İngilizce genel bakış.
-- [README_TR.md](README_TR.md) — Türkçe genel bakış.
-- [CITATION.cff](CITATION.cff) — Atıf metadata dosyası.
-- [CONTRIBUTING.md](CONTRIBUTING.md) — Katkı yönergeleri (dahili kullanım).
-- [CONTRIBUTING_TR.md](CONTRIBUTING_TR.md) — Katkı yönergeleri (TR).
-- [README_CHECKLIST.md](README_CHECKLIST.md) — README denetim checklist'i (EN).
-- [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README denetim checklist'i (TR).
-- [scripts/README.md](scripts/README.md) — Script kataloğu (EN).
-- [scripts/README_TR.md](scripts/README_TR.md) — Script kataloğu (TR).
-- [snake_demo.py](snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
-- [USAGE_GUIDE.md](USAGE_GUIDE.md) — Operasyonel kullanım kılavuzu (EN).
-- [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md) — Operasyonel kullanım kılavuzu (TR).
-- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — Sorun giderme kılavuzu (EN).
-- [TROUBLESHOOTING_TR.md](TROUBLESHOOTING_TR.md) — Sorun giderme kılavuzu (TR).
-- [MODEL_LICENSE.md](MODEL_LICENSE.md) — Model lisansı özeti (EN).
-- [MODEL_LICENSE_TR.md](MODEL_LICENSE_TR.md) — Model lisansı özeti (TR).
-- [.env.example](.env.example) — Ortam değişkeni şablonu.
-- [docs/CHAIN_MAP.md](docs/CHAIN_MAP.md) — Bağlı vs bağımsız zincir haritası (EN).
-- [docs/CHAIN_MAP_TR.md](docs/CHAIN_MAP_TR.md) — Bağlı vs bağımsız zincir haritası (TR).
-- [reports/commercial_handover/known_issues.md](reports/commercial_handover/known_issues.md) — Devir risk görünürlüğü için bilinen sorunlar kaydı.
-- [reports/commercial_handover/known_issues_TR.md](reports/commercial_handover/known_issues_TR.md) — Devir risk görünürlüğü için bilinen sorunlar kaydı (TR).
-- [reports/commercial_handover/handover_scope.md](reports/commercial_handover/handover_scope.md) — Devir kapsamı ve kapsam dışı sınırlar.
-- [reports/commercial_handover/handover_scope_TR.md](reports/commercial_handover/handover_scope_TR.md) — Devir kapsamı ve kapsam dışı sınırlar (TR).
-- [reports/commercial_handover/ownership_and_role.md](reports/commercial_handover/ownership_and_role.md) — Devir sonrası sahiplik modeli ve karar hakları.
-- [reports/commercial_handover/ownership_and_role_TR.md](reports/commercial_handover/ownership_and_role_TR.md) — Devir sonrası sahiplik modeli ve karar hakları (TR).
-- [reports/commercial_handover/sla_kpi_90_180.md](reports/commercial_handover/sla_kpi_90_180.md) — 90/180 gün SLA ve KPI işletim planı.
-- [reports/commercial_handover/sla_kpi_90_180_TR.md](reports/commercial_handover/sla_kpi_90_180_TR.md) — 90/180 gün SLA ve KPI işletim planı (TR).
-- [reports/commercial_handover/contract_terms_checklist.md](reports/commercial_handover/contract_terms_checklist.md) — IP, sorumluluk, operasyon ve çıkış için sözleşme checklisti.
-- [reports/commercial_handover/contract_terms_checklist_TR.md](reports/commercial_handover/contract_terms_checklist_TR.md) — IP, sorumluluk, operasyon ve çıkış için sözleşme checklisti (TR).
+- [README.md](../README.md) — İngilizce genel bakış.
+- [README_TR.md](../README_TR.md) — Türkçe genel bakış.
+- [CITATION.cff](../CITATION.cff) — Atıf metadata dosyası.
+- [CONTRIBUTING.md](../CONTRIBUTING.md) — Katkı yönergeleri (dahili kullanım).
+- [CONTRIBUTING_TR.md](../CONTRIBUTING_TR.md) — Katkı yönergeleri (TR).
+- [README_CHECKLIST.md](../README_CHECKLIST.md) — README denetim checklist'i (EN).
+- [README_CHECKLIST_TR.md](../README_CHECKLIST_TR.md) — README denetim checklist'i (TR).
+- [scripts/README.md](../scripts/README.md) — Script kataloğu (EN).
+- [scripts/README_TR.md](../scripts/README_TR.md) — Script kataloğu (TR).
+- [snake_demo.py](../snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
+- [USAGE_GUIDE.md](../USAGE_GUIDE.md) — Operasyonel kullanım kılavuzu (EN).
+- [USAGE_GUIDE_TR.md](../USAGE_GUIDE_TR.md) — Operasyonel kullanım kılavuzu (TR).
+- [TROUBLESHOOTING.md](../TROUBLESHOOTING.md) — Sorun giderme kılavuzu (EN).
+- [TROUBLESHOOTING_TR.md](../TROUBLESHOOTING_TR.md) — Sorun giderme kılavuzu (TR).
+- [MODEL_LICENSE.md](../MODEL_LICENSE.md) — Model lisansı özeti (EN).
+- [MODEL_LICENSE_TR.md](../MODEL_LICENSE_TR.md) — Model lisansı özeti (TR).
+- [.env.example](../.env.example) — Ortam değişkeni şablonu.
+- [docs/CHAIN_MAP.md](../docs/CHAIN_MAP.md) — Bağlı vs bağımsız zincir haritası (EN).
+- [docs/CHAIN_MAP_TR.md](../docs/CHAIN_MAP_TR.md) — Bağlı vs bağımsız zincir haritası (TR).
+- [reports/commercial_handover/known_issues.md](../reports/commercial_handover/known_issues.md) — Devir risk görünürlüğü için bilinen sorunlar kaydı.
+- [reports/commercial_handover/known_issues_TR.md](../reports/commercial_handover/known_issues_TR.md) — Devir risk görünürlüğü için bilinen sorunlar kaydı (TR).
+- [reports/commercial_handover/handover_scope.md](../reports/commercial_handover/handover_scope.md) — Devir kapsamı ve kapsam dışı sınırlar.
+- [reports/commercial_handover/handover_scope_TR.md](../reports/commercial_handover/handover_scope_TR.md) — Devir kapsamı ve kapsam dışı sınırlar (TR).
+- [reports/commercial_handover/ownership_and_role.md](../reports/commercial_handover/ownership_and_role.md) — Devir sonrası sahiplik modeli ve karar hakları.
+- [reports/commercial_handover/ownership_and_role_TR.md](../reports/commercial_handover/ownership_and_role_TR.md) — Devir sonrası sahiplik modeli ve karar hakları (TR).
+- [reports/commercial_handover/sla_kpi_90_180.md](../reports/commercial_handover/sla_kpi_90_180.md) — 90/180 gün SLA ve KPI işletim planı.
+- [reports/commercial_handover/sla_kpi_90_180_TR.md](../reports/commercial_handover/sla_kpi_90_180_TR.md) — 90/180 gün SLA ve KPI işletim planı (TR).
+- [reports/commercial_handover/contract_terms_checklist.md](../reports/commercial_handover/contract_terms_checklist.md) — IP, sorumluluk, operasyon ve çıkış için sözleşme checklisti.
+- [reports/commercial_handover/contract_terms_checklist_TR.md](../reports/commercial_handover/contract_terms_checklist_TR.md) — IP, sorumluluk, operasyon ve çıkış için sözleşme checklisti (TR).
 
 **SDK**
 Edge dağıtım için paket + CLI.
-- [mertformer_sdk/](mertformer_sdk/) — SDK paketi (API + CLI + kernel).
-- [SDK_GUIDE.md](SDK_GUIDE.md) — SDK hızlı kılavuz (EN).
-- [SDK_GUIDE_TR.md](SDK_GUIDE_TR.md) — SDK hızlı kılavuz (TR).
+- [mertformer_sdk/](../mertformer_sdk/) — SDK paketi (API + CLI + kernel).
+- [SDK_GUIDE.md](../SDK_GUIDE.md) — SDK hızlı kılavuz (EN).
+- [SDK_GUIDE_TR.md](../SDK_GUIDE_TR.md) — SDK hızlı kılavuz (TR).
 
 **Planlar**
 Yol haritaları ve operatör planları.
-- [TASK.md](TASK.md) — Operatör Modu görev planı (EN).
-- [TASK_TR.md](TASK_TR.md) — Operatör Modu görev planı (TR).
-- [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) — Uygulama planı (EN).
-- [IMPLEMENTATION_PLAN_TR.md](IMPLEMENTATION_PLAN_TR.md) — Uygulama planı (TR).
-- [TRAINING_PLAN.md](TRAINING_PLAN.md) — Eğitim yol haritası (EN).
-- [TRAINING_PLAN_TR.md](TRAINING_PLAN_TR.md) — Eğitim yol haritası (TR).
-- [CHANGELOG.md](CHANGELOG.md) — Sürüm değişiklik kaydı (EN).
-- [CHANGELOG_TR.md](CHANGELOG_TR.md) — Sürüm değişiklik kaydı (TR).
+- [TASK.md](../TASK.md) — Operatör Modu görev planı (EN).
+- [TASK_TR.md](../TASK_TR.md) — Operatör Modu görev planı (TR).
+- [IMPLEMENTATION_PLAN.md](../IMPLEMENTATION_PLAN.md) — Uygulama planı (EN).
+- [IMPLEMENTATION_PLAN_TR.md](../IMPLEMENTATION_PLAN_TR.md) — Uygulama planı (TR).
+- [TRAINING_PLAN.md](../TRAINING_PLAN.md) — Eğitim yol haritası (EN).
+- [TRAINING_PLAN_TR.md](../TRAINING_PLAN_TR.md) — Eğitim yol haritası (TR).
+- [CHANGELOG.md](../CHANGELOG.md) — Sürüm değişiklik kaydı (EN).
+- [CHANGELOG_TR.md](../CHANGELOG_TR.md) — Sürüm değişiklik kaydı (TR).
 
 **Teknik**
 Derin teknik analiz ve araştırma referansları.
-- [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md) — Teknik derin inceleme (EN).
-- [TECHNICAL_REPORT_TR.md](TECHNICAL_REPORT_TR.md) — Teknik derin inceleme (TR).
-- [WHITE_PAPER_LIQUIDROUTER.md](WHITE_PAPER_LIQUIDROUTER.md) — LiquidRouter white paper (EN).
-- [WHITE_PAPER_LIQUIDROUTER_TR.md](WHITE_PAPER_LIQUIDROUTER_TR.md) — LiquidRouter white paper (TR).
+- [TECHNICAL_REPORT.md](../TECHNICAL_REPORT.md) — Teknik derin inceleme (EN).
+- [TECHNICAL_REPORT_TR.md](../TECHNICAL_REPORT_TR.md) — Teknik derin inceleme (TR).
+- [WHITE_PAPER_LIQUIDROUTER.md](../WHITE_PAPER_LIQUIDROUTER.md) — LiquidRouter white paper (EN).
+- [WHITE_PAPER_LIQUIDROUTER_TR.md](../WHITE_PAPER_LIQUIDROUTER_TR.md) — LiquidRouter white paper (TR).
 
 **Dahili**
 Dahili yol haritası ve yetenek boşluk haritalaması (kamusal değil).
-- [INTERNAL_AGI_GAP.md](INTERNAL_AGI_GAP.md) — Dahili AGI boşluk haritası (EN).
-- [INTERNAL_AGI_GAP_TR.md](INTERNAL_AGI_GAP_TR.md) — Dahili AGI boşluk haritası (TR).
+- [INTERNAL_AGI_GAP.md](../INTERNAL_AGI_GAP.md) — Dahili AGI boşluk haritası (EN).
+- [INTERNAL_AGI_GAP_TR.md](../INTERNAL_AGI_GAP_TR.md) — Dahili AGI boşluk haritası (TR).
 
 **Denetim & Strateji**
 Rapor doğruluk denetimi ve stratejik değer özeti.
-- [reports/report_accuracy_audit.md](reports/report_accuracy_audit.md) — Rapor doğruluk denetimi (EN).
-- [reports/report_accuracy_audit_TR.md](reports/report_accuracy_audit_TR.md) — Rapor doğruluk denetimi (TR).
-- [reports/codex_deep_audit_EN.md](reports/codex_deep_audit_EN.md) — Derin mühendislik denetimi (EN).
-- [reports/codex_deep_audit_DE.md](reports/codex_deep_audit_DE.md) — Derin mühendislik denetimi (DE).
-- [reports/codex_deep_audit_TR.md](reports/codex_deep_audit_TR.md) — Derin mühendislik denetimi (TR).
-- [reports/codex_deep_audit_EN_TR.md](reports/codex_deep_audit_EN_TR.md) — EN denetim raporu için TR pointer dosyası (kanonik içerik `codex_deep_audit_TR.md`).
-- [reports/codex_deep_audit_DE_TR.md](reports/codex_deep_audit_DE_TR.md) — DE denetim raporu için TR pointer dosyası (kanonik içerik `codex_deep_audit_TR.md`).
+- [reports/report_accuracy_audit.md](../reports/report_accuracy_audit.md) — Rapor doğruluk denetimi (EN).
+- [reports/report_accuracy_audit_TR.md](../reports/report_accuracy_audit_TR.md) — Rapor doğruluk denetimi (TR).
+- [reports/codex_deep_audit_EN.md](../reports/codex_deep_audit_EN.md) — Derin mühendislik denetimi (EN).
+- [reports/codex_deep_audit_DE.md](../reports/codex_deep_audit_DE.md) — Derin mühendislik denetimi (DE).
+- [reports/codex_deep_audit_TR.md](../reports/codex_deep_audit_TR.md) — Derin mühendislik denetimi (TR).
+- [reports/codex_deep_audit_EN_TR.md](../reports/codex_deep_audit_EN_TR.md) — EN denetim raporu için TR pointer dosyası (kanonik içerik `codex_deep_audit_TR.md`).
+- [reports/codex_deep_audit_DE_TR.md](../reports/codex_deep_audit_DE_TR.md) — DE denetim raporu için TR pointer dosyası (kanonik içerik `codex_deep_audit_TR.md`).
 - DE dilindeki denetim dosyaları, Almanca konuşan paydaşlar için dış inceleme artifact’i olarak korunur.
-- [reports/verified_matrix.md](reports/verified_matrix.md) — Verified vs Target matrisi (EN).
-- [reports/verified_matrix_TR.md](reports/verified_matrix_TR.md) — Verified vs Target matrisi (TR).
-- [reports/review_checklist.md](reports/review_checklist.md) — Dış inceleme checklist'i (EN).
-- [reports/review_checklist_TR.md](reports/review_checklist_TR.md) — Dış inceleme checklist'i (TR).
-- [reports/release_snapshot.md](reports/release_snapshot.md) — Release snapshot (EN).
-- [reports/release_snapshot_TR.md](reports/release_snapshot_TR.md) — Release snapshot (TR).
-- [reports/final_sync_matrix.md](reports/final_sync_matrix.md) — Final senkron matris (EN).
-- [reports/final_sync_matrix_TR.md](reports/final_sync_matrix_TR.md) — Final senkron matris (TR).
-- [reports/go_status_matrix.md](reports/go_status_matrix.md) — GO/NO-GO durum matrisi (EN).
-- [reports/go_status_matrix_TR.md](reports/go_status_matrix_TR.md) — GO/NO-GO durum matrisi (TR).
-- [reports/go_nogo_signoff_onepager.md](reports/go_nogo_signoff_onepager.md) — Teknik GO/NO-GO tek sayfa imza özeti (EN).
-- [reports/go_nogo_signoff_onepager_TR.md](reports/go_nogo_signoff_onepager_TR.md) — Teknik GO/NO-GO tek sayfa imza özeti (TR).
-- [reports/closure_57_matrix.md](reports/closure_57_matrix.md) — Closure 57 matrisi (EN).
-- [reports/closure_57_matrix_TR.md](reports/closure_57_matrix_TR.md) — Closure 57 matrisi (TR).
-- [reports/report_truth_matrix.md](reports/report_truth_matrix.md) — Rapor doğruluk matrisi (EN).
-- [AGENTS.md](AGENTS.md) — Katkıcılar ve coding agent'lar için closure anayasası.
-- [reports/source_of_truth_map.md](reports/source_of_truth_map.md) — Güncel source-of-truth yetki haritası.
-- [reports/final_backlog_classification.md](reports/final_backlog_classification.md) — Güncel gruplanmış backlog durum muhasebesi.
-- [reports/final_truth_matrix.md](reports/final_truth_matrix.md) — Güncel claim-to-evidence doğruluk matrisi.
-- [reports/release_closure_note.md](reports/release_closure_note.md) — Release kapanış notu (EN).
-- [reports/kpi_pack_v1.md](reports/kpi_pack_v1.md) — KPI paketi (EN).
-- [reports/kpi_pack_v1_TR.md](reports/kpi_pack_v1_TR.md) — KPI paketi (TR).
-- [reports/cleanroom_verification.md](reports/cleanroom_verification.md) — Temiz clone tekrar üretim kanıtı (EN).
-- [reports/cleanroom_verification_TR.md](reports/cleanroom_verification_TR.md) — Temiz clone tekrar üretim kanıtı (TR).
-- [reports/legal_cleanroom_signoff_internal.md](reports/legal_cleanroom_signoff_internal.md) — Dahili cleanroom hukuki imza kaydı (EN).
-- [reports/teacher_output_license_assessment.md](reports/teacher_output_license_assessment.md) — Teacher/output lisans dahili değerlendirme (EN).
-- [reports/contamination_report_build30.md](reports/contamination_report_build30.md) — Build30 contamination raporu (EN).
-- [reports/kpi_contract_build30.md](reports/kpi_contract_build30.md) — GO kararı için teknik KPI sözleşmesi (EN).
-- [reports/benchmarks/README.md](reports/benchmarks/README.md) — Benchmark çıktıları rehberi (EN).
-- [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark çıktıları rehberi (TR).
-- [reports/benchmarks/smoke_train_metrics.json](reports/benchmarks/smoke_train_metrics.json) — Smoke benchmark metrik snapshot'ı (makine-okur).
-- [reports/strategic_value.md](reports/strategic_value.md) — Stratejik değer özeti (EN).
-- [reports/strategic_value_TR.md](reports/strategic_value_TR.md) — Stratejik değer özeti (TR).
-- [reports/efficiency_convergence_analysis.md](reports/efficiency_convergence_analysis.md) — Yakınsama analizi (BitNet/Liquid/MoE, öngörü, EN).
-- [reports/efficiency_convergence_analysis_TR.md](reports/efficiency_convergence_analysis_TR.md) — Yakınsama analizi (BitNet/Liquid/MoE, öngörü, TR).
+- [reports/verified_matrix.md](../reports/verified_matrix.md) — Verified vs Target matrisi (EN).
+- [reports/verified_matrix_TR.md](../reports/verified_matrix_TR.md) — Verified vs Target matrisi (TR).
+- [reports/review_checklist.md](../reports/review_checklist.md) — Dış inceleme checklist'i (EN).
+- [reports/review_checklist_TR.md](../reports/review_checklist_TR.md) — Dış inceleme checklist'i (TR).
+- [reports/release_snapshot.md](../reports/release_snapshot.md) — Release snapshot (EN).
+- [reports/release_snapshot_TR.md](../reports/release_snapshot_TR.md) — Release snapshot (TR).
+- [reports/final_sync_matrix.md](../reports/final_sync_matrix.md) — Final senkron matris (EN).
+- [reports/final_sync_matrix_TR.md](../reports/final_sync_matrix_TR.md) — Final senkron matris (TR).
+- [reports/go_status_matrix.md](../reports/go_status_matrix.md) — GO/NO-GO durum matrisi (EN).
+- [reports/go_status_matrix_TR.md](../reports/go_status_matrix_TR.md) — GO/NO-GO durum matrisi (TR).
+- [reports/go_nogo_signoff_onepager.md](../reports/go_nogo_signoff_onepager.md) — Teknik GO/NO-GO tek sayfa imza özeti (EN).
+- [reports/go_nogo_signoff_onepager_TR.md](../reports/go_nogo_signoff_onepager_TR.md) — Teknik GO/NO-GO tek sayfa imza özeti (TR).
+- [reports/closure_57_matrix.md](../reports/closure_57_matrix.md) — Closure 57 matrisi (EN).
+- [reports/closure_57_matrix_TR.md](../reports/closure_57_matrix_TR.md) — Closure 57 matrisi (TR).
+- [reports/report_truth_matrix.md](../reports/report_truth_matrix.md) — Rapor doğruluk matrisi (EN).
+- [AGENTS.md](../AGENTS.md) — Katkıcılar ve coding agent'lar için closure anayasası.
+- [reports/source_of_truth_map.md](../reports/source_of_truth_map.md) — Güncel source-of-truth yetki haritası.
+- [reports/final_backlog_classification.md](../reports/final_backlog_classification.md) — Güncel gruplanmış backlog durum muhasebesi.
+- [reports/final_truth_matrix.md](../reports/final_truth_matrix.md) — Güncel claim-to-evidence doğruluk matrisi.
+- [reports/release_closure_note.md](../reports/release_closure_note.md) — Release kapanış notu (EN).
+- [reports/kpi_pack_v1.md](../reports/kpi_pack_v1.md) — KPI paketi (EN).
+- [reports/kpi_pack_v1_TR.md](../reports/kpi_pack_v1_TR.md) — KPI paketi (TR).
+- [reports/cleanroom_verification.md](../reports/cleanroom_verification.md) — Temiz clone tekrar üretim kanıtı (EN).
+- [reports/cleanroom_verification_TR.md](../reports/cleanroom_verification_TR.md) — Temiz clone tekrar üretim kanıtı (TR).
+- [reports/legal_cleanroom_signoff_internal.md](../reports/legal_cleanroom_signoff_internal.md) — Dahili cleanroom hukuki imza kaydı (EN).
+- [reports/teacher_output_license_assessment.md](../reports/teacher_output_license_assessment.md) — Teacher/output lisans dahili değerlendirme (EN).
+- [reports/contamination_report_build30.md](../reports/contamination_report_build30.md) — Build30 contamination raporu (EN).
+- [reports/kpi_contract_build30.md](../reports/kpi_contract_build30.md) — GO kararı için teknik KPI sözleşmesi (EN).
+- [reports/benchmarks/README.md](../reports/benchmarks/README.md) — Benchmark çıktıları rehberi (EN).
+- [reports/benchmarks/README_TR.md](../reports/benchmarks/README_TR.md) — Benchmark çıktıları rehberi (TR).
+- [reports/benchmarks/smoke_train_metrics.json](../reports/benchmarks/smoke_train_metrics.json) — Smoke benchmark metrik snapshot'ı (makine-okur).
+- [reports/strategic_value.md](../reports/strategic_value.md) — Stratejik değer özeti (EN).
+- [reports/strategic_value_TR.md](../reports/strategic_value_TR.md) — Stratejik değer özeti (TR).
+- [reports/efficiency_convergence_analysis.md](../reports/efficiency_convergence_analysis.md) — Yakınsama analizi (BitNet/Liquid/MoE, öngörü, EN).
+- [reports/efficiency_convergence_analysis_TR.md](../reports/efficiency_convergence_analysis_TR.md) — Yakınsama analizi (BitNet/Liquid/MoE, öngörü, TR).
 
 **Sunum & Asset**
 Yatırımcı materyalleri ve lansman varlıkları.
-- [PITCH.md](PITCH.md) — Yatırımcı pitch (EN).
-- [PITCH_TR.md](PITCH_TR.md) — Yatırımcı pitch (TR).
-- [reports/investor_deck.pptx](reports/investor_deck.pptx) — Yatırımcı deck (EN).
-- [reports/investor_deck_TR.pptx](reports/investor_deck_TR.pptx) — Yatırımcı deck (TR).
-- [reports/one_pager.md](reports/one_pager.md) — One-pager (EN).
-- [reports/one_pager_TR.md](reports/one_pager_TR.md) — One-pager (TR).
-- [reports/technical_snapshot.md](reports/technical_snapshot.md) — Teknik snapshot (EN).
-- [reports/technical_snapshot_TR.md](reports/technical_snapshot_TR.md) — Teknik snapshot (TR).
-- [reports/asset_stack.md](reports/asset_stack.md) — Asset index (EN).
-- [reports/asset_stack_TR.md](reports/asset_stack_TR.md) — Asset index (TR).
-- [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4) — 30 saniyelik snake demo kanıt videosu.
-- [assets/snake_demo_preview.gif](assets/snake_demo_preview.gif) — Gömülü snake demo önizlemesi (GIF).
-- [assets/sources/README.md](assets/sources/README.md) — Düzenlenebilir görsel kaynak arşiv standardı (EN).
-- [assets/sources/README_TR.md](assets/sources/README_TR.md) — Düzenlenebilir görsel kaynak arşiv standardı (TR).
+- [PITCH.md](../PITCH.md) — Yatırımcı pitch (EN).
+- [PITCH_TR.md](../PITCH_TR.md) — Yatırımcı pitch (TR).
+- [reports/investor_deck.pptx](../reports/investor_deck.pptx) — Yatırımcı deck (EN).
+- [reports/investor_deck_TR.pptx](../reports/investor_deck_TR.pptx) — Yatırımcı deck (TR).
+- [reports/one_pager.md](../reports/one_pager.md) — One-pager (EN).
+- [reports/one_pager_TR.md](../reports/one_pager_TR.md) — One-pager (TR).
+- [reports/technical_snapshot.md](../reports/technical_snapshot.md) — Teknik snapshot (EN).
+- [reports/technical_snapshot_TR.md](../reports/technical_snapshot_TR.md) — Teknik snapshot (TR).
+- [reports/asset_stack.md](../reports/asset_stack.md) — Asset index (EN).
+- [reports/asset_stack_TR.md](../reports/asset_stack_TR.md) — Asset index (TR).
+- [assets/snake_demo_proof.mp4](../assets/snake_demo_proof.mp4) — 30 saniyelik snake demo kanıt videosu.
+- [assets/snake_demo_preview.gif](../assets/snake_demo_preview.gif) — Gömülü snake demo önizlemesi (GIF).
+- [assets/sources/README.md](../assets/sources/README.md) — Düzenlenebilir görsel kaynak arşiv standardı (EN).
+- [assets/sources/README_TR.md](../assets/sources/README_TR.md) — Düzenlenebilir görsel kaynak arşiv standardı (TR).
 
-![Snake Demo Önizleme](assets/snake_demo_preview.gif)
+![Snake Demo Önizleme](../assets/snake_demo_preview.gif)
 
-Tam video: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
-- [reports/founders_hub_application.md](reports/founders_hub_application.md) — Founders Hub taslağı (EN).
-- [reports/founders_hub_application_TR.md](reports/founders_hub_application_TR.md) — Founders Hub taslağı (TR).
-- [reports/security_compliance.md](reports/security_compliance.md) — Güvenlik & uyum özeti (EN).
-- [reports/security_compliance_TR.md](reports/security_compliance_TR.md) — Güvenlik & uyum özeti (TR).
-- [reports/poc_protocol.md](reports/poc_protocol.md) — Pilot/PoC protokolü (EN).
-- [reports/poc_protocol_TR.md](reports/poc_protocol_TR.md) — Pilot/PoC protokolü (TR).
-- [reports/pilot_readiness_kit.md](reports/pilot_readiness_kit.md) — Pilot hazırlık kiti (EN).
-- [reports/pilot_readiness_kit_TR.md](reports/pilot_readiness_kit_TR.md) — Pilot hazırlık kiti (TR).
-- [reports/pilot_offer_packages.md](reports/pilot_offer_packages.md) — Standart pilot teklif paketleri (EN).
-- [reports/pilot_offer_packages_TR.md](reports/pilot_offer_packages_TR.md) — Standart pilot teklif paketleri (TR).
-- [reports/sales_funnel_90d.md](reports/sales_funnel_90d.md) — 90 günlük B2B pilot satış hunisi (EN).
-- [reports/sales_funnel_90d_TR.md](reports/sales_funnel_90d_TR.md) — 90 günlük B2B pilot satış hunisi (TR).
-- [reports/drone_sitl_demo.md](reports/drone_sitl_demo.md) — SITL drone kanıt protokolü (EN).
-- [reports/drone_sitl_demo_TR.md](reports/drone_sitl_demo_TR.md) — SITL drone kanıt protokolü (TR).
-- [reports/pilots/README.md](reports/pilots/README.md) — Pilot kanıt klasörü standardı (EN).
-- [reports/pilots/README_TR.md](reports/pilots/README_TR.md) — Pilot kanıt klasörü standardı (TR).
-- [reports/pilot_acceptance_signoff.md](reports/pilot_acceptance_signoff.md) — Pilot kabul imza şablonu (EN).
-- [reports/pilot_acceptance_signoff_TR.md](reports/pilot_acceptance_signoff_TR.md) — Pilot kabul imza şablonu (TR).
-- [reports/ip_licensing_split.md](reports/ip_licensing_split.md) — Sektörel fikri hak ayrımı çerçevesi (EN).
-- [reports/ip_licensing_split_TR.md](reports/ip_licensing_split_TR.md) — Sektörel fikri hak ayrımı çerçevesi (TR).
-- [reports/dataset_health.md](reports/dataset_health.md) — Dataset sağlık raporu (EN).
-- [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset sağlık raporu (TR).
-- [reports/model_health.md](reports/model_health.md) — Model sağlık raporu (EN).
-- [reports/model_health_TR.md](reports/model_health_TR.md) — Model sağlık raporu (TR).
-- [reports/system_hardware.md](reports/system_hardware.md) — Sistem donanım raporu (EN).
-- [reports/system_hardware_TR.md](reports/system_hardware_TR.md) — Sistem donanım raporu (TR).
-- [reports/cli_smoke_log.md](reports/cli_smoke_log.md) — CLI smoke log (EN).
-- [reports/cli_smoke_log_TR.md](reports/cli_smoke_log_TR.md) — CLI smoke log (TR).
+Tam video: [assets/snake_demo_proof.mp4](../assets/snake_demo_proof.mp4)
+- [reports/founders_hub_application.md](../reports/founders_hub_application.md) — Founders Hub taslağı (EN).
+- [reports/founders_hub_application_TR.md](../reports/founders_hub_application_TR.md) — Founders Hub taslağı (TR).
+- [reports/security_compliance.md](../reports/security_compliance.md) — Güvenlik & uyum özeti (EN).
+- [reports/security_compliance_TR.md](../reports/security_compliance_TR.md) — Güvenlik & uyum özeti (TR).
+- [reports/poc_protocol.md](../reports/poc_protocol.md) — Pilot/PoC protokolü (EN).
+- [reports/poc_protocol_TR.md](../reports/poc_protocol_TR.md) — Pilot/PoC protokolü (TR).
+- [reports/pilot_readiness_kit.md](../reports/pilot_readiness_kit.md) — Pilot hazırlık kiti (EN).
+- [reports/pilot_readiness_kit_TR.md](../reports/pilot_readiness_kit_TR.md) — Pilot hazırlık kiti (TR).
+- [reports/pilot_offer_packages.md](../reports/pilot_offer_packages.md) — Standart pilot teklif paketleri (EN).
+- [reports/pilot_offer_packages_TR.md](../reports/pilot_offer_packages_TR.md) — Standart pilot teklif paketleri (TR).
+- [reports/sales_funnel_90d.md](../reports/sales_funnel_90d.md) — 90 günlük B2B pilot satış hunisi (EN).
+- [reports/sales_funnel_90d_TR.md](../reports/sales_funnel_90d_TR.md) — 90 günlük B2B pilot satış hunisi (TR).
+- [reports/drone_sitl_demo.md](../reports/drone_sitl_demo.md) — SITL drone kanıt protokolü (EN).
+- [reports/drone_sitl_demo_TR.md](../reports/drone_sitl_demo_TR.md) — SITL drone kanıt protokolü (TR).
+- [reports/pilots/README.md](../reports/pilots/README.md) — Pilot kanıt klasörü standardı (EN).
+- [reports/pilots/README_TR.md](../reports/pilots/README_TR.md) — Pilot kanıt klasörü standardı (TR).
+- [reports/pilot_acceptance_signoff.md](../reports/pilot_acceptance_signoff.md) — Pilot kabul imza şablonu (EN).
+- [reports/pilot_acceptance_signoff_TR.md](../reports/pilot_acceptance_signoff_TR.md) — Pilot kabul imza şablonu (TR).
+- [reports/ip_licensing_split.md](../reports/ip_licensing_split.md) — Sektörel fikri hak ayrımı çerçevesi (EN).
+- [reports/ip_licensing_split_TR.md](../reports/ip_licensing_split_TR.md) — Sektörel fikri hak ayrımı çerçevesi (TR).
+- [reports/dataset_health.md](../reports/dataset_health.md) — Dataset sağlık raporu (EN).
+- [reports/dataset_health_TR.md](../reports/dataset_health_TR.md) — Dataset sağlık raporu (TR).
+- [reports/model_health.md](../reports/model_health.md) — Model sağlık raporu (EN).
+- [reports/model_health_TR.md](../reports/model_health_TR.md) — Model sağlık raporu (TR).
+- [reports/system_hardware.md](../reports/system_hardware.md) — Sistem donanım raporu (EN).
+- [reports/system_hardware_TR.md](../reports/system_hardware_TR.md) — Sistem donanım raporu (TR).
+- [reports/cli_smoke_log.md](../reports/cli_smoke_log.md) — CLI smoke log (EN).
+- [reports/cli_smoke_log_TR.md](../reports/cli_smoke_log_TR.md) — CLI smoke log (TR).
 
 
 **Operasyon & Yönetişim**
 Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
-- [MODEL_CARD.md](MODEL_CARD.md) — Model kartı (EN).
-- [MODEL_CARD_TR.md](MODEL_CARD_TR.md) — Model kartı (TR).
-- [USE_POLICY.md](USE_POLICY.md) — Kullanım politikası (EN).
-- [USE_POLICY_TR.md](USE_POLICY_TR.md) — Kullanım politikası (TR).
-- [SECURITY.md](SECURITY.md) — Güvenlik politikası (EN).
-- [SECURITY_TR.md](SECURITY_TR.md) — Güvenlik politikası (TR).
-- [DECISIONS.md](DECISIONS.md) — Mimari kararlar (EN).
-- [DECISIONS_TR.md](DECISIONS_TR.md) — Mimari kararlar (TR).
-- [datasets/README.md](datasets/README.md) — Dataset genel bakış (EN).
-- [datasets/README_TR.md](datasets/README_TR.md) — Dataset genel bakış (TR).
-- [datasets/SOURCES.md](datasets/SOURCES.md) — Veri kaynakları (EN).
-- [datasets/SOURCES_TR.md](datasets/SOURCES_TR.md) — Veri kaynakları (TR).
-- [datasets/LICENSES.md](datasets/LICENSES.md) — Lisanslar (EN).
-- [datasets/LICENSES_TR.md](datasets/LICENSES_TR.md) — Lisanslar (TR).
-- [datasets/inventory.md](datasets/inventory.md) — Dataset envanteri (otomatik, EN).
-- [datasets/inventory_TR.md](datasets/inventory_TR.md) — Dataset envanteri (otomatik, TR).
-- [datasets/inventory.json](datasets/inventory.json) — Dataset envanteri (otomatik, makine-okur).
-- [repro/seed_policy.md](repro/seed_policy.md) — Seed politikası (EN).
-- [repro/seed_policy_TR.md](repro/seed_policy_TR.md) — Seed politikası (TR).
-- [repro/python.md](repro/python.md) — Python 3.11 baseline kurulum (EN).
-- [repro/python_TR.md](repro/python_TR.md) — Python 3.11 baseline kurulum (TR).
-- [repro/accelerate_default.yaml](repro/accelerate_default.yaml) — Örnek accelerate config (yerel).
-- [repro/pip_freeze.txt](repro/pip_freeze.txt) — Ortam envanteri (pip freeze).
-- [logs/README.md](logs/README.md) — Log dizini + birleşik logbook notları.
+- [MODEL_CARD.md](../MODEL_CARD.md) — Model kartı (EN).
+- [MODEL_CARD_TR.md](../MODEL_CARD_TR.md) — Model kartı (TR).
+- [USE_POLICY.md](../USE_POLICY.md) — Kullanım politikası (EN).
+- [USE_POLICY_TR.md](../USE_POLICY_TR.md) — Kullanım politikası (TR).
+- [SECURITY.md](../SECURITY.md) — Güvenlik politikası (EN).
+- [SECURITY_TR.md](../SECURITY_TR.md) — Güvenlik politikası (TR).
+- [DECISIONS.md](../DECISIONS.md) — Mimari kararlar (EN).
+- [DECISIONS_TR.md](../DECISIONS_TR.md) — Mimari kararlar (TR).
+- [datasets/README.md](../datasets/README.md) — Dataset genel bakış (EN).
+- [datasets/README_TR.md](../datasets/README_TR.md) — Dataset genel bakış (TR).
+- [datasets/SOURCES.md](../datasets/SOURCES.md) — Veri kaynakları (EN).
+- [datasets/SOURCES_TR.md](../datasets/SOURCES_TR.md) — Veri kaynakları (TR).
+- [datasets/LICENSES.md](../datasets/LICENSES.md) — Lisanslar (EN).
+- [datasets/LICENSES_TR.md](../datasets/LICENSES_TR.md) — Lisanslar (TR).
+- [datasets/inventory.md](../datasets/inventory.md) — Dataset envanteri (otomatik, EN).
+- [datasets/inventory_TR.md](../datasets/inventory_TR.md) — Dataset envanteri (otomatik, TR).
+- [datasets/inventory.json](../datasets/inventory.json) — Dataset envanteri (otomatik, makine-okur).
+- [repro/seed_policy.md](../repro/seed_policy.md) — Seed politikası (EN).
+- [repro/seed_policy_TR.md](../repro/seed_policy_TR.md) — Seed politikası (TR).
+- [repro/python.md](../repro/python.md) — Python 3.11 baseline kurulum (EN).
+- [repro/python_TR.md](../repro/python_TR.md) — Python 3.11 baseline kurulum (TR).
+- [repro/accelerate_default.yaml](../repro/accelerate_default.yaml) — Örnek accelerate config (yerel).
+- [repro/pip_freeze.txt](../repro/pip_freeze.txt) — Ortam envanteri (pip freeze).
+- [logs/README.md](../logs/README.md) — Log dizini + birleşik logbook notları.
 - `logs/ALL_LOGS.jsonl` — Birleşik logbook artifact (gitignored; `.titan-venv/bin/python scripts/logbook_build.py --append` ile üretilir).
-- [.github/workflows/ci.yml](.github/workflows/ci.yml) — CI pipeline (pytest + preflight + secret scan).
-- [interfaces/inference_contract.md](interfaces/inference_contract.md) — Çıkarım sözleşmesi (EN).
-- [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md) — Çıkarım sözleşmesi (TR).
-- [interfaces/pilot_report_v1.schema.json](interfaces/pilot_report_v1.schema.json) — Pilot raporu JSON şeması.
-- [economics/cost_model.md](economics/cost_model.md) — Maliyet modeli (EN).
-- [economics/cost_model_TR.md](economics/cost_model_TR.md) — Maliyet modeli (TR).
-- [economics/efficiency_report.md](economics/efficiency_report.md) — Verim raporu (EN).
-- [economics/efficiency_report_TR.md](economics/efficiency_report_TR.md) — Verim raporu (TR).
-- [limits/scaling_breakpoints.md](limits/scaling_breakpoints.md) — Ölçek kırılma noktaları (EN).
-- [limits/scaling_breakpoints_TR.md](limits/scaling_breakpoints_TR.md) — Ölçek kırılma noktaları (TR).
-- [postmortems/README.md](postmortems/README.md) — Olay raporu dizini (EN).
-- [postmortems/README_TR.md](postmortems/README_TR.md) — Olay raporu dizini (TR).
-- [postmortems/_template.md](postmortems/_template.md) — Postmortem şablonu (EN).
-- [postmortems/_template_TR.md](postmortems/_template_TR.md) — Postmortem şablonu (TR).
-- [postmortems/example_001.md](postmortems/example_001.md) — Postmortem örneği (EN).
-- [postmortems/example_001_TR.md](postmortems/example_001_TR.md) — Postmortem örneği (TR).
-- [prompts/changelog.md](prompts/changelog.md) — Prompt değişim günlüğü (EN).
-- [prompts/changelog_TR.md](prompts/changelog_TR.md) — Prompt değişim günlüğü (TR).
-- [tokenizer/stats.md](tokenizer/stats.md) — Tokenizer istatistikleri (EN).
-- [tokenizer/stats_TR.md](tokenizer/stats_TR.md) — Tokenizer istatistikleri (TR).
-- [tokenizer/drift_report.md](tokenizer/drift_report.md) — Tokenizer drift raporu (EN).
-- [tokenizer/drift_report_TR.md](tokenizer/drift_report_TR.md) — Tokenizer drift raporu (TR).
-- [tokenizer/tr/README.md](tokenizer/tr/README.md) — Turkish tokenizer cache note (EN).
-- [tokenizer/tr/README_TR.md](tokenizer/tr/README_TR.md) — Turkish tokenizer cache note (TR).
-- [ablations/results.md](ablations/results.md) — Ablation sonuçları (EN).
-- [ablations/results_TR.md](ablations/results_TR.md) — Ablation sonuçları (TR).
-- [ablations/no_moe/README.md](ablations/no_moe/README.md) — MoE kapalı ablation (EN).
-- [ablations/no_moe/README_TR.md](ablations/no_moe/README_TR.md) — MoE kapalı ablation (TR).
-- [ablations/no_liquid/README.md](ablations/no_liquid/README.md) — Liquid kapalı ablation (EN).
-- [ablations/no_liquid/README_TR.md](ablations/no_liquid/README_TR.md) — Liquid kapalı ablation (TR).
-- [ablations/dense_only/README.md](ablations/dense_only/README.md) — Dense-only ablation (EN).
-- [ablations/dense_only/README_TR.md](ablations/dense_only/README_TR.md) — Dense-only ablation (TR).
-- [ablations/bitlinear_off/README.md](ablations/bitlinear_off/README.md) — BitNet kapalı ablation (EN).
-- [ablations/bitlinear_off/README_TR.md](ablations/bitlinear_off/README_TR.md) — BitNet kapalı ablation (TR).
-- [experiments/exp_001_baseline/notes.md](experiments/exp_001_baseline/notes.md) — Deney notları (EN).
-- [experiments/exp_001_baseline/notes_TR.md](experiments/exp_001_baseline/notes_TR.md) — Deney notları (TR).
-- [tools/abuse_tests.md](tools/abuse_tests.md) — Tool abuse testleri (EN).
-- [tools/abuse_tests_TR.md](tools/abuse_tests_TR.md) — Tool abuse testleri (TR).
-- [tools/sandbox/README.md](tools/sandbox/README.md) — Tool sandbox (EN).
-- [tools/sandbox/README_TR.md](tools/sandbox/README_TR.md) — Tool sandbox (TR).
-- [tools/contracts/README.md](tools/contracts/README.md) — Tool sözleşmeleri (EN).
-- [tools/contracts/README_TR.md](tools/contracts/README_TR.md) — Tool sözleşmeleri (TR).
-- [training_dynamics/cold_vs_warm.md](training_dynamics/cold_vs_warm.md) — Eğitim dinamiği notu (EN).
-- [training_dynamics/cold_vs_warm_TR.md](training_dynamics/cold_vs_warm_TR.md) — Eğitim dinamiği notu (TR).
+- [.github/workflows/ci.yml](../.github/workflows/ci.yml) — CI pipeline (pytest + preflight + secret scan).
+- [interfaces/inference_contract.md](../interfaces/inference_contract.md) — Çıkarım sözleşmesi (EN).
+- [interfaces/inference_contract_TR.md](../interfaces/inference_contract_TR.md) — Çıkarım sözleşmesi (TR).
+- [interfaces/pilot_report_v1.schema.json](../interfaces/pilot_report_v1.schema.json) — Pilot raporu JSON şeması.
+- [economics/cost_model.md](../economics/cost_model.md) — Maliyet modeli (EN).
+- [economics/cost_model_TR.md](../economics/cost_model_TR.md) — Maliyet modeli (TR).
+- [economics/efficiency_report.md](../economics/efficiency_report.md) — Verim raporu (EN).
+- [economics/efficiency_report_TR.md](../economics/efficiency_report_TR.md) — Verim raporu (TR).
+- [limits/scaling_breakpoints.md](../limits/scaling_breakpoints.md) — Ölçek kırılma noktaları (EN).
+- [limits/scaling_breakpoints_TR.md](../limits/scaling_breakpoints_TR.md) — Ölçek kırılma noktaları (TR).
+- [postmortems/README.md](../postmortems/README.md) — Olay raporu dizini (EN).
+- [postmortems/README_TR.md](../postmortems/README_TR.md) — Olay raporu dizini (TR).
+- [postmortems/_template.md](../postmortems/_template.md) — Postmortem şablonu (EN).
+- [postmortems/_template_TR.md](../postmortems/_template_TR.md) — Postmortem şablonu (TR).
+- [postmortems/example_001.md](../postmortems/example_001.md) — Postmortem örneği (EN).
+- [postmortems/example_001_TR.md](../postmortems/example_001_TR.md) — Postmortem örneği (TR).
+- [prompts/changelog.md](../prompts/changelog.md) — Prompt değişim günlüğü (EN).
+- [prompts/changelog_TR.md](../prompts/changelog_TR.md) — Prompt değişim günlüğü (TR).
+- [tokenizer/stats.md](../tokenizer/stats.md) — Tokenizer istatistikleri (EN).
+- [tokenizer/stats_TR.md](../tokenizer/stats_TR.md) — Tokenizer istatistikleri (TR).
+- [tokenizer/drift_report.md](../tokenizer/drift_report.md) — Tokenizer drift raporu (EN).
+- [tokenizer/drift_report_TR.md](../tokenizer/drift_report_TR.md) — Tokenizer drift raporu (TR).
+- [tokenizer/tr/README.md](../tokenizer/tr/README.md) — Turkish tokenizer cache note (EN).
+- [tokenizer/tr/README_TR.md](../tokenizer/tr/README_TR.md) — Turkish tokenizer cache note (TR).
+- [ablations/results.md](../ablations/results.md) — Ablation sonuçları (EN).
+- [ablations/results_TR.md](../ablations/results_TR.md) — Ablation sonuçları (TR).
+- [ablations/no_moe/README.md](../ablations/no_moe/README.md) — MoE kapalı ablation (EN).
+- [ablations/no_moe/README_TR.md](../ablations/no_moe/README_TR.md) — MoE kapalı ablation (TR).
+- [ablations/no_liquid/README.md](../ablations/no_liquid/README.md) — Liquid kapalı ablation (EN).
+- [ablations/no_liquid/README_TR.md](../ablations/no_liquid/README_TR.md) — Liquid kapalı ablation (TR).
+- [ablations/dense_only/README.md](../ablations/dense_only/README.md) — Dense-only ablation (EN).
+- [ablations/dense_only/README_TR.md](../ablations/dense_only/README_TR.md) — Dense-only ablation (TR).
+- [ablations/bitlinear_off/README.md](../ablations/bitlinear_off/README.md) — BitNet kapalı ablation (EN).
+- [ablations/bitlinear_off/README_TR.md](../ablations/bitlinear_off/README_TR.md) — BitNet kapalı ablation (TR).
+- [experiments/exp_001_baseline/notes.md](../experiments/exp_001_baseline/notes.md) — Deney notları (EN).
+- [experiments/exp_001_baseline/notes_TR.md](../experiments/exp_001_baseline/notes_TR.md) — Deney notları (TR).
+- [tools/abuse_tests.md](../tools/abuse_tests.md) — Tool abuse testleri (EN).
+- [tools/abuse_tests_TR.md](../tools/abuse_tests_TR.md) — Tool abuse testleri (TR).
+- [tools/sandbox/README.md](../tools/sandbox/README.md) — Tool sandbox (EN).
+- [tools/sandbox/README_TR.md](../tools/sandbox/README_TR.md) — Tool sandbox (TR).
+- [tools/contracts/README.md](../tools/contracts/README.md) — Tool sözleşmeleri (EN).
+- [tools/contracts/README_TR.md](../tools/contracts/README_TR.md) — Tool sözleşmeleri (TR).
+- [training_dynamics/cold_vs_warm.md](../training_dynamics/cold_vs_warm.md) — Eğitim dinamiği notu (EN).
+- [training_dynamics/cold_vs_warm_TR.md](../training_dynamics/cold_vs_warm_TR.md) — Eğitim dinamiği notu (TR).
 
 ---
 
@@ -536,7 +538,7 @@ flowchart TD
   C --> D["SOP artefaktları (reports + packages/artifacts zip)"]
 ```
 
-Tam harita: [`docs/CHAIN_MAP_TR.md`](docs/CHAIN_MAP_TR.md)
+Tam harita: [`docs/CHAIN_MAP_TR.md`](../docs/CHAIN_MAP_TR.md)
 
 ### Neden MertFormer Titan?
 
@@ -781,7 +783,7 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
 
 ### 🦅 MertFormer Titan: Sinaptik Katman Hiyerarşisi
 
-![Sinaptik Hiyerarşi Haritası](assets/synaptic_map.png)
+![Sinaptik Hiyerarşi Haritası](../assets/synaptic_map.png)
 
 Verinin 0'dan 17'ye kadar olan yolculuğu:
 
@@ -1202,7 +1204,7 @@ Aşağıdaki blok, bir MertFormer Ajanının karmaşık bir hatayı nasıl anali
 
 ### Eğitim Yapılandırması
 
-**Dosya**: [`config/config.py`](config/config.py)
+**Dosya**: [`config/config.py`](../config/config.py)
 
 Temel hiperparametreler:
 ```python
@@ -2366,11 +2368,11 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 
 ### Tıklanabilir Yol Haritası
 
-- `Çekirdek Sistem`: [config/](config/), [layers/](layers/), [model/](model/), [train/](train/), [utils/](utils/)
-- `SDK ve Çalışma Katmanı`: [mertformer_sdk/](mertformer_sdk/), [scripts/](scripts/), [run.sh](run.sh)
-- `Veri ve Kanıt`: [datasets/](datasets/), [reports/](reports/), [logs/](logs/), [interfaces/](interfaces/)
-- `Araştırma ve Uzantılar`: [ablations/](ablations/), [experiments/](experiments/), [orchestrator/](orchestrator/), [economics/](economics/), [limits/](limits/)
-- `Ana Dokümanlar`: [README.md](README.md), [README_TR.md](README_TR.md), [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md), [SDK_GUIDE_TR.md](SDK_GUIDE_TR.md)
+- `Çekirdek Sistem`: [config/](../config/), [layers/](../layers/), [model/](../model/), [train/](../train/), [utils/](../utils/)
+- `SDK ve Çalışma Katmanı`: [mertformer_sdk/](../mertformer_sdk/), [scripts/](../scripts/), [run.sh](../run.sh)
+- `Veri ve Kanıt`: [datasets/](../datasets/), [reports/](../reports/), [logs/](../logs/), [interfaces/](../interfaces/)
+- `Araştırma ve Uzantılar`: [ablations/](../ablations/), [experiments/](../experiments/), [orchestrator/](../orchestrator/), [economics/](../economics/), [limits/](../limits/)
+- `Ana Dokümanlar`: [README.md](../README.md), [README_TR.md](../README_TR.md), [USAGE_GUIDE_TR.md](../USAGE_GUIDE_TR.md), [SDK_GUIDE_TR.md](../SDK_GUIDE_TR.md)
 
 ### Bakım Kuralı
 
@@ -2384,7 +2386,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 <a id="lisans"></a>
 ## 📄 Lisans
 
-Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafından saklıdır. İzinsiz kopyalanması, değiştirilmesi veya dağıtılması kesinlikle yasaktır. Tüm detaylar için [LICENSE](LICENSE) dosyasına bakın.
+Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafından saklıdır. İzinsiz kopyalanması, değiştirilmesi veya dağıtılması kesinlikle yasaktır. Tüm detaylar için [LICENSE](../LICENSE) dosyasına bakın.
 
 ---
 

@@ -2,25 +2,26 @@
 
 Offline-first, auditable AI systems infrastructure for controlled local deployment and truthful ML systems evidence.
 Current maturity: **pilot-ready pre-training baseline**.
-Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_OFFLINE_CLEAN`.
+Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_REMOTE_BOOTSTRAP`.
 
 ### What Matters First
 - Application-relevant gate: a real owned training run plus checkpoint-bound evidence.
 - Exact `45K` is the preferred serious validation target, not the only acceptable application threshold.
-- Canonical repo-side lane: `offline-clean`.
-- Optional gated blocker: `online_teacher:MISSING_HF_TOKEN`.
+- Recommended repo-side lane: `remote_bootstrap`.
+- Strict local lane: `offline_clean`.
+- Remaining non-winning blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
 - Missing post-run evidence remains: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle, and trained export/device measurements.
 
 ### Shortest Truthful Review Path
-1. [START_HERE.md](START_HERE.md)
-2. [docs/PROJECT_MASTER_TRUTH.md](docs/PROJECT_MASTER_TRUTH.md)
-3. [docs/CHESS_ONEFILE_MASTER_TRUTH.md](docs/CHESS_ONEFILE_MASTER_TRUTH.md)
-4. [reports/final_truth_matrix.md](reports/final_truth_matrix.md)
-5. [reports/known_limits_v1.md](reports/known_limits_v1.md)
-6. [reports/systems_performance_case_study.md](reports/systems_performance_case_study.md)
-7. [reports/offline_assistant_case_study.md](reports/offline_assistant_case_study.md)
-8. [reports/chess_proof_teaching_case_study.md](reports/chess_proof_teaching_case_study.md)
-9. [applications/anthropic/README.md](applications/anthropic/README.md)
+1. [START_HERE.md](../START_HERE.md)
+2. [docs/PROJECT_MASTER_TRUTH.md](../docs/PROJECT_MASTER_TRUTH.md)
+3. [docs/CHESS_ONEFILE_MASTER_TRUTH.md](../docs/CHESS_ONEFILE_MASTER_TRUTH.md)
+4. [reports/final_truth_matrix.md](../reports/final_truth_matrix.md)
+5. [reports/known_limits_v1.md](../reports/known_limits_v1.md)
+6. [reports/systems_performance_case_study.md](../reports/systems_performance_case_study.md)
+7. [reports/offline_assistant_case_study.md](../reports/offline_assistant_case_study.md)
+8. [reports/chess_proof_teaching_case_study.md](../reports/chess_proof_teaching_case_study.md)
+9. [applications/anthropic/README.md](../applications/anthropic/README.md)
 
 ### Anthropic-Relevant Signals
 - training efficiency and systems debugging discipline
@@ -49,7 +50,7 @@ Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_OFFLINE_CL
 - `Routing policy: token-choice top-k.`
 - Closure-57 transparency note: `out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]`
 
-![MertFormer Titan Header](assets/header.png)
+![MertFormer Titan Header](../assets/header.png)
 
 <div align="center">
   <a href="README.md">🇬🇧 English</a> | <a href="README_TR.md">🇹🇷 Türkçe</a>
@@ -128,7 +129,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 
 **Feature highlight:** the canonical 45K path is now `bash zero_touch_start.sh`, which owns the exact readiness verdict, run lock, resume policy, and post-train autorun contract.
 
-This repository is no longer in idea/prototype-only state. The current working tree is repo-side 45K-ready on the canonical `offline_clean` lane; trained outputs are still absent because the real long run has not been executed on the target hardware yet.
+This repository is no longer in idea/prototype-only state. The current working tree is repo-side 45K-start-ready through the `remote_bootstrap` lane; trained outputs are still absent because the real long run has not been executed on the target hardware yet. The strict local `offline_clean` lane remains blocked until local logits exist or local Phase-0 precompute becomes actionable.
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
@@ -146,9 +147,10 @@ This repository is no longer in idea/prototype-only state. The current working t
    - `reports/final_truth_matrix.md`
 
 ### Current Exact Boundary
-- Canonical repo-side lane: `offline_clean`
-- Exact readiness verdict: `TRAIN_ALLOWED` / `READY_OFFLINE_CLEAN`
-- Remaining exact blocker: `online_teacher:MISSING_HF_TOKEN` (only for the optional gated teacher lane)
+- Recommended repo-side lane: `remote_bootstrap`
+- Exact readiness verdict: `TRAIN_ALLOWED` / `READY_REMOTE_BOOTSTRAP`
+- Strict local offline-clean rule: complete local precomputed logits or actionable local Phase-0 precompute; no teacherless fallback on the 45K lane
+- Remaining non-winning blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`
 
 ### Final prerequisites before long-run training
 - Target hardware allocation (GPU/edge) must be reserved.
@@ -208,10 +210,10 @@ HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touc
 
 | Engineering Status | `Pilot-ready pre-training baseline` |
 | :--- | :--- |
-| **Training Start Readiness** | ✅ TRAIN_ALLOWED (`READY_OFFLINE_CLEAN`; optional online teacher lane remains blocked without `HF_TOKEN`) |
+| **Training Start Readiness** | ✅ TRAIN_ALLOWED (`READY_REMOTE_BOOTSTRAP`; strict local offline_clean remains blocked without logits/local Phase-0, online_teacher remains blocked without `HF_TOKEN`) |
 | **Codebase** | ✅ Implemented (tests + offline preflight passing) |
 | **Offline Verification** | ✅ PASS (`bash scripts/verify_all.sh`) |
-| **Dataset Compliance** | ✅ Ready for offline-clean (`license/hash workflow active; stage JSONL files exist in the current working tree`) |
+| **Dataset Compliance** | ✅ Repo-side handoff ready (`license/hash workflow active; stage JSONL files exist in the current working tree, but strict local offline_clean still requires logits/local Phase-0`) |
 | **Full Training Run** | ▶️ Not started yet (`starts with first long-run on allocated hardware`) |
 | **Benchmarks** | ⛔ Not eligible for claim without a trained checkpoint (`NOT ELIGIBLE FOR CLAIM`) |
 
@@ -247,7 +249,7 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 - This repository is **proprietary and confidential**.
 - Source code, assets, and methods may only be used under explicit written agreement or employment contract with the owner.
 - Any third-party disclosure of confidential technical details requires signed NDA terms.
-- Full legal terms remain in [`LICENSE`](LICENSE) and [`LICENSE_TR`](LICENSE_TR).
+- Full legal terms remain in [`LICENSE`](../LICENSE) and [`LICENSE_TR`](../LICENSE_TR).
 
 ---
 
@@ -295,232 +297,232 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 
 **Core**
 Primary entry docs and checklists.
-- [README.md](README.md) — English overview.
-- [README_TR.md](README_TR.md) — Turkish overview.
-- [CITATION.cff](CITATION.cff) — Citation metadata (Cite this repository).
-- [CONTRIBUTING.md](CONTRIBUTING.md) — Contribution guidelines (internal use).
-- [CONTRIBUTING_TR.md](CONTRIBUTING_TR.md) — Contribution guidelines (TR).
-- [README_CHECKLIST.md](README_CHECKLIST.md) — README audit checklist (EN).
-- [README_CHECKLIST_TR.md](README_CHECKLIST_TR.md) — README audit checklist (TR).
-- [scripts/README.md](scripts/README.md) — Scripts catalog (EN).
-- [scripts/README_TR.md](scripts/README_TR.md) — Scripts catalog (TR).
-- [snake_demo.py](snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
-- [USAGE_GUIDE.md](USAGE_GUIDE.md) — Operational usage guide (EN).
-- [USAGE_GUIDE_TR.md](USAGE_GUIDE_TR.md) — Operational usage guide (TR).
-- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — Troubleshooting guide (EN).
-- [TROUBLESHOOTING_TR.md](TROUBLESHOOTING_TR.md) — Troubleshooting guide (TR).
-- [MODEL_LICENSE.md](MODEL_LICENSE.md) — Model license summary (EN).
-- [MODEL_LICENSE_TR.md](MODEL_LICENSE_TR.md) — Model license summary (TR).
-- [.env.example](.env.example) — Environment variable template.
-- [docs/CHAIN_MAP.md](docs/CHAIN_MAP.md) — Connected vs independent chain map (EN).
-- [docs/CHAIN_MAP_TR.md](docs/CHAIN_MAP_TR.md) — Connected vs independent chain map (TR).
-- [reports/commercial_handover/known_issues.md](reports/commercial_handover/known_issues.md) — Known issues register for transfer risk visibility.
-- [reports/commercial_handover/known_issues_TR.md](reports/commercial_handover/known_issues_TR.md) — Known issues register (TR).
-- [reports/commercial_handover/handover_scope.md](reports/commercial_handover/handover_scope.md) — Transfer scope and explicit out-of-scope boundaries.
-- [reports/commercial_handover/handover_scope_TR.md](reports/commercial_handover/handover_scope_TR.md) — Transfer scope and out-of-scope boundaries (TR).
-- [reports/commercial_handover/ownership_and_role.md](reports/commercial_handover/ownership_and_role.md) — Ownership model and decision rights after transfer.
-- [reports/commercial_handover/ownership_and_role_TR.md](reports/commercial_handover/ownership_and_role_TR.md) — Ownership model and decision rights (TR).
-- [reports/commercial_handover/sla_kpi_90_180.md](reports/commercial_handover/sla_kpi_90_180.md) — 90/180 day SLA and KPI operating plan.
-- [reports/commercial_handover/sla_kpi_90_180_TR.md](reports/commercial_handover/sla_kpi_90_180_TR.md) — 90/180 day SLA and KPI plan (TR).
-- [reports/commercial_handover/contract_terms_checklist.md](reports/commercial_handover/contract_terms_checklist.md) — Contract checklist for IP, liability, operations and exit.
-- [reports/commercial_handover/contract_terms_checklist_TR.md](reports/commercial_handover/contract_terms_checklist_TR.md) — Contract checklist for IP, liability, operations and exit (TR).
+- [README.md](../README.md) — English overview.
+- [README_TR.md](../README_TR.md) — Turkish overview.
+- [CITATION.cff](../CITATION.cff) — Citation metadata (Cite this repository).
+- [CONTRIBUTING.md](../CONTRIBUTING.md) — Contribution guidelines (internal use).
+- [CONTRIBUTING_TR.md](../CONTRIBUTING_TR.md) — Contribution guidelines (TR).
+- [README_CHECKLIST.md](../README_CHECKLIST.md) — README audit checklist (EN).
+- [README_CHECKLIST_TR.md](../README_CHECKLIST_TR.md) — README audit checklist (TR).
+- [scripts/README.md](../scripts/README.md) — Scripts catalog (EN).
+- [scripts/README_TR.md](../scripts/README_TR.md) — Scripts catalog (TR).
+- [snake_demo.py](../snake_demo.py) — Pygame cyberpunk Snake autoplayer (LIVE DEMO).
+- [USAGE_GUIDE.md](../USAGE_GUIDE.md) — Operational usage guide (EN).
+- [USAGE_GUIDE_TR.md](../USAGE_GUIDE_TR.md) — Operational usage guide (TR).
+- [TROUBLESHOOTING.md](../TROUBLESHOOTING.md) — Troubleshooting guide (EN).
+- [TROUBLESHOOTING_TR.md](../TROUBLESHOOTING_TR.md) — Troubleshooting guide (TR).
+- [MODEL_LICENSE.md](../MODEL_LICENSE.md) — Model license summary (EN).
+- [MODEL_LICENSE_TR.md](../MODEL_LICENSE_TR.md) — Model license summary (TR).
+- [.env.example](../.env.example) — Environment variable template.
+- [docs/CHAIN_MAP.md](../docs/CHAIN_MAP.md) — Connected vs independent chain map (EN).
+- [docs/CHAIN_MAP_TR.md](../docs/CHAIN_MAP_TR.md) — Connected vs independent chain map (TR).
+- [reports/commercial_handover/known_issues.md](../reports/commercial_handover/known_issues.md) — Known issues register for transfer risk visibility.
+- [reports/commercial_handover/known_issues_TR.md](../reports/commercial_handover/known_issues_TR.md) — Known issues register (TR).
+- [reports/commercial_handover/handover_scope.md](../reports/commercial_handover/handover_scope.md) — Transfer scope and explicit out-of-scope boundaries.
+- [reports/commercial_handover/handover_scope_TR.md](../reports/commercial_handover/handover_scope_TR.md) — Transfer scope and out-of-scope boundaries (TR).
+- [reports/commercial_handover/ownership_and_role.md](../reports/commercial_handover/ownership_and_role.md) — Ownership model and decision rights after transfer.
+- [reports/commercial_handover/ownership_and_role_TR.md](../reports/commercial_handover/ownership_and_role_TR.md) — Ownership model and decision rights (TR).
+- [reports/commercial_handover/sla_kpi_90_180.md](../reports/commercial_handover/sla_kpi_90_180.md) — 90/180 day SLA and KPI operating plan.
+- [reports/commercial_handover/sla_kpi_90_180_TR.md](../reports/commercial_handover/sla_kpi_90_180_TR.md) — 90/180 day SLA and KPI plan (TR).
+- [reports/commercial_handover/contract_terms_checklist.md](../reports/commercial_handover/contract_terms_checklist.md) — Contract checklist for IP, liability, operations and exit.
+- [reports/commercial_handover/contract_terms_checklist_TR.md](../reports/commercial_handover/contract_terms_checklist_TR.md) — Contract checklist for IP, liability, operations and exit (TR).
 
 **SDK**
 Package + CLI for edge deployments.
-- [mertformer_sdk/](mertformer_sdk/) — SDK package (API + CLI + kernels).
-- [SDK_GUIDE.md](SDK_GUIDE.md) — SDK quick guide (EN).
-- [SDK_GUIDE_TR.md](SDK_GUIDE_TR.md) — SDK quick guide (TR).
+- [mertformer_sdk/](../mertformer_sdk/) — SDK package (API + CLI + kernels).
+- [SDK_GUIDE.md](../SDK_GUIDE.md) — SDK quick guide (EN).
+- [SDK_GUIDE_TR.md](../SDK_GUIDE_TR.md) — SDK quick guide (TR).
 
 **Plans**
 Execution roadmaps and operator plans.
-- [TASK.md](TASK.md) — Operator Mode task plan (EN).
-- [TASK_TR.md](TASK_TR.md) — Operator Mode task plan (TR).
-- [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) — Implementation plan (EN).
-- [IMPLEMENTATION_PLAN_TR.md](IMPLEMENTATION_PLAN_TR.md) — Implementation plan (TR).
-- [TRAINING_PLAN.md](TRAINING_PLAN.md) — Training roadmap (EN).
-- [TRAINING_PLAN_TR.md](TRAINING_PLAN_TR.md) — Training roadmap (TR).
-- [CHANGELOG.md](CHANGELOG.md) — Release changelog (EN).
-- [CHANGELOG_TR.md](CHANGELOG_TR.md) — Release changelog (TR).
+- [TASK.md](../TASK.md) — Operator Mode task plan (EN).
+- [TASK_TR.md](../TASK_TR.md) — Operator Mode task plan (TR).
+- [IMPLEMENTATION_PLAN.md](../IMPLEMENTATION_PLAN.md) — Implementation plan (EN).
+- [IMPLEMENTATION_PLAN_TR.md](../IMPLEMENTATION_PLAN_TR.md) — Implementation plan (TR).
+- [TRAINING_PLAN.md](../TRAINING_PLAN.md) — Training roadmap (EN).
+- [TRAINING_PLAN_TR.md](../TRAINING_PLAN_TR.md) — Training roadmap (TR).
+- [CHANGELOG.md](../CHANGELOG.md) — Release changelog (EN).
+- [CHANGELOG_TR.md](../CHANGELOG_TR.md) — Release changelog (TR).
 
 **Technical**
 Deep-dive architecture and research references.
-- [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md) — Technical deep dive (EN).
-- [TECHNICAL_REPORT_TR.md](TECHNICAL_REPORT_TR.md) — Technical deep dive (TR).
-- [WHITE_PAPER_LIQUIDROUTER.md](WHITE_PAPER_LIQUIDROUTER.md) — LiquidRouter white paper (EN).
-- [WHITE_PAPER_LIQUIDROUTER_TR.md](WHITE_PAPER_LIQUIDROUTER_TR.md) — LiquidRouter white paper (TR).
+- [TECHNICAL_REPORT.md](../TECHNICAL_REPORT.md) — Technical deep dive (EN).
+- [TECHNICAL_REPORT_TR.md](../TECHNICAL_REPORT_TR.md) — Technical deep dive (TR).
+- [WHITE_PAPER_LIQUIDROUTER.md](../WHITE_PAPER_LIQUIDROUTER.md) — LiquidRouter white paper (EN).
+- [WHITE_PAPER_LIQUIDROUTER_TR.md](../WHITE_PAPER_LIQUIDROUTER_TR.md) — LiquidRouter white paper (TR).
 
 **Internal**
 Internal roadmap and capability gap mapping (non-public).
-- [INTERNAL_AGI_GAP.md](INTERNAL_AGI_GAP.md) — Internal AGI gap map (EN).
-- [INTERNAL_AGI_GAP_TR.md](INTERNAL_AGI_GAP_TR.md) — Internal AGI gap map (TR).
+- [INTERNAL_AGI_GAP.md](../INTERNAL_AGI_GAP.md) — Internal AGI gap map (EN).
+- [INTERNAL_AGI_GAP_TR.md](../INTERNAL_AGI_GAP_TR.md) — Internal AGI gap map (TR).
 
 **Audit & Strategy**
 Report accuracy audit and strategic value summary.
-- [reports/report_accuracy_audit.md](reports/report_accuracy_audit.md) — Report accuracy audit (EN).
-- [reports/report_accuracy_audit_TR.md](reports/report_accuracy_audit_TR.md) — Report accuracy audit (TR).
-- [reports/codex_deep_audit_EN.md](reports/codex_deep_audit_EN.md) — Deep engineering audit (EN).
-- [reports/codex_deep_audit_DE.md](reports/codex_deep_audit_DE.md) — Deep engineering audit (DE).
-- [reports/codex_deep_audit_TR.md](reports/codex_deep_audit_TR.md) — Deep engineering audit (TR).
-- [reports/codex_deep_audit_EN_TR.md](reports/codex_deep_audit_EN_TR.md) — EN audit Turkish pointer file (TR, canonical content in `codex_deep_audit_TR.md`).
-- [reports/codex_deep_audit_DE_TR.md](reports/codex_deep_audit_DE_TR.md) — DE audit Turkish pointer file (TR, canonical content in `codex_deep_audit_TR.md`).
+- [reports/report_accuracy_audit.md](../reports/report_accuracy_audit.md) — Report accuracy audit (EN).
+- [reports/report_accuracy_audit_TR.md](../reports/report_accuracy_audit_TR.md) — Report accuracy audit (TR).
+- [reports/codex_deep_audit_EN.md](../reports/codex_deep_audit_EN.md) — Deep engineering audit (EN).
+- [reports/codex_deep_audit_DE.md](../reports/codex_deep_audit_DE.md) — Deep engineering audit (DE).
+- [reports/codex_deep_audit_TR.md](../reports/codex_deep_audit_TR.md) — Deep engineering audit (TR).
+- [reports/codex_deep_audit_EN_TR.md](../reports/codex_deep_audit_EN_TR.md) — EN audit Turkish pointer file (TR, canonical content in `codex_deep_audit_TR.md`).
+- [reports/codex_deep_audit_DE_TR.md](../reports/codex_deep_audit_DE_TR.md) — DE audit Turkish pointer file (TR, canonical content in `codex_deep_audit_TR.md`).
 - DE-language audit files are retained as external review artifacts for German-speaking stakeholders.
-- [reports/verified_matrix.md](reports/verified_matrix.md) — Verified vs Target matrix (EN).
-- [reports/verified_matrix_TR.md](reports/verified_matrix_TR.md) — Verified vs Target matrix (TR).
-- [reports/review_checklist.md](reports/review_checklist.md) — External review checklist (EN).
-- [reports/review_checklist_TR.md](reports/review_checklist_TR.md) — External review checklist (TR).
-- [reports/release_snapshot.md](reports/release_snapshot.md) — Release snapshot (EN).
-- [reports/release_snapshot_TR.md](reports/release_snapshot_TR.md) — Release snapshot (TR).
-- [reports/final_sync_matrix.md](reports/final_sync_matrix.md) — Final sync matrix (EN).
-- [reports/final_sync_matrix_TR.md](reports/final_sync_matrix_TR.md) — Final sync matrix (TR).
-- [reports/go_status_matrix.md](reports/go_status_matrix.md) — GO/NO-GO status matrix (EN).
-- [reports/go_status_matrix_TR.md](reports/go_status_matrix_TR.md) — GO/NO-GO status matrix (TR).
-- [reports/go_nogo_signoff_onepager.md](reports/go_nogo_signoff_onepager.md) — Technical GO/NO-GO one-pager (EN).
-- [reports/go_nogo_signoff_onepager_TR.md](reports/go_nogo_signoff_onepager_TR.md) — Technical GO/NO-GO one-pager (TR).
-- [reports/closure_57_matrix.md](reports/closure_57_matrix.md) — Closure 57 matrix (EN).
-- [reports/closure_57_matrix_TR.md](reports/closure_57_matrix_TR.md) — Closure 57 matrix (TR).
-- [reports/report_truth_matrix.md](reports/report_truth_matrix.md) — Report truth matrix (EN).
-- [AGENTS.md](AGENTS.md) — Closure constitution for contributors and coding agents.
-- [reports/source_of_truth_map.md](reports/source_of_truth_map.md) — Current source-of-truth authority map.
-- [reports/final_backlog_classification.md](reports/final_backlog_classification.md) — Current grouped backlog status accounting.
-- [reports/final_truth_matrix.md](reports/final_truth_matrix.md) — Current claim-to-evidence truth matrix.
-- [reports/release_closure_note.md](reports/release_closure_note.md) — Release closure note (EN).
-- [reports/kpi_pack_v1.md](reports/kpi_pack_v1.md) — KPI pack (EN).
-- [reports/kpi_pack_v1_TR.md](reports/kpi_pack_v1_TR.md) — KPI pack (TR).
-- [reports/cleanroom_verification.md](reports/cleanroom_verification.md) — Fresh-clone reproducibility evidence (EN).
-- [reports/cleanroom_verification_TR.md](reports/cleanroom_verification_TR.md) — Fresh-clone reproducibility evidence (TR).
-- [reports/legal_cleanroom_signoff_internal.md](reports/legal_cleanroom_signoff_internal.md) — Internal cleanroom legal sign-off record (EN).
-- [reports/teacher_output_license_assessment.md](reports/teacher_output_license_assessment.md) — Teacher/output license internal assessment (EN).
-- [reports/contamination_report_build30.md](reports/contamination_report_build30.md) — Build30 contamination report (EN).
-- [reports/kpi_contract_build30.md](reports/kpi_contract_build30.md) — Technical KPI contract for GO decision (EN).
-- [reports/benchmarks/README.md](reports/benchmarks/README.md) — Benchmark outputs guide (EN).
-- [reports/benchmarks/README_TR.md](reports/benchmarks/README_TR.md) — Benchmark outputs guide (TR).
-- [reports/benchmarks/smoke_train_metrics.json](reports/benchmarks/smoke_train_metrics.json) — Smoke benchmark metrics snapshot (machine-readable).
-- [reports/strategic_value.md](reports/strategic_value.md) — Strategic value summary (EN).
-- [reports/strategic_value_TR.md](reports/strategic_value_TR.md) — Strategic value summary (TR).
-- [reports/efficiency_convergence_analysis.md](reports/efficiency_convergence_analysis.md) — Convergence analysis (BitNet/Liquid/MoE, forecast, EN).
-- [reports/efficiency_convergence_analysis_TR.md](reports/efficiency_convergence_analysis_TR.md) — Convergence analysis (BitNet/Liquid/MoE, forecast, TR).
+- [reports/verified_matrix.md](../reports/verified_matrix.md) — Verified vs Target matrix (EN).
+- [reports/verified_matrix_TR.md](../reports/verified_matrix_TR.md) — Verified vs Target matrix (TR).
+- [reports/review_checklist.md](../reports/review_checklist.md) — External review checklist (EN).
+- [reports/review_checklist_TR.md](../reports/review_checklist_TR.md) — External review checklist (TR).
+- [reports/release_snapshot.md](../reports/release_snapshot.md) — Release snapshot (EN).
+- [reports/release_snapshot_TR.md](../reports/release_snapshot_TR.md) — Release snapshot (TR).
+- [reports/final_sync_matrix.md](../reports/final_sync_matrix.md) — Final sync matrix (EN).
+- [reports/final_sync_matrix_TR.md](../reports/final_sync_matrix_TR.md) — Final sync matrix (TR).
+- [reports/go_status_matrix.md](../reports/go_status_matrix.md) — GO/NO-GO status matrix (EN).
+- [reports/go_status_matrix_TR.md](../reports/go_status_matrix_TR.md) — GO/NO-GO status matrix (TR).
+- [reports/go_nogo_signoff_onepager.md](../reports/go_nogo_signoff_onepager.md) — Technical GO/NO-GO one-pager (EN).
+- [reports/go_nogo_signoff_onepager_TR.md](../reports/go_nogo_signoff_onepager_TR.md) — Technical GO/NO-GO one-pager (TR).
+- [reports/closure_57_matrix.md](../reports/closure_57_matrix.md) — Closure 57 matrix (EN).
+- [reports/closure_57_matrix_TR.md](../reports/closure_57_matrix_TR.md) — Closure 57 matrix (TR).
+- [reports/report_truth_matrix.md](../reports/report_truth_matrix.md) — Report truth matrix (EN).
+- [AGENTS.md](../AGENTS.md) — Closure constitution for contributors and coding agents.
+- [reports/source_of_truth_map.md](../reports/source_of_truth_map.md) — Current source-of-truth authority map.
+- [reports/final_backlog_classification.md](../reports/final_backlog_classification.md) — Current grouped backlog status accounting.
+- [reports/final_truth_matrix.md](../reports/final_truth_matrix.md) — Current claim-to-evidence truth matrix.
+- [reports/release_closure_note.md](../reports/release_closure_note.md) — Release closure note (EN).
+- [reports/kpi_pack_v1.md](../reports/kpi_pack_v1.md) — KPI pack (EN).
+- [reports/kpi_pack_v1_TR.md](../reports/kpi_pack_v1_TR.md) — KPI pack (TR).
+- [reports/cleanroom_verification.md](../reports/cleanroom_verification.md) — Fresh-clone reproducibility evidence (EN).
+- [reports/cleanroom_verification_TR.md](../reports/cleanroom_verification_TR.md) — Fresh-clone reproducibility evidence (TR).
+- [reports/legal_cleanroom_signoff_internal.md](../reports/legal_cleanroom_signoff_internal.md) — Internal cleanroom legal sign-off record (EN).
+- [reports/teacher_output_license_assessment.md](../reports/teacher_output_license_assessment.md) — Teacher/output license internal assessment (EN).
+- [reports/contamination_report_build30.md](../reports/contamination_report_build30.md) — Build30 contamination report (EN).
+- [reports/kpi_contract_build30.md](../reports/kpi_contract_build30.md) — Technical KPI contract for GO decision (EN).
+- [reports/benchmarks/README.md](../reports/benchmarks/README.md) — Benchmark outputs guide (EN).
+- [reports/benchmarks/README_TR.md](../reports/benchmarks/README_TR.md) — Benchmark outputs guide (TR).
+- [reports/benchmarks/smoke_train_metrics.json](../reports/benchmarks/smoke_train_metrics.json) — Smoke benchmark metrics snapshot (machine-readable).
+- [reports/strategic_value.md](../reports/strategic_value.md) — Strategic value summary (EN).
+- [reports/strategic_value_TR.md](../reports/strategic_value_TR.md) — Strategic value summary (TR).
+- [reports/efficiency_convergence_analysis.md](../reports/efficiency_convergence_analysis.md) — Convergence analysis (BitNet/Liquid/MoE, forecast, EN).
+- [reports/efficiency_convergence_analysis_TR.md](../reports/efficiency_convergence_analysis_TR.md) — Convergence analysis (BitNet/Liquid/MoE, forecast, TR).
 
 **Pitch & Assets**
 Investor-facing materials and launch assets.
-- [PITCH.md](PITCH.md) — Investor pitch (EN).
-- [PITCH_TR.md](PITCH_TR.md) — Investor pitch (TR).
-- [reports/investor_deck.pptx](reports/investor_deck.pptx) — Investor deck (EN).
-- [reports/investor_deck_TR.pptx](reports/investor_deck_TR.pptx) — Investor deck (TR).
-- [reports/one_pager.md](reports/one_pager.md) — One-pager (EN).
-- [reports/one_pager_TR.md](reports/one_pager_TR.md) — One-pager (TR).
-- [reports/technical_snapshot.md](reports/technical_snapshot.md) — Technical snapshot (EN).
-- [reports/technical_snapshot_TR.md](reports/technical_snapshot_TR.md) — Technical snapshot (TR).
-- [reports/asset_stack.md](reports/asset_stack.md) — Asset index (EN).
-- [reports/asset_stack_TR.md](reports/asset_stack_TR.md) — Asset index (TR).
-- [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4) — 30-second snake demo proof clip.
-- [assets/snake_demo_preview.gif](assets/snake_demo_preview.gif) — Embedded snake demo preview (GIF).
-- [assets/sources/README.md](assets/sources/README.md) — Editable visual source archive standard (EN).
-- [assets/sources/README_TR.md](assets/sources/README_TR.md) — Editable visual source archive standard (TR).
+- [PITCH.md](../PITCH.md) — Investor pitch (EN).
+- [PITCH_TR.md](../PITCH_TR.md) — Investor pitch (TR).
+- [reports/investor_deck.pptx](../reports/investor_deck.pptx) — Investor deck (EN).
+- [reports/investor_deck_TR.pptx](../reports/investor_deck_TR.pptx) — Investor deck (TR).
+- [reports/one_pager.md](../reports/one_pager.md) — One-pager (EN).
+- [reports/one_pager_TR.md](../reports/one_pager_TR.md) — One-pager (TR).
+- [reports/technical_snapshot.md](../reports/technical_snapshot.md) — Technical snapshot (EN).
+- [reports/technical_snapshot_TR.md](../reports/technical_snapshot_TR.md) — Technical snapshot (TR).
+- [reports/asset_stack.md](../reports/asset_stack.md) — Asset index (EN).
+- [reports/asset_stack_TR.md](../reports/asset_stack_TR.md) — Asset index (TR).
+- [assets/snake_demo_proof.mp4](../assets/snake_demo_proof.mp4) — 30-second snake demo proof clip.
+- [assets/snake_demo_preview.gif](../assets/snake_demo_preview.gif) — Embedded snake demo preview (GIF).
+- [assets/sources/README.md](../assets/sources/README.md) — Editable visual source archive standard (EN).
+- [assets/sources/README_TR.md](../assets/sources/README_TR.md) — Editable visual source archive standard (TR).
 
-![Snake Demo Preview](assets/snake_demo_preview.gif)
+![Snake Demo Preview](../assets/snake_demo_preview.gif)
 
-Open full clip: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
-- [reports/founders_hub_application.md](reports/founders_hub_application.md) — Founders Hub draft (EN).
-- [reports/founders_hub_application_TR.md](reports/founders_hub_application_TR.md) — Founders Hub draft (TR).
-- [reports/security_compliance.md](reports/security_compliance.md) — Security & compliance brief (EN).
-- [reports/security_compliance_TR.md](reports/security_compliance_TR.md) — Security & compliance brief (TR).
-- [reports/poc_protocol.md](reports/poc_protocol.md) — Pilot/PoC protocol (EN).
-- [reports/poc_protocol_TR.md](reports/poc_protocol_TR.md) — Pilot/PoC protocol (TR).
-- [reports/pilot_readiness_kit.md](reports/pilot_readiness_kit.md) — Pilot readiness kit (EN).
-- [reports/pilot_readiness_kit_TR.md](reports/pilot_readiness_kit_TR.md) — Pilot readiness kit (TR).
-- [reports/pilot_offer_packages.md](reports/pilot_offer_packages.md) — Standard pilot offer packages (EN).
-- [reports/pilot_offer_packages_TR.md](reports/pilot_offer_packages_TR.md) — Standard pilot offer packages (TR).
-- [reports/sales_funnel_90d.md](reports/sales_funnel_90d.md) — 90-day B2B pilot sales funnel (EN).
-- [reports/sales_funnel_90d_TR.md](reports/sales_funnel_90d_TR.md) — 90-day B2B pilot sales funnel (TR).
-- [reports/drone_sitl_demo.md](reports/drone_sitl_demo.md) — SITL drone proof protocol (EN).
-- [reports/drone_sitl_demo_TR.md](reports/drone_sitl_demo_TR.md) — SITL drone proof protocol (TR).
-- [reports/pilots/README.md](reports/pilots/README.md) — Pilot evidence folder standard (EN).
-- [reports/pilots/README_TR.md](reports/pilots/README_TR.md) — Pilot evidence folder standard (TR).
-- [reports/pilot_acceptance_signoff.md](reports/pilot_acceptance_signoff.md) — Pilot acceptance signature template (EN).
-- [reports/pilot_acceptance_signoff_TR.md](reports/pilot_acceptance_signoff_TR.md) — Pilot acceptance signature template (TR).
-- [reports/ip_licensing_split.md](reports/ip_licensing_split.md) — Sectoral IP split framework (EN).
-- [reports/ip_licensing_split_TR.md](reports/ip_licensing_split_TR.md) — Sectoral IP split framework (TR).
-- [reports/dataset_health.md](reports/dataset_health.md) — Dataset health report (EN).
-- [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset health report (TR).
-- [reports/model_health.md](reports/model_health.md) — Model health report (EN).
-- [reports/model_health_TR.md](reports/model_health_TR.md) — Model health report (TR).
-- [reports/system_hardware.md](reports/system_hardware.md) — System hardware report (EN).
-- [reports/system_hardware_TR.md](reports/system_hardware_TR.md) — System hardware report (TR).
-- [reports/cli_smoke_log.md](reports/cli_smoke_log.md) — CLI smoke log (EN).
-- [reports/cli_smoke_log_TR.md](reports/cli_smoke_log_TR.md) — CLI smoke log (TR).
+Open full clip: [assets/snake_demo_proof.mp4](../assets/snake_demo_proof.mp4)
+- [reports/founders_hub_application.md](../reports/founders_hub_application.md) — Founders Hub draft (EN).
+- [reports/founders_hub_application_TR.md](../reports/founders_hub_application_TR.md) — Founders Hub draft (TR).
+- [reports/security_compliance.md](../reports/security_compliance.md) — Security & compliance brief (EN).
+- [reports/security_compliance_TR.md](../reports/security_compliance_TR.md) — Security & compliance brief (TR).
+- [reports/poc_protocol.md](../reports/poc_protocol.md) — Pilot/PoC protocol (EN).
+- [reports/poc_protocol_TR.md](../reports/poc_protocol_TR.md) — Pilot/PoC protocol (TR).
+- [reports/pilot_readiness_kit.md](../reports/pilot_readiness_kit.md) — Pilot readiness kit (EN).
+- [reports/pilot_readiness_kit_TR.md](../reports/pilot_readiness_kit_TR.md) — Pilot readiness kit (TR).
+- [reports/pilot_offer_packages.md](../reports/pilot_offer_packages.md) — Standard pilot offer packages (EN).
+- [reports/pilot_offer_packages_TR.md](../reports/pilot_offer_packages_TR.md) — Standard pilot offer packages (TR).
+- [reports/sales_funnel_90d.md](../reports/sales_funnel_90d.md) — 90-day B2B pilot sales funnel (EN).
+- [reports/sales_funnel_90d_TR.md](../reports/sales_funnel_90d_TR.md) — 90-day B2B pilot sales funnel (TR).
+- [reports/drone_sitl_demo.md](../reports/drone_sitl_demo.md) — SITL drone proof protocol (EN).
+- [reports/drone_sitl_demo_TR.md](../reports/drone_sitl_demo_TR.md) — SITL drone proof protocol (TR).
+- [reports/pilots/README.md](../reports/pilots/README.md) — Pilot evidence folder standard (EN).
+- [reports/pilots/README_TR.md](../reports/pilots/README_TR.md) — Pilot evidence folder standard (TR).
+- [reports/pilot_acceptance_signoff.md](../reports/pilot_acceptance_signoff.md) — Pilot acceptance signature template (EN).
+- [reports/pilot_acceptance_signoff_TR.md](../reports/pilot_acceptance_signoff_TR.md) — Pilot acceptance signature template (TR).
+- [reports/ip_licensing_split.md](../reports/ip_licensing_split.md) — Sectoral IP split framework (EN).
+- [reports/ip_licensing_split_TR.md](../reports/ip_licensing_split_TR.md) — Sectoral IP split framework (TR).
+- [reports/dataset_health.md](../reports/dataset_health.md) — Dataset health report (EN).
+- [reports/dataset_health_TR.md](../reports/dataset_health_TR.md) — Dataset health report (TR).
+- [reports/model_health.md](../reports/model_health.md) — Model health report (EN).
+- [reports/model_health_TR.md](../reports/model_health_TR.md) — Model health report (TR).
+- [reports/system_hardware.md](../reports/system_hardware.md) — System hardware report (EN).
+- [reports/system_hardware_TR.md](../reports/system_hardware_TR.md) — System hardware report (TR).
+- [reports/cli_smoke_log.md](../reports/cli_smoke_log.md) — CLI smoke log (EN).
+- [reports/cli_smoke_log_TR.md](../reports/cli_smoke_log_TR.md) — CLI smoke log (TR).
 
 
 **Ops & Governance**
 Security, provenance, reproducibility, and ops notes.
-- [MODEL_CARD.md](MODEL_CARD.md) — Model card (EN).
-- [MODEL_CARD_TR.md](MODEL_CARD_TR.md) — Model card (TR).
-- [USE_POLICY.md](USE_POLICY.md) — Use policy (EN).
-- [USE_POLICY_TR.md](USE_POLICY_TR.md) — Use policy (TR).
-- [SECURITY.md](SECURITY.md) — Security policy (EN).
-- [SECURITY_TR.md](SECURITY_TR.md) — Security policy (TR).
-- [DECISIONS.md](DECISIONS.md) — Architecture decisions (EN).
-- [DECISIONS_TR.md](DECISIONS_TR.md) — Architecture decisions (TR).
-- [datasets/README.md](datasets/README.md) — Dataset overview (EN).
-- [datasets/README_TR.md](datasets/README_TR.md) — Dataset overview (TR).
-- [datasets/SOURCES.md](datasets/SOURCES.md) — Data sources (EN).
-- [datasets/SOURCES_TR.md](datasets/SOURCES_TR.md) — Data sources (TR).
-- [datasets/LICENSES.md](datasets/LICENSES.md) — Data licenses (EN).
-- [datasets/LICENSES_TR.md](datasets/LICENSES_TR.md) — Data licenses (TR).
-- [datasets/inventory.md](datasets/inventory.md) — Dataset inventory (auto, EN).
-- [datasets/inventory_TR.md](datasets/inventory_TR.md) — Dataset inventory (auto, TR).
-- [datasets/inventory.json](datasets/inventory.json) — Dataset inventory (auto, machine-readable).
-- [repro/seed_policy.md](repro/seed_policy.md) — Seed policy (EN).
-- [repro/seed_policy_TR.md](repro/seed_policy_TR.md) — Seed policy (TR).
-- [repro/python.md](repro/python.md) — Python 3.11 baseline setup (EN).
-- [repro/python_TR.md](repro/python_TR.md) — Python 3.11 baseline setup (TR).
-- [repro/accelerate_default.yaml](repro/accelerate_default.yaml) — Example accelerate config (local).
-- [repro/pip_freeze.txt](repro/pip_freeze.txt) — Environment snapshot (pip freeze).
-- [logs/README.md](logs/README.md) — Logs index + unified logbook notes.
+- [MODEL_CARD.md](../MODEL_CARD.md) — Model card (EN).
+- [MODEL_CARD_TR.md](../MODEL_CARD_TR.md) — Model card (TR).
+- [USE_POLICY.md](../USE_POLICY.md) — Use policy (EN).
+- [USE_POLICY_TR.md](../USE_POLICY_TR.md) — Use policy (TR).
+- [SECURITY.md](../SECURITY.md) — Security policy (EN).
+- [SECURITY_TR.md](../SECURITY_TR.md) — Security policy (TR).
+- [DECISIONS.md](../DECISIONS.md) — Architecture decisions (EN).
+- [DECISIONS_TR.md](../DECISIONS_TR.md) — Architecture decisions (TR).
+- [datasets/README.md](../datasets/README.md) — Dataset overview (EN).
+- [datasets/README_TR.md](../datasets/README_TR.md) — Dataset overview (TR).
+- [datasets/SOURCES.md](../datasets/SOURCES.md) — Data sources (EN).
+- [datasets/SOURCES_TR.md](../datasets/SOURCES_TR.md) — Data sources (TR).
+- [datasets/LICENSES.md](../datasets/LICENSES.md) — Data licenses (EN).
+- [datasets/LICENSES_TR.md](../datasets/LICENSES_TR.md) — Data licenses (TR).
+- [datasets/inventory.md](../datasets/inventory.md) — Dataset inventory (auto, EN).
+- [datasets/inventory_TR.md](../datasets/inventory_TR.md) — Dataset inventory (auto, TR).
+- [datasets/inventory.json](../datasets/inventory.json) — Dataset inventory (auto, machine-readable).
+- [repro/seed_policy.md](../repro/seed_policy.md) — Seed policy (EN).
+- [repro/seed_policy_TR.md](../repro/seed_policy_TR.md) — Seed policy (TR).
+- [repro/python.md](../repro/python.md) — Python 3.11 baseline setup (EN).
+- [repro/python_TR.md](../repro/python_TR.md) — Python 3.11 baseline setup (TR).
+- [repro/accelerate_default.yaml](../repro/accelerate_default.yaml) — Example accelerate config (local).
+- [repro/pip_freeze.txt](../repro/pip_freeze.txt) — Environment snapshot (pip freeze).
+- [logs/README.md](../logs/README.md) — Logs index + unified logbook notes.
 - `logs/ALL_LOGS.jsonl` — Unified logbook artifact (gitignored; generated via `.titan-venv/bin/python scripts/logbook_build.py --append`).
-- [.github/workflows/ci.yml](.github/workflows/ci.yml) — CI pipeline (pytest + preflight + secret scan).
-- [interfaces/inference_contract.md](interfaces/inference_contract.md) — Inference contract (EN).
-- [interfaces/inference_contract_TR.md](interfaces/inference_contract_TR.md) — Inference contract (TR).
-- [interfaces/pilot_report_v1.schema.json](interfaces/pilot_report_v1.schema.json) — Pilot report JSON schema.
-- [economics/cost_model.md](economics/cost_model.md) — Cost model (EN).
-- [economics/cost_model_TR.md](economics/cost_model_TR.md) — Cost model (TR).
-- [economics/efficiency_report.md](economics/efficiency_report.md) — Efficiency report (EN).
-- [economics/efficiency_report_TR.md](economics/efficiency_report_TR.md) — Efficiency report (TR).
-- [limits/scaling_breakpoints.md](limits/scaling_breakpoints.md) — Scaling breakpoints (EN).
-- [limits/scaling_breakpoints_TR.md](limits/scaling_breakpoints_TR.md) — Scaling breakpoints (TR).
-- [postmortems/README.md](postmortems/README.md) — Postmortem guide (EN).
-- [postmortems/README_TR.md](postmortems/README_TR.md) — Postmortem guide (TR).
-- [postmortems/_template.md](postmortems/_template.md) — Postmortem template (EN).
-- [postmortems/_template_TR.md](postmortems/_template_TR.md) — Postmortem template (TR).
-- [postmortems/example_001.md](postmortems/example_001.md) — Example postmortem (EN).
-- [postmortems/example_001_TR.md](postmortems/example_001_TR.md) — Example postmortem (TR).
-- [prompts/changelog.md](prompts/changelog.md) — Prompt change log (EN).
-- [prompts/changelog_TR.md](prompts/changelog_TR.md) — Prompt change log (TR).
-- [tokenizer/stats.md](tokenizer/stats.md) — Tokenizer stats (EN).
-- [tokenizer/stats_TR.md](tokenizer/stats_TR.md) — Tokenizer stats (TR).
-- [tokenizer/drift_report.md](tokenizer/drift_report.md) — Tokenizer drift report (EN).
-- [tokenizer/drift_report_TR.md](tokenizer/drift_report_TR.md) — Tokenizer drift report (TR).
-- [tokenizer/tr/README.md](tokenizer/tr/README.md) — Turkish tokenizer cache note (EN).
-- [tokenizer/tr/README_TR.md](tokenizer/tr/README_TR.md) — Turkish tokenizer cache note (TR).
-- [ablations/results.md](ablations/results.md) — Ablation results (EN).
-- [ablations/results_TR.md](ablations/results_TR.md) — Ablation results (TR).
-- [ablations/no_moe/README.md](ablations/no_moe/README.md) — Ablation: no MoE (EN).
-- [ablations/no_moe/README_TR.md](ablations/no_moe/README_TR.md) — Ablation: no MoE (TR).
-- [ablations/no_liquid/README.md](ablations/no_liquid/README.md) — Ablation: no Liquid (EN).
-- [ablations/no_liquid/README_TR.md](ablations/no_liquid/README_TR.md) — Ablation: no Liquid (TR).
-- [ablations/dense_only/README.md](ablations/dense_only/README.md) — Ablation: dense-only (EN).
-- [ablations/dense_only/README_TR.md](ablations/dense_only/README_TR.md) — Ablation: dense-only (TR).
-- [ablations/bitlinear_off/README.md](ablations/bitlinear_off/README.md) — Ablation: BitLinear off (EN).
-- [ablations/bitlinear_off/README_TR.md](ablations/bitlinear_off/README_TR.md) — Ablation: BitLinear off (TR).
-- [experiments/exp_001_baseline/notes.md](experiments/exp_001_baseline/notes.md) — Experiment notes (EN).
-- [experiments/exp_001_baseline/notes_TR.md](experiments/exp_001_baseline/notes_TR.md) — Experiment notes (TR).
-- [tools/abuse_tests.md](tools/abuse_tests.md) — Tool abuse tests (EN).
-- [tools/abuse_tests_TR.md](tools/abuse_tests_TR.md) — Tool abuse tests (TR).
-- [tools/sandbox/README.md](tools/sandbox/README.md) — Tool sandbox guide (EN).
-- [tools/sandbox/README_TR.md](tools/sandbox/README_TR.md) — Tool sandbox guide (TR).
-- [tools/contracts/README.md](tools/contracts/README.md) — Tool contracts (EN).
-- [tools/contracts/README_TR.md](tools/contracts/README_TR.md) — Tool contracts (TR).
-- [training_dynamics/cold_vs_warm.md](training_dynamics/cold_vs_warm.md) — Training dynamics notes (EN).
-- [training_dynamics/cold_vs_warm_TR.md](training_dynamics/cold_vs_warm_TR.md) — Training dynamics notes (TR).
+- [.github/workflows/ci.yml](../.github/workflows/ci.yml) — CI pipeline (pytest + preflight + secret scan).
+- [interfaces/inference_contract.md](../interfaces/inference_contract.md) — Inference contract (EN).
+- [interfaces/inference_contract_TR.md](../interfaces/inference_contract_TR.md) — Inference contract (TR).
+- [interfaces/pilot_report_v1.schema.json](../interfaces/pilot_report_v1.schema.json) — Pilot report JSON schema.
+- [economics/cost_model.md](../economics/cost_model.md) — Cost model (EN).
+- [economics/cost_model_TR.md](../economics/cost_model_TR.md) — Cost model (TR).
+- [economics/efficiency_report.md](../economics/efficiency_report.md) — Efficiency report (EN).
+- [economics/efficiency_report_TR.md](../economics/efficiency_report_TR.md) — Efficiency report (TR).
+- [limits/scaling_breakpoints.md](../limits/scaling_breakpoints.md) — Scaling breakpoints (EN).
+- [limits/scaling_breakpoints_TR.md](../limits/scaling_breakpoints_TR.md) — Scaling breakpoints (TR).
+- [postmortems/README.md](../postmortems/README.md) — Postmortem guide (EN).
+- [postmortems/README_TR.md](../postmortems/README_TR.md) — Postmortem guide (TR).
+- [postmortems/_template.md](../postmortems/_template.md) — Postmortem template (EN).
+- [postmortems/_template_TR.md](../postmortems/_template_TR.md) — Postmortem template (TR).
+- [postmortems/example_001.md](../postmortems/example_001.md) — Example postmortem (EN).
+- [postmortems/example_001_TR.md](../postmortems/example_001_TR.md) — Example postmortem (TR).
+- [prompts/changelog.md](../prompts/changelog.md) — Prompt change log (EN).
+- [prompts/changelog_TR.md](../prompts/changelog_TR.md) — Prompt change log (TR).
+- [tokenizer/stats.md](../tokenizer/stats.md) — Tokenizer stats (EN).
+- [tokenizer/stats_TR.md](../tokenizer/stats_TR.md) — Tokenizer stats (TR).
+- [tokenizer/drift_report.md](../tokenizer/drift_report.md) — Tokenizer drift report (EN).
+- [tokenizer/drift_report_TR.md](../tokenizer/drift_report_TR.md) — Tokenizer drift report (TR).
+- [tokenizer/tr/README.md](../tokenizer/tr/README.md) — Turkish tokenizer cache note (EN).
+- [tokenizer/tr/README_TR.md](../tokenizer/tr/README_TR.md) — Turkish tokenizer cache note (TR).
+- [ablations/results.md](../ablations/results.md) — Ablation results (EN).
+- [ablations/results_TR.md](../ablations/results_TR.md) — Ablation results (TR).
+- [ablations/no_moe/README.md](../ablations/no_moe/README.md) — Ablation: no MoE (EN).
+- [ablations/no_moe/README_TR.md](../ablations/no_moe/README_TR.md) — Ablation: no MoE (TR).
+- [ablations/no_liquid/README.md](../ablations/no_liquid/README.md) — Ablation: no Liquid (EN).
+- [ablations/no_liquid/README_TR.md](../ablations/no_liquid/README_TR.md) — Ablation: no Liquid (TR).
+- [ablations/dense_only/README.md](../ablations/dense_only/README.md) — Ablation: dense-only (EN).
+- [ablations/dense_only/README_TR.md](../ablations/dense_only/README_TR.md) — Ablation: dense-only (TR).
+- [ablations/bitlinear_off/README.md](../ablations/bitlinear_off/README.md) — Ablation: BitLinear off (EN).
+- [ablations/bitlinear_off/README_TR.md](../ablations/bitlinear_off/README_TR.md) — Ablation: BitLinear off (TR).
+- [experiments/exp_001_baseline/notes.md](../experiments/exp_001_baseline/notes.md) — Experiment notes (EN).
+- [experiments/exp_001_baseline/notes_TR.md](../experiments/exp_001_baseline/notes_TR.md) — Experiment notes (TR).
+- [tools/abuse_tests.md](../tools/abuse_tests.md) — Tool abuse tests (EN).
+- [tools/abuse_tests_TR.md](../tools/abuse_tests_TR.md) — Tool abuse tests (TR).
+- [tools/sandbox/README.md](../tools/sandbox/README.md) — Tool sandbox guide (EN).
+- [tools/sandbox/README_TR.md](../tools/sandbox/README_TR.md) — Tool sandbox guide (TR).
+- [tools/contracts/README.md](../tools/contracts/README.md) — Tool contracts (EN).
+- [tools/contracts/README_TR.md](../tools/contracts/README_TR.md) — Tool contracts (TR).
+- [training_dynamics/cold_vs_warm.md](../training_dynamics/cold_vs_warm.md) — Training dynamics notes (EN).
+- [training_dynamics/cold_vs_warm_TR.md](../training_dynamics/cold_vs_warm_TR.md) — Training dynamics notes (TR).
 
 ---
 
@@ -543,7 +545,7 @@ flowchart TD
   C --> D["SOP artifacts (reports + packages/artifacts zips)"]
 ```
 
-See the full map: [`docs/CHAIN_MAP.md`](docs/CHAIN_MAP.md)
+See the full map: [`docs/CHAIN_MAP.md`](../docs/CHAIN_MAP.md)
 
 ### Why MertFormer Titan?
 
@@ -788,7 +790,7 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
 
 ### 🦅 MertFormer Titan: Synaptic Layer Hierarchy
 
-![Synaptic Hierarchy Map](assets/synaptic_map.png)
+![Synaptic Hierarchy Map](../assets/synaptic_map.png)
 
 The journey of data from Layer 0 to 17:
 
@@ -1206,7 +1208,7 @@ The following block demonstrates how a MertFormer Agent analyzes and resolves a 
 
 ### Training Configuration
 
-**File**: [`config/config.py`](config/config.py)
+**File**: [`config/config.py`](../config/config.py)
 
 Key hyperparameters:
 ```python
@@ -2370,11 +2372,11 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 
 ### Clickable Path Map
 
-- `Core System`: [config/](config/), [layers/](layers/), [model/](model/), [train/](train/), [utils/](utils/)
-- `SDK & Runtime`: [mertformer_sdk/](mertformer_sdk/), [scripts/](scripts/), [run.sh](run.sh)
-- `Data & Evidence`: [datasets/](datasets/), [reports/](reports/), [logs/](logs/), [interfaces/](interfaces/)
-- `Research & Extensions`: [ablations/](ablations/), [experiments/](experiments/), [orchestrator/](orchestrator/), [economics/](economics/), [limits/](limits/)
-- `Primary Docs`: [README.md](README.md), [README_TR.md](README_TR.md), [USAGE_GUIDE.md](USAGE_GUIDE.md), [SDK_GUIDE.md](SDK_GUIDE.md)
+- `Core System`: [config/](../config/), [layers/](../layers/), [model/](../model/), [train/](../train/), [utils/](../utils/)
+- `SDK & Runtime`: [mertformer_sdk/](../mertformer_sdk/), [scripts/](../scripts/), [run.sh](../run.sh)
+- `Data & Evidence`: [datasets/](../datasets/), [reports/](../reports/), [logs/](../logs/), [interfaces/](../interfaces/)
+- `Research & Extensions`: [ablations/](../ablations/), [experiments/](../experiments/), [orchestrator/](../orchestrator/), [economics/](../economics/), [limits/](../limits/)
+- `Primary Docs`: [README.md](../README.md), [README_TR.md](../README_TR.md), [USAGE_GUIDE.md](../USAGE_GUIDE.md), [SDK_GUIDE.md](../SDK_GUIDE.md)
 
 ### Maintenance Rule
 
@@ -2388,7 +2390,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 <a id="license"></a>
 ## 📄 License
 
-This project is **confidential and proprietary**. All rights are reserved by the **MertFormer AI Team**. Unauthorized copying, modification, or distribution is strictly prohibited. See the [LICENSE](LICENSE) file for full details.
+This project is **confidential and proprietary**. All rights are reserved by the **MertFormer AI Team**. Unauthorized copying, modification, or distribution is strictly prohibited. See the [LICENSE](../LICENSE) file for full details.
 
 ---
 

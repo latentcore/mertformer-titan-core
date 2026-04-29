@@ -582,7 +582,7 @@ CLAIMS = [
             "reports/training_readiness_manifest.json",
             "reports/start_gate_report.json",
         ],
-        "still_missing": "Repo-side readiness is green on the offline-clean lane. Real trained outputs remain post-run evidence, and the online teacher lane still requires optional gated credentials.",
+        "still_missing": "Repo-side readiness is green on the remote-bootstrap lane. Real trained outputs remain post-run evidence. Remaining non-winning exact blockers: offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE, online_teacher:MISSING_HF_TOKEN.",
     },
     {
         "claim_id": "claim.first_serious_validation_run_positioning",
@@ -620,7 +620,7 @@ CLAIMS = [
             "reports/train_readiness_decision.json",
             "reports/training_readiness_manifest.json",
         ],
-        "still_missing": "The repo-side verdict is TRAIN_ALLOWED via offline_clean; the remaining exact reason-coded blocker is the optional online_teacher lane without HF_TOKEN.",
+        "still_missing": "The repo-side verdict is TRAIN_ALLOWED via remote_bootstrap. Remaining non-winning exact blockers: offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE, online_teacher:MISSING_HF_TOKEN.",
     },
     {
         "claim_id": "claim.canonical_closure_flow_exists",
@@ -899,7 +899,7 @@ BACKLOG_GROUPS = [
             "reports/training_readiness_manifest.json",
         ],
         "what_is_done": "The repo emits a deterministic TRAIN_ALLOWED or NOT_ALLOWED decision with exact reason codes.",
-        "still_missing": "Repo-side readiness is green via offline_clean. The remaining exact blocker is the optional online_teacher lane without HF_TOKEN.",
+        "still_missing": "Repo-side readiness is green via remote_bootstrap. Remaining non-winning exact blockers: offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE, online_teacher:MISSING_HF_TOKEN.",
     },
     {
         "group_id": "data_contract",

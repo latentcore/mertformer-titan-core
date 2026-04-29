@@ -12,10 +12,12 @@ MertFormer Titan; low-bit runtime altyapısı, yerel assistant foundation ve dis
 ## Mevcut Exact Durum
 - Aşama: `pilot-ready pre-training baseline`
 - Repo-side readiness: `TRAIN_ALLOWED`
-- Exact reason code: `READY_OFFLINE_CLEAN`
+- Exact reason code: `READY_REMOTE_BOOTSTRAP`
+- Önerilen repo-side lane: `remote_bootstrap`
+- Sıkı yerel lane: `offline_clean`
 - Tercih edilen ciddi doğrulama hedefi: `45K`
 - Başvuru kapısı: gerçek owned training run + checkpoint-bound evidence
-- Teacher lane seçilirse tek opsiyonel gated blocker: `online_teacher:MISSING_HF_TOKEN`
+- Kalan non-winning blocker'lar: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`
 
 ## İnceleme İçin Kritik Noktalar
 - Henüz trained checkpoint claim’i yapılmıyor.

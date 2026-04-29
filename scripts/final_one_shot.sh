@@ -34,6 +34,65 @@ run_zip_with_tolerance() {
   return "$rc"
 }
 
+refresh_anthropic_packet() {
+  local dir="$ROOT_DIR/applications/anthropic"
+  local zip_path="$dir/mertformer_anthropic_packet_20260419.zip"
+  local sha_path="$dir/mertformer_anthropic_packet_20260419.zip.sha256"
+  local pointer_path="$dir/PACKET_POINTER_20260419.md"
+  local files=(
+    "README.md"
+    "application_strategy.md"
+    "project_summary.md"
+    "measured_evidence_summary.md"
+    "why_anthropic_science_of_scaling.md"
+    "science_of_scaling_cv_seed.md"
+    "tokens_variant_notes.md"
+    "strongest_stories.md"
+    "interview_prep.md"
+    "performance_engineer_fallback.md"
+  )
+
+  rm -f "$zip_path" "$sha_path"
+  (
+    cd "$dir"
+    zip -q -r "$(basename "$zip_path")" "${files[@]}"
+  )
+
+  local sha
+  sha="$(shasum -a 256 "$zip_path" | awk '{print $1}')"
+  printf '%s  %s\n' "$sha" "$(basename "$zip_path")" > "$sha_path"
+
+  local size_bytes
+  size_bytes="$(stat -f%z "$zip_path")"
+  cat > "$pointer_path" <<EOF
+# Anthropic Packet Pointer - 2026-04-19
+
+This directory has a small local application packet zip for handoff and review.
+
+## Local Artifact
+
+- Zip: \`applications/anthropic/$(basename "$zip_path")\`
+- SHA256 sidecar: \`applications/anthropic/$(basename "$sha_path")\`
+- SHA256: \`$sha\`
+- Size: \`$size_bytes\` bytes
+- Contents: 10 markdown application files
+
+## Git Policy
+
+The zip itself is not tracked by git because repository policy ignores \`*.zip\`.
+
+The pointer and SHA sidecar are small enough to keep as closure metadata.
+
+## Truth Boundary
+
+This packet is an application-facing summary bundle. It is not a model artifact, benchmark package, or evidence archive.
+
+The Build30 T4 one-cell evidence pointer lives under:
+
+- \`evidence/build30_t4_onecell/\`
+EOF
+}
+
 run_step "one_command_full_sop" bash scripts/one_command_full_sop.sh
 run_step "start_gate" .titan-venv/bin/python scripts/start_gate.py
 run_step "unicode_path_guard" .titan-venv/bin/python scripts/unicode_path_guard.py --root . --out reports/unicode_path_guard_report.json --fail-on-hit
@@ -45,8 +104,10 @@ run_step "hardening_bundle" .titan-venv/bin/python scripts/ram_guard.py --out re
 
 run_step "bench_reports" .titan-venv/bin/python scripts/generate_bench_reports.py
 run_step "md_quality" .titan-venv/bin/python scripts/md_quality_gate.py --root . --scope release_core --out reports/md_lint_report.json
+run_step "md_integrity" .titan-venv/bin/python scripts/md_integrity_check.py --root .
 run_step "linkcheck" .titan-venv/bin/python scripts/linkcheck_gate.py --root . --scope release_core --out reports/linkcheck_report.json
 run_step "docs_inventory" .titan-venv/bin/python scripts/docs_inventory.py
+run_step "anthropic_packet_refresh" refresh_anthropic_packet
 
 # Documents cleanup and hash fixes
 if [ -f "$DOCS_DIR/Proje.zip" ] && [ -f "$IMMUTABLE_ZIP" ]; then
@@ -58,7 +119,7 @@ if [ -f "$LINKEDIN_ZIP" ]; then
 fi
 
 run_step "duplicate_zip_guard" .titan-venv/bin/python scripts/duplicate_zip_guard.py --out reports/duplicate_zip_guard_report.json
-run_step "scoped_external_intake_matrix" .titan-venv/bin/python scripts/build_scoped_external_intake_matrix.py
+run_step "scoped_external_intake_matrix" .titan-venv/bin/python scripts/build_scoped_external_intake_matrix.py --sync-mode audit
 run_step "scoped_cleanup_apply" .titan-venv/bin/python scripts/cleanup_scoped_closure_junk.py --apply --delete-stale-zips
 
 # Sync manifest/structure/policy
@@ -83,6 +144,7 @@ chmod u+w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha2
 
 # Release artifact
 rm -f artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 artifacts/mertformer_training_outputs_bundle.zip artifacts/mertformer_training_outputs_bundle.zip.sha256
+run_step "pre_zip_cache_cleanup" .titan-venv/bin/python scripts/run_and_clean_pycache.py --root . --include-tool-caches --full-clean --include-venv-caches -- bash -lc true
 run_zip_with_tolerance artifacts/mertformer_release.zip . -x ".git/*" "*/.git/*" "*.pyc" "*__pycache__*" ".titan-venv/*" ".lint-venv/*" ".venv/*" ".idea/*" ".pytest_cache/*" ".ruff_cache/*" ".mypy_cache/*" ".env" ".env.*" "logs/*" "checkpoints/*" "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256" "apps/chess_gui/logs/*" "apps/chess_gui/checkpoints/*" "apps/chess_gui/assets/*" "apps/chess_gui/chess_5080_onefile.py"
 (
   cd artifacts
@@ -101,6 +163,10 @@ chflags uchg "$IMMUTABLE_ZIP" "$IMMUTABLE_ZIP.sha256" 2>/dev/null || true
 bash scripts/apply_github_policy.sh || true
 bash scripts/release_closure_lock.sh v1.0.0 || true
 run_step "offline_closure_pack" .titan-venv/bin/python scripts/build_offline_closure_pack.py
+run_step "scoped_external_sync_apply" .titan-venv/bin/python scripts/build_scoped_external_intake_matrix.py --sync-mode apply
+run_step "final_claim_consistency" .titan-venv/bin/python scripts/check_doc_claim_consistency.py
+run_step "final_md_integrity" .titan-venv/bin/python scripts/md_integrity_check.py --root .
+run_step "final_duplicate_zip_guard" .titan-venv/bin/python scripts/duplicate_zip_guard.py --out reports/duplicate_zip_guard_report.json
 
 cat > reports/execution_trace.json <<'JSON'
 {

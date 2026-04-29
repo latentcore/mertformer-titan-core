@@ -51,7 +51,7 @@ I want a real artifact chain: run identity, checkpoint identity, benchmark or ra
 - any document that sounds larger than the current checkpoint-bound evidence
 
 ## Three-Minute Repo Pitch
-MertFormer Titan is an offline-first AI systems repository. The current repo is a pilot-ready pre-training baseline, not a finished trained-model release. The strongest signals are a claim-safe verification surface, a train-readiness contract that currently reports TRAIN_ALLOWED with READY_OFFLINE_CLEAN, a low-bit and multi-backend runtime lane with explicit fallback semantics, an offline assistant foundation built around governed local retrieval, and a chess proof lane that treats benchmark honesty as a feature rather than a liability. The main missing class is post-run evidence: a real training run, trained checkpoints, checkpoint-bound benchmarks, a trained demo bundle, and trained export measurements.
+MertFormer Titan is an offline-first AI systems repository. The current repo is a pilot-ready pre-training baseline, not a finished trained-model release. The strongest signals are a claim-safe verification surface, a train-readiness contract that currently reports TRAIN_ALLOWED with READY_REMOTE_BOOTSTRAP, an active recommended start lane of remote_bootstrap, a low-bit and multi-backend runtime lane with explicit fallback semantics, an offline assistant foundation built around governed local retrieval, and a chess proof lane that treats benchmark honesty as a feature rather than a liability. The main missing class is post-run evidence: a real training run, trained checkpoints, checkpoint-bound benchmarks, a trained demo bundle, and trained export measurements.
 
 ## Pair-Style Debugging Reminders
 - narrate what you know versus what you are inferring

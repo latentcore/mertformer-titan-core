@@ -67,6 +67,9 @@ echo "[verify] Translation pointer policy gate ..."
 echo "[verify] Documentation claim consistency gate ..."
 "$PY" scripts/check_doc_claim_consistency.py
 
+echo "[verify] Markdown integrity gate ..."
+"$PY" scripts/md_integrity_check.py --root .
+
 echo "[verify] Master closure matrix refresh ..."
 "$PY" scripts/build_master_closure_matrix.py
 
@@ -81,6 +84,9 @@ echo "[verify] Code-truth delta audit refresh ..."
 
 echo "[verify] Workspace hygiene manifest refresh ..."
 "$PY" scripts/build_workspace_hygiene_manifest.py
+
+echo "[verify] Scoped external intake audit ..."
+"$PY" scripts/build_scoped_external_intake_matrix.py --sync-mode audit
 
 echo "[verify] Chess GUI onefile sync check ..."
 "$PY" scripts/sync_chess_gui_onefile.py --check-only
