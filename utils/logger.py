@@ -161,6 +161,53 @@ def _ensure_logbook_header(path: Path) -> None:
         tmp.replace(path)
 
 
+DEFAULT_STEP_CSV_FIELDS = [
+    "timestamp_utc",
+    "step",
+    "curriculum_stage",
+    "lr",
+    "loss",
+    "ce",
+    "kd",
+    "aux",
+    "grad_norm",
+    "max_grad_norm",
+    "tok_s",
+    "interval_sec",
+    "step_wall_sec",
+    "cpu_percent",
+    "ram_used_gb",
+    "ram_total_gb",
+    "gpu_device",
+    "gpu_allocated_gb",
+    "gpu_reserved_gb",
+    "gpu_total_gb",
+    "gpu_util_percent",
+    "gpu_temp_c",
+    "gpu_power_w",
+    "gpu_power_limit_w",
+    "gpu_mem_used_gb_smi",
+    "gpu_mem_total_gb_smi",
+    "disk_used_gb",
+    "disk_free_gb",
+    "disk_total_gb",
+    "continual_ema_loss",
+    "continual_replay_size",
+    "continual_drift_alert",
+    "moe_max_load",
+    "moe_avg_std",
+    "moe_load_entropy",
+    "moe_capacity_overflow",
+    "router_collapse",
+    # Legacy columns kept for compatibility with older report consumers.
+    "cbd",
+    "lsep",
+    "ent",
+    "mode",
+    "mem",
+]
+
+
 class RunLogger:
     def __init__(
         self,
@@ -303,12 +350,7 @@ class RunLogger:
             return
         try:
             if self._csv_fields is None:
-                # >>> YALNIZCA BURASI GÜNCELLENDİ <<<
-                self._csv_fields = [
-                    "timestamp_utc", "step", "lr", "loss", "ce", "kd", "cbd",
-                    "lsep", "aux", "ent", "grad_norm", "tok_s", "mode",
-                    "mem", "moe_max_load", "moe_avg_std"
-                ]
+                self._csv_fields = list(DEFAULT_STEP_CSV_FIELDS)
 
             try:
                 is_empty = (os.stat(self.csv_path).st_size == 0)

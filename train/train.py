@@ -69,6 +69,7 @@ print(f"📍 PROJE ANA MERKEZİ: {project_root}")
 try:
     from config.config import cfg
     from model.transformers import MertFormer
+    from orchestrator.telemetry import system_snapshot
     from utils.logger import RunLogger
     from utils.liquid_safeguard import update_liquid_spike_state
 except ImportError as e:
@@ -1866,10 +1867,17 @@ def train():
                             "kd": distill_val,
                             "aux": aux_val,
                             "tok_s": tok_s,
+                            "interval_sec": float(dt),
+                            "step_wall_sec": float(dt / max(accum_count, 1)),
                             "lr": lr_now,
                             "grad_norm": avg_grad_norm,
                             "max_grad_norm": max_grad_norm_seen
                         }
+                        telemetry_snapshot = system_snapshot(project_root)
+                        for key, value in telemetry_snapshot.items():
+                            if key == "timestamp_utc" or value is None:
+                                continue
+                            log_data[key] = value
                         if continual_state is not None:
                             log_data["continual_ema_loss"] = float(continual_state.running_loss_ema)
                             log_data["continual_replay_size"] = int(continual_state.replay_size)
