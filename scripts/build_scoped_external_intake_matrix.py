@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import shutil
+import subprocess
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -268,9 +269,30 @@ def write_sidecar(zip_path: Path) -> None:
     sidecar.write_text(f"{sha256_file(zip_path)}  {zip_path.name}\n", encoding="utf-8")
 
 
-def copy_file(source: Path, target: Path) -> None:
+def unlock_target(target: Path) -> None:
+    if not target.exists():
+        return
+    for args in (
+        ["chflags", "nouchg", str(target)],
+        ["chflags", "noschg", str(target)],
+        ["chflags", "nouchg,noschg", str(target)],
+    ):
+        subprocess.run(args, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        current_mode = target.stat().st_mode
+        os.chmod(target, current_mode | 0o200)
+    except Exception:
+        pass
+
+
+def copy_file(source: Path, target: Path) -> str | None:
     target.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(source, target)
+    try:
+        unlock_target(target)
+        shutil.copy2(source, target)
+        return None
+    except Exception as exc:
+        return f"{type(exc).__name__}: {exc}"
 
 
 def build_handoff_dir_name() -> str:
@@ -396,11 +418,15 @@ def sync_external_artifacts(entries: list[dict], sync_mode: str) -> dict:
         status = "match" if not needs_copy else "mismatch"
 
         if sync_mode == "apply" and needs_copy:
-            copy_file(source, target)
-            if rule["kind"] == "zip":
-                write_sidecar(target)
-            status = "copied"
-            target_sha = sha256_file(target)
+            error = copy_file(source, target)
+            if error is None:
+                if rule["kind"] == "zip":
+                    write_sidecar(target)
+                status = "copied"
+                target_sha = sha256_file(target)
+            else:
+                status = "copy_failed"
+                apply_errors.append(f"sync rule {rule['id']} failed for {sanitize_path(target)}: {error}")
         elif sync_mode == "apply" and rule["kind"] == "zip" and target.exists():
             write_sidecar(target)
 
@@ -439,7 +465,10 @@ def sync_external_artifacts(entries: list[dict], sync_mode: str) -> dict:
                 apply_errors.append(f"missing handoff source: {source}")
                 continue
             target = handoff_dir / target_name
-            copy_file(source, target)
+            error = copy_file(source, target)
+            if error is not None:
+                apply_errors.append(f"handoff copy failed for {sanitize_path(target)}: {error}")
+                continue
             handoff_copies.append(
                 {
                     "source": sanitize_path(source),
@@ -609,7 +638,10 @@ def main() -> int:
                 (json_out, handoff_dir_real / json_out.name),
             ]
             for source, target in extra_targets:
-                copy_file(source, target)
+                error = copy_file(source, target)
+                if error is not None:
+                    sync_report["apply_errors"].append(f"handoff sync failed for {sanitize_path(target)}: {error}")
+                    continue
                 sync_report["handoff_copies"].append(
                     {
                         "source": sanitize_path(source),

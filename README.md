@@ -123,7 +123,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `233 passed, 3 skipped` |
+| `python3 -m pytest -q` | `238 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -136,7 +136,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`233 passed, 3 skipped`)
+   - `pytest` passed (`238 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -2017,6 +2017,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── go_status_matrix_TR.md  # Turkish document counterpart
 │   ├── gtm_master_plan.md  # documentation/report file
 │   ├── hardening_bundle_summary.json  # JSON data artifact
+│   ├── immutable_evidence_register.json  # JSON data artifact
+│   ├── immutable_evidence_register.md  # documentation/report file
 │   ├── investable_definition.md  # documentation/report file
 │   ├── investor_deck.pptx  # artifact
 │   ├── investor_deck_TR.pptx  # artifact
@@ -2338,6 +2340,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_sdk_pilot_cli.py  # Python module/script (automated test module for sdk pilot cli)
 │   ├── test_start_gate.py  # Python module/script (automated test module for start gate)
 │   ├── test_sync_chess_gui_onefile.py  # Python module/script (automated test module for sync chess gui onefile)
+│   ├── test_telemetry_logger_contract.py  # Python module/script (automated test module for telemetry logger contract)
 │   ├── test_titan_preflight_contract.py  # Python module/script (automated test module for titan preflight contract)
 │   ├── test_train_loop_sanity.py  # Python module/script (automated test module for train loop sanity)
 │   ├── test_triad_omega_api.py  # Python module/script (automated test module for triad omega api)

@@ -124,7 +124,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `233 passed, 3 skipped` |
+| `python3 -m pytest -q` | `238 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -137,7 +137,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`233 passed, 3 skipped`)
+   - `pytest` geçti (`238 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -2003,6 +2003,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── go_status_matrix_TR.md  # Türkçe doküman karşılığı
 │   ├── gtm_master_plan.md  # dokümantasyon/rapor dosyası
 │   ├── hardening_bundle_summary.json  # JSON veri artefaktı
+│   ├── immutable_evidence_register.json  # JSON veri artefaktı
+│   ├── immutable_evidence_register.md  # dokümantasyon/rapor dosyası
 │   ├── investable_definition.md  # dokümantasyon/rapor dosyası
 │   ├── investor_deck.pptx  # artefakt
 │   ├── investor_deck_TR.pptx  # artefakt
@@ -2324,6 +2326,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_sdk_pilot_cli.py  # Python modülü/scripti (sdk pilot cli için otomatik test modülü)
 │   ├── test_start_gate.py  # Python modülü/scripti (start gate için otomatik test modülü)
 │   ├── test_sync_chess_gui_onefile.py  # Python modülü/scripti (sync chess gui onefile için otomatik test modülü)
+│   ├── test_telemetry_logger_contract.py  # Python modülü/scripti (telemetry logger contract için otomatik test modülü)
 │   ├── test_titan_preflight_contract.py  # Python modülü/scripti (titan preflight contract için otomatik test modülü)
 │   ├── test_train_loop_sanity.py  # Python modülü/scripti (train loop sanity için otomatik test modülü)
 │   ├── test_triad_omega_api.py  # Python modülü/scripti (triad omega api için otomatik test modülü)

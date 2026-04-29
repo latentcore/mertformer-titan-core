@@ -3,7 +3,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
+import subprocess
 from pathlib import Path
 from typing import Dict, List
 
@@ -17,11 +19,32 @@ JUNK_SUFFIXES = {".pyc", ".pyo"}
 JUNK_FILES = {".DS_Store"}
 
 
-def delete_path(path: Path) -> None:
-    if path.is_dir() and not path.is_symlink():
-        shutil.rmtree(path)
-    else:
-        path.unlink(missing_ok=True)
+def unlock_path(path: Path) -> None:
+    if not path.exists():
+        return
+    for args in (
+        ["chflags", "nouchg", str(path)],
+        ["chflags", "noschg", str(path)],
+        ["chflags", "nouchg,noschg", str(path)],
+    ):
+        subprocess.run(args, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        current_mode = path.stat().st_mode
+        os.chmod(path, current_mode | 0o200)
+    except Exception:
+        pass
+
+
+def delete_path(path: Path) -> str | None:
+    try:
+        unlock_path(path)
+        if path.is_dir() and not path.is_symlink():
+            shutil.rmtree(path)
+        else:
+            path.unlink(missing_ok=True)
+        return None
+    except Exception as exc:
+        return f"{type(exc).__name__}: {exc}"
 
 
 def sanitize_path(path: Path) -> str:
@@ -89,14 +112,18 @@ def main() -> int:
     roots = collect_roots(intake_path)
     removed: List[str] = []
     found: List[str] = []
+    errors: List[Dict[str, str]] = []
 
     for root in roots:
         for path in root.rglob("*"):
             if path.name in JUNK_DIRS or path.name in JUNK_FILES or path.suffix in JUNK_SUFFIXES:
                 found.append(str(path))
                 if args.apply:
-                    delete_path(path)
-                    removed.append(str(path))
+                    error = delete_path(path)
+                    if error is None:
+                        removed.append(str(path))
+                    else:
+                        errors.append({"path": str(path), "error": error})
 
     stale_deleted: List[str] = []
     if args.delete_stale_zips and intake_path.exists():
@@ -110,21 +137,39 @@ def main() -> int:
             if path.exists() and path.is_file():
                 found.append(str(path))
                 if args.apply:
-                    delete_path(path)
-                    removed.append(str(path))
-                    stale_deleted.append(str(path))
+                    error = delete_path(path)
+                    if error is None:
+                        removed.append(str(path))
+                        stale_deleted.append(str(path))
+                    else:
+                        errors.append({"path": str(path), "error": error})
 
     report = {
         "roots": [sanitize_path(path) for path in roots],
         "found_count": len(found),
         "removed_count": len(removed),
         "stale_deleted_count": len(stale_deleted),
+        "error_count": len(errors),
         "found": [sanitize_path(Path(path)) for path in found],
         "removed": [sanitize_path(Path(path)) for path in removed],
         "stale_deleted": [sanitize_path(Path(path)) for path in stale_deleted],
+        "errors": [
+            {"path": sanitize_path(Path(item["path"])), "error": item["error"]}
+            for item in errors
+        ],
     }
     report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(json.dumps({"report": sanitize_path(report_path), "found": len(found), "removed": len(removed)}, indent=2))
+    print(
+        json.dumps(
+            {
+                "report": sanitize_path(report_path),
+                "found": len(found),
+                "removed": len(removed),
+                "errors": len(errors),
+            },
+            indent=2,
+        )
+    )
     return 0
 
 

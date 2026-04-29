@@ -448,6 +448,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── go_status_matrix_TR.md  # Turkish document counterpart
 │   ├── gtm_master_plan.md  # documentation/report file
 │   ├── hardening_bundle_summary.json  # JSON data artifact
+│   ├── immutable_evidence_register.json  # JSON data artifact
+│   ├── immutable_evidence_register.md  # documentation/report file
 │   ├── investable_definition.md  # documentation/report file
 │   ├── investor_deck.pptx  # artifact
 │   ├── investor_deck_TR.pptx  # artifact
@@ -769,6 +771,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_sdk_pilot_cli.py  # Python module/script (automated test module for sdk pilot cli)
 │   ├── test_start_gate.py  # Python module/script (automated test module for start gate)
 │   ├── test_sync_chess_gui_onefile.py  # Python module/script (automated test module for sync chess gui onefile)
+│   ├── test_telemetry_logger_contract.py  # Python module/script (automated test module for telemetry logger contract)
 │   ├── test_titan_preflight_contract.py  # Python module/script (automated test module for titan preflight contract)
 │   ├── test_train_loop_sanity.py  # Python module/script (automated test module for train loop sanity)
 │   ├── test_triad_omega_api.py  # Python module/script (automated test module for triad omega api)

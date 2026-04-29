@@ -38,6 +38,20 @@ def test_collect_entries_marks_immutable_and_canonical_sources(monkeypatch, tmp_
     assert by_name["mertformer-titan-core.zip"]["canonical_source"] is not None
 
 
+def test_copy_file_reports_permission_errors(monkeypatch, tmp_path: Path) -> None:
+    source = tmp_path / "source.txt"
+    source.write_text("demo", encoding="utf-8")
+    target = tmp_path / "target.txt"
+    target.write_text("old", encoding="utf-8")
+
+    monkeypatch.setattr(intake, "unlock_target", lambda path: None)
+    monkeypatch.setattr(intake.shutil, "copy2", lambda *args, **kwargs: (_ for _ in ()).throw(PermissionError("locked")))
+
+    error = intake.copy_file(source, target)
+    assert error is not None
+    assert "PermissionError" in error
+
+
 def test_cleanup_scoped_junk_removes_pycache(monkeypatch, tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     repo_root.mkdir()
@@ -56,3 +70,41 @@ def test_cleanup_scoped_junk_removes_pycache(monkeypatch, tmp_path: Path) -> Non
     report = json.loads(out.read_text(encoding="utf-8"))
     assert report["removed_count"] >= 1
     assert not junk_dir.exists()
+
+
+def test_cleanup_scoped_junk_reports_delete_failures_without_crashing(monkeypatch, tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    stale_zip = repo_root / "mertformer_release.zip"
+    stale_zip.write_bytes(b"stale")
+    intake_path = tmp_path / "intake.json"
+    intake_path.write_text(
+        json.dumps(
+            {
+                "entries": [
+                    {
+                        "path": str(stale_zip),
+                        "kind": "file",
+                        "mutation_policy": "project_safe_cleanup",
+                        "disposition": "delete_as_stale_generated",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    out = tmp_path / "cleanup.json"
+
+    monkeypatch.setattr(cleanup, "ROOT", repo_root)
+    monkeypatch.setattr(cleanup, "delete_path", lambda path: "PermissionError: locked")
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["cleanup", "--apply", "--delete-stale-zips", "--intake", str(intake_path), "--out", str(out)],
+    )
+
+    assert cleanup.main() == 0
+    report = json.loads(out.read_text(encoding="utf-8"))
+    assert report["removed_count"] == 0
+    assert report["error_count"] == 1
+    assert report["errors"][0]["path"].endswith("mertformer_release.zip")
