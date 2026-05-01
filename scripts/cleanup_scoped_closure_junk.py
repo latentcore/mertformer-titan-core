@@ -19,6 +19,14 @@ JUNK_SUFFIXES = {".pyc", ".pyo"}
 JUNK_FILES = {".DS_Store"}
 
 
+def run_unlock_command(args: list[str]) -> None:
+    try:
+        subprocess.run(args, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except FileNotFoundError:
+        # Linux runners do not ship macOS chflags; unlock remains best-effort.
+        return
+
+
 def unlock_path(path: Path) -> None:
     if not path.exists():
         return
@@ -27,7 +35,7 @@ def unlock_path(path: Path) -> None:
         ["chflags", "noschg", str(path)],
         ["chflags", "nouchg,noschg", str(path)],
     ):
-        subprocess.run(args, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        run_unlock_command(args)
     try:
         current_mode = path.stat().st_mode
         os.chmod(path, current_mode | 0o200)

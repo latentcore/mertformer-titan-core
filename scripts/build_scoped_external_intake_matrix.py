@@ -269,6 +269,14 @@ def write_sidecar(zip_path: Path) -> None:
     sidecar.write_text(f"{sha256_file(zip_path)}  {zip_path.name}\n", encoding="utf-8")
 
 
+def run_unlock_command(args: list[str]) -> None:
+    try:
+        subprocess.run(args, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except FileNotFoundError:
+        # Linux runners do not ship macOS chflags; unlock remains best-effort.
+        return
+
+
 def unlock_target(target: Path) -> None:
     if not target.exists():
         return
@@ -277,7 +285,7 @@ def unlock_target(target: Path) -> None:
         ["chflags", "noschg", str(target)],
         ["chflags", "nouchg,noschg", str(target)],
     ):
-        subprocess.run(args, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        run_unlock_command(args)
     try:
         current_mode = target.stat().st_mode
         os.chmod(target, current_mode | 0o200)

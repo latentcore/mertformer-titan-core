@@ -124,7 +124,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `238 passed, 3 skipped` |
+| `python3 -m pytest -q` | `240 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -137,7 +137,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`238 passed, 3 skipped`)
+   - `pytest` geçti (`240 passed, 3 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -276,7 +276,7 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 - [SDK API Hızlı Başlangıç](#sdk-api-tr-quickstart)
 - [Sorun Giderme](#sorun-giderme)
 - [Eğitim](#eğitim)
-- [Eğitim Stratejisi (Baseline -> v28)](#eğitim-stratejisi-baseline-v28)
+- [Eğitim Stratejisi (Baseline -> Build 30 V2 Tuning)](#egitim-stratejisi-baseline-build-30-v2-tuning)
 - [Dağıtım (Deployment)](#dağıtım-deployment)
 - [Entegrasyon Hedefleri](#entegrasyon-hedefleri)
 - [Kıyaslamalar (Benchmarks)](#kıyaslamalar-benchmarks)
@@ -1283,13 +1283,13 @@ liquid_spike_threshold = 5.0
 Bu eğitim sırası ve token bütçesi, **güçlü bir temel için yeterli** olacak şekilde tasarlanmıştır.
 **Niş veya özel alanlar** için, en yüksek uzmanlık seviyesine çıkmak amaçıyla **hedefli fine‑tune** önerilir.
 
-<a id="eğitim-stratejisi-baseline-v28"></a>
-### Eğitim Stratejisi (Baseline -> v28, Claim-Safe)
+<a id="egitim-stratejisi-baseline-build-30-v2-tuning"></a>
+### Eğitim Stratejisi (Baseline -> Build 30 V2 Tuning, Claim-Safe)
 
 Baseline eğitim öncesinde acil bir mimari değişiklik zorunlu değildir.
 Ancak ilk tuning turunda aşağıdaki maddeler kalite çarpanı olarak ele alınmalıdır.
 
-**Önerilen v28 tuning maddeleri (baseline kanıtından sonra):**
+**Önerilen Build 30 V2 tuning maddeleri (baseline kanıtından sonra):**
 1. Kimlik kayması gözlenirse Stage 4 (`Ruh/Kimlik`) etkisini artırma (oran yükseltme veya kontrollü oversample).
 2. Modelin rol/sınır/misyon tonunu güçlendirmek için modele özel self-identity veri seti ekleme.
 3. Baseline SFT korunurken DPO/RLHF hattını post-SFT alignment fazına alma.
@@ -1300,8 +1300,8 @@ Ancak ilk tuning turunda aşağıdaki maddeler kalite çarpanı olarak ele alın
 1. Baseline eğitimi değiştirmeden başlat:
    `cd \"$(git rev-parse --show-toplevel)\" && TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh`
 2. İlk checkpoint + ilk benchmark kanıtını üret (referans baseline).
-3. v28 tuning paketini tek kontrollü turda uygula.
-4. Baseline vs v28 A/B karşılaştırması ile ölçülen kazananı ana hat yap.
+3. Build 30 V2 tuning paketini tek kontrollü turda uygula.
+4. Baseline ile Build 30 V2 tuning turunu A/B karşılaştırmasıyla ölç ve kazananı ana hat yap.
 
 Yukarıdaki maddeler claim-safe'tir; ölçüm/kanıt üretilmeden kesin performans iddiası sayılmaz.
 

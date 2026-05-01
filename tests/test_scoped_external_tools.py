@@ -52,6 +52,19 @@ def test_copy_file_reports_permission_errors(monkeypatch, tmp_path: Path) -> Non
     assert "PermissionError" in error
 
 
+def test_copy_file_tolerates_missing_chflags(monkeypatch, tmp_path: Path) -> None:
+    source = tmp_path / "source.txt"
+    source.write_text("demo", encoding="utf-8")
+    target = tmp_path / "target.txt"
+    target.write_text("old", encoding="utf-8")
+
+    monkeypatch.setattr(intake.subprocess, "run", lambda *args, **kwargs: (_ for _ in ()).throw(FileNotFoundError("chflags")))
+
+    error = intake.copy_file(source, target)
+    assert error is None
+    assert target.read_text(encoding="utf-8") == "demo"
+
+
 def test_cleanup_scoped_junk_removes_pycache(monkeypatch, tmp_path: Path) -> None:
     repo_root = tmp_path / "repo"
     repo_root.mkdir()
@@ -67,6 +80,29 @@ def test_cleanup_scoped_junk_removes_pycache(monkeypatch, tmp_path: Path) -> Non
     out = tmp_path / "cleanup.json"
     monkeypatch.setattr(sys, "argv", ["cleanup", "--apply", "--intake", str(intake_path), "--out", str(out)])
     cleanup.main()
+    report = json.loads(out.read_text(encoding="utf-8"))
+    assert report["removed_count"] >= 1
+    assert not junk_dir.exists()
+
+
+def test_cleanup_scoped_junk_tolerates_missing_chflags(monkeypatch, tmp_path: Path) -> None:
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    junk_dir = repo_root / "__pycache__"
+    junk_dir.mkdir()
+    (junk_dir / "demo.pyc").write_bytes(b"x")
+    intake_path = tmp_path / "intake.json"
+    intake_path.write_text(
+        json.dumps({"entries": [{"path": str(repo_root), "kind": "dir", "mutation_policy": "project_safe_cleanup"}]}),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(cleanup, "ROOT", repo_root)
+    monkeypatch.setattr(cleanup.subprocess, "run", lambda *args, **kwargs: (_ for _ in ()).throw(FileNotFoundError("chflags")))
+    out = tmp_path / "cleanup.json"
+    monkeypatch.setattr(sys, "argv", ["cleanup", "--apply", "--intake", str(intake_path), "--out", str(out)])
+
+    assert cleanup.main() == 0
     report = json.loads(out.read_text(encoding="utf-8"))
     assert report["removed_count"] >= 1
     assert not junk_dir.exists()

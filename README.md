@@ -123,7 +123,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `238 passed, 3 skipped` |
+| `python3 -m pytest -q` | `240 passed, 3 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -136,7 +136,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`238 passed, 3 skipped`)
+   - `pytest` passed (`240 passed, 3 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -293,7 +293,7 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 - [SDK API Quick Start](#sdk-api-quickstart)
 - [Troubleshooting](#troubleshooting)
 - [Training](#training)
-- [Training Strategy (Baseline -> v28)](#training-strategy-baseline-v28)
+- [Training Strategy (Baseline -> Build 30 V2 Tuning)](#training-strategy-baseline-build-30-v2-tuning)
 - [Deployment](#deployment)
 - [Integration Targets](#integration-targets)
 - [Benchmarks](#benchmarks)
@@ -1297,13 +1297,13 @@ liquid_spike_threshold = 5.0
 This curriculum order and token budget are designed to be **sufficient for a strong general foundation**.
 For **niche or proprietary domains**, we recommend **targeted fine-tuning** on domain data to maximize specialization.
 
-<a id="training-strategy-baseline-v28"></a>
-### Training Strategy (Baseline -> v28, Claim-Safe)
+<a id="training-strategy-baseline-build-30-v2-tuning"></a>
+### Training Strategy (Baseline -> Build 30 V2 Tuning, Claim-Safe)
 
 No emergency architecture change is required before baseline training.
 However, the following items are high-impact quality multipliers for the first tuning cycle.
 
-**Recommended v28 tuning items (post-baseline evidence):**
+**Recommended Build 30 V2 tuning items (post-baseline evidence):**
 1. Increase Stage 4 (`Soul/Identity`) influence when identity drift is observed (ratio increase or controlled oversampling).
 2. Add a model-specific self-identity dataset to reinforce role, boundaries, and mission tone.
 3. Keep SFT as baseline and move DPO/RLHF into a post-SFT alignment track.
@@ -1314,8 +1314,8 @@ However, the following items are high-impact quality multipliers for the first t
 1. Run baseline training unchanged:
    `cd \"$(git rev-parse --show-toplevel)\" && TITAN_OFFLINE=0 TITAN_INSTALL=1 bash run.sh`
 2. Produce first checkpoint + first benchmark evidence (reference baseline).
-3. Apply the v28 tuning bundle in one controlled pass.
-4. Compare baseline vs v28 with A/B evaluation and keep the measured winner.
+3. Apply the Build 30 V2 tuning bundle in one controlled pass.
+4. Compare baseline vs the Build 30 V2 tuning cycle with A/B evaluation and keep the measured winner.
 
 All points above are claim-safe and conditional until empirically validated.
 
