@@ -1,0 +1,195 @@
+{
+  "name": "MertFormer Titan pre-45K H200 partial captured evidence",
+  "created": "2026-05-14",
+  "claim_boundary": {
+    "completed_45k_run": false,
+    "completed_proof_artifact": false,
+    "benchmark_verified": false,
+    "production_ready": false,
+    "public_checkpoint_release": false,
+    "interpretation": "Partial operational evidence only. It shows 2x GPU DDP startup, stable captured training, curriculum transition, and no captured traceback/OOM/NCCL markers, but no final eval/checkpoint/archive completion."
+  },
+  "source": {
+    "raw_terminal_log_private": true,
+    "raw_terminal_log_public": false,
+    "raw_log_size_bytes": 19478098,
+    "raw_line_count": 48405,
+    "json_events_extracted": 47467,
+    "unique_events_kept": 298,
+    "duplicate_exact_events_removed": 47169,
+    "unique_step_events": 193,
+    "unique_heartbeat_events": 89
+  },
+  "run": {
+    "run_name": "final_math_h200",
+    "proof_version": "pre45k_h200_final_evidence_proof_v2_3_fast_proof",
+    "docker_image": "ghcr.io/latentcore/mertformer-oncompute-enc",
+    "docker_tag": "build30-7c393c7",
+    "runtime": "Ocean/OnCompute-style job wrapper",
+    "status": "captured_partial_log_only"
+  },
+  "startup_events": {
+    "repo_status_ok": true,
+    "gpu_probe_ok": true,
+    "gpu_count": 2,
+    "required_gpus": 2,
+    "package_materialization_ok": true,
+    "package_inventory_ok": true,
+    "kernel_hotpatch_ok": true,
+    "code_modules_smoke_ok": true,
+    "worker_boot_count": 2,
+    "worker_devices": [
+      "cuda:0",
+      "cuda:1"
+    ],
+    "fixed_eval_cases_created": true,
+    "case_bank_created": true
+  },
+  "training_config": {
+    "world_size": 2,
+    "batch_per_gpu": 96,
+    "global_batch": 192,
+    "seq_len": 512,
+    "max_minutes": 480.0,
+    "max_steps": 1000000,
+    "fixed_eval_cases": 864,
+    "tokenizer_vocab_size": 84,
+    "digit_tokenizer_verified": true,
+    "scratchpad_mode": "algorithmic_digit_steps"
+  },
+  "model_config": {
+    "hidden_size": 768,
+    "num_layers": 8,
+    "num_heads": 8,
+    "num_kv_heads": 4,
+    "moe": "8x2",
+    "liquid_layers_idx": [
+      0,
+      2,
+      4,
+      6
+    ],
+    "main_training_lowbit_kernel_enabled": false,
+    "main_training_fused_backward_enabled": false
+  },
+  "captured_range": {
+    "first_step": 1,
+    "first_elapsed_sec": 4.399,
+    "first_progress": 0.000153,
+    "first_loss": 662.312927,
+    "first_weighted_ce_loss": 662.259949,
+    "last_step": 1880,
+    "last_elapsed_sec": 5357.378,
+    "last_elapsed_minutes": 89.29,
+    "last_progress": 0.18602,
+    "last_loss": 0.041666,
+    "last_weighted_ce_loss": 0.001362,
+    "last_aux_loss": 4.030454,
+    "last_grad_norm": 0.088019,
+    "last_samples": 360960,
+    "last_supervised_tokens": 45564022,
+    "last_samples_per_sec": 67.376,
+    "last_supervised_tokens_per_sec": 8504.91
+  },
+  "curriculum": {
+    "trigger_type": "progress_time_based_not_loss_threshold",
+    "observed_first_seen": {
+      "single_op": {
+        "step": 1,
+        "progress": 0.000153
+      },
+      "carry_borrow": {
+        "step": 1,
+        "progress": 0.000153
+      },
+      "multi_op": {
+        "step": 1020,
+        "progress": 0.100887,
+        "weighted_ce_loss": 0.459345,
+        "grad_norm": 4.947806
+      },
+      "parentheses": null,
+      "negatives": null,
+      "modulo": null,
+      "exact_division": null,
+      "long_number": null,
+      "ood_hard": null
+    },
+    "interpretation": "multi_op opened at the expected approximate 0.10 progress boundary. Later buckets were not expected yet because capture ended before approximate 0.22 progress."
+  },
+  "selected_steps": [
+    {
+      "step": 1,
+      "progress": 0.000153,
+      "loss": 662.312927,
+      "weighted_ce_loss": 662.259949,
+      "grad_norm": 120.006821,
+      "active_buckets": [
+        "single_op",
+        "carry_borrow"
+      ]
+    },
+    {
+      "step": 1000,
+      "progress": 0.09887,
+      "loss": 0.058095,
+      "weighted_ce_loss": 0.01786,
+      "grad_norm": 0.316024,
+      "active_buckets": [
+        "single_op",
+        "carry_borrow"
+      ]
+    },
+    {
+      "step": 1020,
+      "progress": 0.100887,
+      "loss": 0.500789,
+      "weighted_ce_loss": 0.459345,
+      "grad_norm": 4.947806,
+      "active_buckets": [
+        "single_op",
+        "multi_op",
+        "carry_borrow"
+      ]
+    },
+    {
+      "step": 1090,
+      "progress": 0.107804,
+      "loss": 0.074905,
+      "weighted_ce_loss": 0.034271,
+      "grad_norm": 1.152607,
+      "active_buckets": [
+        "single_op",
+        "multi_op",
+        "carry_borrow"
+      ]
+    },
+    {
+      "step": 1880,
+      "progress": 0.18602,
+      "loss": 0.041666,
+      "weighted_ce_loss": 0.001362,
+      "grad_norm": 0.088019,
+      "active_buckets": [
+        "single_op",
+        "multi_op",
+        "carry_borrow"
+      ]
+    }
+  ],
+  "markers": {
+    "final_eval": false,
+    "checkpoint_saved": false,
+    "terminal_recovery": false,
+    "traceback": false,
+    "oom": false,
+    "nccl": false
+  },
+  "next_compute_requirement": {
+    "preferred_window": "8-10 hours of 2x H100/H200 or equivalent",
+    "minimum_window": "2-4 hours for launch/early-curriculum validation only",
+    "requires_persistent_output_storage": true,
+    "requires_reliable_artifact_retrieval": true,
+    "requires_terminal_log_access": true
+  }
+}

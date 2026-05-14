@@ -10,6 +10,7 @@ Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_REMOTE_BOOTSTRA
 - Kiralık makinede önerilen repo-side lane: `remote_bootstrap`.
 - Sıkı yerel lane: `offline_clean` (sabit öğretmen `meta-llama/Llama-3.3-70B-Instruct` ile strict precomputed KD).
 - Kalan non-winning blocker'lar: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
+- Son dış kanıt pointer'ı: [Ocean pre-45K H200 partial evidence](reports/ocean_pre45k_h200_20260514_partial_evidence.md) yalnız partial operational evidence'tır; final eval, checkpoint ve archive recovery hâlâ eksiktir.
 - Hâlâ açık olan post-run evidence sınıfı: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle ve trained export/device measurements.
 
 ### En Kısa Doğru Okuma Sırası
@@ -19,10 +20,11 @@ Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_REMOTE_BOOTSTRA
 4. [docs/PROJECT_MASTER_TRUTH_TR.md](docs/PROJECT_MASTER_TRUTH_TR.md)
 5. [reports/final_truth_matrix.md](reports/final_truth_matrix.md)
 6. [reports/known_limits_v1.md](reports/known_limits_v1.md)
-7. [reports/systems_performance_case_study.md](reports/systems_performance_case_study.md)
-8. [reports/offline_assistant_case_study.md](reports/offline_assistant_case_study.md)
-9. [reports/chess_proof_teaching_case_study.md](reports/chess_proof_teaching_case_study.md)
-10. [applications/anthropic/README.md](applications/anthropic/README.md)
+7. [reports/ocean_pre45k_h200_20260514_partial_evidence.md](reports/ocean_pre45k_h200_20260514_partial_evidence.md)
+8. [reports/systems_performance_case_study.md](reports/systems_performance_case_study.md)
+9. [reports/offline_assistant_case_study.md](reports/offline_assistant_case_study.md)
+10. [reports/chess_proof_teaching_case_study.md](reports/chess_proof_teaching_case_study.md)
+11. [applications/anthropic/README.md](applications/anthropic/README.md)
 
 ### Anthropic İçin Yüksek-Sinyal Noktalar
 - training efficiency ve systems debugging disiplini
@@ -124,7 +126,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `240 passed, 3 skipped` |
+| `python3 -m pytest -q` | `248 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -137,7 +139,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`240 passed, 3 skipped`)
+   - `pytest` geçti (`248 passed, 4 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -149,6 +151,10 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
    - `reports/run_contract.md`
    - `reports/post_train_automation_contract.md`
    - `reports/final_truth_matrix.md`
+4. **Dış partial run evidence kayda geçti**
+   - `reports/ocean_pre45k_h200_20260514_partial_evidence.md`
+   - `reports/ocean_pre45k_h200_20260514_clean_summary.json`
+   - Bu yalnız 2x H200 startup ve captured training progress için partial operational evidence sağlar; completed proof artifact veya capability claim sağlamaz.
 
 ### Güncel Exact Boundary
 - Önerilen repo-side yol: `remote_bootstrap`
@@ -1747,6 +1753,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   │   ├── __init__.py  # Python modülü/scripti (kernels paket başlatıcısı ve dışa aktarmalar)
 │   │   ├── dispatcher.py  # Python modülü/scripti (dispatcher için SDK bileşeni)
 │   │   ├── onnx_custom_op.py  # Python modülü/scripti (onnx custom op için SDK bileşeni)
+│   │   ├── triton_fused_bitlinear.py  # Python modülü/scripti (Triton fused BitLinear CUDA kernel yüzeyi)
 │   │   └── triton_ternary.py  # Python modülü/scripti (triton ternary için SDK bileşeni)
 │   ├── utils/  # dizin
 │   │   ├── __init__.py  # Python modülü/scripti (utils paket başlatıcısı ve dışa aktarmalar)
@@ -2253,6 +2260,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── start_gate.py  # Python modülü/scripti (start gate için otomasyon scripti)
 │   ├── sync_chess_gui_onefile.py  # Python modülü/scripti (sync chess gui onefile için otomasyon scripti)
 │   ├── sync_manifest.py  # Python modülü/scripti (release manifest ve proje-yapısı senkron üreticisi)
+│   ├── sync_test_stat_claims.py  # Python modülü/scripti (izlenen dokümanlar için pytest passed/skipped claim senkronlayıcısı)
 │   ├── test_onnx_export.py  # Python modülü/scripti (test onnx export için otomasyon scripti)
 │   ├── titan_onnx_stress_test.py  # Python modülü/scripti (titan onnx stress test için otomasyon scripti)
 │   ├── titan_preflight.py  # Python modülü/scripti (titan preflight için otomasyon scripti)
@@ -2330,6 +2338,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_titan_preflight_contract.py  # Python modülü/scripti (titan preflight contract için otomatik test modülü)
 │   ├── test_train_loop_sanity.py  # Python modülü/scripti (train loop sanity için otomatik test modülü)
 │   ├── test_triad_omega_api.py  # Python modülü/scripti (triad omega api için otomatik test modülü)
+│   ├── test_triton_fused_bitlinear_cuda.py  # Python modülü/scripti (triton fused bitlinear cuda için otomatik test modülü)
+│   ├── test_triton_fused_bitlinear_import.py  # Python modülü/scripti (triton fused bitlinear import için otomatik test modülü)
 │   └── test_world_model_head.py  # Python modülü/scripti (world model head için otomatik test modülü)
 ├── tokenizer/  # dizin
 │   ├── tr/  # dizin

@@ -508,6 +508,38 @@ SOURCE_DOCS = [
         "notes": "Tracks evidence, missing proof, and claim mode.",
     },
     {
+        "path": "reports/ocean_pre45k_h200_20260514_partial_evidence.md",
+        "role": "partial Ocean/H200 operational evidence pointer",
+        "audience": "operators",
+        "update_mode": "manual",
+        "authority": "supporting",
+        "notes": "Records 2026-05-14 partial startup/training evidence without claiming final proof, benchmark, or checkpoint completion.",
+    },
+    {
+        "path": "reports/ocean_pre45k_h200_20260514_clean_summary.json",
+        "role": "machine-readable partial Ocean/H200 evidence summary",
+        "audience": "automation",
+        "update_mode": "manual",
+        "authority": "supporting",
+        "notes": "Mirrors the public Gist summary while excluding the private raw terminal log.",
+    },
+    {
+        "path": "reports/closure_release_truthsync_master_protocol.md",
+        "role": "external closure protocol pointer",
+        "audience": "operators",
+        "update_mode": "manual",
+        "authority": "supporting",
+        "notes": "Links the external operator protocol as supporting context; it does not override AGENTS.md or current readiness outputs.",
+    },
+    {
+        "path": "reports/outreach_compute_sponsorship_messages.md",
+        "role": "claim-safe compute and referral outreach snippets",
+        "audience": "operators",
+        "update_mode": "manual",
+        "authority": "supporting",
+        "notes": "Keeps LinkedIn/referral/compute outreach evidence-first and prevents raw-log or capability overclaiming.",
+    },
+    {
         "path": "reports/repo_external_handoff.md",
         "role": "canonical repo-internal handoff summary with optional desktop copy status",
         "audience": "operators",
@@ -718,6 +750,17 @@ CLAIMS = [
             "reports/repo_external_handoff.md",
         ],
         "still_missing": "Real 45K outputs still remain external to the current working tree.",
+    },
+    {
+        "claim_id": "claim.ocean_pre45k_h200_partial_operational_evidence",
+        "claim": "The 2026-05-14 Ocean/H200 capture provides partial operational evidence for 2x GPU startup and captured training progress, but not final proof completion.",
+        "mode": "measured",
+        "status": "verified_partial",
+        "evidence": [
+            "reports/ocean_pre45k_h200_20260514_partial_evidence.md",
+            "reports/ocean_pre45k_h200_20260514_clean_summary.json",
+        ],
+        "still_missing": "Final eval, final checkpoint, archive recovery, and checkpoint-bound benchmark evidence remain missing.",
     },
     {
         "claim_id": "claim.docs_only_done_forbidden",
@@ -1548,6 +1591,7 @@ def build_known_limits(readiness: dict) -> str:
         - Repo-side training readiness is currently `{final_status}` with blockers `{blockers}`.
         - Exact `45K` remains the preferred main-run target, but application readiness is gated by a real owned training run plus checkpoint-bound evidence rather than the exact step count alone.
         - Costly large-scale compute is not a personal-funding requirement; truthful verified evidence is the actual gate.
+        - The 2026-05-14 Ocean pre-45K H200 capture is partial operational evidence only: it captured 2x GPU startup and training through step `1880`, but did not recover final eval, checkpoint, or archive artifacts.
 
         ## Not Yet Measured
         - trained final weights from a real owned training run
@@ -1555,6 +1599,7 @@ def build_known_limits(readiness: dict) -> str:
         - claim-grade benchmark outputs tied to trained checkpoints
         - final checkpoint-bound evidence pack
         - trained-model export or edge/mobile measurement (strong plus, not a hard blocker)
+        - reliable final artifact retrieval from the next H100/H200 proof window
 
         ## Chess-Specific Limit
         - Internal proxy strength and readiness surfaces exist, but real strength claims still require post-run benchmark evidence.

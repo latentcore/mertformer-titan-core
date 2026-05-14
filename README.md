@@ -10,6 +10,7 @@ Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_REMOTE_BOO
 - Recommended repo-side lane for rented-machine start: `remote_bootstrap`.
 - Strict local lane: `offline_clean` (strict precomputed KD with fixed teacher `meta-llama/Llama-3.3-70B-Instruct`).
 - Remaining non-winning blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
+- Latest external evidence pointer: [Ocean pre-45K H200 partial evidence](reports/ocean_pre45k_h200_20260514_partial_evidence.md) is partial operational evidence only; final eval, checkpoint, and archive recovery are still missing.
 - Missing post-run evidence remains: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle, and trained export/device measurements.
 
 ### Shortest Truthful Review Path
@@ -18,10 +19,11 @@ Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_REMOTE_BOO
 3. [docs/CHESS_ONEFILE_MASTER_TRUTH.md](docs/CHESS_ONEFILE_MASTER_TRUTH.md)
 4. [reports/final_truth_matrix.md](reports/final_truth_matrix.md)
 5. [reports/known_limits_v1.md](reports/known_limits_v1.md)
-6. [reports/systems_performance_case_study.md](reports/systems_performance_case_study.md)
-7. [reports/offline_assistant_case_study.md](reports/offline_assistant_case_study.md)
-8. [reports/chess_proof_teaching_case_study.md](reports/chess_proof_teaching_case_study.md)
-9. [applications/anthropic/README.md](applications/anthropic/README.md)
+6. [reports/ocean_pre45k_h200_20260514_partial_evidence.md](reports/ocean_pre45k_h200_20260514_partial_evidence.md)
+7. [reports/systems_performance_case_study.md](reports/systems_performance_case_study.md)
+8. [reports/offline_assistant_case_study.md](reports/offline_assistant_case_study.md)
+9. [reports/chess_proof_teaching_case_study.md](reports/chess_proof_teaching_case_study.md)
+10. [applications/anthropic/README.md](applications/anthropic/README.md)
 
 ### Anthropic-Relevant Signals
 - training efficiency and systems debugging discipline
@@ -123,7 +125,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `240 passed, 3 skipped` |
+| `python3 -m pytest -q` | `248 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -136,7 +138,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`240 passed, 3 skipped`)
+   - `pytest` passed (`248 passed, 4 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -148,6 +150,10 @@ This repository is no longer in idea/prototype-only state. The current working t
    - `reports/run_contract.md`
    - `reports/post_train_automation_contract.md`
    - `reports/final_truth_matrix.md`
+4. **External partial run evidence recorded**
+   - `reports/ocean_pre45k_h200_20260514_partial_evidence.md`
+   - `reports/ocean_pre45k_h200_20260514_clean_summary.json`
+   - This supports only partial operational evidence for 2x H200 startup and captured training progress; it does not support a completed proof artifact or capability claim.
 
 ### Current Exact Boundary
 - Recommended repo-side lane: `remote_bootstrap`
@@ -1761,6 +1767,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   ├── __init__.py  # Python module/script (kernels package initializer and exports)
 │   │   ├── dispatcher.py  # Python module/script (SDK component for dispatcher)
 │   │   ├── onnx_custom_op.py  # Python module/script (SDK component for onnx custom op)
+│   │   ├── triton_fused_bitlinear.py  # Python module/script (Triton fused BitLinear CUDA kernel surface)
 │   │   └── triton_ternary.py  # Python module/script (SDK component for triton ternary)
 │   ├── utils/  # directory
 │   │   ├── __init__.py  # Python module/script (utils package initializer and exports)
@@ -2267,6 +2274,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── start_gate.py  # Python module/script (automation script for start gate)
 │   ├── sync_chess_gui_onefile.py  # Python module/script (automation script for sync chess gui onefile)
 │   ├── sync_manifest.py  # Python module/script (release manifest and project-structure sync generator)
+│   ├── sync_test_stat_claims.py  # Python module/script (pytest pass/skipped claim synchronizer for tracked docs)
 │   ├── test_onnx_export.py  # Python module/script (automation script for test onnx export)
 │   ├── titan_onnx_stress_test.py  # Python module/script (automation script for titan onnx stress test)
 │   ├── titan_preflight.py  # Python module/script (automation script for titan preflight)
@@ -2344,6 +2352,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_titan_preflight_contract.py  # Python module/script (automated test module for titan preflight contract)
 │   ├── test_train_loop_sanity.py  # Python module/script (automated test module for train loop sanity)
 │   ├── test_triad_omega_api.py  # Python module/script (automated test module for triad omega api)
+│   ├── test_triton_fused_bitlinear_cuda.py  # Python module/script (automated test module for triton fused bitlinear cuda)
+│   ├── test_triton_fused_bitlinear_import.py  # Python module/script (automated test module for triton fused bitlinear import)
 │   └── test_world_model_head.py  # Python module/script (automated test module for world model head)
 ├── tokenizer/  # directory
 │   ├── tr/  # directory

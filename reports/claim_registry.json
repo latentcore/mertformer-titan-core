@@ -150,6 +150,17 @@
     "still_missing": "Real 45K outputs still remain external to the current working tree."
   },
   {
+    "claim_id": "claim.ocean_pre45k_h200_partial_operational_evidence",
+    "claim": "The 2026-05-14 Ocean/H200 capture provides partial operational evidence for 2x GPU startup and captured training progress, but not final proof completion.",
+    "mode": "measured",
+    "status": "verified_partial",
+    "evidence": [
+      "reports/ocean_pre45k_h200_20260514_partial_evidence.md",
+      "reports/ocean_pre45k_h200_20260514_clean_summary.json"
+    ],
+    "still_missing": "Final eval, final checkpoint, archive recovery, and checkpoint-bound benchmark evidence remain missing."
+  },
+  {
     "claim_id": "claim.docs_only_done_forbidden",
     "claim": "Closure-critical work is not done if it only exists as prose without code path, command, verification, and artifact evidence.",
     "mode": "policy",

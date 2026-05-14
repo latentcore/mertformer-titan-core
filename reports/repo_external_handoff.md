@@ -1,11 +1,13 @@
 # MertFormer Build 30 Max Closure Handoff
 
-- generated_utc: `2026-05-01T00:53:42Z`
+- generated_utc: `2026-05-14T20:08:57Z`
 - product_sentence: Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre edilebilir zeka altyapısı.
 - canonical_closure_entrypoint: `bash scripts/final_one_shot.sh`
 - train_readiness_status: `TRAIN_ALLOWED`
 - train_readiness_reason: `READY_REMOTE_BOOTSTRAP`
 - recommended_path: `remote_bootstrap`
+- latest_partial_external_evidence: `reports/ocean_pre45k_h200_20260514_partial_evidence.md`
+- outreach_boundary: `reports/outreach_compute_sponsorship_messages.md`
 - desktop_copy_status: `written`
 - desktop_copy_path: `<DESKTOP_PATH>/MertFormer_Build30_Max_Closure_Handoff.md`
 - desktop_copy_reason: `desktop copy refreshed`
@@ -27,6 +29,7 @@
 - `reports/target_machine_handoff_manifest.md`
 - `reports/final_freeze_manifest.md`
 - `reports/one_command_full_sop_summary.md`
+- `reports/ocean_pre45k_h200_20260514_partial_evidence.md`
 - `artifacts/target_machine_handoff_bundle.zip`
 
 ## Guardrail
