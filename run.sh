@@ -377,7 +377,7 @@ if [[ "$OS_TYPE" == "Linux" ]] && command -v nvidia-smi &> /dev/null; then
         done
         
         # NCCL Optimizations
-        export NCCL_ASYNC_ERROR_HANDLING=1  # Hata toleransı
+        export TORCH_NCCL_ASYNC_ERROR_HANDLING=1  # Hata toleransı
         export NCCL_BLOCKING_WAIT=0         # Non-blocking (daha hızlı)
         
         # Debug (sadece sorun varsa aktif et)

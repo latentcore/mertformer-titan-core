@@ -44,6 +44,36 @@ def run(cmd: list[str], py: str | None = None) -> dict:
     }
 
 
+def git_available() -> bool:
+    p = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=ROOT, capture_output=True, text=True, check=False)
+    return p.returncode == 0 and p.stdout.strip() == "true"
+
+
+def skipped_step(cmd: list[str], reason: str) -> dict:
+    return {
+        "cmd": sanitize_text(" ".join(cmd)),
+        "return_code": 0,
+        "stdout_tail": reason,
+        "stderr_tail": "",
+        "ok": True,
+        "skipped": True,
+        "non_blocking": True,
+    }
+
+
+def git_gate_steps(*, package_mode: bool, strict_git: bool) -> dict:
+    if package_mode and not strict_git:
+        reason = "PACKAGE_MODE_GIT_CHECKS_NON_BLOCKING"
+        return {
+            "git_status": skipped_step(["git", "status", "--short", "--branch"], reason),
+            "git_remote": skipped_step(["git", "remote", "-v"], reason),
+        }
+    return {
+        "git_status": run(["git", "status", "--short", "--branch"]),
+        "git_remote": run(["git", "remote", "-v"]),
+    }
+
+
 def load_json(path: Path) -> dict:
     if not path.exists():
         return {}
@@ -83,7 +113,15 @@ def transfer_file_candidates() -> list[str]:
     return [path for path in candidates if path in always_present_outputs or (ROOT / path).exists()]
 
 
-def build_operator_decision(structural_ok: bool, train_allowed: bool, readiness: dict, steps: dict) -> dict:
+def build_operator_decision(
+    structural_ok: bool,
+    train_allowed: bool,
+    readiness: dict,
+    steps: dict,
+    *,
+    package_mode: bool = False,
+    git_metadata_available: bool = True,
+) -> dict:
     blockers = list(readiness.get("blockers", []))
     recommended_path = readiness.get("recommended_path")
     decision_reason_code = readiness.get("decision_reason_code")
@@ -101,6 +139,11 @@ def build_operator_decision(structural_ok: bool, train_allowed: bool, readiness:
             operator_message = (
                 "Repo-side gate is green. Allocate or rent the target training machine, transfer the canonical files, "
                 "rerun `bash zero_touch_start.sh --check-only` there, and start training immediately if it remains green."
+            )
+        if package_mode:
+            operator_message += (
+                " Package-mode was active because git metadata was unavailable or explicitly bypassed; provenance must be "
+                "anchored by package manifests, checksums, and the generated start-gate report rather than live git status."
             )
     elif train_allowed and not verify_ok:
         next_action = "DO_NOT_RENT_YET_FIX_START_GATE"
@@ -124,6 +167,11 @@ def build_operator_decision(structural_ok: bool, train_allowed: bool, readiness:
         "structural_ok": structural_ok,
         "recommended_path": recommended_path,
         "decision_reason_code": decision_reason_code,
+        "start_gate_reason_code": "START_ALLOWED" if structural_ok and train_allowed else (
+            "TRAIN_ALLOWED_BUT_STRUCTURAL_BLOCKED" if train_allowed else decision_reason_code
+        ),
+        "package_mode": package_mode,
+        "git_metadata_available": git_metadata_available,
         "blockers": blockers,
         "required_transfer_files": transfer_file_candidates() if train_allowed else [],
     }
@@ -138,6 +186,9 @@ def build_operator_decision_md(payload: dict) -> str:
         f"- structural_ok: `{payload['structural_ok']}`",
         f"- recommended_path: `{payload.get('recommended_path') or 'none'}`",
         f"- decision_reason_code: `{payload.get('decision_reason_code') or 'none'}`",
+        f"- start_gate_reason_code: `{payload.get('start_gate_reason_code') or 'none'}`",
+        f"- package_mode: `{payload.get('package_mode', False)}`",
+        f"- git_metadata_available: `{payload.get('git_metadata_available', True)}`",
         "",
         "## Operator Message",
         payload["operator_message"],
@@ -163,18 +214,25 @@ def main() -> int:
     parser.add_argument("--skip-verify-all", action="store_true")
     parser.add_argument("--allow-not-ready", action="store_true")
     parser.add_argument("--require-train-allowed", action="store_true")
+    parser.add_argument("--package-mode", action="store_true", help="Treat missing git metadata as non-blocking package provenance mode.")
+    parser.add_argument("--strict-git", action="store_true", help="Keep git status/remote checks blocking even in package mode.")
     args = parser.parse_args()
 
+    git_metadata_available = git_available()
+    package_mode = args.package_mode or not git_metadata_available
+    secret_scan_cmd = ["<PY>", "scripts/secret_scan.py"]
+    if package_mode:
+        secret_scan_cmd.append("--package-mode")
+
     steps = {
-        "secret_scan": run(["<PY>", "scripts/secret_scan.py"], py=args.python),
+        "secret_scan": run(secret_scan_cmd, py=args.python),
         "check_57_matrix": run(["<PY>", "scripts/check_57_matrix.py"], py=args.python),
         "train_readiness_contract": run(
             ["<PY>", "scripts/build_train_readiness_contract.py", "--allow-not-ready"],
             py=args.python,
         ),
-        "git_status": run(["git", "status", "--short", "--branch"]),
-        "git_remote": run(["git", "remote", "-v"]),
     }
+    steps.update(git_gate_steps(package_mode=package_mode, strict_git=args.strict_git))
     if not args.skip_verify_all:
         steps["verify_all"] = run(["bash", "scripts/verify_all.sh"])
 
@@ -190,10 +248,22 @@ def main() -> int:
         "train_allowed": train_allowed,
         "train_readiness_status": readiness.get("final_status"),
         "decision_reason_code": readiness.get("decision_reason_code"),
+        "start_gate_reason_code": "START_ALLOWED" if start_allowed else (
+            "TRAIN_ALLOWED_BUT_STRUCTURAL_BLOCKED" if train_allowed else readiness.get("decision_reason_code")
+        ),
+        "package_mode": package_mode,
+        "git_metadata_available": git_metadata_available,
         "blockers": readiness.get("blockers", []),
         "steps": steps,
     }
-    operator_decision = build_operator_decision(structural_ok, train_allowed, readiness, steps)
+    operator_decision = build_operator_decision(
+        structural_ok,
+        train_allowed,
+        readiness,
+        steps,
+        package_mode=package_mode,
+        git_metadata_available=git_metadata_available,
+    )
 
     out = Path(args.report_out).resolve()
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -206,6 +276,8 @@ def main() -> int:
                 "ok": structural_ok,
                 "train_allowed": train_allowed,
                 "decision_reason_code": readiness.get("decision_reason_code"),
+                "start_gate_reason_code": operator_decision["start_gate_reason_code"],
+                "package_mode": package_mode,
                 "next_action": operator_decision["next_action"],
             },
             ensure_ascii=False,

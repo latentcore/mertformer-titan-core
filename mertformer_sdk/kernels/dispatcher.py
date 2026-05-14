@@ -43,6 +43,13 @@ def select_backend(x: torch.Tensor, w: torch.Tensor) -> Backend:
 
     if x.is_cuda and w.is_cuda:
         try:
+            from .triton_fused_bitlinear import is_triton_fused_available
+
+            if is_triton_fused_available():
+                return "triton_cuda"
+        except Exception:
+            pass
+        try:
             from .triton_ternary import is_triton_available
 
             if is_triton_available():

@@ -23,6 +23,7 @@ import torch.nn.functional as F
 
 _LOWBIT_KERNEL_ENABLED = os.getenv("MERTFORMER_LOWBIT_KERNEL", "0") == "1"
 _TENSORCORE_ENABLED = os.getenv("MERTFORMER_TENSORCORE", "0") == "1"
+_FUSED_KERNEL_ENABLED = os.getenv("MERTFORMER_FUSED_KERNEL", "1") == "1"
 
 
 def set_lowbit_kernel_enabled(enabled: bool) -> None:
@@ -43,6 +44,15 @@ def _try_lowbit_kernel(x: torch.Tensor, w: torch.Tensor, bias: torch.Tensor | No
 
         backend = select_backend(x, w)
         if backend == "triton_cuda":
+            if _FUSED_KERNEL_ENABLED:
+                from mertformer_sdk.kernels.triton_fused_bitlinear import (
+                    is_triton_fused_available,
+                    triton_fused_ternary_linear,
+                )
+
+                if is_triton_fused_available():
+                    return triton_fused_ternary_linear(x, w, bias)
+
             from mertformer_sdk.kernels.triton_ternary import is_triton_available, triton_ternary_linear
 
             if not is_triton_available():
@@ -83,6 +93,8 @@ def _try_lowbit_kernel(x: torch.Tensor, w: torch.Tensor, bias: torch.Tensor | No
 
         return None
     except Exception:
+        if os.getenv("MERTFORMER_KERNEL_STRICT", "0") == "1":
+            raise
         return None
 
 

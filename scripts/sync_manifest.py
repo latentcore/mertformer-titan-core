@@ -96,9 +96,17 @@ PYTHON_ROLE_OVERRIDES: dict[str, tuple[str, str]] = {
         "release manifest and project-structure sync generator",
         "release manifest ve proje-yapısı senkron üreticisi",
     ),
+    "scripts/sync_test_stat_claims.py": (
+        "pytest pass/skipped claim synchronizer for tracked docs",
+        "izlenen dokümanlar için pytest passed/skipped claim senkronlayıcısı",
+    ),
     "scripts/docs_inventory.py": (
         "markdown inventory and folder policy reporter",
         "markdown envanteri ve klasör politika raporlayıcısı",
+    ),
+    "mertformer_sdk/kernels/triton_fused_bitlinear.py": (
+        "Triton fused BitLinear CUDA kernel surface",
+        "Triton fused BitLinear CUDA kernel yüzeyi",
     ),
 }
 

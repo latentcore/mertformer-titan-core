@@ -44,6 +44,9 @@ pytest_output="$("$PY" -m pytest -q 2>&1)" || {
 printf '%s\n' "$pytest_output"
 export MERTFORMER_EXPECTED_TEST_STAT="$(printf '%s\n' "$pytest_output" | grep -oE '[0-9]+ passed, [0-9]+ skipped' | tail -n 1)"
 
+echo "[verify] Test-stat claim sync ..."
+"$PY" scripts/sync_test_stat_claims.py --test-stat "$MERTFORMER_EXPECTED_TEST_STAT"
+
 echo "[verify] Preflight (offline) ..."
 "$PY" scripts/titan_preflight.py
 

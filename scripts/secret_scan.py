@@ -1,14 +1,20 @@
-"""Repo secret scanner (best-effort).
+"""Repo secret scanner.
 
 Scans *tracked* files for common secret patterns and exits non-zero if any are found.
-This is designed to run in CI and must not print secret values.
+When git metadata is unavailable, scans a bounded package file walk instead. This
+keeps transferred/package-only copies gateable without weakening the secret check.
+The scanner must not print secret values.
 """
 from __future__ import annotations
 
+import argparse
+import os
 import re
 import subprocess
 import sys
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
 
 
 PATTERNS: dict[str, re.Pattern[str]] = {
@@ -40,18 +46,91 @@ SKIP_EXTS = {
     ".pth",
     ".ckpt",
     ".bin",
+    ".mp4",
+    ".mov",
+    ".tar",
+    ".tgz",
+    ".gz",
+    ".zst",
 }
 
+SKIP_DIR_NAMES = {
+    ".git",
+    ".hg",
+    ".svn",
+    ".titan-venv",
+    ".lint-venv",
+    ".venv",
+    "venv",
+    "env",
+    "__pycache__",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    "node_modules",
+    "site-packages",
+    "checkpoints",
+    "results",
+}
 
-def _tracked_files() -> list[Path]:
-    out = subprocess.check_output(["git", "ls-files"], text=True)
+DEFAULT_MAX_SCAN_BYTES = 2_000_000
+
+
+def _max_scan_bytes() -> int:
+    raw = os.environ.get("MERTFORMER_SECRET_SCAN_MAX_BYTES", str(DEFAULT_MAX_SCAN_BYTES))
+    try:
+        return max(1, int(raw))
+    except ValueError:
+        return DEFAULT_MAX_SCAN_BYTES
+
+
+def _should_skip_path(path: Path, root: Path) -> bool:
+    try:
+        rel = path.relative_to(root)
+    except ValueError:
+        rel = path
+    if any(part in SKIP_DIR_NAMES or part.endswith((".dist-info", ".egg-info")) for part in rel.parts):
+        return True
+    if path.suffix.lower() in SKIP_EXTS:
+        return True
+    try:
+        if path.stat().st_size > _max_scan_bytes():
+            return True
+    except OSError:
+        return True
+    return False
+
+
+def _git_tracked_files(root: Path = ROOT) -> list[Path]:
+    out = subprocess.check_output(["git", "ls-files"], cwd=root, stderr=subprocess.DEVNULL, text=True)
     paths = []
     for line in out.splitlines():
-        p = Path(line)
-        if p.suffix.lower() in SKIP_EXTS:
+        p = root / line
+        if _should_skip_path(p, root):
             continue
         paths.append(p)
     return paths
+
+
+def _package_files(root: Path = ROOT) -> list[Path]:
+    paths: list[Path] = []
+    for path in root.rglob("*"):
+        if not path.is_file():
+            continue
+        if _should_skip_path(path, root):
+            continue
+        paths.append(path)
+    return sorted(paths)
+
+
+def discover_scan_files(root: Path = ROOT, *, package_mode: bool = False) -> tuple[str, list[Path]]:
+    if not package_mode:
+        try:
+            files = _git_tracked_files(root)
+            return "git_tracked", files
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            pass
+    return "package_walk", _package_files(root)
 
 
 def _redact_line(line: str) -> str:
@@ -61,9 +140,16 @@ def _redact_line(line: str) -> str:
     return redacted
 
 
-def main() -> int:
+def _display_path(path: Path, root: Path) -> Path:
+    try:
+        return path.relative_to(root)
+    except ValueError:
+        return path
+
+
+def scan_paths(paths: list[Path], root: Path = ROOT) -> list[tuple[str, Path, int, str]]:
     hits: list[tuple[str, Path, int, str]] = []
-    for path in _tracked_files():
+    for path in paths:
         try:
             text = path.read_text(encoding="utf-8", errors="ignore")
         except Exception:
@@ -71,13 +157,25 @@ def main() -> int:
         for idx, line in enumerate(text.splitlines(), start=1):
             for name, rx in PATTERNS.items():
                 if rx.search(line):
-                    hits.append((name, path, idx, _redact_line(line).strip()))
+                    hits.append((name, _display_path(path, root), idx, _redact_line(line).strip()))
+    return hits
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Scan repository or package files for secret-like patterns.")
+    parser.add_argument("--root", default=str(ROOT), help="Repository/package root to scan.")
+    parser.add_argument("--package-mode", action="store_true", help="Force package file-walk mode instead of git ls-files.")
+    args = parser.parse_args(argv)
+
+    root = Path(args.root).resolve()
+    mode, paths = discover_scan_files(root, package_mode=args.package_mode)
+    hits = scan_paths(paths, root)
 
     if not hits:
-        print("OK: no secret patterns detected in tracked files.")
+        print(f"OK: no secret patterns detected in {mode} files. scanned={len(paths)}")
         return 0
 
-    print("ERROR: potential secrets detected in tracked files:")
+    print(f"ERROR: potential secrets detected in {mode} files:")
     # Do not print raw matches.
     for name, path, idx, safe in hits[:200]:
         print(f"- {name}: {path}:{idx} :: {safe}")
