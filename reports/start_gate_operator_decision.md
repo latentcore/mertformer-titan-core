@@ -5,6 +5,9 @@
 - structural_ok: `True`
 - recommended_path: `remote_bootstrap`
 - decision_reason_code: `READY_REMOTE_BOOTSTRAP`
+- start_gate_reason_code: `START_ALLOWED`
+- package_mode: `False`
+- git_metadata_available: `True`
 
 ## Operator Message
 Repo-side gate is green via the rented-machine bootstrap lane. Allocate or rent the target training machine, inject `HF_TOKEN` there (and `WANDB_API_KEY` only if needed), rerun `bash zero_touch_start.sh --check-only`, and start immediately if the target-machine gate remains green.

@@ -1,6 +1,6 @@
 {
   "schema": "target_machine_handoff_manifest_v1",
-  "generated_utc": "2026-05-01T00:52:55Z",
+  "generated_utc": "2026-05-14T20:08:29Z",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "train_allowed": true,
   "decision_reason_code": "READY_REMOTE_BOOTSTRAP",
@@ -15,8 +15,8 @@
     },
     {
       "path": "run.sh",
-      "size_bytes": 24440,
-      "sha256": "aae67b6d2ea0bc7bed6290dbf60d6daff4ee25ee896f83cb0aee6115dd4e2897"
+      "size_bytes": 24446,
+      "sha256": "444a0799dcf03d49cb9e9ccde708fcdf0a9a53d625a4dae85de2679c58d679ae"
     },
     {
       "path": "launch_mertformer_kaggle_closure.command",
@@ -60,8 +60,8 @@
     },
     {
       "path": "scripts/start_gate.py",
-      "size_bytes": 8927,
-      "sha256": "0c3133f77cbad53a96a02e20249a94b1c708d8b8ac5a52c387bd3e744db58dfe"
+      "size_bytes": 11888,
+      "sha256": "b7bf16d559d2304903935db37ceafac59a094addb4a7ca9873758f9a6d0acc05"
     },
     {
       "path": "scripts/build_train_readiness_contract.py",
@@ -80,23 +80,23 @@
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 4123,
-      "sha256": "5e360ff0aad5159e37dff8f6772d4ac0fbfd495b55507bae97033f2281c78f71"
+      "size_bytes": 5227,
+      "sha256": "cc92ee864a7f42ef9e35b0bc36743ef2f4971035c7a024d62bea064047b6edc7"
     },
     {
       "path": "reports/start_gate_operator_decision.json",
-      "size_bytes": 1475,
-      "sha256": "47adf0966bb0fba5790f5ae694d9870bc59db4ae94c3bfecae54d33a05c40da5"
+      "size_bytes": 1579,
+      "sha256": "b8139cefbf332f1e18a47b44701aa79497fe41b651476a00d7c8bd538cfa5afa"
     },
     {
       "path": "reports/start_gate_operator_decision.md",
-      "size_bytes": 1313,
-      "sha256": "38a096468ddeffdf21a9b3cc327a9d2b2e4b2cfc6115d28b3b521b9f7385c33e"
+      "size_bytes": 1412,
+      "sha256": "c8dfee1ed74bbe0f680680f32f454203211a73d1fd2c59755eddb3553e6219c3"
     },
     {
       "path": "reports/repo_external_handoff.md",
-      "size_bytes": 1474,
-      "sha256": "97c18c9f7ca3007ac7cb4ac3482d5f097083f24cf618fd203cedaad9933b0fc6"
+      "size_bytes": 1698,
+      "sha256": "0967ce4f41d0e62824584174a1751de9a3e9756e0372225a7d23c6c1b566340f"
     }
   ],
   "operator_steps": [

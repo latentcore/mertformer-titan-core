@@ -95,6 +95,7 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `mertformer_sdk/kernels/npu/__init__.py` | `fallback` |
 | `mertformer_sdk/kernels/npu/engine.py` | `fallback` |
 | `mertformer_sdk/kernels/onnx_custom_op.py` | `fallback` |
+| `mertformer_sdk/kernels/triton_fused_bitlinear.py` | `fallback` |
 | `mertformer_sdk/kernels/vulkan/__init__.py` | `fallback` |
 | `mertformer_sdk/kernels/vulkan/engine.py` | `fallback` |
 | `mertformer_sdk/pilot.py` | `fallback` |

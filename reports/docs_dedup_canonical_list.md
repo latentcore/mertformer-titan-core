@@ -242,6 +242,7 @@ Generated automatically.
 - `reports/cli_smoke_log_TR.md`
 - `reports/closure_57_matrix.md`
 - `reports/closure_57_matrix_TR.md`
+- `reports/closure_release_truthsync_master_protocol.md`
 - `reports/closure_report_build30_v2.md`
 - `reports/closure_risk_register.md`
 - `reports/cloud_readiness_report.md`
@@ -324,6 +325,7 @@ Generated automatically.
 - `reports/model_health.md`
 - `reports/model_health_TR.md`
 - `reports/model_health_final.md`
+- `reports/ocean_pre45k_h200_20260514_partial_evidence.md`
 - `reports/offline_assistant_case_study.md`
 - `reports/one_command_full_sop_summary.md`
 - `reports/one_pager.md`
@@ -331,6 +333,7 @@ Generated automatically.
 - `reports/outreach/github_release_post.md`
 - `reports/outreach/huggingface_launch.md`
 - `reports/outreach/reddit_post.md`
+- `reports/outreach_compute_sponsorship_messages.md`
 - `reports/owner_matrix.md`
 - `reports/package_validation_report.md`
 - `reports/param_accounting_report.md`

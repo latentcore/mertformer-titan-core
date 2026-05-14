@@ -1,6 +1,6 @@
 {
-  "generated_local": "2026-05-01T03:54:26",
-  "entry_count": 624,
+  "generated_local": "2026-05-14T23:09:27",
+  "entry_count": 591,
   "entries": [
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260404_232149.zip",
@@ -1803,6 +1803,150 @@
       "disposition": "preserve_immutable_evidence"
     },
     {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260504_090841.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260504_090841.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_095606.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_095606.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_095959.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_095959.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_100429.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_100429.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_100430.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_100430.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_101257.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_101257.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_114139.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_114139.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_160437.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_160437.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_225949.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_225949.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_230300.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_230300.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_230551.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_230551.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_230740.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260514_230740.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113659.json",
       "kind": "file",
       "immutable_reason": "result_",
@@ -2739,146 +2883,260 @@
       "disposition": "preserve_immutable_evidence"
     },
     {
-      "path": "<HOME>/Documents/mertformer_outputs",
+      "path": "<HOME>/Documents/MertFormer_Final_Frontier_Onefile_2026_05_02/runs/20260502_021930_verify/bundles/evidence_bundle.zip",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Final_Frontier_Onefile_2026_05_02/runs/20260502_021930_verify/bundles/evidence_bundle.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Final_Frontier_Onefile_2026_05_02/runs/20260502_022111_mac_m4_smoke_mps/bundles/evidence_bundle.zip",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Final_Frontier_Onefile_2026_05_02/runs/20260502_022111_mac_m4_smoke_mps/bundles/evidence_bundle.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Final_Frontier_Onefile_2026_05_02/runs/20260502_022130_mac_m4_smoke_mps/bundles/evidence_bundle.zip",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Final_Frontier_Onefile_2026_05_02/runs/20260502_022130_mac_m4_smoke_mps/bundles/evidence_bundle.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Final_Frontier_Onefile_2026_05_02/runs/20260502_022148_frontier_report/bundles/evidence_bundle.zip",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Final_Frontier_Onefile_2026_05_02/runs/20260502_022148_frontier_report/bundles/evidence_bundle.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Final_Frontier_Onefile_2026_05_02/runs/20260502_022214_verify/bundles/evidence_bundle.zip",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Final_Frontier_Onefile_2026_05_02/runs/20260502_022214_verify/bundles/evidence_bundle.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Gist_Update_2026-05-14/5_OCEAN_PRE45K_H200_20260514_PARTIAL_EVIDENCE.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Gist_Update_2026-05-14/gist_clone/5_OCEAN_PRE45K_H200_20260514_PARTIAL_EVIDENCE.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_math_fastproof_mac/runs/run_20260501_110521_micro/config_snapshot.json",
+      "kind": "file",
+      "immutable_reason": "snapshot",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_math_fastproof_mac/runs/run_20260501_110608_micro/config_snapshot.json",
+      "kind": "file",
+      "immutable_reason": "snapshot",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_DefaultRuntime_RepoCheck_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-df142945b6a9f76f9453f1e904fb78e779023dc3cac2637685d65774af6b37a2/result-output.tar",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_DefaultRuntime_RepoCheck_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-df142945b6a9f76f9453f1e904fb78e779023dc3cac2637685d65774af6b37a2/result-output_extracted",
       "kind": "dir",
       "immutable_reason": "output",
       "disposition": "preserve_immutable_evidence"
     },
     {
-      "path": "<HOME>/Documents/mertformer_outputs/checkpoints",
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/ocean_orchestrator_job/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-3e9a3fc04155b9be3dac0b192ddd286f16c99f0135523ab0eb086d098a0127d0/result-output(2).tar",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/ocean_orchestrator_job/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-3e9a3fc04155b9be3dac0b192ddd286f16c99f0135523ab0eb086d098a0127d0/result-output.tar",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/documents/README_snapshot_source.md",
+      "kind": "file",
+      "immutable_reason": "snapshot",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/evidence",
+      "kind": "dir",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/evidence/chess_evidence_contract.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/evidence/README.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/reports/final_evidence_pack.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/reports/immutable_evidence_register.json",
+      "kind": "file",
+      "immutable_reason": "immutable",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/reports/immutable_evidence_register.md",
+      "kind": "file",
+      "immutable_reason": "immutable",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/reports/release_snapshot.md",
+      "kind": "file",
+      "immutable_reason": "snapshot",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/reports/release_snapshot_TR.md",
+      "kind": "file",
+      "immutable_reason": "snapshot",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/reports/snapshot_manifest_dealroom.json",
+      "kind": "file",
+      "immutable_reason": "snapshot",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/reports/snapshot_manifest_main.json",
+      "kind": "file",
+      "immutable_reason": "snapshot",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/reports/teacher_output_license_assessment.md",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/reports/technical_snapshot.md",
+      "kind": "file",
+      "immutable_reason": "snapshot",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/reports/technical_snapshot_TR.md",
+      "kind": "file",
+      "immutable_reason": "snapshot",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/reports/training_outputs_bundle_manifest.json",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/reports/training_outputs_bundle_manifest.md",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/scripts/build_training_outputs_bundle.py",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/scripts/decrypt_mertformer_result_package.py",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/tests/test_build_training_outputs_bundle.py",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Recovery_HealthJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-240b82a6e6daf7a6951c29f2ea73662e27c97cdc2318c4dff08a78926e4e35da/result-output.tar",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Recovery_HealthJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-240b82a6e6daf7a6951c29f2ea73662e27c97cdc2318c4dff08a78926e4e35da/result-output_extracted",
       "kind": "dir",
       "immutable_reason": "output",
       "disposition": "preserve_immutable_evidence"
     },
     {
-      "path": "<HOME>/Documents/mertformer_outputs/checkpoints/kaggle_onefile_build30",
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Recovery_HealthJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-25e4492868431de9111d2f1d7cd60b2bf7e301d3a226ee2edf2e38ae5bc02b75/result-output.tar",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Recovery_HealthJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-25e4492868431de9111d2f1d7cd60b2bf7e301d3a226ee2edf2e38ae5bc02b75/result-output_extracted",
       "kind": "dir",
       "immutable_reason": "output",
       "disposition": "preserve_immutable_evidence"
     },
     {
-      "path": "<HOME>/Documents/mertformer_outputs/checkpoints/kaggle_onefile_build30/best.pt",
+      "path": "<HOME>/Documents/MertFormer_Oncompute_UltraSlim_SmokeJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-48c46c252a4dc46a6bd8907ab2155303c37a4e492d69e5c6d6a9f156ad603626/result-output.tar",
       "kind": "file",
       "immutable_reason": "output",
       "disposition": "preserve_immutable_evidence"
     },
     {
-      "path": "<HOME>/Documents/mertformer_outputs/checkpoints/kaggle_onefile_build30/manifest.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs",
+      "path": "<HOME>/Documents/MertFormer_Oncompute_UltraSlim_SmokeJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-48c46c252a4dc46a6bd8907ab2155303c37a4e492d69e5c6d6a9f156ad603626/result-output_extracted",
       "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/eval_incremental.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/eval_snapshots",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/eval_snapshots/eval_step_00000250_20260220T181248Z.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/eval_snapshots/eval_step_00000500_20260220T182554Z.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/eval_snapshots/eval_step_00000750_20260220T184404Z.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/eval_snapshots/eval_step_00001000_20260220T185728Z.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/eval_snapshots/eval_step_00001250_20260220T191112Z.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/eval_snapshots/eval_step_00001500_20260220T192730Z.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/eval_snapshots/eval_step_00001750_20260220T194436Z.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/eval_snapshots/eval_step_00002000_20260220T195742Z.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/eval_snapshots/eval_step_00002250_20260220T201416Z.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/failure_traceback.txt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/health_latest.txt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/last_state.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/logs",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs/runs/run_20260220_175540/logs/kaggle_onefile_build30_log.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Documents/mertformer_outputs_LINKEDIN_run_20260220_175540.zip",
-      "kind": "file",
       "immutable_reason": "output",
       "disposition": "preserve_immutable_evidence"
     },
@@ -2886,6 +3144,18 @@
       "path": "<HOME>/Documents/mertformer_outputs_LINKEDIN_run_20260220_175540.zip.sha256",
       "kind": "file",
       "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_RunCompute_TruthSync_Ready_2026-05-12/code_modules/evidence_module.py",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Smart_Dump.txt",
+      "kind": "file",
+      "immutable_reason": "smart_dump",
       "disposition": "preserve_immutable_evidence"
     },
     {
@@ -3033,656 +3303,182 @@
       "disposition": "preserve_immutable_evidence"
     },
     {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/applications/anthropic/measured_evidence_summary.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/documents/README_snapshot_source.md",
+      "kind": "file",
+      "immutable_reason": "snapshot",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/evidence",
+      "kind": "dir",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/evidence/build30_t4_onecell",
+      "kind": "dir",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/evidence/build30_t4_onecell/EVIDENCE_POINTER.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/evidence/build30_t4_onecell/run_summary.json",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/evidence/build30_t4_onecell/sha256.txt",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/evidence/build30_t4_onecell/smoke_test_result.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/evidence/chess_evidence_contract.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/evidence/README.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/mertformer-titan-dealroom-private/03_TECH_EVIDENCE",
+      "kind": "dir",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/mertformer-titan-dealroom-private/03_TECH_EVIDENCE/closure_57_matrix_EN.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/mertformer-titan-dealroom-private/03_TECH_EVIDENCE/closure_57_matrix_TR.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/mertformer-titan-dealroom-private/03_TECH_EVIDENCE/compile_cudagraph_stall_fix_note.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/mertformer-titan-dealroom-private/03_TECH_EVIDENCE/feature_coverage_matrix_v2.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/mertformer-titan-dealroom-private/03_TECH_EVIDENCE/kpi_report_v1.json",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/mertformer-titan-dealroom-private/03_TECH_EVIDENCE/live_validation_snapshot.md",
+      "kind": "file",
+      "immutable_reason": "snapshot",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/mertformer-titan-dealroom-private/03_TECH_EVIDENCE/report_accuracy_audit_EN.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/mertformer-titan-dealroom-private/03_TECH_EVIDENCE/report_accuracy_audit_TR.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/mertformer-titan-dealroom-private/03_TECH_EVIDENCE/runtime_disclosure.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/mertformer-titan-dealroom-private/04_SECURITY_LEGAL/teacher_output_license_assessment.md",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/mertformer-titan-dealroom-private/MANIFEST/security_scan_result_v1.json",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/scripts/build_training_outputs_bundle.py",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/scripts/decrypt_mertformer_result_package.py",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_synthetic_dataset_20260510/tests/test_build_training_outputs_bundle.py",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/OCEAN_8H30_PRE45K_H200_FINAL_EVIDENCE_PROOF_20260514_RUNNOW/kernel_patch/mertformer_sdk",
+      "kind": "dir",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/OCEAN_8H30_PRE45K_H200_FINAL_EVIDENCE_PROOF_20260514_RUNNOW/kernel_patch/mertformer_sdk/kernels",
+      "kind": "dir",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/OCEAN_8H30_PRE45K_H200_FINAL_EVIDENCE_PROOF_20260514_RUNNOW/kernel_patch/mertformer_sdk/kernels/dispatcher.py",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/OCEAN_8H30_PRE45K_H200_FINAL_EVIDENCE_PROOF_20260514_RUNNOW/kernel_patch/mertformer_sdk/kernels/triton_fused_bitlinear.py",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
       "path": "<HOME>/Downloads/content/mertformer_outputs",
       "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/.DS_Store",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/checkpoints",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/checkpoints/.DS_Store",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/checkpoints/kaggle_onefile_build30",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/checkpoints/kaggle_onefile_build30/mathfp_our_mertformer_latest.pt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/checkpoints/kaggle_onefile_build30/mathfp_our_mertformer_step_002400.pt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/checkpoints/kaggle_onefile_build30/mathfp_our_mertformer_step_004500.pt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/.DS_Store",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_045204",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_045204/run_20260315_045204_run_log.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_045204/run_20260315_045204_step_metrics.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050032",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050032/run_20260315_050032_run_log.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050032/run_20260315_050032_step_metrics.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_artifact_index.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_compare.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_compare.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_compare.md",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_evidence.zip",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_health.txt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_model_final.pt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_run_log.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_step_metrics.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_summary.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/zip_manifest.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_102321",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_102321/moe_expert_bar_proxy.png",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_102321/run_20260315_102321_artifact_index.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_102321/run_20260315_102321_compare.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_102321/run_20260315_102321_compare.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_102321/run_20260315_102321_compare.md",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_102321/run_20260315_102321_evidence.zip",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_102321/run_20260315_102321_health.txt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_102321/run_20260315_102321_model_final.pt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_102321/run_20260315_102321_run_log.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_102321/run_20260315_102321_step_metrics.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_102321/run_20260315_102321_summary.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_102321/zip_manifest.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_124901",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_124901/moe_expert_bar_proxy.png",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_124901/run_20260315_124901_artifact_index.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_124901/run_20260315_124901_compare.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_124901/run_20260315_124901_compare.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_124901/run_20260315_124901_compare.md",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_124901/run_20260315_124901_evidence.zip",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_124901/run_20260315_124901_health.txt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_124901/run_20260315_124901_model_final.pt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_124901/run_20260315_124901_run_log.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_124901/run_20260315_124901_step_metrics.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_124901/run_20260315_124901_summary.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_124901/zip_manifest.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_153128",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_153128/moe_expert_bar_proxy.png",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_153128/run_20260315_153128_artifact_index.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_153128/run_20260315_153128_compare.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_153128/run_20260315_153128_compare.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_153128/run_20260315_153128_compare.md",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_153128/run_20260315_153128_evidence.zip",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_153128/run_20260315_153128_health.txt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_153128/run_20260315_153128_model_final.pt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_153128/run_20260315_153128_run_log.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_153128/run_20260315_153128_step_metrics.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_153128/run_20260315_153128_summary.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_153128/zip_manifest.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_173223",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_173223/run_20260315_173223_run_log.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_173223/run_20260315_173223_step_metrics.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180019",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180019/run_20260315_180019_artifact_index.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180019/run_20260315_180019_compare.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180019/run_20260315_180019_compare.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180019/run_20260315_180019_compare.md",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180019/run_20260315_180019_evidence.zip",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180019/run_20260315_180019_health.txt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180019/run_20260315_180019_run_log.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180019/run_20260315_180019_summary.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180019/run_20260315_180019_test.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180019/run_20260315_180019_train.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180019/run_20260315_180019_unseen.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180019/run_20260315_180019_val.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180112",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180112/run_20260315_180112_artifact_index.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180112/run_20260315_180112_compare.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180112/run_20260315_180112_compare.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180112/run_20260315_180112_compare.md",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180112/run_20260315_180112_evidence.zip",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180112/run_20260315_180112_health.txt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180112/run_20260315_180112_run_log.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180112/run_20260315_180112_summary.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180112/run_20260315_180112_test.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180112/run_20260315_180112_train.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180112/run_20260315_180112_unseen.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180112/run_20260315_180112_val.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151",
-      "kind": "dir",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_artifact_index.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_compare.csv",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_compare.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_compare.md",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_evidence.zip",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_health.txt",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_run_log.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_summary.json",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_test.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_train.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_unseen.jsonl",
-      "kind": "file",
-      "immutable_reason": "output",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_val.jsonl",
-      "kind": "file",
       "immutable_reason": "output",
       "disposition": "preserve_immutable_evidence"
     },
@@ -3708,6 +3504,12 @@
       "path": "<HOME>/Downloads/content1/content/mertformer_outputs/runs/.DS_Store",
       "kind": "file",
       "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Downloads/MertFormer_Smart_Dump-1.txt",
+      "kind": "file",
+      "immutable_reason": "smart_dump",
       "disposition": "preserve_immutable_evidence"
     },
     {

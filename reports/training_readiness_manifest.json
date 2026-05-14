@@ -103,7 +103,7 @@
           }
         }
       },
-      "elapsed_s": 0.018,
+      "elapsed_s": 0.006,
       "path_name": "offline_clean",
       "exit_code": 1,
       "stdout_tail": "TRAIN_READY:FAIL reason_code=PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE\n",
@@ -195,7 +195,7 @@
           "detail": "HF_TOKEN missing"
         }
       },
-      "elapsed_s": 0.001,
+      "elapsed_s": 0.0,
       "path_name": "online_teacher",
       "exit_code": 1,
       "stdout_tail": "TRAIN_READY:FAIL reason_code=MISSING_HF_TOKEN\n",
