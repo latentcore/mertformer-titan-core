@@ -44,6 +44,7 @@ Optional fallback only if the post-run story hardens materially:
 - Strict local lane: `offline_clean`
 - Canonical Kaggle closure lane: `bash zero_touch_start.sh --kaggle-onefile --mode train-end --profile auto`
 - Remaining non-winning blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`
+- 2026-05-14 Ocean/H200 evidence is partial operational evidence only; it does not establish trained capability, benchmark verification, or completed 45K proof.
 - Real trained outputs remain post-run evidence and must not be narrated as already complete
 - Exact `45K` is preferred, not mandatory; the real gate is owned training evidence tied to checkpoints
 
@@ -53,6 +54,7 @@ Optional fallback only if the post-run story hardens materially:
 - `docs/PROJECT_MASTER_TRUTH.md`
 - `reports/final_truth_matrix.md`
 - `reports/known_limits_v1.md`
+- `reports/ocean_pre45k_h200_20260514_partial_evidence.md`
 - `reports/systems_performance_case_study.md`
 - `reports/offline_assistant_case_study.md`
 - `reports/chess_proof_teaching_case_study.md`

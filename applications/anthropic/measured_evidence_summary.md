@@ -8,6 +8,7 @@
 - The canonical Kaggle closure lane is `bash zero_touch_start.sh --kaggle-onefile --mode train-end --profile auto`.
 - Claim-critical docs explicitly separate measured, target, and vision surfaces.
 - Closure scripts regenerate reports, hashes, and package artifacts instead of relying on narration.
+- A 2026-05-14 Ocean pre-45K H200 capture is recorded as partial operational evidence only: it captured 2x GPU startup and training through step `1880`, but no final eval/checkpoint/archive artifacts were recovered.
 
 ## Current Validation Snapshot
 - `python3 -m pytest --collect-only -q` currently collects `205` tests.
@@ -21,6 +22,7 @@
 - Repo-side benchmark artifacts exist for smoke/reference surfaces while trained-checkpoint claims remain open.
 - The repo keeps compute, checkpoint, benchmark, and release evidence tied to manifests and exact artifacts.
 - The Kaggle closure lane packages first-100-step loss evidence, checkpoint manifests, artifact hashes, and auxiliary compare/text runs without turning those surfaces into trained benchmark claims.
+- The public compute-sponsorship Gist points to the same boundary: partial H200 operational evidence is useful for infrastructure review, not capability or benchmark claims.
 
 ## Product and Assistant Evidence
 - Offline-first is the repo-default operating direction.
@@ -38,6 +40,7 @@
 - checkpoint-bound benchmark outputs
 - trained demo bundle
 - trained export and device measurements
+- recovered final eval/checkpoint/archive from the next H100/H200 proof window
 
 ## Gaps To Disclose Directly
 - The current offline-clean dataset lane is contract-safe and seed-level, not evidence of large-scale ETL ownership.
