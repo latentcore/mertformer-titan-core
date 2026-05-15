@@ -265,6 +265,7 @@ Generated automatically.
 - `reports/commercial_handover/sla_kpi_90_180_TR.md`
 - `reports/commercial_handover_pack.md`
 - `reports/contamination_report_build30.md`
+- `reports/current_delta_addendum_2026_05_15.md`
 - `reports/customer_ready_definition.md`
 - `reports/data_pipeline_contract.md`
 - `reports/dataset_health.md`
@@ -398,6 +399,7 @@ Generated automatically.
 - `reports/tokenizer_sync_final_report.md`
 - `reports/train_readiness_decision.md`
 - `reports/training_outputs_bundle_manifest.md`
+- `reports/training_surface_audit_2026_05_15.md`
 - `reports/turk_telekom_call_faq.md`
 - `reports/update_first_policy.md`
 - `reports/verified_matrix.md`

@@ -23,14 +23,19 @@ LOG_DIR = Path("logs")
 LOGBOOK_PATH = LOG_DIR / "ALL_LOGS.jsonl"
 
 REDACT_PATTERNS = [
-    re.compile(r"hf_[A-Za-z0-9]{8,}"),
-    re.compile(r"wandb_[A-Za-z0-9]{8,}"),
+    re.compile(r"\bhf_[A-Za-z0-9_\-]{8,}\b"),
+    re.compile(r"\bwandb_[A-Za-z0-9_\-]{8,}\b"),
     # WandB API keys are often 40 hex chars; also catches accidental full git SHAs in logs (acceptable).
     re.compile(r"\b[0-9a-fA-F]{40}\b"),
-    re.compile(r"sk-[A-Za-z0-9]{10,}"),
+    re.compile(r"\bsk-[A-Za-z0-9_\-]{10,}\b"),
     re.compile(r"\bghp_[A-Za-z0-9]{20,}\b"),  # GitHub tokens (best-effort)
     re.compile(r"\bAIza[0-9A-Za-z\-_]{20,}\b"),  # Google API keys (best-effort)
 ]
+
+SENSITIVE_KEY_PATTERN = re.compile(
+    r"(^|[_\-])(api[_\-]?key|access[_\-]?key|secret|password|passwd|credential|private[_\-]?key|auth[_\-]?token|hf[_\-]?token|wandb[_\-]?api[_\-]?key)($|[_\-])",
+    re.IGNORECASE,
+)
 
 
 def _utc_iso() -> str:
@@ -55,6 +60,13 @@ def _redact_text(text: str) -> str:
     return out
 
 
+def _is_sensitive_key(key: str) -> bool:
+    normalized = re.sub(r"[^A-Za-z0-9]+", "_", key).strip("_").lower()
+    if normalized in {"token", "secret", "password", "passwd", "api_key", "access_key", "private_key", "credential"}:
+        return True
+    return bool(SENSITIVE_KEY_PATTERN.search(key))
+
+
 def _redact(obj: Any) -> Any:
     if obj is None:
         return None
@@ -63,7 +75,11 @@ def _redact(obj: Any) -> Any:
     if isinstance(obj, (int, float, bool)):
         return obj
     if isinstance(obj, dict):
-        return {k: _redact(v) for k, v in obj.items()}
+        redacted: dict[str, Any] = {}
+        for k, v in obj.items():
+            key = str(k)
+            redacted[key] = "REDACTED" if _is_sensitive_key(key) else _redact(v)
+        return redacted
     if isinstance(obj, (list, tuple)):
         return [_redact(v) for v in obj]
     return _redact_text(str(obj))
@@ -76,7 +92,7 @@ def _ensure_logbook_header(path: Path) -> None:
         "schema_version": "1.0",
         "created_at_utc": _utc_iso(),
         "note": "Unified logbook for all logs under logs/. New entries append automatically.",
-        "redaction_policy": "Simple token redaction for hf_/wandb_/sk- patterns.",
+        "redaction_policy": "Best-effort value and sensitive-key redaction for common API tokens/secrets.",
     }
     if not path.exists() or path.stat().st_size == 0:
         path.parent.mkdir(parents=True, exist_ok=True)

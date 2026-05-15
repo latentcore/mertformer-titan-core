@@ -369,6 +369,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── closure_57_matrix.json  # JSON data artifact
 │   ├── closure_57_matrix.md  # documentation/report file
 │   ├── closure_57_matrix_TR.md  # Turkish document counterpart
+│   ├── closure_release_truthsync_master_protocol.md  # documentation/report file
 │   ├── closure_report_build30_v2.md  # documentation/report file
 │   ├── closure_risk_register.md  # documentation/report file
 │   ├── cloud_readiness_report.md  # documentation/report file
@@ -478,11 +479,14 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── model_health.md  # documentation/report file
 │   ├── model_health_TR.md  # Turkish document counterpart
 │   ├── model_health_final.md  # documentation/report file
+│   ├── ocean_pre45k_h200_20260514_clean_summary.json  # JSON data artifact
+│   ├── ocean_pre45k_h200_20260514_partial_evidence.md  # documentation/report file
 │   ├── offline_assistant_case_study.md  # documentation/report file
 │   ├── one_command_full_sop.log  # text/log artifact (single-command end-to-end SOP raw log; overwritten each run)
 │   ├── one_command_full_sop_summary.md  # documentation/report file (single-command end-to-end SOP summary; overwritten each run)
 │   ├── one_pager.md  # documentation/report file
 │   ├── one_pager_TR.md  # Turkish document counterpart
+│   ├── outreach_compute_sponsorship_messages.md  # documentation/report file
 │   ├── owner_matrix.md  # documentation/report file
 │   ├── ownership_proof_bundle.json  # JSON data artifact
 │   ├── package_smoke_report.json  # JSON data artifact
@@ -683,6 +687,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── operator_mode_gate.py  # Python module/script (automation script for operator mode gate)
 │   ├── overfit_gate.py  # Python module/script (automation script for overfit gate)
 │   ├── plot_training_log.py  # Python module/script (automation script for plot training log)
+│   ├── post_run_processor.py  # Python module/script (automation script for post run processor)
 │   ├── post_train_autorun.py  # Python module/script (automation script for post train autorun)
 │   ├── precompute_logits_topk.py  # Python module/script (automation script for precompute logits topk)
 │   ├── ram_guard.py  # Python module/script (automation script for ram guard)
@@ -767,10 +772,12 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_onnx_export_path.py  # Python module/script (automated test module for onnx export path)
 │   ├── test_onnx_metadata_hook.py  # Python module/script (automated test module for onnx metadata hook)
 │   ├── test_orchestrator_swarm_runtime.py  # Python module/script (automated test module for orchestrator swarm runtime)
+│   ├── test_post_run_processor.py  # Python module/script (automated test module for post run processor)
 │   ├── test_post_train_autorun_cli.py  # Python module/script (automated test module for post train autorun cli)
 │   ├── test_scoped_external_tools.py  # Python module/script (automated test module for scoped external tools)
 │   ├── test_sdk_api.py  # Python module/script (automated test module for sdk api)
 │   ├── test_sdk_pilot_cli.py  # Python module/script (automated test module for sdk pilot cli)
+│   ├── test_secret_scan.py  # Python module/script (automated test module for secret scan)
 │   ├── test_start_gate.py  # Python module/script (automated test module for start gate)
 │   ├── test_sync_chess_gui_onefile.py  # Python module/script (automated test module for sync chess gui onefile)
 │   ├── test_telemetry_logger_contract.py  # Python module/script (automated test module for telemetry logger contract)

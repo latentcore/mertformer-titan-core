@@ -126,7 +126,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `248 passed, 4 skipped` |
+| `python3 -m pytest -q` | `250 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -139,7 +139,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`248 passed, 4 skipped`)
+   - `pytest` geçti (`250 passed, 4 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -1930,6 +1930,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── closure_57_matrix.json  # JSON veri artefaktı
 │   ├── closure_57_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── closure_57_matrix_TR.md  # Türkçe doküman karşılığı
+│   ├── closure_release_truthsync_master_protocol.md  # dokümantasyon/rapor dosyası
 │   ├── closure_report_build30_v2.md  # dokümantasyon/rapor dosyası
 │   ├── closure_risk_register.md  # dokümantasyon/rapor dosyası
 │   ├── cloud_readiness_report.md  # dokümantasyon/rapor dosyası
@@ -2039,11 +2040,14 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── model_health.md  # dokümantasyon/rapor dosyası
 │   ├── model_health_TR.md  # Türkçe doküman karşılığı
 │   ├── model_health_final.md  # dokümantasyon/rapor dosyası
+│   ├── ocean_pre45k_h200_20260514_clean_summary.json  # JSON veri artefaktı
+│   ├── ocean_pre45k_h200_20260514_partial_evidence.md  # dokümantasyon/rapor dosyası
 │   ├── offline_assistant_case_study.md  # dokümantasyon/rapor dosyası
 │   ├── one_command_full_sop.log  # metin/log artefaktı (tek komut uçtan uca SOP ham logu; her çalıştırmada üzerine yazılır)
 │   ├── one_command_full_sop_summary.md  # dokümantasyon/rapor dosyası (tek komut uçtan uca SOP özeti; her çalıştırmada üzerine yazılır)
 │   ├── one_pager.md  # dokümantasyon/rapor dosyası
 │   ├── one_pager_TR.md  # Türkçe doküman karşılığı
+│   ├── outreach_compute_sponsorship_messages.md  # dokümantasyon/rapor dosyası
 │   ├── owner_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── ownership_proof_bundle.json  # JSON veri artefaktı
 │   ├── package_smoke_report.json  # JSON veri artefaktı
@@ -2244,6 +2248,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── operator_mode_gate.py  # Python modülü/scripti (operator mode gate için otomasyon scripti)
 │   ├── overfit_gate.py  # Python modülü/scripti (overfit gate için otomasyon scripti)
 │   ├── plot_training_log.py  # Python modülü/scripti (plot training log için otomasyon scripti)
+│   ├── post_run_processor.py  # Python modülü/scripti (post run processor için otomasyon scripti)
 │   ├── post_train_autorun.py  # Python modülü/scripti (post train autorun için otomasyon scripti)
 │   ├── precompute_logits_topk.py  # Python modülü/scripti (precompute logits topk için otomasyon scripti)
 │   ├── ram_guard.py  # Python modülü/scripti (ram guard için otomasyon scripti)
@@ -2328,10 +2333,12 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_onnx_export_path.py  # Python modülü/scripti (onnx export path için otomatik test modülü)
 │   ├── test_onnx_metadata_hook.py  # Python modülü/scripti (onnx metadata hook için otomatik test modülü)
 │   ├── test_orchestrator_swarm_runtime.py  # Python modülü/scripti (orchestrator swarm runtime için otomatik test modülü)
+│   ├── test_post_run_processor.py  # Python modülü/scripti (post run processor için otomatik test modülü)
 │   ├── test_post_train_autorun_cli.py  # Python modülü/scripti (post train autorun cli için otomatik test modülü)
 │   ├── test_scoped_external_tools.py  # Python modülü/scripti (scoped external tools için otomatik test modülü)
 │   ├── test_sdk_api.py  # Python modülü/scripti (sdk api için otomatik test modülü)
 │   ├── test_sdk_pilot_cli.py  # Python modülü/scripti (sdk pilot cli için otomatik test modülü)
+│   ├── test_secret_scan.py  # Python modülü/scripti (secret scan için otomatik test modülü)
 │   ├── test_start_gate.py  # Python modülü/scripti (start gate için otomatik test modülü)
 │   ├── test_sync_chess_gui_onefile.py  # Python modülü/scripti (sync chess gui onefile için otomatik test modülü)
 │   ├── test_telemetry_logger_contract.py  # Python modülü/scripti (telemetry logger contract için otomatik test modülü)

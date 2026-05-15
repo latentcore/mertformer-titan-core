@@ -1,0 +1,1863 @@
+{
+  "audit_method": [
+    "Dependency-order source read for selected training surfaces.",
+    "Python AST parse for Python files where applicable.",
+    "Keyword scan for credential/logits/readiness/external dependency boundaries.",
+    "Manual high-risk outline review for train loop, BitLinear/MoE/Liquid, distillation, telemetry, kernels, final closure sync."
+  ],
+  "audit_scope": "Canonical 45K training/eval/orchestration/SDK/config/tokenizer/test surfaces plus direct closure scripts.",
+  "claim_boundary": "No training/model capability claim is introduced by this audit. No teacher/tokenizer/dataset policy, prompt surface, or model architecture change was made.",
+  "closure_pass": "logger_hardening_release_truth_sync_2026_05_15",
+  "external_dependency_count": 17,
+  "file_count": 155,
+  "finding_policy": {
+    "EXTERNAL_DEPENDENCY": "Needs real run, hardware, credentials, dataset, or downloaded artifacts.",
+    "FIX_NOW": "Concrete bug affecting training correctness, artifact integrity, secret safety, checkpoint/eval/reproducibility.",
+    "NO_TOUCH": "Correct as-is for closure scope; no code edit.",
+    "PHASE2": "Improvement or adjacent legacy surface not required for 45K closure."
+  },
+  "fix_now_count": 0,
+  "generated_at_utc": "2026-05-15T20:51:41Z",
+  "generated_for": "MertFormer Build30 logger hardening closure pass",
+  "manual_high_risk_review": {
+    "layers/bitlinear.py": "READ: lowbit kernel route and BitLinear forward outline reviewed.",
+    "layers/liquid.py": "READ: LiquidCell/LiquidMixer cached and train-loop outline reviewed.",
+    "layers/moe.py": "READ: router/expert dispatch/paging outline reviewed.",
+    "mertformer_sdk/kernels/dispatcher.py": "READ: backend selection outline reviewed.",
+    "mertformer_sdk/kernels/triton_fused_bitlinear.py": "READ: Triton availability/forward/backward wrapper outline reviewed.",
+    "orchestrator/distillation_manager.py": "READ: teacher load/precompute/logits loader outline reviewed.",
+    "orchestrator/telemetry.py": "READ: system/runtime telemetry outline reviewed.",
+    "scripts/build_scoped_external_intake_matrix.py": "READ: /Applications sync source/target and sidecar writer outline reviewed.",
+    "scripts/final_one_shot.sh": "READ: final_one_shot invokes sync apply and release artifact rebuild.",
+    "train/train.py": "READ: entrypoint, datasets, teacher bundle, logger integration, checkpoint/resume/finalize outline reviewed."
+  },
+  "no_touch_count": 137,
+  "parse_errors": [],
+  "phase2_count": 1,
+  "repo_root": "<REPO_ROOT>",
+  "rows": [
+    {
+      "bytes": 0,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 0,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "config/__init__.py",
+      "python_ast_ok": true,
+      "role": "config",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1919,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 94,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "config/base.yaml",
+      "python_ast_ok": null,
+      "role": "config",
+      "sha256": "c61a31de38a65b6ae23a54b9edd35d4096149ddaa021f068616cd9efcae57718"
+    },
+    {
+      "bytes": 30121,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "PRECOMPUTED_LOGITS",
+        "checkpoint"
+      ],
+      "lines": 710,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "config/config.py",
+      "python_ast_ok": true,
+      "role": "config",
+      "sha256": "f14fb720e96ef162cd6f875c5bb86ac02412cb54029f57f56759e8c98496e6d1"
+    },
+    {
+      "bytes": 83,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 3,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "config/export/onnx_mobile.yaml",
+      "python_ast_ok": null,
+      "role": "config",
+      "sha256": "ebc2e0d8d7be5f5e40a2aef7c506d700c0fc60300fb917cb6738947a8d65532b"
+    },
+    {
+      "bytes": 668,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 23,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "config/model/mertformer_max_arch.yaml",
+      "python_ast_ok": null,
+      "role": "config",
+      "sha256": "a4ebf9747da455bfd6a9f5cfa7d31f94fe8a1baad3a227242c4101234ce49294"
+    },
+    {
+      "bytes": 110,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 4,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "config/model/mertformer_moe.yaml",
+      "python_ast_ok": null,
+      "role": "config",
+      "sha256": "9496505f8d3154cc41b9d9426a13d5ff488e4f7b0a81f0b5ce6e4fd57350d04e"
+    },
+    {
+      "bytes": 239,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 11,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "config/model/mertformer_small.yaml",
+      "python_ast_ok": null,
+      "role": "config",
+      "sha256": "3d8242995b50252002fbf9acf006ac055c06e38d20da30e18c66ba13af340052"
+    },
+    {
+      "bytes": 117,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 5,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "config/train/finetune.yaml",
+      "python_ast_ok": null,
+      "role": "config",
+      "sha256": "84e15b2a6f1bb5b21f1cc4ca0c25227ada0b2984a22ccde0ec55ef4b658e2a73"
+    },
+    {
+      "bytes": 112,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 5,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "config/train/pretrain.yaml",
+      "python_ast_ok": null,
+      "role": "config",
+      "sha256": "b3dfa52086068dde1a8f729b2a336968155c85e5ee2b8e9d10b590a76a4f0b29"
+    },
+    {
+      "bytes": 271,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 9,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "configs/README.md",
+      "python_ast_ok": null,
+      "role": "config docs",
+      "sha256": "3df3f45ad44b2ea6c1787d645edaf02106c75d3c5152d11c4bac4ebb2d26a7b3"
+    },
+    {
+      "bytes": 1054,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 30,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "configs/chess_onefile_profile_contract.md",
+      "python_ast_ok": null,
+      "role": "config docs",
+      "sha256": "56debbe24dde3437e602a1b0c5c15c69c86fdd3e7488cb7f85ad0714d3406668"
+    },
+    {
+      "bytes": 1438,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 27,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/INTERNAL_POLICY.md",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "3a544ae9993c5750b7d0b48025f596f7e357c2987888a820b8a11650ef5791d1"
+    },
+    {
+      "bytes": 1523,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 27,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/INTERNAL_POLICY_TR.md",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "b0d542bd935f2ed8044d9cf26485dfaa2e5fc38e594035a9135896b2daf03d6f"
+    },
+    {
+      "bytes": 3183,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 32,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/LICENSES.md",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "83006389931d5a5acff81dd15928c2ebfc1691fd2a8ec543d2adace1579adfe4"
+    },
+    {
+      "bytes": 3346,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 32,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/LICENSES_TR.md",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "88d30db6ff71fcf5ea058add911780c1a67a85e4f30461667e91ac50c3bbc9a2"
+    },
+    {
+      "bytes": 772,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 23,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/README.md",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "bc12869e38dc34005d0d37dae5d59bd9c1ad7ac08cd677e1769dc7389c9ac00c"
+    },
+    {
+      "bytes": 846,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 23,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/README_TR.md",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "4a8c0c06d8cd839457f8abed78711f9710f0d18b95b6b683e53d602fd4bb8e9b"
+    },
+    {
+      "bytes": 6601,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 118,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/SOURCES.md",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "612e293171d4dc9aec9dd37aecb5a907b98e5ef20b24822ed94749556c1a175a"
+    },
+    {
+      "bytes": 6636,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 119,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/SOURCES_TR.md",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "832fbbfc6db6743b105e61ee8fe23178c1950a186ae550ad303af1a788abfcf1"
+    },
+    {
+      "bytes": 192,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 10,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/filters.yaml",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "b4dd80696fbd8a7a2933669b46b760923b8a3b073d110c24a09fbfc6716b5d88"
+    },
+    {
+      "bytes": 7826,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 50,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/golden_assertions.jsonl",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "1038db75a5e4daadf163319a261da15d9d7b946c8bdb902c9c0dce2cf499c984"
+    },
+    {
+      "bytes": 5426,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 50,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/golden_samples.jsonl",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "ec09cd23ef28db7c118ca0b972b31db1150a2c0a5f09abc020835eb011b9fbfa"
+    },
+    {
+      "bytes": 9682,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 219,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/hashes.json",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "22391b028944c6d9aa3394b7abb154e9114b50388f0cc452ecb49d8990b22fdd"
+    },
+    {
+      "bytes": 14636,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 449,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/inventory.json",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "d3f12e09eb84205b4f3b2b9d727d867e8358254664bfb5cd47f15c29f6669e63"
+    },
+    {
+      "bytes": 4916,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 101,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/inventory.md",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "c34293389ec84f728115f9e0be0d26524144f6d4f65e8e8f0e5e71e7379deafe"
+    },
+    {
+      "bytes": 4937,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 101,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/inventory_TR.md",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "7a047b7e020dfdd01ad2fa49ec229e3cd6a02e236d4d1241086b2a6bbaaad534"
+    },
+    {
+      "bytes": 446,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 15,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/offline_demo/README.md",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "5bb0d1bddf3d7539b2fd04c5d0ee86d140cf2014647b0517af6e8dbef0584577"
+    },
+    {
+      "bytes": 142756,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 99,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/offline_demo/train.jsonl",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "1d2e384fe9be13980fadd6ea066b3145c28ee793ff3ba5eeff03b89639900938"
+    },
+    {
+      "bytes": 96172,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 128,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/offline_demo/validation.jsonl",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "dc9f1c22748c076df18600c4bd48d5c5348701f2306c54119ab4f3f1c5305c98"
+    },
+    {
+      "bytes": 10693,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 41,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/stage1/stage1_data.jsonl",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "79ced38d0f61338a7f6f64e2b848a731373c0868bb5927c3ad78f9e75f8f5c93"
+    },
+    {
+      "bytes": 110957,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 30,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/stage2/stage2_data.jsonl",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "ecf9bcf032862f9a13d24f4c08be2cc314f38f696b9eb7c89d074df00a91ca56"
+    },
+    {
+      "bytes": 13987,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 8,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/stage3/stage3_data.jsonl",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "f7e1b3731c1dd799041b39f03799dab2b4e5f09cc8f40a22ac48272effc98a78"
+    },
+    {
+      "bytes": 5036,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 8,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/stage4_soul/stage4_data.jsonl",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "db98409b4dbbee290844fbf00f0e982502be3d5879af3c9fbddfe5967d961f5c"
+    },
+    {
+      "bytes": 2083,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 12,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/stage5_tools/stage5_data.jsonl",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "48c9117ed80a749679de8bb63779b812367cbb3fccdc811053a0441fa2222e9e"
+    },
+    {
+      "bytes": 1216246,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 1500,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "datasets/validation.jsonl",
+      "python_ast_ok": null,
+      "role": "dataset policy/data",
+      "sha256": "9cc71ac3be7708cd93f0646bd9ce21873f63b3fda973ab33098a226ecb1345ef"
+    },
+    {
+      "bytes": 5708,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 173,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "eval/agentic_suite.py",
+      "python_ast_ok": true,
+      "role": "eval/post-run",
+      "sha256": "ea69e38f842ef0befc6a1f6cd72bb0b0b356715a1656017a08fedd6deb0fee99"
+    },
+    {
+      "bytes": 4484,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 135,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "eval/generalization_suite.py",
+      "python_ast_ok": true,
+      "role": "eval/post-run",
+      "sha256": "17843ec9e7f640adeeab33e7b3ed1bbbcda1011ea7b64bea2d0218df4e4aefbd"
+    },
+    {
+      "bytes": 306,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 14,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "eval/golden.py",
+      "python_ast_ok": true,
+      "role": "eval/post-run",
+      "sha256": "0dcdd4458b9d9ed61d612a2e4616894450fb7f7264536b4b4ce93871fff0019d"
+    },
+    {
+      "bytes": 6679,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 204,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "eval/gsm8k.py",
+      "python_ast_ok": true,
+      "role": "eval/post-run",
+      "sha256": "2fba8e7d9de136d6172eb22d2af82612215e53e61eb9c5edf2882843dab2c046"
+    },
+    {
+      "bytes": 441,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 21,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "eval/humaneval.py",
+      "python_ast_ok": true,
+      "role": "eval/post-run",
+      "sha256": "81d632915ed636c2402b404869e7b78af0501abdf49e785cb9a0c9b2a1caf0ed"
+    },
+    {
+      "bytes": 4236,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 125,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "eval/report_builder.py",
+      "python_ast_ok": true,
+      "role": "eval/post-run",
+      "sha256": "f2186bbe8710cc57de3e6d36020a58514e79578d27b5b7568b83bb9d37e77344"
+    },
+    {
+      "bytes": 0,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 0,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "layers/__init__.py",
+      "python_ast_ok": true,
+      "role": "model layers",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6049,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 172,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "layers/bitlinear.py",
+      "python_ast_ok": true,
+      "role": "model layers",
+      "sha256": "661f2d21f3118e7ab6874fd312b55a8c588a275c5b848eeb540a2e7b8ea16e13"
+    },
+    {
+      "bytes": 3233,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 97,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "layers/bitnet_patch.py",
+      "python_ast_ok": true,
+      "role": "model layers",
+      "sha256": "631eefd14fad9a6d8e9d371bc33a27a46bc5a5d86cda8fb83c75bc66fd55aeb8"
+    },
+    {
+      "bytes": 5407,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 125,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "layers/cognitive_extensions.py",
+      "python_ast_ok": true,
+      "role": "model layers",
+      "sha256": "b572fd1490eadc71950368f7d499dcc018bd08059c6b3100a57a7adab897df7a"
+    },
+    {
+      "bytes": 2929,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 81,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "layers/ffn.py",
+      "python_ast_ok": true,
+      "role": "model layers",
+      "sha256": "b19e37b40d56d032363337563fd30378248cac3680b349169c4ae77461ef4c5c"
+    },
+    {
+      "bytes": 2860,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 77,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "layers/lifelong_safety.py",
+      "python_ast_ok": true,
+      "role": "model layers",
+      "sha256": "cf92dc7dcfabfc507e3ba5df3d52dfbb3df6a9b7903b34cf01b08d5a5bcdd3c4"
+    },
+    {
+      "bytes": 16515,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 400,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "layers/liquid.py",
+      "python_ast_ok": true,
+      "role": "model layers",
+      "sha256": "9cb4038e3e2c38caab1967b7ed20004119066eb1280dc57492a354a68497b855"
+    },
+    {
+      "bytes": 10438,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 254,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "layers/mertformer_block.py",
+      "python_ast_ok": true,
+      "role": "model layers",
+      "sha256": "ba585c97eb04920f59fc011a80e4839e615b1c452cb79eaa642484db916be552"
+    },
+    {
+      "bytes": 19886,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 477,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "layers/mla.py",
+      "python_ast_ok": true,
+      "role": "model layers",
+      "sha256": "1afe20f9e375315e40adfcef34d36a151fb159fa72d80e4125958093188e4df2"
+    },
+    {
+      "bytes": 37589,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 856,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "layers/moe.py",
+      "python_ast_ok": true,
+      "role": "model layers",
+      "sha256": "34cf76046cd522894d20bf10b1031aeeab8c0fda0dd5f4b33d4fed1bb5d273d1"
+    },
+    {
+      "bytes": 5975,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 160,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "layers/qinn.py",
+      "python_ast_ok": true,
+      "role": "model layers",
+      "sha256": "ca8af1acb74974ee13eec237da0a6d84f00446fb3796db779542a23023218a61"
+    },
+    {
+      "bytes": 2959,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 83,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "layers/world_model_head.py",
+      "python_ast_ok": true,
+      "role": "model layers",
+      "sha256": "b44801193906e384e570022e549e3c9dc7869da6d981df844c43d897640eca15"
+    },
+    {
+      "bytes": 77,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 4,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/__init__.py",
+      "python_ast_ok": true,
+      "role": "SDK/runtime",
+      "sha256": "f9d4bbb18f2653eb2b6709f3097e0478561538cde1286080c10a6f1f4549db28"
+    },
+    {
+      "bytes": 5717,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 172,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/api.py",
+      "python_ast_ok": true,
+      "role": "SDK/runtime",
+      "sha256": "490706da6c2f0bf2dc6f5abf9a59327fa499c17b5a36031ba1b0b5c2d66afd13"
+    },
+    {
+      "bytes": 6909,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 188,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/cli.py",
+      "python_ast_ok": true,
+      "role": "SDK/runtime",
+      "sha256": "3ddc1bc594111ddf74de62a45195cb84044e9977981a5b4721b2d57ba22182b5"
+    },
+    {
+      "bytes": 506,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 20,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/export.py",
+      "python_ast_ok": true,
+      "role": "SDK/runtime",
+      "sha256": "04ef42d0d6dd8ad074739c3464627af0ba59569b0a6fbb5314fd71e63cee902a"
+    },
+    {
+      "bytes": 477,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 22,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kernels/__init__.py",
+      "python_ast_ok": true,
+      "role": "SDK/kernel edge",
+      "sha256": "e1b3515a4adecbb86fda2ee5db18c7bd5310270c28bf965d9b082697657c4a1a"
+    },
+    {
+      "bytes": 37,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 2,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kernels/cpp/__init__.py",
+      "python_ast_ok": true,
+      "role": "SDK/kernel edge",
+      "sha256": "1b78ce6892e2a68e7284d73eaa6efcfe35d7d2e937440cbf212ae5160170e83d"
+    },
+    {
+      "bytes": 1396,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 56,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kernels/cpp/loader.py",
+      "python_ast_ok": true,
+      "role": "SDK/kernel edge",
+      "sha256": "4cccb1ec798d1a0b9d059a75d83d315724ebddcf7fb4059d7028f11a5293e402"
+    },
+    {
+      "bytes": 2169,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 75,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kernels/dispatcher.py",
+      "python_ast_ok": true,
+      "role": "SDK/kernel edge",
+      "sha256": "30261257683f3a3923c998030f21b731c7f960a694fa7a38bf98df75057601b1"
+    },
+    {
+      "bytes": 127,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 5,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kernels/metal/__init__.py",
+      "python_ast_ok": true,
+      "role": "SDK/kernel edge",
+      "sha256": "0e05b9b75821f8ea67288084a394790e7f00b8ff7d7415be665ea43ae1ba85df"
+    },
+    {
+      "bytes": 394,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 14,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kernels/metal/engine.py",
+      "python_ast_ok": true,
+      "role": "SDK/kernel edge",
+      "sha256": "130fbb824af1270ba6ee1193a8ba73ad72092d30840d1ad9fb727d27d53fa6e4"
+    },
+    {
+      "bytes": 121,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 5,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kernels/npu/__init__.py",
+      "python_ast_ok": true,
+      "role": "SDK/kernel edge",
+      "sha256": "75878839c26fd1273312f854ca1f3a814af5d073efc4afc9c4b8979af1ca4d0f"
+    },
+    {
+      "bytes": 288,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 11,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kernels/npu/engine.py",
+      "python_ast_ok": true,
+      "role": "SDK/kernel edge",
+      "sha256": "b0c761f829ac5b67b8627b8e9a5ec230c09ebfe6380272c7be436f5aaf308331"
+    },
+    {
+      "bytes": 841,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 31,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kernels/onnx_custom_op.py",
+      "python_ast_ok": true,
+      "role": "SDK/kernel edge",
+      "sha256": "f97b26e57e6138a6d59f364083d6ac3fcec50752be605ff4cf22d36359c7358a"
+    },
+    {
+      "bytes": 19729,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 575,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kernels/triton_fused_bitlinear.py",
+      "python_ast_ok": true,
+      "role": "SDK/kernel edge",
+      "sha256": "9a98ded7c39b94e2193418fc62cd76b324a7521f5a6ed4a04ea1423fa082faed"
+    },
+    {
+      "bytes": 6049,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 212,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kernels/triton_ternary.py",
+      "python_ast_ok": true,
+      "role": "SDK/kernel edge",
+      "sha256": "2fa35ff62c4866eebd80c85deec6b4c77d4758e02c504d8f63c667830459d9dc"
+    },
+    {
+      "bytes": 130,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 5,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kernels/vulkan/__init__.py",
+      "python_ast_ok": true,
+      "role": "SDK/kernel edge",
+      "sha256": "6c8f9843f9ed7a562af01dfd98da61d25848c879a39c707c8c68d7fa8b95f881"
+    },
+    {
+      "bytes": 294,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 11,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kernels/vulkan/engine.py",
+      "python_ast_ok": true,
+      "role": "SDK/kernel edge",
+      "sha256": "ea7da3e334536774315133580d44154d5078c78265d898552061529ad0d31e5f"
+    },
+    {
+      "bytes": 6364,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 135,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/kpi.py",
+      "python_ast_ok": true,
+      "role": "SDK/runtime",
+      "sha256": "16efb81b655381412f569bb8a2fcb5533b720a825e366933d37bcbe1fab4bdb6"
+    },
+    {
+      "bytes": 9223,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 261,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/pilot.py",
+      "python_ast_ok": true,
+      "role": "SDK/runtime",
+      "sha256": "c1ff1f9f8fe8bf4b12e9bd16211e2b1b0af2a561f6ae77f8e4f50ee04e9b8ca0"
+    },
+    {
+      "bytes": 102,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 5,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/utils/__init__.py",
+      "python_ast_ok": true,
+      "role": "SDK/runtime",
+      "sha256": "29b3a90e05310f83bb615ba173e059c96e86135528879c6220061ed414970695"
+    },
+    {
+      "bytes": 2232,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 66,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/utils/bitpack.py",
+      "python_ast_ok": true,
+      "role": "SDK/runtime",
+      "sha256": "a8b7489c13f1341e0426a40d2bc06dfe49c99468864aeb462858335688911b04"
+    },
+    {
+      "bytes": 600,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 22,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "mertformer_sdk/utils/onnx_meta.py",
+      "python_ast_ok": true,
+      "role": "SDK/runtime",
+      "sha256": "3e821797b864f5715622735b273b1df56009ae1ef022d2cc93991782e00553b4"
+    },
+    {
+      "bytes": 0,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 0,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "model/__init__.py",
+      "python_ast_ok": true,
+      "role": "model core",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 13631,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 312,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "model/transformers.py",
+      "python_ast_ok": true,
+      "role": "model core",
+      "sha256": "551f31a92d53fc3620ba7a841d9df6317c1fa2fc3c372798ba5ee89780186376"
+    },
+    {
+      "bytes": 2949,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 95,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/__init__.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "c5e9a5fb2767810b45a5299f29fb514c49fc3ef3179eeba44d911f790776ad35"
+    },
+    {
+      "bytes": 6352,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 94,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/agent_registry.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "21c56c1aa16ea1f361030bd26d970bec792c4fb17a72a2f70441658e8e0cd042"
+    },
+    {
+      "bytes": 1273,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 44,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/alignment_contracts.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "e0233634f07f50c67b5feb6e8117c39ec76e116c426c3eaf66ad5e31b46dcbf9"
+    },
+    {
+      "bytes": 4537,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 123,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/audio_sense.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "d55240df1f1a975aab6113e7c4e1cc86f79346baf90530ac7531fd367dd344af"
+    },
+    {
+      "bytes": 16603,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 353,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/cognitive.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "64abf3b564a6c26633a8c203b4971b01a6941e2cc08512e2570ff98c526d694d"
+    },
+    {
+      "bytes": 21552,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 555,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/cognitive_loop.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "1d2cc5ca670ea3707824507c3ed4c5d7d25aa9419789730ca977f2d79af28169"
+    },
+    {
+      "bytes": 1371,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 43,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/compute_orchestrator.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "eabf9795fcb4925bdcbda639d373ac86deffa007a97045bf8a48c65c81154cc9"
+    },
+    {
+      "bytes": 26073,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 673,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/core.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "e278cc39953bf897162036d16b7e998ed9c98bd6f81ceae21513badee8ab707b"
+    },
+    {
+      "bytes": 17465,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN",
+        "resume"
+      ],
+      "lines": 453,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "orchestrator/distillation_manager.py",
+      "python_ast_ok": true,
+      "role": "distillation/data",
+      "sha256": "0537d43d13aded4dd3ea331167e02d2d1def8f8fed1c0220a129a501b0dcde7b"
+    },
+    {
+      "bytes": 12630,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 312,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/experience_store.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "e787f0edeeeceee5aa7a666ac941a1ffef272ba0fb74be733f5a45ecb0b05c86"
+    },
+    {
+      "bytes": 3357,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 90,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/failure_budget.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "3b53588e5749f49ae0b9e913117ecb56a43eb00eea554101eaa5fc29867f4f01"
+    },
+    {
+      "bytes": 1686,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 56,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/governance.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "c943cd75fcefd2d2422bfa827dafcb7268e4845eea1f07083b5d0928907816a8"
+    },
+    {
+      "bytes": 2306,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 62,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/hardware.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "8c7d3533c6655d2465cc88a5c707c22ff8291f94e8c7429b4e33513c6d079c8f"
+    },
+    {
+      "bytes": 15495,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 426,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/memory.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "961d79eae09932337655bc4f4c0d8e46fbf60ce52ca39d2c1672cb0dc872a82c"
+    },
+    {
+      "bytes": 1998,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 56,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/paths.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "c4e7437939b13ddd402b52a8a5238d8ffb559e120f5df1f8738fc38e8e0dd147"
+    },
+    {
+      "bytes": 3245,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 91,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/planner.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "ad3006b075a45f3f24f2c27db3357df8c0966cad1ece6ab6cefab9226054c52a"
+    },
+    {
+      "bytes": 24482,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 684,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/reasoning_engine.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "489146ad50eab6a436de84b0fe7d225c5c46a309160fdcb32fd00c5c69218093"
+    },
+    {
+      "bytes": 13408,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 346,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/self_audit.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "5a83c2033da15876cbfc65ad060801cdb474932885ec6c69cc9f4cf07ea888a3"
+    },
+    {
+      "bytes": 7376,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 206,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/self_improvement_guard.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "57ed983b3dab3da9b11b9a62ce1d56fa445555e518917a602c6d1b196d339dde"
+    },
+    {
+      "bytes": 6082,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 157,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/sense_engine.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "a73fc8b46946a2440f54b831f3cecea184e72be450e34bff5a63678a747fd616"
+    },
+    {
+      "bytes": 3942,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 105,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/swarm_runtime.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "88fb01ed35f2a395f63a6d34aa2a997cb90594fe6e18d51df50ccfd4c16c26e5"
+    },
+    {
+      "bytes": 8223,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 256,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/telemetry.py",
+      "python_ast_ok": true,
+      "role": "runtime telemetry",
+      "sha256": "71b69fad758321b2304b6d4532b3896781fae95f2a4df4b26e6f6e4537b830ec"
+    },
+    {
+      "bytes": 18958,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 460,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/tool_executor.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "488c19e13cfca783544f4c27469dc79999b5e1c19b4f637bbd90db9b47eb86dd"
+    },
+    {
+      "bytes": 1854,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 37,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/tool_registry.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "cb6922642054305c844226c70e64499f2d5912f0fe2a1e3ebff255562ad6d3a9"
+    },
+    {
+      "bytes": 5746,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 170,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/verifier.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "f263479950cc1064256d7305e5e2883be8c6569d041e40cba14d0edda8459962"
+    },
+    {
+      "bytes": 4542,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 132,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "orchestrator/web_sense.py",
+      "python_ast_ok": true,
+      "role": "runtime/orchestration",
+      "sha256": "7a7b3378e5f07e419592c75fb0fe69da1e5d98ab69a7a796acfef5f192b011d2"
+    },
+    {
+      "bytes": 5662,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 146,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/build_chess_training_readiness_report.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "3e5ac2784fddca225c493a60c5ab029df005a5095f7c778b3a585c63be3fa5f2"
+    },
+    {
+      "bytes": 8194,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN"
+      ],
+      "lines": 208,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "scripts/build_target_machine_handoff_bundle.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "6b1c8846b0d1808bcd2917793924bef42a12b05c1020c23153be25693d344bc3"
+    },
+    {
+      "bytes": 6368,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "PRECOMPUTED_LOGITS"
+      ],
+      "lines": 180,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "scripts/build_train_readiness_contract.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "c98b2ee83ab0818f3eead58af78c5b940c972be0b740c9ccaf62edf9eecec0ec"
+    },
+    {
+      "bytes": 10494,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "CUDA lock",
+        "checkpoint"
+      ],
+      "lines": 306,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/build_training_outputs_bundle.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "7f629666c83ecef3c06a8bef8d034cc03f03126e1b085e8c7fdb3f2314d23e54"
+    },
+    {
+      "bytes": 3526,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 112,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/checkpoint_restore_drill.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "22dfc0c3b9ee80cad63f973f10ae2a00386fd4eb443516c14eddd377a21c329e"
+    },
+    {
+      "bytes": 4226,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 117,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/eval.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "fc63ae620799fe4305629403d6aa99f4800ff89fc828ded5900a9574b47648c8"
+    },
+    {
+      "bytes": 7768,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN"
+      ],
+      "lines": 210,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "scripts/extract_dataset_refs.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "749e608038129174287c00a1618943316c4416b5f95dd50fc80858cce8e58a42"
+    },
+    {
+      "bytes": 9398,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 179,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/final_one_shot.sh",
+      "python_ast_ok": null,
+      "role": "training/release script",
+      "sha256": "383d9ee5fc6b5908209474925084aa0a88e1eda6f407f3a17ff68980dc89e87e"
+    },
+    {
+      "bytes": 26632,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN",
+        "PRECOMPUTED_LOGITS",
+        "checkpoint",
+        "resume"
+      ],
+      "lines": 678,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "scripts/final_orchestrator.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "2feee952233996998678b96b5c93e808cd2f277db1cb7ae7a8ecaec48cbf9ae4"
+    },
+    {
+      "bytes": 2727,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 92,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/golden_eval.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "acef55c62d1799fe761654a1efba9c5e5b45f503a5e36728136908f0529d5ed5"
+    },
+    {
+      "bytes": 287066,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN",
+        "checkpoint",
+        "resume"
+      ],
+      "lines": 6984,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "scripts/kaggle_onecell_t4_build30.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "d7c3d362acfbbd9431e12f2c5b0d2273ac8bab37c080e47b039a19f7b76d1d91"
+    },
+    {
+      "bytes": 42570,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint",
+        "resume"
+      ],
+      "lines": 1096,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/kaggle_onefile_closure_build30.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "10998a9f432b26ada60276cabbcd84e95bee2c297f4eab52558059cb201690ff"
+    },
+    {
+      "bytes": 271881,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN",
+        "checkpoint",
+        "resume"
+      ],
+      "lines": 6684,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "scripts/kaggle_onefile_demo_build30.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "97c4b139a50b159273a1a2e01b15b3091cd475bbf95fca804bf1bcf71f5c8779"
+    },
+    {
+      "bytes": 359995,
+      "classification": "PHASE2",
+      "keyword_hits": [
+        "HF_TOKEN",
+        "checkpoint",
+        "resume"
+      ],
+      "lines": 8818,
+      "notes": "Historical/adjacent onefile surface read and parsed; not on canonical 45K closure path.",
+      "path": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "e694826506ad011cb3211c30c98cc1247f7e3ac5206642f3a30ac7aea40039ba"
+    },
+    {
+      "bytes": 17556,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 490,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/kaggle_train_compare_build30.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "f0dd5a044ece0791847d58de2853250a368b0599bab36b108c3a82b361bfce74"
+    },
+    {
+      "bytes": 13079,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 353,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/offline_4060_demo_train.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "3eee568b614ed65d996a54e78953285e3a4e208acf2068313cf1b387daec62b0"
+    },
+    {
+      "bytes": 9506,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 227,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/one_command_full_sop.sh",
+      "python_ast_ok": null,
+      "role": "training/release script",
+      "sha256": "f05071961347656436c7fd9563ef01ba9dfafb4fb643d0cb6510953efb1714a5"
+    },
+    {
+      "bytes": 5679,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 154,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/operator_mode_gate.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "8b730c8ec7f5aa8587e7cdbf4e7355960b7d66ecc01ae4b90433a5b23f8d3e0a"
+    },
+    {
+      "bytes": 22013,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 498,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/plot_training_log.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "d04df5286f4d09c8ac1bba3c536f701318dd0e2fa410461be9cd3c120e142de1"
+    },
+    {
+      "bytes": 21513,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 535,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/post_train_autorun.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "f97f2d85c4e484255c5d1123750614a497ce2b8ebcb27cfdc7314d6de882b313"
+    },
+    {
+      "bytes": 15870,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN",
+        "checkpoint",
+        "resume"
+      ],
+      "lines": 489,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "scripts/precompute_logits_topk.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "47f8d4d33ba6b0c2c671d7f2a4954c2ce3979e50ee8d5f2fa40bb25d6ec3f012"
+    },
+    {
+      "bytes": 6648,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN"
+      ],
+      "lines": 189,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "scripts/record_dataset_hashes.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "f6884dcd9596148097e9f24515c61aa92e1fe11ffae2585c8302465470cfe289"
+    },
+    {
+      "bytes": 5716,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint",
+        "resume"
+      ],
+      "lines": 172,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/resume_compat_check.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "7620100afdb72086b86ed6d445abb1b4755fd92ac274262980f3c6203e003931"
+    },
+    {
+      "bytes": 6058,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 192,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/smoke_train_benchmark.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "77cf669d74ad193776891982dd6f4c9b9c17d7e5ebac33ee87e2cb22ea2e57db"
+    },
+    {
+      "bytes": 11888,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN"
+      ],
+      "lines": 295,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "scripts/start_gate.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "b7bf16d559d2304903935db37ceafac59a094addb4a7ca9873758f9a6d0acc05"
+    },
+    {
+      "bytes": 41107,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN",
+        "MISSING_HF_TOKEN",
+        "PRECOMPUTED_LOGITS",
+        "CUDA lock",
+        "checkpoint"
+      ],
+      "lines": 1033,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "scripts/titan_preflight.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "f470603a9c1ca1f95e534824ae9882991955db7a7056675ee5bdef8d411aeeaa"
+    },
+    {
+      "bytes": 4736,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 155,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/train_smoke.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "ae2b75b51de07353ebe8c793953afa97101f20a8d2463f4854262642a53975c5"
+    },
+    {
+      "bytes": 6943,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 183,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/train_tpu_turbo.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "d5c75d10030550d1a372414799e607cedc2337b0893cf9bf748d3ad51ba61f86"
+    },
+    {
+      "bytes": 4558,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 129,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/verify_all.sh",
+      "python_ast_ok": null,
+      "role": "training/release script",
+      "sha256": "7b7cc3d830e871f62106ba4691500dca739719f28d60e6e0e6dda9bedd352c26"
+    },
+    {
+      "bytes": 5158,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN"
+      ],
+      "lines": 147,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "scripts/verify_datasets.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "59751982d40c7f28fbbd2791c9ce655968b2a6dec72ac36002e49b6540fc4161"
+    },
+    {
+      "bytes": 2358,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 77,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "scripts/write_cuda_lock.py",
+      "python_ast_ok": true,
+      "role": "training/release script",
+      "sha256": "46d1711b4bd4b82b301f01a94c92ceafe095fe82741620f2d303b2dc6a363d02"
+    },
+    {
+      "bytes": 447,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 13,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "telemetry/metrics_schema.json",
+      "python_ast_ok": null,
+      "role": "telemetry schema",
+      "sha256": "f69b90be81f7252787840eab63d85e142108fe9a4b435b88aa6ec33b2d2e555e"
+    },
+    {
+      "bytes": 3155,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 84,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "tests/test_build_chess_training_readiness_report.py",
+      "python_ast_ok": true,
+      "role": "training-surface tests",
+      "sha256": "fb4c3f54ae823a5d44b5142e75901233b3b1fc72eb29d9624269c8f74a8f7e0a"
+    },
+    {
+      "bytes": 3385,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 79,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "tests/test_build_training_outputs_bundle.py",
+      "python_ast_ok": true,
+      "role": "training-surface tests",
+      "sha256": "0c0c7e72afa8e521febbb40fe9f3d6faf896cbdc19a943680db8099f7c0a408e"
+    },
+    {
+      "bytes": 2023,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 58,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "tests/test_distillation_topk.py",
+      "python_ast_ok": true,
+      "role": "training-surface tests",
+      "sha256": "fece1af69a07761fa9f47eeab430b344967bf65042f01135885c3528289a16da"
+    },
+    {
+      "bytes": 964,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 29,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "tests/test_eval_suites.py",
+      "python_ast_ok": true,
+      "role": "training-surface tests",
+      "sha256": "facf5424afe92fe7f190b0078c6cad6faa490641b4e6e8b3dbb6f0df010e6e4a"
+    },
+    {
+      "bytes": 1312,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 51,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "tests/test_liquid_safeguard.py",
+      "python_ast_ok": true,
+      "role": "training-surface tests",
+      "sha256": "da8e62e3cb11b2b8a0c87032a61842370bc88ffd834d5ae924582c24811fe6bf"
+    },
+    {
+      "bytes": 3896,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN",
+        "MISSING_HF_TOKEN"
+      ],
+      "lines": 110,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "tests/test_start_gate.py",
+      "python_ast_ok": true,
+      "role": "training-surface tests",
+      "sha256": "d8dffdddf6dff23635cb7856a6600a1e83ade2f5968303ee0a68e82088ee8b9e"
+    },
+    {
+      "bytes": 6471,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN"
+      ],
+      "lines": 176,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "tests/test_telemetry_logger_contract.py",
+      "python_ast_ok": true,
+      "role": "training-surface tests",
+      "sha256": "28c74511a170d08953227bac6a66ada0cf6bbd22d14b874043a68ac8b250e812"
+    },
+    {
+      "bytes": 94,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 3,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "tokenizer/drift_report.md",
+      "python_ast_ok": null,
+      "role": "tokenizer",
+      "sha256": "c95b305c11f3d445df507daab6f2d6a6ea314127cf4f42273057a1b477e4b83b"
+    },
+    {
+      "bytes": 96,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 3,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "tokenizer/drift_report_TR.md",
+      "python_ast_ok": null,
+      "role": "tokenizer",
+      "sha256": "0ad4fee43cd89105b91a7844a9f1a60223620829f20b7040e2308698c6432baf"
+    },
+    {
+      "bytes": 124,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 6,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "tokenizer/stats.md",
+      "python_ast_ok": null,
+      "role": "tokenizer",
+      "sha256": "a6d684883676be31f647cb81566dd81509904dfd79ce7cca4171844a86e65f2e"
+    },
+    {
+      "bytes": 140,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 6,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "tokenizer/stats_TR.md",
+      "python_ast_ok": null,
+      "role": "tokenizer",
+      "sha256": "1e14e6d2fe2828ec2d166dd973a61600dffd378b06d3a16e26e9a69639674dfc"
+    },
+    {
+      "bytes": 251,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 8,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "tokenizer/tokenizer.json",
+      "python_ast_ok": null,
+      "role": "tokenizer",
+      "sha256": "21d29a6ad849dd9ef567e5d750e15ac08d4d445bd0985bb736f40c66a18fa95e"
+    },
+    {
+      "bytes": 250,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 9,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "tokenizer/tr/README.md",
+      "python_ast_ok": null,
+      "role": "tokenizer",
+      "sha256": "279078d26ff4fb5c26b7d4be6bf4c9b8c158da6d6be51f4bac33f8167ba93099"
+    },
+    {
+      "bytes": 259,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 9,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "tokenizer/tr/README_TR.md",
+      "python_ast_ok": null,
+      "role": "tokenizer",
+      "sha256": "e96910e197b7545d38c2dc793b2e6883dac16d141261f3e707afe671201bcfde"
+    },
+    {
+      "bytes": 0,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 0,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "train/__init__.py",
+      "python_ast_ok": true,
+      "role": "training entrypoint/loop",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2722,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [],
+      "lines": 93,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "train/continual_adapter.py",
+      "python_ast_ok": true,
+      "role": "training entrypoint/loop",
+      "sha256": "81487e0de80afd83eeec148911a6ee479c8b0038540cd2180632935bfd896fc1"
+    },
+    {
+      "bytes": 103107,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN",
+        "checkpoint",
+        "resume"
+      ],
+      "lines": 2226,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "train/train.py",
+      "python_ast_ok": true,
+      "role": "training entrypoint/loop",
+      "sha256": "125d7c6ae0be02a59164ac88b15a54cc618a96b3e1223a00bfc37cc97a0fbe43"
+    },
+    {
+      "bytes": 102,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint",
+        "resume"
+      ],
+      "lines": 3,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "training_dynamics/cold_vs_warm.md",
+      "python_ast_ok": null,
+      "role": "training analysis docs",
+      "sha256": "5d4d5bcb9b43e3523411b04382a8252e6fb5d17701e12920e4babf76a462942f"
+    },
+    {
+      "bytes": 107,
+      "classification": "NO_TOUCH",
+      "keyword_hits": [
+        "checkpoint"
+      ],
+      "lines": 3,
+      "notes": "Read end-to-end by audit scanner; no concrete FIX_NOW issue from static parse/keyword pass.",
+      "path": "training_dynamics/cold_vs_warm_TR.md",
+      "python_ast_ok": null,
+      "role": "training analysis docs",
+      "sha256": "00e3cec93278c0cd8dd3d02dd3bb20303ce272f882c4fcc808cab4ea4f3890d8"
+    },
+    {
+      "bytes": 2934,
+      "classification": "EXTERNAL_DEPENDENCY",
+      "keyword_hits": [
+        "HF_TOKEN",
+        "resume"
+      ],
+      "lines": 84,
+      "notes": "Contains credential/logits/readiness dependency markers; known closure boundary, no code edit.",
+      "path": "zero_touch_start.sh",
+      "python_ast_ok": null,
+      "role": "training surface",
+      "sha256": "e444192201d64b1bc6ba161c31f79f3c6b34a00097a77b7930114ba80080315a"
+    }
+  ],
+  "schema": "training_surface_audit_v1"
+}

@@ -17,9 +17,10 @@ __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
 import os
-import io
 import sys
+import csv
 import json
+import re
 import time
 import hashlib
 import platform
@@ -107,12 +108,31 @@ def atomic_write_json(path: Union[str, Path], data: Dict[str, Any]) -> None:
     tmp.replace(p)
 
 
+SECRET_PATTERNS = [
+    re.compile(r"\bhf_[A-Za-z0-9_\-]{8,}\b"),
+    re.compile(r"\bwandb_[A-Za-z0-9_\-]{8,}\b"),
+    re.compile(r"\bsk-[A-Za-z0-9_\-]{10,}\b"),
+    re.compile(r"\bghp_[A-Za-z0-9_\-]{20,}\b"),
+    re.compile(r"\bAIza[0-9A-Za-z\-_]{20,}\b"),
+]
+
+SENSITIVE_KEY_PATTERN = re.compile(
+    r"(^|[_\-])(api[_\-]?key|access[_\-]?key|secret|password|passwd|credential|private[_\-]?key|auth[_\-]?token|hf[_\-]?token|wandb[_\-]?api[_\-]?key)($|[_\-])",
+    re.IGNORECASE,
+)
+
+
+def _is_sensitive_key(key: str) -> bool:
+    normalized = re.sub(r"[^A-Za-z0-9]+", "_", key).strip("_").lower()
+    if normalized in {"token", "secret", "password", "passwd", "api_key", "access_key", "private_key", "credential"}:
+        return True
+    return bool(SENSITIVE_KEY_PATTERN.search(key))
+
+
 def _redact_text(text: str) -> str:
-    patterns = ["hf_", "wandb_", "sk-"]
     out = text
-    for token in patterns:
-        if token in out:
-            out = out.replace(token, "REDACTED_")
+    for pattern in SECRET_PATTERNS:
+        out = pattern.sub("[REDACTED]", out)
     return out
 
 
@@ -124,7 +144,14 @@ def _redact_obj(obj: Any) -> Any:
     if isinstance(obj, (int, float, bool)):
         return obj
     if isinstance(obj, dict):
-        return {k: _redact_obj(v) for k, v in obj.items()}
+        redacted = {}
+        for k, v in obj.items():
+            key = str(k)
+            if _is_sensitive_key(key):
+                redacted[key] = "[REDACTED]"
+            else:
+                redacted[key] = _redact_obj(v)
+        return redacted
     if isinstance(obj, (list, tuple)):
         return [_redact_obj(v) for v in obj]
     return _redact_text(str(obj))
@@ -137,7 +164,7 @@ def _ensure_logbook_header(path: Path) -> None:
         "schema_version": "1.0",
         "created_at_utc": _utc_iso(),
         "note": "Unified logbook for all logs under logs/. New entries append automatically.",
-        "redaction_policy": "Simple token redaction for hf_/wandb_/sk- patterns.",
+        "redaction_policy": "Best-effort value and sensitive-key redaction for common API tokens/secrets.",
     }
     if not path.exists() or path.stat().st_size == 0:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -291,11 +318,11 @@ class RunLogger:
         if self._fh is None:
             return
         try:
-            safe = _safe_json(rec)
+            safe = _redact_obj(_safe_json(rec))
             if not isinstance(safe, dict):
                 safe = {"value": safe}
 
-            safe["_chain"] = {"prev": self._prev_hash}
+            safe["_chain"] = {"prev": self._prev_hash, "n": self._line_count + 1}
             line = json.dumps(safe, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
             line_bytes = (line + "\n").encode("utf-8")
 
@@ -305,7 +332,6 @@ class RunLogger:
             line_hash = h.hexdigest()
 
             safe["_chain"]["hash"] = line_hash
-            safe["_chain"]["n"] = self._line_count + 1
 
             line2 = json.dumps(safe, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
             self._fh.write(line2 + "\n")
@@ -360,6 +386,7 @@ class RunLogger:
             if is_empty:
                 self._csv_fh.write(",".join(self._csv_fields) + "\n")
 
+            writer = csv.writer(self._csv_fh, lineterminator="\n")
             row = []
             for k in self._csv_fields:
                 v = step_rec.get(k, "")
@@ -367,10 +394,8 @@ class RunLogger:
                     s = f"{v:.6g}"
                 else:
                     s = str(v)
-                if "," in s or "\n" in s or '"' in s:
-                    s = '"' + s.replace('"', '""') + '"'
-                row.append(s)
-            self._csv_fh.write(",".join(row) + "\n")
+                row.append("[REDACTED]" if _is_sensitive_key(str(k)) else _redact_text(s))
+            writer.writerow(row)
 
         except Exception as e:
             if self.fail_safe:
@@ -492,7 +517,7 @@ class RunLogger:
             "timestamp_utc": _utc_iso(),
             "status": str(status),
             "lines": self._line_count,
-            "final_chain_hash": self._prev_hash,
+            "pre_final_chain_hash": self._prev_hash,
         }
         if extra:
             end["extra"] = _safe_json(extra)
@@ -519,7 +544,7 @@ class RunLogger:
             "csv_path": str(self.csv_path) if self.csv_path else None,
         }
         if extra:
-            manifest["extra"] = _safe_json(extra)
+            manifest["extra"] = _redact_obj(_safe_json(extra))
 
         try:
             atomic_write_json(self.manifest_path, manifest)
