@@ -126,7 +126,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `250 passed, 4 skipped` |
+| `python3 -m pytest -q` | `251 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -139,7 +139,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`250 passed, 4 skipped`)
+   - `pytest` geçti (`251 passed, 4 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -1944,6 +1944,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── codex_deep_audit_TR.md  # Türkçe doküman karşılığı
 │   ├── commercial_handover_pack.md  # dokümantasyon/rapor dosyası
 │   ├── contamination_report_build30.md  # dokümantasyon/rapor dosyası
+│   ├── current_delta_addendum_2026_05_15.md  # dokümantasyon/rapor dosyası
 │   ├── customer_ready_definition.md  # dokümantasyon/rapor dosyası
 │   ├── data_pipeline_contract.md  # dokümantasyon/rapor dosyası
 │   ├── data_pipeline_provenance.json  # JSON veri artefaktı
@@ -2132,6 +2133,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── training_outputs_bundle_manifest.json  # JSON veri artefaktı
 │   ├── training_outputs_bundle_manifest.md  # dokümantasyon/rapor dosyası
 │   ├── training_readiness_manifest.json  # JSON veri artefaktı
+│   ├── training_surface_audit_2026_05_15.json  # JSON veri artefaktı
+│   ├── training_surface_audit_2026_05_15.md  # dokümantasyon/rapor dosyası
 │   ├── turk_telekom_call_faq.md  # dokümantasyon/rapor dosyası
 │   ├── unicode_path_guard_report.json  # JSON veri artefaktı
 │   ├── update_first_policy.md  # dokümantasyon/rapor dosyası

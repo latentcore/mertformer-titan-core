@@ -1,6 +1,6 @@
 {
   "schema": "post_train_autorun_status_v1",
-  "generated_utc": "2026-05-15T21:01:22.423025+00:00",
+  "generated_utc": "2026-05-16T10:43:21.483475+00:00",
   "mode": "demo-only",
   "status": "completed",
   "checkpoint": null,

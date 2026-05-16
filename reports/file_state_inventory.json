@@ -1,14 +1,12 @@
 {
   "schema": "file_state_inventory_v1",
-  "generated_utc": "2026-05-15T21:01:22Z",
+  "generated_utc": "2026-05-16T10:43:21Z",
   "git_branch": "main",
-  "git_commit_short": "605fb93",
-  "tracked_files": 803,
+  "git_commit_short": "fb4ac21",
+  "tracked_files": 806,
   "modified_entries": [
     "M README.md",
     " M README_TR.md",
-    " M applications/anthropic/PACKET_POINTER_20260419.md",
-    " M applications/anthropic/mertformer_anthropic_packet_20260419.zip.sha256",
     " M artifacts/mertformer_release.zip.sha256",
     " M docs/PROJECT_STRUCTURE.md",
     " M packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256",
@@ -34,7 +32,6 @@
     " M reports/demo_bundle_manifest.json",
     " M reports/determinism_report.json",
     " M reports/differential_backend_report.json",
-    " M reports/docs_dedup_canonical_list.md",
     " M reports/docs_packages_hash_manifest.json",
     " M reports/dry_run_report.json",
     " M reports/dry_run_report.md",
@@ -92,15 +89,10 @@
     " M reports/unicode_path_guard_report.json",
     " M reports/workspace_hygiene_manifest.json",
     " M reports/xla_smoke_report.json",
-    " M scripts/logbook_build.py",
-    " M tests/test_telemetry_logger_contract.py",
-    " M utils/logger.py"
+    " M tests/test_train_loop_sanity.py",
+    " M train/train.py"
   ],
-  "untracked_entries": [
-    "?? reports/current_delta_addendum_2026_05_15.md",
-    "?? reports/training_surface_audit_2026_05_15.json",
-    "?? reports/training_surface_audit_2026_05_15.md"
-  ],
+  "untracked_entries": [],
   "reports_present": [
     "reports/adr_index.md",
     "reports/architecture_honesty_audit.md",

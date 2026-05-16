@@ -1,14 +1,14 @@
 # Package Validation Report
 
-- generated_utc: `2026-05-15T21:01:22Z`
+- generated_utc: `2026-05-16T10:43:21Z`
 
 | Path | Size (bytes) | SHA256 | Members | Contains .env | Contains logs |
 | --- | ---: | --- | ---: | --- | --- |
-| `artifacts/mertformer_release.zip` | `108024504` | `414df2117d5cb94c935466bcbb95108b7282dfa35d023987950bb8b187b2107f` | `1026` | `false` | `false` |
-| `artifacts/mertformer_training_outputs_bundle.zip` | `205358664` | `0364726863490f9a6b61d0e9880224e4823640cda1af107d35cc6f6063e03ce8` | `857` | `false` | `true` |
-| `artifacts/target_machine_handoff_bundle.zip` | `122723` | `7b4da1031101fb454bb53b0e678050aa77846077a7be2ceec8e90893a3c7252a` | `21` | `false` | `false` |
+| `artifacts/mertformer_release.zip` | `108030833` | `6a90ed2d8b6d9d2b93019e37f2ad165b408e6d2ae4f90e78ab163e7bdc424efe` | `1026` | `false` | `false` |
+| `artifacts/mertformer_training_outputs_bundle.zip` | `205388356` | `067ad5d6289817e5ddabf0ab19abf324bb58c2a2f791aaf2196f69da9d6d1494` | `863` | `false` | `true` |
+| `artifacts/target_machine_handoff_bundle.zip` | `122637` | `20d8f29cd9bff92f88029dba7b34613a40e8dda3cd4233851cfe3e942e7657a5` | `21` | `false` | `false` |
 | `packages/MertFormer_5080_Final_Delivery_20260421_213941.zip` | `122233` | `c9bc642eb794ca6d6f2587c54c93cea20ad3e64ac12f4705452860e11009604d` | `10` | `false` | `false` |
 | `packages/MertFormer_5080_Final_Delivery_20260421_221701.zip` | `122904` | `54f81c06960db5991b19d74a9d95bf91d1191a6284ece37b7b47a212e164215d` | `10` | `false` | `false` |
 | `packages/MertFormer_5080_Final_Delivery_20260421_221919.zip` | `362147` | `ed3bbccb46303d2aa2ebab6806a82afd62e9c4b9a56f258745d98b930bf33c44` | `12` | `false` | `false` |
 | `packages/MertFormer_5080_Final_Delivery_20260421_222608.zip` | `362057` | `f1282ced806c3168900e976826039ad25606c0135950fce6eb6e5215b7ce6bcc` | `12` | `false` | `false` |
-| `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip` | `52673291` | `f1076a8513297c397fe7c567401f5b8c7d623bf3607271f5e029e37ee50e301f` | `994` | `false` | `false` |
+| `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip` | `52676900` | `3f8ce87571d0c96d1f408d478ba6748d3fcac6bc57711ac3f28e36dda566bdd3` | `994` | `false` | `false` |

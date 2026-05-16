@@ -1777,6 +1777,8 @@ def train():
                                 f"🧊 LIQUID SPIKE: loss>{liquid_spike_threshold:.2f} "
                                 f"({liquid_spike_patience} strikes). Freezing until step {liquid_frozen_until}."
                             )
+                    else:
+                        continue
 
                     # Update Stats
                     grad_norm_val = grad_norm.item() if isinstance(grad_norm, torch.Tensor) else grad_norm

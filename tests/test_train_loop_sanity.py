@@ -108,3 +108,37 @@ def test_kd_loss_called_with_padding_mask():
     assert any(any(k.arg == "mask" for k in call.keywords) for call in kd_calls), (
         "Expected kd_loss_safe to receive a mask keyword (pad exclusion)"
     )
+
+
+def _is_sync_gradients_guard(node: ast.If) -> bool:
+    return ast.unparse(node.test) == "accelerator.sync_gradients"
+
+
+def test_grad_norm_reads_are_sync_step_guarded():
+    tree = _tree()
+    guards = [
+        n
+        for n in ast.walk(tree)
+        if isinstance(n, ast.If) and _is_sync_gradients_guard(n)
+    ]
+    assert len(guards) == 1, "Expected one accelerator.sync_gradients optimizer-step guard"
+
+    guard = guards[0]
+    body_nodes = [n for stmt in guard.body for n in ast.walk(stmt)]
+    assert any(
+        isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store) and n.id == "grad_norm"
+        for n in body_nodes
+    ), "Expected grad_norm to be assigned inside the sync_gradients guard"
+    assert any(isinstance(stmt, ast.Continue) for stmt in guard.orelse), (
+        "Non-sync accumulation micro-steps must continue before grad_norm is read"
+    )
+
+    grad_norm_loads = [
+        n
+        for n in ast.walk(tree)
+        if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load) and n.id == "grad_norm"
+    ]
+    assert grad_norm_loads, "Expected grad_norm to be read after the optimizer step"
+    assert all(n.lineno > guard.lineno for n in grad_norm_loads), (
+        "grad_norm must not be read before the sync_gradients guard can assign it"
+    )

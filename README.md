@@ -125,7 +125,7 @@ MertFormer is designed as an offline-first AI system that can run on controlled 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `250 passed, 4 skipped` |
+| `python3 -m pytest -q` | `251 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -138,7 +138,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`250 passed, 4 skipped`)
+   - `pytest` passed (`251 passed, 4 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -1958,6 +1958,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── codex_deep_audit_TR.md  # Turkish document counterpart
 │   ├── commercial_handover_pack.md  # documentation/report file
 │   ├── contamination_report_build30.md  # documentation/report file
+│   ├── current_delta_addendum_2026_05_15.md  # documentation/report file
 │   ├── customer_ready_definition.md  # documentation/report file
 │   ├── data_pipeline_contract.md  # documentation/report file
 │   ├── data_pipeline_provenance.json  # JSON data artifact
@@ -2146,6 +2147,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── training_outputs_bundle_manifest.json  # JSON data artifact
 │   ├── training_outputs_bundle_manifest.md  # documentation/report file
 │   ├── training_readiness_manifest.json  # JSON data artifact
+│   ├── training_surface_audit_2026_05_15.json  # JSON data artifact
+│   ├── training_surface_audit_2026_05_15.md  # documentation/report file
 │   ├── turk_telekom_call_faq.md  # documentation/report file
 │   ├── unicode_path_guard_report.json  # JSON data artifact
 │   ├── update_first_policy.md  # documentation/report file

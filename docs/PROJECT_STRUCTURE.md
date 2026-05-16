@@ -383,6 +383,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── codex_deep_audit_TR.md  # Turkish document counterpart
 │   ├── commercial_handover_pack.md  # documentation/report file
 │   ├── contamination_report_build30.md  # documentation/report file
+│   ├── current_delta_addendum_2026_05_15.md  # documentation/report file
 │   ├── customer_ready_definition.md  # documentation/report file
 │   ├── data_pipeline_contract.md  # documentation/report file
 │   ├── data_pipeline_provenance.json  # JSON data artifact
@@ -571,6 +572,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── training_outputs_bundle_manifest.json  # JSON data artifact
 │   ├── training_outputs_bundle_manifest.md  # documentation/report file
 │   ├── training_readiness_manifest.json  # JSON data artifact
+│   ├── training_surface_audit_2026_05_15.json  # JSON data artifact
+│   ├── training_surface_audit_2026_05_15.md  # documentation/report file
 │   ├── turk_telekom_call_faq.md  # documentation/report file
 │   ├── unicode_path_guard_report.json  # JSON data artifact
 │   ├── update_first_policy.md  # documentation/report file
