@@ -875,7 +875,15 @@ def data_distill_test():
     log("Teacher Model mocked (Prevented 140GB download).", "security")
     
     dataset_mock = [{"text": "MertFormer Titan Ultimate Test"}]
-    manager.precompute_logits(dataset_mock, "preflight", subset="test")
+    previous_dense_precompute = os.environ.get("TITAN_ALLOW_DENSE_PRECOMPUTE")
+    os.environ["TITAN_ALLOW_DENSE_PRECOMPUTE"] = "1"
+    try:
+        manager.precompute_logits(dataset_mock, "preflight", subset="test")
+    finally:
+        if previous_dense_precompute is None:
+            os.environ.pop("TITAN_ALLOW_DENSE_PRECOMPUTE", None)
+        else:
+            os.environ["TITAN_ALLOW_DENSE_PRECOMPUTE"] = previous_dense_precompute
     
     if (TEMP_LOGITS_DIR / "preflight_test_part_0.pt").exists():
         log("Distillation pipeline: PROVEN (Logits generated/saved).", "success")
@@ -887,76 +895,84 @@ def data_distill_test():
 
 def moe_guru_learning_test():
     log("STEP 4: MOE GURU LEARNING TEST...", "info")
-    
-    # Use Mini-Titan config for RAM safety
-    cfg.num_layers = 2
-    cfg.hidden_size = 256
-    cfg.num_heads = 2
-    cfg.num_kv_heads = 2 # [FIX] Align with num_heads to avoid GQA repetition error
-    cfg.vocab_size = 1000 # Small vocab for speed
-    cfg.moe_every_n_layers = 1 # Force MoE on every layer for testing
-    cfg.liquid_layers_idx = [0] # Force Liquid on layer 0
-    cfg.use_gradient_checkpointing = False # Disable for preflight safety
-    cfg.router_jitter = 0.0 # Remove stochasticity for deterministic grad check
-    log("🏗️  CONFIG: Using 'Mini-Titan' (2 Layers, 256 Hidden, forced MoE/Liquid) for RAM safety.")
-    
-    model = MertFormer()
-    model.train()
-    
-    # Test Data
-    input_ids = torch.randint(0, 1000, (1, 32))
-    target_logits = torch.randn(1, 32, 1000)
-    
-    # Optimizer
-    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-1) # High LR for clear grad
-    
-    # Forward
-    logits, aux_loss, _ = model(input_ids)
-    
-    # Loss (Distillation target)
-    loss = nn.MSELoss()(logits, target_logits) + aux_loss.float()
-    
-    # Backward
-    loss.backward()
-    
-    # Gradient Audit
-    log("Checking Architectural Gradient Health...", "info")
-    found_moe_grad = False
-    found_liquid_grad = False
-    experts_with_grad = 0
-    liquid_params_with_grad = 0
-    
-    for name, param in model.named_parameters():
-        if param.grad is not None and param.grad.norm() > 0:
-            if "experts" in name:
-                experts_with_grad += 1
-                found_moe_grad = True
-            if "liquid" in name or "cfc" in name:
-                liquid_params_with_grad += 1
-                found_liquid_grad = True
-            
-    if found_moe_grad:
-        log(f"MoE Learning: PROVEN ({experts_with_grad} expert params receiving gradients).", "success")
-    else:
-        log(f"MoE Gradient Trace: Loss={loss.item():.4f}, AuxLoss={aux_loss.item():.4f}", "warning")
-        log("MoE Learning: FAILED (Gradients not flowing to experts!).", "error")
-        return False
+    mini_overrides = {
+        "num_layers": 2,
+        "hidden_size": 256,
+        "num_heads": 2,
+        "num_kv_heads": 2,
+        "vocab_size": 1000,
+        "moe_every_n_layers": 1,
+        "liquid_layers_idx": [0],
+        "use_gradient_checkpointing": False,
+        "router_jitter": 0.0,
+    }
+    original_cfg = {name: getattr(cfg, name) for name in mini_overrides}
 
-    if found_liquid_grad:
-        log(f"Liquid Dynamics: PROVEN ({liquid_params_with_grad} liquid params receiving gradients).", "success")
-    else:
-        log("Liquid Dynamics: FAILED (Gradients not flowing to Liquid layers!).", "error")
-        return False
-        
-    # Check shared expert
-    shared_grad = False
-    for name, param in model.named_parameters():
-         if "shared_expert" in name and param.grad is not None and param.grad.norm() > 0:
-              shared_grad = True
-    log(f"Shared Expert Grad: {'OK' if shared_grad else 'NONE'}", "info")
-        
-    log("MertFormer forward/backward pass verified.", "success")
-    return True
+    try:
+        for name, value in mini_overrides.items():
+            setattr(cfg, name, value)
+        log("🏗️  CONFIG: Using 'Mini-Titan' (2 Layers, 256 Hidden, forced MoE/Liquid) for RAM safety.")
+
+        model = MertFormer()
+        model.train()
+
+        # Test Data
+        input_ids = torch.randint(0, 1000, (1, 32))
+        target_logits = torch.randn(1, 32, 1000)
+
+        # Optimizer
+        optimizer = torch.optim.AdamW(model.parameters(), lr=1e-1) # High LR for clear grad
+
+        # Forward
+        logits, aux_loss, _ = model(input_ids)
+
+        # Loss (Distillation target)
+        loss = nn.MSELoss()(logits, target_logits) + aux_loss.float()
+
+        # Backward
+        loss.backward()
+
+        # Gradient Audit
+        log("Checking Architectural Gradient Health...", "info")
+        found_moe_grad = False
+        found_liquid_grad = False
+        experts_with_grad = 0
+        liquid_params_with_grad = 0
+
+        for name, param in model.named_parameters():
+            if param.grad is not None and param.grad.norm() > 0:
+                if "experts" in name:
+                    experts_with_grad += 1
+                    found_moe_grad = True
+                if "liquid" in name or "cfc" in name:
+                    liquid_params_with_grad += 1
+                    found_liquid_grad = True
+
+        if found_moe_grad:
+            log(f"MoE Learning: PROVEN ({experts_with_grad} expert params receiving gradients).", "success")
+        else:
+            log(f"MoE Gradient Trace: Loss={loss.item():.4f}, AuxLoss={aux_loss.item():.4f}", "warning")
+            log("MoE Learning: FAILED (Gradients not flowing to experts!).", "error")
+            return False
+
+        if found_liquid_grad:
+            log(f"Liquid Dynamics: PROVEN ({liquid_params_with_grad} liquid params receiving gradients).", "success")
+        else:
+            log("Liquid Dynamics: FAILED (Gradients not flowing to Liquid layers!).", "error")
+            return False
+
+        # Check shared expert
+        shared_grad = False
+        for name, param in model.named_parameters():
+             if "shared_expert" in name and param.grad is not None and param.grad.norm() > 0:
+                  shared_grad = True
+        log(f"Shared Expert Grad: {'OK' if shared_grad else 'NONE'}", "info")
+
+        log("MertFormer forward/backward pass verified.", "success")
+        return True
+    finally:
+        for name, value in original_cfg.items():
+            setattr(cfg, name, value)
 
 def run_default_profile() -> int:
     log("============================================================")

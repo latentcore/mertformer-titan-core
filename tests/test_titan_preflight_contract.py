@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import torch
+
 import scripts.titan_preflight as titan_preflight
 
 
@@ -114,6 +116,10 @@ def test_strict_offline_readiness_passes_with_complete_logits(monkeypatch, tmp_p
     assert payload["reason_code"] == "READY_PRECOMPUTED_LOGITS_COMPLETE"
 
 
+def test_precompute_state_path_stays_on_canonical_topk_state(tmp_path: Path):
+    assert titan_preflight._precompute_state_path(tmp_path, "stage1").name == "stage1_train_topk_state.json"
+
+
 def test_strict_offline_readiness_passes_with_actionable_phase0(monkeypatch, tmp_path: Path):
     project_root = _prepare_offline_repo(tmp_path)
     _patch_offline_cfg(monkeypatch, project_root)
@@ -171,3 +177,40 @@ def test_runtime_injected_readiness_passes_without_local_hf_or_stage(monkeypatch
     )
     assert payload["reason_code"] == "READY_RUNTIME_INJECTED_BOOTSTRAP"
     assert payload["checks"]["runtime_credentials"]["hf_token_present_locally"] is False
+
+
+def test_moe_guru_learning_test_restores_global_cfg(monkeypatch):
+    class _TinyMertFormer(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.experts = torch.nn.Linear(1, 1)
+            self.liquid = torch.nn.Linear(1, 1)
+            self.shared_expert = torch.nn.Linear(1, 1)
+
+        def forward(self, input_ids):
+            value = (
+                self.experts.weight.sum()
+                + self.liquid.weight.sum()
+                + self.shared_expert.weight.sum()
+            )
+            logits = value.expand(1, 32, 1000)
+            aux_loss = torch.zeros((), dtype=logits.dtype, device=logits.device)
+            return logits, aux_loss, None
+
+    watched = {
+        "num_layers": titan_preflight.cfg.num_layers,
+        "hidden_size": titan_preflight.cfg.hidden_size,
+        "num_heads": titan_preflight.cfg.num_heads,
+        "num_kv_heads": titan_preflight.cfg.num_kv_heads,
+        "vocab_size": titan_preflight.cfg.vocab_size,
+        "moe_every_n_layers": titan_preflight.cfg.moe_every_n_layers,
+        "liquid_layers_idx": list(titan_preflight.cfg.liquid_layers_idx),
+        "use_gradient_checkpointing": titan_preflight.cfg.use_gradient_checkpointing,
+        "router_jitter": titan_preflight.cfg.router_jitter,
+    }
+    monkeypatch.setattr(titan_preflight, "MertFormer", _TinyMertFormer)
+
+    assert titan_preflight.moe_guru_learning_test() is True
+
+    for name, value in watched.items():
+        assert getattr(titan_preflight.cfg, name) == value

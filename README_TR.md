@@ -126,7 +126,7 @@ MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımd
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `267 passed, 4 skipped` |
+| `python3 -m pytest -q` | `274 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -139,7 +139,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`267 passed, 4 skipped`)
+   - `pytest` geçti (`274 passed, 4 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -2338,6 +2338,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_orchestrator_swarm_runtime.py  # Python modülü/scripti (orchestrator swarm runtime için otomatik test modülü)
 │   ├── test_post_run_processor.py  # Python modülü/scripti (post run processor için otomatik test modülü)
 │   ├── test_post_train_autorun_cli.py  # Python modülü/scripti (post train autorun cli için otomatik test modülü)
+│   ├── test_resume_policy.py  # Python modülü/scripti (resume policy için otomatik test modülü)
 │   ├── test_scoped_external_tools.py  # Python modülü/scripti (scoped external tools için otomatik test modülü)
 │   ├── test_sdk_api.py  # Python modülü/scripti (sdk api için otomatik test modülü)
 │   ├── test_sdk_pilot_cli.py  # Python modülü/scripti (sdk pilot cli için otomatik test modülü)

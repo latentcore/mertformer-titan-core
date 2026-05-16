@@ -140,6 +140,12 @@ class DistillationManager:
         Safe against crashes: Saves every 5000 samples. 
         """
         self.load_teacher()
+        if os.environ.get("TITAN_ALLOW_DENSE_PRECOMPUTE", "0") != "1":
+            raise RuntimeError(
+                "DistillationManager.precompute_logits() writes dense [seq, vocab] tensors and is unsafe "
+                "for canonical training. Use scripts/precompute_logits_topk.py for sparse Top-K logits. "
+                "Set TITAN_ALLOW_DENSE_PRECOMPUTE=1 only for tiny preflight/debug runs."
+            )
         self.logits_dir.mkdir(parents=True, exist_ok=True)
         
         logger.info(f"⚙️  Pre-computing logits for {stage_name}...")

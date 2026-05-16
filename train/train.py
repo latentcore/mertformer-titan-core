@@ -206,7 +206,8 @@ def write_energy_telemetry_baseline(project_root: Path, stage: str = "bootstrap"
         "mixed_precision": "bf16" if (torch.cuda.is_available() and torch.cuda.is_bf16_supported()) else ("fp16" if cfg.use_amp else "no"),
     }
 
-    (reports_dir / "system_stats.jsonl").open("a", encoding="utf-8").write(json.dumps(payload, ensure_ascii=False) + "\n")
+    with (reports_dir / "system_stats.jsonl").open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
     energy_baseline = {
         "generated_utc": payload["timestamp_utc"],
@@ -754,6 +755,12 @@ class PrecomputedCurriculumDataset(IterableDataset):
     def set_stage(self, stage: int):
         self.current_stage = stage
 
+    def _stage_entry(self, stage: int) -> tuple[str, Path]:
+        if not self.stage_info:
+            raise RuntimeError("PrecomputedCurriculumDataset has no stage paths.")
+        idx = min(max(int(stage) - 1, 0), len(self.stage_info) - 1)
+        return self.stage_info[idx]
+
     def _align_logits(self, logits: Any, target_len: int) -> Any:
         # TR: Logit uzunluğunu token uzunluğuna hizala
         # EN: Align logits length to token length
@@ -809,13 +816,13 @@ class PrecomputedCurriculumDataset(IterableDataset):
             raise RuntimeError("Precomputed logits require num_workers=0 for deterministic alignment.")
 
         current_stage = self.current_stage
-        stage_name, path = self.stage_info[current_stage - 1]
+        stage_name, path = self._stage_entry(current_stage)
         stage_iter = self._iter_stage(stage_name, path)
 
         while True:
             if self.current_stage != current_stage:
                 current_stage = self.current_stage
-                stage_name, path = self.stage_info[current_stage - 1]
+                stage_name, path = self._stage_entry(current_stage)
                 stage_iter = self._iter_stage(stage_name, path)
 
             try:
@@ -1453,6 +1460,10 @@ def train():
     prefetch_factor = getattr(cfg, "dataloader_prefetch_factor", 2)
     if use_offline_logits:
         num_workers = 0  # deterministic alignment with precomputed logits
+        prefetch_factor = None
+    else:
+        # Online curriculum stage changes live on the dataset object; worker copies do not see them.
+        num_workers = 0
         prefetch_factor = None
     dl = DataLoader(
         curriculum_ds,

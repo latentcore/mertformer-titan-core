@@ -122,4 +122,5 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `scripts/update_system_hardware.py` | `fallback` |
 | `scripts/verify_datasets.py` | `fallback` |
 | `tests/test_architecture_integrity.py` | `fallback` |
+| `tests/test_distillation_topk.py` | `fallback` |
 | `tests/test_onnx_custom_op_contract.py` | `fallback` |

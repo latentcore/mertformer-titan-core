@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-05-16T15:07:00.954749+00:00",
-  "zip_count": 61,
-  "unique_sha_count": 55,
-  "duplicate_group_count": 5,
+  "generated_utc": "2026-05-16T16:21:28.049709+00:00",
+  "zip_count": 69,
+  "unique_sha_count": 56,
+  "duplicate_group_count": 4,
   "duplicate_groups": {
     "a62ac32a943e878cb7fc9b41c69f5d8320819860edd9ecd8ce8c5347136d78fc": [
       "<DOCUMENTS_PATH>/MertFormer_5080_Final_Onefile_Lab/archive/previous_20260421_201946/local_decrypt_test/mert5080_20260421_195115_hero_evidence_package_encrypted.zip",
@@ -12,14 +12,10 @@
       "<DOCUMENTS_PATH>/MertFormer_5080_Final_Onefile_Lab/archive/previous_20260421_201946/local_decrypt_test/raw_evidence/mert5080_20260421_195115_evidence.zip",
       "<DOCUMENTS_PATH>/MertFormer_5080_Final_Onefile_Lab/archive/previous_20260421_201946/local_smoke_outputs/runs/mert5080_20260421_195115/mert5080_20260421_195115_evidence.zip"
     ],
-    "ed56e2bfa5e275f43bed8f8a0d01de3a2156a7cf7c7885513b40b14a9109643a": [
+    "f584e5e15f01c2c3f9e95a0fe86f41a8664c1f3ee59e04f82135fa4e2e569707": [
       "<DOCUMENTS_PATH>/MertFormer_Final_PreTraining_Closure_2026_05_16/mertformer_release.zip",
       "<DOCUMENTS_PATH>/mertformer-titan-core.zip",
       "artifacts/mertformer_release.zip"
-    ],
-    "f411fb881680e14c1ef445123ddeb2e8acb6c39fc6e7779c07b832280d754a2a": [
-      "<DOCUMENTS_PATH>/MertFormer_Final_PreTraining_Closure_2026_05_16/target_machine_handoff_bundle.zip",
-      "artifacts/target_machine_handoff_bundle.zip"
     ],
     "295a1086ce2496a37f1518365d23b35f91c7600b89858eea9fe084fad013cd4e": [
       "<DOCUMENTS_PATH>/OCEAN_6H_PRE45K_H200_STRICT_KERNEL_READY_20260513/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-da273dc7b887e2765fc1b3c83d207c02ae9adeb23ae0763df08aac2bd54ff255/result-output(2)_extracted/outputs/mertformer_final_math_h200_outputs.zip",

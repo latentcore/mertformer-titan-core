@@ -1,4 +1,7 @@
 from utils.liquid_safeguard import update_liquid_spike_state
+import torch
+
+from layers.moe import LiquidRouter
 
 
 def test_liquid_spike_counter_resets_on_safe_loss():
@@ -49,3 +52,13 @@ def test_liquid_spike_disabled_noop():
         enabled=False,
     )
     assert (counter, frozen, triggered) == (1, 0, False)
+
+
+def test_liquid_router_inference_state_casts_to_activation_dtype():
+    router = LiquidRouter(hidden_size=8, num_experts=2)
+    state = torch.randn(1, 8, router.history_window - 1, dtype=torch.bfloat16)
+
+    router._update_inference_state(state)
+
+    assert router.inference_state.dtype == torch.bfloat16
+    assert torch.equal(router.inference_state, state)

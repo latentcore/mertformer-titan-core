@@ -125,13 +125,15 @@ class LiquidRouter(nn.Module):
         """
         with torch.no_grad():
             target = state.detach()
-            if self.inference_state.device != target.device or self.inference_state.dtype != target.dtype:
+            if self.inference_state.device != target.device:
                 raise RuntimeError(
-                    "inference_state device/dtype mismatch: "
+                    "inference_state device mismatch: "
                     f"state={self.inference_state.device}/{self.inference_state.dtype}, "
                     f"target={target.device}/{target.dtype}. "
                     "Move the whole model via model.to(...)."
                 )
+            if self.inference_state.dtype != target.dtype:
+                self.inference_state = self.inference_state.to(dtype=target.dtype)
             self.inference_state.resize_(target.shape[0], target.shape[1], target.shape[2])
             self.inference_state.copy_(target)
 

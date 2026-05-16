@@ -140,6 +140,18 @@ def test_pre_zip_cache_cleanup_is_followed_by_runtime_clean_check():
     ) < final.index("run_zip_with_tolerance artifacts/mertformer_release.zip")
 
 
+def test_online_curriculum_uses_single_worker_for_stage_sync():
+    source = Path("train/train.py").read_text(encoding="utf-8")
+    assert "worker copies do not see them" in source
+    assert "else:\n        # Online curriculum stage changes" in source
+    assert "num_workers = 0\n        prefetch_factor = None" in source
+
+
+def test_energy_telemetry_jsonl_write_closes_handle():
+    source = Path("train/train.py").read_text(encoding="utf-8")
+    assert 'with (reports_dir / "system_stats.jsonl").open("a", encoding="utf-8") as handle' in source
+
+
 def test_kd_loss_called_with_padding_mask():
     tree = _tree()
     kd_calls = [

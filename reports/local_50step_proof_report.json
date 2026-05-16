@@ -1,12 +1,12 @@
 {
   "schema": "local_50step_proof_report_v1",
-  "generated_utc": "2026-05-16T15:06:44Z",
+  "generated_utc": "2026-05-16T16:17:44Z",
   "status": "PASS",
   "steps": 50,
-  "checkpoint_path": "checkpoints/local_50step_proof/smoke_2026-05-16_18-06-44.pt",
-  "elapsed_sec": 7.2,
+  "checkpoint_path": "checkpoints/local_50step_proof/smoke_2026-05-16_19-17-43.pt",
+  "elapsed_sec": 6.65,
   "cmd": "<REPO_ROOT>/.titan-venv/bin/python scripts/train_smoke.py --steps 50 --cleanup --out-dir checkpoints/local_50step_proof",
-  "stdout_tail": "[smoke] step=1/50 loss=121.8376 aux=0.0000\n[smoke] step=10/50 loss=120.1745 aux=0.0000\n[smoke] step=20/50 loss=119.1146 aux=0.0000\n[smoke] step=30/50 loss=116.0627 aux=0.0000\n[smoke] step=40/50 loss=115.5639 aux=0.0000\n[smoke] step=50/50 loss=113.2259 aux=0.0000\n[smoke] checkpoint=checkpoints/local_50step_proof/smoke_2026-05-16_18-06-44.pt\n[smoke] cleaned up checkpoint\n[smoke] OK elapsed_sec=7.20\n",
+  "stdout_tail": "[smoke] step=1/50 loss=121.8376 aux=0.0000\n[smoke] step=10/50 loss=120.1745 aux=0.0000\n[smoke] step=20/50 loss=119.1146 aux=0.0000\n[smoke] step=30/50 loss=116.0627 aux=0.0000\n[smoke] step=40/50 loss=115.5639 aux=0.0000\n[smoke] step=50/50 loss=113.2245 aux=0.0000\n[smoke] checkpoint=checkpoints/local_50step_proof/smoke_2026-05-16_19-17-43.pt\n[smoke] cleaned up checkpoint\n[smoke] OK elapsed_sec=6.65\n",
   "stderr_tail": "",
   "note": "Tiny offline motor proof; not a quality or scale claim."
 }

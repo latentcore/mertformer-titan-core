@@ -1,13 +1,15 @@
 {
   "schema": "file_state_inventory_v1",
-  "generated_utc": "2026-05-16T15:06:51Z",
+  "generated_utc": "2026-05-16T16:17:50Z",
   "git_branch": "main",
-  "git_commit_short": "2c050c6",
-  "tracked_files": 806,
+  "git_commit_short": "681ce4b",
+  "tracked_files": 807,
   "modified_entries": [
     "M README.md",
     " M README_TR.md",
     " M artifacts/mertformer_release.zip.sha256",
+    " M docs/PROJECT_STRUCTURE.md",
+    " M layers/moe.py",
     " M orchestrator/distillation_manager.py",
     " M packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256",
     " M reports/backup_restore_report.json",
@@ -27,6 +29,7 @@
     " M reports/cleanup_scoped_closure_junk_report.json",
     " M reports/closure_57_matrix.json",
     " M reports/code_truth_delta_audit.json",
+    " M reports/code_truth_delta_audit.md",
     " M reports/dealroom_reference.json",
     " M reports/demo_bundle.md",
     " M reports/demo_bundle_manifest.json",
@@ -89,15 +92,14 @@
     " M reports/unicode_path_guard_report.json",
     " M reports/workspace_hygiene_manifest.json",
     " M reports/xla_smoke_report.json",
-    " M scripts/final_one_shot.sh",
-    " M scripts/one_command_full_sop.sh",
+    " M scripts/titan_preflight.py",
     " M tests/test_distillation_topk.py",
+    " M tests/test_liquid_safeguard.py",
+    " M tests/test_titan_preflight_contract.py",
     " M tests/test_train_loop_sanity.py",
     " M train/train.py"
   ],
-  "untracked_entries": [
-    "?? tests/test_resume_policy.py"
-  ],
+  "untracked_entries": [],
   "reports_present": [
     "reports/adr_index.md",
     "reports/architecture_honesty_audit.md",

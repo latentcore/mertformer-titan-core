@@ -160,3 +160,24 @@ def test_sparse_loader_keeps_canonical_payload_small(tmp_path: Path, monkeypatch
 def test_phase0_stage_paths_match_repo_layout() -> None:
     assert phase0_topk.STAGE_FILES[4].as_posix().endswith("datasets/stage4_soul/stage4_data.jsonl")
     assert phase0_topk.STAGE_FILES[5].as_posix().endswith("datasets/stage5_tools/stage5_data.jsonl")
+
+
+def test_dense_precompute_requires_explicit_debug_override(tmp_path: Path, monkeypatch) -> None:
+    class _Cfg:
+        precomputed_logits_path = str(tmp_path)
+        device = "cpu"
+        require_gated_teacher = False
+
+    manager = dm.DistillationManager(_Cfg(), tokenizer=object())
+    manager.teacher_model = object()
+    monkeypatch.delenv("TITAN_ALLOW_DENSE_PRECOMPUTE", raising=False)
+
+    with pytest.raises(RuntimeError, match="sparse Top-K logits"):
+        manager.precompute_logits([], "stage1")
+
+
+def test_precomputed_curriculum_stage_entry_clamps_fallback_stage() -> None:
+    dataset = object.__new__(train_mod.PrecomputedCurriculumDataset)
+    dataset.stage_info = [("fallback", Path("datasets/validation.jsonl"))]
+
+    assert dataset._stage_entry(5) == ("fallback", Path("datasets/validation.jsonl"))
