@@ -27,9 +27,9 @@ PATTERNS: dict[str, re.Pattern[str]] = {
     "aws_access_key": re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
     # Common 40-hex API keys (heuristic) but only when the line contains key-like context.
     # Avoid false positives from git SHAs or checksums.
-    "hex40_context": re.compile(r"(?i)\\b(?:api[_-]?key|secret|token|password)\\b\\s*[:=]\\s*['\\\"]?[0-9a-f]{40}['\\\"]?\\b"),
+    "hex40_context": re.compile(r"(?i)\b(?:api[_-]?key|secret|token|password)\b\s*[:=]\s*['\"]?[0-9a-f]{40}['\"]?\b"),
     # W&B API keys are 40-hex; catch explicit env-style assignments.
-    "wandb_api_key": re.compile(r"(?i)\\bWANDB_API_KEY\\b\\s*[:=]\\s*['\\\"]?[0-9a-f]{40}['\\\"]?\\b"),
+    "wandb_api_key": re.compile(r"(?i)\bWANDB_API_KEY\b\s*[:=]\s*['\"]?[0-9a-f]{40}['\"]?\b"),
 }
 
 SKIP_EXTS = {

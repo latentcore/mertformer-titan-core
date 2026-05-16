@@ -137,9 +137,9 @@ def estimate_params():
         print(f"✅ STATUS: CHINCHILLA SATISFIED via Distillation ({ratio:.1f} virtual tok/param).")
         print(f"   Raw tokens were low, but Teacher Logic fills the gap.")
         if ratio > 100:
-             print("🚀 MODE: GOD-MODE (Teacher Enhanced). Ready for Samsung S25.")
+             print("   Mode: Teacher-enhanced target analysis; S25 readiness remains unmeasured.")
         else:
-             print("   Status: Healthy Production Baseline.")
+             print("   Status: Healthy pre-training baseline target.")
 
 if __name__ == "__main__":
     estimate_params()

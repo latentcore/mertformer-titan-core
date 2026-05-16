@@ -34,7 +34,10 @@ from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader, IterableDataset, get_worker_info
 
 
-import wandb
+try:
+    import wandb
+except ImportError:
+    wandb = None
 from accelerate import Accelerator
 from accelerate.utils import DistributedType, set_seed
 try:
@@ -268,8 +271,8 @@ def read_metric_from_json(path: Path, key: str) -> Optional[float]:
         return None
 
 
-def write_training_readiness_manifest(payload: dict) -> None:
-    out = project_root / "reports" / "training_readiness_manifest.json"
+def write_training_runtime_manifest(payload: dict) -> None:
+    out = project_root / "reports" / "training_runtime_manifest.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
@@ -858,20 +861,32 @@ class TeacherBundle:
                 # Accelerate handles student, but teacher is static.
                 # In DDP, each process should load teacher to its own device (or CPU offload).
                 # device_map="auto" tries to use all GPUs, causing conflict in DDP.
-                
+                teacher_device = (
+                    f"cuda:{self.device.index if self.device.index is not None else torch.cuda.current_device()}"
+                    if self.device.type == "cuda"
+                    else "cpu"
+                )
+                teacher_load_kwargs = {
+                    "token": hf_token,
+                    "torch_dtype": torch.float16,
+                    # [FIX] Use explicit string map for HF compatibility across versions/backends.
+                    "device_map": {"": teacher_device},
+                }
+                try:
+                    import bitsandbytes  # noqa: F401
+
+                    teacher_load_kwargs["quantization_config"] = BitsAndBytesConfig(
+                        load_in_4bit=True,
+                        bnb_4bit_compute_dtype=torch.float16,
+                        bnb_4bit_quant_type="nf4",
+                    )
+                    print("✅ Teacher quantization: bitsandbytes 4-bit NF4.")
+                except ImportError:
+                    print("⚠️ bitsandbytes missing; loading teacher without 4-bit quantization.")
+
                 self.model = AutoModelForCausalLM.from_pretrained(
                     cfg.teacher_model_id,
-                    token=hf_token,
-                    torch_dtype=torch.float16,
-                    # [FIX] Use explicit string map for HF compatibility across versions/backends.
-                    device_map={
-                        "": (
-                            f"cuda:{self.device.index if self.device.index is not None else torch.cuda.current_device()}"
-                            if self.device.type == "cuda"
-                            else "cpu"
-                        )
-                    },
-                    quantization_config=BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.float16, bnb_4bit_quant_type='nf4')
+                    **teacher_load_kwargs,
                 )
                 self.model.eval()
                 # Explicit move to device logic
@@ -1507,7 +1522,7 @@ def train():
 
     # Runtime manifest for portable handoff observability.
     if accelerator.is_main_process:
-        write_training_readiness_manifest(
+        write_training_runtime_manifest(
             {
                 "status": "started",
                 "token_budget_mode": token_budget_mode,
@@ -1837,7 +1852,7 @@ def train():
                         print(f"Step {global_step} | Stage {current_curriculum_stage} | Loss: {avg_loss:.4f} | "
                               f"Tok/s: {tok_s:.0f} | LR: {lr_now:.2e} | GradNorm: {avg_grad_norm:.3f}")
 
-                        write_training_readiness_manifest(
+                        write_training_runtime_manifest(
                             {
                                 "status": "running",
                                 "global_step": int(global_step),
@@ -2126,7 +2141,7 @@ def train():
                                     if saturation_plateau_windows >= saturation_patience_windows:
                                         saturation_should_stop = True
 
-                                write_training_readiness_manifest(
+                                write_training_runtime_manifest(
                                     {
                                         "status": "running",
                                         "global_step": int(global_step),

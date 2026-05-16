@@ -95,6 +95,31 @@ def test_seed_includes_process_index():
     assert "set_seed(cfg.seed + accelerator.process_index)" in source
 
 
+def test_wandb_is_optional_import():
+    source = Path("train/train.py").read_text(encoding="utf-8")
+    assert "try:\n    import wandb\nexcept ImportError:\n    wandb = None" in source
+
+
+def test_runtime_manifest_does_not_overwrite_readiness_manifest():
+    source = Path("train/train.py").read_text(encoding="utf-8")
+    assert "training_runtime_manifest.json" in source
+    assert "write_training_runtime_manifest(" in source
+    assert "write_training_readiness_manifest(" not in source
+    assert 'project_root / "reports" / "training_readiness_manifest.json"' not in source
+
+
+def test_teacher_bitsandbytes_load_has_non_quantized_fallback():
+    source = Path("train/train.py").read_text(encoding="utf-8")
+    assert "import bitsandbytes" in source
+    assert "quantization_config" in source
+    assert "bitsandbytes missing; loading teacher without 4-bit quantization" in source
+
+
+def test_sop_summary_accepts_current_secret_scan_success_line():
+    source = Path("scripts/one_command_full_sop.sh").read_text(encoding="utf-8")
+    assert 'line.startswith("OK: no secret patterns detected in ") and "files." in line' in source
+
+
 def test_kd_loss_called_with_padding_mask():
     tree = _tree()
     kd_calls = [

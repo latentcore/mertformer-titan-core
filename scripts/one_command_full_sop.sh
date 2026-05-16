@@ -159,7 +159,7 @@ for line in clean.splitlines():
         duplicate_ok = True
     elif line.startswith("OK: runtime artifacts and caches are clean"):
         runtime_clean_ok = True
-    elif line.startswith("OK: no secret patterns detected in tracked files."):
+    elif line.startswith("OK: no secret patterns detected in ") and "files." in line:
         secret_ok = True
     elif line.startswith("[tolerance]"):
         tolerance_line = line.strip()

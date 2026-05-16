@@ -20,7 +20,7 @@ bash scripts/verify_all.sh
 
 Beklenen:
 - Secret scan: PASS
-- Pytest: PASS (`251 passed, 4 skipped`)
+- Pytest: PASS (`257 passed, 4 skipped`)
 - Preflight (offline): PASS
 - Operator gate (safe, offline): PASS
 
@@ -54,7 +54,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 - `MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`
 - Locked artefakt durumu: `skipped (expected: AGE_RECIPIENT_FILE missing)`
 - SHA-256:
-  - `3f8ce87571d0c96d1f408d478ba6748d3fcac6bc57711ac3f28e36dda566bdd3` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`)
+  - `f582f77b0a313bd237857684ae4514487ed8c3d6a60aa5bfcba6e943759433e2` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`)
   - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`)
 
 ## Bilinen Gate / Blokerler

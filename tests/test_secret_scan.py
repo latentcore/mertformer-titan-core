@@ -43,6 +43,36 @@ def test_secret_scan_package_walk_detects_and_redacts_secret(tmp_path: Path):
     assert fake_key not in hits[0][3]
 
 
+def test_secret_scan_detects_explicit_wandb_api_key(tmp_path: Path):
+    module = _load_secret_scan_module()
+    fake_key = "a" * 40
+    (tmp_path / "wandb.env").write_text(f"WANDB_API_KEY={fake_key}\n", encoding="utf-8")
+
+    mode, paths = module.discover_scan_files(tmp_path, package_mode=True)
+    hits = module.scan_paths(paths, tmp_path)
+
+    assert mode == "package_walk"
+    assert len(hits) == 1
+    assert hits[0][0] == "wandb_api_key"
+    assert "<REDACTED>" in hits[0][3]
+    assert fake_key not in hits[0][3]
+
+
+def test_secret_scan_detects_contextual_40hex_token(tmp_path: Path):
+    module = _load_secret_scan_module()
+    fake_key = "b" * 40
+    (tmp_path / "secrets.txt").write_text(f"token: '{fake_key}'\n", encoding="utf-8")
+
+    mode, paths = module.discover_scan_files(tmp_path, package_mode=True)
+    hits = module.scan_paths(paths, tmp_path)
+
+    assert mode == "package_walk"
+    assert len(hits) == 1
+    assert hits[0][0] == "hex40_context"
+    assert "<REDACTED>" in hits[0][3]
+    assert fake_key not in hits[0][3]
+
+
 def test_secret_scan_package_walk_skips_cache_directories(tmp_path: Path):
     module = _load_secret_scan_module()
     cache = tmp_path / "__pycache__"
