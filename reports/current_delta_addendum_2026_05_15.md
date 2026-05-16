@@ -11,6 +11,7 @@
 - Start gate remains: `START_ALLOWED`.
 - Logger hardening scope: JSONL secret redaction, CSV redaction, verifiable hash-chain, manifest `final_chain_hash`, final record `pre_final_chain_hash`, and logbook redaction alignment.
 - `/Applications/mertformer-titan-core.zip` and `/Applications/mertformer-titan-core.zip.sha256` are external sync targets implemented by `scripts/build_scoped_external_intake_matrix.py` and applied by `bash scripts/final_one_shot.sh`.
+- `bash scripts/final_one_shot.sh` also invokes `bash scripts/apply_github_policy.sh || true`; on this private/non-Pro GitHub repo the GitHub branch-protection API returned HTTP 403, so the generated `reports/github_policy_report.json` status is expected to be `skipped_or_failed`. This is a best-effort governance hardening step, not a closure blocker, and it does not weaken the local verification, release, artifact, readiness, or `/Applications` sync results.
 
 ## Boundary
 
