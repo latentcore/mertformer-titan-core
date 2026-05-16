@@ -24,7 +24,7 @@ import time
 import shutil
 import psutil
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, List, Optional
 
 import torch
 import torch.nn as nn
@@ -430,6 +430,41 @@ def _discover_resume_checkpoint(cfg) -> Optional[Path]:
     return None
 
 
+def _partial_resume_allowed() -> bool:
+    return os.getenv("TITAN_RESUME_ALLOW_PARTIAL", "0").strip() == "1"
+
+
+def _enforce_resume_key_policy(
+    missing: list[str],
+    unexpected: list[str],
+    ckpt_path: Path,
+    is_main_process: bool,
+) -> None:
+    if not missing and not unexpected:
+        return
+
+    detail = (
+        f"Resume checkpoint key mismatch for {ckpt_path}: "
+        f"missing={len(missing)}, unexpected={len(unexpected)}"
+    )
+    if _partial_resume_allowed():
+        if is_main_process:
+            print(
+                "⚠️  Partial resume explicitly allowed "
+                "(TITAN_RESUME_ALLOW_PARTIAL=1): "
+                f"{detail}"
+            )
+        return
+
+    missing_preview = ", ".join(missing[:8]) if missing else "none"
+    unexpected_preview = ", ".join(unexpected[:8]) if unexpected else "none"
+    raise RuntimeError(
+        f"{detail}. Default closure policy requires exact model-state compatibility. "
+        f"Missing preview: {missing_preview}. Unexpected preview: {unexpected_preview}. "
+        "Set TITAN_RESUME_ALLOW_PARTIAL=1 only for an explicit exploratory migration."
+    )
+
+
 def _load_resume_payload(cfg, model: nn.Module, is_main_process: bool = True) -> Optional[dict]:
     """
     Load model state for resume before optimizer/scheduler wiring.
@@ -452,6 +487,9 @@ def _load_resume_payload(cfg, model: nn.Module, is_main_process: bool = True) ->
 
     model_state = _normalize_state_dict_keys_for_model(state["model"], model)
     missing, unexpected = model.load_state_dict(model_state, strict=False)
+    missing = list(missing)
+    unexpected = list(unexpected)
+    _enforce_resume_key_policy(missing, unexpected, ckpt_path, is_main_process)
 
     step = int(state.get("step", 0))
     val_loss = state.get("val_loss")
@@ -468,6 +506,8 @@ def _load_resume_payload(cfg, model: nn.Module, is_main_process: bool = True) ->
         "state": state,
         "step": step,
         "val_loss": float(val_loss) if val_loss is not None else None,
+        "missing_keys": missing,
+        "unexpected_keys": unexpected,
     }
 
 
@@ -714,9 +754,12 @@ class PrecomputedCurriculumDataset(IterableDataset):
     def set_stage(self, stage: int):
         self.current_stage = stage
 
-    def _align_logits(self, logits: torch.Tensor, target_len: int) -> torch.Tensor:
+    def _align_logits(self, logits: Any, target_len: int) -> Any:
         # TR: Logit uzunluğunu token uzunluğuna hizala
         # EN: Align logits length to token length
+        if _is_sparse_topk_payload(logits):
+            return _align_sparse_topk_payload(logits, target_len)
+
         # logits: [seq, vocab]
         if logits.dim() == 3 and logits.size(0) == 1:
             logits = logits.squeeze(0)
@@ -785,7 +828,7 @@ def collate_fn(batch):
     # TR: [FIX] 2 elemana sadeleştirildi (text kaldırıldı) / EN: [FIX] Simplified to 2 elements (removed text)
     if len(batch[0]) == 3:
         x, y, t = zip(*batch)
-        return torch.stack(x), torch.stack(y), torch.stack(t)
+        return torch.stack(x), torch.stack(y), _stack_teacher_payloads(t)
     x, y = zip(*batch)
     return torch.stack(x), torch.stack(y)
 
@@ -793,7 +836,126 @@ def collate_fn(batch):
 # -----------------------------------------------------------------------------
 # TR: 3. BİLGİ DAMITMA KAYBI / EN: 3. KD LOSS (Knowledge Distillation)
 # -----------------------------------------------------------------------------
+def _is_sparse_topk_payload(value: Any) -> bool:
+    return (
+        isinstance(value, dict)
+        and value.get("format") == "topk_sparse_v1"
+        and isinstance(value.get("indices"), torch.Tensor)
+        and isinstance(value.get("values"), torch.Tensor)
+    )
+
+
+def _align_sparse_topk_payload(payload: dict, target_len: int, fill_value: float = -1e4) -> dict:
+    indices = payload["indices"].long()
+    values = payload["values"].float()
+    if indices.dim() == 3 and indices.size(0) == 1:
+        indices = indices.squeeze(0)
+        values = values.squeeze(0)
+    if indices.shape != values.shape or indices.dim() != 2:
+        raise ValueError(
+            "Sparse Top-K teacher payload must use matching [seq, top_k] indices/values tensors."
+        )
+    seq_len, top_k = indices.shape
+    if seq_len > target_len:
+        indices = indices[:target_len]
+        values = values[:target_len]
+    elif seq_len < target_len:
+        pad_len = target_len - seq_len
+        index_pad = torch.zeros(pad_len, top_k, dtype=indices.dtype)
+        value_pad = torch.full((pad_len, top_k), fill_value, dtype=values.dtype)
+        indices = torch.cat([indices, index_pad], dim=0)
+        values = torch.cat([values, value_pad], dim=0)
+    return {
+        "format": "topk_sparse_v1",
+        "indices": indices,
+        "values": values,
+        "vocab_size": int(payload.get("vocab_size", 0)),
+        "top_k": int(payload.get("top_k", top_k)),
+    }
+
+
+def _stack_teacher_payloads(payloads: tuple[Any, ...]) -> Any:
+    if all(isinstance(item, torch.Tensor) for item in payloads):
+        return torch.stack(payloads)
+    if all(_is_sparse_topk_payload(item) for item in payloads):
+        vocab_sizes = {int(item.get("vocab_size", 0)) for item in payloads}
+        top_ks = {int(item.get("top_k", item["indices"].size(-1))) for item in payloads}
+        if len(vocab_sizes) != 1 or len(top_ks) != 1:
+            raise ValueError("Sparse Top-K batch has inconsistent vocab_size or top_k metadata.")
+        return {
+            "format": "topk_sparse_v1",
+            "indices": torch.stack([item["indices"].long() for item in payloads]),
+            "values": torch.stack([item["values"].float() for item in payloads]),
+            "vocab_size": vocab_sizes.pop(),
+            "top_k": top_ks.pop(),
+        }
+    raise ValueError("Cannot mix dense and sparse teacher logits in the same batch.")
+
+
+def _teacher_payload_to_device(payload: Any, device: torch.device) -> Any:
+    if _is_sparse_topk_payload(payload):
+        return {
+            **payload,
+            "indices": payload["indices"].to(device=device, dtype=torch.long),
+            "values": payload["values"].to(device=device, dtype=torch.float32),
+        }
+    return payload.to(device)
+
+
+def _shift_teacher_payload(payload: Any) -> Any:
+    if _is_sparse_topk_payload(payload):
+        indices = payload["indices"]
+        values = payload["values"]
+        if indices.dim() == 3:
+            indices = indices[:, :-1, :].contiguous()
+            values = values[:, :-1, :].contiguous()
+        elif indices.dim() == 2:
+            indices = indices[:-1, :].contiguous()
+            values = values[:-1, :].contiguous()
+        else:
+            raise ValueError(f"Invalid sparse teacher indices shape: {tuple(indices.shape)}")
+        return {**payload, "indices": indices, "values": values}
+    return payload[..., :-1, :].contiguous()
+
+
+def _kd_loss_sparse_topk(student_logits, teacher_payload: dict, temp, mask=None):
+    indices = teacher_payload["indices"].to(device=student_logits.device, dtype=torch.long)
+    values = teacher_payload["values"].to(device=student_logits.device, dtype=torch.float32)
+    if indices.shape != values.shape or indices.dim() not in (2, 3):
+        raise ValueError(
+            "Sparse Top-K teacher payload must use matching [seq, top_k] or [batch, seq, top_k] tensors."
+        )
+    if tuple(indices.shape[:-1]) != tuple(student_logits.shape[:-1]):
+        raise ValueError(
+            f"Sparse KD shape mismatch: student={tuple(student_logits.shape)}, "
+            f"teacher_indices={tuple(indices.shape)}"
+        )
+    if indices.numel() and int(indices.max().item()) >= int(student_logits.size(-1)):
+        raise ValueError(
+            "Sparse teacher indices exceed student vocab dimension; tokenizer/vocab sync is required."
+        )
+
+    T = float(temp)
+    student_topk = torch.gather(student_logits.float(), dim=-1, index=indices)
+    token_kl = F.kl_div(
+        F.log_softmax(student_topk / T, dim=-1),
+        F.softmax(values / T, dim=-1),
+        reduction="none",
+    ).sum(dim=-1) * (T * T)
+    if mask is not None:
+        mask = mask.to(device=token_kl.device, dtype=torch.bool)
+        if mask.shape != token_kl.shape:
+            raise ValueError(f"KD mask shape mismatch: expected {token_kl.shape}, got {mask.shape}")
+        if not bool(mask.any().item()):
+            return token_kl.new_zeros(())
+        token_kl = token_kl.masked_select(mask)
+    return token_kl.mean()
+
+
 def kd_loss_safe(student_logits, teacher_logits, temp, mask=None):
+    if _is_sparse_topk_payload(teacher_logits):
+        return _kd_loss_sparse_topk(student_logits, teacher_logits, temp, mask=mask)
+
     min_vocab = min(student_logits.size(-1), teacher_logits.size(-1))
     s = student_logits[..., :min_vocab].float()
     t = teacher_logits[..., :min_vocab].float().to(s.device)
@@ -1713,8 +1875,8 @@ def train():
 
                         loss_distill = 0.0
                         if t_logits is not None:
-                            t_logits = t_logits.to(shift_logits.device)
-                            shift_t_logits = t_logits[..., :-1, :].contiguous()
+                            t_logits = _teacher_payload_to_device(t_logits, shift_logits.device)
+                            shift_t_logits = _shift_teacher_payload(t_logits)
                             kd_mask = shift_labels != pad_id
                             loss_distill = kd_loss_safe(shift_logits, shift_t_logits, cfg.teacher_temp, mask=kd_mask)
 

@@ -145,6 +145,7 @@ chmod u+w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha2
 # Release artifact
 rm -f artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 artifacts/mertformer_training_outputs_bundle.zip artifacts/mertformer_training_outputs_bundle.zip.sha256
 run_step "pre_zip_cache_cleanup" .titan-venv/bin/python scripts/run_and_clean_pycache.py --root . --include-tool-caches --full-clean --include-venv-caches -- bash -lc true
+run_step "pre_zip_runtime_clean_check" bash scripts/clean_runtime_artifacts.sh --check
 run_zip_with_tolerance artifacts/mertformer_release.zip . -x ".git/*" "*/.git/*" "*.pyc" "*__pycache__*" ".titan-venv/*" ".lint-venv/*" ".venv/*" ".idea/*" ".pytest_cache/*" ".ruff_cache/*" ".mypy_cache/*" ".env" ".env.*" "logs/*" "checkpoints/*" "artifacts/mertformer_release.zip" "artifacts/mertformer_release.zip.sha256" "apps/chess_gui/logs/*" "apps/chess_gui/checkpoints/*" "apps/chess_gui/assets/*" "apps/chess_gui/chess_5080_onefile.py"
 (
   cd artifacts

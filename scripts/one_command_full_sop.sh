@@ -78,6 +78,7 @@ fi
   run_step "intermediate_cache_cleanup" "$PY_BIN" scripts/run_and_clean_pycache.py --root . --include-tool-caches --full-clean --include-venv-caches -- bash -lc true
   run_step "clean_runtime_artifacts_check" bash scripts/clean_runtime_artifacts.sh --check
   run_step "pre_zip_cache_cleanup" "$PY_BIN" scripts/run_and_clean_pycache.py --root . --include-tool-caches --full-clean --include-venv-caches -- bash -lc true
+  run_step "pre_zip_runtime_clean_check" bash scripts/clean_runtime_artifacts.sh --check
   run_step "release_build30" bash scripts/release_build30.sh
   run_step "unlock_artifacts" bash -lc 'chflags nouchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 artifacts/mertformer_training_outputs_bundle.zip artifacts/mertformer_training_outputs_bundle.zip.sha256 2>/dev/null || true; chmod u+w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 artifacts/mertformer_training_outputs_bundle.zip artifacts/mertformer_training_outputs_bundle.zip.sha256 2>/dev/null || true'
   run_step "artifact_release_zip" bash scripts/build_artifacts_release_zip.sh

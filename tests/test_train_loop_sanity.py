@@ -108,6 +108,14 @@ def test_runtime_manifest_does_not_overwrite_readiness_manifest():
     assert 'project_root / "reports" / "training_readiness_manifest.json"' not in source
 
 
+def test_resume_requires_exact_model_keys_by_default():
+    source = Path("train/train.py").read_text(encoding="utf-8")
+    assert "TITAN_RESUME_ALLOW_PARTIAL" in source
+    assert "Default closure policy requires exact model-state compatibility" in source
+    assert "missing_keys" in source
+    assert "unexpected_keys" in source
+
+
 def test_teacher_bitsandbytes_load_has_non_quantized_fallback():
     source = Path("train/train.py").read_text(encoding="utf-8")
     assert "import bitsandbytes" in source
@@ -118,6 +126,18 @@ def test_teacher_bitsandbytes_load_has_non_quantized_fallback():
 def test_sop_summary_accepts_current_secret_scan_success_line():
     source = Path("scripts/one_command_full_sop.sh").read_text(encoding="utf-8")
     assert 'line.startswith("OK: no secret patterns detected in ") and "files." in line' in source
+
+
+def test_pre_zip_cache_cleanup_is_followed_by_runtime_clean_check():
+    sop = Path("scripts/one_command_full_sop.sh").read_text(encoding="utf-8")
+    final = Path("scripts/final_one_shot.sh").read_text(encoding="utf-8")
+
+    assert sop.index('run_step "pre_zip_cache_cleanup"') < sop.index(
+        'run_step "pre_zip_runtime_clean_check"'
+    ) < sop.index('run_step "release_build30"')
+    assert final.index('run_step "pre_zip_cache_cleanup"') < final.index(
+        'run_step "pre_zip_runtime_clean_check"'
+    ) < final.index("run_zip_with_tolerance artifacts/mertformer_release.zip")
 
 
 def test_kd_loss_called_with_padding_mask():

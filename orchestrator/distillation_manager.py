@@ -26,6 +26,8 @@ import logging
 # Set up logging
 logger = logging.getLogger(__name__)
 
+TOPK_DENSE_MAX_ELEMENTS = int(os.environ.get("TITAN_TOPK_DENSE_MAX_ELEMENTS", "8000000"))
+
 class DistillationManager:
     """
     TR: Öğretmen model (Llama-3-70B) logitlerini önceden hesaplayıp diske yazan yönetici.
@@ -316,7 +318,19 @@ def _reconstruct_dense_from_topk(
     """
     indices = item["indices"].long()
     values = item["values"].float()
+    if indices.shape != values.shape or indices.dim() != 2:
+        raise ValueError(
+            "Top-K sparse logits must use matching [seq, top_k] indices/values tensors."
+        )
     seq_len, _ = indices.shape
+    dense_elements = seq_len * int(vocab_size)
+    allow_large = os.getenv("TITAN_ALLOW_DENSE_TOPK_RECONSTRUCT", "0").strip() == "1"
+    if dense_elements > TOPK_DENSE_MAX_ELEMENTS and not allow_large:
+        raise RuntimeError(
+            "Refusing dense Top-K logits reconstruction for "
+            f"{seq_len}x{int(vocab_size)}={dense_elements} elements. "
+            "Use sparse KD or set TITAN_ALLOW_DENSE_TOPK_RECONSTRUCT=1 for an explicit debug run."
+        )
 
     dense = torch.full(
         (seq_len, vocab_size),
@@ -325,6 +339,22 @@ def _reconstruct_dense_from_topk(
     )
     dense.scatter_(dim=1, index=indices, src=values)
     return dense
+
+
+def _as_sparse_topk_payload(item: dict, vocab_size: int) -> dict:
+    indices = item["indices"].long()
+    values = item["values"].float()
+    if indices.shape != values.shape or indices.dim() != 2:
+        raise ValueError(
+            "Top-K sparse logits must use matching [seq, top_k] indices/values tensors."
+        )
+    return {
+        "format": "topk_sparse_v1",
+        "indices": indices,
+        "values": values,
+        "vocab_size": int(item.get("vocab_size", vocab_size)),
+        "top_k": int(item.get("top_k", indices.size(-1))),
+    }
 
 
 class PrecomputedLogitsIterable(IterableDataset):
@@ -361,7 +391,7 @@ class PrecomputedLogitsIterable(IterableDataset):
                 raise RuntimeError(f"Invalid logits shard format: {file}")
             for item in chunk:
                 if isinstance(item, dict) and "indices" in item and "values" in item:
-                    yield _reconstruct_dense_from_topk(item, vocab_size)
+                    yield _as_sparse_topk_payload(item, vocab_size)
                 elif isinstance(item, torch.Tensor):
                     yield item
                 else:
