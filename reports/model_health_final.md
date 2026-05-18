@@ -1,6 +1,6 @@
 # Model Health Final
 
-- generated_utc: `2026-05-16T16:17:50Z`
+- generated_utc: `2026-05-18T16:04:16Z`
 - smoke_metrics_present: `true`
 - readiness_status: `TRAIN_ALLOWED`
 

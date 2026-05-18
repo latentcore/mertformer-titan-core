@@ -301,7 +301,17 @@ def preflight_param_report(model: nn.Module):
     print(f"📚 Trainable: {trainable / 1e6:.2f} Milyon")
 
 
-def save_checkpoint_smart(model, optimizer, scheduler, step, cfg, keep_last_n=3, val_loss=None, best_val_loss=None):
+def save_checkpoint_smart(
+    model,
+    optimizer,
+    scheduler,
+    step,
+    cfg,
+    keep_last_n=3,
+    val_loss=None,
+    best_val_loss=None,
+    write_final=False,
+):
     """
     Smart checkpoint saver - keeps only last N checkpoints + best checkpoint.
     
@@ -314,6 +324,7 @@ def save_checkpoint_smart(model, optimizer, scheduler, step, cfg, keep_last_n=3,
         keep_last_n: Number of recent checkpoints to keep
         val_loss: Current validation loss (optional)
         best_val_loss: Best validation loss seen so far (optional)
+        write_final: Also write the canonical final checkpoint alias
     
     Returns:
         float: Updated best_val_loss (if val_loss provided)
@@ -324,10 +335,12 @@ def save_checkpoint_smart(model, optimizer, scheduler, step, cfg, keep_last_n=3,
     ckpt_name = f"{cfg.model_name}_step_{step}.pt"
     latest_name = f"{cfg.model_name}_latest.pt"
     best_name = f"{cfg.model_name}_best.pt"
+    final_name = f"{cfg.model_name}_final.pt"
 
     save_path = save_dir / ckpt_name
     latest_path = save_dir / latest_name
     best_path = save_dir / best_name
+    final_path = save_dir / final_name
 
     print(f"💾 Checkpoint Kaydediliyor: {ckpt_name}")
 
@@ -342,10 +355,15 @@ def save_checkpoint_smart(model, optimizer, scheduler, step, cfg, keep_last_n=3,
     # Add validation loss to state if provided
     if val_loss is not None:
         state['val_loss'] = val_loss
+    if write_final:
+        state['is_final'] = True
 
     # Save regular checkpoint
     torch.save(state, save_path)
     torch.save(state, latest_path)
+    if write_final:
+        torch.save(state, final_path)
+        print(f"🏁 Final Checkpoint Kaydedildi: {final_name}")
     
     # Save best checkpoint if this is the best so far
     if val_loss is not None and best_val_loss is not None:
@@ -2199,7 +2217,7 @@ def train():
 
                                 # EVAL-DRIVEN EARLY STOPPING
                                 if val_loss < best_val_loss:
-                                    best_val_loss = val_loss
+                                    previous_best_val_loss = best_val_loss
                                     patience_counter = 0
                                     print("✅ New best validation loss! Saving checkpoint...")
                                     unwrapped_model = accelerator.unwrap_model(student)
@@ -2211,7 +2229,7 @@ def train():
                                         cfg,
                                         keep_last_n=3,
                                         val_loss=val_loss,
-                                        best_val_loss=best_val_loss,
+                                        best_val_loss=previous_best_val_loss,
                                     )
                                 else:
                                     patience_counter += 1
@@ -2376,6 +2394,7 @@ def train():
                     keep_last_n=3,
                     val_loss=None,
                     best_val_loss=best_val_loss,
+                    write_final=True,
                 )
                 if logger:
                     logger.finalize(
@@ -2387,15 +2406,41 @@ def train():
                         },
                     )
             elif early_stopped:
+                unwrapped_model = accelerator.unwrap_model(student)
+                best_val_loss = save_checkpoint_smart(
+                    unwrapped_model,
+                    opt,
+                    scheduler,
+                    global_step,
+                    cfg,
+                    keep_last_n=3,
+                    val_loss=None,
+                    best_val_loss=best_val_loss,
+                    write_final=True,
+                )
                 if logger:
                     logger.finalize(
                         "early_stopped",
                         extra={"best_val_loss": best_val_loss, "tokens_seen": int(tokens_seen_total)},
                     )
             else:
-                if logger:
-                    logger.finalize("completed", extra={"tokens_seen": int(tokens_seen_total)})
                 unwrapped_model = accelerator.unwrap_model(student)
+                best_val_loss = save_checkpoint_smart(
+                    unwrapped_model,
+                    opt,
+                    scheduler,
+                    global_step,
+                    cfg,
+                    keep_last_n=3,
+                    val_loss=None,
+                    best_val_loss=best_val_loss,
+                    write_final=True,
+                )
+                if logger:
+                    logger.finalize(
+                        "completed",
+                        extra={"best_val_loss": best_val_loss, "tokens_seen": int(tokens_seen_total)},
+                    )
                 export_to_onnx(unwrapped_model, save_dir, cfg.model_name, student_device)
 
     except KeyboardInterrupt:
