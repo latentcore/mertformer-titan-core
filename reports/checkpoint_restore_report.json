@@ -1,6 +1,6 @@
 {
   "schema": "checkpoint_restore_report_v1",
-  "generated_utc": "2026-05-18T16:04:07Z",
+  "generated_utc": "2026-05-22T07:40:33Z",
   "status": "PASS",
   "cmd": "<REPO_ROOT>/.titan-venv/bin/python scripts/checkpoint_restore_drill.py",
   "stdout_tail": "Checkpoint restore drill: PASS\n",

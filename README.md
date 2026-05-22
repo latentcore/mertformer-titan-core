@@ -763,11 +763,11 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
 ```text
       ╔═══════════════════════════════════════════════════════════════════════════╗
       ║  M E R T F O R M E R   T I T A N   (O N Y X   S T O R M)                  ║
-      ║  » ARCHITECTURE BLUEPRINT v1.0 (Build 30 V2) // TARGET: SAMSUNG S25 NPU «    ║
+      ║  ARCHITECTURE BLUEPRINT v1.0 (Build 30 V2) | TARGET: SAMSUNG S25 NPU      ║
       ╚═══════════════════════════════════════════════════════════════════════════╝
                                             │
       ┌─────────────────────────────────────▼─────────────────────────────────────┐
-      │  INPUT EMBEDDINGS [Batch, Seq, 2048]  ⚡  RoPE (Theta=100k, Float32)       │
+      │  INPUT EMBEDDINGS [Batch, Seq, 2048]     RoPE (Theta=100k, Float32)       │
       └─────────────────────────────────────┬─────────────────────────────────────┘
                                             │ [B, S, 2048]
                   ┌─────────────────────────▼──────────────────────────┐
@@ -777,8 +777,8 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
       │  TRANSFORMER BLOCK [Layers 0-17]  (Iterative Process)                     │
       │                                                                           │
       │  ┌──────────────┐    ┌─────────────────────────────────────────────────┐  │
-      │  │ RMSNorm (F)  │───►│ [MLA-LABELED GQA] ATTENTION               │  │
-      │  └──────────────┘    │ » GQA heads: Q=16, KV=8 (default profile)                      │  │
+      │  │ RMSNorm (F)  │───►│ [MLA-LABELED GQA] ATTENTION                    │   │
+      │  └──────────────┘    │ » GQA heads: Q=16, KV=8 (default profile)       │  │
       │                      │ » Op: Softmax(Q·K^T / √d) · V                   │  │
       │                      │ » H/W: FlashAttn2 Kernel (SRAM Optimized)       │  │
       │                      └────────────────────────┬────────────────────────┘  │
