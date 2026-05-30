@@ -97,3 +97,35 @@ def test_liquid_train_impls_match_baseline_forward_and_backward():
         for name, grad0 in pg0.items():
             assert name in pg1
             assert torch.max(torch.abs(grad0 - pg1[name])).item() < 1e-8
+
+
+def _configure_tau_clamp_probe(model):
+    with torch.no_grad():
+        model.cell.input_w.weight.zero_()
+        model.cell.hidden_w.weight.zero_()
+        model.cell.tau_input_w.weight.zero_()
+        model.cell.tau_hidden_w.weight.zero_()
+        model.cell.tau_bias.fill_(20.0)
+
+
+def test_liquid_train_impls_clamp_tau_like_eval_path():
+    steps = 3
+    h_init = torch.ones(2, 4, dtype=torch.float64)
+    x = torch.zeros(2, steps, 4, dtype=torch.float64)
+    expected_final = h_init * torch.exp(
+        torch.tensor(-5.0 * steps, dtype=torch.float64)
+    )
+
+    for impl in ("baseline", "precompute_input", "packed_pair"):
+        model = LiquidMixer(4, fast_path=False, train_impl=impl).double()
+        _configure_tau_clamp_probe(model)
+
+        model.train()
+        with torch.no_grad():
+            _, h_train = model(x, h_init=h_init, return_state=True)
+        assert torch.max(torch.abs(h_train - expected_final)).item() < 1e-12
+
+        model.eval()
+        with torch.no_grad():
+            _, h_eval = model(x, h_init=h_init, return_state=True)
+        assert torch.max(torch.abs(h_eval - expected_final)).item() < 1e-12

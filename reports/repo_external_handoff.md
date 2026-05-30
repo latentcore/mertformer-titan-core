@@ -1,6 +1,6 @@
 # MertFormer Build 30 Max Closure Handoff
 
-- generated_utc: `2026-05-30T01:18:45Z`
+- generated_utc: `2026-05-30T20:15:06Z`
 - product_sentence: Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre edilebilir zeka altyapısı.
 - canonical_closure_entrypoint: `bash scripts/final_one_shot.sh`
 - train_readiness_status: `TRAIN_ALLOWED`

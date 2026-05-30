@@ -128,7 +128,7 @@ Its long-term target is to make efficient, auditable AI training and inference m
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `281 passed, 4 skipped` |
+| `python3 -m pytest -q` | `284 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -141,7 +141,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`281 passed, 4 skipped`)
+   - `pytest` passed (`284 passed, 4 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -1682,6 +1682,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── config.py  # Python module/script (runtime configuration model and validation helpers)
 ├── configs/  # directory
 │   ├── README.md  # primary documentation (EN)
+│   ├── README_TR.md  # Turkish document counterpart
 │   └── chess_onefile_profile_contract.md  # documentation/report file
 ├── datasets/  # directory
 │   ├── INTERNAL_POLICY.md  # documentation/report file
@@ -2023,6 +2024,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── external_readability_checklist.md  # documentation/report file
 │   ├── fallback_policy_report.json  # JSON data artifact
 │   ├── feature_flag_governance.md  # documentation/report file
+│   ├── feature_flag_governance_TR.md  # Turkish document counterpart
 │   ├── file_state_inventory.json  # JSON data artifact
 │   ├── final_artifact_manifest.json  # JSON data artifact
 │   ├── final_backlog_classification.json  # JSON data artifact
@@ -2082,6 +2084,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── model_health.md  # documentation/report file
 │   ├── model_health_TR.md  # Turkish document counterpart
 │   ├── model_health_final.md  # documentation/report file
+│   ├── ocean_2xh200_1024_first_launch_profile.md  # documentation/report file
 │   ├── ocean_pre45k_h200_20260514_clean_summary.json  # JSON data artifact
 │   ├── ocean_pre45k_h200_20260514_partial_evidence.md  # documentation/report file
 │   ├── offline_assistant_case_study.md  # documentation/report file
@@ -2167,6 +2170,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── technical_snapshot.md  # documentation/report file
 │   ├── technical_snapshot_TR.md  # Turkish document counterpart
 │   ├── test_verification_matrix.md  # documentation/report file
+│   ├── test_verification_matrix_TR.md  # Turkish document counterpart
 │   ├── thermal_baseline.json  # JSON data artifact
 │   ├── tokenizer_sync_final_report.md  # documentation/report file
 │   ├── train_readiness_decision.json  # JSON data artifact
@@ -2187,6 +2191,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── zip_audit_artifacts.json  # JSON data artifact
 │   └── zip_audit_packages.json  # JSON data artifact
 ├── repro/  # directory
+│   ├── accelerate_8xgpu.yaml  # YAML configuration file
 │   ├── accelerate_default.yaml  # YAML configuration file
 │   ├── cuda.lock  # artifact
 │   ├── env.lock  # artifact
@@ -2276,6 +2281,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── kaggle_onefile_demo_build30_text_understanding.py  # Python module/script (automation script for kaggle onefile demo build30 text understanding)
 │   ├── kaggle_train_compare_build30.py  # Python module/script (automation script for kaggle train compare build30)
 │   ├── linkcheck_gate.py  # Python module/script (automation script for linkcheck gate)
+│   ├── liquid_train_impl_benchmark.py  # Python module/script (automation script for liquid train impl benchmark)
 │   ├── logbook_build.py  # Python module/script (automation script for logbook build)
 │   ├── mac_simulation.py  # Python module/script (automation script for mac simulation)
 │   ├── macos_keepawake.sh  # shell automation script
@@ -2377,6 +2383,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_onnx_export_path.py  # Python module/script (automated test module for onnx export path)
 │   ├── test_onnx_metadata_hook.py  # Python module/script (automated test module for onnx metadata hook)
 │   ├── test_orchestrator_swarm_runtime.py  # Python module/script (automated test module for orchestrator swarm runtime)
+│   ├── test_packed_projection_equivalence.py  # Python module/script (automated test module for packed projection equivalence)
 │   ├── test_post_run_processor.py  # Python module/script (automated test module for post run processor)
 │   ├── test_post_train_autorun_cli.py  # Python module/script (automated test module for post train autorun cli)
 │   ├── test_resume_policy.py  # Python module/script (automated test module for resume policy)

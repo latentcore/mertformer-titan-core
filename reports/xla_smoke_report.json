@@ -1,6 +1,6 @@
 {
   "schema": "xla_smoke_report_v1",
-  "generated_utc": "2026-05-30T01:19:15Z",
+  "generated_utc": "2026-05-30T20:16:07Z",
   "status": "NOT_RUN",
   "reason": "XLA/TPU runtime not available in the current local environment.",
   "timing_bucket": "phase2_or_external"

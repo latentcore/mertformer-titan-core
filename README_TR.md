@@ -129,7 +129,7 @@ Uzun vadeli hedefi, compute bütçesi sınırlı geliştiriciler, küçük ekipl
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `281 passed, 4 skipped` |
+| `python3 -m pytest -q` | `284 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -142,7 +142,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`281 passed, 4 skipped`)
+   - `pytest` geçti (`284 passed, 4 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -1668,6 +1668,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   └── config.py  # Python modülü/scripti (çalışma zamanı konfigürasyon modeli ve doğrulama yardımcıları)
 ├── configs/  # dizin
 │   ├── README.md  # ana dokümantasyon (EN)
+│   ├── README_TR.md  # Türkçe doküman karşılığı
 │   └── chess_onefile_profile_contract.md  # dokümantasyon/rapor dosyası
 ├── datasets/  # dizin
 │   ├── INTERNAL_POLICY.md  # dokümantasyon/rapor dosyası
@@ -2009,6 +2010,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── external_readability_checklist.md  # dokümantasyon/rapor dosyası
 │   ├── fallback_policy_report.json  # JSON veri artefaktı
 │   ├── feature_flag_governance.md  # dokümantasyon/rapor dosyası
+│   ├── feature_flag_governance_TR.md  # Türkçe doküman karşılığı
 │   ├── file_state_inventory.json  # JSON veri artefaktı
 │   ├── final_artifact_manifest.json  # JSON veri artefaktı
 │   ├── final_backlog_classification.json  # JSON veri artefaktı
@@ -2068,6 +2070,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── model_health.md  # dokümantasyon/rapor dosyası
 │   ├── model_health_TR.md  # Türkçe doküman karşılığı
 │   ├── model_health_final.md  # dokümantasyon/rapor dosyası
+│   ├── ocean_2xh200_1024_first_launch_profile.md  # dokümantasyon/rapor dosyası
 │   ├── ocean_pre45k_h200_20260514_clean_summary.json  # JSON veri artefaktı
 │   ├── ocean_pre45k_h200_20260514_partial_evidence.md  # dokümantasyon/rapor dosyası
 │   ├── offline_assistant_case_study.md  # dokümantasyon/rapor dosyası
@@ -2153,6 +2156,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── technical_snapshot.md  # dokümantasyon/rapor dosyası
 │   ├── technical_snapshot_TR.md  # Türkçe doküman karşılığı
 │   ├── test_verification_matrix.md  # dokümantasyon/rapor dosyası
+│   ├── test_verification_matrix_TR.md  # Türkçe doküman karşılığı
 │   ├── thermal_baseline.json  # JSON veri artefaktı
 │   ├── tokenizer_sync_final_report.md  # dokümantasyon/rapor dosyası
 │   ├── train_readiness_decision.json  # JSON veri artefaktı
@@ -2173,6 +2177,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── zip_audit_artifacts.json  # JSON veri artefaktı
 │   └── zip_audit_packages.json  # JSON veri artefaktı
 ├── repro/  # dizin
+│   ├── accelerate_8xgpu.yaml  # YAML yapılandırma dosyası
 │   ├── accelerate_default.yaml  # YAML yapılandırma dosyası
 │   ├── cuda.lock  # artefakt
 │   ├── env.lock  # artefakt
@@ -2262,6 +2267,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── kaggle_onefile_demo_build30_text_understanding.py  # Python modülü/scripti (kaggle onefile demo build30 text understanding için otomasyon scripti)
 │   ├── kaggle_train_compare_build30.py  # Python modülü/scripti (kaggle train compare build30 için otomasyon scripti)
 │   ├── linkcheck_gate.py  # Python modülü/scripti (linkcheck gate için otomasyon scripti)
+│   ├── liquid_train_impl_benchmark.py  # Python modülü/scripti (liquid train impl benchmark için otomasyon scripti)
 │   ├── logbook_build.py  # Python modülü/scripti (logbook build için otomasyon scripti)
 │   ├── mac_simulation.py  # Python modülü/scripti (mac simulation için otomasyon scripti)
 │   ├── macos_keepawake.sh  # kabuk otomasyon scripti
@@ -2363,6 +2369,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_onnx_export_path.py  # Python modülü/scripti (onnx export path için otomatik test modülü)
 │   ├── test_onnx_metadata_hook.py  # Python modülü/scripti (onnx metadata hook için otomatik test modülü)
 │   ├── test_orchestrator_swarm_runtime.py  # Python modülü/scripti (orchestrator swarm runtime için otomatik test modülü)
+│   ├── test_packed_projection_equivalence.py  # Python modülü/scripti (packed projection equivalence için otomatik test modülü)
 │   ├── test_post_run_processor.py  # Python modülü/scripti (post run processor için otomatik test modülü)
 │   ├── test_post_train_autorun_cli.py  # Python modülü/scripti (post train autorun cli için otomatik test modülü)
 │   ├── test_resume_policy.py  # Python modülü/scripti (resume policy için otomatik test modülü)

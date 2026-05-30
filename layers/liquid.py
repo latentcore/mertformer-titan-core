@@ -91,6 +91,7 @@ class LiquidCell(nn.Module):
         # TR: (input + hidden + bias) "bağlam-farkında" zaman algısı verir.
         # EN: (input + hidden + bias) gives "context-aware" time perception.
         time_decay = F.softplus(tau_in + tau_rec + self.tau_bias)
+        time_decay = torch.clamp(time_decay, min=1e-4, max=5.0)
         
         # TR: --- CfC Güncellemesi --- / EN: --- CfC Update ---
         # TR: h(t) = A + (h_prev - A) * exp(-time_decay * dt) / EN: h(t) = A + (h_prev - A) * exp(-time_decay * dt)
@@ -428,6 +429,7 @@ class LiquidMixer(nn.Module):
 
             tau_rec = self.cell.tau_hidden_w(h)
             time_decay = F.softplus(tau_in_seq[:, t, :] + tau_rec + self.cell.tau_bias)
+            time_decay = torch.clamp(time_decay, min=1e-4, max=5.0)
 
             decay = torch.exp(torch.clamp(-time_decay * dt, min=-20.0, max=20.0))
             h = A + (h - A) * decay
@@ -463,6 +465,7 @@ class LiquidMixer(nn.Module):
 
             A = torch.tanh(val_in_seq[:, t, :] + val_rec)
             time_decay = F.softplus(tau_in_seq[:, t, :] + tau_rec + self.cell.tau_bias)
+            time_decay = torch.clamp(time_decay, min=1e-4, max=5.0)
 
             decay = torch.exp(torch.clamp(-time_decay * dt, min=-20.0, max=20.0))
             h = A + (h - A) * decay

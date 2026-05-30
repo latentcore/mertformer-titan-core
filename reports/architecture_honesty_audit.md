@@ -1,6 +1,6 @@
 # Architecture Honesty Audit
 
-- generated_utc: `2026-05-30T01:19:15Z`
+- generated_utc: `2026-05-30T20:16:07Z`
 - claim boundary: `pre-training / not eligible for claim without a trained checkpoint`
 
 ## Current Honesty Rules

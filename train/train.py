@@ -344,12 +344,24 @@ def save_checkpoint_smart(
 
     print(f"💾 Checkpoint Kaydediliyor: {ckpt_name}")
 
+    checkpoint_best_val_loss = best_val_loss
+    if val_loss is not None and (
+        checkpoint_best_val_loss is None or val_loss < checkpoint_best_val_loss
+    ):
+        checkpoint_best_val_loss = val_loss
+
     state = {
         'model': model.state_dict(),
         'optimizer': optimizer.state_dict(),
         'scheduler': scheduler.state_dict(),
         'step': step,
         'config': str(cfg),
+        'best_val_loss': (
+            float(checkpoint_best_val_loss)
+            if checkpoint_best_val_loss is not None
+            and math.isfinite(float(checkpoint_best_val_loss))
+            else None
+        ),
     }
     
     # Add validation loss to state if provided
@@ -512,12 +524,15 @@ def _load_resume_payload(cfg, model: nn.Module, is_main_process: bool = True) ->
 
     step = int(state.get("step", 0))
     val_loss = state.get("val_loss")
+    best_val_loss = state.get("best_val_loss")
 
     if is_main_process:
         print(f"♻️  Auto-resume checkpoint loaded: {ckpt_path}")
         print(f"   - resume_step: {step}")
         if val_loss is not None:
             print(f"   - resume_val_loss: {float(val_loss):.6f}")
+        if best_val_loss is not None:
+            print(f"   - resume_best_val_loss: {float(best_val_loss):.6f}")
         print(f"   - model missing keys: {len(missing)} | unexpected keys: {len(unexpected)}")
 
     return {
@@ -525,6 +540,7 @@ def _load_resume_payload(cfg, model: nn.Module, is_main_process: bool = True) ->
         "state": state,
         "step": step,
         "val_loss": float(val_loss) if val_loss is not None else None,
+        "best_val_loss": float(best_val_loss) if best_val_loss is not None else None,
         "missing_keys": missing,
         "unexpected_keys": unexpected,
     }
@@ -1637,8 +1653,13 @@ def train():
 
     # Early Stopping & Monitoring
     best_val_loss = float('inf')
-    if resume_payload is not None and resume_payload.get("val_loss") is not None:
-        best_val_loss = float(resume_payload["val_loss"])
+    if resume_payload is not None:
+        resume_best_val_loss = resume_payload.get("best_val_loss")
+        resume_val_loss = resume_payload.get("val_loss")
+        if resume_best_val_loss is not None:
+            best_val_loss = float(resume_best_val_loss)
+        elif resume_val_loss is not None:
+            best_val_loss = float(resume_val_loss)
     patience_counter = 0
     early_stop_patience = getattr(cfg, "early_stop_patience", 5)
     val_check_interval = getattr(cfg, "val_check_interval", 1000)
@@ -1870,8 +1891,8 @@ def train():
                          if "tau" in n or "liquid" in n:
                              p.requires_grad = True
                       
-                     # Build 30 polish: Rebuild Optimizer to sync groups
-                     rebuild_optimizer(student, opt, cfg)
+                     # Accelerate wraps the optimizer after prepare; the optimizer
+                     # already owns these params, so requires_grad is enough here.
                       
                      liquid_frozen_until = 0
             # ---------------------------------------------------------------------
