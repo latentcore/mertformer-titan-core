@@ -68,26 +68,46 @@ def _load_dataset():
         return load_dataset("openai/gsm8k", split="test", revision=revision)
 
 
-def _load_model_and_tokenizer(ckpt: str):
-    import torch
-    from transformers import AutoTokenizer
-    from config.config import cfg
-    from model.transformers import MertFormer
-
-    device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
-    model = MertFormer().to(device)
-
+def _resolve_checkpoint_path(ckpt: str, save_dir: str, model_name: str) -> Path:
     ckpt_path = Path(ckpt)
     if not ckpt_path.exists():
-        candidate = Path(cfg.save_dir) / f"{cfg.model_name}_latest.pt"
+        candidate = Path(save_dir) / f"{model_name}_latest.pt"
         if candidate.exists():
             ckpt_path = candidate
+    return ckpt_path
 
+
+def _require_checkpoint_or_allow_random(
+    ckpt_path: Path, allow_random_weights: bool
+) -> None:
+    if ckpt_path.exists() or allow_random_weights:
+        return
+    raise FileNotFoundError(
+        f"Checkpoint not found: {ckpt_path}. "
+        "Use --allow-random-weights only for explicit random-init smoke checks."
+    )
+
+
+def _load_model_and_tokenizer(ckpt: str, allow_random_weights: bool = False):
+    import torch
+    from config.config import cfg
+
+    device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
+    ckpt_path = _resolve_checkpoint_path(ckpt, cfg.save_dir, cfg.model_name)
+    _require_checkpoint_or_allow_random(ckpt_path, allow_random_weights)
+
+    from transformers import AutoTokenizer
+    from model.transformers import MertFormer
+
+    model = MertFormer().to(device)
     if ckpt_path.exists():
         checkpoint = torch.load(ckpt_path, map_location=device)
         model.load_state_dict(checkpoint.get("model", checkpoint))
     else:
-        print(f"[gsm8k] Checkpoint not found: {ckpt_path}. Using random weights.")
+        print(
+            f"[gsm8k] Checkpoint not found: {ckpt_path}. "
+            "Using random weights (--allow-random-weights)."
+        )
 
     model.eval()
 
@@ -103,9 +123,12 @@ def run_generation(
     max_new_tokens: int,
     samples: int,
     ckpt: str,
+    allow_random_weights: bool = False,
 ) -> int:
+    model, tokenizer, device = _load_model_and_tokenizer(
+        ckpt, allow_random_weights=allow_random_weights
+    )
     dataset = _load_dataset()
-    model, tokenizer, device = _load_model_and_tokenizer(ckpt)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     total = len(dataset)
@@ -178,6 +201,11 @@ def main() -> None:
     parser.add_argument("--ckpt", type=str, default="checkpoints/latest.pt")
     parser.add_argument("--output", type=str, default="reports/benchmarks/gsm8k_outputs.jsonl")
     parser.add_argument("--predictions", type=str, default="")
+    parser.add_argument(
+        "--allow-random-weights",
+        action="store_true",
+        help="Allow random-init eval when no checkpoint exists (smoke checks only).",
+    )
     args = parser.parse_args()
 
     out_path = Path(args.output)
@@ -195,7 +223,13 @@ def main() -> None:
         print("[gsm8k] Use --run to generate outputs or --score-only to score existing outputs.")
         return
 
-    generated = run_generation(out_path, args.max_new_tokens, args.samples, args.ckpt)
+    generated = run_generation(
+        out_path,
+        args.max_new_tokens,
+        args.samples,
+        args.ckpt,
+        allow_random_weights=args.allow_random_weights,
+    )
     summary = score_predictions(out_path, summary_path)
     print(f"[gsm8k] Generated {generated} examples. Accuracy={summary['accuracy']:.4f}")
 

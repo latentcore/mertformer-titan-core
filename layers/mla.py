@@ -235,7 +235,7 @@ class MLA(nn.Module):
         
         # RoPE settings
         self.rope_dim = getattr(cfg, "rope_dim", None) # Default to full head_dim
-        self.rope_base = getattr(cfg, "rope_base", 500000.0)
+        self.rope_base = getattr(cfg, "rope_base", 100000.0)
 
         rope_dim_eff = self.head_dim if self.rope_dim is None else int(self.rope_dim)
         if rope_dim_eff <= 0 or rope_dim_eff > self.head_dim:

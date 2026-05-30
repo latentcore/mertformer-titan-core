@@ -73,6 +73,18 @@ def test_mla_has_no_static_causal_mask_buffer():
         assert "causal_mask" not in buffer_names
 
 
+def test_mla_rope_base_fallback_matches_config_default():
+    original = getattr(cfg, "rope_base")
+    try:
+        delattr(cfg, "rope_base")
+        with _cfg_patch(**_mla_tiny_overrides(rope_dim=None)):
+            mla = MLA()
+            assert mla.rope_base == 100000.0
+            assert mla.rotary_emb.base == 100000.0
+    finally:
+        setattr(cfg, "rope_base", original)
+
+
 def test_mla_kv_cache_offset_path_shape_and_finite():
     with _cfg_patch(**_mla_tiny_overrides(rope_dim=None)):
         mla = MLA()
