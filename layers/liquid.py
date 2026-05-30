@@ -22,9 +22,11 @@ import sys
 import warnings
 from typing import Optional, Tuple
 
-from layers.bitlinear import BitLinear
+from layers.bitlinear import BitLinear, activation_quant, weight_quant
 
 DEFAULT_TORCHSCRIPT_COMPAT_ENV = "MERTFORMER_ENABLE_TORCHSCRIPT_COMPAT"
+DEFAULT_LIQUID_TRAIN_IMPL_ENV = "TITAN_LIQUID_TRAIN_IMPL"
+LIQUID_TRAIN_IMPLS = {"baseline", "precompute_input", "packed_pair", "packed_pair_compile"}
 
 
 def _jit_script_if_supported(fn):
@@ -204,14 +206,29 @@ class LiquidMixer(nn.Module):
     EN: Liquid Mixer Build30 V2 - fast_path (torch.compile guarded).
     """
 
-    def __init__(self, h: int, fast_path: Optional[bool] = None) -> None:
+    def __init__(
+        self,
+        h: int,
+        fast_path: Optional[bool] = None,
+        train_impl: Optional[str] = None,
+    ) -> None:
         super().__init__()
         self.cell = LiquidCell(h)
         self.norm = nn.LayerNorm(h)
         if fast_path is None:
             fast_path = os.environ.get("TITAN_LIQUID_FAST_PATH", "1") == "1"
         self.fast_path = bool(fast_path)
+        if train_impl is None:
+            train_impl = os.environ.get(DEFAULT_LIQUID_TRAIN_IMPL_ENV, "baseline")
+        train_impl = str(train_impl).strip().lower()
+        if train_impl not in LIQUID_TRAIN_IMPLS:
+            raise ValueError(
+                f"{DEFAULT_LIQUID_TRAIN_IMPL_ENV} must be one of "
+                f"{sorted(LIQUID_TRAIN_IMPLS)}, got {train_impl!r}"
+            )
+        self.train_impl = train_impl
         self._compiled_train_loop = None
+        self._compiled_packed_train_loop = None
 
         # TR: Eval/inference quant cache (checkpoint'e yazılmaz)
         # EN: Eval/inference quant cache (excluded from checkpoints)
@@ -340,7 +357,23 @@ class LiquidMixer(nn.Module):
         # TR: Çıkarım: JIT döngüsü kullan -> NPU optimizasyonu.
         # EN: Inference: JIT loop use -> NPU optimization.
         if self.training:
-            if self.fast_path and x.device.type != "mps":
+            if self.train_impl == "precompute_input":
+                out_seq, h = self._train_loop_precompute_input(x, h, dt)
+            elif self.train_impl == "packed_pair":
+                out_seq, h = self._train_loop_packed_pair(x, h, dt)
+            elif self.train_impl == "packed_pair_compile":
+                if self.fast_path and x.device.type != "mps":
+                    try:
+                        out_seq, h = self._train_loop_packed_pair_compiled(x, h, dt)
+                    except Exception as exc:
+                        warnings.warn(
+                            f"Liquid packed-pair compile failed; falling back to eager: {exc}",
+                            RuntimeWarning,
+                        )
+                        out_seq, h = self._train_loop_packed_pair(x, h, dt)
+                else:
+                    out_seq, h = self._train_loop_packed_pair(x, h, dt)
+            elif self.fast_path and x.device.type != "mps":
                 try:
                     out_seq, h = self._train_loop_compiled(x, h, dt)
                 except Exception as exc:
@@ -381,6 +414,62 @@ class LiquidMixer(nn.Module):
             out_seq[:, t, :] = h
         return out_seq, h
 
+    def _train_loop_precompute_input(
+        self, x: torch.Tensor, h: torch.Tensor, dt: float
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        B, T, H = x.shape
+        out_seq = torch.empty(B, T, H, device=x.device, dtype=x.dtype).contiguous()
+        val_in_seq = self.cell.input_w(x)
+        tau_in_seq = self.cell.tau_input_w(x)
+
+        for t in range(T):
+            val_rec = self.cell.hidden_w(h)
+            A = torch.tanh(val_in_seq[:, t, :] + val_rec)
+
+            tau_rec = self.cell.tau_hidden_w(h)
+            time_decay = F.softplus(tau_in_seq[:, t, :] + tau_rec + self.cell.tau_bias)
+
+            decay = torch.exp(torch.clamp(-time_decay * dt, min=-20.0, max=20.0))
+            h = A + (h - A) * decay
+            out_seq[:, t, :] = h
+
+        return out_seq, h
+
+    @staticmethod
+    def _packed_bitlinear(x: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:
+        return F.linear(activation_quant(x), weight_quant(weight), None)
+
+    def _train_loop_packed_pair(
+        self, x: torch.Tensor, h: torch.Tensor, dt: float
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        B, T, H = x.shape
+        out_seq = torch.empty(B, T, H, device=x.device, dtype=x.dtype).contiguous()
+
+        input_pair_w = torch.cat(
+            [self.cell.input_w.weight, self.cell.tau_input_w.weight],
+            dim=0,
+        )
+        input_pair = self._packed_bitlinear(x, input_pair_w)
+        val_in_seq, tau_in_seq = input_pair.chunk(2, dim=-1)
+
+        hidden_pair_w = torch.cat(
+            [self.cell.hidden_w.weight, self.cell.tau_hidden_w.weight],
+            dim=0,
+        )
+
+        for t in range(T):
+            hidden_pair = self._packed_bitlinear(h, hidden_pair_w)
+            val_rec, tau_rec = hidden_pair.chunk(2, dim=-1)
+
+            A = torch.tanh(val_in_seq[:, t, :] + val_rec)
+            time_decay = F.softplus(tau_in_seq[:, t, :] + tau_rec + self.cell.tau_bias)
+
+            decay = torch.exp(torch.clamp(-time_decay * dt, min=-20.0, max=20.0))
+            h = A + (h - A) * decay
+            out_seq[:, t, :] = h
+
+        return out_seq, h
+
     def _train_loop_compiled(self, x: torch.Tensor, h: torch.Tensor, dt: float) -> Tuple[torch.Tensor, torch.Tensor]:
         if self._compiled_train_loop is None:
             try:
@@ -392,6 +481,23 @@ class LiquidMixer(nn.Module):
                 )
                 self._compiled_train_loop = self._train_loop
         return self._compiled_train_loop(x, h, dt)
+
+    def _train_loop_packed_pair_compiled(
+        self, x: torch.Tensor, h: torch.Tensor, dt: float
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        if self._compiled_packed_train_loop is None:
+            try:
+                self._compiled_packed_train_loop = torch.compile(
+                    self._train_loop_packed_pair,
+                    mode="reduce-overhead",
+                )
+            except Exception as exc:
+                warnings.warn(
+                    f"Liquid packed-pair compile disabled: {exc}",
+                    RuntimeWarning,
+                )
+                self._compiled_packed_train_loop = self._train_loop_packed_pair
+        return self._compiled_packed_train_loop(x, h, dt)
 
     def load_state_dict(self, *args, **kwargs):
         out = super().load_state_dict(*args, **kwargs)

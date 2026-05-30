@@ -2,6 +2,21 @@
 
 All notable changes to this project are tracked in this file.
 
+## Unreleased - 2026-05-24
+
+### Added
+- Optional, default-off packed projection controls for FFN, MoE BitSwiGLU, and MLA K/V training paths.
+- Environment-overridable training controls for batch size, log interval, validation interval, checkpoint interval, and DataLoader transfer behavior.
+- Optional 8-GPU Accelerate profile under `repro/accelerate_8xgpu.yaml`.
+- Equivalence coverage for packed projection and Liquid train implementation variants.
+
+### Changed
+- README, usage guide, training plan, feature-flag governance, script catalog, and verification matrix now document the optional speed-control surface with explicit claim boundaries.
+- Documentation clarifies that `repro/` holds reproducibility/run configs, while `configs/` remains reserved for stable named configuration contracts.
+
+### Validation
+- Optional speed flags remain off by default and require equivalence tests plus target-machine logs before any speed claim.
+
 ## v1.0.0-build30-v2 - 2026-03-13
 
 ### Added

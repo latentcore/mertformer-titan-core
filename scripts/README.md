@@ -97,11 +97,14 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 - `overfit_gate.py` — 1MB overfit gate (safe/full modes).
 - `train_smoke.py` — Tiny offline training sanity loop (CPU/MPS).
 - `cfc_moe_tolerance_check.py` — CfC/MoE loss tolerance check (<=1% diff).
+- `liquid_train_impl_benchmark.py` — Optional Liquid train implementation microbenchmark; results are local evidence only until tied to a target-machine run artifact.
 - `build_training_outputs_bundle.py` — Builds the canonical downloadable training outputs bundle zip + SHA256 + manifests.
 
 ## Review-Ready Tooling
 - `bootstrap_venv.sh` — Creates `.titan-venv` (Python 3.11 baseline). Use `--demo` to install `pygame`.
 - `verify_all.sh` — Offline-first verify-all: secret scan → pytest → preflight → operator gate (safe).
+- `tests/test_packed_projection_equivalence.py` — Optional speed-flag equivalence coverage for `TITAN_FFN_PACK`, `TITAN_MOE_PACK`, and `TITAN_MLA_KV_PACK`.
+- `tests/test_liquid_safeguard.py` — Liquid train implementation safeguard coverage for `TITAN_LIQUID_TRAIN_IMPL`.
 - `secret_scan.py` — Scans tracked files for common secret patterns (CI gate).
 - `check_tokenizer_sync.py` — Enforces canonical tokenizer spec sync (`interfaces/tokenizer_spec.json` -> `tokenizer/tokenizer.json`).
 - `check_translation_pointer_policy.py` — Enforces pointer policy for translated deep-audit counterparts.
@@ -114,6 +117,23 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 - `zip_denylist_audit.py` — Audits release zip against denylisted paths and secret patterns.
 - `build_scoped_external_intake_matrix.py` — Hashes and classifies scoped Desktop/Documents/Downloads/Applications project artifacts into a closure intake matrix.
 - `cleanup_scoped_closure_junk.py` — Removes scoped closure junk (`__pycache__`, `.pyc`, duplicate stale zips) from repo + scoped external directories.
+
+## Optional 45K Speed-Control Surface
+
+These controls are documented because they are wired into code, but they remain claim-safe operator knobs:
+- `TITAN_BATCH_SIZE`, `TITAN_LOG_INTERVAL`, `TITAN_VAL_CHECK_INTERVAL`, `TITAN_SAVE_INTERVAL`
+- `TITAN_DATALOADER_PIN`, `TITAN_DATALOADER_NONBLOCKING`
+- `TITAN_FFN_PACK`, `TITAN_MOE_PACK`, `TITAN_MLA_KV_PACK`
+- `TITAN_LIQUID_TRAIN_IMPL`
+- `ACCELERATE_CONFIG_FILE=repro/accelerate_8xgpu.yaml`
+
+Before enabling the optional packed/Liquid flags on a target run:
+
+```bash
+python3 -m pytest -q tests/test_packed_projection_equivalence.py tests/test_liquid_safeguard.py
+```
+
+`repro/accelerate_8xgpu.yaml` belongs under `repro/` because it records a reproducible run launch profile, not a stable model/config contract under `configs/`.
 
 ## SOP (Standard Operating Procedure) Outputs
 - `reports/one_command_full_sop_summary.md` — Consolidated single-document summary for the full one-command SOP run.

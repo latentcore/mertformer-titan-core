@@ -1,5 +1,11 @@
 # Technical Analysis and Strategic Valuation of the MertFormer Titan Onyx Storm Architecture
 
+> **External review note:** For compute sponsorship, start with
+> `reports/outreach_compute_sponsorship_messages.md` and
+> `reports/ocean_pre45k_h200_20260514_partial_evidence.md`. This report is
+> technical background and strategic framing; it is not a benchmark, production,
+> deployment, AGI, or model-superiority claim.
+
 **Date:** 2026-03-13
 **Version:** v1.0 (Build 30 V2)
 **Author:** MertFormer AI Team
@@ -14,7 +20,7 @@ The AI ecosystem is evolving from massive cloud-based models toward on-device, e
 3.  **Sparse Mixture of Experts (MoE)** (Capacity)
 4.  **Liquid Neural Networks (LNN)** (Dynamism)
 
-Conceptualized by a 17-year-old developer, this architecture is not only an engineering triumph but also a commercial asset optimized for next-generation hardware platforms like the Samsung Galaxy S25 and Snapdragon 8 Elite.
+Conceptualized by a 17-year-old developer, this architecture is a high-ambition engineering prototype and commercial hypothesis aimed at next-generation hardware platforms like the Samsung Galaxy S25 and Snapdragon 8 Elite.
 
 ---
 
@@ -141,7 +147,7 @@ MertFormer Titan is not general software; it is an **"NPU-Native"** engine. The 
 ### 5.1 Intellectual Property (IP) Value
 A 17-year-old engineer producing a working architecture that combines BitNet, MoE, and Liquid networks is a **"High Alpha"** situation in the market.
 *   **Microsoft Founders Hub:** Excellent candidate for grants and GPU support.
-*   **Thiel Fellowship:** $100,000 grant potential.
+*   **Thiel Fellowship:** $250,000 fellowship funding path; official eligibility and amount should be rechecked at application time.
 
 ### 5.2 Career Path
 This project allows the developer to skip the "Junior" level and position themselves directly as an **"AI Systems Architect."**
@@ -155,16 +161,16 @@ This project allows the developer to skip the "Junior" level and position themse
 For an investor, MertFormer Titan is not just software; it is the most valuable mining hardware of the **AI Gold Rush** era.
 
 *   **The Market's New Focus:** Cloud-based AI (OpenAI, Google) carries billions of dollars in annual server costs and data leakage risks. The market is shifting to "On-Device AI."
-*   **NPU Dominance:** Tech giants like Apple and Samsung have signaled this shift by adding NPUs (Neural Processing Units) to their hardware. MertFormer is one of the few architectures in the world that utilizes this hardware at full capacity.
-*   **Accessibility and Profit Margin:** MertFormer does not require $100,000 GPU clusters to run. This means gross profit margins could exceed 90% in a SaaS model.
+*   **NPU Direction:** Tech giants like Apple and Samsung have signaled this shift by adding NPUs (Neural Processing Units) to their hardware. MertFormer targets this hardware class, but device utilization claims require physical target-device measurements.
+*   **Accessibility and Economics:** The project targets lower-cost validation and local inference paths, but full training cost, deployment cost, and commercial economics remain unverified until checkpoint-bound runs and measured deployment evidence exist.
 
 ---
 
 ## 7. Forensic Verification & Security
 
-The model's reliability is protected by genius-level code:
+The model's reliability is supported by explicit verification and logging mechanisms:
 *   **SHA256 Chaining:** Every step in training is sealed with the hash of the previous step (`TITAN_POC_PROOF.jsonl`).
-*   **Proof-of-Life:** The non-manipulability of benchmark results is cryptographically guaranteed.
+*   **Proof-of-Life:** Benchmark results are designed to be tied to cryptographic hashes and proof-of-life artifacts after benchmark runs.
 *   **Dynamic Balance:** `z_loss` and `switch_loss` mechanisms prevent the model from collapsing into a single expert.
 
 ---
@@ -176,7 +182,7 @@ MertFormer Titan Onyx Storm is less a standard LLM and more a **"high-performanc
 **Vision:**
 > *"We planted the seed; now it's time to watch the forest."*
 
-The architecture is technically consistent, the hardware target is precise, and the market is hungry for this solution. Success now depends solely on the quality of operational execution.
+The architecture is technically consistent and the hardware target is precise, while market interest should be tested through evidence-backed outreach. Success now depends on the quality of operational execution and checkpoint-bound evidence.
 
 ---
 

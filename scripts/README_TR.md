@@ -85,11 +85,15 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 - `operator_mode_gate.py` — Tek girişli ops gate (güvenlik + sanity checks).
 - `overfit_gate.py` — 1MB overfit gate (safe/full mod).
 - `train_smoke.py` — Küçük offline training sanity loop (CPU/MPS).
+- `cfc_moe_tolerance_check.py` — CfC/MoE loss tolerans kontrolü (<=%1 fark).
+- `liquid_train_impl_benchmark.py` — Opsiyonel Liquid eğitim implementasyonu mikrobenchmark'ı; hedef makine koşu artefaktına bağlanmadıkça yalnızca yerel kanıt sayılır.
 - `build_training_outputs_bundle.py` — Kanonik indirilebilir training outputs bundle zip + SHA256 + manifest üreticisi.
 
 ## Review-Ready Araçlar
 - `bootstrap_venv.sh` — `.titan-venv` üretir (Python 3.11 baseline). Demo için `--demo` ile `pygame` kurar.
 - `verify_all.sh` — Offline-first verify-all: secret scan → pytest → preflight → operator gate (safe).
+- `tests/test_packed_projection_equivalence.py` — `TITAN_FFN_PACK`, `TITAN_MOE_PACK` ve `TITAN_MLA_KV_PACK` için opsiyonel hız flag'i equivalence kapsamı.
+- `tests/test_liquid_safeguard.py` — `TITAN_LIQUID_TRAIN_IMPL` için Liquid eğitim implementasyonu safeguard kapsamı.
 - `secret_scan.py` — Track'li dosyalarda olası secret pattern taraması (CI gate).
 - `check_tokenizer_sync.py` — Kanonik tokenizer spec senkronunu zorunlu kılar (`interfaces/tokenizer_spec.json` -> `tokenizer/tokenizer.json`).
 - `check_translation_pointer_policy.py` — Derin denetim TR counterpart dosyalarında pointer politikasını zorunlu kılar.
@@ -101,6 +105,23 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 - `zip_denylist_audit.py` — Release zip'i denylist yol/secret pattern kontrolünden geçirir.
 - `build_scoped_external_intake_matrix.py` — Scoped Desktop/Documents/Downloads/Applications proje artefaktlarını hash'leyip closure intake matrix'ine sınıflandırır.
 - `cleanup_scoped_closure_junk.py` — Repo + scoped external dizinlerde closure artığı çöpü (`__pycache__`, `.pyc`, stale duplicate zip) temizler.
+
+## Opsiyonel 45K Hız Kontrol Yüzeyi
+
+Bu kontroller kodda bağlı olduğu için dokümante edilmiştir; ancak claim-safe operatör ayarı olarak kalırlar:
+- `TITAN_BATCH_SIZE`, `TITAN_LOG_INTERVAL`, `TITAN_VAL_CHECK_INTERVAL`, `TITAN_SAVE_INTERVAL`
+- `TITAN_DATALOADER_PIN`, `TITAN_DATALOADER_NONBLOCKING`
+- `TITAN_FFN_PACK`, `TITAN_MOE_PACK`, `TITAN_MLA_KV_PACK`
+- `TITAN_LIQUID_TRAIN_IMPL`
+- `ACCELERATE_CONFIG_FILE=repro/accelerate_8xgpu.yaml`
+
+Opsiyonel packed/Liquid flag'lerini hedef koşuda açmadan önce:
+
+```bash
+python3 -m pytest -q tests/test_packed_projection_equivalence.py tests/test_liquid_safeguard.py
+```
+
+`repro/accelerate_8xgpu.yaml`, yeniden üretilebilir koşu launch profili olduğu için `repro/` altında durur; `configs/` altındaki stabil model/config sözleşmelerine ait değildir.
 
 ## SOP (Standard Operating Procedure) Çıktıları
 - `reports/one_command_full_sop_summary.md` — Full tek-komut SOP koşusunun tek belgede konsolide özeti.

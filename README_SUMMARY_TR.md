@@ -9,6 +9,8 @@ Dil: [English](README_SUMMARY.md) | [Türkçe](README_SUMMARY_TR.md)
 ## Bu Proje Nedir?
 MertFormer Titan; low-bit runtime altyapısı, yerel assistant foundation ve disiplinli evaluation yüzeyleri etrafında kurulan offline-first, denetlenebilir bir AI systems reposudur.
 
+Uzun vadeli hedef: compute bütçesi sınırlı geliştiriciler, küçük ekipler ve yerel kurumlar için denetlenebilir AI eğitim/çıkarım maliyet bariyerini düşürmek. Bu, checkpoint-bound koşular ve hedef donanım ölçümleri oluşana kadar benchmark claim değil, target statüsündedir.
+
 ## Mevcut Exact Durum
 - Aşama: `pilot-ready pre-training baseline`
 - Repo-side readiness: `TRAIN_ALLOWED`
@@ -49,6 +51,7 @@ bash scripts/final_one_shot.sh
 - backend routing ve fallback dürüstlüğü
 - governance-gated, offline-first assistant foundation
 - claim-safe verification ve repo truth sync
+- düşük maliyetli denetlenebilir eğitim/çıkarım için compute erişilebilirliği konumlandırması; target statüsü measured evidence'dan ayrı tutulur
 
 ## Hâlâ Açık Post-Run Evidence Sınıfı
 - trained final weights

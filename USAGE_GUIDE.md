@@ -63,6 +63,37 @@ Common control flags:
 - `--export-only`
 - `--readme-update-only`
 
+## 4.5) Optional Target-Machine Speed Controls
+
+These controls are wired for smoke/full-run tuning, but they are **not** benchmark claims. Keep them off for the conservative baseline lane unless the equivalence tests and a short target-machine smoke run pass.
+
+Equivalence check for the optional packed projection and Liquid train paths:
+
+```bash
+python3 -m pytest -q tests/test_packed_projection_equivalence.py tests/test_liquid_safeguard.py
+```
+
+Example Ocean 2x H200 smoke command after the canonical gate is reviewed:
+
+```bash
+HF_TOKEN=... \
+TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable \
+TITAN_BATCH_SIZE=1024 TITAN_BATCH_SIZE_FALLBACKS=1024,512,256 \
+TITAN_DATALOADER_PIN=1 TITAN_DATALOADER_NONBLOCKING=1 \
+TITAN_FFN_PACK=1 TITAN_MOE_PACK=1 TITAN_MLA_KV_PACK=1 \
+TITAN_LIQUID_FAST_PATH=0 TITAN_LIQUID_TRAIN_IMPL=packed_pair \
+MERTFORMER_LOWBIT_KERNEL=0 MERTFORMER_FUSED_BACKWARD=0 \
+bash zero_touch_start.sh --dry-run
+```
+
+Operational boundaries:
+- `repro/accelerate_8xgpu.yaml` lives under `repro/` because it is a reproducibility/run configuration, not a stable model config contract under `configs/`.
+- `TITAN_BATCH_SIZE_FALLBACKS=1024,512,256` is used only for clear OOM signals; non-OOM failures stop without changing batch.
+- `TITAN_FFN_PACK`, `TITAN_MOE_PACK`, and `TITAN_MLA_KV_PACK` are default-off and covered by equivalence tests.
+- The first Ocean long run keeps `TITAN_LIQUID_FAST_PATH=0` and avoids `packed_pair_compile`.
+- If `MERTFORMER_LOWBIT_KERNEL=1` is enabled, packed projection paths fall back to the baseline path to avoid bypassing the experimental low-bit inference kernel boundary.
+- Real throughput must come from target-machine logs; do not promote projected speedups to measured claims.
+
 ## 5) Offline Test Entry
 
 ```bash
@@ -108,6 +139,8 @@ Generate 30s proof video (headless):
   - The strict local `offline_clean` lane can remain green only when logits already exist locally or local Phase-0 is actionable.
 - `venv command path mismatch`:
   - Use module style commands: `.titan-venv/bin/python -m ...`
+- Optional speed flags cause mismatch or instability:
+  - Disable the relevant flag first (`TITAN_FFN_PACK=0`, `TITAN_MOE_PACK=0`, `TITAN_MLA_KV_PACK=0`, or `TITAN_LIQUID_TRAIN_IMPL=baseline`) and rerun the equivalence tests before any long run.
 
 ## 8.5) Auto Cache Sweep Wrapper
 
@@ -128,6 +161,7 @@ python3 scripts/run_and_clean_pycache.py --full-clean --include-tool-caches --in
 
 - [ ] `bash scripts/verify_all.sh` PASS
 - [ ] `bash zero_touch_start.sh --check-only` reviewed
+- [ ] Optional packed/Liquid equivalence tests PASS if any speed flags are enabled
 - [ ] `TITAN_OFFLINE=1 bash run.sh --test` PASS
 - [ ] README and README_TR docs links valid
 - [ ] No missing EN/TR markdown pair

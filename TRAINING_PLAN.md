@@ -90,6 +90,28 @@ Recommended execution (remote-bootstrap lane on target hardware):
 HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh
 ```
 
+Optional speed-smoke controls (target-machine only, not a claim):
+
+```bash
+python3 -m pytest -q tests/test_packed_projection_equivalence.py tests/test_liquid_safeguard.py
+
+HF_TOKEN=... \
+TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable \
+TITAN_BATCH_SIZE=1024 TITAN_BATCH_SIZE_FALLBACKS=1024,512,256 \
+TITAN_DATALOADER_PIN=1 TITAN_DATALOADER_NONBLOCKING=1 \
+TITAN_FFN_PACK=1 TITAN_MOE_PACK=1 TITAN_MLA_KV_PACK=1 \
+TITAN_LIQUID_FAST_PATH=0 TITAN_LIQUID_TRAIN_IMPL=packed_pair \
+MERTFORMER_LOWBIT_KERNEL=0 MERTFORMER_FUSED_BACKWARD=0 \
+bash zero_touch_start.sh --dry-run
+```
+
+Speed-control boundaries:
+- Packed projection flags are default-off and must pass equivalence tests before use.
+- `TITAN_BATCH_SIZE` is now wired into `config/config.py`; the Ocean 2x H200 profile starts at `1024` and falls back only on clear OOM through `1024 -> 512 -> 256`.
+- The first Ocean long run keeps `TITAN_LIQUID_FAST_PATH=0` and does not use `packed_pair_compile`.
+- `repro/accelerate_8xgpu.yaml` is a reproducibility/run config and only affects execution when selected through `ACCELERATE_CONFIG_FILE`.
+- The 45K claim boundary remains unchanged: no trained, benchmark-verified, mobile-ready, production-ready, speed, energy, or deployment claim is valid until the real run and measurement artifacts exist.
+
 Canonical offline-clean truth boundary:
 - use precomputed logits if they are already complete
 - otherwise allow Phase-0 to build them when `HF_TOKEN` is available

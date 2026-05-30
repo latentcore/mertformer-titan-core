@@ -20,6 +20,8 @@ This file is the canonical runtime contract for the current 45K closure path.
 - The `remote_bootstrap` lane is valid when the repo-side contract proves that the rented machine can inject `HF_TOKEN` at runtime and generate missing stage data or teacher artifacts there.
 - `--check-only` intentionally skips the heavyweight `verify_all.sh` sweep and behaves as a target-machine readiness gate.
 - This orchestrator uses a JSON lock file to prevent overlapping train-end launches.
+- If `TITAN_BATCH_SIZE_FALLBACKS` is set, batch retries are allowed only after clear OOM signals; non-OOM failures stop without changing batch.
+- Ocean 2x H200 first-launch profile uses `TITAN_BATCH_SIZE=1024` and `TITAN_BATCH_SIZE_FALLBACKS=1024,512,256`.
 
 ## Resume Rules
 - `--resume auto`: enable auto-discovery via `TITAN_AUTO_RESUME=1`.

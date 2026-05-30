@@ -1,6 +1,7 @@
 ## MertFormer Titan (Build 30 V2)
 
 Offline-first, auditable AI systems infrastructure for controlled local deployment and truthful ML systems evidence.
+Long-term target: lower the cost barrier for auditable AI training and inference so compute-constrained developers, small teams, and local institutions can own more of their AI stack without depending only on always-on cloud-scale providers.
 Current maturity: **pilot-ready pre-training baseline**.
 Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_REMOTE_BOOTSTRAP`.
 
@@ -106,7 +107,7 @@ Outputs:
 ```
 
 # 🦅 MertFormer Titan: Autonomous Swarm Architecture
-> **Target: near-frontier coding capability at mobile compute cost (pending training/benchmarks).**
+> **Target: strong coding-model capability at constrained compute cost (pending training/benchmarks).**
 > **Development Stage:** Pilot-ready pre-training baseline (`Build 30 V2`, training/benchmark claims pending).
 
 ## 🇹🇷 Executive Summary (Non-Technical)
@@ -114,18 +115,20 @@ Outputs:
 
 **What is this project?**
 MertFormer is designed as an offline-first AI system that can run on controlled local hardware and continue operating without always-on cloud dependency.
+Its long-term target is to make efficient, auditable AI training and inference more accessible for compute-constrained developers, small teams, and local institutions.
 
 **Why is it strategically relevant?**
 1. **Data Control:** Primary design goal is local/offline operation to reduce external data exposure.
 2. **Operational Continuity:** The architecture is designed to keep functioning under constrained connectivity.
 3. **Language/Domain Adaptation:** Turkish-first documentation and workflow alignment are treated as core requirements.
+4. **Compute Accessibility (Target):** The architecture targets lower-cost training/inference paths for small teams and local institutions; this remains a target until checkpoint-bound runs and target-hardware measurements validate it.
 
 **In short:** The system is positioned as a disciplined, mission-focused AI infrastructure rather than a generic internet chatbot.
 
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `274 passed, 4 skipped` |
+| `python3 -m pytest -q` | `281 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -138,7 +141,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`274 passed, 4 skipped`)
+   - `pytest` passed (`281 passed, 4 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -251,9 +254,9 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 ### 💼 Executive Brief
 **This section translates the structural-efficiency positioning into operational outcomes for technical and executive decision-makers.**
 
-*   **💰 Targeted ~90% Operational Savings (Estimate)**: Cloud server expenses can be minimized in target deployments. MertFormer aims to reduce processing costs by optimizing energy at the NPU level.
-*   **🛡️ Data Sovereignty**: Data is designed to be processed on-device. This is a structural advantage for markets with high security standards, such as defense, law, and finance.
-*   **🌍 Scalable Access (Target)**: An autonomous system aiming for GPT-3.5-class capability after training, even in low-bandwidth regions without always-on internet.
+*   **💰 Lower-Cost Operation (Target)**: Cloud server expenses are targeted for reduction in controlled deployments; exact savings require measured target-run and deployment evidence.
+*   **🛡️ Data Sovereignty (Design Goal)**: The system is designed for local/offline processing paths. Sector-specific security or compliance claims require separate review and evidence.
+*   **🌍 Scalable Access (Target)**: An autonomous system direction for strong low-cost coding-model capability after training, even in low-bandwidth regions without always-on internet.
 
 *Note: All performance and training-duration figures are pre-training estimates and will be empirically validated after full runs.*
 
@@ -496,6 +499,7 @@ Security, provenance, reproducibility, and ops notes.
 - [repro/python.md](repro/python.md) — Python 3.11 baseline setup (EN).
 - [repro/python_TR.md](repro/python_TR.md) — Python 3.11 baseline setup (TR).
 - [repro/accelerate_default.yaml](repro/accelerate_default.yaml) — Example accelerate config (local).
+- [repro/accelerate_8xgpu.yaml](repro/accelerate_8xgpu.yaml) — Optional 8-GPU Accelerate config for target-machine smoke/full-run attempts.
 - [repro/pip_freeze.txt](repro/pip_freeze.txt) — Environment snapshot (pip freeze).
 - [logs/README.md](logs/README.md) — Logs index + unified logbook notes.
 - `logs/ALL_LOGS.jsonl` — Unified logbook artifact (gitignored; generated via `.titan-venv/bin/python scripts/logbook_build.py --append`).
@@ -549,7 +553,7 @@ Security, provenance, reproducibility, and ops notes.
 <a id="overview"></a>
 ## 🎯 Overview
 
-MertFormer Titan is a cutting-edge **2.64B parameter** language model designed for **on-device inference** on mobile platforms. Combining **BitNet 1.58-bit quantization**, **Liquid Neural Networks**, **Sparse Mixture of Experts (MoE)**, and **MLA-labeled GQA attention (current implementation)**, it **targets GPT-3.5 level performance (pre-training target)** while running entirely on a smartphone.
+MertFormer Titan is a **2.64B design-target parameter** language model direction for **on-device inference** on mobile platforms. Combining **BitNet 1.58-bit quantization**, **Liquid Neural Networks**, **Sparse Mixture of Experts (MoE)**, and **MLA-labeled GQA attention (current implementation)**, it targets strong low-cost coding-model efficiency after training while keeping capability claims blocked until checkpoint-bound benchmarks exist.
 
 Architecture truth note: `layers/mla.py` class naming is `MLA`, while the current attention core is GQA-based (`num_kv_heads` projection + KV head replication). Full latent-MLA bottleneck remains a roadmap item.
 
@@ -601,7 +605,7 @@ See the full map: [`docs/CHAIN_MAP.md`](docs/CHAIN_MAP.md)
 ### 2. **LiquidRouter (Temporal Conv Router)** 🌍
 - **Implementation truth**: Causal depthwise `Conv1d` + rolling state buffer routes MoE tokens.
 - **CfC separation**: Closed-form continuous-time (CfC) cells run in `LiquidMixer/LiquidCell`, not inside `LiquidRouter`.
-- **Impact**: **estimated 15-20% better routing quality** vs standard routers (stateless).
+- **Impact**: targets better routing quality than stateless routers; final gain requires trained-checkpoint evaluation.
 - **Temporal Routing**: Decisions are based on **historical context**, preventing expert collapse.
 - **Dynamic**: Time-constant adaptation with jitter boost for stability.
 - **Academic value**: A new paradigm in conditional computation.
@@ -611,7 +615,7 @@ See the full map: [`docs/CHAIN_MAP.md`](docs/CHAIN_MAP.md)
 - LLaMA-3 compatible RoPE (interleaved & decoupled)
 - Optional hierarchical KV cache path (short/long split) for decode efficiency.
 - QK normalization for stability
-- Flash Attention 2 integration (+30% speedup)
+- Flash Attention 2 integration path; throughput impact requires target-run logs.
 - Long-context ready (theta=100K)
 
 ### 4. **Liquid Neural Networks (CfC)** 💧
@@ -626,7 +630,7 @@ See the full map: [`docs/CHAIN_MAP.md`](docs/CHAIN_MAP.md)
 - Routing policy: token-choice top-k.
 - **Momentum-Based Routing:** Unlike standard routers, `LiquidRouter` selects experts by looking at the data's arrival speed and temporal momentum (`Fluid Path`), not just the immediate word.
 - **Causal Conv1d Integration:** It acts more like "strategic intelligence" than a "traffic controller" by considering the past 4-token window (`history_window`) during expert selection.
-- **Hardware Compatibility:** `LiquidRouter`'s sharp selections prevent unnecessary expert triggers, leading to an estimated up to 40% energy savings on the Samsung S25 NPU unit.
+- **Hardware Compatibility:** `LiquidRouter` is designed to reduce unnecessary expert triggers; numeric target-device energy savings require trained checkpoint export and physical-device measurement before any public claim.
 - Load balancing + Z-loss + Switch loss
 - BitSwiGLU experts (quantized)
 - Emergency jitter boost for collapse prevention
@@ -641,13 +645,14 @@ See the full map: [`docs/CHAIN_MAP.md`](docs/CHAIN_MAP.md)
 - **Dynamic Alpha**: Progressive distillation weight adjustment
 
 ### 7. **Performance Optimizations (v1.0 (Build 30 V2))** ⚡
-- ✅ **Flash Attention 2**: Projected +30% speedup (A100/H100)
-- ✅ **Fused RMSNorm**: Projected +10% speedup (torch.compile)
-- ✅ **torch.compile (max-autotune)**: Projected +15% speedup
-- ✅ **CUDA TF32 + cuDNN**: Projected +10% speedup
-- ✅ **Enhanced DataLoader**: Projected +5% speedup (16 workers, prefetch=4)
-- ✅ **NCCL Tuning**: Projected +5-10% speedup (multi-GPU, auto-detection)
-- **Projected total: 70-80% faster training (estimate).**
+- ✅ **Flash Attention 2**: target speed path for supported A100/H100-class CUDA runtimes; measure per target run.
+- ✅ **Fused RMSNorm / torch.compile / CUDA TF32 + cuDNN**: opt-in or runtime-dependent optimization surfaces; all throughput claims require run logs.
+- ✅ **DataLoader transfer controls**: `TITAN_DATALOADER_PIN` and `TITAN_DATALOADER_NONBLOCKING` are wired through config/train code for pinned-memory and non-blocking GPU transfer attempts.
+- ✅ **Batch/log/eval/save controls**: `TITAN_BATCH_SIZE`, `TITAN_BATCH_SIZE_FALLBACKS`, `TITAN_LOG_INTERVAL`, `TITAN_VAL_CHECK_INTERVAL`, and `TITAN_SAVE_INTERVAL` are environment-overridable for target-machine smoke/full-run tuning; fallback is clear-OOM-only.
+- ✅ **Packed projection training paths**: `TITAN_FFN_PACK`, `TITAN_MOE_PACK`, and `TITAN_MLA_KV_PACK` are optional, default-off, equivalence-tested projection packing paths. They fall back to the baseline path when `MERTFORMER_LOWBIT_KERNEL=1`.
+- ✅ **Liquid train implementation selector**: `TITAN_LIQUID_FAST_PATH` and `TITAN_LIQUID_TRAIN_IMPL=baseline|precompute_input|packed_pair|packed_pair_compile` keep Liquid training variants switchable; the first Ocean 2x H200 long run uses `TITAN_LIQUID_FAST_PATH=0` and avoids `packed_pair_compile`.
+- ✅ **Accelerate profile selection**: `ACCELERATE_CONFIG_FILE` can select a reproducibility profile such as `repro/accelerate_8xgpu.yaml` when the target machine matches it.
+- **Claim boundary:** these controls are infrastructure and target knobs, not benchmark-verified speed claims. End-to-end speed must be reported from target-machine logs.
 
 ### 8. **Safety & Reliability** 🛡️
 - ✅ **OOM Recovery**: Auto batch size reduction
@@ -924,7 +929,7 @@ MertFormer Titan (2.64B Parameters)
 **Aggregate Throughput Target (Projected): up to 11,000 tok/s.**
 This value is a roadmap target for aggregate system capacity under a defined deployment profile; it is **not** a single-device measured benchmark result.
 Operational meaning: higher concurrent session capacity, lower unit inference cost under load, and shorter queue times in multi-user scenarios.
-*Note: Performance metrics are pre-training estimates based on architecture simulation. BitNet 1.58 inference now includes an optional low-bit kernel path; the Tensor Core path is **experimental** and opt-in (`MERTFORMER_TENSORCORE=1`). Energy/TOPS gains still require real device measurement. Kernel criticism applies to inference only; BitNet training exists as a separate layer, and low-bit inference is explicitly a roadmap item. **Training still runs on standard PyTorch matmul paths; the low-bit kernel does not accelerate training.** Furthermore, the **Residual Scaling Effect** maintains signal stability throughout 18 layers using the 1/√2 (1/sqrt(2)) factor, aiming to keep gradient flow stable even in the deepest layer.*
+*Note: Performance metrics are pre-training estimates based on architecture simulation. BitNet 1.58 inference now includes an optional low-bit kernel path; the Tensor Core path is **experimental** and opt-in (`MERTFORMER_TENSORCORE=1`). Energy/TOPS gains still require real device measurement. Kernel criticism applies to inference only; BitNet training exists as a separate layer, and low-bit inference is explicitly a roadmap item. Training uses the standard PyTorch/BitLinear training path by default. Optional packed-projection training paths reduce projection launch count while reusing the existing quantization math, but they are opt-in and require equivalence plus target-run measurement before any speed claim. The low-bit inference kernel itself is not treated as a training accelerator. Furthermore, the **Residual Scaling Effect** maintains signal stability throughout 18 layers using the 1/√2 (1/sqrt(2)) factor, aiming to keep gradient flow stable even in the deepest layer.*
 
 ### Memory Footprint
 | Component | FP32 | BF16 | BitNet 1.58 |
@@ -936,12 +941,12 @@ Operational meaning: higher concurrent session capacity, lower unit inference co
 | **Total (8 GPUs)** | 736 GB | 368 GB | **267.6 GB** |
 *Note: Values in this table are based on architectural comparisons and projections from similar models.*
 
-### Inference (Samsung S25 - Estimated)
-- ⏱️ **Latency**: ~50ms/token (NPU-optimized)
-- 💾 **Memory**: <2GB RAM
-- 🔋 **Power**: <3W (on-device)
-- 🏎️ **Throughput**: ~45+ tokens/sec (Targeting 100+ with NPU Kernel Optimization)
-*Note: Samsung S25 and Snapdragon 8 Elite NPU values are theoretical inference results based on manufacturer roadmaps and similar NPU architectures. Much higher speeds are possible due to the 1.58-bit architecture overcoming bandwidth bottlenecks.*
+### Inference (Samsung S25 - Target Profile)
+- ⏱️ **Latency**: target profile only; no measured Samsung S25 latency claim yet.
+- 💾 **Memory**: target profile only; no measured Samsung S25 memory claim yet.
+- 🔋 **Power**: target profile only; no measured Samsung S25 power claim yet.
+- 🏎️ **Throughput**: target profile only; no measured Samsung S25 throughput claim yet.
+*Note: Samsung S25 and Snapdragon 8 Elite NPU values remain planning targets until a trained checkpoint is exported, deployed, and measured on physical target hardware.*
 
 ### 🔄 Universal Compatibility & System Requirements
 Thanks to the BitNet architecture, MertFormer runs not just on flagships, but on **almost any device**:
@@ -1244,6 +1249,8 @@ The following block demonstrates how a MertFormer Agent analyzes and resolves a 
 
 Key hyperparameters:
 ```python
+import os
+
 #- Model Architecture
 hidden_size = 2048
 num_layers = 18
@@ -1254,7 +1261,7 @@ intermediate_size = 5632
 learning_rate = 1.5e-3
 max_steps = 45000
 warmup_steps = 3000
-batch_size = 128  # Global (auto-configured per GPU)
+batch_size = int(os.environ.get("TITAN_BATCH_SIZE", "128"))  # Optional runtime override
 grad_clip = 2.0
 
 #- Distillation
@@ -1266,6 +1273,11 @@ teacher_temp = 1.0
 use_torch_compile = False
 torch_compile_mode = "max-autotune"
 use_gradient_checkpointing = True
+log_interval = int(os.environ.get("TITAN_LOG_INTERVAL", "1"))
+val_check_interval = int(os.environ.get("TITAN_VAL_CHECK_INTERVAL", "1000"))
+save_interval = int(os.environ.get("TITAN_SAVE_INTERVAL", "1000"))
+dataloader_pin_memory = os.environ.get("TITAN_DATALOADER_PIN", "1") == "1"
+dataloader_non_blocking = os.environ.get("TITAN_DATALOADER_NONBLOCKING", "1") == "1"
 
 #- Safety
 early_stop_patience = 5
@@ -1284,6 +1296,19 @@ liquid_spike_threshold = 5.0
 | `TITAN_BOOTSTRAP` | `1` | launcher | Auto-bootstraps `.titan-venv` if local venv is missing. |
 | `MERTFORMER_TENSORCORE` | unset/`0` | kernel path | Experimental Tensor Core low-bit path (opt-in). |
 | `MERTFORMER_LOWBIT_KERNEL` | unset/`0` | kernel path | Enables experimental low-bit inference kernel path (opt-in). |
+| `TITAN_BATCH_SIZE` | `128` | training config | Optional global batch override for target-machine smoke/full-run tuning. |
+| `TITAN_BATCH_SIZE_FALLBACKS` | unset | launcher | Optional comma-separated fallback list used only after clear OOM signals; Ocean 2x H200 profile uses `1024,512,256`. |
+| `TITAN_LOG_INTERVAL` | `1` | training loop | Optional logging interval override. |
+| `TITAN_VAL_CHECK_INTERVAL` | `1000` | training loop | Optional validation interval override. |
+| `TITAN_SAVE_INTERVAL` | `1000` | training loop | Optional checkpoint interval override. |
+| `TITAN_DATALOADER_PIN` | `1` | training data transfer | Enables pinned-memory DataLoader transfer when CUDA is available. |
+| `TITAN_DATALOADER_NONBLOCKING` | `1` | training data transfer | Enables non-blocking tensor transfer where the training path moves tensors explicitly. |
+| `TITAN_FFN_PACK` | `0` | training projection path | Optional FFN gate/up packed projection path; covered by equivalence tests. |
+| `TITAN_MOE_PACK` | `0` | training projection path | Optional MoE BitSwiGLU gate/up packed projection path; covered by equivalence tests. |
+| `TITAN_MLA_KV_PACK` | `0` | training projection path | Optional MLA K/V packed projection path; covered by equivalence tests. |
+| `TITAN_LIQUID_FAST_PATH` | `1` | Liquid runtime path | Fast-path selector; first Ocean 2x H200 long run pins this to `0`. |
+| `TITAN_LIQUID_TRAIN_IMPL` | `baseline` | Liquid training path | Selects Liquid train implementation variant (`baseline`, `precompute_input`, `packed_pair`, `packed_pair_compile`). |
+| `ACCELERATE_CONFIG_FILE` | unset | launcher / Accelerate | Optional path to an Accelerate config, e.g. `repro/accelerate_8xgpu.yaml`. |
 | `HF_TOKEN` | unset | online ops | Required for authenticated online dataset/model operations. |
 | `WANDB_API_KEY` | unset | tracking | Required only when WandB is enabled in online mode. |
 
@@ -1424,16 +1449,16 @@ This section lists realistic integration paths with explicit current status.
 | Phi-3-mini | 3.8B | FP16 | ❌ | ❌ | ❌ |
 | Gemma-2B | 2.0B | BF16 | ❌ | ❌ | ❌ |
 
-### Performance Metrics (Estimated)
+### Performance Metrics (Post-Run Targets, Not Claims)
 
-| Task | MertFormer Titan | Llama-3.2-3B | Phi-3-mini |
-| :--- | :---: | :---: | :---: |
-| **MMLU** | ~55% | 63% | 69% |
-| **HellaSwag** | ~70% | 72% | 75% |
-| **TruthfulQA** | ~45% | 50% | 55% |
-| **Turkish NLU** | **~65%** | 45% | 30% |
+| Task | MertFormer Titan Status | Comparison Status |
+| :--- | :--- | :--- |
+| **MMLU** | Not eligible for claim until trained checkpoint benchmark | Compare only after measured run |
+| **HellaSwag** | Not eligible for claim until trained checkpoint benchmark | Compare only after measured run |
+| **TruthfulQA** | Not eligible for claim until trained checkpoint benchmark | Compare only after measured run |
+| **Turkish NLU** | Not eligible for claim until trained checkpoint benchmark | Compare only after measured run |
 
-*Note: Benchmarks will be updated after training completion*
+*Note: Benchmarks will be updated only after training completion and checkpoint-bound evaluation artifacts.*
 
 ---
 
@@ -1505,7 +1530,7 @@ Planned Turkish data sources:
 **A**: **Multi-GPU communication optimization**:
 - Faster inter-GPU data transfer
 - P2P paths activate when NVLink is available
-- ~5-10% speedup potential on 8x GPU configurations
+- Potential throughput improvement on matching 8x GPU configurations; exact impact requires target-run logs.
 
 ### Q: How long does training take?
 
@@ -1890,6 +1915,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── outreach/  # directory
 │   │   ├── github_release_post.md  # documentation/report file
 │   │   ├── huggingface_launch.md  # documentation/report file
+│   │   ├── mertformer_titan_1_page_evidence_packet_2026-05-22.md  # documentation/report file
+│   │   ├── mertformer_titan_executive_brief_2026-05-22.md  # documentation/report file
 │   │   └── reddit_post.md  # documentation/report file
 │   ├── pilots/  # directory
 │   │   ├── README.md  # primary documentation (EN)
@@ -2551,7 +2578,7 @@ For paid pilots in pre-training stage, the minimum acceptance set is:
 This project intentionally concludes at the proof-of-system level. The goal is to demonstrate a complete and working autonomous reasoning stack under real-world constraints, not to claim a production-ready or certified platform. Architecture boundaries, safety behavior, real-time constraints, and failure modes are treated as first-class engineering concerns. Large-scale deployment, certification, and long-horizon field validation are explicitly out of scope for this release by design.
 
 ### ⚠️ Technical Risk Factors
-*   **Performance Projection**: Mobile NPU metrics (<50ms/token) are currently architecture-modeled and will be empirically validated post-training.
+*   **Performance Projection**: Mobile NPU metrics are currently target profiles only and will be empirically validated post-training on physical target hardware.
 *   **Deployment Kernel**: 1.58-bit ternary execution on mobile may require custom kernel optimization beyond standard ONNX runtimes for peak speed.
 *   **MoE Stability**: `LiquidRouter` is a novel research contribution; its exact edge over classical routers will be benchmarked during full-scale training.
 

@@ -1489,7 +1489,8 @@ def train():
         collate_fn=collate_fn,
         num_workers=num_workers,
         prefetch_factor=prefetch_factor if num_workers > 0 else None,
-        pin_memory=torch.cuda.is_available()
+        pin_memory=bool(getattr(cfg, "dataloader_pin_memory", torch.cuda.is_available())) and torch.cuda.is_available(),
+        persistent_workers=num_workers > 0,
     )
 
     # [PRO] Validation Setup
@@ -2179,8 +2180,9 @@ def train():
                                     val_iter = iter(val_dl)
                                     val_input_ids, val_labels = next(val_iter)
 
-                                val_input_ids = val_input_ids.to(student_device)
-                                val_labels = val_labels.to(student_device)
+                                non_blocking = bool(getattr(cfg, "dataloader_non_blocking", True))
+                                val_input_ids = val_input_ids.to(student_device, non_blocking=non_blocking)
+                                val_labels = val_labels.to(student_device, non_blocking=non_blocking)
 
                                 with torch.no_grad():
                                     val_logits, _, _ = student(val_input_ids, use_cache=False)

@@ -83,6 +83,7 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `datasets/SOURCES_TR.md` | `fallback` |
 | `datasets/inventory.md` | `TBD` |
 | `datasets/inventory_TR.md` | `TBD` |
+| `layers/ffn.py` | `fallback` |
 | `layers/mertformer_block.py` | `fallback` |
 | `layers/mla.py` | `fallback` |
 | `layers/moe.py` | `fallback` |

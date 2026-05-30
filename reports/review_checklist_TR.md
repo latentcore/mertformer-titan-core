@@ -62,10 +62,23 @@ Doğrula:
 - Python baseline pin: `pyproject.toml` (`>=3.11,<3.12`)
 - Bootstrap script mevcut ve dokümante
 - Accelerate config örneği mevcut: `repro/accelerate_default.yaml`
+- Opsiyonel 8 GPU hedef makine Accelerate profili mevcut: `repro/accelerate_8xgpu.yaml`
+- Accelerate koşu profilleri `configs/` altında değil, `repro/` altında durur; çünkü stabil model config sözleşmesi değil, yeniden üretilebilir launch ortamı tarif ederler.
 
 Kanıt:
 - `repro/python_TR.md`
 - `scripts/bootstrap_venv.sh`
+
+## 5.5) Opsiyonel Hız Flag'i İncelemesi
+
+Hedef koşuda opsiyonel hız kontrolleri açılıyorsa doğrula:
+- Ocean 2x H200, `TITAN_BATCH_SIZE=1024` ile başlar ve `TITAN_BATCH_SIZE_FALLBACKS=1024,512,256` yalnızca net OOM sinyalinden sonra kullanılır.
+- OOM olmayan eğitim hataları batch değiştirmeden durur.
+- `TITAN_FFN_PACK`, `TITAN_MOE_PACK` ve `TITAN_MLA_KV_PACK` varsayılan kapalıdır ve yalnızca incelenen koşu için açıkça etkinleştirilmiştir.
+- İlk Ocean uzun koşusunda `TITAN_LIQUID_FAST_PATH=0` kalır; `TITAN_LIQUID_TRAIN_IMPL`, ya `baseline` ya da test edilmiş bir varyanttır.
+- `MERTFORMER_LOWBIT_KERNEL=0` ve `MERTFORMER_FUSED_BACKWARD=0`, kanonik uzun hat için kapalı kalır.
+- Uzun koşudan önce `python3 -m pytest -q tests/test_packed_projection_equivalence.py tests/test_liquid_safeguard.py` geçer.
+- Hedef makine logları olmadan hız, enerji, mobile, deployment veya production iddiası kabul edilmez.
 
 ## 6) CI Kapsamı
 
@@ -103,4 +116,3 @@ Beklenen:
 - `scripts/verify_all.sh` console çıktısı (token yok)
 - `logs/` altında üretilen loglar (opsiyonel, sanitize, commit edilmez)
 - Commit SHA ve ortam notları
-

@@ -406,7 +406,7 @@ class MertFormerConfig:
     # -------------------------------------------------------------------------
     # 8. HİPERPARAMETRELER
     # -------------------------------------------------------------------------
-    batch_size: int = 128
+    batch_size: int = int(os.environ.get("TITAN_BATCH_SIZE", "128"))
     
     # [V27.0 AUTO-CONFIG] Otomatik GPU-based batch size optimization
     # micro_batch_size ve grad_accum_steps artık otomatik hesaplanıyor
@@ -437,6 +437,7 @@ class MertFormerConfig:
 
     # Runtime fast paths (V2)
     liquid_fast_path: bool = os.environ.get("TITAN_LIQUID_FAST_PATH", "1") == "1"
+    liquid_train_impl: str = os.environ.get("TITAN_LIQUID_TRAIN_IMPL", "baseline")
     moe_dispatch_mode: str = os.environ.get("TITAN_MOE_DISPATCH", "parallel")  # {"parallel", "sequential"}
     use_flash_attn_inference: bool = os.environ.get("TITAN_FLASH_ATTN_INFER", "0") == "1"
     # [TITAN PREFLIGHT] Support env var override for testing
@@ -455,7 +456,7 @@ class MertFormerConfig:
 
     # UPGRADE: Early Stopping & Validation
     early_stop_patience: int = 5  # Stop if no improvement for N validation checks
-    val_check_interval: int = 1000  # Run validation every N steps
+    val_check_interval: int = int(os.environ.get("TITAN_VAL_CHECK_INTERVAL", "1000"))  # Run validation every N steps
     saturation_eval_interval_steps: int = 2000
     saturation_patience_windows: int = 3
     val_improve_min_rel: float = 0.002
@@ -471,8 +472,8 @@ class MertFormerConfig:
     save_dir: str = "./checkpoints/mertformer_titan_prod"
 
     # Loglama Sıklığı
-    log_interval: int = 1
-    save_interval: int = 1000
+    log_interval: int = int(os.environ.get("TITAN_LOG_INTERVAL", "1"))
+    save_interval: int = int(os.environ.get("TITAN_SAVE_INTERVAL", "1000"))
 
     export_format: str = "onnx_dynamic"
 
@@ -489,6 +490,8 @@ class MertFormerConfig:
     # FIX: DataLoader Optimization
     dataloader_num_workers: int = 8 # [TITAN SPEED BOOST] Optimized for 8x A100
     dataloader_prefetch_factor: int = 2
+    dataloader_pin_memory: bool = os.environ.get("TITAN_DATALOADER_PIN", "1") == "1"
+    dataloader_non_blocking: bool = os.environ.get("TITAN_DATALOADER_NONBLOCKING", "1") == "1"
 
     # TITAN ONYX STORM: Advanced Training Features
     freeze_core_layers: bool = False  # If True, freeze everything except MoE Router and Liquid Layers

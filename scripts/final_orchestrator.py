@@ -127,6 +127,9 @@ def detect_num_processes() -> int:
 def build_train_command(py: str, port: int) -> list[str]:
     num_processes = detect_num_processes()
     launcher = [py, "-m", "accelerate.commands.launch"]
+    accelerate_config_file = os.environ.get("ACCELERATE_CONFIG_FILE", "").strip()
+    if accelerate_config_file:
+        launcher.extend(["--config_file", accelerate_config_file])
     return launcher + [
         "--num_processes",
         str(num_processes),
@@ -138,6 +141,122 @@ def build_train_command(py: str, port: int) -> list[str]:
         str(port),
         "train/train.py",
     ]
+
+
+def parse_positive_int_csv(raw: str) -> list[int]:
+    values: list[int] = []
+    for part in raw.split(","):
+        item = part.strip()
+        if not item:
+            continue
+        try:
+            value = int(item)
+        except ValueError:
+            continue
+        if value > 0 and value not in values:
+            values.append(value)
+    return values
+
+
+def batch_fallback_candidates(env: dict[str, str]) -> list[int]:
+    fallback_raw = env.get("TITAN_BATCH_SIZE_FALLBACKS", "").strip()
+    if not fallback_raw:
+        return []
+    candidates: list[int] = []
+    current_raw = env.get("TITAN_BATCH_SIZE", "").strip()
+    if current_raw:
+        try:
+            current = int(current_raw)
+            if current > 0:
+                candidates.append(current)
+        except ValueError:
+            pass
+    for value in parse_positive_int_csv(fallback_raw):
+        if value not in candidates:
+            candidates.append(value)
+    return candidates
+
+
+def result_has_clear_oom(result: dict) -> bool:
+    text = " ".join(
+        str(result.get(key, ""))
+        for key in ("stdout_tail", "stderr_tail", "note", "forced_failure_reason")
+    ).lower()
+    markers = (
+        "cuda out of memory",
+        "cuda error: out of memory",
+        "out of memory",
+        "cuda oom",
+        "oom_backoff_exhausted",
+        "cudnn_status_alloc_failed",
+    )
+    return any(marker in text for marker in markers)
+
+
+def attach_batch_fallback_metadata(
+    result: dict,
+    *,
+    attempts: list[dict],
+    batch_size: int,
+    policy: str,
+) -> dict:
+    enriched = dict(result)
+    enriched["batch_size_attempted"] = batch_size
+    enriched["batch_fallback_attempts"] = attempts
+    enriched["batch_fallback_used"] = len(attempts) > 1
+    enriched["fallback_policy"] = policy
+    return enriched
+
+
+def run_training_with_batch_fallback(root: Path, cmd: list[str], env: dict[str, str]) -> dict:
+    candidates = batch_fallback_candidates(env)
+    if not candidates:
+        return run_command(root, cmd, env=env)
+
+    attempts: list[dict] = []
+    last_result: dict | None = None
+    policy = "clear_oom_only"
+    for batch_size in candidates:
+        attempt_env = dict(env)
+        attempt_env["TITAN_BATCH_SIZE"] = str(batch_size)
+        result = run_command(root, cmd, env=attempt_env)
+        clear_oom = result_has_clear_oom(result)
+        attempts.append(
+            {
+                "batch_size": batch_size,
+                "return_code": result["return_code"],
+                "ok": bool(result["ok"]),
+                "clear_oom": bool(clear_oom),
+            }
+        )
+        last_result = result
+        if result["ok"] and not clear_oom:
+            return attach_batch_fallback_metadata(
+                result,
+                attempts=attempts,
+                batch_size=batch_size,
+                policy=policy,
+            )
+        if not clear_oom:
+            return attach_batch_fallback_metadata(
+                result,
+                attempts=attempts,
+                batch_size=batch_size,
+                policy=policy,
+            )
+
+    final_result = attach_batch_fallback_metadata(
+        last_result or {"cmd": sanitize_text(" ".join(cmd), root), "return_code": EXIT_GATE_FAILED, "ok": False, "stdout_tail": "", "stderr_tail": ""},
+        attempts=attempts,
+        batch_size=attempts[-1]["batch_size"] if attempts else candidates[-1],
+        policy=policy,
+    )
+    if result_has_clear_oom(final_result) and final_result.get("ok"):
+        final_result["child_return_code"] = final_result["return_code"]
+        final_result["return_code"] = EXIT_GATE_FAILED
+        final_result["ok"] = False
+        final_result["forced_failure_reason"] = "OOM_FALLBACK_EXHAUSTED"
+    return final_result
 
 
 def acquire_lock(lock_path: Path, payload: dict) -> tuple[bool, dict | None]:
@@ -233,6 +352,8 @@ def build_run_contract() -> str:
         - The `remote_bootstrap` lane is valid when the repo-side contract proves that the rented machine can inject `HF_TOKEN` at runtime and generate missing stage data or teacher artifacts there.
         - `--check-only` intentionally skips the heavyweight `verify_all.sh` sweep and behaves as a target-machine readiness gate.
         - This orchestrator uses a JSON lock file to prevent overlapping train-end launches.
+        - If `TITAN_BATCH_SIZE_FALLBACKS` is set, batch retries are allowed only after clear OOM signals; non-OOM failures stop without changing batch.
+        - Ocean 2x H200 first-launch profile uses `TITAN_BATCH_SIZE=1024` and `TITAN_BATCH_SIZE_FALLBACKS=1024,512,256`.
 
         ## Resume Rules
         - `--resume auto`: enable auto-discovery via `TITAN_AUTO_RESUME=1`.
@@ -626,13 +747,18 @@ def main() -> int:
             return exit_code
 
         env = build_training_env(args.resume, start_gate_payload)
-        train_result = run_command(root, train_cmd, env=env)
+        train_result = run_training_with_batch_fallback(root, train_cmd, env=env)
         payload["steps"].append({
             "name": "training",
             "status": "completed" if train_result["ok"] else "failed",
             "return_code": train_result["return_code"],
             "note": train_result["stderr_tail"] or train_result["stdout_tail"] or f"training flow executed ({resolve_training_lane(start_gate_payload)})",
             "cmd": train_result["cmd"],
+            "batch_size_attempted": train_result.get("batch_size_attempted"),
+            "batch_fallback_attempts": train_result.get("batch_fallback_attempts"),
+            "batch_fallback_used": train_result.get("batch_fallback_used"),
+            "fallback_policy": train_result.get("fallback_policy"),
+            "forced_failure_reason": train_result.get("forced_failure_reason"),
         })
         if not train_result["ok"]:
             payload["status"] = "failed"

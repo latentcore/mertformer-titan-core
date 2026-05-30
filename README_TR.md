@@ -1,6 +1,7 @@
 ## MertFormer Titan (Build 30 V2)
 
 Kontrollü yerel dağıtım ve dürüst ML systems kanıtı için offline-first, denetlenebilir yapay zeka altyapısı.
+Uzun vadeli hedef: compute bütçesi sınırlı geliştiricilerin, küçük ekiplerin ve yerel kurumların kendi denetlenebilir AI eğitim/çıkarım hattını daha düşük maliyetle sahiplenebilmesi; bu hedef checkpoint-bound koşular ve hedef donanım ölçümleri oluşana kadar target statüsündedir.
 Mevcut olgunluk: **pilota hazır eğitim öncesi baseline**.
 Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_REMOTE_BOOTSTRAP`.
 
@@ -107,7 +108,7 @@ mertformer 57-report --out reports/closure_57_matrix.json
 ```
 
 # 🦅 MertFormer Titan: Otonom Sürü Mimarisi
-> **Hedef: Mobil maliyetle, sınır-üstü kodlama yeteneği (eğitim/benchmark sonrası).**
+> **Hedef: Kısıtlı compute maliyetiyle güçlü kodlama modeli yeteneği (eğitim/benchmark sonrası).**
 > **Geliştirme Aşaması:** Pilota hazır eğitim öncesi baseline (`Build 30 V2`, eğitim/benchmark iddiaları beklemede).
 
 ## 🇹🇷 Sivil/Komutan Özeti (Teknik Olmayan Okuyucu İçin)
@@ -115,18 +116,20 @@ mertformer 57-report --out reports/closure_57_matrix.json
 
 **Bu proje nedir?**
 MertFormer, sürekli bulut bağımlılığı olmadan, kontrollü yerel donanımda çalışmak üzere tasarlanmış offline-first bir yapay zeka altyapısıdır.
+Uzun vadeli hedefi, compute bütçesi sınırlı geliştiriciler, küçük ekipler ve yerel kurumlar için verimli ve denetlenebilir AI eğitim/çıkarım hattını daha erişilebilir hale getirmektir.
 
 **Neden stratejiktir?**
 1. **Veri Kontrolü:** Ana tasarım hedefi yerel/offline çalışmadır; dış veri maruziyetini azaltır.
 2. **Operasyonel Süreklilik:** Mimari, kısıtlı bağlantı koşullarında çalışmayı sürdürecek şekilde kurgulanmıştır.
 3. **Dil/Alan Uyumu:** Türkçe odaklı dokümantasyon ve iş akışı uyumu çekirdek gereksinim olarak ele alınır.
+4. **Compute Erişilebilirliği (Hedef):** Mimari, küçük ekipler ve yerel kurumlar için daha düşük maliyetli eğitim/çıkarım yollarını hedefler; bu hedef checkpoint-bound koşular ve hedef donanım ölçümleriyle doğrulanana kadar target statüsündedir.
 
 **Kısaca:** Bu sistem, genel amaçlı internet sohbet botu değil; görev odaklı ve disiplinli bir yapay zeka altyapısı olarak konumlandırılmıştır.
 
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `274 passed, 4 skipped` |
+| `python3 -m pytest -q` | `281 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -139,7 +142,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`274 passed, 4 skipped`)
+   - `pytest` geçti (`281 passed, 4 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -234,9 +237,9 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 ### 💼 Yönetici Özeti (Executive Brief)
 **Bu bölüm, yapısal verimlilik konumlandırmasını teknik ve yönetici karar vericiler için operasyonel çıktılara dönüştürür.**
 
-*   **💰 Hedeflenen ~%90 Operasyonel Tasarruf (Tahmini/Hedef)**: Bulut sunucu masrafları minimize edilir. MertFormer, enerjiyi NPU düzeyinde optimize ederek işlem maliyetlerini azaltmayı hedefler.
-*   **🛡️ Veri Egemenliği**: Veriler cihazda işlenir. Bu, savunma sanayi, hukuk ve finans gibi "yüksek güvenlik" standartlarına sahip pazarlar için yapısal bir avantajdır.
-*   **🌍 Ölçeklenebilir Erişim (Hedef)**: İnternet bağımlılığı olmadan, düşük bant genişliğine sahip bölgelerde bile GPT-3.5 düzeyini hedefleyen otonom bir sistemdir.
+*   **💰 Daha Düşük Operasyon Maliyeti (Hedef)**: Kontrollü deployment senaryolarında bulut sunucu masrafını azaltmak hedeflenir; kesin tasarruf oranı ölçülmüş target-run ve deployment kanıtı ister.
+*   **🛡️ Veri Egemenliği (Tasarım Hedefi)**: Sistem yerel/offline işleme yolları için tasarlanmıştır. Sektörel güvenlik veya uyumluluk iddiaları ayrı inceleme ve kanıt ister.
+*   **🌍 Ölçeklenebilir Erişim (Hedef)**: İnternet bağımlılığı olmadan, düşük bant genişliğine sahip bölgelerde bile eğitim sonrası güçlü düşük maliyetli kodlama modeli yeteneği hedefleyen otonom sistem yönüdür.
 
 *Not: Tüm performans ve eğitim süresi rakamları eğitim öncesi tahmindir; tam eğitim sonrası ölçümle doğrulanacaktır.*
 
@@ -479,6 +482,7 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 - [repro/python.md](repro/python.md) — Python 3.11 baseline kurulum (EN).
 - [repro/python_TR.md](repro/python_TR.md) — Python 3.11 baseline kurulum (TR).
 - [repro/accelerate_default.yaml](repro/accelerate_default.yaml) — Örnek accelerate config (yerel).
+- [repro/accelerate_8xgpu.yaml](repro/accelerate_8xgpu.yaml) — Hedef makinede smoke/full-run denemeleri için opsiyonel 8 GPU Accelerate config'i.
 - [repro/pip_freeze.txt](repro/pip_freeze.txt) — Ortam envanteri (pip freeze).
 - [logs/README.md](logs/README.md) — Log dizini + birleşik logbook notları.
 - `logs/ALL_LOGS.jsonl` — Birleşik logbook artifact (gitignored; `.titan-venv/bin/python scripts/logbook_build.py --append` ile üretilir).
@@ -532,7 +536,7 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 <a id="genel-bakış"></a>
 ## 🎯 Genel Bakış
 
-MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** için tasarlanmış, son teknoloji ürünü **2.64B parametreli** bir dil modelidir. **BitNet 1.58-bit kuantizasyon**, **Liquid Neural Networks**, **Seyrek Uzmanlar Karışımı (MoE)** ve **MLA etiketli GQA dikkat bloğu (mevcut implementasyon)** teknolojilerini birleştirerek, tamamen bir akıllı telefonda çalışırken **GPT-3.5 seviyesinde performans hedefler (eğitim öncesi hedef)**.
+MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** için tasarlanmış **2.64B tasarım-hedef parametreli** bir dil modeli yönüdür. **BitNet 1.58-bit kuantizasyon**, **Liquid Neural Networks**, **Seyrek Uzmanlar Karışımı (MoE)** ve **MLA etiketli GQA dikkat bloğu (mevcut implementasyon)** teknolojilerini birleştirerek eğitim sonrası güçlü ve düşük maliyetli kodlama modeli verimliliği hedefler; capability iddiaları checkpoint-bound benchmark kanıtı oluşana kadar kapalıdır.
 
 Mimari doğruluk notu: `layers/mla.py` sınıf adı `MLA` olarak korunur; mevcut attention çekirdeği GQA tabanlıdır (`num_kv_heads` projeksiyonu + KV head çoğaltma). Tam latent-MLA bottleneck yol haritası kalemidir.
 
@@ -584,7 +588,7 @@ Tam harita: [`docs/CHAIN_MAP_TR.md`](docs/CHAIN_MAP_TR.md)
 ### 2. **LiquidRouter (Zamansal Conv Yönlendirici)** 🌍
 - **Implementasyon gerçeği**: MoE yönlendirmesi causal depthwise `Conv1d` + rolling state buffer ile yapılır.
 - **CfC ayrımı**: Kapalı form sürekli zamanlı (CfC) hücreler `LiquidMixer/LiquidCell` içinde çalışır; `LiquidRouter` içinde değil.
-- **Etki**: Standart (hafızasız) yönlendiricilere kıyasla **tahmini %15-20 daha iyi yönlendirme kalitesi**.
+- **Etki**: Hafızasız yönlendiricilere göre daha iyi yönlendirme kalitesi hedefler; nihai kazanım eğitilmiş checkpoint değerlendirmesi ister.
 - **Zamansal Rota**: Geçmişi hatırlayan "Trafik Polisi" mantığıyla uzman çökmesini önler.
 - **Dinamik**: Stabilite için zaman sabiti adaptasyonu ve jitter desteği.
 - **Akademik Değer**: Koşullu hesaplamada (conditional computation) yeni bir paradigma.
@@ -594,7 +598,7 @@ Tam harita: [`docs/CHAIN_MAP_TR.md`](docs/CHAIN_MAP_TR.md)
 - LLaMA-3 uyumlu RoPE (interleaved & decoupled)
 - Opsiyonel hiyerarşik KV cache yolu (kısa/uzun ayrımı) ile decode verimliliği.
 - Stabilite için QK normalizasyonu
-- Flash Attention 2 entegrasyonu (+%30 hızlanma)
+- Flash Attention 2 entegrasyon yolu; throughput etkisi hedef-run logları ister.
 - Uzun bağlam hazır (theta=100K)
 
 ### 4. **Liquid Neural Networks (CfC)** 💧
@@ -609,7 +613,7 @@ Tam harita: [`docs/CHAIN_MAP_TR.md`](docs/CHAIN_MAP_TR.md)
 - Yönlendirme politikası: token-choice top-k.
 - **Momentum Bazlı Yönlendirme:** Standart yönlendiricilerin aksine, `LiquidRouter` sadece anlık kelimeye değil, verinin geliş hızına ve zamansal momentumuna (`Fluid Path`) bakarak uzman seçer.
 - **Causal Conv1d Entegrasyonu:** Uzman seçimi sırasında geçmiş 4 token'lık pencereyi (`history_window`) dikkate alarak "trafik polisinden" ziyade bir "stratejik zeka" gibi çalışır.
-- **Donanım Uyumluluğu:** `LiquidRouter`ın keskin seçimleri sayesinde gereksiz uzmanların tetiklenmesi önlenir, bu da Samsung S25 NPU biriminde tahmini %40'a varan enerji tasarrufu sağlar.
+- **Donanım Uyumluluğu:** `LiquidRouter`, gereksiz uzman tetiklemelerini azaltmak için tasarlanmıştır; sayısal hedef-cihaz enerji tasarrufu iddiası ancak eğitilmiş checkpoint export'u ve fiziksel cihaz ölçümü sonrası yapılabilir.
 - Yük dengeleme + Z-loss + Switch loss
 - BitSwiGLU uzmanları (kuantize edilmiş)
 - Çökme önleme için acil durum jitter desteği
@@ -624,13 +628,14 @@ Tam harita: [`docs/CHAIN_MAP_TR.md`](docs/CHAIN_MAP_TR.md)
 - **Dinamik Alpha**: Aşamalı damıtma ağırlığı ayarlaması
 
 ### 7. **Performans Optimizasyonları (v1.0 (Build 30 V2))** ⚡
-- ✅ **Flash Attention 2**: Tahmini +%30 hızlanma (A100/H100)
-- ✅ **Fused RMSNorm**: Tahmini +%10 hızlanma (torch.compile)
-- ✅ **torch.compile (max-autotune)**: Tahmini +%15 hızlanma
-- ✅ **CUDA TF32 + cuDNN**: Tahmini +%10 hızlanma
-- ✅ **Geliştirilmiş DataLoader**: Tahmini +%5 hızlanma (16 işçi, prefetch=4)
-- ✅ **NCCL Tuning**: Tahmini +%5-10 hızlanma (multi-GPU, otomatik algılama)
-- **Tahmini toplam: %70-80 daha hızlı eğitim.**
+- ✅ **Flash Attention 2**: desteklenen A100/H100 sınıfı CUDA çalışma zamanları için hedef hız yolu; her hedef koşuda ayrıca ölçülmelidir.
+- ✅ **Fused RMSNorm / torch.compile / CUDA TF32 + cuDNN**: opsiyonel veya çalışma zamanı bağımlı optimizasyon yüzeyleri; tüm throughput iddiaları koşu logu gerektirir.
+- ✅ **DataLoader transfer kontrolleri**: `TITAN_DATALOADER_PIN` ve `TITAN_DATALOADER_NONBLOCKING`, pinned-memory ve non-blocking GPU transfer denemeleri için config/train hattına bağlıdır.
+- ✅ **Batch/log/eval/save kontrolleri**: `TITAN_BATCH_SIZE`, `TITAN_BATCH_SIZE_FALLBACKS`, `TITAN_LOG_INTERVAL`, `TITAN_VAL_CHECK_INTERVAL` ve `TITAN_SAVE_INTERVAL`, hedef makine smoke/full-run ayarı için environment üzerinden değiştirilebilir; fallback yalnızca net OOM içindir.
+- ✅ **Packed projection eğitim yolları**: `TITAN_FFN_PACK`, `TITAN_MOE_PACK` ve `TITAN_MLA_KV_PACK` opsiyonel, varsayılan kapalı ve equivalence testleriyle kapsanan projection packing yollarıdır. `MERTFORMER_LOWBIT_KERNEL=1` iken baseline yola düşerler.
+- ✅ **Liquid eğitim implementasyonu seçici**: `TITAN_LIQUID_FAST_PATH` ve `TITAN_LIQUID_TRAIN_IMPL=baseline|precompute_input|packed_pair|packed_pair_compile`, Liquid eğitim varyantlarını açılıp kapanabilir tutar; ilk Ocean 2x H200 uzun koşusu `TITAN_LIQUID_FAST_PATH=0` kullanır ve `packed_pair_compile` kullanmaz.
+- ✅ **Accelerate profil seçimi**: `ACCELERATE_CONFIG_FILE`, hedef makineyle uyumlu olduğunda `repro/accelerate_8xgpu.yaml` gibi reproducibility profillerini seçebilir.
+- **İddia sınırı:** bu kontroller altyapı ve hedef ayarlarıdır; benchmark ile doğrulanmış hız iddiası değildir. End-to-end hız, hedef makine loglarından raporlanmalıdır.
 
 ### 8. **Güvenlik & Güvenilirlik** 🛡️
 - ✅ **OOM Kurtarma**: Otomatik toplu iş boyutu (batch size) azaltma
@@ -908,7 +913,7 @@ MertFormer Titan (2.64B Parametre)
 **Toplam Throughput Hedefi (Projeksiyon): 11.000 tok/sn seviyesine kadar.**
 Bu değer, tanımlı dağıtım profilindeki toplam sistem kapasitesi için yol haritası hedefidir; **tek cihazda ölçülmüş benchmark sonucu değildir**.
 Operasyonel anlamı: daha yüksek eşzamanlı oturum kapasitesi, yük altında daha düşük birim inference maliyeti ve çok kullanıcılı senaryolarda daha kısa kuyruk süreleri.
-*Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir. BitNet 1.58 çıkarımı opsiyonel düşük-bit kernel yolu içerir; Tensor Core yolu **deneysel** ve opt-in’dir (`MERTFORMER_TENSORCORE=1`). Enerji/TOPS kazanımları gerçek cihaz ölçümü gerektirir. Kernel eleştirisi sadece inference için geçerlidir; BitNet eğitim katmanı mevcut, low-bit inference ise açıkça yol haritası maddesidir. **Eğitim hâlâ standart PyTorch matmul yollarıyla yürür; düşük-bit kernel eğitimi hızlandırmaz.** Ayrıca, **Residual Scaling Etkisi** ile 18 katman boyunca sinyal kararlılığı, 1/√2 (1/sqrt(2)) katsayısı ile korunarak en derin katmanda bile gradyan akışının stabil kalması hedeflenmektedir.*
+*Not: Performans metrikleri mimari simülasyonlara dayanan eğitim öncesi tahminlerdir. BitNet 1.58 çıkarımı opsiyonel düşük-bit kernel yolu içerir; Tensor Core yolu **deneysel** ve opt-in'dir (`MERTFORMER_TENSORCORE=1`). Enerji/TOPS kazanımları gerçek cihaz ölçümü gerektirir. Kernel eleştirisi sadece inference için geçerlidir; BitNet eğitim katmanı mevcut, low-bit inference ise açıkça yol haritası maddesidir. Eğitim varsayılan olarak standart PyTorch/BitLinear eğitim yolunu kullanır. Opsiyonel packed-projection eğitim yolları mevcut quantization matematiğini koruyarak projection launch sayısını azaltmayı hedefler; ancak opt-in'dir ve herhangi bir hız iddiasından önce equivalence testi ile hedef koşu ölçümü gerektirir. Low-bit inference kernel'in kendisi eğitim hızlandırıcısı olarak ele alınmaz. Ayrıca, **Residual Scaling Etkisi** ile 18 katman boyunca sinyal kararlılığı, 1/√2 (1/sqrt(2)) katsayısı ile korunarak en derin katmanda bile gradyan akışının stabil kalması hedeflenmektedir.*
 
 ### Bellek Ayak İzi
 | Bileşen | FP32 | BF16 | BitNet 1.58 |
@@ -920,12 +925,12 @@ Operasyonel anlamı: daha yüksek eşzamanlı oturum kapasitesi, yük altında d
 | **Toplam (8 GPUs)** | 736 GB | 368 GB | **267.6 GB** |
 *Not: Bu tabloda yer alan değerler mimari karşılaştırmalar ve benzer modellerden elde edilen öngörülere dayanmaktadır.*
 
-### Çıkarım (Inference) (Samsung S25 - Tahmini)
-- ⏱️ **Gecikme (Latency)**: ~50ms/token (NPU optimize)
-- 💾 **Bellek**: <2GB RAM
-- 🔋 **Güç**: <3W (cihaz içi)
-- 🏎️ **Verim**: ~45+ token/sn (NPU Kernel Optimizasyonu ile 100+ hedeflenmektedir)
-*Not: Samsung S25 ve Snapdragon 8 Elite NPU değerleri, üretici yol haritaları ve benzer NPU mimarileri temel alınarak yapılan teorik çıkarım sonuçlarıdır. 1.58-bit mimarisi sayesinde bant genişliği darboğazı aşıldığı için çok daha yüksek hızlar mümkündür.*
+### Çıkarım (Inference) (Samsung S25 - Hedef Profil)
+- ⏱️ **Gecikme (Latency)**: yalnız hedef profil; henüz ölçülmüş Samsung S25 gecikme iddiası yoktur.
+- 💾 **Bellek**: yalnız hedef profil; henüz ölçülmüş Samsung S25 bellek iddiası yoktur.
+- 🔋 **Güç**: yalnız hedef profil; henüz ölçülmüş Samsung S25 güç iddiası yoktur.
+- 🏎️ **Verim**: yalnız hedef profil; henüz ölçülmüş Samsung S25 throughput iddiası yoktur.
+*Not: Samsung S25 ve Snapdragon 8 Elite NPU değerleri; eğitilmiş checkpoint export edilip fiziksel hedef donanımda ölçülene kadar planlama hedefidir.*
 
 ### 🔄 Evrensel Uyumluluk & Sistem Gereksinimleri
 BitNet mimarisi sayesinde MertFormer, sadece amiral gemilerinde değil, **neredeyse her cihazda** çalışabilir:
@@ -1230,6 +1235,8 @@ Aşağıdaki blok, bir MertFormer Ajanının karmaşık bir hatayı nasıl anali
 
 Temel hiperparametreler:
 ```python
+import os
+
 #- Model Mimarisi
 hidden_size = 2048
 num_layers = 18
@@ -1240,7 +1247,7 @@ intermediate_size = 5632
 learning_rate = 1.5e-3
 max_steps = 45000
 warmup_steps = 3000
-batch_size = 128  # Global (GPU başına otomatik yapılandırılır)
+batch_size = int(os.environ.get("TITAN_BATCH_SIZE", "128"))  # Opsiyonel runtime override
 grad_clip = 2.0
 
 #- Damıtma (Distillation)
@@ -1252,6 +1259,11 @@ teacher_temp = 1.0
 use_torch_compile = False
 torch_compile_mode = "max-autotune"
 use_gradient_checkpointing = True
+log_interval = int(os.environ.get("TITAN_LOG_INTERVAL", "1"))
+val_check_interval = int(os.environ.get("TITAN_VAL_CHECK_INTERVAL", "1000"))
+save_interval = int(os.environ.get("TITAN_SAVE_INTERVAL", "1000"))
+dataloader_pin_memory = os.environ.get("TITAN_DATALOADER_PIN", "1") == "1"
+dataloader_non_blocking = os.environ.get("TITAN_DATALOADER_NONBLOCKING", "1") == "1"
 
 #- Güvenlik
 early_stop_patience = 5
@@ -1270,6 +1282,19 @@ liquid_spike_threshold = 5.0
 | `TITAN_BOOTSTRAP` | `1` | launcher | Yerel venv yoksa `.titan-venv` otomatik bootstrap eder. |
 | `MERTFORMER_TENSORCORE` | unset/`0` | kernel yolu | Deneysel Tensor Core low-bit yolunu açar (opt-in). |
 | `MERTFORMER_LOWBIT_KERNEL` | unset/`0` | kernel yolu | Deneysel low-bit inference kernel yolunu açar (opt-in). |
+| `TITAN_BATCH_SIZE` | `128` | eğitim config'i | Hedef makine smoke/full-run ayarı için opsiyonel global batch override. |
+| `TITAN_BATCH_SIZE_FALLBACKS` | unset | launcher | Yalnızca net OOM sinyalinden sonra kullanılan virgüllü fallback listesi; Ocean 2x H200 profili `1024,512,256` kullanır. |
+| `TITAN_LOG_INTERVAL` | `1` | eğitim döngüsü | Opsiyonel log aralığı override'ı. |
+| `TITAN_VAL_CHECK_INTERVAL` | `1000` | eğitim döngüsü | Opsiyonel validation aralığı override'ı. |
+| `TITAN_SAVE_INTERVAL` | `1000` | eğitim döngüsü | Opsiyonel checkpoint aralığı override'ı. |
+| `TITAN_DATALOADER_PIN` | `1` | eğitim veri transferi | CUDA mevcutsa pinned-memory DataLoader transferini etkinleştirir. |
+| `TITAN_DATALOADER_NONBLOCKING` | `1` | eğitim veri transferi | Eğitim yolu tensörleri açıkça taşıdığı yerlerde non-blocking transferi etkinleştirir. |
+| `TITAN_FFN_PACK` | `0` | eğitim projection yolu | Opsiyonel FFN gate/up packed projection yolu; equivalence testleriyle kapsanır. |
+| `TITAN_MOE_PACK` | `0` | eğitim projection yolu | Opsiyonel MoE BitSwiGLU gate/up packed projection yolu; equivalence testleriyle kapsanır. |
+| `TITAN_MLA_KV_PACK` | `0` | eğitim projection yolu | Opsiyonel MLA K/V packed projection yolu; equivalence testleriyle kapsanır. |
+| `TITAN_LIQUID_FAST_PATH` | `1` | Liquid runtime yolu | Fast-path seçici; ilk Ocean 2x H200 uzun koşusu bunu `0` yapar. |
+| `TITAN_LIQUID_TRAIN_IMPL` | `baseline` | Liquid eğitim yolu | Liquid eğitim implementasyonu varyantını seçer (`baseline`, `precompute_input`, `packed_pair`, `packed_pair_compile`). |
+| `ACCELERATE_CONFIG_FILE` | unset | launcher / Accelerate | Opsiyonel Accelerate config yolu; örn. `repro/accelerate_8xgpu.yaml`. |
 | `HF_TOKEN` | unset | online operasyon | Kimlik doğrulamalı online dataset/model adımları için gerekir. |
 | `WANDB_API_KEY` | unset | izleme | Sadece online modda WandB açıkken gerekir. |
 
@@ -1410,16 +1435,16 @@ Bu bölüm, gerçekçi entegrasyon yollarını güncel durumlarıyla birlikte li
 | Phi-3-mini | 3.8B | FP16 | ❌ | ❌ | ❌ |
 | Gemma-2B | 2.0B | BF16 | ❌ | ❌ | ❌ |
 
-### Performans Metrikleri (Tahmini)
+### Performans Metrikleri (Post-Run Hedefleri, İddia Değil)
 
-| Görev | MertFormer Titan | Llama-3.2-3B | Phi-3-mini |
-| :--- | :---: | :---: | :---: |
-| **MMLU** | ~%55 | %63 | %69 |
-| **HellaSwag** | ~%70 | %72 | %75 |
-| **TruthfulQA** | ~%45 | %50 | %55 |
-| **Türkçe NLU** | **~%65** | %45 | %30 |
+| Görev | MertFormer Titan Durumu | Kıyas Durumu |
+| :--- | :--- | :--- |
+| **MMLU** | Eğitilmiş checkpoint benchmark'ı olmadan iddia edilemez | Yalnız ölçülmüş run sonrası kıyaslanır |
+| **HellaSwag** | Eğitilmiş checkpoint benchmark'ı olmadan iddia edilemez | Yalnız ölçülmüş run sonrası kıyaslanır |
+| **TruthfulQA** | Eğitilmiş checkpoint benchmark'ı olmadan iddia edilemez | Yalnız ölçülmüş run sonrası kıyaslanır |
+| **Türkçe NLU** | Eğitilmiş checkpoint benchmark'ı olmadan iddia edilemez | Yalnız ölçülmüş run sonrası kıyaslanır |
 
-*Not: Kıyaslamalar eğitim tamamlandıktan sonra güncellenecektir*
+*Not: Benchmark'lar yalnız eğitim tamamlandıktan ve checkpoint-bound değerlendirme artifact'leri oluştuktan sonra güncellenir.*
 
 ---
 
@@ -1490,14 +1515,14 @@ Planlanan Türkçe veri kaynakları:
 **C**: **Çoklu GPU iletişim optimizasyonu**:
 - GPU'lar arası veri transferi hızlanır
 - NVLink varsa P2P aktif olur
-- 8x GPU'da %5-10 hızlanma
+- Uyumlu 8x GPU konfigürasyonlarında potansiyel throughput iyileştirmesi; kesin etki hedef-run logları ister.
 
 ### S: Eğitim ne kadar sürer?
 
 **C**: **8x A100 80GB için projeksiyon**dur (**benchmark iddiası değildir**):
 - Temel: ~25 saat (45K adım × 2 sn/adım)
 - v1.0 (Build 30 V2) Optimize: **tahmini** (45K adım; süre donanım/throughput'a bağlı, koşu sonrası netleşir)
-- **10 saat tasarruf!**
+- Süre kazanımı, hedef makinedeki gerçek throughput logları sonrası netleşir.
 
 ### S: Samsung S25'te gerçekten çalışır mı?
 
@@ -1876,6 +1901,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── outreach/  # dizin
 │   │   ├── github_release_post.md  # dokümantasyon/rapor dosyası
 │   │   ├── huggingface_launch.md  # dokümantasyon/rapor dosyası
+│   │   ├── mertformer_titan_1_page_evidence_packet_2026-05-22.md  # dokümantasyon/rapor dosyası
+│   │   ├── mertformer_titan_executive_brief_2026-05-22.md  # dokümantasyon/rapor dosyası
 │   │   └── reddit_post.md  # dokümantasyon/rapor dosyası
 │   ├── pilots/  # dizin
 │   │   ├── README.md  # ana dokümantasyon (EN)
@@ -2538,7 +2565,7 @@ Eğitim öncesi aşamada ücretli pilot için minimum kabul seti:
 Bu proje, tasarım gereği proof-of-system seviyesinde tamamlanır. Amaç, gerçek dünya kısıtları altında çalışan bütüncül bir otonom akıl yürütme hattını göstermek; production-ready veya sertifikalı bir platform iddiası sunmak değildir. Mimari sınırlar, güvenlik davranışı, gerçek zaman kısıtları ve hata modları birincil mühendislik konusu olarak ele alınır. Büyük ölçekli dağıtım, sertifikasyon ve uzun süreli saha doğrulaması bu sürüm için bilinçli olarak kapsam dışıdır.
 
 ### ⚠️ Teknik Risk Faktörleri
-*   **Performans Projeksiyonu**: Mobil NPU metrikleri (<50ms/token) şu an için mimari simülasyon bazlıdır ve eğitim sonrası fiziksel testlerle doğrulanacaktır.
+*   **Performans Projeksiyonu**: Mobil NPU metrikleri şu an yalnız hedef profildir ve eğitim sonrası fiziksel hedef donanımda doğrulanacaktır.
 *   **Donanım Uyumluluğu**: Mobilde 1.58-bit ternary yürütme, en yüksek hız için standart ONNX çalışma zamanlarının ötesinde özel kernel optimizasyonu gerektirebilir.
 *   **MoE Kararlılığı**: `LiquidRouter` yeni bir araştırma katkısıdır; klasik router'lara göre kesin avantajı tam ölçekli eğitim sırasında benchmark edilecektir.
 

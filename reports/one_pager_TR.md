@@ -1,9 +1,14 @@
 # MertFormer Titan One-Pager (TR)
 
+> **Dış inceleme notu:** Compute sponsorship değerlendiriyorsanız önce
+> `reports/outreach_compute_sponsorship_messages.md` okunmalıdır. Bu one-pager
+> arka plan materyalidir; benchmark, production, deployment, AGI veya model
+> üstünlüğü iddiası olarak okunmamalıdır.
+
 **Version:** Build 30 V2
 
 ## Özet
-MertFormer Titan, mobil hesaplama maliyetinde GPT-3.5 hedefli bir seviyeyi amaçlayan, 2.64B tasarım hedefli edge-native bir kodlama modelidir (mevcut ölçülen runtime toplamı: ~3.70B). 1.58-bit kuantizasyon, LiquidRouter MoE ve uzun bağlam dikkatini birleştirir.
+MertFormer Titan, mobil hesaplama maliyetinde GPT-3.5 sınıfı bir verimlilik hedefini amaçlayan, 2.64B tasarım hedefli edge-native bir kodlama modelidir (mevcut ölçülen runtime toplamı: ~3.70B). 1.58-bit kuantizasyon, LiquidRouter MoE ve uzun bağlam dikkatini birleştirir.
 
 ## Problem
 Kurumsal AI pahalıdır, buluta bağımlıdır ve gizlilik açısından risk taşır. Gecikme, veri egemenliği ve maliyetler regüle sektörlerde benimsemeyi zorlaştırır.
@@ -19,7 +24,7 @@ Gizlilik ve verimlilik odaklı, cihaz içi çalışan mobil-first kodlama modeli
 
 ## Farklılaştırıcılar
 - Donanım‑farkındalıklı mimari
-- Zaman‑bağımlı yönlendirme (LiquidRouter)
+- Zaman‑bağımlı yönlendirme (LiquidRouter) daha iyi uzman dengesi hedefler; nihai kazançlar trained-checkpoint evidence gerektirir.
 - Forensik loglama ve reproducibility gate’leri
 
 ## Yol Haritası

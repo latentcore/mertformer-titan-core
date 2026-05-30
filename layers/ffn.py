@@ -14,6 +14,8 @@ Status : PRE-TRAINING (UNVERIFIED)
 __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
+import os
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -21,7 +23,23 @@ from typing import Optional
 
 # TR: Yerel import'lar / EN: Local imports
 from config.config import cfg
-from layers.bitlinear import BitLinear
+from layers.bitlinear import BitLinear, activation_quant, weight_quant
+
+
+_FFN_PACK_ENABLED = os.environ.get("TITAN_FFN_PACK", "0") == "1"
+
+
+def set_ffn_pack_enabled(enabled: bool) -> None:
+    """Runtime toggle for the lossless FFN gate+up packed projection path."""
+    global _FFN_PACK_ENABLED
+    _FFN_PACK_ENABLED = bool(enabled)
+
+
+def _ffn_packed_bitlinear(x: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:
+    """Apply BitLinear fallback math to a packed output weight matrix."""
+    x_q = activation_quant(x)
+    w_q = weight_quant(weight)
+    return F.linear(x_q, w_q, None)
 
 
 class MertFormerFFN(nn.Module):
@@ -55,16 +73,16 @@ class MertFormerFFN(nn.Module):
         # TR: Dropout katmanı / EN: Dropout layer
         self.dropout = nn.Dropout(ffn_dropout)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        TR: İleri yayılım - SwiGLU aktivasyonu ile feed-forward.
-        EN: Forward pass - Feed-forward with SwiGLU activation.
+    def _forward_packed(self, x: torch.Tensor) -> torch.Tensor:
+        """TR: gate+up projeksiyonlarını tek matmul'da hesaplar. EN: Packs gate+up."""
+        packed_weight = torch.cat([self.gate_proj.weight, self.up_proj.weight], dim=0)
+        gate_up = _ffn_packed_bitlinear(x, packed_weight)
+        gate, up = gate_up.chunk(2, dim=-1)
+        x_inter = F.silu(gate) * up
+        x_inter = self.dropout(x_inter)
+        return self.down_proj(x_inter)
 
-        Args:
-            x (torch.Tensor): Girdi tensörü / Input tensor
-        Returns:
-            torch.Tensor: Çıktı tensörü / Output tensor
-        """
+    def _forward_baseline(self, x: torch.Tensor) -> torch.Tensor:
         # TR: Gate ve Up projeksiyonları / EN: Gate and Up projections
         gate = self.gate_proj(x)
         up = self.up_proj(x)
@@ -77,5 +95,18 @@ class MertFormerFFN(nn.Module):
 
         # TR: Down projeksiyon (orijinal hidden boyutuna dönüş)
         # EN: Down projection (return to original hidden dimension)
-        out = self.down_proj(x_inter)
-        return out
+        return self.down_proj(x_inter)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        TR: İleri yayılım - SwiGLU aktivasyonu ile feed-forward.
+        EN: Forward pass - Feed-forward with SwiGLU activation.
+
+        Args:
+            x (torch.Tensor): Girdi tensörü / Input tensor
+        Returns:
+            torch.Tensor: Çıktı tensörü / Output tensor
+        """
+        if _FFN_PACK_ENABLED and os.environ.get("MERTFORMER_LOWBIT_KERNEL", "0") != "1":
+            return self._forward_packed(x)
+        return self._forward_baseline(x)

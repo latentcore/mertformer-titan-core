@@ -1,5 +1,10 @@
 # Verified vs Target Matrisi (Mühendislik Gerçeği)
 
+> **Dış inceleme notu:** Compute sponsorship değerlendiriyorsanız önce
+> `reports/outreach_compute_sponsorship_messages.md` okunmalıdır. Bu matris,
+> doğrulanmış yüzeyleri hedeflerden ayırır ve claim-boundary referansı olarak
+> kullanılmalıdır.
+
 Bu doküman şu ayrımı katı şekilde yapar:
 - **Verified (Run)**: komut çalıştırılarak yerelde veya CI'da doğrulandı
 - **Verified (Code)**: kodda görülerek doğrulandı (ama çalıştırılmadı)

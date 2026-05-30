@@ -3,6 +3,21 @@
 Bu dosya projedeki önemli değişiklikleri takip eder.
 
 
+## Unreleased - 2026-05-24
+
+### Eklenenler
+- FFN, MoE BitSwiGLU ve MLA K/V eğitim yolları için opsiyonel, varsayılan kapalı packed projection kontrolleri.
+- Batch size, log aralığı, validation aralığı, checkpoint aralığı ve DataLoader transfer davranışı için environment üzerinden değiştirilebilir eğitim kontrolleri.
+- `repro/accelerate_8xgpu.yaml` altında opsiyonel 8 GPU Accelerate profili.
+- Packed projection ve Liquid eğitim implementasyonu varyantları için equivalence test kapsamı.
+
+### Değişenler
+- README, kullanım kılavuzu, eğitim planı, feature-flag governance, script kataloğu ve doğrulama matrisi; opsiyonel hız kontrol yüzeyini açık iddia sınırlarıyla dokümante edecek şekilde güncellendi.
+- Dokümantasyon, `repro/` klasörünün yeniden üretilebilirlik/koşu config'leri için; `configs/` klasörünün ise stabil isimlendirilmiş config sözleşmeleri için kullanıldığını netleştirdi.
+
+### Doğrulama
+- Opsiyonel hız flag'leri varsayılan kapalı kalır ve herhangi bir hız iddiasından önce equivalence testleri ile hedef makine logları gerektirir.
+
 ## v1.0.0-build30-v2 - 2026-03-13
 
 ### Eklenenler

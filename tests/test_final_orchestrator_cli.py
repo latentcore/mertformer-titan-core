@@ -65,11 +65,91 @@ def test_final_orchestrator_lock_helpers(tmp_path: Path):
     assert not lock_path.exists()
 
 
-def test_build_train_command_uses_accelerate_entrypoint_from_venv():
+def test_build_train_command_uses_accelerate_entrypoint_from_venv(monkeypatch):
+    monkeypatch.delenv("ACCELERATE_CONFIG_FILE", raising=False)
     module = _load_final_orchestrator_module()
     cmd = module.build_train_command(str(ROOT / ".titan-venv" / "bin" / "python"), 29501)
     assert cmd[:3] == [str(ROOT / ".titan-venv" / "bin" / "python"), "-m", "accelerate.commands.launch"]
     assert "train/train.py" in cmd
+
+
+def test_build_train_command_uses_accelerate_config_file(monkeypatch):
+    monkeypatch.setenv("ACCELERATE_CONFIG_FILE", "repro/accelerate_2xh200.yaml")
+    module = _load_final_orchestrator_module()
+    monkeypatch.setattr(module, "detect_num_processes", lambda: 2)
+    cmd = module.build_train_command("python3", 29501)
+    assert cmd[:5] == [
+        "python3",
+        "-m",
+        "accelerate.commands.launch",
+        "--config_file",
+        "repro/accelerate_2xh200.yaml",
+    ]
+    assert cmd[5:7] == ["--num_processes", "2"]
+
+
+def test_run_training_with_batch_fallback_retries_clear_oom_only(monkeypatch):
+    module = _load_final_orchestrator_module()
+    attempts: list[int] = []
+
+    def fake_run_command(root, cmd, env=None):
+        batch_size = int(env["TITAN_BATCH_SIZE"])
+        attempts.append(batch_size)
+        if batch_size == 1024:
+            return {
+                "cmd": "train",
+                "return_code": 0,
+                "ok": True,
+                "stdout_tail": "Safety brake stop finalized. reason=oom_backoff_exhausted",
+                "stderr_tail": "",
+            }
+        return {"cmd": "train", "return_code": 0, "ok": True, "stdout_tail": "done", "stderr_tail": ""}
+
+    monkeypatch.setattr(module, "run_command", fake_run_command)
+    result = module.run_training_with_batch_fallback(
+        ROOT,
+        ["python3", "train/train.py"],
+        {
+            "TITAN_BATCH_SIZE": "1024",
+            "TITAN_BATCH_SIZE_FALLBACKS": "1024,512,256",
+        },
+    )
+    assert result["ok"] is True
+    assert attempts == [1024, 512]
+    assert result["batch_size_attempted"] == 512
+    assert result["batch_fallback_used"] is True
+    assert [item["batch_size"] for item in result["batch_fallback_attempts"]] == [1024, 512]
+    assert result["fallback_policy"] == "clear_oom_only"
+
+
+def test_run_training_with_batch_fallback_stops_on_non_oom(monkeypatch):
+    module = _load_final_orchestrator_module()
+    attempts: list[int] = []
+
+    def fake_run_command(root, cmd, env=None):
+        attempts.append(int(env["TITAN_BATCH_SIZE"]))
+        return {
+            "cmd": "train",
+            "return_code": 17,
+            "ok": False,
+            "stdout_tail": "",
+            "stderr_tail": "teacher artifact missing",
+        }
+
+    monkeypatch.setattr(module, "run_command", fake_run_command)
+    result = module.run_training_with_batch_fallback(
+        ROOT,
+        ["python3", "train/train.py"],
+        {
+            "TITAN_BATCH_SIZE": "1024",
+            "TITAN_BATCH_SIZE_FALLBACKS": "1024,512,256",
+        },
+    )
+    assert result["ok"] is False
+    assert attempts == [1024]
+    assert result["batch_size_attempted"] == 1024
+    assert result["batch_fallback_used"] is False
+    assert result["batch_fallback_attempts"][0]["clear_oom"] is False
 
 
 def test_build_training_env_prefers_offline_clean_lane():

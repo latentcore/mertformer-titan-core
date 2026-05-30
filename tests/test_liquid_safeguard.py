@@ -1,6 +1,7 @@
 from utils.liquid_safeguard import update_liquid_spike_state
 import torch
 
+from layers.liquid import LiquidMixer
 from layers.moe import LiquidRouter
 
 
@@ -62,3 +63,37 @@ def test_liquid_router_inference_state_casts_to_activation_dtype():
 
     assert router.inference_state.dtype == torch.bfloat16
     assert torch.equal(router.inference_state, state)
+
+
+def _run_liquid_for_equivalence(model, x):
+    x = x.detach().clone().requires_grad_(True)
+    model.zero_grad(set_to_none=True)
+    y = model(x)
+    loss = (y.float() ** 2).mean()
+    loss.backward()
+    grads = {
+        name: p.grad.detach().clone()
+        for name, p in model.named_parameters()
+        if p.grad is not None
+    }
+    return y.detach(), x.grad.detach().clone(), grads
+
+
+def test_liquid_train_impls_match_baseline_forward_and_backward():
+    torch.manual_seed(1453)
+    baseline = LiquidMixer(16, fast_path=False, train_impl="baseline").double()
+    baseline.train()
+    x = torch.randn(2, 9, 16, dtype=torch.float64)
+    y0, xg0, pg0 = _run_liquid_for_equivalence(baseline, x)
+
+    for impl in ("precompute_input", "packed_pair"):
+        candidate = LiquidMixer(16, fast_path=False, train_impl=impl).double()
+        candidate.load_state_dict(baseline.state_dict())
+        candidate.train()
+        y1, xg1, pg1 = _run_liquid_for_equivalence(candidate, x)
+
+        assert torch.max(torch.abs(y0 - y1)).item() < 1e-8
+        assert torch.max(torch.abs(xg0 - xg1)).item() < 1e-8
+        for name, grad0 in pg0.items():
+            assert name in pg1
+            assert torch.max(torch.abs(grad0 - pg1[name])).item() < 1e-8

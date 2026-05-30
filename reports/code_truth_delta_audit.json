@@ -1,6 +1,6 @@
 {
   "schema": "code_truth_delta_audit_v1",
-  "generated_utc": "2026-05-22T07:44:21Z",
+  "generated_utc": "2026-05-30T01:17:53Z",
   "evidence_contract": {
     "required_columns": [
       "code_path",
@@ -403,6 +403,13 @@
       "summary": "TBD"
     },
     {
+      "path": "layers/ffn.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "layers/mertformer_block.py",
       "markers": [
         "fallback"
@@ -700,6 +707,6 @@
       "tested_fallback": 6,
       "reference_safe": 1
     },
-    "marker_hit_count": 52
+    "marker_hit_count": 53
   }
 }

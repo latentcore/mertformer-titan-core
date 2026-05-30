@@ -96,6 +96,7 @@ Generated automatically.
 - `checklists/chess_4060_24h_all_on_experimental.md`
 - `checklists/chess_4060_24h_all_on_experimental_TR.md`
 - `configs/README.md`
+- `configs/README_TR.md`
 - `configs/chess_onefile_profile_contract.md`
 - `datasets/INTERNAL_POLICY.md`
 - `datasets/INTERNAL_POLICY_TR.md`
@@ -288,6 +289,7 @@ Generated automatically.
 - `reports/expected_artifacts_list.md`
 - `reports/external_readability_checklist.md`
 - `reports/feature_flag_governance.md`
+- `reports/feature_flag_governance_TR.md`
 - `reports/final_backlog_classification.md`
 - `reports/final_backlog_coverage_diff.md`
 - `reports/final_backlog_missing_items.md`
@@ -326,6 +328,7 @@ Generated automatically.
 - `reports/model_health.md`
 - `reports/model_health_TR.md`
 - `reports/model_health_final.md`
+- `reports/ocean_2xh200_1024_first_launch_profile.md`
 - `reports/ocean_pre45k_h200_20260514_partial_evidence.md`
 - `reports/offline_assistant_case_study.md`
 - `reports/one_command_full_sop_summary.md`
@@ -398,6 +401,7 @@ Generated automatically.
 - `reports/technical_snapshot.md`
 - `reports/technical_snapshot_TR.md`
 - `reports/test_verification_matrix.md`
+- `reports/test_verification_matrix_TR.md`
 - `reports/tokenizer_sync_final_report.md`
 - `reports/train_readiness_decision.md`
 - `reports/training_outputs_bundle_manifest.md`
@@ -526,6 +530,7 @@ Generated automatically.
   - `ablations/no_liquid/README_TR.md`
   - `ablations/no_moe/README_TR.md`
   - `assets/sources/README_TR.md`
+  - `configs/README_TR.md`
   - `datasets/README_TR.md`
   - `logs/README_TR.md`
   - `postmortems/README_TR.md`

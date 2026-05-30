@@ -3,8 +3,10 @@
 ## Header
 Mert Y.
 Turkey
-GitHub: add current URL
-Email: add current email
+GitHub: https://github.com/latentcore
+Email: mert.yunlu08@gmail.com
+Public evidence packet: https://gist.github.com/latentcore/dac0aa0c56b12177e4a0e8e8f684bccf
+Repository note: the main MertFormer Titan repository may be private; use the public Gist and curated application packet for external review unless private repo access is explicitly granted.
 
 ## Target Title
 Research Engineer, Science of Scaling

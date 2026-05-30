@@ -14,6 +14,8 @@ Status : PRE-TRAINING (UNVERIFIED)
 __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
+import os
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -21,7 +23,23 @@ import math
 from typing import Any, Dict, List, Set, Tuple
 
 from config.config import cfg
-from layers.bitlinear import BitLinear
+from layers.bitlinear import BitLinear, activation_quant, weight_quant
+
+
+_MOE_PACK_ENABLED = os.environ.get("TITAN_MOE_PACK", "0") == "1"
+
+
+def set_moe_pack_enabled(enabled: bool) -> None:
+    """Runtime toggle for BitSwiGLU gate+up packed projection."""
+    global _MOE_PACK_ENABLED
+    _MOE_PACK_ENABLED = bool(enabled)
+
+
+def _moe_packed_bitlinear(x: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:
+    """Apply BitLinear fallback math to a packed expert output weight matrix."""
+    x_q = activation_quant(x)
+    w_q = weight_quant(weight)
+    return F.linear(x_q, w_q, None)
 
 
 class BitSwiGLU(nn.Module):
@@ -53,6 +71,20 @@ class BitSwiGLU(nn.Module):
         self.up_proj = BitLinear(hidden_size, intermediate_size, bias=False)
         self.down_proj = BitLinear(intermediate_size, hidden_size, bias=False)
 
+    def _forward_packed(self, x: torch.Tensor) -> torch.Tensor:
+        packed_weight = torch.cat([self.gate_proj.weight, self.up_proj.weight], dim=0)
+        gate_up = _moe_packed_bitlinear(x, packed_weight)
+        gate, up = gate_up.chunk(2, dim=-1)
+        x_inter = F.silu(gate) * up
+        return self.down_proj(x_inter)
+
+    def _forward_baseline(self, x: torch.Tensor) -> torch.Tensor:
+        # TR: SwiGLU: SiLU(gate) * up -> down / EN: SwiGLU: SiLU(gate) * up -> down
+        gate = self.gate_proj(x)
+        up = self.up_proj(x)
+        x_inter = F.silu(gate) * up
+        return self.down_proj(x_inter)
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         TR: İleri yayılım - SwiGLU aktivasyonu uygular.
@@ -63,11 +95,9 @@ class BitSwiGLU(nn.Module):
         Returns:
             torch.Tensor: Çıktı tensörü / Output tensor
         """
-        # TR: SwiGLU: SiLU(gate) * up -> down / EN: SwiGLU: SiLU(gate) * up -> down
-        gate = self.gate_proj(x)
-        up = self.up_proj(x)
-        x_inter = F.silu(gate) * up
-        return self.down_proj(x_inter)
+        if _MOE_PACK_ENABLED and os.environ.get("MERTFORMER_LOWBIT_KERNEL", "0") != "1":
+            return self._forward_packed(x)
+        return self._forward_baseline(x)
 
 
 

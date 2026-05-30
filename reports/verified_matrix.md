@@ -1,5 +1,10 @@
 # Verified vs Target Matrix (Engineering Truth)
 
+> **External review note:** If you are evaluating compute sponsorship, start
+> with `reports/outreach_compute_sponsorship_messages.md`. This matrix separates
+> verified surfaces from targets and should be used as a claim-boundary
+> reference.
+
 This document makes a strict distinction between:
 - **Verified (Run)**: confirmed by executing commands locally or in CI
 - **Verified (Code)**: confirmed by direct code inspection (but not executed)

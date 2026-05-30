@@ -9,6 +9,8 @@ Language: [English](README_SUMMARY.md) | [Turkce](README_SUMMARY_TR.md)
 ## What This Project Is
 MertFormer Titan is an offline-first, auditable AI systems repository built around low-bit runtime infrastructure, local assistant foundations, and disciplined evaluation surfaces.
 
+Long-term target: reduce the cost barrier for auditable AI training and inference for compute-constrained developers, small teams, and local institutions. This is a target, not a benchmark claim, until checkpoint-bound runs and target-hardware measurements exist.
+
 ## Current Exact State
 - Stage: `pilot-ready pre-training baseline`
 - Repo-side readiness: `TRAIN_ALLOWED`
@@ -49,6 +51,7 @@ bash scripts/final_one_shot.sh
 - backend routing and fallback honesty
 - offline-first, governance-gated assistant foundations
 - claim-safe verification and repo truth sync
+- compute-accessibility positioning for lower-cost auditable training/inference, with target status kept separate from measured evidence
 
 ## Open Post-Run Evidence Class
 - trained final weights

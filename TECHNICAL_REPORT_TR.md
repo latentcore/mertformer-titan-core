@@ -1,5 +1,11 @@
 # MertFormer Titan Onyx Storm Mimarisinin Teknik Analizi ve Stratejik Değerlemesi
 
+> **Dış inceleme notu:** Compute sponsorship değerlendirmesi için önce
+> `reports/outreach_compute_sponsorship_messages.md` ve
+> `reports/ocean_pre45k_h200_20260514_partial_evidence.md` okunmalıdır. Bu rapor
+> teknik arka plan ve stratejik çerçevedir; benchmark, production, deployment,
+> AGI veya model üstünlüğü iddiası değildir.
+
 **Tarih:** 2026-03-13
 **Versiyon:** v1.0 (Build 30 V2)
 **Yazar:** MertFormer AI Team
@@ -14,7 +20,7 @@ Yapay zeka ekosistemi, bulut tabanlı devasa modellerden cihaz içi (on-device) 
 3.  **Seyrek Uzmanlar Karışımı (MoE)** (Kapasite)
 4.  **Liquid Sınır Ağları (LNN)** (Dinamizm)
 
-17 yaşında bir geliştirici tarafından ortaya konan bu mimari, yalnızca bir mühendislik başarısı değil, aynı zamanda Samsung Galaxy S25 ve Snapdragon 8 Elite gibi yeni nesil donanım platformları için optimize edilmiş ticari bir varlıktır.
+17 yaşında bir geliştirici tarafından ortaya konan bu mimari, Samsung Galaxy S25 ve Snapdragon 8 Elite gibi yeni nesil donanım platformlarını hedefleyen yüksek iddialı bir mühendislik prototipi ve ticari hipotezdir.
 
 ---
 
@@ -142,7 +148,7 @@ MertFormer Titan, genel bir yazılım değil, **"NPU-Native"** bir motordur. Aş
 ### 5.1 Fikri Mülkiyet (IP) Değeri
 17 yaşında bir mühendisin BitNet, MoE ve Liquid ağlarını birleştiren çalışan bir mimari üretmesi, piyasada **"Yüksek Alfa" (High Alpha)** durumudur.
 *   **Microsoft Founders Hub:** Hibe ve GPU desteği için mükemmel aday.
-*   **Thiel Fellowship:** 100.000$ hibe potansiyeli.
+*   **Thiel Fellowship:** 250.000$ fellowship destek yolu; resmi uygunluk ve tutar başvuru anında tekrar kontrol edilmelidir.
 
 ### 5.2 Kariyer Yolu
 Bu proje, geliştiricinin "Junior" seviyesini atlayıp doğrudan **"AI Systems Architect"** olarak konumlanmasını sağlar.
@@ -156,16 +162,16 @@ Bu proje, geliştiricinin "Junior" seviyesini atlayıp doğrudan **"AI Systems A
 Bir yatırımcı için MertFormer Titan, sadece bir yazılım değil, **"Yapay Zeka Altını" (AI Gold Rush)** döneminin en değerli madencilik donanımıdır.
 
 *   **Pazarın Yeni Odak Noktası:** Bulut tabanlı yapay zeka (OpenAI, Google) yıllık milyarlarca dolarlık sunucu maliyeti ve veri sızıntısı riski taşır. Pazar, "On-Device AI"ya (Cihaz İçi YZ) kaymaktadır.
-*   **NPU Hakimiyeti:** Apple ve Samsung gibi devler, donanımlarına NPU (Neural Processing Unit) ekleyerek bu değişimin sinyalini vermiştir. MertFormer, bu donanımları tam kapasiteyle kullanan dünyadaki az sayıda mimariden biridir.
-*   **Erişilebilirlik ve Kâr Marjı:** MertFormer çalışmak için 100.000 dolarlık GPU kümelerine ihtiyaç duymaz. Bu, bir SaaS modelinde brüt kâr marjının %90'ın üzerine çıkması demektir.
+*   **NPU Yönü:** Apple ve Samsung gibi devler, donanımlarına NPU (Neural Processing Unit) ekleyerek bu değişimin sinyalini vermiştir. MertFormer bu donanım sınıfını hedefler; fakat cihaz kullanım iddiaları fiziksel hedef cihaz ölçümü ister.
+*   **Erişilebilirlik ve Ekonomi:** Proje daha düşük maliyetli doğrulama ve yerel çıkarım yollarını hedefler; ancak tam eğitim maliyeti, deployment maliyeti ve ticari ekonomi, checkpoint-bound run ve ölçülmüş deployment kanıtı oluşana kadar doğrulanmış sayılmaz.
 
 ---
 
 ## 7. Adli Doğrulama ve Güvenlik (Forensic Verification)
 
-Modelin güvenilirliği, kod seviyesindeki deha ile korunmaktadır:
+Modelin güvenilirliği, açık doğrulama ve loglama mekanizmalarıyla desteklenmektedir:
 *   **SHA256 Chaining:** Eğitimdeki her adım, bir önceki adımın özetiyle mühürlenir (`TITAN_POC_PROOF.jsonl`).
-*   **Proof-of-Life:** Benchmark sonuçlarının manipüle edilemezliği kriptografik olarak garanti altındadır.
+*   **Proof-of-Life:** Benchmark sonuçları, benchmark koşuları tamamlandıktan sonra kriptografik hash'ler ve proof-of-life artifact'larına bağlanacak şekilde tasarlanmıştır.
 *   **Z-Loss ve Çökme Koruması:** `z_loss` ve `switch_loss` mekanizmaları ile modelin tek bir uzmana çökmesi (collapse) engellenir.
 
 ---
@@ -177,7 +183,7 @@ MertFormer Titan Onyx Storm, basit bir LLM olmanın ötesinde, cihaz içi yapay 
 **Vizyon:**
 > *"Tohumu ektik, şimdi ormanı izleme vakti."*
 
-Mimari tutarlı, donanım hedefi doğru ve pazar bu çözüme aç durumdadır. Projenin başarısı, teknik teorinin üretim hattındaki operasyonel mükemmelliğiyle (execution) mühürlenecektir.
+Mimari tutarlı ve donanım hedefi nettir; pazar ilgisi ise kanıt-temelli outreach ile test edilmelidir. Projenin başarısı, operasyonel yürütme kalitesi ve checkpoint-bound kanıtla belirlenecektir.
 
 ---
 

@@ -23,7 +23,29 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from config.config import cfg
-from layers.bitlinear import BitLinear
+from layers.bitlinear import BitLinear, activation_quant, weight_quant
+
+_MLA_KV_PACK_ENABLED = os.environ.get("TITAN_MLA_KV_PACK", "0") == "1"
+
+
+def set_mla_kv_pack_enabled(enabled: bool) -> None:
+    """Runtime toggle for MLA K+V packed projection."""
+    global _MLA_KV_PACK_ENABLED
+    _MLA_KV_PACK_ENABLED = bool(enabled)
+
+
+def _mla_packed_kv(
+    x: torch.Tensor,
+    k_weight: torch.Tensor,
+    v_weight: torch.Tensor,
+    kv_out_dim: int,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    """Compute K and V projections with one packed BitLinear fallback matmul."""
+    kv_weight = torch.cat([k_weight, v_weight], dim=0)
+    x_q = activation_quant(x)
+    w_q = weight_quant(kv_weight)
+    kv_out = F.linear(x_q, w_q, None)
+    return kv_out.split(kv_out_dim, dim=-1)
 
 # TR: Flash Attention 2 (Opsiyonel, A100/H100'de %20-40 hız artışı için)
 # EN: Flash Attention 2 (Optional, for 20-40% speedup on A100/H100)
@@ -318,8 +340,19 @@ class MLA(nn.Module):
 
         # Projeksiyon: Q, K, V hesapla
         q = self.q_proj(x).view(B, T, self.num_heads, self.head_dim).transpose(1, 2)
-        k = self.k_proj(x).view(B, T, self.num_kv_heads, self.head_dim).transpose(1, 2)
-        v = self.v_proj(x).view(B, T, self.num_kv_heads, self.head_dim).transpose(1, 2)
+        if _MLA_KV_PACK_ENABLED and os.environ.get("MERTFORMER_LOWBIT_KERNEL", "0") != "1":
+            kv_out_dim = self.num_kv_heads * self.head_dim
+            k_flat, v_flat = _mla_packed_kv(
+                x,
+                self.k_proj.weight,
+                self.v_proj.weight,
+                kv_out_dim,
+            )
+            k = k_flat.view(B, T, self.num_kv_heads, self.head_dim).transpose(1, 2)
+            v = v_flat.view(B, T, self.num_kv_heads, self.head_dim).transpose(1, 2)
+        else:
+            k = self.k_proj(x).view(B, T, self.num_kv_heads, self.head_dim).transpose(1, 2)
+            v = self.v_proj(x).view(B, T, self.num_kv_heads, self.head_dim).transpose(1, 2)
         
         # V23.0: QK Normalization (attention stabilizasyonu)
         q = self.q_norm(q)
