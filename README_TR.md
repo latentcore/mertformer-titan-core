@@ -129,7 +129,7 @@ Uzun vadeli hedefi, compute bütçesi sınırlı geliştiriciler, küçük ekipl
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `336 passed, 4 skipped` |
+| `python3 -m pytest -q` | `337 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -142,7 +142,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`336 passed, 4 skipped`)
+   - `pytest` geçti (`337 passed, 4 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -1612,7 +1612,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── adr/  # dizin
 │   ├── ADR-0001-source-of-truth-and-claim-boundary.md  # dokümantasyon/rapor dosyası
 │   ├── ADR-0002-change-control-and-closure-governance.md  # dokümantasyon/rapor dosyası
-│   └── ADR-0003-chess-oneclick-delivery-runtime-contract.md  # dokümantasyon/rapor dosyası
+│   ├── ADR-0003-chess-oneclick-delivery-runtime-contract.md  # dokümantasyon/rapor dosyası
+│   └── ADR-0004-blocker-fix-pass-core-override.md  # dokümantasyon/rapor dosyası
 ├── applications/  # dizin
 │   └── anthropic/  # dizin
 │       ├── PACKET_POINTER_20260419.md  # dokümantasyon/rapor dosyası
@@ -2311,6 +2312,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── unicode_path_guard.py  # Python modülü/scripti (unicode path guard için otomasyon scripti)
 │   ├── update_investor_deck.py  # Python modülü/scripti (update investor deck için otomasyon scripti)
 │   ├── update_system_hardware.py  # Python modülü/scripti (update system hardware için otomasyon scripti)
+│   ├── validate_logit_alignment.py  # Python modülü/scripti (validate logit alignment için otomasyon scripti)
 │   ├── verify_all.sh  # kabuk otomasyon scripti
 │   ├── verify_datasets.py  # Python modülü/scripti (verify datasets için otomasyon scripti)
 │   ├── verify_onnx_local.py  # Python modülü/scripti (verify onnx local için otomasyon scripti)
@@ -2334,6 +2336,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_build_max_closure_handoff.py  # Python modülü/scripti (build max closure handoff için otomatik test modülü)
 │   ├── test_build_target_machine_handoff_bundle.py  # Python modülü/scripti (build target machine handoff bundle için otomatik test modülü)
 │   ├── test_build_training_outputs_bundle.py  # Python modülü/scripti (build training outputs bundle için otomatik test modülü)
+│   ├── test_build_validation_set.py  # Python modülü/scripti (build validation set için otomatik test modülü)
 │   ├── test_build_workspace_hygiene_manifest.py  # Python modülü/scripti (build workspace hygiene manifest için otomatik test modülü)
 │   ├── test_check_doc_claim_consistency.py  # Python modülü/scripti (check doc claim consistency için otomatik test modülü)
 │   ├── test_checkpoint_tokenizer_id.py  # Python modülü/scripti (checkpoint tokenizer id için otomatik test modülü)
@@ -2349,10 +2352,12 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_distillation_topk.py  # Python modülü/scripti (distillation topk için otomatik test modülü)
 │   ├── test_drone_sitl_demo.py  # Python modülü/scripti (drone sitl demo için otomatik test modülü)
 │   ├── test_duplicate_zip_guard.py  # Python modülü/scripti (duplicate zip guard için otomatik test modülü)
+│   ├── test_eval_generation_eos.py  # Python modülü/scripti (eval generation eos için otomatik test modülü)
 │   ├── test_eval_suites.py  # Python modülü/scripti (eval suites için otomatik test modülü)
 │   ├── test_export_chess_5080_share.py  # Python modülü/scripti (export chess 5080 share için otomatik test modülü)
 │   ├── test_export_metadata.py  # Python modülü/scripti (export metadata için otomatik test modülü)
 │   ├── test_final_orchestrator_cli.py  # Python modülü/scripti (final orchestrator cli için otomatik test modülü)
+│   ├── test_gradient_checkpoint_moe.py  # Python modülü/scripti (gradient checkpoint moe için otomatik test modülü)
 │   ├── test_gsm8k_policy.py  # Python modülü/scripti (gsm8k policy için otomatik test modülü)
 │   ├── test_kaggle_compare_script.py  # Python modülü/scripti (kaggle compare script için otomatik test modülü)
 │   ├── test_kaggle_onefile_closure_build30.py  # Python modülü/scripti (kaggle onefile closure build30 için otomatik test modülü)
@@ -2372,8 +2377,10 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_onnx_custom_op_contract.py  # Python modülü/scripti (onnx custom op contract için otomatik test modülü)
 │   ├── test_onnx_export_path.py  # Python modülü/scripti (onnx export path için otomatik test modülü)
 │   ├── test_onnx_metadata_hook.py  # Python modülü/scripti (onnx metadata hook için otomatik test modülü)
+│   ├── test_optimizer_build.py  # Python modülü/scripti (optimizer build için otomatik test modülü)
 │   ├── test_orchestrator_swarm_runtime.py  # Python modülü/scripti (orchestrator swarm runtime için otomatik test modülü)
 │   ├── test_packed_projection_equivalence.py  # Python modülü/scripti (packed projection equivalence için otomatik test modülü)
+│   ├── test_packing.py  # Python modülü/scripti (packing için otomatik test modülü)
 │   ├── test_post_run_processor.py  # Python modülü/scripti (post run processor için otomatik test modülü)
 │   ├── test_post_train_autorun_cli.py  # Python modülü/scripti (post train autorun cli için otomatik test modülü)
 │   ├── test_resume_policy.py  # Python modülü/scripti (resume policy için otomatik test modülü)
@@ -2387,9 +2394,11 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_titan_preflight_contract.py  # Python modülü/scripti (titan preflight contract için otomatik test modülü)
 │   ├── test_tokenizer_parity.py  # Python modülü/scripti (tokenizer parity için otomatik test modülü)
 │   ├── test_train_loop_sanity.py  # Python modülü/scripti (train loop sanity için otomatik test modülü)
+│   ├── test_train_loss_eos_mask.py  # Python modülü/scripti (train loss eos mask için otomatik test modülü)
 │   ├── test_triad_omega_api.py  # Python modülü/scripti (triad omega api için otomatik test modülü)
 │   ├── test_triton_fused_bitlinear_cuda.py  # Python modülü/scripti (triton fused bitlinear cuda için otomatik test modülü)
 │   ├── test_triton_fused_bitlinear_import.py  # Python modülü/scripti (triton fused bitlinear import için otomatik test modülü)
+│   ├── test_validate_logit_alignment.py  # Python modülü/scripti (validate logit alignment için otomatik test modülü)
 │   └── test_world_model_head.py  # Python modülü/scripti (world model head için otomatik test modülü)
 ├── tokenizer/  # dizin
 │   ├── tr/  # dizin
@@ -2412,6 +2421,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── train/  # dizin
 │   ├── __init__.py  # Python modülü/scripti (train paket başlatıcısı ve dışa aktarmalar)
 │   ├── continual_adapter.py  # Python modülü/scripti (eğitim için continual learning adaptör yolu)
+│   ├── packing.py  # Python modülü/scripti (packing için modül)
 │   └── train.py  # Python modülü/scripti (ana eğitim döngüsü giriş noktası)
 ├── training_dynamics/  # dizin
 │   ├── cold_vs_warm.md  # dokümantasyon/rapor dosyası

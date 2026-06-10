@@ -1,6 +1,6 @@
 {
   "schema": "checkpoint_hash_manifest_v1",
-  "generated_utc": "2026-06-10T22:25:16Z",
+  "generated_utc": "2026-06-10T22:58:17Z",
   "entries": [],
   "note": "No trained checkpoints are present in the working tree; this manifest will populate after the real run."
 }

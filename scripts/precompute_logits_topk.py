@@ -337,6 +337,9 @@ def precompute_stage(
         topk_items = extract_topk_logits(teacher, input_ids, top_k, teacher_device)
         for seq, item in zip(seqs, topk_items):
             shard_buffer.append({
+                # [B2] stamp the packed format on each item so the loader surfaces
+                # 'topk_packed_v1' (not just the wrapper), keeping reader/writer aligned.
+                "format": TOPK_PACKED_FORMAT,
                 "indices": item["indices"],
                 "values": item["values"],
                 "true_len": int(seq["true_len"]),

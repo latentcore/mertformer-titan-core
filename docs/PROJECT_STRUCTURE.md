@@ -26,7 +26,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── adr/  # directory
 │   ├── ADR-0001-source-of-truth-and-claim-boundary.md  # documentation/report file
 │   ├── ADR-0002-change-control-and-closure-governance.md  # documentation/report file
-│   └── ADR-0003-chess-oneclick-delivery-runtime-contract.md  # documentation/report file
+│   ├── ADR-0003-chess-oneclick-delivery-runtime-contract.md  # documentation/report file
+│   └── ADR-0004-blocker-fix-pass-core-override.md  # documentation/report file
 ├── applications/  # directory
 │   └── anthropic/  # directory
 │       ├── PACKET_POINTER_20260419.md  # documentation/report file
@@ -725,6 +726,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── unicode_path_guard.py  # Python module/script (automation script for unicode path guard)
 │   ├── update_investor_deck.py  # Python module/script (automation script for update investor deck)
 │   ├── update_system_hardware.py  # Python module/script (automation script for update system hardware)
+│   ├── validate_logit_alignment.py  # Python module/script (automation script for validate logit alignment)
 │   ├── verify_all.sh  # shell automation script
 │   ├── verify_datasets.py  # Python module/script (automation script for verify datasets)
 │   ├── verify_onnx_local.py  # Python module/script (automation script for verify onnx local)
@@ -748,6 +750,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_build_max_closure_handoff.py  # Python module/script (automated test module for build max closure handoff)
 │   ├── test_build_target_machine_handoff_bundle.py  # Python module/script (automated test module for build target machine handoff bundle)
 │   ├── test_build_training_outputs_bundle.py  # Python module/script (automated test module for build training outputs bundle)
+│   ├── test_build_validation_set.py  # Python module/script (automated test module for build validation set)
 │   ├── test_build_workspace_hygiene_manifest.py  # Python module/script (automated test module for build workspace hygiene manifest)
 │   ├── test_check_doc_claim_consistency.py  # Python module/script (automated test module for check doc claim consistency)
 │   ├── test_checkpoint_tokenizer_id.py  # Python module/script (automated test module for checkpoint tokenizer id)
@@ -763,10 +766,12 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_distillation_topk.py  # Python module/script (automated test module for distillation topk)
 │   ├── test_drone_sitl_demo.py  # Python module/script (automated test module for drone sitl demo)
 │   ├── test_duplicate_zip_guard.py  # Python module/script (automated test module for duplicate zip guard)
+│   ├── test_eval_generation_eos.py  # Python module/script (automated test module for eval generation eos)
 │   ├── test_eval_suites.py  # Python module/script (automated test module for eval suites)
 │   ├── test_export_chess_5080_share.py  # Python module/script (automated test module for export chess 5080 share)
 │   ├── test_export_metadata.py  # Python module/script (automated test module for export metadata)
 │   ├── test_final_orchestrator_cli.py  # Python module/script (automated test module for final orchestrator cli)
+│   ├── test_gradient_checkpoint_moe.py  # Python module/script (automated test module for gradient checkpoint moe)
 │   ├── test_gsm8k_policy.py  # Python module/script (automated test module for gsm8k policy)
 │   ├── test_kaggle_compare_script.py  # Python module/script (automated test module for kaggle compare script)
 │   ├── test_kaggle_onefile_closure_build30.py  # Python module/script (automated test module for kaggle onefile closure build30)
@@ -786,8 +791,10 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_onnx_custom_op_contract.py  # Python module/script (automated test module for onnx custom op contract)
 │   ├── test_onnx_export_path.py  # Python module/script (automated test module for onnx export path)
 │   ├── test_onnx_metadata_hook.py  # Python module/script (automated test module for onnx metadata hook)
+│   ├── test_optimizer_build.py  # Python module/script (automated test module for optimizer build)
 │   ├── test_orchestrator_swarm_runtime.py  # Python module/script (automated test module for orchestrator swarm runtime)
 │   ├── test_packed_projection_equivalence.py  # Python module/script (automated test module for packed projection equivalence)
+│   ├── test_packing.py  # Python module/script (automated test module for packing)
 │   ├── test_post_run_processor.py  # Python module/script (automated test module for post run processor)
 │   ├── test_post_train_autorun_cli.py  # Python module/script (automated test module for post train autorun cli)
 │   ├── test_resume_policy.py  # Python module/script (automated test module for resume policy)
@@ -801,9 +808,11 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_titan_preflight_contract.py  # Python module/script (automated test module for titan preflight contract)
 │   ├── test_tokenizer_parity.py  # Python module/script (automated test module for tokenizer parity)
 │   ├── test_train_loop_sanity.py  # Python module/script (automated test module for train loop sanity)
+│   ├── test_train_loss_eos_mask.py  # Python module/script (automated test module for train loss eos mask)
 │   ├── test_triad_omega_api.py  # Python module/script (automated test module for triad omega api)
 │   ├── test_triton_fused_bitlinear_cuda.py  # Python module/script (automated test module for triton fused bitlinear cuda)
 │   ├── test_triton_fused_bitlinear_import.py  # Python module/script (automated test module for triton fused bitlinear import)
+│   ├── test_validate_logit_alignment.py  # Python module/script (automated test module for validate logit alignment)
 │   └── test_world_model_head.py  # Python module/script (automated test module for world model head)
 ├── tokenizer/  # directory
 │   ├── tr/  # directory
@@ -826,6 +835,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── train/  # directory
 │   ├── __init__.py  # Python module/script (train package initializer and exports)
 │   ├── continual_adapter.py  # Python module/script (continual learning adapter path for training)
+│   ├── packing.py  # Python module/script (module for packing)
 │   └── train.py  # Python module/script (main training loop entrypoint)
 ├── training_dynamics/  # directory
 │   ├── cold_vs_warm.md  # documentation/report file
