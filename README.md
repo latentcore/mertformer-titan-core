@@ -128,7 +128,7 @@ Its long-term target is to make efficient, auditable AI training and inference m
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `337 passed, 4 skipped` |
+| `python3 -m pytest -q` | `338 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -141,7 +141,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`337 passed, 4 skipped`)
+   - `pytest` passed (`338 passed, 4 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**

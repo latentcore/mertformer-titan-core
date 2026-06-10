@@ -131,7 +131,9 @@ def generate(
             next_token_id = torch.multinomial(probs, num_samples=1)
             generated_ids = torch.cat([generated_ids, next_token_id], dim=1)
 
-            if next_token_id.item() == tokenizer.eos_token_id:
+            # [tier-2 LOW] guard eos_token_id is not None before comparing.
+            _eos = tokenizer.eos_token_id
+            if _eos is not None and next_token_id.item() == _eos:
                 break
 
     return tokenizer.decode(generated_ids[0], skip_special_tokens=True)

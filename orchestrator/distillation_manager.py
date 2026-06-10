@@ -462,7 +462,11 @@ if __name__ == "__main__":
         print("❌ HF_TOKEN missing under require_gated_teacher=true.")
         sys.exit(1)
 
-    tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token)
+    # [tier-2] Use the single-source resolver (honors use_tr_tokenizer, offline
+    # snapshot, identity) instead of a raw teacher load, for parity with the
+    # canonical precompute/train tokenizer policy.
+    from utils.tokenizer_resolver import resolve_tokenizer
+    tokenizer = resolve_tokenizer(cfg)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
         

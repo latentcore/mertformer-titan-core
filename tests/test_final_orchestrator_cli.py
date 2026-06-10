@@ -163,7 +163,10 @@ def test_build_training_env_prefers_offline_clean_lane():
     assert env["TITAN_OFFLINE"] == "1"
     assert env["TITAN_REQUIRE_GATED_TEACHER"] == "1"
     assert env["TITAN_USE_PRECOMPUTED_LOGITS"] == "1"
-    assert env["TITAN_USE_TR_TOKENIZER"] == "1"
+    # [tier-2 BLOCKER fix] offline_clean is teacher-tokenizer KD; it must NOT force
+    # the TR tokenizer (precompute stamps the teacher identity and refuses TR, so
+    # TR=1 here would trip the logit-alignment gate and block every canonical run).
+    assert env.get("TITAN_USE_TR_TOKENIZER") != "1"
 
 
 def test_build_training_env_supports_remote_bootstrap_lane():

@@ -161,7 +161,9 @@ def _precompute_done_samples(logits_root: Path, stage_name: str) -> int:
         payload = json.loads(state_path.read_text(encoding="utf-8"))
     except Exception:
         return 0
-    return int(payload.get("done_samples", 0) or 0)
+    # [tier-2 MED] Read the canonical lines_consumed first; done_samples is only a
+    # back-compat mirror that a future writer might drop.
+    return int(payload.get("lines_consumed", payload.get("done_samples", 0)) or 0)
 
 
 def _offline_precompute_stage_status(logits_root: Path) -> dict[str, Any]:

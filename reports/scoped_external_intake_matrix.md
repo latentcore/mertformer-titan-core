@@ -1,7 +1,7 @@
 # Scoped External Intake Matrix
 
-- generated_local: `2026-06-11T02:01:23`
-- sync_mode: `audit`
+- generated_local: `2026-06-11T02:25:03`
+- sync_mode: `apply`
 - scope: Desktop/Documents/Downloads plus application roots for project-related artifacts; unrelated applications remain audit-only.
 
 ## Audited Roots
@@ -26,7 +26,7 @@
 | `/Applications/MertFormerChessDownload/windows_final_command.txt` | `Applications` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `3bd9830e219ce45924d44ddb1834f211a835cef76ba5eb2047e6998ee257bb2f` |
 | `<HOME>/Desktop/chess_5080_onefile.py` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `a2774932c73b4e34f88f0132d6688492ccfe90efa255cbe6a8ab65962a6a6d1a` |
 | `<HOME>/Desktop/MertFormer_45K_Launch_Bundle_20260401_2130.zip.sha256` | `Desktop` | `file` | `keep_sidecar_metadata` | `audit_only` | `false` | `` | `2524cc25e77e3de5a98f5691c8029f24e84232ef505c3403306c319b7cc6be05` |
-| `<HOME>/Desktop/MertFormer_Build30_Max_Closure_Handoff.md` | `Desktop` | `file` | `sync_with_canonical_source` | `project_sync` | `false` | `<REPO_ROOT>/reports/repo_external_handoff.md` | `b3cfad9a8b14f9b6cf1cafb43528a1bfe8d2cf266cf964452ed5eedd34da7390` |
+| `<HOME>/Desktop/MertFormer_Build30_Max_Closure_Handoff.md` | `Desktop` | `file` | `sync_with_canonical_source` | `project_sync` | `false` | `<REPO_ROOT>/reports/repo_external_handoff.md` | `f55ffa03ef14a84cc6b13538c8cee4dd6f0d2b5b0807723aff2816fcf9fb8c57` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260404_233012` | `Desktop` | `dir` | `keep_project_directory` | `project_safe_cleanup` | `false` | `` | `` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260404_233012.zip` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `1d769c54f558c6b8ae7383df128ee71fe5af66e2271e3ba00d77063ed8dd3240` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260404_233012.zip.sha256` | `Desktop` | `file` | `keep_sidecar_metadata` | `audit_only` | `false` | `` | `3aeeb35f1d468be023a37cdc33b3fa939ac9e1bf063bb5e66f01e571a9d16443` |
@@ -481,6 +481,17 @@
 | `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_015749/README_BUILD.md` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `2c74a545c377876a714d6e17e1de9b9d3341bad0f346f9a48ac287db0976ec79` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_015749/RUN_FINAL_BUILD.bat` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `19d90acb27c03f94710de707119b74b8a7816bcca01a96ce423961ebe466880b` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_015749/RUN_FINAL_BUILD.ps1` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `23bf7a0ca552317f9a1b0910bda8f12fb8ecdb702ebf358178261eaaf38240ec` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_022427` | `Desktop` | `dir` | `keep_project_directory` | `project_safe_cleanup` | `false` | `` | `` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_022427.zip` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `1f8d3a02ad3a977efc9b46d393d686080f4b7b9c745b12d0ef6878af4641cc83` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_022427.zip.sha256` | `Desktop` | `file` | `keep_sidecar_metadata` | `audit_only` | `false` | `` | `b7c72944b97142426146218b11a18c681f7fed0bed7bc20a62a555a5edec3119` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_022427/build_chess_5080_windows_delivery.py` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `3dbe343a97c7fd6eb2fa6ad8015142d1d83a92914b10655fb482e7ed3e8a30da` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_022427/build_windows_delivery.bat` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `1c7c007114a08808e770e46cd34acce2e558edeeb669537984df8d4900721a17` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_022427/build_windows_delivery.ps1` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `e3aaf3cae30bb2d65d57eb68190b685083e6b078167b71cf90bce4a41b38592d` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_022427/chess_5080_onefile.py` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `f4286998b4382ac7ed86c0035e40de1f5c07aef400b33c09ee97639cafd0e49f` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_022427/delivery_manifest.json` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `8d73c0129bbb0bf3b86a28cec846b3179d686e43493b46fcfaa1729544bfa04c` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_022427/README_BUILD.md` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `1385be6d714babd6e05486a98ee6d6f9e74d4027e5e951ac41339d402d796794` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_022427/RUN_FINAL_BUILD.bat` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `19d90acb27c03f94710de707119b74b8a7816bcca01a96ce423961ebe466880b` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_022427/RUN_FINAL_BUILD.ps1` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `23bf7a0ca552317f9a1b0910bda8f12fb8ecdb702ebf358178261eaaf38240ec` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260404_232149.zip` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `47fc230470fbc29d1cdb7ba9a7385da06ef2be457d00d4b17c0b5e555e38c968` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260404_232149.zip.sha256` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `04359d332c6924f60e6528910604c48e71766aa6b80bbb14e0174b0e9648edd0` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260406_003747.zip` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `0c6971653a7ba74872279874002218053dee42690e62428452329225334c1969` |
@@ -977,6 +988,18 @@
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_015622.zip.sha256` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_020038.zip` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_020038.zip.sha256` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_021549.zip` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_021549.zip.sha256` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_021651.zip` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_021651.zip.sha256` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_021731.zip` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_021731.zip.sha256` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_021903.zip` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_021903.zip.sha256` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_022054.zip` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_022054.zip.sha256` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_022259.zip` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_022259.zip.sha256` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113659.json` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `b467aeeda7230d67cbf55315adb3c0e0f5fe77ace048dad82bc9c7909d809e2a` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113738.json` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `ca33f976ad516ce7ad99119556d9a7cdfbacfc90a3f302cb95869539dddeddeb` |
 | `<HOME>/Desktop/mertformer_chess_cache` | `Desktop` | `dir` | `keep_project_directory` | `project_safe_cleanup` | `false` | `` | `` |
@@ -1690,7 +1713,6 @@
 | `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/GPU_OPERATOR_QUICKSTART.md` | `Documents` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `6ff8482797119a969e787542ae3511af11bd7ee9275a377957d0c59ec07e64cc` |
 | `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/INTERNAL_AGI_GAP.md` | `Documents` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `f4a6d63b031ef4b8c3db928f44c56fda3b652bb19b1e66634c0d7e9d2f6fbc9b` |
 | `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/INTERNAL_AGI_GAP_TR.md` | `Documents` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `8602371ddc283ae5f8ca9bcf4a11b131912c15070ca956c11cb8de5995ddc8a4` |
-| `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/mertformer_release.zip` | `Documents` | `file` | `delete_as_stale_generated` | `project_safe_cleanup` | `false` | `` | `df67fe567b6836ffd8e5f4d5e98b34e975727a9842e1a60a0e8eea994d3e744b` |
 | `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/mertformer_release.zip.sha256` | `Documents` | `file` | `keep_sidecar_metadata` | `audit_only` | `false` | `` | `115a1a2eec8cab4cb84fdd90ea3cb9de30fe526faf3f5fbbdfb8ba1a1acc7bf4` |
 | `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/repo_external_handoff.md` | `Documents` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `b3cfad9a8b14f9b6cf1cafb43528a1bfe8d2cf266cf964452ed5eedd34da7390` |
 | `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/scoped_external_intake_matrix.json` | `Documents` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `0298ee460bd4223f67ef5cefa96453d2fb27c57954a2faf0ce1eea12440321e1` |
@@ -3697,7 +3719,23 @@
 
 | Rule | Source | Target | Status | Changed |
 | --- | --- | --- | --- | --- |
-| `documents_release_zip` | `<REPO_ROOT>/artifacts/mertformer_release.zip` | `<HOME>/Documents/mertformer-titan-core.zip` | `match` | `false` |
-| `applications_release_zip` | `<REPO_ROOT>/artifacts/mertformer_release.zip` | `/Applications/mertformer-titan-core.zip` | `match` | `false` |
+| `documents_release_zip` | `<REPO_ROOT>/artifacts/mertformer_release.zip` | `<HOME>/Documents/mertformer-titan-core.zip` | `copied` | `true` |
+| `applications_release_zip` | `<REPO_ROOT>/artifacts/mertformer_release.zip` | `/Applications/mertformer-titan-core.zip` | `copied` | `true` |
 | `desktop_repo_handoff` | `<REPO_ROOT>/reports/repo_external_handoff.md` | `<HOME>/Desktop/MertFormer_Build30_Max_Closure_Handoff.md` | `match` | `false` |
 | `applications_chess_onefile` | `<REPO_ROOT>/scripts/chess_5080_onefile.py` | `/Applications/MertFormerChessDownload/chess_5080_onefile.py` | `match` | `false` |
+
+## Final Documents Handoff Folder
+
+- `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/target_machine_handoff_bundle.zip` <= `<REPO_ROOT>/artifacts/target_machine_handoff_bundle.zip` (sha256=`b9a236e869d5031d865253a86e2d666daf26a4513a063c72a67a7bc8580f559f`)
+- `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/target_machine_handoff_bundle.zip.sha256` <= `<REPO_ROOT>/artifacts/target_machine_handoff_bundle.zip.sha256` (sha256=`d8179014b10dfc7c751cf1a590392b7048ea3f71a5d749c121690dfe8c8ba0fe`)
+- `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/mertformer_release.zip` <= `<REPO_ROOT>/artifacts/mertformer_release.zip` (sha256=`ba3c1c78dcbe6cf7fe7defef39eca8a9ef09cada5068c134a7c14190deac6075`)
+- `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/mertformer_release.zip.sha256` <= `<REPO_ROOT>/artifacts/mertformer_release.zip.sha256` (sha256=`4eb7928e7d145f546c399c9287174a7e10a1b7af212576ec62e4b0d15fea657e`)
+- `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/final_truth_matrix.md` <= `<REPO_ROOT>/reports/final_truth_matrix.md` (sha256=`a3023718b0604f1997c86e955ac5ee57e358dac91f49645cd6d2299d3fdf1667`)
+- `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/repo_external_handoff.md` <= `<REPO_ROOT>/reports/repo_external_handoff.md` (sha256=`f55ffa03ef14a84cc6b13538c8cee4dd6f0d2b5b0807723aff2816fcf9fb8c57`)
+- `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/final_repo_audit.md` <= `<REPO_ROOT>/reports/final_repo_audit.md` (sha256=`f7aca71a703603323cd611a5aad4181b0acf8a22f92219485039b06b6ff7330d`)
+- `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/train_readiness_decision.md` <= `<REPO_ROOT>/reports/train_readiness_decision.md` (sha256=`6984cb6e576f3db3fdd7ba0726d5aad94b1d0f17d7935afec80a9225df2d7cd7`)
+- `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/target_machine_handoff_manifest.md` <= `<REPO_ROOT>/reports/target_machine_handoff_manifest.md` (sha256=`10fb4624dec6e11bf37d84d1aaf76b03ab74fd97da27f198981704334a6a082e`)
+- `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/INTERNAL_AGI_GAP.md` <= `<REPO_ROOT>/INTERNAL_AGI_GAP.md` (sha256=`f4a6d63b031ef4b8c3db928f44c56fda3b652bb19b1e66634c0d7e9d2f6fbc9b`)
+- `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/INTERNAL_AGI_GAP_TR.md` <= `<REPO_ROOT>/INTERNAL_AGI_GAP_TR.md` (sha256=`8602371ddc283ae5f8ca9bcf4a11b131912c15070ca956c11cb8de5995ddc8a4`)
+- `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/scoped_external_intake_matrix.md` <= `<REPO_ROOT>/reports/scoped_external_intake_matrix.md` (sha256=`a299e0a5e7be133bfeac2c8feee199d9fd33588dd6c8a87736344e95bc5b8334`)
+- `<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/scoped_external_intake_matrix.json` <= `<REPO_ROOT>/reports/scoped_external_intake_matrix.json` (sha256=`43b7817724cdefd2286eb25a5e34da146d5fc7576c71713a95c9a42ea9057f8f`)

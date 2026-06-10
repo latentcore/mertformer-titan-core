@@ -51,8 +51,24 @@ def train_tpu():
     - Bfloat16 Native (TPU Sweet Spot)
     - No BitsAndBytes (Incompatible with TPU) - Using BF16 Teacher
     - Data Streaming Boost for XLA
+
+    [tier-2] UNSUPPORTED / EXPERIMENTAL. This standalone lane re-implements the
+    train loop and DIVERGES from the canonical train/train.py: it does not apply the
+    EOS/-100 loss mask + causal shift, build_optimizer (galore/8bit), the collective
+    NaN/OOM skip, the single-source tokenizer, sequence packing, or the real-token
+    budget; it also mis-unpacks the model forward (3rd return is KV-cache, not aux
+    loss). The canonical orchestrator launches train/train.py directly, NOT this file.
+    Gated to prevent accidental launch of a divergent/buggy lane.
     """
-    
+    import os as _os
+    if _os.environ.get("TITAN_ALLOW_EXPERIMENTAL_TPU", "0") != "1":
+        raise SystemExit(
+            "train_tpu_turbo.py is UNSUPPORTED/EXPERIMENTAL and diverges from the "
+            "canonical train/train.py (missing the just-landed fixes). The canonical "
+            "lane is `train/train.py` via the orchestrator. Set "
+            "TITAN_ALLOW_EXPERIMENTAL_TPU=1 only if you accept the divergence."
+        )
+
     # TPU Project Config
     config = ProjectConfiguration(project_dir=str(project_root), logging_dir=str(project_root / "logs"))
     

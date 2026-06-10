@@ -316,11 +316,22 @@ def precompute_stage(
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
+    # TR: [tier-2 HIGH] iter_packed_sequences durumsal (greedy buffer carryover) bir
+    #     packer; ortadan baslatmak (lines_consumed'dan) tek-gecis packing'den sapip
+    #     resume seam'inde identity uyusmazligi uretebiliyordu. Cozum: HER ZAMAN satir
+    #     0'dan tekrar-paketle (deterministik) ve sadece zaten uretilmis (seq_index <
+    #     resume_seq) dizilerin TEACHER-FORWARD'ini atla. Packing ucuz; pahali olan
+    #     teacher forward, o da atlaniyor.
+    # EN: [tier-2 HIGH] iter_packed_sequences is a stateful greedy packer; resuming
+    #     mid-file diverged from the single-pass packing and could produce a seam
+    #     identity mismatch. Fix: ALWAYS re-pack from line 0 (deterministic) and only
+    #     SKIP the teacher forward for already-emitted sequences (seq_index <
+    #     resume_seq). Packing is cheap; the expensive teacher forward is skipped.
+    resume_seq = sequences_emitted
+
     def _rows():
         with jsonl_path.open("r", encoding="utf-8") as handle:
             for li, raw in enumerate(handle):
-                if li < lines_consumed:
-                    continue
                 raw = raw.strip()
                 if not raw:
                     continue
@@ -353,6 +364,9 @@ def precompute_stage(
     last_consumed = lines_consumed - 1
 
     for seq in iter_packed_sequences(_rows(), tokenizer, max_seq, eos_id, pad_id):
+        # Skip the teacher forward for sequences already emitted in a prior run.
+        if int(seq["seq_index"]) < resume_seq:
+            continue
         batch_seqs.append(seq)
         if len(batch_seqs) >= batch_size:
             try:

@@ -103,3 +103,45 @@ def test_precompute_writer_matches_train_reader(monkeypatch, tmp_path):
         assert payload["format"] == "topk_packed_v1"
         assert "identity" in payload
         assert payload["indices"].shape[0] == 8  # one row per packed position
+
+
+def test_precompute_resume_produces_aligned_shards(monkeypatch, tmp_path):
+    """tier-2 HIGH: an interrupted-then-resumed precompute must still produce shards
+    whose per-sequence identity matches a fresh single-pass pack (no resume-seam
+    drift). Re-pack-from-0 + skip-already-emitted guarantees this."""
+    import scripts.validate_logit_alignment as VLA
+
+    tok = _StubTokenizer()
+    teacher = _StubTeacher(vocab=len(tok))
+    jsonl = tmp_path / "stage1.jsonl"
+    rows = ["one two three four", "five", "six seven eight nine ten", "eleven", "twelve thirteen"]
+    with jsonl.open("w", encoding="utf-8") as f:
+        for r in rows:
+            f.write(json.dumps({"text": r}) + "\n")
+
+    logits_dir = tmp_path / "logits"
+    logits_dir.mkdir()
+    monkeypatch.setitem(P.STAGE_FILES, 1, jsonl)
+    monkeypatch.setitem(VLA.STAGE_FILES, 1, jsonl)
+
+    # First pass: chunk_size=1 flushes after every sequence (many shards + state).
+    P.precompute_stage(stage_num=1, teacher=teacher, tokenizer=tok, logits_dir=logits_dir,
+                       top_k=4, chunk_size=1, batch_size=1, max_seq=8)
+    shards = sorted(logits_dir.glob("stage1_train_part_*.pt"))
+    assert len(shards) >= 2
+
+    # Simulate an interruption AFTER the first shard: drop later shards + rewind state.
+    import torch as _t
+    first = _t.load(shards[0], map_location="cpu", weights_only=False)
+    emitted_in_first = len(first["logits"])
+    for s in shards[1:]:
+        s.unlink()
+    P._save_resume_state(logits_dir, "stage1", lines_consumed=1, sequences_emitted=emitted_in_first)
+
+    # Resume: re-pack from 0, skip already-emitted, regenerate the rest.
+    P.precompute_stage(stage_num=1, teacher=teacher, tokenizer=tok, logits_dir=logits_dir,
+                       top_k=4, chunk_size=1, batch_size=1, max_seq=8)
+
+    # The resumed shard set must align to a fresh single-pass pack.
+    res = VLA.validate_stage(1, logits_dir, tok)
+    assert res["status"] == "PASS", res
