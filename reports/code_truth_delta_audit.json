@@ -1,6 +1,6 @@
 {
   "schema": "code_truth_delta_audit_v1",
-  "generated_utc": "2026-05-30T21:16:06Z",
+  "generated_utc": "2026-06-10T20:40:10Z",
   "evidence_contract": {
     "required_columns": [
       "code_path",
@@ -536,6 +536,13 @@
       "summary": "fallback"
     },
     {
+      "path": "scripts/benchmarks_internal.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "scripts/bitnet_kernel_benchmark_standalone.py",
       "markers": [
         "fallback"
@@ -574,7 +581,28 @@
       "summary": "fallback"
     },
     {
+      "path": "scripts/eval.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "scripts/generate_bench_reports.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/golden_eval.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/golden_score.py",
       "markers": [
         "fallback"
       ],
@@ -687,6 +715,13 @@
       "summary": "fallback"
     },
     {
+      "path": "tests/test_benchmark_tokenizer_id.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "tests/test_distillation_topk.py",
       "markers": [
         "fallback"
@@ -699,6 +734,13 @@
         "fallback"
       ],
       "summary": "fallback"
+    },
+    {
+      "path": "tests/test_tokenizer_parity.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
     }
   ],
   "summary": {
@@ -707,6 +749,6 @@
       "tested_fallback": 6,
       "reference_safe": 1
     },
-    "marker_hit_count": 53
+    "marker_hit_count": 59
   }
 }

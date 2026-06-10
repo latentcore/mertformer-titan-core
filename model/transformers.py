@@ -99,6 +99,41 @@ class MertFormer(nn.Module):
         self._last_world_model_outputs: Optional[dict] = None
         self.latent_ode_dt = float(getattr(cfg, "latent_ode_dt", 1.0))
 
+    @property
+    def vocab_size(self) -> int:
+        """TR: Mevcut embedding vocab boyutu. EN: Current embedding vocab size."""
+        return self.tok_embeddings.num_embeddings
+
+    def resize_token_embeddings(self, new_num_tokens: int) -> None:
+        """TR: Embedding ve lm_head'i tokenizer'a hizala. EN: Align embedding and
+        lm_head to the tokenizer vocabulary (closes the 128000/128256 mismatch).
+
+        Preserves existing rows/cols and weight tying. No-op if already aligned.
+        """
+        old_num = self.tok_embeddings.num_embeddings
+        if new_num_tokens == old_num:
+            return
+
+        hidden_size = self.tok_embeddings.embedding_dim
+        weight = self.tok_embeddings.weight
+        device, dtype = weight.device, weight.dtype
+        tie_weights = self.lm_head.weight is self.tok_embeddings.weight
+
+        new_emb = nn.Embedding(new_num_tokens, hidden_size, device=device, dtype=dtype)
+        with torch.no_grad():
+            keep = min(old_num, new_num_tokens)
+            new_emb.weight[:keep] = weight[:keep]
+        self.tok_embeddings = new_emb
+
+        new_head = nn.Linear(hidden_size, new_num_tokens, bias=False, device=device, dtype=dtype)
+        if tie_weights:
+            new_head.weight = self.tok_embeddings.weight
+        else:
+            with torch.no_grad():
+                new_head.weight[:keep] = self.lm_head.weight[:keep]
+        self.lm_head = new_head
+        self.cfg.vocab_size = new_num_tokens
+
     def forward(
         self,
         input_ids: torch.Tensor,

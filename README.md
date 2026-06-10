@@ -128,7 +128,7 @@ Its long-term target is to make efficient, auditable AI training and inference m
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `290 passed, 4 skipped` |
+| `python3 -m pytest -q` | `305 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -141,7 +141,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`290 passed, 4 skipped`)
+   - `pytest` passed (`305 passed, 4 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -2172,6 +2172,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_verification_matrix.md  # documentation/report file
 │   ├── test_verification_matrix_TR.md  # Turkish document counterpart
 │   ├── thermal_baseline.json  # JSON data artifact
+│   ├── tokenizer_parity_fix.md  # documentation/report file
 │   ├── tokenizer_sync_final_report.md  # documentation/report file
 │   ├── train_readiness_decision.json  # JSON data artifact
 │   ├── train_readiness_decision.md  # documentation/report file
@@ -2337,6 +2338,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_57_matrix_gate.py  # Python module/script (automated test module for 57 matrix gate)
 │   ├── test_agi_cognitive.py  # Python module/script (automated test module for agi cognitive)
 │   ├── test_architecture_integrity.py  # Python module/script (automated test module for architecture integrity)
+│   ├── test_benchmark_tokenizer_id.py  # Python module/script (automated test module for benchmark tokenizer id)
 │   ├── test_build_chess_5080_windows_delivery.py  # Python module/script (automated test module for build chess 5080 windows delivery)
 │   ├── test_build_chess_onefile_extension_report.py  # Python module/script (automated test module for build chess onefile extension report)
 │   ├── test_build_chess_teaching_contract_report.py  # Python module/script (automated test module for build chess teaching contract report)
@@ -2348,6 +2350,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_build_training_outputs_bundle.py  # Python module/script (automated test module for build training outputs bundle)
 │   ├── test_build_workspace_hygiene_manifest.py  # Python module/script (automated test module for build workspace hygiene manifest)
 │   ├── test_check_doc_claim_consistency.py  # Python module/script (automated test module for check doc claim consistency)
+│   ├── test_checkpoint_tokenizer_id.py  # Python module/script (automated test module for checkpoint tokenizer id)
 │   ├── test_chess_5080_onefile.py  # Python module/script (automated test module for chess 5080 onefile)
 │   ├── test_chess_gui_contract.py  # Python module/script (automated test module for chess gui contract)
 │   ├── test_chess_onefile_curated_suites.py  # Python module/script (automated test module for chess onefile curated suites)
@@ -2364,6 +2367,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_export_chess_5080_share.py  # Python module/script (automated test module for export chess 5080 share)
 │   ├── test_export_metadata.py  # Python module/script (automated test module for export metadata)
 │   ├── test_final_orchestrator_cli.py  # Python module/script (automated test module for final orchestrator cli)
+│   ├── test_gsm8k_policy.py  # Python module/script (automated test module for gsm8k policy)
 │   ├── test_kaggle_compare_script.py  # Python module/script (automated test module for kaggle compare script)
 │   ├── test_kaggle_onefile_closure_build30.py  # Python module/script (automated test module for kaggle onefile closure build30)
 │   ├── test_kaggle_onefile_colab_math_fastproof.py  # Python module/script (automated test module for kaggle onefile colab math fastproof)
@@ -2395,6 +2399,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_sync_chess_gui_onefile.py  # Python module/script (automated test module for sync chess gui onefile)
 │   ├── test_telemetry_logger_contract.py  # Python module/script (automated test module for telemetry logger contract)
 │   ├── test_titan_preflight_contract.py  # Python module/script (automated test module for titan preflight contract)
+│   ├── test_tokenizer_parity.py  # Python module/script (automated test module for tokenizer parity)
 │   ├── test_train_loop_sanity.py  # Python module/script (automated test module for train loop sanity)
 │   ├── test_triad_omega_api.py  # Python module/script (automated test module for triad omega api)
 │   ├── test_triton_fused_bitlinear_cuda.py  # Python module/script (automated test module for triton fused bitlinear cuda)
@@ -2430,7 +2435,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── dataset_registry.py  # Python module/script (module for dataset registry)
 │   ├── liquid_safeguard.py  # Python module/script (module for liquid safeguard)
 │   ├── logger.py  # Python module/script (module for logger)
-│   └── safety.py  # Python module/script (module for safety)
+│   ├── safety.py  # Python module/script (module for safety)
+│   └── tokenizer_resolver.py  # Python module/script (module for tokenizer resolver)
 ├── .gitignore  # git ignore policy
 ├── AGENTS.md  # documentation/report file
 ├── CHANGELOG.md  # documentation/report file

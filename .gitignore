@@ -93,3 +93,6 @@ temp_preflight_logits/
 
 # Separate dealroom repository (kept outside main repo tracking)
 mertformer-titan-dealroom-private/
+
+# Personal local Claude Code settings (auto-accept perms)
+.claude/settings.local.json

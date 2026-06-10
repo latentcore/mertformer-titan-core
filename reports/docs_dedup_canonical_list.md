@@ -402,6 +402,7 @@ Generated automatically.
 - `reports/technical_snapshot_TR.md`
 - `reports/test_verification_matrix.md`
 - `reports/test_verification_matrix_TR.md`
+- `reports/tokenizer_parity_fix.md`
 - `reports/tokenizer_sync_final_report.md`
 - `reports/train_readiness_decision.md`
 - `reports/training_outputs_bundle_manifest.md`

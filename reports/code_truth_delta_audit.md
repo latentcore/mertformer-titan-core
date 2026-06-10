@@ -102,12 +102,16 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `mertformer_sdk/pilot.py` | `fallback` |
 | `scripts/README.md` | `fallback` |
 | `scripts/README_TR.md` | `fallback` |
+| `scripts/benchmarks_internal.py` | `fallback` |
 | `scripts/bitnet_kernel_benchmark_standalone.py` | `fallback` |
 | `scripts/build_chess_training_readiness_report.py` | `fallback` |
 | `scripts/build_closure_governance_pack.py` | `TODO`, `scaffold`, `fallback` |
 | `scripts/check_57_matrix.py` | `scaffold`, `fallback` |
 | `scripts/chess_5080_onefile.py` | `fallback` |
+| `scripts/eval.py` | `fallback` |
 | `scripts/generate_bench_reports.py` | `fallback` |
+| `scripts/golden_eval.py` | `fallback` |
+| `scripts/golden_score.py` | `fallback` |
 | `scripts/hardening_bundle.py` | `fallback` |
 | `scripts/kaggle_onecell_t4_build30.py` | `fallback` |
 | `scripts/kaggle_onefile_closure_build30.py` | `fallback` |
@@ -123,5 +127,7 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `scripts/update_system_hardware.py` | `fallback` |
 | `scripts/verify_datasets.py` | `fallback` |
 | `tests/test_architecture_integrity.py` | `fallback` |
+| `tests/test_benchmark_tokenizer_id.py` | `fallback` |
 | `tests/test_distillation_topk.py` | `fallback` |
 | `tests/test_onnx_custom_op_contract.py` | `fallback` |
+| `tests/test_tokenizer_parity.py` | `fallback` |

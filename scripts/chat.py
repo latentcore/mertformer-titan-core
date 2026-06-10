@@ -18,7 +18,6 @@ import sys
 import torch
 import argparse
 from pathlib import Path
-from transformers import AutoTokenizer
 
 # Add project root to path
 current_file = Path(__file__).resolve()
@@ -57,10 +56,19 @@ def chat():
     else:
         ckpt_path = Path(args.ckpt)
 
+    from utils.tokenizer_resolver import load_tokenizer_from_identity, resolve_tokenizer
+
+    tokenizer = None
     try:
         if ckpt_path.exists():
             print(f"📦 Loading Checkpoint: {ckpt_path.name}")
             checkpoint = torch.load(ckpt_path, map_location=device)
+            # TR: Tokenizer'i checkpoint kimliginden al (eval/demo ile ayni yol).
+            # EN: Take the tokenizer from the checkpoint identity (same path as
+            #     eval) so the demo decodes with the training tokenizer.
+            tokenizer = load_tokenizer_from_identity(checkpoint.get("tokenizer_id"))
+            cfg.vocab_size = len(tokenizer)
+            model.resize_token_embeddings(len(tokenizer))
             # Handle both full checkpoint dict and clean state dict
             if "model" in checkpoint:
                 model.load_state_dict(checkpoint["model"])
@@ -71,17 +79,18 @@ def chat():
             print(f"⚠️  Checkpoint not found at {ckpt_path}")
             print("⚠️  Initializing with random weights (Untrained Mode)")
     except Exception as e:
-        print(f"⚠️  Error loading checkpoint: {e}")
-        print("⚠️  Continuing with random weights...")
-
-    # 3. Load Tokenizer (Teacher's tokenizer)
-    try:
-        tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
-        if tokenizer.pad_token is None:
-            tokenizer.pad_token = tokenizer.eos_token
-    except Exception as e:
-        print(f"❌ Tokenizer Error: {e}")
+        print(f"❌ Error loading checkpoint: {e}")
         return
+
+    # 3. Load Tokenizer (single resolver) when no checkpoint identity was used.
+    if tokenizer is None:
+        try:
+            tokenizer = resolve_tokenizer(cfg)
+            cfg.vocab_size = len(tokenizer)
+            model.resize_token_embeddings(len(tokenizer))
+        except Exception as e:
+            print(f"❌ Tokenizer Error: {e}")
+            return
 
     print("\n💬 CHAT READY. Type 'exit' to quit.\n")
 

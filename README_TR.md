@@ -129,7 +129,7 @@ Uzun vadeli hedefi, compute bütçesi sınırlı geliştiriciler, küçük ekipl
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `290 passed, 4 skipped` |
+| `python3 -m pytest -q` | `305 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -142,7 +142,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`290 passed, 4 skipped`)
+   - `pytest` geçti (`305 passed, 4 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -2158,6 +2158,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_verification_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── test_verification_matrix_TR.md  # Türkçe doküman karşılığı
 │   ├── thermal_baseline.json  # JSON veri artefaktı
+│   ├── tokenizer_parity_fix.md  # dokümantasyon/rapor dosyası
 │   ├── tokenizer_sync_final_report.md  # dokümantasyon/rapor dosyası
 │   ├── train_readiness_decision.json  # JSON veri artefaktı
 │   ├── train_readiness_decision.md  # dokümantasyon/rapor dosyası
@@ -2323,6 +2324,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_57_matrix_gate.py  # Python modülü/scripti (57 matrix gate için otomatik test modülü)
 │   ├── test_agi_cognitive.py  # Python modülü/scripti (agi cognitive için otomatik test modülü)
 │   ├── test_architecture_integrity.py  # Python modülü/scripti (architecture integrity için otomatik test modülü)
+│   ├── test_benchmark_tokenizer_id.py  # Python modülü/scripti (benchmark tokenizer id için otomatik test modülü)
 │   ├── test_build_chess_5080_windows_delivery.py  # Python modülü/scripti (build chess 5080 windows delivery için otomatik test modülü)
 │   ├── test_build_chess_onefile_extension_report.py  # Python modülü/scripti (build chess onefile extension report için otomatik test modülü)
 │   ├── test_build_chess_teaching_contract_report.py  # Python modülü/scripti (build chess teaching contract report için otomatik test modülü)
@@ -2334,6 +2336,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_build_training_outputs_bundle.py  # Python modülü/scripti (build training outputs bundle için otomatik test modülü)
 │   ├── test_build_workspace_hygiene_manifest.py  # Python modülü/scripti (build workspace hygiene manifest için otomatik test modülü)
 │   ├── test_check_doc_claim_consistency.py  # Python modülü/scripti (check doc claim consistency için otomatik test modülü)
+│   ├── test_checkpoint_tokenizer_id.py  # Python modülü/scripti (checkpoint tokenizer id için otomatik test modülü)
 │   ├── test_chess_5080_onefile.py  # Python modülü/scripti (chess 5080 onefile için otomatik test modülü)
 │   ├── test_chess_gui_contract.py  # Python modülü/scripti (chess gui contract için otomatik test modülü)
 │   ├── test_chess_onefile_curated_suites.py  # Python modülü/scripti (chess onefile curated suites için otomatik test modülü)
@@ -2350,6 +2353,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_export_chess_5080_share.py  # Python modülü/scripti (export chess 5080 share için otomatik test modülü)
 │   ├── test_export_metadata.py  # Python modülü/scripti (export metadata için otomatik test modülü)
 │   ├── test_final_orchestrator_cli.py  # Python modülü/scripti (final orchestrator cli için otomatik test modülü)
+│   ├── test_gsm8k_policy.py  # Python modülü/scripti (gsm8k policy için otomatik test modülü)
 │   ├── test_kaggle_compare_script.py  # Python modülü/scripti (kaggle compare script için otomatik test modülü)
 │   ├── test_kaggle_onefile_closure_build30.py  # Python modülü/scripti (kaggle onefile closure build30 için otomatik test modülü)
 │   ├── test_kaggle_onefile_colab_math_fastproof.py  # Python modülü/scripti (kaggle onefile colab math fastproof için otomatik test modülü)
@@ -2381,6 +2385,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_sync_chess_gui_onefile.py  # Python modülü/scripti (sync chess gui onefile için otomatik test modülü)
 │   ├── test_telemetry_logger_contract.py  # Python modülü/scripti (telemetry logger contract için otomatik test modülü)
 │   ├── test_titan_preflight_contract.py  # Python modülü/scripti (titan preflight contract için otomatik test modülü)
+│   ├── test_tokenizer_parity.py  # Python modülü/scripti (tokenizer parity için otomatik test modülü)
 │   ├── test_train_loop_sanity.py  # Python modülü/scripti (train loop sanity için otomatik test modülü)
 │   ├── test_triad_omega_api.py  # Python modülü/scripti (triad omega api için otomatik test modülü)
 │   ├── test_triton_fused_bitlinear_cuda.py  # Python modülü/scripti (triton fused bitlinear cuda için otomatik test modülü)
@@ -2416,7 +2421,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── dataset_registry.py  # Python modülü/scripti (dataset registry için modül)
 │   ├── liquid_safeguard.py  # Python modülü/scripti (liquid safeguard için modül)
 │   ├── logger.py  # Python modülü/scripti (logger için modül)
-│   └── safety.py  # Python modülü/scripti (safety için modül)
+│   ├── safety.py  # Python modülü/scripti (safety için modül)
+│   └── tokenizer_resolver.py  # Python modülü/scripti (tokenizer resolver için modül)
 ├── .gitignore  # git ignore politikası
 ├── AGENTS.md  # dokümantasyon/rapor dosyası
 ├── CHANGELOG.md  # dokümantasyon/rapor dosyası

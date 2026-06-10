@@ -37,21 +37,30 @@ def dry_run(prompts: List[Dict[str, str]]) -> None:
 
 def run_model(prompts: List[Dict[str, str]], ckpt: str) -> None:
     import torch
-    from transformers import AutoTokenizer
     from config.config import cfg
     from model.transformers import MertFormer
+    from utils.tokenizer_resolver import load_tokenizer_from_identity, resolve_tokenizer
 
     device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
 
-    model = MertFormer().to(device)
     if Path(ckpt).exists():
         checkpoint = torch.load(ckpt, map_location=device)
+        # TR: Tokenizer'i checkpoint kimliginden yukle; yoksa ACIK hata (sessiz
+        #     teacher fallback YOK). EN: Tokenizer strictly from checkpoint
+        #     identity; missing -> explicit error (same pattern as eval/gsm8k.py).
+        tokenizer = load_tokenizer_from_identity(checkpoint.get("tokenizer_id"))
+        cfg.vocab_size = len(tokenizer)
+        model = MertFormer().to(device)
+        model.resize_token_embeddings(len(tokenizer))
         model.load_state_dict(checkpoint.get("model", checkpoint))
+    else:
+        # Smoke-only path (no checkpoint -> no recorded identity).
+        print(f"[golden_eval] checkpoint not found ({ckpt}), using random weights (smoke).")
+        tokenizer = resolve_tokenizer(cfg)
+        cfg.vocab_size = len(tokenizer)
+        model = MertFormer().to(device)
+        model.resize_token_embeddings(len(tokenizer))
     model.eval()
-
-    tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
-    if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
 
     for item in prompts:
         prompt = item.get("prompt", "")

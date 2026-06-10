@@ -84,7 +84,6 @@ def main() -> None:
         return
 
     device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
-    model = MertFormer().to(device)
 
     ckpt_path = Path(args.ckpt)
     if not ckpt_path.exists():
@@ -92,8 +91,19 @@ def main() -> None:
         if candidate.exists():
             ckpt_path = candidate
 
+    from utils.tokenizer_resolver import load_tokenizer_from_identity
+
     if ckpt_path.exists():
         checkpoint = torch.load(ckpt_path, map_location=device)
+        # TR: Tokenizer'i checkpoint kimliginden yukle; yoksa ACIK hata (sessiz
+        #     teacher fallback YOK). EN: Load the tokenizer strictly from the
+        #     checkpoint identity; missing -> explicit error. Same pattern as
+        #     eval/gsm8k.py so this checkpoint-bound evidence path cannot decode
+        #     with a different tokenizer than training used.
+        tokenizer = load_tokenizer_from_identity(checkpoint.get("tokenizer_id"))
+        cfg.vocab_size = len(tokenizer)
+        model = MertFormer().to(device)
+        model.resize_token_embeddings(len(tokenizer))
         model.load_state_dict(checkpoint.get("model", checkpoint))
     else:
         if not args.allow_random:
@@ -112,15 +122,21 @@ def main() -> None:
             )
             return
         print(f"⚠️  Checkpoint not found: {ckpt_path}. Running on random weights (--allow-random).")
+        # TR: Yalnizca smoke yolu: ogretmen tokenizer'i, yoksa offline test
+        #     tokenizer'i. Bu fallback checkpoint decode yolunda DEGIL.
+        # EN: Smoke-only tokenizer: teacher, else the offline test tokenizer.
+        #     This fallback never runs on the checkpoint decode path.
+        hf_token = os.environ.get("HF_TOKEN")
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token)
+        except Exception:
+            tokenizer = AutoTokenizer.from_pretrained("hf-internal-testing/llama-tokenizer")
+        if tokenizer.pad_token is None:
+            tokenizer.pad_token = tokenizer.eos_token
+        cfg.vocab_size = len(tokenizer)
+        model = MertFormer().to(device)
+        model.resize_token_embeddings(len(tokenizer))
     model.eval()
-
-    hf_token = os.environ.get("HF_TOKEN")
-    try:
-        tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token)
-    except Exception:
-        tokenizer = AutoTokenizer.from_pretrained("hf-internal-testing/llama-tokenizer")
-    if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
 
     try:
         humaneval = load_dataset_safe("openai_humaneval", "openai_humaneval")

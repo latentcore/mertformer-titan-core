@@ -1,6 +1,6 @@
 # Logits Integrity Report
 
-- generated_utc: `2026-05-30T21:18:33Z`
+- generated_utc: `2026-06-10T20:41:26Z`
 - logits_root: `datasets/logits`
 - shard_count: `0`
 

@@ -75,6 +75,7 @@ try:
     from orchestrator.telemetry import system_snapshot
     from utils.logger import RunLogger
     from utils.liquid_safeguard import update_liquid_spike_state
+    from utils.tokenizer_resolver import resolve_tokenizer, tokenizer_identity
 except ImportError as e:
     print(f"❌ KRİTİK IMPORT HATASI: {e}")
     sys.exit(1)
@@ -91,6 +92,11 @@ try:
 except ImportError:
     print("❌ Accelerate kütüphanesi eksik! 'pip install accelerate' yap.")
     sys.exit(1)
+
+# TR: Egitimde kullanilan tokenizer kimligi (checkpoint'e yazilir).
+# EN: Identity of the tokenizer used for training; stamped into every checkpoint
+#     so eval/demo reload the exact same tokenizer (no train/eval mismatch).
+RUNTIME_TOKENIZER_ID: Optional[dict] = None
 
 # -----------------------------------------------------------------------------
 # TR: 0.5. SAVE_DIR DÜZELTMESİ / EN: 0.5. SAVE_DIR FIX
@@ -356,6 +362,9 @@ def save_checkpoint_smart(
         'scheduler': scheduler.state_dict(),
         'step': step,
         'config': str(cfg),
+        # TR: Eval/demo'nun AYNI tokenizer'i yuklemesi icin kimligi yaz.
+        # EN: Record tokenizer identity so eval/demo reload the identical tokenizer.
+        'tokenizer_id': RUNTIME_TOKENIZER_ID,
         'best_val_loss': (
             float(checkpoint_best_val_loss)
             if checkpoint_best_val_loss is not None
@@ -1188,45 +1197,17 @@ def _load_local_runtime_tokenizer():
 
 def load_teacher_tokenizer(prefer_local: bool = False):
     """
-    TR: Öğretmen tokenizer'ını güvenli şekilde yükle.
-    EN: Safely load the teacher tokenizer (without loading the teacher model).
+    TR: Egitim tokenizer'ini TEK kaynaktan (resolve_tokenizer) yukle. Politika
+        (teacher vs TR) yalnizca cfg.use_tr_tokenizer ile belirlenir; bu sayede
+        train/eval/demo ayni tokenizer'i alir. gpt2/sessiz fallback YOK.
+    EN: Load the training tokenizer from the single source of truth
+        (resolve_tokenizer). The teacher-vs-TR choice is governed solely by
+        cfg.use_tr_tokenizer so train/eval/demo agree. No gpt2/silent fallback.
+
+    The legacy ``prefer_local`` argument is accepted for backward compatibility
+    but no longer changes the tokenizer family -- policy lives in the config.
     """
-    hf_token = os.environ.get("HF_TOKEN")
-    require_gated_teacher = bool(getattr(cfg, "require_gated_teacher", False))
-    prefer_local = (
-        prefer_local
-        or bool(getattr(cfg, "use_tr_tokenizer", False))
-        or (os.environ.get("TITAN_OFFLINE", "1") == "1" and not hf_token)
-        or not require_gated_teacher
-    )
-
-    if prefer_local:
-        try:
-            return _load_local_runtime_tokenizer()
-        except Exception as local_exc:
-            if require_gated_teacher and not hf_token:
-                raise RuntimeError("Local tokenizer missing and gated teacher access unavailable.") from local_exc
-            print(f"⚠️ Local tokenizer unavailable: {local_exc}")
-
-    try:
-        tok = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token)
-        return _ensure_pad_token(tok)
-    except Exception as e:
-        if require_gated_teacher:
-            raise RuntimeError(
-                "Teacher tokenizer access failed under require_gated_teacher=true. "
-                "Provide valid HF_TOKEN and gated access."
-            ) from e
-        try:
-            return _load_local_runtime_tokenizer()
-        except Exception as local_exc:
-            if os.environ.get("TITAN_OFFLINE", "1") == "1":
-                raise RuntimeError(
-                    "Teacher tokenizer load failed and no local tokenizer is available for offline precomputed-KD mode."
-                ) from local_exc
-            print(f"⚠️ Teacher tokenizer load failed: {e}. Falling back to gpt2.")
-            tok = AutoTokenizer.from_pretrained("gpt2")
-            return _ensure_pad_token(tok)
+    return resolve_tokenizer(cfg)
 
 
 # -----------------------------------------------------------------------------
@@ -1550,11 +1531,26 @@ def train():
     else:
         print(f"ℹ️  Epoch Mode Skipped. Using provided max_steps: {cfg.max_steps}")
 
-    cfg.vocab_size = teacher_tokenizer.vocab_size
+    # TR: Gercek tokenizer'dan vocab boyutunu turet (len() => eklenen ozel
+    #     token'lari da kapsar; Llama-3: 128000 attr ama 128256 len).
+    # EN: Derive vocab size from the real tokenizer via len() so added/special
+    #     tokens are included (Llama-3: 128000 attr vs 128256 len). Closes the
+    #     128256/128000 embedding/lm_head mismatch.
+    cfg.vocab_size = len(teacher_tokenizer)
+    global RUNTIME_TOKENIZER_ID
+    RUNTIME_TOKENIZER_ID = tokenizer_identity(teacher_tokenizer, cfg)
+    print(
+        f"🔤 Runtime tokenizer locked: {RUNTIME_TOKENIZER_ID['name_or_path']} "
+        f"(vocab={RUNTIME_TOKENIZER_ID['vocab_size']}, "
+        f"use_tr_tokenizer={RUNTIME_TOKENIZER_ID['use_tr_tokenizer']})"
+    )
     if accelerator.is_main_process:
         validate_config(cfg, stage="post")
-    
+
     student = MertFormer()
+    # TR: Embedding/lm_head'i tokenizer'a kesin hizala (resize guvenlik agi).
+    # EN: Hard-align embedding/lm_head to the tokenizer (resize safety net).
+    student.resize_token_embeddings(cfg.vocab_size)
     # Note: .to(device) is handled by accelerator.prepare, but explicit move is fine before prepare
     student.to(student_device)
     resume_payload = _load_resume_payload(cfg, student, is_main_process=accelerator.is_main_process)

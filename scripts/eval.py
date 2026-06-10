@@ -20,7 +20,6 @@ import json
 import argparse
 from pathlib import Path
 from tqdm import tqdm
-from transformers import AutoTokenizer
 from datasets import load_dataset
 
 # Add project root to path
@@ -97,19 +96,27 @@ def main():
     ckpt_path = save_dir / f"{cfg.model_name}_latest.pt" if args.ckpt == "latest" else Path(args.ckpt)
     
     print(f"📦 Loading Model: {ckpt_path}")
-    model = MertFormer().to(device)
-    
+    from utils.tokenizer_resolver import load_tokenizer_from_identity, resolve_tokenizer
+
     if ckpt_path.exists():
         checkpoint = torch.load(ckpt_path, map_location=device)
+        # TR: Tokenizer'i checkpoint kimliginden yukle; yoksa ACIK hata.
+        # EN: Load tokenizer from checkpoint identity; missing -> explicit error
+        #     (no silent teacher fallback -> train/eval tokenizer must match).
+        tokenizer = load_tokenizer_from_identity(checkpoint.get("tokenizer_id"))
+        cfg.vocab_size = len(tokenizer)
+        model = MertFormer().to(device)
+        model.resize_token_embeddings(len(tokenizer))
         model.load_state_dict(checkpoint["model"] if "model" in checkpoint else checkpoint)
         model.eval()
     else:
         print("❌ Checkpoint not found! Evaluating initialized weights (Random).")
+        tokenizer = resolve_tokenizer(cfg)
+        cfg.vocab_size = len(tokenizer)
+        model = MertFormer().to(device)
+        model.resize_token_embeddings(len(tokenizer))
         model.eval()
 
-    # Tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
-    
     # Run Evals
     evaluate_gsm8k(model, tokenizer, device, args.samples)
 

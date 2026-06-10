@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import sys
 from pathlib import Path
@@ -115,28 +114,35 @@ def score_assertions(assertions_file: Path, predictions_file: Path, summary_file
 
 def run_model(assertions_file: Path, ckpt: Path, out_predictions: Path, max_new_tokens: int, samples: int) -> int:
     import torch
-    from transformers import AutoTokenizer
     from config.config import cfg
     from model.transformers import MertFormer
+    from utils.tokenizer_resolver import load_tokenizer_from_identity, resolve_tokenizer
 
     cases = load_jsonl(assertions_file)
     if samples > 0:
         cases = cases[:samples]
 
     device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
-    model = MertFormer().to(device)
 
     if ckpt.exists():
         checkpoint = torch.load(ckpt, map_location=device)
+        # TR: Tokenizer'i checkpoint kimliginden yukle; yoksa ACIK hata (sessiz
+        #     teacher fallback YOK). EN: Tokenizer strictly from checkpoint
+        #     identity; missing -> explicit error (same pattern as eval/gsm8k.py).
+        tokenizer = load_tokenizer_from_identity(checkpoint.get("tokenizer_id"))
+        cfg.vocab_size = len(tokenizer)
+        model = MertFormer().to(device)
+        model.resize_token_embeddings(len(tokenizer))
         model.load_state_dict(checkpoint.get("model", checkpoint))
     else:
-        print(f"[golden_score] checkpoint not found ({ckpt}), using random weights.")
+        # Smoke-only path (no checkpoint -> no recorded identity).
+        print(f"[golden_score] checkpoint not found ({ckpt}), using random weights (smoke).")
+        tokenizer = resolve_tokenizer(cfg)
+        cfg.vocab_size = len(tokenizer)
+        model = MertFormer().to(device)
+        model.resize_token_embeddings(len(tokenizer))
 
     model.eval()
-    hf_token = os.environ.get("HF_TOKEN")
-    tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id, token=hf_token)
-    if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
 
     out_predictions.parent.mkdir(parents=True, exist_ok=True)
     written = 0

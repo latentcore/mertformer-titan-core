@@ -1,6 +1,6 @@
 {
-  "generated_local": "2026-05-31T00:18:44",
-  "entry_count": 721,
+  "generated_local": "2026-06-10T23:41:33",
+  "entry_count": 746,
   "entries": [
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260404_232149.zip",
@@ -2715,6 +2715,90 @@
       "disposition": "preserve_immutable_evidence"
     },
     {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_225520.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_225520.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_231233.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_231233.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_231627.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_231627.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_233122.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_233122.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_233435.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_233435.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_233736.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_233736.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_233935.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260610_233935.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113659.json",
       "kind": "file",
       "immutable_reason": "result_",
@@ -3909,6 +3993,54 @@
       "disposition": "preserve_immutable_evidence"
     },
     {
+      "path": "<HOME>/Documents/mertformer_outputs",
+      "kind": "dir",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_outputs/checkpoints",
+      "kind": "dir",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_outputs/checkpoints/final.pt",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_outputs/checkpoints/latest.pt",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_outputs/eval_smoke.json",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_outputs/logs",
+      "kind": "dir",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_outputs/logs/train_log.jsonl",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/mertformer_outputs/manifest.json",
+      "kind": "file",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
       "path": "<HOME>/Documents/mertformer_outputs_LINKEDIN_run_20260220_175540.zip.sha256",
       "kind": "file",
       "immutable_reason": "output",
@@ -4227,6 +4359,12 @@
       "disposition": "preserve_immutable_evidence"
     },
     {
+      "path": "<HOME>/Documents/MertFormer_Titan_Public_Evidence_Note_GIST_READY_2026-05-31.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
       "path": "<HOME>/Documents/OCEAN_8H30_PRE45K_H200_FINAL_EVIDENCE_PROOF_20260514_RUNNOW/kernel_patch/mertformer_sdk",
       "kind": "dir",
       "immutable_reason": "evidence",
@@ -4246,6 +4384,18 @@
     },
     {
       "path": "<HOME>/Documents/OCEAN_8H30_PRE45K_H200_FINAL_EVIDENCE_PROOF_20260514_RUNNOW/kernel_patch/mertformer_sdk/kernels/triton_fused_bitlinear.py",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/Thiel_Evidence_Summary_MertFormer_2026-05-31.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/Thiel_Evidence_Summary_MertFormer_2026-05-31.pdf",
       "kind": "file",
       "immutable_reason": "evidence",
       "disposition": "preserve_immutable_evidence"

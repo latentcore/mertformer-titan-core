@@ -96,25 +96,35 @@ def _load_model_and_tokenizer(ckpt: str, allow_random_weights: bool = False):
     ckpt_path = _resolve_checkpoint_path(ckpt, cfg.save_dir, cfg.model_name)
     _require_checkpoint_or_allow_random(ckpt_path, allow_random_weights)
 
-    from transformers import AutoTokenizer
     from model.transformers import MertFormer
+    from utils.tokenizer_resolver import (
+        load_tokenizer_from_identity,
+        resolve_tokenizer,
+    )
 
-    model = MertFormer().to(device)
     if ckpt_path.exists():
         checkpoint = torch.load(ckpt_path, map_location=device)
+        # TR: Tokenizer'i checkpoint kimliginden yukle; yoksa ACIK hata (sessiz
+        #     teacher fallback YOK). EN: Load the tokenizer from the checkpoint
+        #     identity; missing -> explicit error (no silent teacher fallback).
+        tokenizer = load_tokenizer_from_identity(checkpoint.get("tokenizer_id"))
+        cfg.vocab_size = len(tokenizer)
+        model = MertFormer().to(device)
+        model.resize_token_embeddings(len(tokenizer))
         model.load_state_dict(checkpoint.get("model", checkpoint))
     else:
+        # Random-weights smoke only: no checkpoint exists, so there is no
+        # recorded tokenizer identity. Use the configured single resolver.
         print(
             f"[gsm8k] Checkpoint not found: {ckpt_path}. "
             "Using random weights (--allow-random-weights)."
         )
+        tokenizer = resolve_tokenizer(cfg)
+        cfg.vocab_size = len(tokenizer)
+        model = MertFormer().to(device)
+        model.resize_token_embeddings(len(tokenizer))
 
     model.eval()
-
-    tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
-    if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
-
     return model, tokenizer, device
 
 
