@@ -271,15 +271,39 @@ class DistillationManager:
         """
         return PrecomputedLogitsIterable(self.logits_dir, stage_name, subset="train")
 
-    def has_precomputed_logits(self, stage_names, subset="train"):
+    def has_precomputed_logits(self, stage_names, subset="train", *, verify_alignment=False):
         """
         Quick sanity check to ensure offline logits exist for all stages.
+
+        TR: [B2] verify_alignment=True iken shard'larin sadece VAR olmasi yetmez;
+            her stage'in teacher-logit kimligi student stream'iyle hizali olmali
+            (validate_logit_alignment). Hizasiz shard 'kullanilamaz' sayilir ->
+            train sessiz bozulma yerine acik hata alir.
+        EN: [B2] With verify_alignment=True, shard existence is not enough; each
+            stage's teacher-logit identity must align to the student stream
+            (validate_logit_alignment). A misaligned shard set is treated as
+            unusable so train hard-fails instead of silently corrupting KD.
         """
         # TR: Tüm stage'ler için shard var mı?
         # EN: Do shards exist for all stages?
         for stage in stage_names:
             files = _list_logits_files(self.logits_dir, stage, subset=subset)
             if not files:
+                return False
+        if verify_alignment:
+            try:
+                from scripts.validate_logit_alignment import validate_stage
+                from utils.tokenizer_resolver import resolve_tokenizer
+                from config.config import cfg as _cfg
+                tok = resolve_tokenizer(_cfg)
+                for stage in stage_names:
+                    num = int(str(stage).replace("stage", "")) if "stage" in str(stage) else int(stage)
+                    res = validate_stage(num, self.logits_dir, tok)
+                    if res.get("status") != "PASS":
+                        print(f"⛔ Logit alignment check failed for {stage}: {res.get('reason_code')}")
+                        return False
+            except Exception as exc:
+                print(f"⛔ Logit alignment verification error: {exc}")
                 return False
         return True
 
@@ -354,13 +378,22 @@ def _as_sparse_topk_payload(item: dict, vocab_size: int) -> dict:
         raise ValueError(
             "Top-K sparse logits must use matching [seq, top_k] indices/values tensors."
         )
-    return {
-        "format": "topk_sparse_v1",
+    payload = {
+        # TR: [B2] Packed shard'lar 'topk_packed_v1'; format'i koru, hizalama
+        #     dogrulamasi icin per-sequence kimligini (identity) ve true_len'i tasi.
+        # EN: [B2] Packed shards are 'topk_packed_v1'; preserve the format and carry
+        #     per-sequence identity + true_len so train-side can verify alignment.
+        "format": item.get("format", "topk_sparse_v1"),
         "indices": indices,
         "values": values,
         "vocab_size": int(item.get("vocab_size", vocab_size)),
         "top_k": int(item.get("top_k", indices.size(-1))),
     }
+    if "identity" in item:
+        payload["identity"] = item["identity"]
+    if "true_len" in item:
+        payload["true_len"] = int(item["true_len"])
+    return payload
 
 
 class PrecomputedLogitsIterable(IterableDataset):

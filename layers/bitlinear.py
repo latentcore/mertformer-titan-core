@@ -35,6 +35,23 @@ def set_lowbit_kernel_enabled(enabled: bool) -> None:
     _LOWBIT_KERNEL_ENABLED = bool(enabled)
 
 
+def _kernel_strict() -> bool:
+    return os.getenv("MERTFORMER_KERNEL_STRICT", "0") == "1"
+
+
+def _unavailable(backend: str) -> None:
+    # TR: [strict-mode fix] Secilen backend kullanilamiyorsa strict modda sessiz
+    #     torch fallback yerine HATA ver; aksi halde None dondur (yumusak fallback).
+    # EN: [strict-mode fix] When the selected backend is unavailable, raise under
+    #     strict mode instead of silently torch-falling-back; else return None.
+    if _kernel_strict():
+        raise RuntimeError(
+            f"MERTFORMER_KERNEL_STRICT=1 but selected backend '{backend}' is unavailable; "
+            "refusing to silently fall back to torch."
+        )
+    return None
+
+
 def _try_lowbit_kernel(x: torch.Tensor, w: torch.Tensor, bias: torch.Tensor | None) -> torch.Tensor | None:
     if not _LOWBIT_KERNEL_ENABLED:
         return None
@@ -56,13 +73,27 @@ def _try_lowbit_kernel(x: torch.Tensor, w: torch.Tensor, bias: torch.Tensor | No
             from mertformer_sdk.kernels.triton_ternary import is_triton_available, triton_ternary_linear
 
             if not is_triton_available():
+                return _unavailable("triton_cuda")
+            # TR: Fused-olmayan triton_ternary'de STE/autograd yok. Training'de
+            #     grad isteyen tensorlerde kullanma -> torch STE fallback'a dus.
+            # EN: The non-fused triton_ternary has no STE/autograd. Never use it
+            #     for grad-requiring tensors in training -> fall back to torch STE.
+            if torch.is_grad_enabled() and (x.requires_grad or w.requires_grad):
                 return None
             return triton_ternary_linear(x, w, bias, use_tensorcore=_TENSORCORE_ENABLED)
 
         if backend == "cpp_cpu":
             from mertformer_sdk.kernels.cpp.loader import bitnet_cpu_linear
 
-            return bitnet_cpu_linear(x, w, bias)
+            # TR: [B3 fix] cpp_cpu cekirdegi duz matmul yapiyor; diger tum
+            #     backend dallari gibi ONCE quantize et, yoksa BitNet b1.58
+            #     yerine sessizce full-precision calisir (yanlis numerik).
+            # EN: [B3 fix] the cpp_cpu kernel is a plain matmul; quantize first
+            #     like every other backend branch, else it silently runs
+            #     full-precision instead of BitNet b1.58 (wrong numerics).
+            x_q = activation_quant(x)
+            w_q = weight_quant(w)
+            return bitnet_cpu_linear(x_q, w_q, bias)
 
         if backend == "metal_fallback":
             from mertformer_sdk.kernels.metal.engine import metal_linear
@@ -91,9 +122,9 @@ def _try_lowbit_kernel(x: torch.Tensor, w: torch.Tensor, bias: torch.Tensor | No
             w_q = weight_quant(w)
             return F.linear(x_q, w_q, bias)
 
-        return None
+        return _unavailable(str(backend))
     except Exception:
-        if os.getenv("MERTFORMER_KERNEL_STRICT", "0") == "1":
+        if _kernel_strict():
             raise
         return None
 

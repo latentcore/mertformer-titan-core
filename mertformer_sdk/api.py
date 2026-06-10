@@ -58,11 +58,23 @@ def load_model(
             "Use a valid checkpoint path or pass strict_checkpoint=False for random-weight mode."
         )
 
-    model = MertFormer().to(device)
-    model.eval()
+    # TR: [H4 fix] Tokenizer'i checkpoint kimliginden yukle (train/eval/demo tek
+    #     kaynak), modeli o vocab'a resize et. Sessiz teacher/gpt2 fallback YOK;
+    #     yanlis tokenizer'la decode = orijinal "111111" bug'i. eval/gsm8k.py ile
+    #     birebir ayni desen.
+    # EN: [H4 fix] Load the tokenizer from the checkpoint identity (single source
+    #     for train/eval/demo) and resize the model to that vocab. No silent
+    #     teacher/gpt2 fallback (wrong-tokenizer decode was the original bug).
+    from utils.tokenizer_resolver import load_tokenizer_from_identity, resolve_tokenizer
 
     if ckpt_path.exists():
         checkpoint = torch.load(ckpt_path, map_location=device)
+        tokenizer = load_tokenizer_from_identity(
+            checkpoint.get("tokenizer_id") if isinstance(checkpoint, dict) else None
+        )
+        cfg.vocab_size = len(tokenizer)
+        model = MertFormer().to(device)
+        model.resize_token_embeddings(len(tokenizer))
         if isinstance(checkpoint, dict):
             if "model" in checkpoint:
                 state = checkpoint["model"]
@@ -73,21 +85,15 @@ def load_model(
         else:
             state = checkpoint
         model.load_state_dict(state)
+    else:
+        # Random-weights smoke only (strict_checkpoint=False): no checkpoint, so
+        # no recorded identity -> use the single configured resolver.
+        tokenizer = resolve_tokenizer(cfg)
+        cfg.vocab_size = len(tokenizer)
+        model = MertFormer().to(device)
+        model.resize_token_embeddings(len(tokenizer))
 
-    use_tr = bool(getattr(cfg, "use_tr_tokenizer", False))
-    tr_id = getattr(cfg, "tr_tokenizer_id", "tokenizer/tr")
-    tokenizer = None
-    if use_tr:
-        try:
-            tokenizer = AutoTokenizer.from_pretrained(tr_id, local_files_only=True)
-        except Exception:
-            print("⚠️  Turkish tokenizer not found or incompatible. Falling back to teacher tokenizer.")
-            tokenizer = None
-    if tokenizer is None:
-        tokenizer = AutoTokenizer.from_pretrained(cfg.teacher_model_id)
-    if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
-
+    model.eval()
     return model, tokenizer, device
 
 

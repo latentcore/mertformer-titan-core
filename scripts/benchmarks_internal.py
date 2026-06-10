@@ -38,8 +38,16 @@ def run_generation(dataset, tokenizer, model, device, out_path: Path, max_new_to
             input_ids = tokenizer(prompt, return_tensors="pt").input_ids.to(device)
             import torch
             with torch.no_grad():
-                output = model.generate(input_ids, max_new_tokens=max_new_tokens, temperature=0.2)
-            completion = tokenizer.decode(output[0], skip_special_tokens=True)
+                # [H6 fix] stop on EOS; decode only the generated tokens.
+                output = model.generate(
+                    input_ids,
+                    max_new_tokens=max_new_tokens,
+                    temperature=0.2,
+                    eos_token_id=tokenizer.eos_token_id,
+                )
+            completion = tokenizer.decode(
+                output[0, input_ids.shape[1]:], skip_special_tokens=True
+            )
             record = {
                 "id": row.get("task_id", idx),
                 "prompt": prompt,

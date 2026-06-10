@@ -52,6 +52,13 @@ else
   if "${phase0_base[@]}" --dry-run >/dev/null 2>&1; then
     if "${phase0_base[@]}" --check-complete >/dev/null 2>&1; then
       echo "[phase-0] offline teacher logits already complete."
+      # [B2] Verify teacher-logit shards align to the student stream (identity).
+      # Advisory here; preflight/has_precomputed_logits enforce it authoritatively.
+      if "$PY" scripts/validate_logit_alignment.py --all-stages --logits-dir "$LOGITS_DIR" >/dev/null 2>&1; then
+        echo "[phase-0] logit alignment verified."
+      else
+        echo "[phase-0] WARNING: logit alignment check did not pass; readiness gate will block until shards are realigned (re-run precompute)."
+      fi
     elif [[ -z "${HF_TOKEN:-}" ]]; then
       echo "[phase-0] HF_TOKEN missing; optional offline teacher precompute skipped."
       echo "[phase-0] final orchestrator / readiness policy will block canonical offline_clean until logits exist or Phase-0 becomes actionable."

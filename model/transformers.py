@@ -208,8 +208,19 @@ class MertFormer(nn.Module):
                     )
                     return x_out, aux_out
                 
+                # TR: [ADR-0004] MoE.forward icindeki in-place telemetry buffer
+                #     yazimlari (last_expert_load/collapse_detected vb.) ile
+                #     use_reentrant=False'un metadata-esitlik recompute kontrolu
+                #     catisip ilk backward'da CheckpointError firlatiyordu.
+                #     Reentrant mod bu kontrolu yapmaz; korunan MoE cekirdegine
+                #     dokunmadan blocker'i cozer (RNG recompute farki kabul edildi).
+                # EN: [ADR-0004] In-place MoE telemetry buffer writes during forward
+                #     break use_reentrant=False's recompute metadata-equality check
+                #     (CheckpointError on first backward). Reentrant mode skips that
+                #     check, fixing the blocker without touching the protected MoE
+                #     core (minor RNG-on-recompute difference accepted).
                 x, aux = checkpoint(
-                    run_checkpointed, x, use_reentrant=False
+                    run_checkpointed, x, use_reentrant=True
                 )
                 present_kv = None
             else:
@@ -316,7 +327,10 @@ class MertFormer(nn.Module):
 
             # TR: Son pozisyonun logit'lerini al
             # EN: Get logits of last position
-            next_token_logits = logits[:, -1, :] / temperature
+            # TR: temperature=0 (greedy) bolme-sifir/inf -> NaN'i onle.
+            # EN: Guard temperature=0 (greedy) against div-by-zero/inf -> NaN.
+            safe_temperature = max(float(temperature), 1e-6)
+            next_token_logits = logits[:, -1, :] / safe_temperature
 
             # TR: Top-k filtreleme / EN: Top-k filtering
             if top_k is not None and top_k > 0:

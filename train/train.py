@@ -307,6 +307,66 @@ def preflight_param_report(model: nn.Module):
     print(f"📚 Trainable: {trainable / 1e6:.2f} Milyon")
 
 
+def _capture_rng_state() -> dict:
+    """TR: [MED] Resume'un tekrar-uretilebilir olmasi icin RNG durumlarini topla.
+    EN: [MED] Capture RNG states so resume is reproducible."""
+    rng: dict = {}
+    try:
+        rng["torch"] = torch.get_rng_state()
+    except Exception:
+        pass
+    try:
+        if torch.cuda.is_available():
+            rng["cuda"] = torch.cuda.get_rng_state_all()
+    except Exception:
+        pass
+    try:
+        import numpy as _np
+        st = _np.random.get_state()
+        # TR: weights_only=True ile yuklenebilmesi icin numpy state'i builtin'lere cevir.
+        # EN: Convert numpy state to builtins so checkpoints load under weights_only=True.
+        rng["numpy"] = [st[0], [int(v) for v in st[1]], int(st[2]), int(st[3]), float(st[4])]
+    except Exception:
+        pass
+    try:
+        # random.getstate() -> (int, tuple[int,...], float|None): builtin-safe.
+        ver, state_tuple, gauss = random.getstate()
+        rng["python"] = [int(ver), [int(v) for v in state_tuple], gauss]
+    except Exception:
+        pass
+    return rng
+
+
+def _restore_rng_state(rng) -> None:
+    """TR: [MED] Checkpoint'teki RNG durumlarini geri yukle (best-effort)."""
+    if not isinstance(rng, dict):
+        return
+    try:
+        if "torch" in rng:
+            torch.set_rng_state(rng["torch"])
+    except Exception:
+        pass
+    try:
+        if "cuda" in rng and torch.cuda.is_available():
+            torch.cuda.set_rng_state_all(rng["cuda"])
+    except Exception:
+        pass
+    try:
+        if "numpy" in rng:
+            import numpy as _np
+            s = rng["numpy"]
+            state = (s[0], _np.array(s[1], dtype=_np.uint32), int(s[2]), int(s[3]), float(s[4]))
+            _np.random.set_state(state)
+    except Exception:
+        pass
+    try:
+        if "python" in rng:
+            p = rng["python"]
+            random.setstate((int(p[0]), tuple(int(v) for v in p[1]), p[2]))
+    except Exception:
+        pass
+
+
 def save_checkpoint_smart(
     model,
     optimizer,
@@ -365,6 +425,12 @@ def save_checkpoint_smart(
         # TR: Eval/demo'nun AYNI tokenizer'i yuklemesi icin kimligi yaz.
         # EN: Record tokenizer identity so eval/demo reload the identical tokenizer.
         'tokenizer_id': RUNTIME_TOKENIZER_ID,
+        # TR: [H3] Optimizer sinifini kaydet -> resume'da uyusmazlik uyarisi mumkun.
+        # EN: [H3] Record optimizer class so resume can warn on a class mismatch.
+        'optimizer_class': type(optimizer).__name__,
+        # TR: [MED] Tekrar-uretilebilir resume icin RNG durumlari.
+        # EN: [MED] RNG states for reproducible resume.
+        'rng_state': _capture_rng_state(),
         'best_val_loss': (
             float(checkpoint_best_val_loss)
             if checkpoint_best_val_loss is not None
@@ -630,6 +696,26 @@ def export_to_onnx(model, save_dir, model_name, device):
 # TR: 2. VERİ SETLERİ (CURRICULUM + VALIDATION)
 # EN: 2. DATASETS (CURRICULUM + VALIDATION)
 # -----------------------------------------------------------------------------
+def _encode_with_eos_labels(tokenizer, text, max_len, pad_id, eos_id):
+    """TR: [H2] Tek satiri tokenize et, EOS ekle, max_len'e pad'le; label trailing
+    pad'de -100 tasir -> CE/KD pad'i yok sayar ama EOS denetlenir (pad==eos guvenli).
+    EN: [H2] Tokenize one row, append EOS, pad to max_len; labels carry -100 at
+    trailing pad so CE/KD ignore pad while EOS is supervised (pad==eos safe)."""
+    from train.packing import encode_row
+    ids = encode_row(tokenizer, text, max(1, int(max_len) - 1))
+    if eos_id is not None:
+        ids = ids + [int(eos_id)]
+    ids = ids[: int(max_len)]
+    true_len = len(ids)
+    pad_n = int(max_len) - true_len
+    input_list = ids + [int(pad_id)] * pad_n
+    label_list = ids + [-100] * pad_n
+    return (
+        torch.tensor(input_list, dtype=torch.long),
+        torch.tensor(label_list, dtype=torch.long),
+    )
+
+
 class ValidationJsonlDataset(IterableDataset):
     """
     TR: Validation için basit, sıralı (deterministik) okuyucu.
@@ -639,6 +725,8 @@ class ValidationJsonlDataset(IterableDataset):
         self.path = path
         self.max_len = max_len
         self.tokenizer = tokenizer
+        self.pad_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else 0
+        self.eos_id = tokenizer.eos_token_id
 
     def __iter__(self):
         with open(self.path, "r", encoding="utf-8") as f:
@@ -648,15 +736,10 @@ class ValidationJsonlDataset(IterableDataset):
                     text = obj.get("text", "")
                     if not text:
                         continue
-                    enc = self.tokenizer(
-                        text,
-                        truncation=True,
-                        max_length=self.max_len,
-                        padding="max_length",
-                        return_tensors="pt"
+                    input_ids, labels = _encode_with_eos_labels(
+                        self.tokenizer, text, self.max_len, self.pad_id, self.eos_id
                     )
-                    input_ids = enc["input_ids"].squeeze(0)
-                    yield input_ids, input_ids
+                    yield input_ids, labels
                 except Exception:
                     continue
 
@@ -674,13 +757,29 @@ class CurriculumDataset(IterableDataset):
         self.current_stage = current_stage
         self.pad_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else 0
 
-        # Dosya boyutlarını önceden hesapla (seek için)
+        # TR: [MED] Byte-seek uzun satirlari over-sample ediyordu (uzun satir daha
+        #     fazla byte-uzayi kaplar -> rastgele byte-offset oraya daha sik dusiyor)
+        #     ve dosyanin ilk satirini hic vermiyordu -> stage-ici kaynak oranlari
+        #     bozuluyordu. Cozum: her bos-olmayan satirin byte-offset'ini bir kez
+        #     indeksle, sonra UNIFORM satir indexi sec (uzunluk yanliligi yok).
+        # EN: [MED] Byte-seek over-sampled long lines and never yielded the first
+        #     line, distorting intra-stage source ratios. Index each non-empty
+        #     line's byte offset once, then sample a UNIFORM line index.
         self.file_offsets = {}
+        self.line_offsets = {}
         for p in stage_paths:
             if p.exists():
+                offsets = []
                 with open(p, "rb") as f:
-                    f.seek(0, 2)
-                    self.file_offsets[str(p)] = f.tell()
+                    pos = f.tell()
+                    line = f.readline()
+                    while line:
+                        if line.strip():
+                            offsets.append(pos)
+                        pos = f.tell()
+                        line = f.readline()
+                    self.file_offsets[str(p)] = pos
+                self.line_offsets[str(p)] = offsets
 
     def set_stage(self, stage: int):
         """Update current curriculum stage."""
@@ -727,8 +826,8 @@ class CurriculumDataset(IterableDataset):
             if not path.exists():
                 continue
 
-            file_size = self.file_offsets.get(str(path), 0)
-            if file_size == 0: continue
+            offsets = self.line_offsets.get(str(path), [])
+            if not offsets: continue
 
             total_attempts += 1
 
@@ -741,12 +840,10 @@ class CurriculumDataset(IterableDataset):
             try:
                 # [FIX] Binary mode seek is safe; text mode seek is fragile with UTF-8
                 with open(path, "rb") as f:
-                    # Rastgele bir bayt konumuna git
-                    rand_pos = random.randint(0, max(0, file_size - 1000))
-                    f.seek(rand_pos)
-                    # İlk satır yarım olabilir, atla
-                    f.readline()
-                    # İkinci satırı al
+                    # TR: [MED] UNIFORM satir-index sec, dogrudan o satirin offset'ine git.
+                    # EN: [MED] Pick a UNIFORM line index, seek to that line's offset.
+                    idx = random.randint(0, len(offsets) - 1)
+                    f.seek(offsets[idx])
                     line_bytes = f.readline()
 
                     if not line_bytes:
@@ -766,16 +863,13 @@ class CurriculumDataset(IterableDataset):
                         skipped_count += 1
                         continue
 
-                    enc = self.tokenizer(
-                        text,
-                        truncation=True,
-                        max_length=self.max_len,
-                        padding="max_length",
-                        return_tensors="pt"
+                    # TR: [H2] EOS ekle + label trailing pad'de -100 (pad==eos guvenli).
+                    # EN: [H2] Append EOS + labels -100 at trailing pad (pad==eos safe).
+                    input_ids, labels = _encode_with_eos_labels(
+                        self.tokenizer, text, self.max_len, self.pad_id,
+                        self.tokenizer.eos_token_id,
                     )
-                    input_ids = enc["input_ids"].squeeze(0)
-                    # TR: [FIX] RAM yükünü azaltmak için text yield'dan kaldırıldı / EN: [FIX] Removed text from yield to reduce RAM overhead
-                    yield input_ids, input_ids
+                    yield input_ids, labels
             except Exception:
                 skipped_count += 1
                 continue
@@ -824,14 +918,64 @@ class PrecomputedCurriculumDataset(IterableDataset):
         return logits
 
     def _iter_stage(self, stage_name: str, path: Path):
-        # TR: Stage dataset + logits shard eşlemesi (deterministik)
-        # EN: Deterministic pairing of stage dataset with logits shards
+        # TR: [B2] Student akisini precompute ile AYNI packer'dan kur; her packed
+        #     dizide teacher shard kimligini HARD-ASSERT et (sessiz realign YOK).
+        #     Pad pozisyonlari label'da -100. Eski (non-packed) yola sadece
+        #     TITAN_ALLOW_LEGACY_LOGIT_REALIGN=1 ile dusulur.
+        # EN: [B2] Build the student stream from the SAME packer as precompute and
+        #     HARD-ASSERT each packed sequence's teacher-shard identity (no silent
+        #     realign). Pad positions are -100 in labels. Legacy non-packed path is
+        #     reachable only via TITAN_ALLOW_LEGACY_LOGIT_REALIGN=1.
+        import os as _os
+        from train.packing import (
+            LogitAlignmentError,
+            assert_sequence_identity,
+            extract_row_text,
+            iter_packed_sequences,
+        )
+
+        use_packing = bool(getattr(cfg, "sequence_packing", True))
+        verify = bool(getattr(cfg, "verify_logit_alignment", True))
+        legacy = _os.environ.get("TITAN_ALLOW_LEGACY_LOGIT_REALIGN", "0") == "1"
+        eos_id = self.tokenizer.eos_token_id
+        if eos_id is None:
+            eos_id = self.pad_id
         logits_iter = iter(self.distill_manager.get_precomputed_loader(stage_name))
+
+        if use_packing and not legacy:
+            def _rows():
+                with open(path, "r", encoding="utf-8") as f:
+                    for li, line in enumerate(f):
+                        try:
+                            obj = json.loads(line)
+                        except Exception:
+                            continue
+                        yield li, extract_row_text(obj)
+
+            for seq in iter_packed_sequences(
+                _rows(), self.tokenizer, self.max_len, eos_id, self.pad_id
+            ):
+                try:
+                    t_item = next(logits_iter)
+                except StopIteration:
+                    return
+                stored_identity = t_item.get("identity") if isinstance(t_item, dict) else None
+                if verify:
+                    assert_sequence_identity(seq["input_ids"], seq["true_len"], stored_identity)
+                input_ids = torch.tensor(seq["input_ids"], dtype=torch.long)
+                labels = input_ids.clone()
+                tl = int(seq["true_len"])
+                if tl < labels.numel():
+                    labels[tl:] = -100  # ignore trailing pad (pad==eos safe)
+                yield input_ids, labels, t_item
+            return
+
+        # Legacy non-packed path (escape hatch only).
         with open(path, "r", encoding="utf-8") as f:
             for line in f:
                 try:
                     obj = json.loads(line)
-                    text = obj.get("text", "")
+                    text = extract_row_text(obj)
                     if not text:
                         continue
                     enc = self.tokenizer(
@@ -839,7 +983,7 @@ class PrecomputedCurriculumDataset(IterableDataset):
                         truncation=True,
                         max_length=self.max_len,
                         padding="max_length",
-                        return_tensors="pt"
+                        return_tensors="pt",
                     )
                     input_ids = enc["input_ids"].squeeze(0)
                     try:
@@ -847,7 +991,11 @@ class PrecomputedCurriculumDataset(IterableDataset):
                     except StopIteration:
                         return
                     t_logits = self._align_logits(t_logits, input_ids.size(0))
-                    yield input_ids, input_ids, t_logits
+                    labels = input_ids.clone()
+                    labels[input_ids == self.pad_id] = -100
+                    yield input_ids, labels, t_logits
+                except LogitAlignmentError:
+                    raise
                 except Exception:
                     continue
 
@@ -889,7 +1037,7 @@ def collate_fn(batch):
 def _is_sparse_topk_payload(value: Any) -> bool:
     return (
         isinstance(value, dict)
-        and value.get("format") == "topk_sparse_v1"
+        and value.get("format") in ("topk_sparse_v1", "topk_packed_v1")
         and isinstance(value.get("indices"), torch.Tensor)
         and isinstance(value.get("values"), torch.Tensor)
     )
@@ -1294,6 +1442,45 @@ def rebuild_optimizer(model, opt, cfg):
     print(f"✅ Optimizer Rebuilt: {len(body_params)} Body, {len(router_params)} Router params.")
 
 
+def build_optimizer(body_params, router_params, cfg):
+    """TR: [H3] Optimizer'i construction'da, use_galore/use_8bit_adam'i ONURLANDIRARAK
+    kur (sinif ancak burada secilebilir; rebuild_optimizer sadece param_group
+    degistirebiliyordu). Aktif sinifi ACIKCA logla -> config == gercek; "GaLore
+    aciktir ama aslinda duz AdamW calisiyor" sessiz uyusmazligini bitirir.
+    EN: [H3] Construct the optimizer honoring use_galore/use_8bit_adam (the class can
+    only be chosen here; rebuild_optimizer could only mutate param groups). Logs the
+    ACTIVE class so config==reality (kills the phantom-GaLore mismatch)."""
+    body_group = {"params": body_params, "lr": cfg.learning_rate, "weight_decay": cfg.weight_decay}
+    router_group = {"params": router_params, "lr": cfg.learning_rate * 1.5, "weight_decay": 1e-4}
+    opt = None
+    if getattr(cfg, "use_galore", False) and galore_torch is not None:
+        try:
+            optim_cls = galore_torch.GaLoreAdamW8bit if cfg.use_8bit_adam else galore_torch.GaLoreAdamW
+            opt = optim_cls([
+                {**body_group, "rank": 128, "update_proj_gap": 200, "scale": 0.25},
+                {**router_group, "rank": 64, "update_proj_gap": 200, "scale": 0.25},
+            ])
+        except Exception as exc:
+            print(f"⚠️ GaLore optimizer unavailable ({exc}); falling back.")
+            opt = None
+    if opt is None and getattr(cfg, "use_8bit_adam", False):
+        try:
+            import bitsandbytes as bnb
+            opt = bnb.optim.AdamW8bit([body_group, router_group])
+        except Exception as exc:
+            print(f"⚠️ 8-bit AdamW unavailable ({exc}); falling back to torch AdamW.")
+            opt = None
+    if opt is None:
+        opt = torch.optim.AdamW([body_group, router_group])
+    print(
+        f"🚀 OPTIMIZER ACTIVE: {type(opt).__name__} "
+        f"(use_galore={getattr(cfg, 'use_galore', False)}, "
+        f"use_8bit_adam={getattr(cfg, 'use_8bit_adam', False)}, "
+        f"galore_available={galore_torch is not None})"
+    )
+    return opt
+
+
 # -----------------------------------------------------------------------------
 # TR: 6. DONDURMA DESTEĞİ / EN: 6. FREEZE SUPPORT
 # -----------------------------------------------------------------------------
@@ -1446,7 +1633,12 @@ def train():
     # Curriculum dataset
     if use_offline_logits:
         stage_names = [name for name, _ in stage_info]
-        if not distill_manager.has_precomputed_logits(stage_names):
+        # TR: [B2] Sadece varlik degil, KIMLIK hizalamasini da dogrula -> hizasiz
+        #     shard 'eksik' gibi ele alinir, train sessiz KD bozulmasi yapmaz.
+        # EN: [B2] Verify identity alignment (not just existence) so a misaligned
+        #     shard set is treated as missing and train never silently corrupts KD.
+        _verify_align = bool(getattr(cfg, "verify_logit_alignment", True))
+        if not distill_manager.has_precomputed_logits(stage_names, verify_alignment=_verify_align):
             if offline_mode:
                 raise RuntimeError(
                     "Precomputed logits are missing or incomplete while TITAN_OFFLINE=1. "
@@ -1606,11 +1798,9 @@ def train():
 
     print(f"🧠 Grokking Setup: {len(router_params)} Router Params | {len(body_params)} Body Params")
 
-    opt = torch.optim.AdamW([
-            {'params': body_params, 'lr': cfg.learning_rate, 'weight_decay': cfg.weight_decay},
-            # Stabilization: Reduced LR multiplier and added weight decay for Router parameters
-            {'params': router_params, 'lr': cfg.learning_rate * 1.5, 'weight_decay': 1e-4} 
-        ])
+    # TR: [H3] Optimizer'i cfg.use_galore/use_8bit_adam'a gore gercekten kur.
+    # EN: [H3] Build the real optimizer per cfg.use_galore/use_8bit_adam.
+    opt = build_optimizer(body_params, router_params, cfg)
 
     # V21.0 FIX: WSD Scheduler (Warmup-Stable-Decay) moved to global scope
 
@@ -1623,13 +1813,26 @@ def train():
 
     if resume_payload is not None:
         resume_state = resume_payload.get("state", {})
+        # TR: [H3] Optimizer sinifi degistiyse state_dict uyumsuz -> uyar.
+        # EN: [H3] Warn if the optimizer class changed (state_dict incompatible).
+        saved_opt_class = resume_state.get("optimizer_class")
+        if saved_opt_class and saved_opt_class != type(opt).__name__ and accelerator.is_main_process:
+            print(
+                f"⚠️ Optimizer class changed since checkpoint "
+                f"(saved={saved_opt_class}, now={type(opt).__name__}); "
+                "optimizer state may be reset on load."
+            )
         try:
             if "optimizer" in resume_state:
                 opt.load_state_dict(resume_state["optimizer"])
             if "scheduler" in resume_state:
                 scheduler.load_state_dict(resume_state["scheduler"])
+            # TR: [MED] RNG durumlarini geri yukle -> tekrar-uretilebilir resume.
+            # EN: [MED] Restore RNG states for reproducible resume.
+            if "rng_state" in resume_state:
+                _restore_rng_state(resume_state["rng_state"])
             if accelerator.is_main_process:
-                print("✅ Resume optimizer/scheduler state restored.")
+                print("✅ Resume optimizer/scheduler/RNG state restored.")
         except Exception as resume_exc:
             if accelerator.is_main_process:
                 print(f"⚠️ Resume state restore warning (optimizer/scheduler): {resume_exc}")
@@ -1912,11 +2115,25 @@ def train():
                         shift_logits = s_logits[..., :-1, :].contiguous()
                         shift_labels = labels[..., 1:].contiguous()
 
+                        # TR: [H2] Datasets pad pozisyonlarini -100 (kanonik ignore)
+                        #     olarak isaretler. pad_id != eos_id ise geriye-uyum icin
+                        #     pad_id'yi de yok say; AMA pad_id == eos_id ise pad_id ile
+                        #     maskeleme YAPMA, yoksa EOS denetimi sessizce dusurulur
+                        #     (model durmayi ogrenemez = orijinal bug).
+                        # EN: [H2] Datasets mark padding as -100 (canonical ignore).
+                        #     When pad_id != eos_id, also ignore raw pad_id (back-compat);
+                        #     when pad_id == eos_id, do NOT mask by ==pad_id, else EOS
+                        #     supervision is dropped (the bug: model never learns to stop).
                         pad_id = teacher_tokenizer.pad_token_id if teacher_tokenizer and teacher_tokenizer.pad_token_id is not None else 0
+                        eos_id = teacher_tokenizer.eos_token_id if teacher_tokenizer is not None else None
+                        IGNORE_INDEX = -100
+                        ce_labels = shift_labels
+                        if eos_id is None or pad_id != eos_id:
+                            ce_labels = shift_labels.masked_fill(shift_labels == pad_id, IGNORE_INDEX)
                         loss_ce = F.cross_entropy(
                             shift_logits.view(-1, cfg.vocab_size),
-                            shift_labels.view(-1),
-                            ignore_index=pad_id,
+                            ce_labels.view(-1),
+                            ignore_index=IGNORE_INDEX,
                             label_smoothing=getattr(cfg, "label_smoothing", 0.0)
                         )
 
@@ -1924,7 +2141,7 @@ def train():
                         if t_logits is not None:
                             t_logits = _teacher_payload_to_device(t_logits, shift_logits.device)
                             shift_t_logits = _shift_teacher_payload(t_logits)
-                            kd_mask = shift_labels != pad_id
+                            kd_mask = ce_labels != IGNORE_INDEX
                             loss_distill = kd_loss_safe(shift_logits, shift_t_logits, cfg.teacher_temp, mask=kd_mask)
 
                         # Dynamic Distillation Alpha
@@ -1943,10 +2160,24 @@ def train():
                         aux_coef = getattr(cfg, "router_aux_loss_coef", 0.01)
                         total_loss = (1.0 - alpha) * loss_ce + alpha * loss_distill + aux_coef * aux_loss
 
-                    # NaN Check
-                    if not torch.isfinite(total_loss):
+                    # NaN Check — [H1] COLLECTIVE skip decision.
+                    # TR: Multi-GPU'da bir rank NaN gorup 'continue' ederken digerleri
+                    #     backward/clip_grad_norm_ (NCCL collective) yapinca deadlock
+                    #     olurdu. Skip bayragini all-reduce edip TUM rank'leri ayni
+                    #     dala sokuyoruz (sum>0 -> herkes atlar).
+                    # EN: On multi-GPU a single-rank 'continue' would deadlock peers at
+                    #     the collective backward/clip. All-reduce the skip flag so every
+                    #     rank takes the same branch (sum>0 -> all skip together).
+                    nan_flag = torch.tensor(
+                        [0.0 if torch.isfinite(total_loss) else 1.0],
+                        device=total_loss.device,
+                        dtype=torch.float32,
+                    )
+                    if accelerator.num_processes > 1:
+                        nan_flag = accelerator.reduce(nan_flag, reduction="sum")
+                    if nan_flag.item() > 0:
                         consecutive_nan += 1
-                        print(f"⚠️ NaN detected ({consecutive_nan}/{max_consecutive_nan}), skipping step")
+                        print(f"⚠️ NaN detected ({consecutive_nan}/{max_consecutive_nan}), skipping step (collective)")
                         opt.zero_grad()
                         if consecutive_nan >= max_consecutive_nan:
                             safety_brake_triggered = True
@@ -1959,8 +2190,15 @@ def train():
                     # Track micro-batch stats (for accurate averages)
                     accum_loss += total_loss.item()
                     accum_count += 1
-                    tokens_processed += input_ids.numel()
-                    tokens_seen_total += int(input_ids.numel()) * max(1, accelerator.num_processes)
+                    # TR: [B2/budget] Pad token'lari "token" sayma. Datasets pad'i -100
+                    #     ile isaretler; yalniz gercek (supervised) token'lari say ki
+                    #     token-butce provenance'i sisirilmesin.
+                    # EN: [B2/budget] Don't count pad tokens. Datasets mark pad as -100;
+                    #     count only real (supervised) tokens so the token-budget
+                    #     provenance is not pad-inflated.
+                    real_tokens = int((labels != -100).sum().item())
+                    tokens_processed += real_tokens
+                    tokens_seen_total += real_tokens * max(1, accelerator.num_processes)
 
                     # Backward (Accelerate handles scaling and division by accum steps AUTOMATICALLY)
                     accelerator.backward(total_loss)
@@ -2205,10 +2443,15 @@ def train():
                                     val_logits, _, _ = student(val_input_ids, use_cache=False)
                                     val_shift_logits = val_logits[..., :-1, :].contiguous()
                                     val_shift_labels = val_labels[..., 1:].contiguous()
+                                    # [H2] Same canonical -100 ignore as the train CE.
+                                    _v_pad = teacher_tokenizer.pad_token_id if teacher_tokenizer and teacher_tokenizer.pad_token_id is not None else 0
+                                    _v_eos = teacher_tokenizer.eos_token_id if teacher_tokenizer is not None else None
+                                    if _v_eos is None or _v_pad != _v_eos:
+                                        val_shift_labels = val_shift_labels.masked_fill(val_shift_labels == _v_pad, -100)
                                     val_batch_loss = F.cross_entropy(
                                         val_shift_logits.view(-1, cfg.vocab_size),
                                         val_shift_labels.view(-1),
-                                        ignore_index=teacher_tokenizer.pad_token_id if teacher_tokenizer and teacher_tokenizer.pad_token_id is not None else 0
+                                        ignore_index=-100
                                     )
                                     val_loss_local += val_batch_loss.item()
                                     val_samples_local += 1
@@ -2387,11 +2630,25 @@ def train():
                     consecutive_oom_backoff_fail += 1
                     print(
                         f"⚠️ OOM detected ({consecutive_oom_backoff_fail}/{max_consecutive_oom_backoff_fail}). "
-                        "Clearing cache and retrying..."
+                        "Clearing cache..."
                     )
                     opt.zero_grad(set_to_none=True)
                     if torch.cuda.is_available():
                         torch.cuda.empty_cache()
+                    # TR: [H1] Tek bir rank'te OOM olup 'continue' ile retry yapmak DDP'yi
+                    #     desync eder (peer'lar collective backward/clip'te NCCL timeout'a
+                    #     kadar bekler). Multi-GPU'da guvenli retry YOK -> temiz safety
+                    #     brake ile dur; operator daha kucuk batch ile resume eder.
+                    #     Tek-process'te retry guvenli.
+                    # EN: [H1] A single-rank OOM retry desyncs DDP (peers hang at the
+                    #     collective backward/clip -> NCCL timeout). No safe multi-GPU
+                    #     retry -> clean safety-brake stop; operator resumes with a
+                    #     smaller batch. Single-process retry stays safe.
+                    if accelerator.num_processes > 1:
+                        safety_brake_triggered = True
+                        safety_brake_reason = "oom_multigpu_no_safe_retry"
+                        print("🛑 SAFETY BRAKE: multi-GPU OOM cannot be retried safely (DDP desync). Stopping.")
+                        break
                     if consecutive_oom_backoff_fail >= max_consecutive_oom_backoff_fail:
                         safety_brake_triggered = True
                         safety_brake_reason = "oom_backoff_exhausted"

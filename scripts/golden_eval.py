@@ -68,8 +68,16 @@ def run_model(prompts: List[Dict[str, str]], ckpt: str) -> None:
             continue
         input_ids = tokenizer(prompt, return_tensors="pt").input_ids.to(device)
         with torch.no_grad():
-            output = model.generate(input_ids, max_new_tokens=128, temperature=0.2)
-        text = tokenizer.decode(output[0], skip_special_tokens=True)
+            # [H6 fix] stop on EOS; decode only the generated tokens.
+            output = model.generate(
+                input_ids,
+                max_new_tokens=128,
+                temperature=0.2,
+                eos_token_id=tokenizer.eos_token_id,
+            )
+        text = tokenizer.decode(
+            output[0, input_ids.shape[1]:], skip_special_tokens=True
+        )
         print("---")
         print(text)
 

@@ -23,6 +23,8 @@ Repo-side gate is green via the rented-machine bootstrap lane. Allocate or rent 
 - `scripts/data_pipeline.py`
 - `scripts/smart_runner.py`
 - `scripts/precompute_logits_topk.py`
+- `scripts/validate_logit_alignment.py`
+- `train/packing.py`
 - `scripts/kaggle_onefile_closure_build30.py`
 - `scripts/kaggle_onecell_t4_build30.py`
 - `scripts/macos_keepawake.sh`

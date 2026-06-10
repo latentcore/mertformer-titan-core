@@ -154,8 +154,16 @@ def run_model(assertions_file: Path, ckpt: Path, out_predictions: Path, max_new_
             rid = str(case.get("id", written + 1))
             input_ids = tokenizer(prompt, return_tensors="pt").input_ids.to(device)
             with torch.no_grad():
-                output = model.generate(input_ids, max_new_tokens=max_new_tokens, temperature=0.2)
-            completion = tokenizer.decode(output[0], skip_special_tokens=True)
+                # [H6 fix] stop on EOS; decode only the generated tokens.
+                output = model.generate(
+                    input_ids,
+                    max_new_tokens=max_new_tokens,
+                    temperature=0.2,
+                    eos_token_id=tokenizer.eos_token_id,
+                )
+            completion = tokenizer.decode(
+                output[0, input_ids.shape[1]:], skip_special_tokens=True
+            )
             f.write(
                 json.dumps(
                     {"id": rid, "prompt": prompt, "completion": completion},

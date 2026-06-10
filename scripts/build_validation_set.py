@@ -165,16 +165,129 @@ def _load_local_golden(path: Path) -> list[dict[str, Any]]:
     return items
 
 
+DEFAULT_STAGE_PATHS = [
+    ROOT / "datasets" / "stage1" / "stage1_data.jsonl",
+    ROOT / "datasets" / "stage2" / "stage2_data.jsonl",
+    ROOT / "datasets" / "stage3" / "stage3_data.jsonl",
+    ROOT / "datasets" / "stage4_soul" / "stage4_data.jsonl",
+    ROOT / "datasets" / "stage5_tools" / "stage5_data.jsonl",
+]
+
+
+def _training_fingerprinter():
+    """TR: [H5] Egitim pipeline'inin RollingDeduper fingerprint'ini (blake2b,
+    normalize) YENIDEN kullan -> val-vs-train dislamasi, korpusun deduplandigi AYNI
+    algoritmayla yapilir. EN: Reuse the training pipeline's RollingDeduper
+    fingerprint so val-vs-train exclusion uses the SAME algorithm."""
+    from scripts.data_pipeline import RollingDeduper
+    return RollingDeduper(enabled=True)._fingerprint
+
+
+def _load_training_fingerprints(stage_paths):
+    """Set of training-row fingerprints from on-disk stage JSONLs (offline-safe;
+    no network/re-download)."""
+    fp = _training_fingerprinter()
+    seen: set[int] = set()
+    used: list[str] = []
+    for p in stage_paths:
+        if not p.exists():
+            continue
+        used.append(str(p))
+        try:
+            with p.open("r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        obj = json.loads(line)
+                    except Exception:
+                        continue
+                    t = str(obj.get("text", "") or "").strip()
+                    if t:
+                        seen.add(fp(t))
+        except Exception:
+            continue
+    return seen, used
+
+
 def build_validation_set(
     *,
     target_size: int,
     seed: int,
     min_chars: int,
     max_chars: int,
-) -> list[dict[str, str]]:
+    exclude_training: bool = True,
+    stage_paths=None,
+    offline_rebuild: bool = False,
+    strict_offline: bool = False,
+    current_val_path=None,
+):
     rng = random.Random(seed)
     seen: set[str] = set()
     rows: list[dict[str, str]] = []
+    stage_paths = list(stage_paths) if stage_paths is not None else list(DEFAULT_STAGE_PATHS)
+
+    # [H5] Training fingerprints for leakage exclusion (offline-safe).
+    train_fp: set[int] = set()
+    stage_files_used: list[str] = []
+    if exclude_training:
+        train_fp, stage_files_used = _load_training_fingerprints(stage_paths)
+        if strict_offline and not stage_files_used:
+            raise RuntimeError(
+                "strict_offline + exclude_training requested but no stage JSONLs were "
+                "found on disk; cannot certify non-leakage. Provide stage files."
+            )
+    tfp = _training_fingerprinter() if exclude_training else None
+    excluded_leak = {}
+
+    def _is_leak(text: str) -> bool:
+        return bool(exclude_training and train_fp and tfp(text) in train_fp)
+
+    if offline_rebuild:
+        # TR: [H5] Networksuz yeniden kur: mevcut val + golden'dan training fingerprint
+        #     ile dislayarak sertifikali (sizintisiz) altkume uret.
+        # EN: [H5] Network-free rebuild: from existing val + golden, exclude training
+        #     fingerprints to certify a leakage-free subset.
+        pool = []
+        if current_val_path and Path(current_val_path).exists():
+            with Path(current_val_path).open("r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        pool.append(json.loads(line))
+                    except Exception:
+                        continue
+        pool.extend(_load_local_golden(ROOT / "datasets" / "golden_samples.jsonl"))
+        rng.shuffle(pool)
+        for item in pool:
+            text = _clean_text(item.get("text", ""))
+            if not text or len(text) < min_chars or len(text) > max_chars:
+                continue
+            fp = _fingerprint(text)
+            if fp in seen:
+                continue
+            if _is_leak(text):
+                excluded_leak["offline_rebuild"] = excluded_leak.get("offline_rebuild", 0) + 1
+                continue
+            item["text"] = text
+            rows.append(item)
+            seen.add(fp)
+            if len(rows) >= target_size:
+                break
+        rng.shuffle(rows)
+        rows = rows[:target_size]
+        provenance = {
+            "mode": "offline_rebuild",
+            "count": len(rows),
+            "excluded_leak": excluded_leak,
+            "stage_files": stage_files_used,
+            "fingerprint_algo": "RollingDeduper.blake2b_normalized",
+            "network_used": False,
+        }
+        return rows, provenance
 
     quotas = {s.key: max(1, int(round(target_size * s.weight))) for s in SOURCES}
 
@@ -196,18 +309,15 @@ def build_validation_set(
             fp = _fingerprint(text)
             if fp in seen:
                 continue
-            rows.append(
-                {
-                    "text": text,
-                    "source": spec.key,
-                    "lang": spec.lang,
-                }
-            )
+            if _is_leak(text):
+                excluded_leak[spec.key] = excluded_leak.get(spec.key, 0) + 1
+                continue
+            rows.append({"text": text, "source": spec.key, "lang": spec.lang})
             seen.add(fp)
             taken += 1
             if taken >= need:
                 break
-        print(f"[ok] {spec.key}: {taken}/{need}")
+        print(f"[ok] {spec.key}: {taken}/{need} (excluded_leak={excluded_leak.get(spec.key, 0)})")
 
     # Fill from local golden prompts if needed.
     if len(rows) < target_size:
@@ -219,6 +329,9 @@ def build_validation_set(
                 continue
             fp = _fingerprint(text)
             if fp in seen:
+                continue
+            if _is_leak(text):
+                excluded_leak["golden"] = excluded_leak.get("golden", 0) + 1
                 continue
             rows.append(item)
             seen.add(fp)
@@ -243,13 +356,10 @@ def build_validation_set(
                 fp = _fingerprint(text)
                 if fp in seen:
                     continue
-                rows.append(
-                    {
-                        "text": text,
-                        "source": f"{spec.key}:extra",
-                        "lang": spec.lang,
-                    }
-                )
+                if _is_leak(text):
+                    excluded_leak[f"{spec.key}:extra"] = excluded_leak.get(f"{spec.key}:extra", 0) + 1
+                    continue
+                rows.append({"text": text, "source": f"{spec.key}:extra", "lang": spec.lang})
                 seen.add(fp)
                 if len(rows) >= target_size:
                     break
@@ -257,7 +367,17 @@ def build_validation_set(
                 break
 
     rng.shuffle(rows)
-    return rows[:target_size]
+    rows = rows[:target_size]
+    provenance = {
+        "mode": "networked",
+        "count": len(rows),
+        "excluded_leak": excluded_leak,
+        "excluded_leak_total": sum(excluded_leak.values()),
+        "stage_files": stage_files_used,
+        "fingerprint_algo": "RollingDeduper.blake2b_normalized",
+        "network_used": True,
+    }
+    return rows, provenance
 
 
 def main() -> int:
@@ -267,21 +387,40 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=1453)
     parser.add_argument("--min-chars", type=int, default=40)
     parser.add_argument("--max-chars", type=int, default=2400)
+    parser.add_argument("--no-exclude-training", action="store_true",
+                        help="Disable val-vs-train fingerprint exclusion (NOT recommended).")
+    parser.add_argument("--strict-offline", action="store_true",
+                        help="Fail if non-leakage cannot be certified against stage JSONLs.")
+    parser.add_argument("--offline-rebuild", action="store_true",
+                        help="Network-free: re-certify existing val + golden by training-fingerprint exclusion.")
     args = parser.parse_args()
 
-    rows = build_validation_set(
+    out = Path(args.out)
+    rows, provenance = build_validation_set(
         target_size=max(1, int(args.target_size)),
         seed=int(args.seed),
         min_chars=max(1, int(args.min_chars)),
         max_chars=max(128, int(args.max_chars)),
+        exclude_training=not args.no_exclude_training,
+        offline_rebuild=args.offline_rebuild,
+        strict_offline=args.strict_offline,
+        current_val_path=out,
     )
-    out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     with out.open("w", encoding="utf-8") as f:
         for row in rows:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
-    print(json.dumps({"out": str(out), "count": len(rows)}, ensure_ascii=False))
+    # [H5] Provenance artifact proving the val set is leakage-excluded.
+    prov_path = ROOT / "datasets" / "validation_provenance.json"
+    try:
+        prov_path.write_text(json.dumps(provenance, ensure_ascii=False, indent=2), encoding="utf-8")
+    except Exception:
+        pass
+
+    print(json.dumps({"out": str(out), "count": len(rows), "provenance": provenance}, ensure_ascii=False))
+    # NOTE: after any val rebuild, run scripts/record_dataset_hashes.py because
+    # datasets/hashes.json pins validation.jsonl's sha256.
     return 0
 
 

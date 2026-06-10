@@ -1,6 +1,6 @@
 {
   "schema": "code_truth_delta_audit_v1",
-  "generated_utc": "2026-06-10T20:40:10Z",
+  "generated_utc": "2026-06-10T22:24:00Z",
   "evidence_contract": {
     "required_columns": [
       "code_path",
@@ -53,7 +53,9 @@
       "lane": "bitnet-kernel",
       "surface_class": "living",
       "maturity": "tested_fallback",
-      "markers": [],
+      "markers": [
+        "fallback"
+      ],
       "evidence": {
         "code_path": [
           "layers/bitlinear.py"
@@ -403,6 +405,13 @@
       "summary": "TBD"
     },
     {
+      "path": "layers/bitlinear.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "layers/ffn.py",
       "markers": [
         "fallback"
@@ -432,6 +441,13 @@
     },
     {
       "path": "layers/qinn.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "mertformer_sdk/api.py",
       "markers": [
         "fallback"
       ],
@@ -736,6 +752,13 @@
       "summary": "fallback"
     },
     {
+      "path": "tests/test_sdk_api.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "tests/test_tokenizer_parity.py",
       "markers": [
         "fallback"
@@ -749,6 +772,6 @@
       "tested_fallback": 6,
       "reference_safe": 1
     },
-    "marker_hit_count": 59
+    "marker_hit_count": 62
   }
 }

@@ -43,6 +43,13 @@ def _extract_gold(answer: str | None) -> str | None:
 def _extract_pred(text: str | None) -> str | None:
     if not text:
         return None
+    # TR: [H6 fix] Once GSM8K '#### <sayi>' isaretini ara; yoksa son sayiya dus.
+    #     (Decode artik yalniz uretilen token'lari icerir, sorudaki sayilar degil.)
+    # EN: [H6 fix] Prefer the GSM8K '#### <num>' marker; else fall back to the last
+    #     number. (Decode now contains only generated tokens, not question digits.)
+    marked = ANSWER_RE.search(text)
+    if marked:
+        return _normalize_number(marked.group(1))
     matches = NUM_RE.findall(text)
     if not matches:
         return None
@@ -155,8 +162,21 @@ def run_generation(
 
             input_ids = tokenizer(question, return_tensors="pt").input_ids.to(device)
             with torch.no_grad():
-                output = model.generate(input_ids, max_new_tokens=max_new_tokens, temperature=0.2)
-            completion = tokenizer.decode(output[0], skip_special_tokens=True)
+                # TR: [H6 fix] eos_token_id ver -> EOS'ta dur; tum budceyi harcama.
+                # EN: [H6 fix] pass eos_token_id so generation stops on EOS.
+                output = model.generate(
+                    input_ids,
+                    max_new_tokens=max_new_tokens,
+                    temperature=0.2,
+                    eos_token_id=tokenizer.eos_token_id,
+                )
+            # TR: [H6 fix] Yalniz uretilen token'lari decode et (prompt'u haric tut)
+            #     ki _extract_pred sorudaki sayilari okumasin.
+            # EN: [H6 fix] Decode only the newly generated tokens (exclude prompt)
+            #     so _extract_pred can't read numbers from the question.
+            completion = tokenizer.decode(
+                output[0, input_ids.shape[1]:], skip_special_tokens=True
+            )
 
             gold = _extract_gold(row.get("answer"))
             pred = _extract_pred(completion)

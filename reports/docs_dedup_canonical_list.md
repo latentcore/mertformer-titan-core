@@ -66,6 +66,7 @@ Generated automatically.
 - `adr/ADR-0001-source-of-truth-and-claim-boundary.md`
 - `adr/ADR-0002-change-control-and-closure-governance.md`
 - `adr/ADR-0003-chess-oneclick-delivery-runtime-contract.md`
+- `adr/ADR-0004-blocker-fix-pass-core-override.md`
 - `applications/anthropic/PACKET_POINTER_20260419.md`
 - `applications/anthropic/README.md`
 - `applications/anthropic/application_strategy.md`

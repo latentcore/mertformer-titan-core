@@ -116,6 +116,8 @@
   "distill_intermediate_layers": true,
   "use_tr_tokenizer": false,
   "tr_tokenizer_id": "tokenizer/tr",
+  "sequence_packing": true,
+  "verify_logit_alignment": true,
   "teacher_temp": 1.0,
   "use_precomputed_logits": true,
   "precomputed_logits_path": "./datasets/logits/",

@@ -391,6 +391,15 @@ class MertFormerConfig:
     use_tr_tokenizer: bool = os.environ.get("TITAN_USE_TR_TOKENIZER", "0") == "1"
     tr_tokenizer_id: str = os.environ.get("TITAN_TR_TOKENIZER_ID", "tokenizer/tr")
 
+    # TR: [B2] Sequence packing (EOS-ayirici ile max_seq_len'e doldurma) ve precompute
+    #     teacher-logit hizalama dogrulamasi. Ikisi de varsayilan ACIK. Packing ayni
+    #     anda hem teacher hem student tarafinda calismali (train/packing.py tek kaynak).
+    # EN: [B2] Sequence packing (EOS-separated, filled to max_seq_len) and precompute
+    #     teacher-logit alignment verification. Both default ON. Packing must run on
+    #     BOTH teacher and student via the single train/packing.py source.
+    sequence_packing: bool = os.environ.get("TITAN_SEQUENCE_PACKING", "1") == "1"
+    verify_logit_alignment: bool = os.environ.get("TITAN_VERIFY_LOGIT_ALIGNMENT", "1") == "1"
+
     # [KRİTİK DÜZELTME]
     # [RAPOR DÜZELTME] 1.3 -> 1.0 (BitNet için keskin öğretmen gerekir)
     # [RAPOR DÜZELTME] 1.3 -> 1.0 (BitNet için keskin öğretmen gerekir)

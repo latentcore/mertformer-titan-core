@@ -680,6 +680,33 @@ def strict_offline_training_readiness_profile() -> int:
             )
             raise RuntimeError("offline_clean strict precompute requirements are not satisfied")
 
+        # TR: [B2] Shard'lar tamamsa, sadece varlik degil KIMLIK hizalamasini da
+        #     dogrula -> hizasiz teacher-logit = sessiz KD bozulmasi, burada gurultulu
+        #     on-ucus hatasina cevrilir. Henuz uretilmemis (phase0) ise SKIP.
+        # EN: [B2] When shards are complete, verify IDENTITY alignment (not just
+        #     existence) -> misaligned teacher logits become a loud preflight failure
+        #     instead of silent KD corruption. SKIP when not yet produced (phase0).
+        if precompute_status["all_complete"]:
+            align = None
+            try:
+                from scripts.validate_logit_alignment import validate_all_stages
+                align = validate_all_stages(logits_root)
+            except Exception as exc:
+                # Cannot validate (e.g. tokenizer not loadable here) -> WARN, do not
+                # block; real training resolves the same tokenizer and re-checks.
+                checks["logit_alignment"] = {"status": "WARN", "error": str(exc)}
+            if align is not None:
+                checks["logit_alignment"] = {
+                    "status": "PASS" if align["status"] == "PASS" else "FAIL",
+                    "result": align["status"],
+                    "checks": align["checks"],
+                }
+                if align["status"] == "FAIL":
+                    reason_code = "LOGIT_ALIGNMENT_FAILED"
+                    raise RuntimeError("offline_clean logit alignment verification failed")
+        else:
+            checks["logit_alignment"] = {"status": "SKIP", "policy": "no complete shards yet to validate"}
+
         strict_cuda_lock = os.environ.get("TITAN_PREFLIGHT_STRICT_CUDA_LOCK", "0") == "1"
         cuda_ok = check_cuda_lock(strict=strict_cuda_lock)
         checks["cuda_lock"] = {

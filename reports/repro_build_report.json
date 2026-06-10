@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-06-10T20:40:29.682419+00:00",
-  "git_commit": "f2204072b217f8364095890ff49f77111648f8ef",
+  "generated_utc": "2026-06-10T22:24:19.371889+00:00",
+  "git_commit": "8bd2d169fef5c3ca1175e0bfef84ba68a18e441b",
   "python": "Python 3.11.14",
   "targets": [
     {
@@ -15,18 +15,18 @@
     },
     {
       "path": "config/config.py",
-      "sha256": "c4ab5a217e0b845d2fe50c6c9a0fef177510cc1a3270e6cd51fb32148855ac89",
-      "size_bytes": 30569
+      "sha256": "380998ec7397e5258bf69d57b77fd8839999ad5677174ea955eb6e2caa549d6f",
+      "size_bytes": 31254
     },
     {
       "path": "train/train.py",
-      "sha256": "fda7379ae1b81c6b4b6100d99d46666850071344e175d366aeaf8feeef545931",
-      "size_bytes": 113690
+      "sha256": "425e4e67bdcfea539014176d3abc2f84e70600ad5dd980a9afb8e429e0f48084",
+      "size_bytes": 127529
     },
     {
       "path": "layers/bitlinear.py",
-      "sha256": "661f2d21f3118e7ab6874fd312b55a8c588a275c5b848eeb540a2e7b8ea16e13",
-      "size_bytes": 6049
+      "sha256": "91d7f0a2cb52fa04c2da0a40d4f69b567145378fd58caa0afc65ca8f83ac56d3",
+      "size_bytes": 7715
     },
     {
       "path": "mertformer_sdk/kernels/dispatcher.py",

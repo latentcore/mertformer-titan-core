@@ -50,7 +50,7 @@ Required evidence columns:
 
 | Path | Lane | Surface Class | Maturity | Markers | Evidence Complete | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| `layers/bitlinear.py` | `bitnet-kernel` | `living` | `tested_fallback` | none | `true` | BitLinear is correctness-first and dispatch-aware, but production-depth performance claims still depend on backend-specific measurement. |
+| `layers/bitlinear.py` | `bitnet-kernel` | `living` | `tested_fallback` | `fallback` | `true` | BitLinear is correctness-first and dispatch-aware, but production-depth performance claims still depend on backend-specific measurement. |
 | `mertformer_sdk/kernels/dispatcher.py` | `bitnet-kernel` | `maintained` | `tested_fallback` | `fallback` | `true` | Dispatcher routing is deterministic and test-covered; it is a contract surface rather than a speed claim by itself. |
 | `mertformer_sdk/kernels/triton_ternary.py` | `bitnet-performance` | `living` | `tested_fallback` | none | `true` | The Triton kernel is explicitly experimental; correctness is partially covered, but it is not yet a release-grade performance claim surface. |
 | `mertformer_sdk/kernels/cpp/bitnet_cpu.cpp` | `cpu-reference` | `maintained` | `reference_safe` | `scaffold` | `true` | This file is a minimal CPU reference kernel and should remain a parity/debug surface, not a production-depth speed claim. |
@@ -83,11 +83,13 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `datasets/SOURCES_TR.md` | `fallback` |
 | `datasets/inventory.md` | `TBD` |
 | `datasets/inventory_TR.md` | `TBD` |
+| `layers/bitlinear.py` | `fallback` |
 | `layers/ffn.py` | `fallback` |
 | `layers/mertformer_block.py` | `fallback` |
 | `layers/mla.py` | `fallback` |
 | `layers/moe.py` | `fallback` |
 | `layers/qinn.py` | `fallback` |
+| `mertformer_sdk/api.py` | `fallback` |
 | `mertformer_sdk/kernels/cpp/bitnet_cpu.cpp` | `scaffold` |
 | `mertformer_sdk/kernels/cpp/loader.py` | `fallback` |
 | `mertformer_sdk/kernels/dispatcher.py` | `fallback` |
@@ -130,4 +132,5 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `tests/test_benchmark_tokenizer_id.py` | `fallback` |
 | `tests/test_distillation_topk.py` | `fallback` |
 | `tests/test_onnx_custom_op_contract.py` | `fallback` |
+| `tests/test_sdk_api.py` | `fallback` |
 | `tests/test_tokenizer_parity.py` | `fallback` |

@@ -77,12 +77,41 @@ def _unwrap_payload_for_count(payload) -> int:
     return 0
 
 
-def _load_done_samples(logits_dir: Path, stage_name: str) -> int:
+def _load_resume_state(logits_dir: Path, stage_name: str) -> dict:
+    """TR: [B2] Resume durumu: HAM SATIR indexine gore (lines_consumed) + uretilen
+    packed dizi sayisi. Eski 'done_samples' semasi geriye-uyumlu okunur.
+    EN: [B2] Resume state keyed by RAW LINE INDEX (lines_consumed) + emitted packed
+    sequence count. The old 'done_samples' schema is read back-compat."""
     state_path = _state_path(logits_dir, stage_name)
     if state_path.exists():
         try:
             data = json.loads(state_path.read_text(encoding="utf-8"))
-            return int(data.get("done_samples", 0))
+            lines_consumed = int(data.get("lines_consumed", data.get("done_samples", 0)))
+            sequences_emitted = int(data.get("sequences_emitted", 0))
+            return {"lines_consumed": max(0, lines_consumed), "sequences_emitted": max(0, sequences_emitted)}
+        except Exception:
+            pass
+    return {"lines_consumed": 0, "sequences_emitted": 0}
+
+
+def _save_resume_state(logits_dir: Path, stage_name: str, lines_consumed: int, sequences_emitted: int) -> None:
+    state_path = _state_path(logits_dir, stage_name)
+    payload = {
+        "lines_consumed": int(max(0, lines_consumed)),
+        "sequences_emitted": int(max(0, sequences_emitted)),
+        # back-compat mirror for older readers (titan_preflight)
+        "done_samples": int(max(0, lines_consumed)),
+    }
+    state_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+
+def _load_done_samples(logits_dir: Path, stage_name: str) -> int:
+    """Back-compat: raw lines consumed (was 'done_samples')."""
+    state_path = _state_path(logits_dir, stage_name)
+    if state_path.exists():
+        try:
+            data = json.loads(state_path.read_text(encoding="utf-8"))
+            return int(data.get("lines_consumed", data.get("done_samples", 0)))
         except Exception:
             pass
 
@@ -93,15 +122,7 @@ def _load_done_samples(logits_dir: Path, stage_name: str) -> int:
             total += _unwrap_payload_for_count(payload)
         except Exception:
             continue
-    if total > 0:
-        _save_done_samples(logits_dir, stage_name, total)
     return total
-
-
-def _save_done_samples(logits_dir: Path, stage_name: str, done_samples: int) -> None:
-    state_path = _state_path(logits_dir, stage_name)
-    payload = {"done_samples": int(max(0, done_samples))}
-    state_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
 
 
 def _next_chunk_idx(logits_dir: Path, stage_name: str) -> int:
@@ -211,6 +232,22 @@ def precompute_stage(
     batch_size: int,
     max_seq: int,
 ) -> None:
+    # TR: [B2] Packed precompute: student ile AYNI deterministik packer; her packed
+    #     dizinin per-sequence kimligi (identity) + true_len shard'a yazilir, train
+    #     load'da HARD-ASSERT edilir. Resume HAM SATIR indexine gore. Tokenizer,
+    #     teacher MODELINE beslenecek ID'leri ureten student tokenizer'i ile AYNI
+    #     olmali (resolve_tokenizer); main() bunu garanti eder.
+    # EN: [B2] Packed precompute using the SAME deterministic packer as the student;
+    #     each packed sequence's identity + true_len is written to the shard and
+    #     HARD-ASSERTed at train load. Resume keyed by RAW LINE INDEX. Tokenizer must
+    #     equal the student tokenizer that produces the ids fed to the teacher model.
+    from train.packing import (
+        TOPK_PACKED_FORMAT,
+        extract_row_text,
+        iter_packed_sequences,
+    )
+    from utils.tokenizer_resolver import tokenizer_identity
+
     stage_name = f"stage{stage_num}"
     jsonl_path = STAGE_FILES[stage_num]
 
@@ -218,28 +255,20 @@ def precompute_stage(
         logger.warning("%s dataset missing: %s - skipping.", stage_name, jsonl_path)
         return
 
-    total_samples = _count_jsonl(jsonl_path)
-    done_samples = _load_done_samples(logits_dir, stage_name)
+    total_lines = _count_jsonl(jsonl_path)
+    resume = _load_resume_state(logits_dir, stage_name)
+    lines_consumed = resume["lines_consumed"]
+    sequences_emitted = resume["sequences_emitted"]
     chunk_idx = _next_chunk_idx(logits_dir, stage_name)
 
-    if done_samples >= total_samples and total_samples > 0:
-        logger.info("%s already complete (%s/%s) - skipping.", stage_name, done_samples, total_samples)
+    if lines_consumed >= total_lines and total_lines > 0:
+        logger.info("%s already complete (%s/%s lines) - skipping.", stage_name, lines_consumed, total_lines)
         return
 
-    est_mb = _estimate_disk_mb(max(total_samples - done_samples, 0), max_seq, top_k)
     logger.info(
-        "\n%s\n[%s] dataset=%s\n[%s] total=%s samples\n[%s] resume=%s samples (chunk %s)\n[%s] remaining disk ~= %.0f MB\n%s",
-        "=" * 60,
-        stage_name,
-        jsonl_path,
-        stage_name,
-        total_samples,
-        stage_name,
-        done_samples,
-        chunk_idx,
-        stage_name,
-        est_mb,
-        "=" * 60,
+        "\n%s\n[%s] dataset=%s\n[%s] total=%s lines | resume from line %s (chunk %s, %s seqs done)\n%s",
+        "=" * 60, stage_name, jsonl_path, stage_name, total_lines,
+        lines_consumed, chunk_idx, sequences_emitted, "=" * 60,
     )
 
     try:
@@ -247,33 +276,39 @@ def precompute_stage(
     except Exception:
         teacher_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    shard_buffer: list[dict[str, torch.Tensor]] = []
-    processed = done_samples
-    skipped = 0
-    started = time.time()
+    pad_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else 0
+    eos_id = tokenizer.eos_token_id if tokenizer.eos_token_id is not None else pad_id
     vocab_size = int(getattr(tokenizer, "vocab_size", 0) or 0)
+    tok_identity = tokenizer_identity(tokenizer, cfg)
 
-    def flush_chunk() -> None:
-        nonlocal chunk_idx
+    shard_buffer: list[dict] = []
+    started = time.time()
+
+    def flush_chunk(consumed_through: int) -> None:
+        nonlocal chunk_idx, sequences_emitted
         shard_path = logits_dir / f"{stage_name}_{SUBSET}_part_{chunk_idx}.pt"
         payload = {
-            "format": "topk_sparse_v1",
+            "format": TOPK_PACKED_FORMAT,
             "top_k": int(top_k),
             "vocab_size": vocab_size,
+            "max_seq_len": int(max_seq),
+            "pad_id": int(pad_id),
+            "eos_id": int(eos_id),
+            "tokenizer_identity": tok_identity,
+            "packer_version": "packed_v1",
             "logits": list(shard_buffer),
         }
         torch.save(payload, shard_path)
-        _save_done_samples(logits_dir, stage_name, processed)
+        _save_resume_state(
+            logits_dir, stage_name,
+            lines_consumed=int(consumed_through) + 1,
+            sequences_emitted=sequences_emitted,
+        )
         elapsed = max(time.time() - started, 1e-6)
-        speed = processed / elapsed
         logger.info(
-            "Saved shard %s -> %s | %s samples | total %s/%s | %.1f sample/s",
-            chunk_idx,
-            shard_path.name,
-            len(shard_buffer),
-            processed,
-            total_samples,
-            speed,
+            "Saved shard %s -> %s | %s seqs | %s seqs total | consumed<=line %s | %.1f seq/s",
+            chunk_idx, shard_path.name, len(shard_buffer), sequences_emitted,
+            consumed_through, sequences_emitted / elapsed,
         )
         chunk_idx += 1
         shard_buffer.clear()
@@ -281,94 +316,69 @@ def precompute_stage(
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
-    batch_texts: list[str] = []
-    sample_idx = 0
+    def _rows():
+        with jsonl_path.open("r", encoding="utf-8") as handle:
+            for li, raw in enumerate(handle):
+                if li < lines_consumed:
+                    continue
+                raw = raw.strip()
+                if not raw:
+                    continue
+                try:
+                    obj = json.loads(raw)
+                except Exception:
+                    continue
+                yield li, extract_row_text(obj)
 
-    with jsonl_path.open("r", encoding="utf-8") as handle:
-        for raw_line in handle:
-            raw_line = raw_line.strip()
-            if not raw_line:
-                continue
+    def _process_batch(seqs: list[dict]) -> int:
+        if not seqs:
+            return -1
+        input_ids = torch.tensor([s["input_ids"] for s in seqs], dtype=torch.long)
+        topk_items = extract_topk_logits(teacher, input_ids, top_k, teacher_device)
+        for seq, item in zip(seqs, topk_items):
+            shard_buffer.append({
+                "indices": item["indices"],
+                "values": item["values"],
+                "true_len": int(seq["true_len"]),
+                "seq_index": int(seq["seq_index"]),
+                "row_span": seq["row_span"],
+                "identity": seq["identity"],
+            })
+        return int(seqs[-1]["consumed_through"])
 
-            if sample_idx < done_samples:
-                sample_idx += 1
-                continue
+    batch_seqs: list[dict] = []
+    last_consumed = lines_consumed - 1
 
+    for seq in iter_packed_sequences(_rows(), tokenizer, max_seq, eos_id, pad_id):
+        batch_seqs.append(seq)
+        if len(batch_seqs) >= batch_size:
             try:
-                obj = json.loads(raw_line)
-                text = (
-                    obj.get("text")
-                    or obj.get("content")
-                    or obj.get("instruction")
-                    or ""
-                ).strip()
-            except Exception:
-                sample_idx += 1
-                skipped += 1
-                continue
-
-            if not text:
-                sample_idx += 1
-                skipped += 1
-                continue
-
-            batch_texts.append(text)
-            sample_idx += 1
-            if len(batch_texts) < batch_size:
-                continue
-
-            encoded = tokenizer(
-                batch_texts,
-                return_tensors="pt",
-                max_length=max_seq,
-                truncation=True,
-                padding=True,
-            )
-            input_ids = encoded["input_ids"]
-
-            try:
-                topk_items = extract_topk_logits(teacher, input_ids, top_k, teacher_device)
+                last_consumed = _process_batch(batch_seqs)
+                sequences_emitted += len(batch_seqs)
             except Exception as exc:
-                failed_batch = len(batch_texts)
                 logger.warning("Teacher forward failed for %s batch: %s", stage_name, exc)
-                skipped += failed_batch
-                batch_texts.clear()
-                continue
-
-            shard_buffer.extend(topk_items)
-            processed += len(topk_items)
-            batch_texts.clear()
-
+            batch_seqs = []
             if len(shard_buffer) >= chunk_size:
-                flush_chunk()
+                flush_chunk(last_consumed)
 
-    if batch_texts:
-        encoded = tokenizer(
-            batch_texts,
-            return_tensors="pt",
-            max_length=max_seq,
-            truncation=True,
-            padding=True,
-        )
-        input_ids = encoded["input_ids"]
+    if batch_seqs:
         try:
-            topk_items = extract_topk_logits(teacher, input_ids, top_k, teacher_device)
-            shard_buffer.extend(topk_items)
-            processed += len(topk_items)
+            last_consumed = _process_batch(batch_seqs)
+            sequences_emitted += len(batch_seqs)
         except Exception as exc:
             logger.warning("Teacher forward failed for final %s batch: %s", stage_name, exc)
-            skipped += len(batch_texts)
+        batch_seqs = []
 
     if shard_buffer:
-        flush_chunk()
+        flush_chunk(max(last_consumed, total_lines - 1))
+
+    # Mark fully consumed even if the final partial buffer produced no shard.
+    _save_resume_state(logits_dir, stage_name, lines_consumed=total_lines, sequences_emitted=sequences_emitted)
 
     elapsed = time.time() - started
     logger.info(
-        "%s complete: %s samples processed, %s skipped, %.1f minutes elapsed.",
-        stage_name,
-        processed,
-        skipped,
-        elapsed / 60.0,
+        "%s complete: %s packed sequences, %.1f minutes elapsed.",
+        stage_name, sequences_emitted, elapsed / 60.0,
     )
 
 
@@ -460,7 +470,27 @@ def main() -> int:
     logger.info("Estimated total disk: %.2f GB", total_est / 1024.0)
 
     time.sleep(1)
-    teacher, tokenizer = load_teacher(args.model_id, hf_token)
+    teacher, teacher_tokenizer = load_teacher(args.model_id, hf_token)
+
+    # TR: [B2] Tokenizer, training'in kullandigi student tokenizer'i ile AYNI olmali
+    #     (resolve_tokenizer). Bu ID'ler teacher MODELINE besleniyor; sparse Top-K KD
+    #     ancak teacher==student tokenizer ise anlamli. use_tr_tokenizer=True iken
+    #     student TR-WordPiece olur ve Llama teacher'a verilemez -> acik hata.
+    # EN: [B2] The tokenizer must equal the student tokenizer training uses
+    #     (resolve_tokenizer). These ids are fed to the teacher MODEL; sparse Top-K KD
+    #     only makes sense when teacher==student tokenizer. With use_tr_tokenizer=True
+    #     the student is TR-WordPiece and cannot feed the Llama teacher -> hard error.
+    from utils.tokenizer_resolver import resolve_tokenizer
+    tokenizer = resolve_tokenizer(cfg)
+    if bool(getattr(cfg, "use_tr_tokenizer", False)):
+        logger.error(
+            "use_tr_tokenizer=1 is incompatible with precomputed Top-K KD against the "
+            "teacher model (the TR tokenizer's ids are not the teacher's vocabulary). "
+            "Precompute requires teacher==student tokenizer (use_tr_tokenizer=0)."
+        )
+        return 1
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
 
     for stage_num in stages:
         try:

@@ -181,3 +181,34 @@ def test_precomputed_curriculum_stage_entry_clamps_fallback_stage() -> None:
     dataset.stage_info = [("fallback", Path("datasets/validation.jsonl"))]
 
     assert dataset._stage_entry(5) == ("fallback", Path("datasets/validation.jsonl"))
+
+
+def test_resume_state_keys_raw_lines_not_produced_samples(tmp_path: Path) -> None:
+    """B2: resume indexes by RAW LINE INDEX (lines_consumed), back-compat reads done_samples."""
+    phase0_topk._save_resume_state(tmp_path, "stage1", lines_consumed=42, sequences_emitted=7)
+    state = phase0_topk._load_resume_state(tmp_path, "stage1")
+    assert state["lines_consumed"] == 42
+    assert state["sequences_emitted"] == 7
+    assert phase0_topk._load_done_samples(tmp_path, "stage1") == 42
+
+    import json as _json
+    sp = phase0_topk._state_path(tmp_path, "stage2")
+    sp.write_text(_json.dumps({"done_samples": 11}), encoding="utf-8")
+    assert phase0_topk._load_resume_state(tmp_path, "stage2")["lines_consumed"] == 11
+
+
+def test_packed_payload_preserves_identity() -> None:
+    """B2: the precomputed loader surfaces per-sequence identity + true_len so the
+    train side can hard-assert alignment."""
+    item = {
+        "format": "topk_packed_v1",
+        "indices": torch.tensor([[1, 3], [0, 2]], dtype=torch.int32),
+        "values": torch.tensor([[5.0, 1.5], [-2.0, 3.0]], dtype=torch.bfloat16),
+        "true_len": 2,
+        "identity": {"len": 2, "hash": "abc123"},
+    }
+    payload = dm._as_sparse_topk_payload(item, vocab_size=5)
+    assert payload["format"] == "topk_packed_v1"
+    assert payload["identity"] == {"len": 2, "hash": "abc123"}
+    assert payload["true_len"] == 2
+    assert train_mod._is_sparse_topk_payload(payload)
