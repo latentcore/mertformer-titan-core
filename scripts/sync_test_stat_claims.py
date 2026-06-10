@@ -16,6 +16,9 @@ TARGETS = [
     ROOT / "reports" / "release_snapshot.md",
     ROOT / "reports" / "release_snapshot_TR.md",
     ROOT / "reports" / "one_command_full_sop_summary.md",
+    # Outreach brief is a living surface that quotes the "latest recorded closure
+    # context" test stat; auto-sync it so it never drifts behind the suite again.
+    ROOT / "reports" / "outreach" / "mertformer_titan_executive_brief_2026-05-22.md",
 ]
 
 
