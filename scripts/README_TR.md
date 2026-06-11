@@ -81,6 +81,7 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 - `smart_runner.py` — Ana orkestratör: veri → distill → eğitim.
 - `data_pipeline.py` — Veri hazırlama (5 aşamalı müfredat).
 - `precompute_logits_topk.py` — Katı precomputed-KD yolu için Phase-0 offline teacher Top-K logit shard üreticisi.
+- `precompute_logits_parallel.py` — Yukarıdakinin çok-GPU veri-paralel orkestratörü (block-cyclic; aynı shard'lar, daha kısa süre). `TITAN_PRECOMPUTE_GPUS` ile opsiyonel. Bkz. ADR-0005.
 - `titan_preflight.py` — Uçtan uca preflight doğrulama.
 - `operator_mode_gate.py` — Tek girişli ops gate (güvenlik + sanity checks).
 - `overfit_gate.py` — 1MB overfit gate (safe/full mod).

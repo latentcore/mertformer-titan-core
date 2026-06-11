@@ -64,7 +64,15 @@ else
       echo "[phase-0] final orchestrator / readiness policy will block canonical offline_clean until logits exist or Phase-0 becomes actionable."
     else
       echo "[phase-0] launching offline teacher logits precompute ..."
-      precompute_cmd=( "${phase0_base[@]}" )
+      if [[ -n "${TITAN_PRECOMPUTE_GPUS:-}" ]]; then
+        # [ADR-0005] Opt-in multi-GPU data-parallel precompute. Produces the SAME
+        # Top-K shards (same packer/identity); only wall-clock changes. Default
+        # (env unset) keeps the canonical single-process path byte-for-byte.
+        echo "[phase-0] TITAN_PRECOMPUTE_GPUS=$TITAN_PRECOMPUTE_GPUS -> parallel orchestrator."
+        precompute_cmd=( "$PY" scripts/precompute_logits_parallel.py --all-stages --logits-dir "$LOGITS_DIR" --gpus "$TITAN_PRECOMPUTE_GPUS" )
+      else
+        precompute_cmd=( "${phase0_base[@]}" )
+      fi
       if [[ -n "${TITAN_TOP_K:-}" ]]; then
         precompute_cmd+=( --top-k "$TITAN_TOP_K" )
       fi

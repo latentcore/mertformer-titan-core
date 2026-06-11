@@ -1035,12 +1035,20 @@ def collate_fn(batch):
 # TR: 3. BİLGİ DAMITMA KAYBI / EN: 3. KD LOSS (Knowledge Distillation)
 # -----------------------------------------------------------------------------
 def _is_sparse_topk_payload(value: Any) -> bool:
-    return (
-        isinstance(value, dict)
-        and value.get("format") in ("topk_sparse_v1", "topk_packed_v1")
-        and isinstance(value.get("indices"), torch.Tensor)
-        and isinstance(value.get("values"), torch.Tensor)
-    )
+    # A sparse Top-K teacher payload is a dict carrying matching indices/values
+    # tensors. The 'format' string is intentionally OPTIONAL: the COLLATED payload
+    # that crosses Accelerate's multi-GPU dispatch boundary is stripped to tensors
+    # only — a str/int dict value makes accelerate.utils.concatenate() raise
+    # TypeError on rank 0 while peers block at the next collective (NCCL hang).
+    # Dense payloads are bare Tensors, so a dict with both tensors is unambiguously
+    # the sparse case; if 'format' is present it must still be a known sparse tag.
+    if not isinstance(value, dict):
+        return False
+    if not (isinstance(value.get("indices"), torch.Tensor)
+            and isinstance(value.get("values"), torch.Tensor)):
+        return False
+    fmt = value.get("format")
+    return fmt is None or fmt in ("topk_sparse_v1", "topk_packed_v1")
 
 
 def _align_sparse_topk_payload(payload: dict, target_len: int, fill_value: float = -1e4) -> dict:
@@ -1080,12 +1088,15 @@ def _stack_teacher_payloads(payloads: tuple[Any, ...]) -> Any:
         top_ks = {int(item.get("top_k", item["indices"].size(-1))) for item in payloads}
         if len(vocab_sizes) != 1 or len(top_ks) != 1:
             raise ValueError("Sparse Top-K batch has inconsistent vocab_size or top_k metadata.")
+        # TENSOR-ONLY stacked payload. The non-tensor metadata (format/vocab_size/
+        # top_k) is deliberately dropped here: it is not read downstream (the KD loss
+        # uses indices/values; top_k == indices.size(-1); sparse-ness is detected from
+        # the tensors), and keeping it would crash accelerate's dispatch-time
+        # concatenate() on multi-GPU (str/int values) -> NCCL hang on the canonical
+        # offline_clean lane. The consistency check above still runs before we drop it.
         return {
-            "format": "topk_sparse_v1",
             "indices": torch.stack([item["indices"].long() for item in payloads]),
             "values": torch.stack([item["values"].float() for item in payloads]),
-            "vocab_size": vocab_sizes.pop(),
-            "top_k": top_ks.pop(),
         }
     raise ValueError("Cannot mix dense and sparse teacher logits in the same batch.")
 

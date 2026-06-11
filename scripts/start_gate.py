@@ -93,6 +93,7 @@ def transfer_file_candidates() -> list[str]:
         "scripts/data_pipeline.py",
         "scripts/smart_runner.py",
         "scripts/precompute_logits_topk.py",
+        "scripts/precompute_logits_parallel.py",
         "scripts/validate_logit_alignment.py",
         "train/packing.py",
         "scripts/kaggle_onefile_closure_build30.py",

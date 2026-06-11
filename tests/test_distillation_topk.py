@@ -112,9 +112,44 @@ def test_collate_stacks_sparse_topk_teacher_payload() -> None:
 
     assert batch_x.shape == (2, 3)
     assert torch.equal(batch_y, batch_x)
-    assert teacher["format"] == "topk_sparse_v1"
+    # TENSOR-ONLY stacked payload (multi-GPU dispatch safety): no str/int keys.
+    assert set(teacher.keys()) == {"indices", "values"}
+    assert all(isinstance(v, torch.Tensor) for v in teacher.values())
+    assert train_mod._is_sparse_topk_payload(teacher)  # detection survives without 'format'
     assert teacher["indices"].shape == (2, 3, 2)
     assert teacher["values"].shape == (2, 3, 2)
+
+
+def test_collated_sparse_payload_survives_accelerate_dispatch_concat() -> None:
+    """BLOCKER regression: on multi-GPU the offline_clean lane is an IterableDataset,
+    so Accelerate dispatches batches by calling accelerate.utils.concatenate() on the
+    collated batch on rank 0 before broadcasting. A str/int value in the teacher dict
+    made concatenate() raise TypeError on rank 0 while peers hung at the next
+    collective. The collated payload must now be tensor-only so concatenate succeeds."""
+    concatenate = pytest.importorskip("accelerate.utils.operations").concatenate
+
+    x = torch.tensor([1, 2, 3])
+    mk = lambda fill: {
+        "format": "topk_packed_v1",
+        "indices": torch.tensor([[1, 2], [0, 3], [2, 3]], dtype=torch.long),
+        "values": torch.full((3, 2), float(fill)),
+        "vocab_size": 4,
+        "top_k": 2,
+    }
+    batch_rank0 = train_mod.collate_fn([(x, x, mk(1)), (x, x, mk(2))])
+    batch_rank1 = train_mod.collate_fn([(x, x, mk(3)), (x, x, mk(4))])
+
+    # This is exactly what DataLoaderDispatcher does on rank 0; it must NOT raise.
+    merged = concatenate([batch_rank0, batch_rank1], dim=0)
+    mx, my, mteacher = merged
+    assert mx.shape == (4, 3)
+    assert mteacher["indices"].shape == (4, 3, 2)
+    assert mteacher["values"].shape == (4, 3, 2)
+    # still routed to the sparse KD path after dispatch
+    assert train_mod._is_sparse_topk_payload(mteacher)
+    student = torch.randn(4, 3, 4)
+    loss = train_mod.kd_loss_safe(student, mteacher, temp=1.0)
+    assert torch.isfinite(loss)
 
 
 def test_collate_rejects_mixed_dense_and_sparse_teacher_payloads() -> None:

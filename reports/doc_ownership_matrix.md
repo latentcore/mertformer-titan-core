@@ -74,3 +74,4 @@ Operational ownership map for closure-critical surfaces.
 | `adr/ADR-0002-change-control-and-closure-governance.md` | repo maintainer | when the policy, command ladder, or product wording changes | authoritative |
 | `adr/ADR-0003-chess-oneclick-delivery-runtime-contract.md` | repo maintainer | when the policy, command ladder, or product wording changes | authoritative |
 | `adr/ADR-0004-blocker-fix-pass-core-override.md` | repo maintainer | when the policy, command ladder, or product wording changes | authoritative |
+| `adr/ADR-0005-parallel-precompute-orchestration.md` | repo maintainer | when the policy, command ladder, or product wording changes | authoritative |

@@ -65,8 +65,23 @@ def _stage_pattern(stage_name: str) -> str:
     return f"{stage_name}_{SUBSET}_part_*.pt"
 
 
+def _shard_part_index(path: Path) -> int:
+    """Integer part index parsed from a shard filename's ``..._part_<N>.pt`` tail."""
+    try:
+        return int(path.stem.rsplit("_part_", 1)[-1])
+    except Exception:
+        return -1
+
+
 def _stage_shards(logits_dir: Path, stage_name: str) -> list[Path]:
-    return sorted(logits_dir.glob(_stage_pattern(stage_name)))
+    # Sort by INTEGER part index, mirroring the train reader
+    # (orchestrator.distillation_manager._list_logits_files / _part_index).
+    # A lexicographic sort would mis-order at >=11 single-process shards
+    # (part_10 < part_2) and, for the parallel lane named by first-seq-index,
+    # at >=6 blocks (part_10000 < part_2000) — which would make the alignment
+    # validator false-FAIL a byte-correct shard set. The integer key keeps the
+    # validator's read order identical to what training actually consumes.
+    return sorted(logits_dir.glob(_stage_pattern(stage_name)), key=_shard_part_index)
 
 
 def _unwrap_payload_for_count(payload) -> int:
@@ -220,6 +235,88 @@ def extract_topk_logits(
 
     del logits
     return samples
+
+
+# ---------------------------------------------------------------------------
+# [PARALLEL] Multi-GPU data-parallel sharding (additive; default path untouched).
+#
+# TR: Cok-GPU paralel precompute. Her worker (GPU) TUM packed stream'i SIFIRDAN
+#     deterministik paketler (boylece her seq_index icin identity AYNI kalir) ama
+#     teacher-forward'u yalniz KENDI bloklarina yapar. Blok atamasi BLOK-DONGUSEL:
+#     block_index = seq_index // chunk_size; worker, (block_index % num_shards ==
+#     shard_id) olan bloklari isler. Her shard TAM bir blok icerir ve ilk
+#     seq_index'iyle adlandirilir (part_{block_index*chunk_size}); reader shard'lari
+#     tam-sayi part-index'ine gore sirali okudugu icin GLOBAL seq sirasi korunur ve
+#     train-side per-sequence identity assert'i AYNEN gecerli kalir. Resume STATELESS:
+#     bir blogun shard dosyasi varsa o blok atlanir (idempotent).
+# EN: Multi-GPU data-parallel precompute. Each worker (GPU) re-packs the WHOLE stream
+#     from line 0 deterministically (so every seq_index keeps the SAME identity) but
+#     only teacher-forwards its OWN blocks. Block assignment is BLOCK-CYCLIC:
+#     block_index = seq_index // chunk_size; a worker owns blocks where
+#     (block_index % num_shards == shard_id). Each shard holds EXACTLY one block and is
+#     named by its first seq_index (part_{block_index*chunk_size}); since the reader
+#     sorts shards by integer part index, GLOBAL sequence order is preserved and the
+#     train-side per-sequence identity assertion still holds verbatim. Resume is
+#     STATELESS: a block whose shard file already exists is skipped (idempotent).
+# ---------------------------------------------------------------------------
+
+def _worker_state_path(logits_dir: Path, stage_name: str, shard_id: int, num_shards: int) -> Path:
+    return logits_dir / f"{stage_name}_{SUBSET}_shard{shard_id}of{num_shards}_state.json"
+
+
+def _save_worker_state(
+    logits_dir: Path,
+    stage_name: str,
+    shard_id: int,
+    num_shards: int,
+    *,
+    emitted: int,
+    blocks_done: int,
+    total_sequences: int,
+    done: bool,
+) -> None:
+    path = _worker_state_path(logits_dir, stage_name, shard_id, num_shards)
+    payload = {
+        "shard_id": int(shard_id),
+        "num_shards": int(num_shards),
+        "sequences_emitted": int(max(0, emitted)),
+        "blocks_done": int(max(0, blocks_done)),
+        "total_sequences": int(max(0, total_sequences)),
+        "done": bool(done),
+    }
+    try:
+        path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    except Exception as exc:  # pragma: no cover - best-effort progress file
+        logger.warning("Failed to write worker state %s: %s", path, exc)
+
+
+def _load_worker_state(logits_dir: Path, stage_name: str, shard_id: int, num_shards: int) -> dict:
+    path = _worker_state_path(logits_dir, stage_name, shard_id, num_shards)
+    if path.exists():
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {
+        "shard_id": int(shard_id),
+        "num_shards": int(num_shards),
+        "sequences_emitted": 0,
+        "blocks_done": 0,
+        "total_sequences": 0,
+        "done": False,
+    }
+
+
+def block_first_seq_indices(total_sequences: int, chunk_size: int) -> list[int]:
+    """Canonical first-seq-index (== shard part index) of every block tiling [0, S).
+
+    The full set of shard part indices a complete parallel run must produce.
+    Pure/deterministic so the orchestrator can verify coverage without GPUs.
+    """
+    if total_sequences <= 0 or chunk_size <= 0:
+        return []
+    n_blocks = (int(total_sequences) + int(chunk_size) - 1) // int(chunk_size)
+    return [b * int(chunk_size) for b in range(n_blocks)]
 
 
 def precompute_stage(
@@ -399,6 +496,182 @@ def precompute_stage(
     )
 
 
+def _precompute_stage_sharded(
+    stage_num: int,
+    teacher,
+    tokenizer,
+    logits_dir: Path,
+    top_k: int,
+    chunk_size: int,
+    batch_size: int,
+    max_seq: int,
+    num_shards: int,
+    shard_id: int,
+) -> None:
+    """[PARALLEL] One data-parallel worker of a block-cyclic precompute.
+
+    See the module-level [PARALLEL] note. Invariants this function guarantees:
+      * Re-packs the WHOLE stream from line 0 (identical to the single-process
+        packer) so every sequence's identity is unchanged.
+      * Teacher-forwards ONLY blocks it owns (block_index % num_shards == shard_id).
+      * Writes each owned block as one shard named by its first seq_index, so the
+        union of all workers' shards reads back in exact global seq_index order.
+      * Resume is stateless: an owned block whose shard already exists is skipped.
+    With num_shards == 1 / shard_id == 0 this is behaviourally equivalent to
+    precompute_stage (same shards, same order); the canonical lane keeps using
+    precompute_stage so its on-disk naming stays byte-identical.
+    """
+    from train.packing import (
+        TOPK_PACKED_FORMAT,
+        extract_row_text,
+        iter_packed_sequences,
+    )
+    from utils.tokenizer_resolver import tokenizer_identity
+
+    stage_name = f"stage{stage_num}"
+    jsonl_path = STAGE_FILES[stage_num]
+
+    if not jsonl_path.exists():
+        logger.warning("%s dataset missing: %s - skipping.", stage_name, jsonl_path)
+        _save_worker_state(
+            logits_dir, stage_name, shard_id, num_shards,
+            emitted=0, blocks_done=0, total_sequences=0, done=True,
+        )
+        return
+
+    total_lines = _count_jsonl(jsonl_path)
+
+    try:
+        teacher_device = next(teacher.parameters()).device
+    except Exception:
+        teacher_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    pad_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else 0
+    eos_id = tokenizer.eos_token_id if tokenizer.eos_token_id is not None else pad_id
+    vocab_size = int(getattr(tokenizer, "vocab_size", 0) or 0)
+    tok_identity = tokenizer_identity(tokenizer, cfg)
+
+    started = time.time()
+    emitted = 0
+    blocks_done = 0
+    skipped_existing = 0
+    last_seq_index = -1
+
+    logger.info(
+        "\n%s\n[%s] PARALLEL worker %d/%d | dataset=%s | %s lines | block(chunk)=%s\n%s",
+        "=" * 60, stage_name, shard_id, num_shards, jsonl_path, total_lines, chunk_size, "=" * 60,
+    )
+
+    def _rows():
+        with jsonl_path.open("r", encoding="utf-8") as handle:
+            for li, raw in enumerate(handle):
+                raw = raw.strip()
+                if not raw:
+                    continue
+                try:
+                    obj = json.loads(raw)
+                except Exception:
+                    continue
+                yield li, extract_row_text(obj)
+
+    def _process_batch_into(buf: list[dict], seqs: list[dict]) -> None:
+        if not seqs:
+            return
+        input_ids = torch.tensor([s["input_ids"] for s in seqs], dtype=torch.long)
+        items = extract_topk_logits(teacher, input_ids, top_k, teacher_device)
+        for seq, item in zip(seqs, items):
+            buf.append({
+                "format": TOPK_PACKED_FORMAT,
+                "indices": item["indices"],
+                "values": item["values"],
+                "true_len": int(seq["true_len"]),
+                "seq_index": int(seq["seq_index"]),
+                "row_span": seq["row_span"],
+                "identity": seq["identity"],
+            })
+
+    def _flush_block(block_index: int, buf: list[dict]) -> None:
+        nonlocal blocks_done
+        first_seq = block_index * chunk_size
+        shard_path = logits_dir / f"{stage_name}_{SUBSET}_part_{first_seq}.pt"
+        payload = {
+            "format": TOPK_PACKED_FORMAT,
+            "top_k": int(top_k),
+            "vocab_size": vocab_size,
+            "max_seq_len": int(max_seq),
+            "pad_id": int(pad_id),
+            "eos_id": int(eos_id),
+            "tokenizer_identity": tok_identity,
+            "packer_version": "packed_v1",
+            "shard_id": int(shard_id),
+            "num_shards": int(num_shards),
+            "block_index": int(block_index),
+            "logits": list(buf),
+        }
+        torch.save(payload, shard_path)
+        blocks_done += 1
+        elapsed = max(time.time() - started, 1e-6)
+        logger.info(
+            "worker %d/%d %s: block %d -> %s | %d seqs | %d emitted | %.1f seq/s",
+            shard_id, num_shards, stage_name, block_index, shard_path.name,
+            len(buf), emitted + len(buf), (emitted + len(buf)) / elapsed,
+        )
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
+    current_block: Optional[int] = None
+    buf: list[dict] = []
+    batch_seqs: list[dict] = []
+
+    for seq in iter_packed_sequences(_rows(), tokenizer, max_seq, eos_id, pad_id):
+        si = int(seq["seq_index"])
+        last_seq_index = si
+        block_index = si // chunk_size
+        if (block_index % num_shards) != shard_id:
+            continue  # not this worker's block
+        shard_path = logits_dir / f"{stage_name}_{SUBSET}_part_{block_index * chunk_size}.pt"
+        if shard_path.exists():
+            skipped_existing += 1
+            continue  # already produced by a prior run (idempotent resume)
+        if current_block is None:
+            current_block = block_index
+        if block_index != current_block:
+            # the previous owned block is now complete: drain + flush it
+            _process_batch_into(buf, batch_seqs)
+            batch_seqs = []
+            if buf:
+                _flush_block(current_block, buf)
+                emitted += len(buf)
+                buf = []
+            current_block = block_index
+        batch_seqs.append(seq)
+        if len(batch_seqs) >= batch_size:
+            _process_batch_into(buf, batch_seqs)
+            batch_seqs = []
+
+    # drain the final partial block
+    _process_batch_into(buf, batch_seqs)
+    batch_seqs = []
+    if buf and current_block is not None:
+        _flush_block(current_block, buf)
+        emitted += len(buf)
+        buf = []
+
+    total_sequences = last_seq_index + 1
+    _save_worker_state(
+        logits_dir, stage_name, shard_id, num_shards,
+        emitted=emitted, blocks_done=blocks_done,
+        total_sequences=total_sequences, done=True,
+    )
+    elapsed = time.time() - started
+    logger.info(
+        "worker %d/%d %s done: emitted=%d, blocks=%d, skipped_existing=%d, S=%d, %.1f min",
+        shard_id, num_shards, stage_name, emitted, blocks_done, skipped_existing,
+        total_sequences, elapsed / 60.0,
+    )
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="MertFormer Titan Phase-0 Top-K teacher logit precomputation"
@@ -427,6 +700,20 @@ def parse_args() -> argparse.Namespace:
         "--check-complete",
         action="store_true",
         help="Exit 0 only when the requested stages already have complete shard/state coverage.",
+    )
+    parser.add_argument(
+        "--num-shards",
+        type=int,
+        default=1,
+        help="[PARALLEL] Total data-parallel workers (GPUs). 1 = single-process (default, "
+             "byte-identical behaviour). Used by scripts/precompute_logits_parallel.py.",
+    )
+    parser.add_argument(
+        "--shard-id",
+        type=int,
+        default=0,
+        help="[PARALLEL] This worker's id in [0, num-shards). Owns blocks where "
+             "(seq_index // chunk-size) %% num-shards == shard-id.",
     )
     return parser.parse_args()
 
@@ -470,6 +757,17 @@ def main() -> int:
             all_complete = all_complete and complete
         return 0 if all_complete else 5
 
+    num_shards = int(getattr(args, "num_shards", 1) or 1)
+    shard_id = int(getattr(args, "shard_id", 0) or 0)
+    is_sharded = num_shards > 1
+    if num_shards < 1 or not (0 <= shard_id < max(1, num_shards)):
+        logger.error(
+            "Invalid --num-shards/--shard-id: num_shards=%s shard_id=%s "
+            "(require num_shards>=1 and 0<=shard_id<num_shards).",
+            num_shards, shard_id,
+        )
+        return 1
+
     hf_token = os.environ.get("HF_TOKEN", "").strip() or None
     if not hf_token:
         logger.error("HF_TOKEN is required for real teacher logit precomputation.")
@@ -509,18 +807,35 @@ def main() -> int:
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
+    if is_sharded:
+        logger.info("PARALLEL worker mode: shard %d of %d (block-cyclic).", shard_id, num_shards)
+
     for stage_num in stages:
         try:
-            precompute_stage(
-                stage_num=stage_num,
-                teacher=teacher,
-                tokenizer=tokenizer,
-                logits_dir=logits_dir,
-                top_k=args.top_k,
-                chunk_size=args.chunk_size,
-                batch_size=args.batch_size,
-                max_seq=args.max_seq,
-            )
+            if is_sharded:
+                _precompute_stage_sharded(
+                    stage_num=stage_num,
+                    teacher=teacher,
+                    tokenizer=tokenizer,
+                    logits_dir=logits_dir,
+                    top_k=args.top_k,
+                    chunk_size=args.chunk_size,
+                    batch_size=args.batch_size,
+                    max_seq=args.max_seq,
+                    num_shards=num_shards,
+                    shard_id=shard_id,
+                )
+            else:
+                precompute_stage(
+                    stage_num=stage_num,
+                    teacher=teacher,
+                    tokenizer=tokenizer,
+                    logits_dir=logits_dir,
+                    top_k=args.top_k,
+                    chunk_size=args.chunk_size,
+                    batch_size=args.batch_size,
+                    max_seq=args.max_seq,
+                )
         except KeyboardInterrupt:
             logger.warning("Interrupted by user; progress is already checkpointed in shard/state files.")
             return 130
