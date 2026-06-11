@@ -1,6 +1,6 @@
 {
-  "generated_local": "2026-06-12T01:57:44",
-  "entry_count": 851,
+  "generated_local": "2026-06-12T02:32:53",
+  "entry_count": 855,
   "entries": [
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260404_232149.zip",
@@ -3423,6 +3423,18 @@
       "disposition": "preserve_immutable_evidence"
     },
     {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_023103.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_023103.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113659.json",
       "kind": "file",
       "immutable_reason": "result_",
@@ -4431,7 +4443,19 @@
       "disposition": "preserve_immutable_evidence"
     },
     {
+      "path": "<HOME>/Documents/MertFormer_Gist_Update_2026-05-14/gist_clone/00_THIEL_FELLOWSHIP_EVIDENCE_2026-05-31.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
       "path": "<HOME>/Documents/MertFormer_Gist_Update_2026-05-14/gist_clone/5_OCEAN_PRE45K_H200_20260514_PARTIAL_EVIDENCE.md",
+      "kind": "file",
+      "immutable_reason": "evidence",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Gist_Update_2026-05-14/gist_clone/7_EVIDENCE_PACKET_ONE_PAGE_2026-05-22.md",
       "kind": "file",
       "immutable_reason": "evidence",
       "disposition": "preserve_immutable_evidence"
