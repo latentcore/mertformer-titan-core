@@ -2074,6 +2074,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── ocean_2xh200_1024_first_launch_profile.md  # dokümantasyon/rapor dosyası
 │   ├── ocean_pre45k_h200_20260514_clean_summary.json  # JSON veri artefaktı
 │   ├── ocean_pre45k_h200_20260514_partial_evidence.md  # dokümantasyon/rapor dosyası
+│   ├── offline_4060_demo_evidence.md  # dokümantasyon/rapor dosyası
+│   ├── offline_4060_demo_summary.json  # JSON veri artefaktı
 │   ├── offline_assistant_case_study.md  # dokümantasyon/rapor dosyası
 │   ├── one_command_full_sop.log  # metin/log artefaktı (tek komut uçtan uca SOP ham logu; her çalıştırmada üzerine yazılır)
 │   ├── one_command_full_sop_summary.md  # dokümantasyon/rapor dosyası (tek komut uçtan uca SOP özeti; her çalıştırmada üzerine yazılır)

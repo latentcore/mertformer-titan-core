@@ -1,6 +1,6 @@
 {
-  "generated_local": "2026-06-11T13:44:05",
-  "entry_count": 797,
+  "generated_local": "2026-06-11T14:22:53",
+  "entry_count": 805,
   "entries": [
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260404_232149.zip",
@@ -3094,6 +3094,54 @@
     },
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_134153.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_141451.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_141451.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_141612.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_141612.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_141817.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_141817.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_142037.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_142037.zip.sha256",
       "kind": "file",
       "immutable_reason": "result_",
       "disposition": "preserve_immutable_evidence"

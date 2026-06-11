@@ -1,6 +1,6 @@
 {
   "schema": "code_truth_delta_audit_v1",
-  "generated_utc": "2026-06-11T10:42:32Z",
+  "generated_utc": "2026-06-11T11:21:16Z",
   "evidence_contract": {
     "required_columns": [
       "code_path",

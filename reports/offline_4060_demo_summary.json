@@ -8,9 +8,9 @@
   "train_samples": 99,
   "val_samples": 128,
   "best_val_loss": 4.440474450588226,
-  "latest_checkpoint": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt",
-  "best_checkpoint": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_best.pt",
-  "log_path": "/Users/mertyunlu/Desktop/NİHAİ/mertformer-titan-core/logs/offline_4060_demo.jsonl",
+  "latest_checkpoint": "checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt",
+  "best_checkpoint": "checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_best.pt",
+  "log_path": "logs/offline_4060_demo.jsonl",
   "elapsed_s": 78.907,
   "config": {
     "model_name": "MertFormer_Titan_Offline_4060_Demo",

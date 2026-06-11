@@ -338,9 +338,11 @@ def main() -> int:
         "train_samples": len(train_ds),
         "val_samples": len(val_ds),
         "best_val_loss": None if best_val == float("inf") else best_val,
-        "latest_checkpoint": str(latest_ckpt),
-        "best_checkpoint": str(best_ckpt) if best_ckpt.exists() else None,
-        "log_path": str(log_path),
+        # Repo-relative paths only — absolute machine paths are forbidden in tracked
+        # files (see tests/test_sdk_pilot_cli.py::test_no_desktop_paths_in_tracked_files).
+        "latest_checkpoint": latest_ckpt.relative_to(root).as_posix(),
+        "best_checkpoint": best_ckpt.relative_to(root).as_posix() if best_ckpt.exists() else None,
+        "log_path": log_path.relative_to(root).as_posix(),
         "elapsed_s": round(time.time() - started_at, 3),
         "config": _cfg_snapshot(),
     }

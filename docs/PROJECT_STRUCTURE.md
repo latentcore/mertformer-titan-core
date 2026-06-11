@@ -488,6 +488,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── ocean_2xh200_1024_first_launch_profile.md  # documentation/report file
 │   ├── ocean_pre45k_h200_20260514_clean_summary.json  # JSON data artifact
 │   ├── ocean_pre45k_h200_20260514_partial_evidence.md  # documentation/report file
+│   ├── offline_4060_demo_evidence.md  # documentation/report file
+│   ├── offline_4060_demo_summary.json  # JSON data artifact
 │   ├── offline_assistant_case_study.md  # documentation/report file
 │   ├── one_command_full_sop.log  # text/log artifact (single-command end-to-end SOP raw log; overwritten each run)
 │   ├── one_command_full_sop_summary.md  # documentation/report file (single-command end-to-end SOP summary; overwritten each run)
