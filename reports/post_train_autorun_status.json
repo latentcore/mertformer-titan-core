@@ -1,24 +1,24 @@
 {
   "schema": "post_train_autorun_status_v1",
-  "generated_utc": "2026-06-10T23:24:55.754389+00:00",
+  "generated_utc": "2026-06-11T10:43:59.173807+00:00",
   "mode": "demo-only",
   "status": "completed",
-  "checkpoint": null,
+  "checkpoint": "<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt",
   "reports_dir": "<REPO_ROOT>/reports",
   "steps": [
     {
       "name": "checkpoint_resolution",
       "checkpoint_required": true,
-      "status": "warning",
+      "status": "completed",
       "return_code": 0,
-      "note": "Checkpoint missing; continuing only because allow_missing_checkpoint or non-benchmark mode applies."
+      "note": "<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt"
     },
     {
       "name": "demo_bundle_manifest",
       "checkpoint_required": false,
       "status": "completed",
       "return_code": 0,
-      "note": "No trained checkpoint resolved; this manifest only records current repo-side proof/demo assets."
+      "note": "A trained checkpoint was resolved for post-train closure."
     },
     {
       "name": "evidence_pack",

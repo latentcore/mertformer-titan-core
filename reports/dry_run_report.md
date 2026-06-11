@@ -1,9 +1,9 @@
 # Final Orchestrator Status
 
-- run_id: `zero_touch_20260610T232446Z`
+- run_id: `zero_touch_20260611T104349Z`
 - mode: `dry-run`
 - status: `dry-run`
-- generated_utc: `2026-06-10T23:24:46.453580+00:00`
+- generated_utc: `2026-06-11T10:43:49.858255+00:00`
 - train_readiness_status: `none`
 - decision_reason_code: `none`
 - training_lane: `none`
@@ -16,7 +16,7 @@
 | Step | Status | Return Code | Notes |
 | --- | --- | --- | --- |
 | `contract_outputs` | `completed` | `0` | Run contract, artifact list, exit code standard, and run manifest schema refreshed. |
-| `post_train_plan_refresh` | `completed` | `0` | {"status": "planned", "mode": "plan-only", "checkpoint": null}
+| `post_train_plan_refresh` | `completed` | `0` | {"status": "planned", "mode": "plan-only", "checkpoint": "<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt"}
  |
 | `start_gate` | `planned` | `0` | Refresh verify/readiness gate and exact blocker report. |
 | `training` | `planned` | `0` | Launch accelerate training path with resume policy applied. |

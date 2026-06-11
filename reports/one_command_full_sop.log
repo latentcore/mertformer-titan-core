@@ -1,4 +1,4 @@
-[run] start_utc=2026-06-10T23:20:39Z
+[run] start_utc=2026-06-11T10:39:23Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
@@ -16,7 +16,7 @@ scripts/test_onnx_export.py::test_export
     return cls.__new__(cls, *args)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-338 passed, 4 skipped, 1 warning in 31.66s
+338 passed, 4 skipped, 1 warning in 31.45s
 sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
 [verify] Test-stat claim sync ...
 {'status': 'ok', 'test_stat': '338 passed, 4 skipped', 'changed': [], 'missing': []}
@@ -58,7 +58,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <DESKTOP_PATH>
 ✈️ Removed <DESKTOP_PATH>
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 2.71s
+✈️ Preflight Duration: 2.70s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <DESKTOP_PATH>
@@ -69,8 +69,8 @@ Failure budget drill: PASS
 Overfit step 0: loss=121.5519
 Overfit step 12: loss=117.8494
 Overfit step 24: loss=113.7169
-Overfit step 36: loss=97.5476
-Overfit step 48: loss=50.8442
+Overfit step 36: loss=97.5475
+Overfit step 48: loss=50.8537
 Overfit gate: PASS
 Golden samples: 50
 - algorithms: 13
@@ -103,7 +103,7 @@ Golden sample eval: PASS
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 7.100287914276123,
+  "elapsed_sec": 7.155655860900879,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -129,9 +129,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-06-10T23:21:25Z",
-        "cpu_percent": 16.0,
-        "ram_used_gb": 7.418365478515625,
+        "timestamp_utc": "2026-06-11T10:40:09Z",
+        "cpu_percent": 16.3,
+        "ram_used_gb": 7.0672149658203125,
         "ram_total_gb": 16.0,
         "gpu_device": null,
         "gpu_allocated_gb": null,
@@ -143,8 +143,8 @@ Benchmark runner configured. Use --run to execute.
         "gpu_power_limit_w": null,
         "gpu_mem_used_gb_smi": null,
         "gpu_mem_total_gb_smi": null,
-        "disk_used_gb": 225.63915634155273,
-        "disk_free_gb": 2.6347084045410156,
+        "disk_used_gb": 225.9321174621582,
+        "disk_free_gb": 2.341747283935547,
         "disk_total_gb": 228.27386474609375
       }
     },
@@ -167,7 +167,7 @@ OK: translation pointer policy satisfied
 [verify] Documentation claim consistency gate ...
 OK: documentation claim consistency checks passed
 [verify] Markdown integrity gate ...
-md_integrity_check scanned=437 findings=0
+md_integrity_check scanned=438 findings=0
 [verify] Master closure matrix refresh ...
 {"total_items": 14, "this_pass": 12, "phase_2": 0, "external": 1, "rejected_with_reason": 1}
 [verify] Train readiness contract refresh ...
@@ -186,13 +186,13 @@ OK: workspace hygiene manifest refreshed
 {
   "json": "<REPO_ROOT>/reports/scoped_external_intake_matrix.json",
   "md": "<REPO_ROOT>/reports/scoped_external_intake_matrix.md",
-  "entries": 3681,
+  "entries": 3706,
   "sync_mode": "audit",
   "handoff_dir": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11",
   "apply_errors": 0
 }
 [verify] Chess GUI onefile sync check ...
-{"schema": "chess_gui_onefile_sync_report_v1", "generated_utc": "2026-06-10T23:21:41Z", "canonical_onefile": "<REPO_ROOT>/scripts/chess_5080_onefile.py", "gui_dir": "<REPO_ROOT>/apps/chess_gui", "gui_onefile": "<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py", "status": "canonical_fallback_ready", "reason": "local_copy_missing_repo_canonical_fallback_available", "copied": false, "local_copy_present": false, "canonical_sha256": "f4286998b4382ac7ed86c0035e40de1f5c07aef400b33c09ee97639cafd0e49f", "gui_sha256": "", "hashes_match": false}
+{"schema": "chess_gui_onefile_sync_report_v1", "generated_utc": "2026-06-11T10:40:25Z", "canonical_onefile": "<REPO_ROOT>/scripts/chess_5080_onefile.py", "gui_dir": "<REPO_ROOT>/apps/chess_gui", "gui_onefile": "<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py", "status": "canonical_fallback_ready", "reason": "local_copy_missing_repo_canonical_fallback_available", "copied": false, "local_copy_present": false, "canonical_sha256": "f4286998b4382ac7ed86c0035e40de1f5c07aef400b33c09ee97639cafd0e49f", "gui_sha256": "", "hashes_match": false}
 [verify] Chess teaching contract smoke report ...
 {"case_total": 5, "case_pass": 5, "mode_total": 5, "mode_pass": 5, "level_monotonic_non_decreasing": true, "all_green": true}
 [verify] Chess onefile extension report ...
@@ -247,13 +247,13 @@ OK: duplicate zip guard; groups=3
 [run] step=cfc_moe_tolerance_check
 [tolerance] PASS (max_diff_moe=0.000000 max_diff_cfc=0.000003)
 [run] step=md_quality_all
-md_quality: scope=all files=437 errors=0 warnings=0
+md_quality: scope=all files=438 errors=0 warnings=0
 [run] step=md_integrity_all
-md_integrity_check scanned=437 findings=0
+md_integrity_check scanned=438 findings=0
 [run] step=linkcheck_all
-linkcheck: scope=all files=437 missing=0
+linkcheck: scope=all files=438 missing=0
 [run] step=docs_inventory
-{"ok": true, "md_files": 439, "dup_groups": 25}
+{"ok": true, "md_files": 440, "dup_groups": 25}
 [run] step=sync_manifest
 {"manifest_entries": 827, "ok": true}
 [run] step=dealroom_sync
@@ -266,7 +266,7 @@ OK: duplicate zip guard; groups=3
 {
   "json": "<REPO_ROOT>/reports/scoped_external_intake_matrix.json",
   "md": "<REPO_ROOT>/reports/scoped_external_intake_matrix.md",
-  "entries": 3681,
+  "entries": 3706,
   "sync_mode": "audit",
   "handoff_dir": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11",
   "apply_errors": 0
@@ -308,13 +308,13 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip
-release_sha256=b1496a6ce81c91e3c592ca8194d1b7199979c320684755b77c53240f82164435
+release_sha256=a4da50521460c6b7948dcf7917510dae3134d6ad51563b34344d1feca633fa33
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=unlock_artifacts
 [run] step=artifact_release_zip
 [run] step=training_outputs_bundle
-{"bundle_zip": "artifacts/mertformer_training_outputs_bundle.zip", "included_files": 985}
+{"bundle_zip": "artifacts/mertformer_training_outputs_bundle.zip", "included_files": 998}
 [run] step=zip_denylist_audit zip=packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip
 {
   "zip_path": "packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip",
@@ -326,4 +326,4 @@ locked_sha256=
 }
 [run] step=secret_scan
 OK: no secret patterns detected in git_tracked files. scanned=820
-[run] end_utc=2026-06-10T23:22:38Z
+[run] end_utc=2026-06-11T10:41:32Z

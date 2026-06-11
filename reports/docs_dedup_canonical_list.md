@@ -331,6 +331,7 @@ Generated automatically.
 - `reports/model_health_final.md`
 - `reports/ocean_2xh200_1024_first_launch_profile.md`
 - `reports/ocean_pre45k_h200_20260514_partial_evidence.md`
+- `reports/offline_4060_demo_evidence.md`
 - `reports/offline_assistant_case_study.md`
 - `reports/one_command_full_sop_summary.md`
 - `reports/one_pager.md`

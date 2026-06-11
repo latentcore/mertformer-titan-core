@@ -3,13 +3,13 @@
 - schema: `post_train_autorun_status_v1`
 - mode: `demo-only`
 - status: `completed`
-- generated_utc: `2026-06-10T23:24:55.754389+00:00`
-- checkpoint: `none`
+- generated_utc: `2026-06-11T10:43:59.173807+00:00`
+- checkpoint: `<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt`
 
 ## Steps
 
 | Step | Status | Return Code | Notes |
 | --- | --- | --- | --- |
-| `checkpoint_resolution` | `warning` | `0` | Checkpoint missing; continuing only because allow_missing_checkpoint or non-benchmark mode applies. |
-| `demo_bundle_manifest` | `completed` | `0` | No trained checkpoint resolved; this manifest only records current repo-side proof/demo assets. |
+| `checkpoint_resolution` | `completed` | `0` | <REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt |
+| `demo_bundle_manifest` | `completed` | `0` | A trained checkpoint was resolved for post-train closure. |
 | `evidence_pack` | `completed` | `0` | reports/final_evidence_pack.md refreshed. |

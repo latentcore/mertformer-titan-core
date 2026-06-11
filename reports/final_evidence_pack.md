@@ -1,8 +1,8 @@
 # Final Evidence Pack
 
-- generated_utc: `2026-06-10T23:24:55.755054+00:00`
+- generated_utc: `2026-06-11T10:43:59.174416+00:00`
 - mode: `demo-only`
-- checkpoint: `none`
+- checkpoint: `<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt`
 
 ## Included Evidence
 
@@ -16,5 +16,5 @@
 
 ## Step Status
 
-- `checkpoint_resolution`: status=`warning` return_code=`0`
+- `checkpoint_resolution`: status=`completed` return_code=`0`
 - `demo_bundle_manifest`: status=`completed` return_code=`0`
