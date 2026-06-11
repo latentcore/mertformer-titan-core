@@ -1613,7 +1613,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── ADR-0001-source-of-truth-and-claim-boundary.md  # dokümantasyon/rapor dosyası
 │   ├── ADR-0002-change-control-and-closure-governance.md  # dokümantasyon/rapor dosyası
 │   ├── ADR-0003-chess-oneclick-delivery-runtime-contract.md  # dokümantasyon/rapor dosyası
-│   └── ADR-0004-blocker-fix-pass-core-override.md  # dokümantasyon/rapor dosyası
+│   ├── ADR-0004-blocker-fix-pass-core-override.md  # dokümantasyon/rapor dosyası
+│   └── ADR-0005-parallel-precompute-orchestration.md  # dokümantasyon/rapor dosyası
 ├── applications/  # dizin
 │   └── anthropic/  # dizin
 │       ├── PACKET_POINTER_20260419.md  # dokümantasyon/rapor dosyası
@@ -2290,6 +2291,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── plot_training_log.py  # Python modülü/scripti (plot training log için otomasyon scripti)
 │   ├── post_run_processor.py  # Python modülü/scripti (post run processor için otomasyon scripti)
 │   ├── post_train_autorun.py  # Python modülü/scripti (post train autorun için otomasyon scripti)
+│   ├── precompute_logits_parallel.py  # Python modülü/scripti (precompute logits parallel için otomasyon scripti)
 │   ├── precompute_logits_topk.py  # Python modülü/scripti (precompute logits topk için otomasyon scripti)
 │   ├── ram_guard.py  # Python modülü/scripti (ram guard için otomasyon scripti)
 │   ├── record_dataset_hashes.py  # Python modülü/scripti (record dataset hashes için otomasyon scripti)
@@ -2385,6 +2387,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_packing.py  # Python modülü/scripti (packing için otomatik test modülü)
 │   ├── test_post_run_processor.py  # Python modülü/scripti (post run processor için otomatik test modülü)
 │   ├── test_post_train_autorun_cli.py  # Python modülü/scripti (post train autorun cli için otomatik test modülü)
+│   ├── test_precompute_parallel.py  # Python modülü/scripti (precompute parallel için otomatik test modülü)
 │   ├── test_precompute_train_integration.py  # Python modülü/scripti (precompute train integration için otomatik test modülü)
 │   ├── test_resume_policy.py  # Python modülü/scripti (resume policy için otomatik test modülü)
 │   ├── test_scoped_external_tools.py  # Python modülü/scripti (scoped external tools için otomatik test modülü)

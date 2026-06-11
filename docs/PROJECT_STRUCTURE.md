@@ -27,7 +27,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── ADR-0001-source-of-truth-and-claim-boundary.md  # documentation/report file
 │   ├── ADR-0002-change-control-and-closure-governance.md  # documentation/report file
 │   ├── ADR-0003-chess-oneclick-delivery-runtime-contract.md  # documentation/report file
-│   └── ADR-0004-blocker-fix-pass-core-override.md  # documentation/report file
+│   ├── ADR-0004-blocker-fix-pass-core-override.md  # documentation/report file
+│   └── ADR-0005-parallel-precompute-orchestration.md  # documentation/report file
 ├── applications/  # directory
 │   └── anthropic/  # directory
 │       ├── PACKET_POINTER_20260419.md  # documentation/report file
@@ -704,6 +705,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── plot_training_log.py  # Python module/script (automation script for plot training log)
 │   ├── post_run_processor.py  # Python module/script (automation script for post run processor)
 │   ├── post_train_autorun.py  # Python module/script (automation script for post train autorun)
+│   ├── precompute_logits_parallel.py  # Python module/script (automation script for precompute logits parallel)
 │   ├── precompute_logits_topk.py  # Python module/script (automation script for precompute logits topk)
 │   ├── ram_guard.py  # Python module/script (automation script for ram guard)
 │   ├── record_dataset_hashes.py  # Python module/script (automation script for record dataset hashes)
@@ -799,6 +801,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_packing.py  # Python module/script (automated test module for packing)
 │   ├── test_post_run_processor.py  # Python module/script (automated test module for post run processor)
 │   ├── test_post_train_autorun_cli.py  # Python module/script (automated test module for post train autorun cli)
+│   ├── test_precompute_parallel.py  # Python module/script (automated test module for precompute parallel)
 │   ├── test_precompute_train_integration.py  # Python module/script (automated test module for precompute train integration)
 │   ├── test_resume_policy.py  # Python module/script (automated test module for resume policy)
 │   ├── test_scoped_external_tools.py  # Python module/script (automated test module for scoped external tools)

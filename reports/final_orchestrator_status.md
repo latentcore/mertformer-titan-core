@@ -1,9 +1,9 @@
 # Final Orchestrator Status
 
-- run_id: `zero_touch_20260611T130226Z`
+- run_id: `zero_touch_20260611T130812Z`
 - mode: `plan-only`
 - status: `planned`
-- generated_utc: `2026-06-11T13:02:26.136851+00:00`
+- generated_utc: `2026-06-11T13:08:12.928272+00:00`
 - train_readiness_status: `none`
 - decision_reason_code: `none`
 - training_lane: `none`
