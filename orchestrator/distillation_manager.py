@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30 V2) — Pre-Training
+Version: v1.0 (Build 30 V2) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -30,8 +30,7 @@ TOPK_DENSE_MAX_ELEMENTS = int(os.environ.get("TITAN_TOPK_DENSE_MAX_ELEMENTS", "8
 
 class DistillationManager:
     """
-    TR: Öğretmen model (Llama-3-70B) logitlerini önceden hesaplayıp diske yazan yönetici.
-    EN: Manager that pre-computes teacher model (Llama-3-70B) logits and writes to disk.
+    Manager that pre-computes teacher model (Llama-3-70B) logits and writes to disk.
     
     Objective:
     - Save VRAM during training by removing the Teacher model from memory.
@@ -275,17 +274,12 @@ class DistillationManager:
         """
         Quick sanity check to ensure offline logits exist for all stages.
 
-        TR: [B2] verify_alignment=True iken shard'larin sadece VAR olmasi yetmez;
-            her stage'in teacher-logit kimligi student stream'iyle hizali olmali
-            (validate_logit_alignment). Hizasiz shard 'kullanilamaz' sayilir ->
-            train sessiz bozulma yerine acik hata alir.
-        EN: [B2] With verify_alignment=True, shard existence is not enough; each
+        [B2] With verify_alignment=True, shard existence is not enough; each
             stage's teacher-logit identity must align to the student stream
             (validate_logit_alignment). A misaligned shard set is treated as
             unusable so train hard-fails instead of silently corrupting KD.
         """
-        # TR: Tüm stage'ler için shard var mı?
-        # EN: Do shards exist for all stages?
+        # Do shards exist for all stages?
         for stage in stage_names:
             files = _list_logits_files(self.logits_dir, stage, subset=subset)
             if not files:
@@ -379,9 +373,7 @@ def _as_sparse_topk_payload(item: dict, vocab_size: int) -> dict:
             "Top-K sparse logits must use matching [seq, top_k] indices/values tensors."
         )
     payload = {
-        # TR: [B2] Packed shard'lar 'topk_packed_v1'; format'i koru, hizalama
-        #     dogrulamasi icin per-sequence kimligini (identity) ve true_len'i tasi.
-        # EN: [B2] Packed shards are 'topk_packed_v1'; preserve the format and carry
+        # [B2] Packed shards are 'topk_packed_v1'; preserve the format and carry
         #     per-sequence identity + true_len so train-side can verify alignment.
         "format": item.get("format", "topk_sparse_v1"),
         "indices": indices,
@@ -410,8 +402,7 @@ class PrecomputedLogitsIterable(IterableDataset):
         self.files = _list_logits_files(self.logits_dir, stage_name, subset=subset)
 
     def __iter__(self):
-        # TR: Shard'ları sırayla oku ve sample başına logits üret
-        # EN: Read shards sequentially and yield logits per sample
+        # Read shards sequentially and yield logits per sample
         if not self.files:
             raise RuntimeError(
                 f"Precomputed logits not found for stage '{self.stage_name}' "

@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -25,22 +25,20 @@ import networkx as nx  # type: ignore
 # -----------------------------------------------------------------------------
 class WorldModel:
     """
-    TR: AGI'nin içinde yaşadığı 'zihinsel simülasyon'.
-    EN: The 'mental simulation' in which AGI lives.
-    TR: Semantik varlık grafiği + dynamics prediction.
-    EN: Semantic entity graph + dynamics prediction.
+    The 'mental simulation' in which AGI lives.
+    Semantic entity graph + dynamics prediction.
     """
     def __init__(self, sense_engine=None):
         self.facts = []
-        # TR: Durum temsili: Nesneler -> İlişkiler / EN: State representation: Objects -> Relations
+        # State representation: Objects -> Relations
         self.state_graph = nx.DiGraph()
         self.sense_engine = sense_engine
         self.entity_embeddings: Dict[str, List[float]] = {}
 
     def remember_fact(self, fact: str, category: str = "general"):
-        """TR: Gerçeği kaydeder. / EN: Records the fact."""
+        """Records the fact."""
         self.facts.append({"fact": fact, "cat": category, "ts": time.time()})
-        # TR: Semantik embedding kaydı / EN: Record semantic embedding
+        # Record semantic embedding
         if self.sense_engine is not None:
             try:
                 self.entity_embeddings[fact[:64]] = self.sense_engine.encode_text(fact)
@@ -48,7 +46,7 @@ class WorldModel:
                 pass
 
     def add_entity(self, entity: str, properties: Optional[Dict] = None):
-        """TR: Varlık ekle (semantik bilgiyle). / EN: Add entity (with semantic info)."""
+        """Add entity (with semantic info)."""
         self.state_graph.add_node(entity, **(properties or {}))
         if self.sense_engine is not None:
             try:
@@ -57,11 +55,11 @@ class WorldModel:
                 pass
 
     def add_relation(self, source: str, target: str, relation: str, strength: float = 1.0):
-        """TR: Varlıklar arası ilişki ekle. / EN: Add relation between entities."""
+        """Add relation between entities."""
         self.state_graph.add_edge(source, target, relation=relation, strength=strength)
 
     def recall_relevant(self, query: str, top_k: int = 5) -> List[str]:
-        """TR: İlgili gerçekleri getirir (semantik veya keyword). / EN: Retrieves relevant facts (semantic or keyword)."""
+        """Retrieves relevant facts (semantic or keyword)."""
         if self.sense_engine is not None and self.entity_embeddings:
             return self._semantic_recall(query, top_k)
         return self._keyword_recall(query, top_k)
@@ -77,7 +75,7 @@ class WorldModel:
         return [h[1] for h in hits[:top_k]]
 
     def _semantic_recall(self, query: str, top_k: int = 5) -> List[str]:
-        """TR: Semantik benzerlik ile geri çağırma. / EN: Recall by semantic similarity."""
+        """Recall by semantic similarity."""
         try:
             import torch
             import torch.nn.functional as F
@@ -96,7 +94,7 @@ class WorldModel:
             return self._keyword_recall(query, top_k)
 
     def predict_next_state(self, entity: str, action: str) -> str:
-        """TR: Basit dinamik tahmin. / EN: Simple dynamics prediction."""
+        """Simple dynamics prediction."""
         successors = list(self.state_graph.successors(entity))
         if successors:
             relations = [self.state_graph[entity][s].get("relation", "related") for s in successors]
@@ -104,31 +102,28 @@ class WorldModel:
         return f"No known dynamics for entity '{entity}'"
 
 # -----------------------------------------------------------------------------
-# TR: 2. NEDENSELLIK GRAFİ ÖĞRENİCİ (Nedensellik)
-# EN: 2. CAUSAL GRAPH LEARNER (Causality)
+# 2. CAUSAL GRAPH LEARNER (Causality)
 # -----------------------------------------------------------------------------
 class CausalGraphLearner:
     """
-    TR: Olaylar arasındaki sebep-sonuç ilişkilerini (Directed Acyclic Graph) öğrenir.
-    EN: Learns cause-effect relationships (Directed Acyclic Graph) between events.
+    Learns cause-effect relationships (Directed Acyclic Graph) between events.
     Pearl's Causal Hierarchy: Association -> Intervention -> Counterfactuals
     """
     def __init__(self):
         self.dag = nx.DiGraph()
-        # TR: Örnek başlangıç nedensellikleri / EN: Example starting causalities
+        # Example starting causalities
         self.dag.add_edge("High_RAM_Usage", "System_Slowdown", strength=0.8)
         self.dag.add_edge("Bad_Code", "Syntax_Error", strength=0.9)
         self.dag.add_edge("Syntax_Error", "Execution_Failure", strength=0.85)
 
     def add_observation(self, cause: str, effect: str, strength: float = 0.5):
         """
-        TR: Gözlemden yeni neden-sonuç ilişkisi öğren.
-        EN: Learn new causal link from observation.
+        Learn new causal link from observation.
         """
         cause_node = cause.replace(" ", "_")
         effect_node = effect.replace(" ", "_")
         if self.dag.has_edge(cause_node, effect_node):
-            # TR: Mevcut kenar güçlendirme (EMA) / EN: Strengthen existing edge (EMA)
+            # Strengthen existing edge (EMA)
             old = self.dag[cause_node][effect_node].get("strength", 0.5)
             new_strength = old * 0.7 + strength * 0.3  # EMA update
             self.dag[cause_node][effect_node]["strength"] = min(1.0, new_strength)
@@ -136,12 +131,12 @@ class CausalGraphLearner:
             self.dag.add_edge(cause_node, effect_node, strength=min(1.0, max(0.0, strength)))
 
     def infer_cause(self, effect: str) -> str:
-        """TR: Geriye doğru neden arar (Abduction). / EN: Searches for cause backwards (Abduction)."""
+        """Searches for cause backwards (Abduction)."""
         target_node = self._find_node(effect)
         if target_node:
             preds = list(self.dag.predecessors(target_node))
             if preds:
-                # TR: En güçlü nedeni seç / EN: Select strongest cause
+                # Select strongest cause
                 ranked = sorted(
                     preds,
                     key=lambda p: self.dag[p][target_node].get("strength", 0.5),
@@ -156,13 +151,12 @@ class CausalGraphLearner:
 
     def counterfactual(self, action: str, observed_effect: str) -> str:
         """
-        TR: 'Eğer X yapmasaydım Y olur muydu?' (Karşı-olgusal)
-        EN: 'If I hadn't done X, would Y still happen?' (Counterfactual)
+        'If I hadn't done X, would Y still happen?' (Counterfactual)
         """
         action_node = self._find_node(action)
         effect_node = self._find_node(observed_effect)
         if action_node and effect_node:
-            # TR: Alternatif yollar var mı? / EN: Are there alternative paths?
+            # Are there alternative paths?
             try:
                 paths = list(nx.all_simple_paths(self.dag, action_node, effect_node, cutoff=4))
                 if len(paths) > 1:
@@ -180,10 +174,10 @@ class CausalGraphLearner:
         return f"Counterfactual: No causal path found between '{action}' and '{observed_effect}'."
 
     def predict_intervention(self, action: str) -> str:
-        """TR: X yaparsam Y ne olur? (Öngörü). / EN: If I do X, what happens to Y? (Prediction)."""
+        """If I do X, what happens to Y? (Prediction)."""
         action_node = self._find_node(action)
         if action_node:
-            # TR: İleri yönlü tüm etkileri bul / EN: Find all forward effects
+            # Find all forward effects
             effects = []
             for successor in nx.descendants(self.dag, action_node):
                 try:
@@ -202,37 +196,34 @@ class CausalGraphLearner:
                     risk = "HIGH" if strength > 0.7 else "MEDIUM" if strength > 0.4 else "LOW"
                     lines.append(f"  → {eff} (probability: {strength:.0%}, hops: {hops}, risk: {risk})")
                 return "\n".join(lines)
-        # TR: Genel kurallar / EN: General rules
+        # General rules
         if "delete" in action.lower() and "file" in action.lower():
             return "Prediction: Data Loss probability is HIGH."
         return "Prediction: Outcome uncertain — no causal data available."
 
     def _find_node(self, text: str) -> Optional[str]:
-        """TR: Metinden en yakın graph node'unu bul. / EN: Find closest graph node from text."""
+        """Find closest graph node from text."""
         text_lower = text.lower().replace(" ", "_")
-        # TR: Tam eşleşme / EN: Exact match
+        # Exact match
         for node in self.dag.nodes:
             if node.lower() == text_lower:
                 return node
-        # TR: Kısmi eşleşme / EN: Partial match
+        # Partial match
         for node in self.dag.nodes:
             if node.lower().replace("_", " ") in text.lower():
                 return node
         return None
 
 # -----------------------------------------------------------------------------
-# TR: 3. BAYESİAN AGENT ÇEKİRDEĞİ (Belirsizlik Yönetimi)
-# EN: 3. BAYESIAN AGENT CORE (Uncertainty Management)
+# 3. BAYESIAN AGENT CORE (Uncertainty Management)
 # -----------------------------------------------------------------------------
 class BayesianAgentCore:
     """
-    TR: İnançları olasılık olarak tutar: P(Hipotez | Kanıt)
-    EN: Holds beliefs as probability: P(Hypothesis | Evidence)
-    TR: Proper Bayesian update formula ile.
-    EN: With proper Bayesian update formula.
+    Holds beliefs as probability: P(Hypothesis | Evidence)
+    With proper Bayesian update formula.
     """
     def __init__(self):
-        # TR: Hipotez: Olasılık (0.0 - 1.0) / EN: Hypothesis: Probability (0.0 - 1.0)
+        # Hypothesis: Probability (0.0 - 1.0)
         self.beliefs: Dict[str, float] = {
             "User_is_Expert": 0.5,
             "System_is_Stable": 0.9,
@@ -242,16 +233,15 @@ class BayesianAgentCore:
 
     def update_belief(self, hypothesis: str, evidence_strength: float, likelihood_ratio: float = 2.0):
         """
-        TR: Proper Bayes güncellemesi: P(H|E) = P(E|H)*P(H) / P(E)
-        EN: Proper Bayesian update: P(H|E) = P(E|H)*P(H) / P(E)
+        Proper Bayesian update: P(H|E) = P(E|H)*P(H) / P(E)
         """
         prior = self.beliefs.get(hypothesis, 0.5)
-        # TR: Likelihood ratio tabanlı güncelleme / EN: Likelihood ratio based update
+        # Likelihood ratio based update
         # P(E|H) = evidence_strength * likelihood_ratio
-        # P(E|¬H) = evidence_strength / likelihood_ratio
+        # P(E|not H) = evidence_strength / likelihood_ratio
         p_e_given_h = min(0.99, evidence_strength * likelihood_ratio)
         p_e_given_not_h = max(0.01, evidence_strength / likelihood_ratio)
-        # TR: Bayes Teoremi / EN: Bayes' Theorem
+        # Bayes' Theorem
         p_e = p_e_given_h * prior + p_e_given_not_h * (1.0 - prior)
         if p_e > 0:
             posterior = (p_e_given_h * prior) / p_e
@@ -259,15 +249,14 @@ class BayesianAgentCore:
             posterior = prior
         self.beliefs[hypothesis] = min(max(posterior, 0.01), 0.99)
         self._update_count[hypothesis] = self._update_count.get(hypothesis, 0) + 1
-        # print(f"📊 [Bayes] Updated '{hypothesis}': {prior:.2f} -> {posterior:.2f}")
+        # print(f"[Bayes] Updated '{hypothesis}': {prior:.2f} -> {posterior:.2f}")
 
     def get_confidence(self, hypothesis: str) -> float:
         return self.beliefs.get(hypothesis, 0.5)
 
     def entropy(self) -> float:
         """
-        TR: Tüm inançların bilgi entropisi (belirsizlik ölçüsü).
-        EN: Information entropy of all beliefs (uncertainty measure).
+        Information entropy of all beliefs (uncertainty measure).
         """
         import math
         if not self.beliefs:
@@ -279,14 +268,13 @@ class BayesianAgentCore:
         return total_entropy / len(self.beliefs)
 
     def most_uncertain(self) -> Optional[str]:
-        """TR: En belirsiz hipotezi döndürür. / EN: Returns the most uncertain hypothesis."""
+        """Returns the most uncertain hypothesis."""
         if not self.beliefs:
             return None
         return min(self.beliefs, key=lambda h: abs(self.beliefs[h] - 0.5))
 
 # -----------------------------------------------------------------------------
-# TR: 4. META ÖĞRENİCİ (Strateji)
-# EN: 4. META LEARNER (Strategy)
+# 4. META LEARNER (Strategy)
 # -----------------------------------------------------------------------------
 class MetaLearner:
     def __init__(self):
@@ -300,8 +288,7 @@ class MetaLearner:
         self.history.append((task, success))
 
 # -----------------------------------------------------------------------------
-# TR: 5. MERAK MOTORU (Merak)
-# EN: 5. CURIOSITY ENGINE (Curiosity)
+# 5. CURIOSITY ENGINE (Curiosity)
 # -----------------------------------------------------------------------------
 class CuriosityEngine:
     def identify_gaps(self, text: str) -> List[str]:
@@ -313,13 +300,11 @@ class CuriosityEngine:
         return "Bu kodu optimize etmeyi denedin mi?"
 
 # -----------------------------------------------------------------------------
-# TR: 6. TRANSFER ÖĞRENİCİ (Domain Transferi)
-# EN: 6. TRANSFER LEARNER (Domain Transfer)
+# 6. TRANSFER LEARNER (Domain Transfer)
 # -----------------------------------------------------------------------------
 class TransferLearner:
     """
-    TR: Bir alandaki bilgiyi (Pattern) diğerine uygular.
-    EN: Applies knowledge (Pattern) from one domain to another.
+    Applies knowledge (Pattern) from one domain to another.
     """
     def find_analogy(self, problem: str) -> str:
         if "memory leak" in problem.lower():
@@ -327,16 +312,14 @@ class TransferLearner:
         return ""
 
 # -----------------------------------------------------------------------------
-# TR: 7. ÇOKLU AJan ORKESTRATÖR
-# EN: 7. MULTI-AGENT ORCHESTRATOR
+# 7. MULTI-AGENT ORCHESTRATOR
 # -----------------------------------------------------------------------------
 class MultiAgentOrchestrator:
     def debate(self, topic: str) -> str:
         return f"[Simulated Debate] Experts analyzing '{topic}'..."
 
 # -----------------------------------------------------------------------------
-# TR: 8. DUYGUSAL ZEKA
-# EN: 8. EMOTIONAL INTELLIGENCE
+# 8. EMOTIONAL INTELLIGENCE
 # -----------------------------------------------------------------------------
 class EmotionalIntelligence:
     def analyze_mood(self, text: str) -> str:

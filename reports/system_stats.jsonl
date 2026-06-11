@@ -68,3 +68,4 @@
 {"timestamp_utc": "2026-06-11T11:21:38.505680+00:00", "stage": "baseline", "cpu_percent": 7.1, "ram_total_gb": 16.0, "ram_used_gb": 8.39898681640625}
 {"timestamp_utc": "2026-06-11T13:01:56.672130+00:00", "stage": "baseline", "cpu_percent": 9.7, "ram_total_gb": 16.0, "ram_used_gb": 8.704666137695312}
 {"timestamp_utc": "2026-06-11T17:46:55.842857+00:00", "stage": "baseline", "cpu_percent": 4.7, "ram_total_gb": 16.0, "ram_used_gb": 8.4715576171875}
+{"timestamp_utc": "2026-06-11T22:56:37.582618+00:00", "stage": "baseline", "cpu_percent": 7.6, "ram_total_gb": 16.0, "ram_used_gb": 8.852157592773438}

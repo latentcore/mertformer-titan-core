@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -21,7 +21,7 @@ from typing import Any, Dict, List, Optional
 
 import torch
 
-# TR: Yerel import'lar / EN: Local imports
+# Local imports
 from .paths import AGIPaths
 from .hardware import HardwareSense
 from .web_sense import WebSense
@@ -34,8 +34,7 @@ from .alignment_contracts import AlignmentContracts
 from .compute_orchestrator import ComputeOrchestrator
 from .verifier import SwarmVerifier
 
-# TR: MertFormer import - fallback mekanizmalı
-# EN: MertFormer import - with fallback mechanism
+# MertFormer import - with fallback mechanism
 try:
     from config.config import cfg
     from model.transformers import MertFormer
@@ -51,7 +50,7 @@ except ImportError:
         vocab_size = 128256
         max_seq_len = 4096
 
-# TR: Günlük kaydı / EN: Logging
+# Logging
 logger = logging.getLogger("TitanOrchestrator")
 
 
@@ -100,10 +99,8 @@ class EpisodeResult:
 
 class MertFormerOrchestrator:
     """
-    TR: MertFormer Titan AGI Orkestratörü.
-    EN: MertFormer Titan AGI Orchestrator.
-    TR: Tüm sense modüllerini, hafızayı ve model inference'ı birleştirir.
-    EN: Combines all sense modules, memory and model inference.
+    MertFormer Titan AGI Orchestrator.
+    Combines all sense modules, memory and model inference.
     """
     
     def __init__(
@@ -114,11 +111,11 @@ class MertFormerOrchestrator:
     ):
         """
         Args:
-            device: TR: Hesaplama cihazı (None = otomatik) / EN: Compute device (None = auto)
-            load_model: TR: MertFormer modelini yükle / EN: Load MertFormer model
-            enable_voice: TR: Sesli yanıt (TTS) etkinleştir / EN: Enable voice response (TTS)
+            device: Compute device (None = auto)
+            load_model: Load MertFormer model
+            enable_voice: Enable voice response (TTS)
         """
-        # TR: Cihaz seçimi / EN: Device selection
+        # Device selection
         if device is None:
             if torch.cuda.is_available():
                 device = "cuda"
@@ -133,16 +130,16 @@ class MertFormerOrchestrator:
         print(f"🚀 MertFormer Titan Orchestrator başlatılıyor...")
         print(f"   Device: {self.device}")
         
-        # TR: Dizinleri oluştur / EN: Create directories
+        # Create directories
         AGIPaths.ensure_dirs()
         
-        # TR: Sense modüllerini başlat / EN: Initialize sense modules
+        # Initialize sense modules
         self.hardware = HardwareSense()
         self.web = WebSense()
         self.audio = AudioSense()
         self.senses = SenseEngine(device=self.device)
         
-        # TR: Hafıza ve RAG / EN: Memory and RAG
+        # Memory and RAG
         self.memory = GodMemory(AGIPaths.MEMORY_FILE, self.senses)
         self.doc_indexer = DocIndexer(AGIPaths.DOC_DIR, AGIPaths.VECTOR_FILE, self.senses)
         self.rag = RAGEngine(self.memory, self.doc_indexer, self.senses)
@@ -150,7 +147,7 @@ class MertFormerOrchestrator:
         self.alignment_contracts = AlignmentContracts()
         self.compute_orchestrator = ComputeOrchestrator()
         
-        # TR: Model / EN: Model
+        # Model
         self.model = None
         self.tokenizer = None
         self.swarm = SwarmRuntime(generate_fn=self._swarm_generate_callback)
@@ -160,7 +157,7 @@ class MertFormerOrchestrator:
             self._load_model()
         
         # ================================================================
-        # TR: AGI BİLİŞSEL MİMARİ / EN: AGI COGNITIVE ARCHITECTURE
+        # AGI COGNITIVE ARCHITECTURE
         # ================================================================
         from .reasoning_engine import ReasoningEngine
         from .tool_executor import ToolExecutor
@@ -195,8 +192,7 @@ class MertFormerOrchestrator:
 
     def think(self, task: str, max_iterations: int = 5) -> dict:
         """
-        TR: AGI-tarzı bilişsel işleme — Algıla → Düşün → Eylem → Yansıt.
-        EN: AGI-style cognitive processing — Perceive → Think → Act → Reflect.
+        AGI-style cognitive processing - Perceive -> Think -> Act -> Reflect.
         """
         result = self.cognitive_loop.run(task, max_iterations=max_iterations)
         return {
@@ -397,26 +393,26 @@ class MertFormerOrchestrator:
         return self.generate(prompt, max_tokens=96, temperature=0.4, top_k=40, top_p=0.9)
     
     def _load_model(self) -> None:
-        """TR: MertFormer modelini yükle. / EN: Load MertFormer model."""
+        """Load MertFormer model."""
         try:
             print(f"🧠 MertFormer modeli yükleniyor...")
             
-            # TR: Tokenizer / EN: Tokenizer
+            # Tokenizer
             from transformers import AutoTokenizer
             tokenizer_id = getattr(cfg, "teacher_model_id", "gpt2")
             self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_id)
             if self.tokenizer.pad_token is None:
                 self.tokenizer.pad_token = self.tokenizer.eos_token
             
-            # TR: Model / EN: Model
+            # Model
             self.model = MertFormer().to(self.device)
             
-            # TR: Checkpoint yükle (varsa) / EN: Load checkpoint (if exists)
+            # Load checkpoint (if exists)
             if AGIPaths.CHECKPOINT_FILE.exists():
                 print(f"📂 Checkpoint yükleniyor: {AGIPaths.CHECKPOINT_FILE}")
                 checkpoint = torch.load(AGIPaths.CHECKPOINT_FILE, map_location=self.device)
                 
-                # TR: İç içe state dict kontrolü / EN: Nested state dict check
+                # Nested state dict check
                 state_dict = checkpoint.get("model", checkpoint)
                 self.model.load_state_dict(state_dict, strict=False)
                 print(f"✅ Checkpoint yüklendi!")
@@ -438,11 +434,11 @@ class MertFormerOrchestrator:
         top_k: int = 50,
         top_p: float = 0.9,
     ) -> str:
-        """TR: Metin üret. / EN: Generate text."""
+        """Generate text."""
         if self.model is None or self.tokenizer is None:
             return "[TR: Model yüklenemedi, inference yapılamıyor / EN: Model not loaded, cannot perform inference]"
         
-        # TR: Tokenize / EN: Tokenize
+        # Tokenize
         inputs = self.tokenizer(
             prompt,
             return_tensors="pt",
@@ -450,7 +446,7 @@ class MertFormerOrchestrator:
             max_length=cfg.max_seq_len - max_tokens,
         ).to(self.device)
         
-        # TR: Üretim / EN: Generate
+        # Generate
         outputs = self.model.generate(
             inputs["input_ids"],
             max_new_tokens=max_tokens,
@@ -460,10 +456,10 @@ class MertFormerOrchestrator:
             eos_token_id=self.tokenizer.eos_token_id,
         )
         
-        # TR: Decode / EN: Decode
+        # Decode
         generated = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
         
-        # TR: Prompt'u çıkar / EN: Remove prompt
+        # Remove prompt
         if generated.startswith(prompt):
             generated = generated[len(prompt):].strip()
         
@@ -477,19 +473,18 @@ class MertFormerOrchestrator:
         temperature: float = 0.7,
     ) -> str:
         """
-        TR: Kullanıcıyla sohbet.
-        EN: Chat with user.
+        Chat with user.
         
         Args:
-            user_message: TR: Kullanıcı mesajı / EN: User message
-            use_memory: TR: Hafızadan context al / EN: Get context from memory
-            use_web: TR: Web araması yap / EN: Perform web search
-            temperature: TR: Sampling sıcaklığı / EN: Sampling temperature
+            user_message: User message
+            use_memory: Get context from memory
+            use_web: Perform web search
+            temperature: Sampling temperature
         """
-        # TR: Hafızayı kaydet / EN: Save to memory
+        # Save to memory
         self.memory.save("user", user_message, category="GENERAL", source="CHAT")
         
-        # TR: Context oluştur / EN: Build context
+        # Build context
         context_parts = []
         
         if use_memory:
@@ -501,7 +496,7 @@ class MertFormerOrchestrator:
             web_results = self.web.search(user_message, max_results=3)
             context_parts.append(f"[WEB RESULTS]\n{web_results}\n[/WEB RESULTS]")
         
-        # TR: Prompt oluştur / EN: Build prompt
+        # Build prompt
         context = "\n\n".join(context_parts)
         prompt = f"""Sen MertFormer Titan, gelişmiş bir yapay zeka asistanısın.
 
@@ -511,13 +506,13 @@ Kullanıcı: {user_message}
 
 Titan:"""
         
-        # TR: Üretim / EN: Generate
+        # Generate
         response = self.generate(prompt, temperature=temperature)
         
-        # TR: Hafızaya kaydet / EN: Save to memory
+        # Save to memory
         self.memory.save("assistant", response, category="GENERAL", source="CHAT")
         
-        # TR: Sesli yanıt / EN: Voice response
+        # Voice response
         if self.enable_voice:
             self.audio.speak(response)
         
@@ -525,8 +520,7 @@ Titan:"""
 
     def run_swarm_task(self, task: str, mode: str = "nano") -> dict:
         """
-        TR: Deterministik swarm yürütümü (nano|mid|omega).
-        EN: Deterministic swarm execution (nano|mid|omega).
+        Deterministic swarm execution (nano|mid|omega).
         """
         report = self.swarm.run(task=task, mode=mode)
         return {
@@ -578,7 +572,7 @@ Titan:"""
         )
     
     def status(self) -> str:
-        """TR: Sistem durumunu döndür. / EN: Return system status."""
+        """Return system status."""
         lines = [
             "📊 TITAN ORCHESTRATOR STATUS",
             "=" * 40,
@@ -595,7 +589,7 @@ Titan:"""
         return "\n".join(lines)
     
     def repl(self) -> None:
-        """TR: İnteraktif REPL döngüsü. / EN: Interactive REPL loop."""
+        """Interactive REPL loop."""
         print("\n" + "=" * 60)
         print("🚀 MERTFORMER TITAN - Interactive Mode")
         print("   Komutlar: !status, !web <query>, !voice, !quit")
@@ -608,7 +602,7 @@ Titan:"""
                 if not user_input:
                     continue
                 
-                # TR: Özel komutlar / EN: Special commands
+                # Special commands
                 if user_input.lower() == "!quit":
                     print("👋 Görüşürüz!")
                     break
@@ -636,7 +630,7 @@ Titan:"""
                     print(self.run_swarm_task(payload, mode=mode))
                     continue
                 
-                # TR: Normal sohbet / EN: Normal chat
+                # Normal chat
                 response = self.chat(user_input, use_memory=True)
                 print(f"\nTitan: {response}\n")
                 
@@ -647,12 +641,12 @@ Titan:"""
                 print(f"⚠️ Hata: {e}")
 
 # -----------------------------------------------------------------------------
-# TR: GİRİŞ NOKTASI / EN: ENTRY POINT
+# ENTRY POINT
 # -----------------------------------------------------------------------------
 def main():
-    """TR: CLI Giriş Noktası Orkestratör için. / EN: CLI Entry Point for Orchestrator."""
+    """CLI Entry Point for Orchestrator."""
     try:
-        # TR: Config'i yükle / EN: Load config to get model path or defaults
+        # Load config to get model path or defaults
         from config.config import cfg
         
         print("🔧 Initializing MertFormer Titan Orchestrator...")

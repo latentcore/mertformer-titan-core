@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -47,8 +47,7 @@ def _mla_packed_kv(
     kv_out = F.linear(x_q, w_q, None)
     return kv_out.split(kv_out_dim, dim=-1)
 
-# TR: Flash Attention 2 (Opsiyonel, A100/H100'de %20-40 hız artışı için)
-# EN: Flash Attention 2 (Optional, for 20-40% speedup on A100/H100)
+# Flash Attention 2 (Optional, for 20-40% speedup on A100/H100)
 try:
     from flash_attn import flash_attn_func
     FLASH_ATTN_AVAILABLE = True
@@ -75,10 +74,9 @@ def _is_onnx_export() -> bool:
 
 class _QKRMSNorm(nn.Module):
     """
-    TR: QK Normalization için hafif RMSNorm - attention stabilizasyonu.
-    EN: Lightweight RMSNorm for QK Normalization - attention stability.
-    
-    NOT: nn.RMSNorm PyTorch 2.4+ gerektirir, bu sınıf geriye uyumludur.
+    Lightweight RMSNorm for QK Normalization - attention stability.
+
+    NOTE: nn.RMSNorm requires PyTorch 2.4+; this class is backward compatible.
     """
     
     def __init__(self, dim: int, eps: float = 1e-6) -> None:
@@ -87,22 +85,31 @@ class _QKRMSNorm(nn.Module):
         self.weight = nn.Parameter(torch.ones(dim))
     
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # TR: [V26.5 FIX] Stabilite için FP32'de RMS hesapla
-        # EN: [V26.5 FIX] Compute RMS in FP32 for stability
-        # TR: x.float() -> pow(2) -> mean -> rsqrt
-        # EN: x.float() -> pow(2) -> mean -> rsqrt
+        # [V26.5 FIX] Compute RMS in FP32 for stability
+        # x.float() -> pow(2) -> mean -> rsqrt
         rms = x.float().pow(2).mean(dim=-1, keepdim=True).add(self.eps).rsqrt()
-        # TR: Orijinal dtype'a geri ölçekle / EN: Scale back to original dtype
+        # Scale back to original dtype
         return x * rms.to(x.dtype) * self.weight.to(x.dtype)
 
 
 
 class RotaryEmbedding(nn.Module):
     """
-    TR: Rotary Position Embedding (RoPE) - Caching Optimazed.
-    EN: Rotary Position Embedding (RoPE) - Caching Optimized.
+    Rotary Position Embedding (RoPE) - Caching Optimized.
     """
-    def __init__(self, dim: int, max_seq_len: int = 4096, base: float = 500000.0, device=None):
+
+    # Buffer type declarations (registered in __init__ via register_buffer).
+    inv_freq: torch.Tensor
+    cos_cached: torch.Tensor
+    sin_cached: torch.Tensor
+
+    def __init__(
+        self,
+        dim: int,
+        max_seq_len: int = 4096,
+        base: float = 500000.0,
+        device: Optional[torch.device] = None,
+    ) -> None:
         super().__init__()
         if dim % 2 != 0:
             raise ValueError(f"RoPE dim must be even, got {dim}")
@@ -122,7 +129,7 @@ class RotaryEmbedding(nn.Module):
         self._update_cache(max_seq_len, init_device)
 
     @torch.no_grad()
-    def _update_cache(self, seq_len: int, device):
+    def _update_cache(self, seq_len: int, device: Optional[torch.device]) -> None:
         seq_len = int(seq_len)
         if device is None:
             device = self.inv_freq.device
@@ -154,7 +161,7 @@ class RotaryEmbedding(nn.Module):
         self.sin_cached.resize_(sin.shape)
         self.sin_cached.copy_(sin)
 
-    def forward(self, x: torch.Tensor, seq_len: int = None, offset: int = 0) -> Tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, x: torch.Tensor, seq_len: Optional[int] = None, offset: int = 0) -> Tuple[torch.Tensor, torch.Tensor]:
         if seq_len is None:
             seq_len = x.shape[2]
             
@@ -172,7 +179,7 @@ class RotaryEmbedding(nn.Module):
             self.sin_cached[..., offset:total_len, :].to(dtype=x.dtype)
         )
 
-def rotate_half(x):
+def rotate_half(x: torch.Tensor) -> torch.Tensor:
     """Rotates half the hidden dims of the input."""
     x1 = x[..., : x.shape[-1] // 2]
     x2 = x[..., x.shape[-1] // 2 :]
@@ -185,8 +192,7 @@ def apply_rope_optimized(
     sin: torch.Tensor,
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     """
-    TR: Optimized RoPE application using pre-computed cos/sin.
-    EN: Optimized RoPE application using pre-computed cos/sin.
+    Optimized RoPE application using pre-computed cos/sin.
     """
     # q, k: [B, H, T, D]
     # cos, sin: [1, 1, T, D]
@@ -198,22 +204,21 @@ def apply_rope_optimized(
 
 class MLA(nn.Module):
     """
-    TR: Multi-Head Latent Attention - LLaMA-3 uyumlu attention mekanizması.
-    EN: Multi-Head Latent Attention - LLaMA-3 compatible attention mechanism.
+    Multi-Head Latent Attention - LLaMA-3 compatible attention mechanism.
 
-    Özellikler / Features:
+    Features:
     - LLaMA-3 interleaved RoPE
-    - Opsiyonel decoupled RoPE
-    - FP32 stabil Softmax
-    - BitLinear projeksiyonlar
-    - Causal mask buffer optimizasyonu
-    - KV Cache desteği (inference hızlandırma) [V21.0]
+    - Optional decoupled RoPE
+    - FP32-stable Softmax
+    - BitLinear projections
+    - Causal mask buffer optimization
+    - KV Cache support (inference speedup) [V21.0]
     """
 
     def __init__(self) -> None:
-        """TR: MLA başlatıcı. EN: MLA initializer."""
+        """MLA initializer."""
         super().__init__()
-        # Config-driven parametreler
+        # Config-driven parameters
         self.hidden_size = int(cfg.hidden_size)
         self.num_heads = int(cfg.num_heads)
         self.head_dim = getattr(cfg, "head_dim", self.hidden_size // self.num_heads)
@@ -333,12 +338,11 @@ class MLA(nn.Module):
         use_cache: bool = False,
     ) -> Tuple[torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]:
         """
-        TR: İleri yayılım - Multi-head attention ile sequence processing.
-        EN: Forward pass - Sequence processing with multi-head attention.
+        Forward pass - Sequence processing with multi-head attention.
         """
         B, T, C = x.shape
 
-        # Projeksiyon: Q, K, V hesapla
+        # Projection: compute Q, K, V
         q = self.q_proj(x).view(B, T, self.num_heads, self.head_dim).transpose(1, 2)
         if _MLA_KV_PACK_ENABLED and os.environ.get("MERTFORMER_LOWBIT_KERNEL", "0") != "1":
             kv_out_dim = self.num_kv_heads * self.head_dim
@@ -354,7 +358,7 @@ class MLA(nn.Module):
             k = self.k_proj(x).view(B, T, self.num_kv_heads, self.head_dim).transpose(1, 2)
             v = self.v_proj(x).view(B, T, self.num_kv_heads, self.head_dim).transpose(1, 2)
         
-        # V23.0: QK Normalization (attention stabilizasyonu)
+        # V23.0: QK Normalization (attention stabilization)
         q = self.q_norm(q)
         k = self.k_norm(k)
 
@@ -408,7 +412,7 @@ class MLA(nn.Module):
             k_full = torch.cat([past_k, k], dim=2)
             v_full = torch.cat([past_v, v], dim=2)
 
-        # Cache'i güncelle
+        # Update the cache
         present_key_value = (k_full, v_full) if use_cache else None
 
         # Optional hierarchical short/long split for decode-time attention.
@@ -505,6 +509,6 @@ class MLA(nn.Module):
                 attn_weights = self.attn_dropout(attn_weights)
                 out = torch.matmul(attn_weights, v)
 
-        # Output projeksiyonu
+        # Output projection
         out = out.transpose(1, 2).contiguous().view(B, T, C)
         return self.o_proj(out), present_key_value

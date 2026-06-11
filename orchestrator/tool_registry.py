@@ -20,7 +20,7 @@ def default_tool_registry() -> Dict[str, ToolSpec]:
         ToolSpec("tool.kpi_report", "Generate KPI summary", ("kpi", "reporting"), True),
         ToolSpec("tool.swarm_route", "Dispatch role-based swarm execution", ("routing", "planning"), True),
         ToolSpec("tool.eval_generalization", "Run local generalization suite", ("evaluation", "generalization"), True),
-        # TR: Yeni AGI araçları / EN: New AGI tools
+        # New AGI tools
         ToolSpec("tool.web_search", "Search the web via DuckDuckGo", ("web", "search", "research"), False),
         ToolSpec("tool.calculate", "Perform safe mathematical calculations", ("math", "calculate", "compute"), True),
         ToolSpec("tool.memorize", "Store information in memory", ("memory", "store", "remember"), True),

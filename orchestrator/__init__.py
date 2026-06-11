@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -28,7 +28,7 @@ from .self_improvement_guard import SelfImprovementGuard, ImprovementProposal, A
 from .alignment_contracts import AlignmentContracts, AlignmentViolation
 from .compute_orchestrator import ComputeNode, ComputeOrchestrator
 
-# TR: AGI Bilişsel Modüller / EN: AGI Cognitive Modules
+# AGI Cognitive Modules
 from .reasoning_engine import (
     ReasoningEngine,
     ReasoningResult,
@@ -74,7 +74,7 @@ __all__ = [
     "MertFormerOrchestrator",
     "EpisodeBudget",
     "EpisodeResult",
-    # TR: AGI Bilişsel Modüller / EN: AGI Cognitive Modules
+    # AGI Cognitive Modules
     "ReasoningEngine",
     "ReasoningResult",
     "ThoughtStep",

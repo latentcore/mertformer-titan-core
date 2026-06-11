@@ -6,7 +6,7 @@ This directory has a small local application packet zip for handoff and review.
 
 - Zip: `applications/anthropic/mertformer_anthropic_packet_20260419.zip`
 - SHA256 sidecar: `applications/anthropic/mertformer_anthropic_packet_20260419.zip.sha256`
-- SHA256: `33ce49046821c60a6e1035e810653ff5dafc83de0d7c23663cc9908d6987806c`
+- SHA256: `71d5148cf495f12417b6b5a259df6c1816019e1d5f7f0cd4956dade5bf20ad40`
 - Size: `12937` bytes
 - Contents: 10 markdown application files
 

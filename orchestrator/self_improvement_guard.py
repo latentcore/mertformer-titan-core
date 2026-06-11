@@ -17,7 +17,7 @@ class ImprovementProposal:
 
 @dataclass
 class ApplyResult:
-    """TR: Uygulama sonucu. / EN: Application result."""
+    """Application result."""
     applied: bool
     proposal_title: str = ""
     reason: str = ""
@@ -27,12 +27,11 @@ class ApplyResult:
 
 class SelfImprovementGuard:
     """
-    TR: Kontrollü öz-iyileştirme koruması.
-    EN: Controlled self-improvement guard.
+    Controlled self-improvement guard.
 
-    - Düşük riskli öneriler otomatik uygulanabilir (allow_auto_apply=True ise)
-    - Yüksek riskli öneriler her zaman insan onayı gerektirir
-    - Tüm uygulamalar geri alınabilir (rollback stack)
+    - Low-risk proposals may be auto-applied (only when allow_auto_apply=True)
+    - High-risk proposals always require human approval
+    - Every applied change is reversible (rollback stack)
     """
 
     def __init__(
@@ -90,7 +89,7 @@ class SelfImprovementGuard:
                 )
             )
 
-        # TR: Strateji önerisi / EN: Strategy proposal
+        # Strategy proposal
         if health > 0.8 and failure_signal < 0.1:
             proposals.append(
                 ImprovementProposal(
@@ -120,8 +119,7 @@ class SelfImprovementGuard:
         evaluation: Optional[Dict[str, Any]] = None,
     ) -> ApplyResult:
         """
-        TR: Düşük riskli önerileri otomatik uygula, yüksek risklileri reddet.
-        EN: Auto-apply low-risk proposals, reject high-risk ones.
+        Auto-apply low-risk proposals, reject high-risk ones.
         """
         gate_ok, gate_reason = self._acceptance_gate(evaluation)
         if not gate_ok:
@@ -145,7 +143,7 @@ class SelfImprovementGuard:
                 reason="auto_apply_disabled",
             )
 
-        # TR: Rollback noktası kaydet / EN: Save rollback point
+        # Save rollback point
         self._rollback_counter += 1
         rollback_id = self._rollback_counter
         self._rollback_stack.append({
@@ -186,7 +184,7 @@ class SelfImprovementGuard:
         return True, "gate_pass"
 
     def rollback_last(self) -> Optional[Dict[str, Any]]:
-        """TR: Son otomatik uygulamayı geri al. / EN: Undo last auto-applied improvement."""
+        """Undo last auto-applied improvement."""
         if not self._rollback_stack:
             return None
         return self._rollback_stack.pop()

@@ -24,12 +24,12 @@ from typing import Dict, List, Optional
 
 
 # -----------------------------------------------------------------------------
-# TR: VERİ YAPILARI / EN: DATA STRUCTURES
+# DATA STRUCTURES
 # -----------------------------------------------------------------------------
 
 @dataclass
 class ConsistencyScore:
-    """TR: Tutarlılık puanı. / EN: Consistency score."""
+    """Consistency score."""
     score: float  # 0.0 - 1.0
     overlapping_facts: int = 0
     contradictions: int = 0
@@ -38,7 +38,7 @@ class ConsistencyScore:
 
 @dataclass
 class GroundingScore:
-    """TR: Temellendirme puanı. / EN: Grounding score."""
+    """Grounding score."""
     score: float
     grounded_claims: int = 0
     ungrounded_claims: int = 0
@@ -47,7 +47,7 @@ class GroundingScore:
 
 @dataclass
 class SafetyScore:
-    """TR: Güvenlik puanı. / EN: Safety score."""
+    """Safety score."""
     score: float
     violations: List[str] = field(default_factory=list)
     is_safe: bool = True
@@ -55,7 +55,7 @@ class SafetyScore:
 
 @dataclass
 class UncertaintyScore:
-    """TR: Belirsizlik puanı. / EN: Uncertainty score."""
+    """Uncertainty score."""
     score: float  # 0.0 (certain) - 1.0 (very uncertain)
     hedging_count: int = 0
     speculation_detected: bool = False
@@ -64,7 +64,7 @@ class UncertaintyScore:
 
 @dataclass
 class AuditReport:
-    """TR: Denetim raporu. / EN: Audit report."""
+    """Audit report."""
     overall_score: float  # 0.0 - 1.0
     consistency: ConsistencyScore = field(default_factory=lambda: ConsistencyScore(0.5))
     grounding: GroundingScore = field(default_factory=lambda: GroundingScore(0.5))
@@ -76,10 +76,10 @@ class AuditReport:
 
 
 # -----------------------------------------------------------------------------
-# TR: ÖZ DENETÇİ / EN: SELF AUDITOR
+# SELF AUDITOR
 # -----------------------------------------------------------------------------
 
-# TR: Belirsizlik belirteçleri / EN: Uncertainty markers
+# Uncertainty markers
 _HEDGING_WORDS_TR = frozenset({
     "belki", "muhtemelen", "olabilir", "sanırım", "tahminimce",
     "bence", "galiba", "herhalde", "yanlış olmam",
@@ -92,7 +92,7 @@ _HEDGING_WORDS_EN = frozenset({
     "it seems", "apparently", "arguably",
 })
 
-# TR: Güvenlik tehdidi kelimeleri / EN: Safety threat words
+# Safety threat words
 _SAFETY_THREATS = frozenset({
     "hack", "exploit", "bypass", "inject", "attack",
     "phishing", "malware", "ransomware", "keylogger",
@@ -100,7 +100,7 @@ _SAFETY_THREATS = frozenset({
     "illegal", "weapon", "bomb", "drug", "abuse",
 })
 
-# TR: Çelişki çiftleri / EN: Contradiction pairs
+# Contradiction pairs
 _CONTRADICTION_PAIRS = [
     ("yes", "no"), ("true", "false"), ("always", "never"),
     ("all", "none"), ("increase", "decrease"), ("better", "worse"),
@@ -115,13 +115,12 @@ _CONTRADICTION_PAIRS = [
 
 class SelfAuditor:
     """
-    TR: Kendi çıktılarını denetleyen modül.
-    EN: Module that audits its own outputs.
+    Module that audits its own outputs.
 
-    - Tutarlılık: Yanıt ile bağlam arasındaki uyum
-    - Temellendirme: İddiaların kanıtlanabilirliği
-    - Güvenlik: Zararlı içerik tespiti
-    - Belirsizlik: Hedging/spekülasyon tespiti
+    - Consistency: agreement between response and context
+    - Grounding: verifiability of claims
+    - Safety: harmful content detection
+    - Uncertainty: hedging/speculation detection
     """
 
     def __init__(self, alignment_contracts: Optional[object] = None) -> None:
@@ -134,24 +133,21 @@ class SelfAuditor:
         context: str = "",
         facts: Optional[List[str]] = None,
     ) -> AuditReport:
-        """
-        TR: Tam denetim raporu oluştur.
-        EN: Generate full audit report.
-        """
+        """Generate full audit report."""
         consistency = self.check_consistency(response, context)
         grounding = self.check_grounding(response, facts or [])
         safety = self.check_safety(response)
         uncertainty = self.detect_uncertainty(response)
 
-        # TR: Genel puan hesapla / EN: Calculate overall score
+        # Calculate overall score
         overall = (
             0.30 * consistency.score
             + 0.25 * grounding.score
             + 0.25 * safety.score
-            + 0.20 * (1.0 - uncertainty.score)  # düşük belirsizlik = yüksek puan
+            + 0.20 * (1.0 - uncertainty.score)  # low uncertainty = high score
         )
 
-        # TR: Yeniden deneme kararı / EN: Retry decision
+        # Retry decision
         should_retry = (
             overall < 0.4
             or consistency.contradictions > 2
@@ -159,7 +155,7 @@ class SelfAuditor:
             or (grounding.ungrounded_claims > 3 and grounding.score < 0.3)
         )
 
-        # TR: Düzeltme ipuçları / EN: Revision hints
+        # Revision hints
         revision_hints: List[str] = []
         if consistency.score < 0.4:
             revision_hints.append("Yanıtın bağlamla tutarsız — kaynağa göre yeniden formüle et")
@@ -181,17 +177,17 @@ class SelfAuditor:
         )
 
     def check_consistency(self, response: str, context: str) -> ConsistencyScore:
-        """TR: Yanıt ile bağlam arasındaki tutarlılığı kontrol eder. / EN: Checks consistency between response and context."""
+        """Checks consistency between response and context."""
         if not context:
             return ConsistencyScore(score=0.6, notes=["No context provided for consistency check"])
 
         resp_lower = response.lower()
         ctx_lower = context.lower()
 
-        # TR: Kelime örtüşmesi / EN: Word overlap
+        # Word overlap
         resp_words = set(resp_lower.split())
         ctx_words = set(ctx_lower.split())
-        # TR: Stop words'leri çıkar / EN: Remove stop words
+        # Remove stop words
         stop_words = {"the", "a", "an", "is", "are", "was", "were", "be", "been",
                       "being", "have", "has", "had", "do", "does", "did", "will",
                       "would", "could", "should", "may", "might", "shall", "can",
@@ -206,7 +202,7 @@ class SelfAuditor:
         total = max(1, len(resp_words))
         overlap_ratio = overlap / total
 
-        # TR: Çelişki tespiti / EN: Contradiction detection
+        # Contradiction detection
         contradictions = 0
         contradiction_notes: List[str] = []
         for pos, neg in _CONTRADICTION_PAIRS:
@@ -235,11 +231,11 @@ class SelfAuditor:
         )
 
     def check_grounding(self, response: str, facts: List[str]) -> GroundingScore:
-        """TR: İddiaların kanıta dayalı olup olmadığını kontrol eder. / EN: Checks if claims are evidence-based."""
+        """Checks if claims are evidence-based."""
         if not facts:
             return GroundingScore(score=0.5, notes=["No facts provided for grounding"])
 
-        # TR: Yanıttaki cümleleri çıkar / EN: Extract sentences from response
+        # Extract sentences from response
         sentences = re.split(r'[.!?]\s+', response)
         sentences = [s.strip() for s in sentences if len(s.strip()) > 10]
 
@@ -254,7 +250,7 @@ class SelfAuditor:
             sent_words = set(sent_lower.split())
             sent_words -= {"the", "a", "an", "is", "are", "ve", "bir", "bu", "o"}
 
-            # TR: Herhangi bir fact ile örtüşme var mı? / EN: Overlap with any fact?
+            # Overlap with any fact?
             max_overlap = 0.0
             for fact in facts:
                 fact_words = set(fact.lower().split())
@@ -288,7 +284,7 @@ class SelfAuditor:
         )
 
     def check_safety(self, response: str) -> SafetyScore:
-        """TR: Zararlı içerik kontrolü. / EN: Harmful content check."""
+        """Harmful content check."""
         resp_lower = response.lower()
         violations: List[str] = []
 
@@ -296,8 +292,7 @@ class SelfAuditor:
             if threat in resp_lower:
                 violations.append(f"Safety threat detected: '{threat}'")
 
-        # TR: AlignmentContracts varsa onu da kontrol et
-        # EN: Also check AlignmentContracts if available
+        # Also check AlignmentContracts if available
         if self.alignment_contracts is not None:
             try:
                 align_violations = self.alignment_contracts.check_prompt(response)
@@ -312,7 +307,7 @@ class SelfAuditor:
         return SafetyScore(score=score, violations=violations, is_safe=is_safe)
 
     def detect_uncertainty(self, response: str) -> UncertaintyScore:
-        """TR: Belirsizlik ve hedging tespiti. / EN: Uncertainty and hedging detection."""
+        """Uncertainty and hedging detection."""
         resp_lower = response.lower()
         hedging_count = 0
         notes: List[str] = []
@@ -329,11 +324,11 @@ class SelfAuditor:
                 hedging_count += count
                 notes.append(f"Hedging (EN): '{word}' × {count}")
 
-        # TR: Soru işareti yanıtta belirsizlik gösterisi / EN: Question mark in response indicates uncertainty
+        # Question mark in response indicates uncertainty
         question_marks = response.count("?")
         speculation = question_marks > 2 or hedging_count > 3
 
-        # TR: Belirsizlik skoru / EN: Uncertainty score
+        # Uncertainty score
         word_count = max(1, len(response.split()))
         hedging_density = hedging_count / word_count
         score = min(1.0, hedging_density * 10.0 + question_marks * 0.05)

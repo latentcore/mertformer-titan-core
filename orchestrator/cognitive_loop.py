@@ -37,12 +37,12 @@ from .experience_store import ExperienceStore, Episode
 
 
 # -----------------------------------------------------------------------------
-# TR: VERİ YAPILARI / EN: DATA STRUCTURES
+# DATA STRUCTURES
 # -----------------------------------------------------------------------------
 
 @dataclass
 class PerceptionState:
-    """TR: Algılama durumu — döngünün girdisi. / EN: Perception state — input to the loop."""
+    """Perception state - input to the loop."""
     task: str
     context: str = ""
     memory_context: str = ""
@@ -54,7 +54,7 @@ class PerceptionState:
 
 @dataclass
 class ThoughtPlan:
-    """TR: Düşünce planı — reasoning engine çıktısı. / EN: Thought plan — reasoning engine output."""
+    """Thought plan - reasoning engine output."""
     strategy: str
     conclusion: str
     confidence: float
@@ -65,7 +65,7 @@ class ThoughtPlan:
 
 @dataclass
 class ActionResult:
-    """TR: Eylem sonucu. / EN: Action result."""
+    """Action result."""
     response: str
     tool_results: List[ToolResult] = field(default_factory=list)
     success: bool = True
@@ -74,7 +74,7 @@ class ActionResult:
 
 @dataclass
 class ReflectionReport:
-    """TR: Yansıtma raporu. / EN: Reflection report."""
+    """Reflection report."""
     audit: AuditReport
     should_retry: bool = False
     revision_hints: List[str] = field(default_factory=list)
@@ -84,7 +84,7 @@ class ReflectionReport:
 
 @dataclass
 class CognitiveIteration:
-    """TR: Tek bir bilişsel iterasyon kaydı. / EN: Record of a single cognitive iteration."""
+    """Record of a single cognitive iteration."""
     iteration: int
     perception: PerceptionState
     thought: ThoughtPlan
@@ -95,7 +95,7 @@ class CognitiveIteration:
 
 @dataclass
 class CognitiveResult:
-    """TR: Bilişsel döngünün nihai sonucu. / EN: Final result of the cognitive loop."""
+    """Final result of the cognitive loop."""
     task: str
     final_response: str
     total_iterations: int
@@ -108,7 +108,7 @@ class CognitiveResult:
     metadata: Dict[str, object] = field(default_factory=dict)
 
     def to_summary(self) -> str:
-        """TR: İnsan-okunabilir özet. / EN: Human-readable summary."""
+        """Human-readable summary."""
         lines = [
             f"🧠 AGI Cognitive Result",
             f"   Task: {self.task[:80]}...",
@@ -125,19 +125,12 @@ class CognitiveResult:
 
 
 # -----------------------------------------------------------------------------
-# TR: BİLİŞSEL DÖNGÜ / EN: COGNITIVE LOOP
+# COGNITIVE LOOP
 # -----------------------------------------------------------------------------
 
 class CognitiveLoop:
     """
-    TR: AGI Bilişsel Döngü — Algıla → Düşün → Eylem → Yansıt.
-    EN: AGI Cognitive Loop — Perceive → Think → Act → Reflect.
-
-    Her iterasyonda:
-    1. PERCEIVE: Bağlam topla (hafıza, senses, dünya durumu, deneyimler)
-    2. THINK: Görev hakkında akıl yürüt (CoT/ToT)
-    3. ACT: Seçilen eylemi gerçekleştir (üret, araç kullan, delege et)
-    4. REFLECT: Çıktıyı denetle, sonuçtan öğren
+    AGI Cognitive Loop - Perceive -> Think -> Act -> Reflect.
 
     Each iteration:
     1. PERCEIVE: Gather context (memory, senses, world state, experiences)
@@ -170,8 +163,7 @@ class CognitiveLoop:
 
     def run(self, task: str, max_iterations: Optional[int] = None) -> CognitiveResult:
         """
-        TR: Bilişsel döngüyü çalıştır.
-        EN: Run the cognitive loop.
+        Run the cognitive loop.
         """
         t0 = time.monotonic()
         max_iter = max_iterations or self.max_iterations
@@ -179,8 +171,7 @@ class CognitiveLoop:
         all_tools: List[str] = []
         previous_reflection = ""
 
-        # TR: Deneyim deposundan strateji önerisi al
-        # EN: Get strategy suggestion from experience store
+        # Get strategy suggestion from experience store
         suggested_strategy = self.experience.best_strategy_for(task)
 
         print(f"\n🧠 AGI COGNITIVE LOOP BAŞLATILIYOR...")
@@ -192,7 +183,7 @@ class CognitiveLoop:
             print(f"   ── İterasyon {i + 1}/{max_iter} ──")
 
             # ============================================================
-            # TR: 1. ALGILAMA (PERCEIVE)
+            # 1. PERCEIVE
             # ============================================================
             perception = self._perceive(task, i, previous_reflection)
             print(f"   👁️ Perception: context={len(perception.context)} chars, "
@@ -200,7 +191,7 @@ class CognitiveLoop:
                   f"past_exp={len(perception.past_experiences)}")
 
             # ============================================================
-            # TR: 2. DÜŞÜNME (THINK)
+            # 2. THINK
             # ============================================================
             strategy = suggested_strategy if i == 0 else "cot"
             thought = self._think(perception, strategy)
@@ -210,7 +201,7 @@ class CognitiveLoop:
                   f"actions={len(thought.action_plan)}")
 
             # ============================================================
-            # TR: 3. EYLEM (ACT)
+            # 3. ACT
             # ============================================================
             action = self._act(thought, perception)
             all_tools.extend(
@@ -221,7 +212,7 @@ class CognitiveLoop:
                   f"response_len={len(action.response)}")
 
             # ============================================================
-            # TR: 4. YANSITMA (REFLECT)
+            # 4. REFLECT
             # ============================================================
             reflection = self._reflect(task, thought, action, perception)
             previous_reflection = reflection.learning
@@ -229,7 +220,7 @@ class CognitiveLoop:
                   f"retry={reflection.should_retry}, "
                   f"hints={len(reflection.revision_hints)}")
 
-            # TR: İterasyon kaydı / EN: Record iteration
+            # Record iteration
             iteration = CognitiveIteration(
                 iteration=i + 1,
                 perception=perception,
@@ -239,19 +230,19 @@ class CognitiveLoop:
             )
             iterations.append(iteration)
 
-            # TR: Yeterince iyi → dur / EN: Good enough → stop
+            # Good enough -> stop
             if not reflection.should_retry and thought.confidence >= self.min_confidence:
                 print(f"   ✅ Sonuca ulaşıldı (confidence={thought.confidence:.0%})\n")
                 break
 
-            # TR: Son iterasyon → mecbur dur / EN: Last iteration → forced stop
+            # Last iteration -> forced stop
             if i == max_iter - 1:
                 print(f"   ⚠️ Max iterasyon ulaşıldı\n")
                 break
 
             print(f"   🔄 Yeniden denenecek: {', '.join(reflection.revision_hints[:2])}\n")
 
-        # TR: Final sonuç / EN: Final result
+        # Final result
         final_iteration = iterations[-1] if iterations else None
         final_response = final_iteration.action.response if final_iteration else ""
         confidence = final_iteration.thought.confidence if final_iteration else 0.0
@@ -270,14 +261,14 @@ class CognitiveLoop:
             total_time_ms=(time.monotonic() - t0) * 1000.0,
         )
 
-        # TR: Deneyim kaydet / EN: Record experience
+        # Record experience
         self._record_experience(result)
 
         print(result.to_summary())
         return result
 
     # -----------------------------------------------------------------
-    # TR: 1. ALGILAMA / EN: 1. PERCEIVE
+    # 1. PERCEIVE
     # -----------------------------------------------------------------
     def _perceive(
         self,
@@ -286,10 +277,9 @@ class CognitiveLoop:
         previous_reflection: str,
     ) -> PerceptionState:
         """
-        TR: Bağlam topla — hafıza, dünya durumu, deneyimler.
-        EN: Gather context — memory, world state, experiences.
+        Gather context - memory, world state, experiences.
         """
-        # TR: Hafıza bağlamı / EN: Memory context
+        # Memory context
         memory_context = ""
         if self.memory is not None:
             try:
@@ -300,7 +290,7 @@ class CognitiveLoop:
                 except Exception:
                     memory_context = ""
 
-        # TR: Dünya durumu / EN: World state
+        # World state
         world_state = ""
         if self.world_model is not None:
             try:
@@ -312,10 +302,10 @@ class CognitiveLoop:
             except Exception:
                 pass
 
-        # TR: Deneyimler / EN: Experiences
+        # Experiences
         past = self.experience.recall_similar(task, top_k=3)
 
-        # TR: Tam bağlam oluştur / EN: Build full context
+        # Build full context
         context_parts: List[str] = []
         if memory_context:
             context_parts.append(memory_context)
@@ -346,7 +336,7 @@ class CognitiveLoop:
         )
 
     # -----------------------------------------------------------------
-    # TR: 2. DÜŞÜNME / EN: 2. THINK
+    # 2. THINK
     # -----------------------------------------------------------------
     def _think(
         self,
@@ -354,8 +344,7 @@ class CognitiveLoop:
         strategy: str = "auto",
     ) -> ThoughtPlan:
         """
-        TR: Akıl yürütme motoru ile düşün.
-        EN: Think with the reasoning engine.
+        Think with the reasoning engine.
         """
         result = self.reasoning.reason(
             task=perception.task,
@@ -373,7 +362,7 @@ class CognitiveLoop:
         )
 
     # -----------------------------------------------------------------
-    # TR: 3. EYLEM / EN: 3. ACT
+    # 3. ACT
     # -----------------------------------------------------------------
     def _act(
         self,
@@ -381,16 +370,14 @@ class CognitiveLoop:
         perception: PerceptionState,
     ) -> ActionResult:
         """
-        TR: Planı uygula — araç çağır veya yanıt üret.
-        EN: Execute the plan — call tools or generate response.
+        Execute the plan - call tools or generate response.
         """
         tool_results: List[ToolResult] = []
         tool_outputs: List[str] = []
 
-        # TR: Araç çağrıları / EN: Tool calls
+        # Tool calls
         for tool_id in plan.tool_calls:
-            # TR: Araç parametrelerini görevden çıkarmaya çalış
-            # EN: Try to extract tool parameters from task
+            # Try to extract tool parameters from task
             params = self._infer_tool_params(tool_id, perception.task)
             result = self.tools.execute(tool_id, params)
             tool_results.append(result)
@@ -399,7 +386,7 @@ class CognitiveLoop:
             else:
                 tool_outputs.append(f"[{tool_id}] ERROR: {result.error}")
 
-        # TR: Araç sonuçlarıyla zenginleştirilmiş yanıt / EN: Tool-enriched response
+        # Tool-enriched response
         if tool_outputs and self.generate_fn is not None:
             enrichment = "\n".join(tool_outputs)
             enriched_prompt = (
@@ -429,13 +416,13 @@ class CognitiveLoop:
         )
 
     def _infer_tool_params(self, tool_id: str, task: str) -> Dict[str, Any]:
-        """TR: Görevden araç parametrelerini çıkar. / EN: Infer tool parameters from task."""
+        """Infer tool parameters from task."""
         params: Dict[str, Any] = {}
 
         if tool_id in ("tool.search_local_docs", "tool.web_search", "tool.recall"):
             params["query"] = task
         elif tool_id == "tool.calculate":
-            # TR: Matematiksel ifadeyi bulmaya çalış / EN: Try to find mathematical expression
+            # Try to find mathematical expression
             import re
             match = re.search(r'[\d\+\-\*\/\(\)\.\s]+', task)
             if match:
@@ -447,7 +434,7 @@ class CognitiveLoop:
         elif tool_id == "tool.verify_consistency":
             params["text"] = task
         elif tool_id == "tool.analyze_image":
-            # TR: Dosya yolunu bulmaya çalış / EN: Try to find file path
+            # Try to find file path
             import re
             match = re.search(r'(/[\w./\-_]+\.\w+)', task)
             if match:
@@ -456,7 +443,7 @@ class CognitiveLoop:
         return params
 
     # -----------------------------------------------------------------
-    # TR: 4. YANSITMA / EN: 4. REFLECT
+    # 4. REFLECT
     # -----------------------------------------------------------------
     def _reflect(
         self,
@@ -466,10 +453,9 @@ class CognitiveLoop:
         perception: PerceptionState,
     ) -> ReflectionReport:
         """
-        TR: Sonucu denetle ve yansıt.
-        EN: Audit the result and reflect.
+        Audit the result and reflect.
         """
-        # TR: Öz denetim / EN: Self audit
+        # Self audit
         facts = []
         if perception.world_state:
             facts = [
@@ -484,7 +470,7 @@ class CognitiveLoop:
             facts=facts,
         )
 
-        # TR: Sonuç skoru hesapla / EN: Calculate outcome score
+        # Calculate outcome score
         outcome_score = (
             0.4 * thought.confidence
             + 0.4 * audit.overall_score
@@ -492,7 +478,7 @@ class CognitiveLoop:
             + 0.1 * (1.0 if not audit.should_retry else 0.0)
         )
 
-        # TR: Öğrenme notları / EN: Learning notes
+        # Learning notes
         learning_parts: List[str] = []
         if audit.revision_hints:
             learning_parts.append(
@@ -523,10 +509,10 @@ class CognitiveLoop:
         )
 
     # -----------------------------------------------------------------
-    # TR: DENEYİM KAYDI / EN: EXPERIENCE RECORDING
+    # EXPERIENCE RECORDING
     # -----------------------------------------------------------------
     def _record_experience(self, result: CognitiveResult) -> None:
-        """TR: Sonucu deneyim deposuna kaydet. / EN: Record result to experience store."""
+        """Record result to experience store."""
         thoughts = []
         actions = []
         for iteration in result.iterations:

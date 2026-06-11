@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -18,7 +18,7 @@ import subprocess
 import logging
 from typing import Optional
 
-# TR: Speech Recognition - opsiyonel / EN: Speech Recognition - optional
+# Speech Recognition - optional
 try:
     import speech_recognition as sr
 except ImportError:
@@ -29,10 +29,8 @@ logger = logging.getLogger("TitanAudioSense")
 
 class AudioSense:
     """
-    TR: Duyma ve Konuşma yeteneği.
-    EN: Hearing and Speaking capability.
-    TR: macOS Native TTS + Google Speech Recognition.
-    EN: macOS Native TTS + Google Speech Recognition.
+    Hearing and Speaking capability.
+    macOS Native TTS + Google Speech Recognition.
     """
     
     def __init__(self):
@@ -49,13 +47,13 @@ class AudioSense:
                 print(f"⚠️ Mikrofon kütüphanesi başlatılamadı: {e}")
                 self.recognizer = None
 
-    # TR: --- AĞIZ (TTS) --- / EN: --- MOUTH (TTS) ---
+    # --- MOUTH (TTS) ---
     def speak(self, text: str, voice: str = "Yelda") -> None:
-        """TR: Metni sesli okur (TTS). Güvenli subprocess kullanımı. / EN: Reads text aloud (TTS). Safe subprocess usage."""
+        """Reads text aloud (TTS). Safe subprocess usage."""
         if not text:
             return
         
-        # TR: Güvenlik için temizlik / EN: Cleanup for security
+        # Cleanup for security
         safe_text = (
             text.replace('"', "")
             .replace("'", "")
@@ -67,7 +65,7 @@ class AudioSense:
         print(f"🗣️ [TTS]: {safe_text[:100]}...")
         
         try:
-            # TR: macOS 'say' komutu - non-blocking / EN: macOS 'say' command - non-blocking
+            # macOS 'say' command - non-blocking
             subprocess.Popen(
                 ["say", "-v", voice, safe_text],
                 stderr=subprocess.DEVNULL,
@@ -78,9 +76,9 @@ class AudioSense:
         except Exception as e:
             logger.error(f"TTS Error: {e}")
 
-    # TR: --- KULAK (STT) --- / EN: --- EAR (STT) ---
+    # --- EAR (STT) ---
     def listen(self, timeout: int = 5, phrase_time_limit: int = 10, language: str = "tr-TR") -> str:
-        """TR: Mikrofonu kısa süre dinler. / EN: Listens to microphone briefly."""
+        """Listens to microphone briefly."""
         if self.recognizer is None or sr is None:
             return ""
 
@@ -106,13 +104,13 @@ class AudioSense:
             return ""
     
     def is_stt_available(self) -> bool:
-        """TR: STT (Speech-to-Text) kullanılabilir mi? / EN: Is STT (Speech-to-Text) available?"""
+        """Is STT (Speech-to-Text) available?"""
         return self.recognizer is not None and sr is not None
     
     def is_tts_available(self) -> bool:
-        """TR: TTS (Text-to-Speech) kullanılabilir mi? / EN: Is TTS (Text-to-Speech) available?"""
+        """Is TTS (Text-to-Speech) available?"""
         try:
-            # TR: macOS 'say' komutunu kontrol et / EN: Check macOS 'say' command
+            # Check macOS 'say' command
             result = subprocess.run(
                 ["which", "say"],
                 capture_output=True,

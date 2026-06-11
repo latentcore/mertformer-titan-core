@@ -42,6 +42,7 @@ dev = [
   "pytest>=7.3",
   "pytest-cov>=4.1",
   "ruff>=0.6.0",
+  "mypy>=1.10,<2",
 ]
 demo = ["pygame==2.6.1"]
 
@@ -74,3 +75,22 @@ line-length = 100
 # unused imports and other low-signal warnings. CI focuses on syntax errors and
 # undefined names (high-signal).
 select = ["E9", "F821", "F822", "F823"]
+
+[tool.mypy]
+# Scoped, additive type gate: only the files listed below are checked.
+# follow_imports=silent analyzes imported modules (config.config,
+# layers.bitlinear, torch, ...) for type information but reports no errors
+# for them, so the gate stays green while coverage grows file by file.
+python_version = "3.11"
+follow_imports = "silent"
+ignore_missing_imports = true
+files = [
+  "orchestrator/telemetry.py",
+  "economics/flops_estimator.py",
+  "train/continual_adapter.py",
+  "layers/mla.py",
+  "layers/mertformer_block.py",
+  "train/trainer_core.py",
+  "train/trainer_data.py",
+  "train/trainer_eval.py",
+]

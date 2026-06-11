@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -17,8 +17,7 @@ __author__ = "Mert"
 import platform
 import psutil
 
-# TR: Config import - fallback mekanizmalı
-# EN: Config import - with fallback mechanism
+# Config import - with fallback mechanism
 try:
     from config.config import cfg
 except ImportError:
@@ -28,10 +27,8 @@ except ImportError:
 
 class HardwareSense:
     """
-    TR: AGI'nin kendi sınırlarını bilmesini sağlar.
-    EN: Enables AGI to know its own limitations.
-    TR: Sistem kaynakları, CPU/RAM kullanımı ve AI device bilgisi.
-    EN: System resources, CPU/RAM usage and AI device information.
+    Enables AGI to know its own limitations.
+    System resources, CPU/RAM usage and AI device information.
     """
     
     def __init__(self):
@@ -40,7 +37,7 @@ class HardwareSense:
         self.device = getattr(cfg, "device", "cpu")
 
     def scan(self) -> str:
-        """TR: Sistem durumunu tarar ve rapor döndürür. / EN: Scans system status and returns report."""
+        """Scans system status and returns report."""
         mem = psutil.virtual_memory()
         cpu_usage = psutil.cpu_percent()
         ram_gb = round(mem.total / (1024 ** 3))
@@ -53,10 +50,10 @@ class HardwareSense:
         )
     
     def get_available_memory_gb(self) -> float:
-        """TR: Kullanılabilir RAM miktarını GB olarak döndürür. / EN: Returns available RAM in GB."""
+        """Returns available RAM in GB."""
         mem = psutil.virtual_memory()
         return round(mem.available / (1024 ** 3), 2)
     
     def is_low_memory(self, threshold_gb: float = 2.0) -> bool:
-        """TR: Düşük bellek durumunu kontrol eder. / EN: Checks for low memory condition."""
+        """Checks for low memory condition."""
         return self.get_available_memory_gb() < threshold_gb

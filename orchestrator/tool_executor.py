@@ -30,12 +30,12 @@ from .governance import GovernanceGate, GovernancePolicy
 
 
 # -----------------------------------------------------------------------------
-# TR: VERİ YAPILARI / EN: DATA STRUCTURES
+# DATA STRUCTURES
 # -----------------------------------------------------------------------------
 
 @dataclass
 class ToolResult:
-    """TR: Araç çalıştırma sonucu. / EN: Tool execution result."""
+    """Tool execution result."""
     tool_id: str
     success: bool
     output: str
@@ -46,17 +46,16 @@ class ToolResult:
 
 
 # -----------------------------------------------------------------------------
-# TR: ARAÇ ÇALIŞTIRMA MOTORU / EN: TOOL EXECUTION ENGINE
+# TOOL EXECUTION ENGINE
 # -----------------------------------------------------------------------------
 
 class ToolExecutor:
     """
-    TR: Güvenli araç çalıştırma motoru.
-    EN: Secure tool execution engine.
+    Secure tool execution engine.
 
-    - Her araç çalıştırma öncesinde governance kontrolü yapılır
-    - Timeout enforcement (varsayılan 30s)
-    - Tüm sonuçlar yapılandırılmış ToolResult olarak döndürülür
+    - Governance check is performed before every tool execution
+    - Timeout enforcement (default 30s)
+    - All results are returned as a structured ToolResult
     """
 
     def __init__(
@@ -84,7 +83,7 @@ class ToolExecutor:
         self.registry = registry or default_tool_registry()
         self.max_timeout_s = float(max_timeout_s)
 
-        # TR: Araç → çalıştırıcı eşlemesi / EN: Tool → executor mapping
+        # Tool -> executor mapping
         self._executors: Dict[str, Callable[..., ToolResult]] = {
             "tool.search_local_docs": self._exec_search_docs,
             "tool.verify_consistency": self._exec_verify_consistency,
@@ -100,13 +99,12 @@ class ToolExecutor:
 
     def execute(self, tool_id: str, params: Optional[Dict[str, Any]] = None) -> ToolResult:
         """
-        TR: Aracı çalıştır (governance + timeout ile).
-        EN: Execute tool (with governance + timeout).
+        Execute tool (with governance + timeout).
         """
         params = params or {}
         t0 = time.monotonic()
 
-        # TR: Kayıt kontrolü / EN: Registry check
+        # Registry check
         if tool_id not in self.registry and tool_id not in self._executors:
             return ToolResult(
                 tool_id=tool_id,
@@ -117,9 +115,9 @@ class ToolExecutor:
                 governance_check=False,
             )
 
-        # TR: Governance kontrolü / EN: Governance check
+        # Governance check
         tool_spec = self.registry.get(tool_id)
-        # TR: Araç tipinden aksiyon çıkar / EN: Derive action from tool type
+        # Derive action from tool type
         _tool_action_map = {
             "tool.search_local_docs": "search",
             "tool.verify_consistency": "verify",
@@ -147,7 +145,7 @@ class ToolExecutor:
                 governance_check=False,
             )
 
-        # TR: Çalıştır / EN: Execute
+        # Execute
         executor = self._executors.get(tool_id)
         if executor is None:
             return ToolResult(
@@ -214,7 +212,7 @@ class ToolExecutor:
                 signal.setitimer(signal.ITIMER_REAL, prev_timer[0], prev_timer[1])
 
     def list_available_tools(self) -> List[Dict[str, str]]:
-        """TR: Kullanılabilir araçları listele. / EN: List available tools."""
+        """List available tools."""
         return [
             {
                 "tool_id": tid,
@@ -226,11 +224,11 @@ class ToolExecutor:
         ]
 
     # -----------------------------------------------------------------
-    # TR: ARAÇ UYGULAMALARI / EN: TOOL IMPLEMENTATIONS
+    # TOOL IMPLEMENTATIONS
     # -----------------------------------------------------------------
 
     def _exec_search_docs(self, params: Dict[str, Any]) -> ToolResult:
-        """TR: Yerel belgelerde arama. / EN: Search local documents."""
+        """Search local documents."""
         query = str(params.get("query", ""))
         if not query:
             return ToolResult("tool.search_local_docs", False, "", error="Missing 'query' parameter")
@@ -249,15 +247,14 @@ class ToolExecutor:
             return ToolResult("tool.search_local_docs", False, "", error=str(e))
 
     def _exec_verify_consistency(self, params: Dict[str, Any]) -> ToolResult:
-        """TR: Tutarlılık doğrulaması. / EN: Consistency verification."""
+        """Consistency verification."""
         text = str(params.get("text", ""))
         reference = str(params.get("reference", ""))
 
         if not text:
             return ToolResult("tool.verify_consistency", False, "", error="Missing 'text' parameter")
 
-        # TR: Basit tutarlılık kontrolü — kelime örtüşmesi
-        # EN: Simple consistency check — word overlap
+        # Simple consistency check - word overlap
         text_words = set(text.lower().split())
         ref_words = set(reference.lower().split()) if reference else set()
 
@@ -274,7 +271,7 @@ class ToolExecutor:
             overlap = 0.5
             notes = ["ℹ️ Self-consistency analysis performed (no reference)"]
 
-        # TR: Çelişki tespiti / EN: Contradiction detection
+        # Contradiction detection
         negation_pairs = [
             ("yes", "no"), ("true", "false"), ("always", "never"),
             ("all", "none"), ("increase", "decrease"), ("evet", "hayır"),
@@ -300,7 +297,7 @@ class ToolExecutor:
         )
 
     def _exec_kpi_report(self, params: Dict[str, Any]) -> ToolResult:
-        """TR: KPI raporu oluştur. / EN: Generate KPI report."""
+        """Generate KPI report."""
         metrics = params.get("metrics", {})
         if not metrics:
             return ToolResult(
@@ -318,7 +315,7 @@ class ToolExecutor:
         return ToolResult("tool.kpi_report", True, output="\n".join(lines))
 
     def _exec_swarm_route(self, params: Dict[str, Any]) -> ToolResult:
-        """TR: Swarm route tool stub. / EN: Swarm route tool stub."""
+        """Swarm route tool stub."""
         objective = str(params.get("objective", "")).strip()
         output = "Swarm routing delegated to planner."
         if objective:
@@ -326,7 +323,7 @@ class ToolExecutor:
         return ToolResult("tool.swarm_route", True, output=output)
 
     def _exec_eval_generalization(self, params: Dict[str, Any]) -> ToolResult:
-        """TR: Generalization eval tool stub. / EN: Generalization eval tool stub."""
+        """Generalization eval tool stub."""
         metrics = params.get("metrics", {})
         if isinstance(metrics, dict) and metrics:
             summary = ", ".join(f"{k}={v}" for k, v in metrics.items())
@@ -338,7 +335,7 @@ class ToolExecutor:
         )
 
     def _exec_web_search(self, params: Dict[str, Any]) -> ToolResult:
-        """TR: Web araması. / EN: Web search."""
+        """Web search."""
         query = str(params.get("query", ""))
         if not query:
             return ToolResult("tool.web_search", False, "", error="Missing 'query' parameter")
@@ -358,20 +355,18 @@ class ToolExecutor:
 
     def _exec_calculate(self, params: Dict[str, Any]) -> ToolResult:
         """
-        TR: Güvenli matematiksel hesaplama.
-        EN: Safe mathematical calculation.
+        Safe mathematical calculation.
         """
         expression = str(params.get("expression", ""))
         if not expression:
             return ToolResult("tool.calculate", False, "", error="Missing 'expression' parameter")
 
-        # TR: Güvenli eval — sadece matematiksel operatörler
-        # EN: Safe eval — mathematical operators only
+        # Safe eval - mathematical operators only
         allowed_names = {
             "abs": abs, "round": round, "min": min, "max": max,
             "sum": sum, "len": len, "int": int, "float": float,
             "pow": pow,
-            # TR: math modülünden güvenli fonksiyonlar
+            # Safe functions from the math module
             "sqrt": math.sqrt, "log": math.log, "log2": math.log2,
             "log10": math.log10, "sin": math.sin, "cos": math.cos,
             "tan": math.tan, "pi": math.pi, "e": math.e,
@@ -380,7 +375,7 @@ class ToolExecutor:
         }
 
         try:
-            # TR: Tehlikeli karakter kontrolü / EN: Dangerous character check
+            # Dangerous character check
             forbidden = ["import", "exec", "eval", "open", "os.", "sys.", "__", "lambda"]
             for f in forbidden:
                 if f in expression.lower():
@@ -399,7 +394,7 @@ class ToolExecutor:
             return ToolResult("tool.calculate", False, "", error=f"Calculation error: {e}")
 
     def _exec_memorize(self, params: Dict[str, Any]) -> ToolResult:
-        """TR: Bilgiyi hafızaya kaydet. / EN: Store information in memory."""
+        """Store information in memory."""
         text = str(params.get("text", ""))
         category = str(params.get("category", "GENERAL"))
 
@@ -419,7 +414,7 @@ class ToolExecutor:
             return ToolResult("tool.memorize", False, "", error=str(e))
 
     def _exec_recall(self, params: Dict[str, Any]) -> ToolResult:
-        """TR: Hafızadan bilgi hatırla. / EN: Recall information from memory."""
+        """Recall information from memory."""
         query = str(params.get("query", ""))
         if not query:
             return ToolResult("tool.recall", False, "", error="Missing 'query' parameter")
@@ -437,7 +432,7 @@ class ToolExecutor:
             return ToolResult("tool.recall", False, "", error=str(e))
 
     def _exec_analyze_image(self, params: Dict[str, Any]) -> ToolResult:
-        """TR: Görüntü analizi (CLIP). / EN: Image analysis (CLIP)."""
+        """Image analysis (CLIP)."""
         image_path = str(params.get("image_path", ""))
         if not image_path:
             return ToolResult("tool.analyze_image", False, "", error="Missing 'image_path' parameter")

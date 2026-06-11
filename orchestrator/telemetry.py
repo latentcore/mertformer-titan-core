@@ -165,8 +165,8 @@ def router_entropy(loads: Iterable[float]) -> Optional[float]:
     return float(entropy / max_entropy) if max_entropy > 0 else 0.0
 
 
-def system_snapshot(path: str | Path | None = None) -> Dict[str, Optional[float]]:
-    snapshot: Dict[str, Optional[float]] = {field: None for field in SYSTEM_SNAPSHOT_FIELDS}
+def system_snapshot(path: str | Path | None = None) -> Dict[str, float | str | None]:
+    snapshot: Dict[str, float | str | None] = {field: None for field in SYSTEM_SNAPSHOT_FIELDS}
     snapshot["timestamp_utc"] = utc_timestamp()
     if psutil is not None:
         try:

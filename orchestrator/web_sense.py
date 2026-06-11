@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -16,7 +16,7 @@ __author__ = "Mert"
 
 from typing import List, Callable, Optional
 
-# TR: Web kütüphaneleri - opsiyonel / EN: Web libraries - optional
+# Web libraries - optional
 try:
     import requests
 except ImportError:
@@ -33,17 +33,15 @@ except ImportError:
     DDGS = None
 
 
-# TR: Sabitler / EN: Constants
+# Constants
 MAX_WEB_RESULTS = 10
 MAX_URL_CHARS = 5000
 
 
 class WebSense:
     """
-    TR: Dünyaya açılan pencere.
-    EN: Window to the world.
-    TR: DuckDuckGo üzerinden arama ve URL okuma yetenekleri.
-    EN: Search and URL reading capabilities via DuckDuckGo.
+    Window to the world.
+    Search and URL reading capabilities via DuckDuckGo.
     """
     
     def __init__(self):
@@ -54,7 +52,7 @@ class WebSense:
             print("🌐 Web Modülü devre dışı (eksik kütüphane).")
 
     def search(self, query: str, max_results: int = MAX_WEB_RESULTS) -> str:
-        """TR: DuckDuckGo üzerinden arama yapar ve ham sonuçları döner. / EN: Searches via DuckDuckGo and returns raw results."""
+        """Searches via DuckDuckGo and returns raw results."""
         if not self.enabled:
             return "Web Modülü aktif değil (gerekli kütüphaneler eksik)."
 
@@ -78,8 +76,7 @@ class WebSense:
 
     def deep_research(self, query: str, llm_callback: Callable[[str, float], str]) -> str:
         """
-        TR: Aramayı yapar VE LLM kullanarak profesyonel, referanslı bir rapor hazırlar.
-        EN: Performs search AND uses LLM to prepare a professional, referenced report.
+        Performs search AND uses LLM to prepare a professional, referenced report.
         """
         raw_results = self.search(query, max_results=8)
         
@@ -111,7 +108,7 @@ Kurallar:
         return llm_callback(prompt.strip(), 0.5)
 
     def read_url(self, url: str) -> str:
-        """TR: Verilen linki okur. / EN: Reads the given link."""
+        """Reads the given link."""
         if not self.enabled:
             return "URL okuma modülü aktif değil (gerekli kütüphaneler eksik)."
 

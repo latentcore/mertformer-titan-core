@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -22,13 +22,13 @@ from typing import List, Dict, Any, Optional
 import torch
 import torch.nn.functional as F
 
-# TR: Yerel import için forward reference / EN: Forward reference for local import
+# Forward reference for local import
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .sense_engine import SenseEngine
 
 
-# TR: Sabitler / EN: Constants
+# Constants
 MAX_MEMORY_HITS = 20
 
 
@@ -68,10 +68,8 @@ class HierarchicalMemoryContract:
 
 class GodMemory:
     """
-    TR: Kategorik Vektör Hafıza.
-    EN: Categorical Vector Memory.
-    TR: Quantized vektörlerle RAM-efficient depolama.
-    EN: RAM-efficient storage with quantized vectors.
+    Categorical Vector Memory.
+    RAM-efficient storage with quantized vectors.
     """
     
     def __init__(self, path: pathlib.Path, senses: "SenseEngine"):
@@ -83,7 +81,7 @@ class GodMemory:
         self._load()
 
     def _load(self) -> None:
-        """TR: Hafızayı dosyadan yükle. / EN: Load memory from file."""
+        """Load memory from file."""
         if self.path.exists():
             try:
                 with self.path.open("r", encoding="utf-8") as f:
@@ -103,10 +101,8 @@ class GodMemory:
 
     def save(self, role: str, text: str, category: str = "GENERAL", source: str = "TEXT") -> None:
         """
-        TR: Metni vektöre çevirir ve GodMemory'e kaydeder.
-        EN: Converts text to vector and saves to GodMemory.
-        TR: RAM tasarrufu için int8 quantization.
-        EN: int8 quantization for RAM savings.
+        Converts text to vector and saves to GodMemory.
+        int8 quantization for RAM savings.
         """
         raw_vec = self.senses.encode_text(text)
         vec_tensor = torch.tensor(raw_vec, dtype=torch.float32)
@@ -146,11 +142,11 @@ class GodMemory:
             print(f"⚠️ Hafıza yazma hatası: {e}")
 
     def recall_raw(self, query: str, top_k: int = MAX_MEMORY_HITS) -> List[Dict[str, Any]]:
-        """TR: Sorguya en yakın kayıtları döndürür. / EN: Returns records closest to query."""
+        """Returns records closest to query."""
         if not self.cache:
             return []
 
-        # TR: Kategori tahmini / EN: Category prediction
+        # Category prediction
         q_low = query.lower()
         if any(w in q_low for w in ["kod", "python", "hata", "traceback"]):
             cat = "CODE"
@@ -175,8 +171,7 @@ class GodMemory:
         zero_vec = torch.zeros(dim, dtype=torch.float32)
 
         for c in candidates:
-            # TR: Yeni format: vec_q + vec_scale (int8 quantize)
-            # EN: New format: vec_q + vec_scale (int8 quantize)
+            # New format: vec_q + vec_scale (int8 quantize)
             if "vec_q" in c:
                 q_list = c.get("vec_q") or []
                 scale = float(c.get("vec_scale", 1.0))
@@ -188,7 +183,7 @@ class GodMemory:
                         vecs.append(q_tensor * scale)
                 else:
                     vecs.append(zero_vec)
-            # TR: Eski format: vec (float list) / EN: Old format: vec (float list)
+            # Old format: vec (float list)
             else:
                 base = c.get("vec", None)
                 if isinstance(base, list) and base:
@@ -212,7 +207,7 @@ class GodMemory:
         return [candidates[i] for i in top_indices]
 
     def recall(self, query: str, top_k: int = MAX_MEMORY_HITS) -> str:
-        """TR: Sorguya en yakın kayıtları string olarak döndürür. / EN: Returns records closest to query as string."""
+        """Returns records closest to query as a string."""
         hits = self.recall_raw(query, top_k=top_k)
         if not hits:
             return ""
@@ -229,7 +224,7 @@ class GodMemory:
         return "\n".join(lines)
 
     def build_context_block(self, query: str, top_k: int = MAX_MEMORY_HITS) -> str:
-        """TR: V15.5 tarzı [MEMORY_CONTEXT_START] bloğu üretir. / EN: Produces V15.5 style [MEMORY_CONTEXT_START] block."""
+        """Produces V15.5 style [MEMORY_CONTEXT_START] block."""
         hits = self.recall_raw(query, top_k=top_k)
         if not hits:
             return ""
@@ -257,7 +252,7 @@ class GodMemory:
         }
 
     def last_messages(self, limit: int = 10, category: Optional[str] = None) -> str:
-        """TR: Son n kaydı döndürür. / EN: Returns last n records."""
+        """Returns last n records."""
         if not self.cache:
             return ""
 
@@ -285,7 +280,7 @@ class GodMemory:
 
 
 class DocChunk:
-    """TR: Doküman parçası. / EN: Document chunk."""
+    """Document chunk."""
     
     def __init__(self, doc_id: str, source: str, text: str, vec: List[float]):
         self.doc_id = doc_id
@@ -312,7 +307,7 @@ class DocChunk:
 
 
 class DocIndexer:
-    """TR: Doküman indeksleyici. / EN: Document indexer."""
+    """Document indexer."""
     
     def __init__(self, doc_dir: pathlib.Path, vector_file: pathlib.Path, senses: "SenseEngine"):
         self.doc_dir = doc_dir
@@ -331,7 +326,7 @@ class DocIndexer:
         return files
 
     def build_index(self, max_chunk_chars: int = 800) -> None:
-        """TR: Dokümanları indeksle. / EN: Index documents."""
+        """Index documents."""
         self.chunks = []
         doc_files = self._iter_documents()
         
@@ -362,7 +357,7 @@ class DocIndexer:
         print(f"📚 Doküman indeksi oluşturuldu: {len(self.chunks)} chunk")
 
     def load_index(self) -> None:
-        """TR: Varolan indeksi yükle. / EN: Load existing index."""
+        """Load existing index."""
         if not self.vector_file.exists():
             self.chunks = []
             return
@@ -375,7 +370,7 @@ class DocIndexer:
 
 
 class RAGEngine:
-    """TR: Retrieval Augmented Generation Motoru. / EN: Retrieval Augmented Generation Engine."""
+    """Retrieval Augmented Generation Engine."""
     
     def __init__(self, memory: GodMemory, indexer: DocIndexer, senses: "SenseEngine"):
         self.memory = memory
@@ -389,7 +384,7 @@ class RAGEngine:
             self.indexer.load_index()
 
     def search_docs(self, query: str, top_k: int = 5) -> List[DocChunk]:
-        """TR: Dokümanlardan ilgili parçaları bul. / EN: Find relevant chunks from documents."""
+        """Find relevant chunks from documents."""
         if not self.indexer.chunks:
             self.ensure_index()
         
@@ -411,7 +406,7 @@ class RAGEngine:
         return [self.indexer.chunks[i] for i in top_indices]
 
     def hybrid_search(self, query: str, memory_k: int = 5, doc_k: int = 3) -> str:
-        """TR: Hafıza + Doküman birleşik arama. / EN: Memory + Document hybrid search."""
+        """Memory + Document hybrid search."""
         memory_context = self.memory.recall(query, top_k=memory_k)
         doc_hits = self.search_docs(query, top_k=doc_k)
         

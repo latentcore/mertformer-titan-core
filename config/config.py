@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -17,7 +17,7 @@ __author__ = "Mert"
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import torch
 
@@ -34,35 +34,29 @@ def _cfg_print(msg: str) -> None:
 
 def get_auto_dtype() -> Any:
     """
-    TR: Donanıma göre en iyi ve en güvenli veri tipini otomatik seçer.
-    EN: Automatically selects the best and safest data type based on hardware.
+    Automatically selects the best and safest data type based on hardware.
 
     Returns:
-        torch.dtype: Seçilen veri tipi / Selected data type
+        torch.dtype: Selected data type
     """
-    # TR: 1. NVIDIA Ampere ve Üstü (A100, H100, 3090, 4090) -> HIZLI
-    # EN: 1. NVIDIA Ampere and Above (A100, H100, 3090, 4090) -> FAST
+    # 1. NVIDIA Ampere and Above (A100, H100, 3090, 4090) -> FAST
     if torch.cuda.is_available() and torch.cuda.is_bf16_supported():
         return torch.bfloat16
 
-    # TR: 2. Apple Silicon (M1, M2, M3, M4) -> GÜVENLİ
-    # EN: 2. Apple Silicon (M1, M2, M3, M4) -> SAFE
-    # TR: Mac'te eğitim sırasında NaN (Tanımsız Sayı) hatası almamak için
-    # EN: To avoid NaN errors during training on Mac
-    # TR: Float32 kullanmak en sağlam yoldur.
-    # EN: Using Float32 is the safest way.
+    # 2. Apple Silicon (M1, M2, M3, M4) -> SAFE
+    # To avoid NaN errors during training on Mac,
+    # using Float32 is the safest way.
     elif torch.backends.mps.is_available():
         return torch.float32
 
-    # TR: 3. Eski GPU veya CPU -> STANDART / EN: 3. Old GPU or CPU -> STANDARD
+    # 3. Old GPU or CPU -> STANDARD
     else:
         return torch.float32
 
 
-def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None):
+def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None) -> tuple[int, int]:
     """
-    TR: GRANDMASTER AUTO-PILOT - Fizik tabanlı VRAM hesaplama ve optimizasyon.
-    EN: GRANDMASTER AUTO-PILOT - Physics-based VRAM calculation & optimization.
+    GRANDMASTER AUTO-PILOT - Physics-based VRAM calculation & optimization.
     
     Logic:
     1. Deep Hardware Inspection (Torch -> Nvidia-SMI -> Fallback)
@@ -185,61 +179,55 @@ def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None):
 @dataclass
 class MertFormerConfig:
     # -------------------------------------------------------------------------
-    # TR: 1. SİSTEM KİMLİĞİ / EN: 1. SYSTEM IDENTITY
+    # 1. SYSTEM IDENTITY
     # -------------------------------------------------------------------------
     model_name: str = "MertFormer_Titan_S25_Prod"
     version: str = "v1.0-TITAN-BUILD30-V2"
 
-    # TR: Cihazı Otomatik Bul (Once NVIDIA, Yoksa Mac MPS, Yoksa CPU)
-    # EN: Auto-detect device (First NVIDIA, then Mac MPS, then CPU)
+    # Auto-detect device (First NVIDIA, then Mac MPS, then CPU)
     device: str = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
     seed: int = 1453
 
     # -------------------------------------------------------------------------
-    # TR: 2. BOYUTLAR (ÇİFT İSİMLENDİRME - HATAYI ÖNLER)
-    # EN: 2. DIMENSIONS (DUAL NAMING - PREVENTS ERRORS)
+    # 2. DIMENSIONS (DUAL NAMING - PREVENTS ERRORS)
     # -------------------------------------------------------------------------
-    # TR: Vocab & Seq / EN: Vocab & Seq
+    # Vocab & Seq
     vocab_size: int = 128256
     max_seq_len: int = 4096
 
-    # TR: Model Genişliği / EN: Model Width
+    # Model Width
     hidden_size: int = 2048
     intermediate_size: int = 5632
 
-    # TR: [KRİTİK DÜZELTME] Kodun aradığı her iki ismi de tanımlıyoruz:
-    # EN: [CRITICAL FIX] We define both names that the code looks for:
-    num_hidden_layers: int = 18 # TR: [USER OPT] S25/Mobil uyumu / EN: [USER OPT] S25/Mobile compatibility
-    num_layers: int = 18  # <-- train code bunu arıyor
+    # [CRITICAL FIX] We define both names that the code looks for:
+    num_hidden_layers: int = 18 # [USER OPT] S25/Mobile compatibility
+    num_layers: int = 18  # <-- train code looks for this
 
     num_attention_heads: int = 16
-    num_heads: int = 16  # <-- mla.py bunu arıyor
+    num_heads: int = 16  # <-- mla.py looks for this
 
     num_kv_heads: int = 8
-    # TR: [MATEMATİK DÜZELTME] 2048 / 16 = 128.
-    # EN: [MATH FIX] 2048 / 16 = 128.
+    # [MATH FIX] 2048 / 16 = 128.
     head_dim: int = 128
 
-    # TR: Normalizasyon ve Dropout / EN: Normalization and Dropout
+    # Normalization and Dropout
     rms_norm_eps: float = 1e-6
     dropout: float = 0.1
 
-    # TR: [YENİ] RoPE Theta: Uzun bağlam (Long Context) için frekans tabanı.
-    # EN: [NEW] RoPE Theta: Frequency base for long context.
-    # TR: Standart 10.000'dir. Bunu 100.000 yapmak, ileride 8K/16K'ya "esnemeyi" kolaylaştırır.
-    # EN: Standard is 10,000. Making it 100,000 eases "stretching" to 8K/16K later.
+    # [NEW] RoPE Theta: Frequency base for long context.
+    # Standard is 10,000. Making it 100,000 eases "stretching" to 8K/16K later.
     rope_theta: float = 100000.0
-    rope_base: float = 100000.0 # TR: [FIX] rope_theta ile senkron / EN: [FIX] Sync with rope_theta
+    rope_base: float = 100000.0 # [FIX] Sync with rope_theta
 
     # -------------------------------------------------------------------------
-    # TR: 3. BITNET b1.58 / EN: 3. BITNET b1.58
+    # 3. BITNET b1.58
     # -------------------------------------------------------------------------
-    use_bitnet: bool = True  # TR: BitNet aktif / EN: BitNet active
-    weight_quantization: str = "absmax_per_tensor"  # TR: Ağırlık quantize / EN: Weight quantize
-    activation_bits: int = 8  # TR: Aktivasyon bit / EN: Activation bits
+    use_bitnet: bool = True  # BitNet active
+    weight_quantization: str = "absmax_per_tensor"  # Weight quantize
+    activation_bits: int = 8  # Activation bits
 
     # -------------------------------------------------------------------------
-    # TR: 4. SPARSE MoE / EN: 4. SPARSE MoE
+    # 4. SPARSE MoE
     # -------------------------------------------------------------------------
     use_moe: bool = True
     num_experts: int = 8
@@ -257,7 +245,6 @@ class MertFormerConfig:
     expert_paging_verbose: bool = False
 
     # V26.5: Switch Loss Option & Router Jitter for collapse prevention
-    # V26.5: Switch Loss Option & Router Jitter for collapse prevention
     use_switch_loss: bool = True  # [AUDIT FIX] Enable Aggressive Load Balancing
     router_jitter: float = 0.02  # [AUDIT FIX] Increase exploration noise
     router_jitter_boost: float = 0.1  # Emergency jitter when collapse detected
@@ -267,7 +254,7 @@ class MertFormerConfig:
     # 5. LIQUID LAYERS
     # -------------------------------------------------------------------------
     use_liquid: bool = True
-    # [RAPOR DÜZELTME] "euler" yerine "cfc" (Kod zaten CfC uyguluyor, isim düzeltildi)
+    # [REPORT FIX] "cfc" instead of "euler" (the code already implements CfC; name corrected)
     liquid_solver: str = "cfc"
     liquid_layers_idx: list = field(default_factory=lambda: [4, 10, 16])  # [FIX] Adjusted for 18 layers (No OOB)
     liquid_every_n_layers: int = 0  # Disabled (using explicit indices instead)
@@ -286,7 +273,7 @@ class MertFormerConfig:
     liquid_spike_cooldown_steps: int = 200
 
     # -------------------------------------------------------------------------
-    # 6. GÜVENLİK SİGORTASI (QINN)
+    # 6. SAFETY FUSE (QINN)
     # -------------------------------------------------------------------------
     use_qinn: bool = False # [AUDIT FIX] Disabled for NPU compatibility & Speed
 
@@ -380,29 +367,25 @@ class MertFormerConfig:
     # [USER OVERRIDE] Teacher Model configuration
     # User confirmed usage of Llama 3.3 70B (assumes A100/H100 or multi-gpu setup)
     teacher_model_id: str = os.environ.get("TITAN_TEACHER_MODEL_ID", "meta-llama/Llama-3.3-70B-Instruct")
-    distill_alpha: float = 0.8 # [USER OPTIMIZATION] Teacher'a %80 güven
+    distill_alpha: float = 0.8 # [USER OPTIMIZATION] 80% trust in the teacher
     distill_intermediate_layers: bool = True
 
     # -------------------------------------------------------------------------
     # 7. TOKENIZER OPTIONS (OPT-IN)
     # -------------------------------------------------------------------------
-    # TR: Varsayilan ogretmen tokenizer kullanilir. Turkce tokenizer sadece opt-in.
-    # EN: Default is teacher tokenizer. Turkish tokenizer is opt-in only.
+    # Default is teacher tokenizer. Turkish tokenizer is opt-in only.
     use_tr_tokenizer: bool = os.environ.get("TITAN_USE_TR_TOKENIZER", "0") == "1"
     tr_tokenizer_id: str = os.environ.get("TITAN_TR_TOKENIZER_ID", "tokenizer/tr")
 
-    # TR: [B2] Sequence packing (EOS-ayirici ile max_seq_len'e doldurma) ve precompute
-    #     teacher-logit hizalama dogrulamasi. Ikisi de varsayilan ACIK. Packing ayni
-    #     anda hem teacher hem student tarafinda calismali (train/packing.py tek kaynak).
-    # EN: [B2] Sequence packing (EOS-separated, filled to max_seq_len) and precompute
+    # [B2] Sequence packing (EOS-separated, filled to max_seq_len) and precompute
     #     teacher-logit alignment verification. Both default ON. Packing must run on
     #     BOTH teacher and student via the single train/packing.py source.
     sequence_packing: bool = os.environ.get("TITAN_SEQUENCE_PACKING", "1") == "1"
     verify_logit_alignment: bool = os.environ.get("TITAN_VERIFY_LOGIT_ALIGNMENT", "1") == "1"
 
-    # [KRİTİK DÜZELTME]
-    # [RAPOR DÜZELTME] 1.3 -> 1.0 (BitNet için keskin öğretmen gerekir)
-    # [RAPOR DÜZELTME] 1.3 -> 1.0 (BitNet için keskin öğretmen gerekir)
+    # [CRITICAL FIX]
+    # [REPORT FIX] 1.3 -> 1.0 (BitNet requires a sharp teacher)
+    # [REPORT FIX] 1.3 -> 1.0 (BitNet requires a sharp teacher)
     teacher_temp: float = 1.0
     
     # [V27.0] Distillation Optimization
@@ -413,14 +396,14 @@ class MertFormerConfig:
 
 
     # -------------------------------------------------------------------------
-    # 8. HİPERPARAMETRELER
+    # 8. HYPERPARAMETERS
     # -------------------------------------------------------------------------
     batch_size: int = int(os.environ.get("TITAN_BATCH_SIZE", "128"))
     
-    # [V27.0 AUTO-CONFIG] Otomatik GPU-based batch size optimization
-    # micro_batch_size ve grad_accum_steps artık otomatik hesaplanıyor
-    micro_batch_size: int = field(default=None)  # Auto-configured
-    grad_accum_steps: int = field(default=None)  # Auto-configured
+    # [V27.0 AUTO-CONFIG] Automatic GPU-based batch size optimization
+    # micro_batch_size and grad_accum_steps are now computed automatically
+    micro_batch_size: Optional[int] = field(default=None)  # Auto-configured
+    grad_accum_steps: Optional[int] = field(default=None)  # Auto-configured
     
     def __post_init__(self):
         """Post-initialization: Auto-configure batch sizes if not set."""
@@ -459,8 +442,8 @@ class MertFormerConfig:
     # Reproducibility metadata strictness
     write_run_manifest: bool = True
 
-    # Gradyan Kırpma
-    # [RAPOR DÜZELTME] 1.0 -> 2.0 (STE sert gradyanlar üretir, biraz esneklik lazım)
+    # Gradient Clipping
+    # [REPORT FIX] 1.0 -> 2.0 (STE produces harsh gradients; some slack is needed)
     grad_clip: float = 2.0
 
     # UPGRADE: Early Stopping & Validation
@@ -475,19 +458,19 @@ class MertFormerConfig:
     max_consecutive_oom_backoff_fail: int = 5
 
     # -------------------------------------------------------------------------
-    # 9. ÇIKTI FORMATI
+    # 9. OUTPUT FORMAT
     # -------------------------------------------------------------------------
     output_dir: str = "./checkpoints/mertformer_titan_prod"
     save_dir: str = "./checkpoints/mertformer_titan_prod"
 
-    # Loglama Sıklığı
+    # Logging Frequency
     log_interval: int = int(os.environ.get("TITAN_LOG_INTERVAL", "1"))
     save_interval: int = int(os.environ.get("TITAN_SAVE_INTERVAL", "1000"))
 
     export_format: str = "onnx_dynamic"
 
-    # [EVRENSEL OTOMATİK PİLOT]
-    # Mac ise Float32, A100 ise Bfloat16 seçer.
+    # [UNIVERSAL AUTO-PILOT]
+    # Selects Float32 on Mac, Bfloat16 on A100.
     param_dtype: Any = field(default_factory=get_auto_dtype)
 
     # FIX: Mixed Precision Training
@@ -508,7 +491,7 @@ class MertFormerConfig:
     # -------------------------------------------------------------------------
     # 10. V22.0 UPGRADES: Gradient Checkpointing, Label Smoothing, Attention Dropout
     # -------------------------------------------------------------------------
-    # Gradient Checkpointing: VRAM %40 tasarrufu, büyük batch için
+    # Gradient Checkpointing: 40% VRAM savings, for large batches
     use_gradient_checkpointing: bool = True
 
     # [SAFETY FIRST] Disable torch.compile for the first run to ensure dynamic routing works
@@ -519,10 +502,10 @@ class MertFormerConfig:
     use_8bit_adam: bool = True  # Enable 8-bit Optimizer
     use_galore: bool = True     # Enable Gradient Low-Rank Projection
 
-    # Label Smoothing: Overfit önleme (0.0 = kapalı, 0.1 = önerilen)
+    # Label Smoothing: Overfitting prevention (0.0 = off, 0.1 = recommended)
     label_smoothing: float = 0.1
 
-    # Attention Dropout: Regularization (eğitimde kullanılır, inference'ta kapalı)
+    # Attention Dropout: Regularization (used during training, off at inference)
     attention_dropout: float = 0.1
 
     # -------------------------------------------------------------------------
@@ -666,13 +649,12 @@ _finalize_config(cfg)
 
 def validate_layer_config(cfg: MertFormerConfig) -> None:
     """
-    TR: Liquid ve MoE katmanlarının çakışmadığını doğrular.
-    EN: Validates that Liquid and MoE layers don't conflict.
+    Validates that Liquid and MoE layers don't conflict.
 
     Args:
-        cfg (MertFormerConfig): Yapılandırma nesnesi / Configuration object
+        cfg (MertFormerConfig): Configuration object
     Raises:
-        ValueError: Katman çakışması tespit edilirse / If layer overlap detected
+        ValueError: If layer overlap detected
     """
     num_layers = cfg.num_layers
 

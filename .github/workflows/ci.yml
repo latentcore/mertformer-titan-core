@@ -38,6 +38,10 @@ jobs:
         run: |
           python -m ruff check .
 
+      - name: Mypy (scoped)
+        run: |
+          python -m mypy --ignore-missing-imports
+
       - name: Verify all
         env:
           TITAN_OFFLINE: "1"

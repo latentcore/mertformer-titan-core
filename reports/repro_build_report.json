@@ -1,12 +1,12 @@
 {
-  "generated_utc": "2026-06-11T17:46:55.800615+00:00",
-  "git_commit": "256404fb53994bff034b92987b1f62ccbc20382d",
+  "generated_utc": "2026-06-11T22:56:37.540901+00:00",
+  "git_commit": "4484d1a282538976d40ed2413c2be3b7c129973c",
   "python": "Python 3.11.14",
   "targets": [
     {
       "path": "pyproject.toml",
-      "sha256": "553228f64e8d4c0e3ab4bc9c195c39ac745924c95150a9142d0d381b197ec4cd",
-      "size_bytes": 1827
+      "sha256": "94e7911873f6bc171c23fde48493adabb6fd1804d2b1af09cce88d81e1836902",
+      "size_bytes": 2463
     },
     {
       "path": "requirements.txt",
@@ -15,13 +15,13 @@
     },
     {
       "path": "config/config.py",
-      "sha256": "380998ec7397e5258bf69d57b77fd8839999ad5677174ea955eb6e2caa549d6f",
-      "size_bytes": 31254
+      "sha256": "1e089559cab1b369afa7d607d5098445b3eb51c5b7883e9e724695eaad4c397c",
+      "size_bytes": 29404
     },
     {
       "path": "train/train.py",
-      "sha256": "59a69c78c722d6552f6d54c3f90eb93b573a1a511ff26b363bd6eab799291d65",
-      "size_bytes": 125132
+      "sha256": "a6df7c8e5c929c7c36601098aadf9e6d35ac9bc7ccd4653a972b50c7d9e10ce6",
+      "size_bytes": 88306
     },
     {
       "path": "layers/bitlinear.py",

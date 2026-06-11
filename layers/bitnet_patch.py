@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -26,10 +26,8 @@ def _convert_linear_modules(
     verbose: bool = True,
 ):
     for name, child in list(module.named_children()):
-        # TR: V21.0 FIX: Hassas katmanlar için whitelist kontrolü
-        # EN: V21.0 FIX: Whitelist check for sensitive layers
-        # TR: V25.1 UPDATE: Tüm True Liquid parametrelerini korumak için 'tau' (generic) eklendi (tau_input_w, tau_hidden_w)
-        # EN: V25.1 UPDATE: Added 'tau' (generic) to protect ALL True Liquid params (tau_input_w, tau_hidden_w)
+        # V21.0 FIX: Whitelist check for sensitive layers
+        # V25.1 UPDATE: Added 'tau' (generic) to protect ALL True Liquid params (tau_input_w, tau_hidden_w)
         if any(x in name for x in ["router", "tau", "gate", "shared_expert_gate"]):
             if verbose:
                 print(f"Skipping sensitive layer (V21.0 FIX): {prefix}.{name} (Keeping FP16/BF16)")
@@ -37,7 +35,7 @@ def _convert_linear_modules(
 
         child_prefix = f"{prefix}.{name}" if prefix else name
 
-        # TR: Özyinelemeli dönüşüm / EN: Recursive conversion
+        # Recursive conversion
         _convert_linear_modules(
             child,
             prefix=child_prefix,
@@ -47,7 +45,7 @@ def _convert_linear_modules(
 
         if isinstance(child, nn.Linear):
 
-            # TR: lm_head gibi çıkış katmanlarını atla / EN: Skip output layers like lm_head
+            # Skip output layers like lm_head
             if skip_output_head and name in ("lm_head", "output_head", "classifier"):
                 if verbose:
                     print(f"[BitNet] Skip output head: {child_prefix}")
@@ -67,7 +65,7 @@ def _convert_linear_modules(
                 dtype=dtype,
             )
 
-            # TR: Ağırlıkları kopyala / EN: Copy weights
+            # Copy weights
             with torch.no_grad():
                 new_layer.weight.copy_(child.weight)
                 if use_bias:

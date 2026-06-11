@@ -26,12 +26,12 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 
 # -----------------------------------------------------------------------------
-# TR: VERİ YAPILARI / EN: DATA STRUCTURES
+# DATA STRUCTURES
 # -----------------------------------------------------------------------------
 
 @dataclass
 class ThoughtStep:
-    """TR: Tek bir düşünce adımı. / EN: A single reasoning step."""
+    """A single reasoning step."""
     step_number: int
     thought: str
     confidence: float  # 0.0 - 1.0
@@ -42,7 +42,7 @@ class ThoughtStep:
 
 @dataclass
 class ThoughtNode:
-    """TR: Düşünce ağacındaki bir düğüm. / EN: A node in the thought tree."""
+    """A node in the thought tree."""
     node_id: int
     depth: int
     thought: str
@@ -54,7 +54,7 @@ class ThoughtNode:
 
 @dataclass
 class ThoughtTree:
-    """TR: Düşünce ağacı yapısı. / EN: Thought tree structure."""
+    """Thought tree structure."""
     root: ThoughtNode
     best_path: List[ThoughtNode] = field(default_factory=list)
     exploration_count: int = 0
@@ -63,7 +63,7 @@ class ThoughtTree:
 
 @dataclass
 class ReasoningResult:
-    """TR: Akıl yürütme sonucu. / EN: Reasoning result."""
+    """Reasoning result."""
     strategy: str  # "cot", "tot", "direct"
     conclusion: str
     confidence: float
@@ -77,7 +77,7 @@ class ReasoningResult:
 
 @dataclass
 class Hypothesis:
-    """TR: Aday hipotez. / EN: Candidate hypothesis."""
+    """Candidate hypothesis."""
     candidate_id: str
     strategy: str
     conclusion: str
@@ -90,7 +90,7 @@ class Hypothesis:
 
 @dataclass
 class HypothesisSet:
-    """TR: Çoklu hipotez paketi. / EN: Multi-hypothesis bundle."""
+    """Multi-hypothesis bundle."""
     task: str
     hypotheses: List[Hypothesis] = field(default_factory=list)
     selected_index: int = 0
@@ -130,10 +130,10 @@ class HypothesisSet:
 
 
 # -----------------------------------------------------------------------------
-# TR: STRATEJİ SEÇİCİ / EN: STRATEGY SELECTOR
+# STRATEGY SELECTOR
 # -----------------------------------------------------------------------------
 
-# TR: Görev karmaşıklığı anahtar kelimeleri / EN: Task complexity keywords
+# Task complexity keywords
 _COMPLEX_KEYWORDS = frozenset({
     "analiz", "analyze", "karşılaştır", "compare", "tasarla", "design",
     "optimize", "debug", "neden", "why", "nasıl", "how", "plan",
@@ -150,8 +150,7 @@ _SIMPLE_KEYWORDS = frozenset({
 
 def _estimate_complexity(task: str) -> float:
     """
-    TR: Görev karmaşıklığını 0-1 arası tahmin eder.
-    EN: Estimates task complexity between 0-1.
+    Estimates task complexity between 0-1.
     """
     task_lower = task.lower()
     words = set(task_lower.split())
@@ -159,12 +158,10 @@ def _estimate_complexity(task: str) -> float:
     complex_hits = sum(1 for kw in _COMPLEX_KEYWORDS if kw in task_lower)
     simple_hits = sum(1 for kw in _SIMPLE_KEYWORDS if kw in task_lower)
 
-    # TR: Uzun görevler genellikle daha karmaşıktır
-    # EN: Longer tasks are usually more complex
+    # Longer tasks are usually more complex
     length_factor = min(1.0, len(words) / 50.0)
 
-    # TR: Soru işareti sayısı karmaşıklığı artırır
-    # EN: Number of question marks increases complexity
+    # Number of question marks increases complexity
     question_factor = min(1.0, task.count("?") * 0.2)
 
     score = (
@@ -178,8 +175,7 @@ def _estimate_complexity(task: str) -> float:
 
 def select_strategy(task: str) -> str:
     """
-    TR: Görev için en uygun stratejiyi seçer.
-    EN: Selects the most appropriate strategy for the task.
+    Selects the most appropriate strategy for the task.
     """
     complexity = _estimate_complexity(task)
     if complexity >= 0.7:
@@ -190,17 +186,16 @@ def select_strategy(task: str) -> str:
 
 
 # -----------------------------------------------------------------------------
-# TR: AKIL YÜRÜTME MOTORU / EN: REASONING ENGINE
+# REASONING ENGINE
 # -----------------------------------------------------------------------------
 
 class ReasoningEngine:
     """
-    TR: Çok stratejili akıl yürütme motoru.
-    EN: Multi-strategy reasoning engine.
+    Multi-strategy reasoning engine.
 
-    - direct: Basit görevler için doğrudan yanıt
-    - cot: Zincir düşünce — adım adım akıl yürütme
-    - tot: Düşünce ağacı — dallanmalı keşif, pruning ile
+    - direct: direct answer for simple tasks
+    - cot: chain of thought - step-by-step reasoning
+    - tot: tree of thought - branching exploration, with pruning
     """
 
     def __init__(
@@ -219,7 +214,7 @@ class ReasoningEngine:
         self._node_counter = 0
 
     def _generate(self, prompt: str) -> str:
-        """TR: LLM çağrısı (fallback: echo). / EN: LLM call (fallback: echo)."""
+        """LLM call (fallback: echo)."""
         if self.generate_fn is not None:
             try:
                 return self.generate_fn(prompt)
@@ -228,7 +223,7 @@ class ReasoningEngine:
         return f"[no-model] {prompt[:200]}"
 
     # -----------------------------------------------------------------
-    # TR: ANA GİRİŞ NOKTASI / EN: MAIN ENTRY POINT
+    # MAIN ENTRY POINT
     # -----------------------------------------------------------------
     def reason(
         self,
@@ -237,12 +232,11 @@ class ReasoningEngine:
         strategy: str = "auto",
     ) -> ReasoningResult:
         """
-        TR: Görevi akıl yürütme ile çözer.
-        EN: Solves the task with reasoning.
+        Solves the task with reasoning.
 
         Args:
-            task: TR: Çözülecek görev / EN: Task to solve
-            context: TR: Ek bağlam (hafıza, belgeler vb.) / EN: Additional context
+            task: Task to solve
+            context: Additional context (memory, documents, etc.)
             strategy: "auto", "direct", "cot", "tot"
         """
         t0 = time.monotonic()
@@ -268,8 +262,7 @@ class ReasoningEngine:
         max_candidates: int = 3,
     ) -> HypothesisSet:
         """
-        TR: Aynı görev için çoklu aday üretir.
-        EN: Produces multiple candidates for the same task.
+        Produces multiple candidates for the same task.
         """
         candidate_budget = max(1, int(max_candidates))
         primary = select_strategy(task) if strategy == "auto" else str(strategy).lower().strip()
@@ -322,7 +315,7 @@ class ReasoningEngine:
         )
 
     # -----------------------------------------------------------------
-    # TR: DOĞRUDAN YANIT / EN: DIRECT RESPONSE
+    # DIRECT RESPONSE
     # -----------------------------------------------------------------
     def _direct(self, task: str, context: str) -> ReasoningResult:
         prompt = self._build_prompt(task, context, mode="direct")
@@ -342,18 +335,17 @@ class ReasoningEngine:
         )
 
     # -----------------------------------------------------------------
-    # TR: ZİNCİR DÜŞÜNCE / EN: CHAIN OF THOUGHT
+    # CHAIN OF THOUGHT
     # -----------------------------------------------------------------
     def _chain_of_thought(self, task: str, context: str) -> ReasoningResult:
         """
-        TR: Adım adım düşünerek sonuca ulaş.
-        EN: Reach conclusion by thinking step by step.
+        Reach conclusion by thinking step by step.
         """
         steps: List[ThoughtStep] = []
         action_plan: List[str] = []
         tool_calls: List[str] = []
 
-        # TR: Adım 1: Görevi Anla / EN: Step 1: Understand the task
+        # Step 1: Understand the task
         step1_prompt = self._build_prompt(
             task, context,
             mode="cot_decompose",
@@ -369,7 +361,7 @@ class ReasoningEngine:
             confidence=0.7,
         ))
 
-        # TR: Adım 2-N: Her alt görev için düşün / EN: Steps 2-N: Think for each subtask
+        # Steps 2-N: Think for each subtask
         accumulated_reasoning = decomposition
         for i in range(2, self.max_cot_steps + 1):
             step_prompt = self._build_prompt(
@@ -386,7 +378,7 @@ class ReasoningEngine:
             step_response = self._generate(step_prompt)
             accumulated_reasoning += f"\nAdım {i}: {step_response}"
 
-            # TR: Araç ve aksiyon çıkarımı / EN: Tool and action extraction
+            # Tool and action extraction
             confidence = self._estimate_step_confidence(step_response, i)
             tool = self._extract_tag(step_response, "TOOL")
             action = self._extract_tag(step_response, "ACTION")
@@ -406,11 +398,11 @@ class ReasoningEngine:
             if action:
                 action_plan.append(action)
 
-            # TR: Sonuca ulaşıldıysa dur / EN: Stop if conclusion reached
+            # Stop if conclusion reached
             if conclusion:
                 break
 
-        # TR: Final sentez / EN: Final synthesis
+        # Final synthesis
         final_prompt = self._build_prompt(
             task, context,
             mode="cot_synthesize",
@@ -435,16 +427,15 @@ class ReasoningEngine:
         )
 
     # -----------------------------------------------------------------
-    # TR: DÜŞÜNCE AĞACI / EN: TREE OF THOUGHT
+    # TREE OF THOUGHT
     # -----------------------------------------------------------------
     def _tree_of_thought(self, task: str, context: str) -> ReasoningResult:
         """
-        TR: Dallanmalı düşünce ağacı — en iyi yolu seç.
-        EN: Branching thought tree — select best path.
+        Branching thought tree - select best path.
         """
         self._node_counter = 0
 
-        # TR: Kök düğüm / EN: Root node
+        # Root node
         root_prompt = self._build_prompt(
             task, context,
             mode="tot_root",
@@ -462,7 +453,7 @@ class ReasoningEngine:
             confidence=0.5,
         )
 
-        # TR: Dalları oluştur / EN: Create branches
+        # Create branches
         branches = self._split_branches(root_response)
         for branch_text in branches[: self.max_tot_branches]:
             branch_conf = self._extract_confidence(branch_text)
@@ -474,19 +465,19 @@ class ReasoningEngine:
             )
             root.children.append(child)
 
-            # TR: Budama / EN: Pruning
+            # Pruning
             if branch_conf < self.prune_threshold:
                 child.pruned = True
                 continue
 
-            # TR: Derinleştir / EN: Deepen
+            # Deepen
             self._expand_node(child, task, context, depth=1)
 
-        # TR: En iyi yolu bul / EN: Find best path
+        # Find best path
         best_path = self._find_best_path(root)
         total_nodes = self._count_nodes(root)
 
-        # TR: En iyi yoldan sonuç sentezle / EN: Synthesize conclusion from best path
+        # Synthesize conclusion from best path
         path_summary = " → ".join(
             n.thought[:100] for n in best_path
         )
@@ -500,7 +491,7 @@ class ReasoningEngine:
         )
         conclusion = self._generate(synth_prompt)
 
-        # TR: Aksiyonları çıkar / EN: Extract actions
+        # Extract actions
         action_plan: List[str] = []
         tool_calls: List[str] = []
         for node in best_path:
@@ -545,7 +536,7 @@ class ReasoningEngine:
     def _expand_node(
         self, node: ThoughtNode, task: str, context: str, depth: int
     ) -> None:
-        """TR: Düğümü derinleştir. / EN: Expand node."""
+        """Expand node."""
         if depth >= self.max_tot_depth:
             return
 
@@ -578,7 +569,7 @@ class ReasoningEngine:
                 self._expand_node(child, task, context, depth + 1)
 
     def _find_best_path(self, root: ThoughtNode) -> List[ThoughtNode]:
-        """TR: En yüksek güvenli yolu bul (greedy). / EN: Find highest confidence path (greedy)."""
+        """Find highest confidence path (greedy)."""
         path = [root]
         current = root
         while current.children:
@@ -591,7 +582,7 @@ class ReasoningEngine:
         return path
 
     # -----------------------------------------------------------------
-    # TR: YARDIMCI METODLAR / EN: HELPER METHODS
+    # HELPER METHODS
     # -----------------------------------------------------------------
     def _build_prompt(
         self,
@@ -613,7 +604,7 @@ class ReasoningEngine:
 
     @staticmethod
     def _extract_tag(text: str, tag: str) -> Optional[str]:
-        """TR: [TAG: value] formatından değer çıkarır. / EN: Extracts value from [TAG: value] format."""
+        """Extracts value from [TAG: value] format."""
         marker = f"[{tag}:"
         idx = text.find(marker)
         if idx == -1:
@@ -626,11 +617,10 @@ class ReasoningEngine:
 
     @staticmethod
     def _estimate_step_confidence(text: str, step_number: int) -> float:
-        """TR: Adımın güven seviyesini tahmin eder. / EN: Estimates step confidence."""
+        """Estimates step confidence."""
         confidence = 0.6
 
-        # TR: Kesinlik belirteçleri güveni artırır
-        # EN: Certainty markers increase confidence
+        # Certainty markers increase confidence
         high_conf = ["kesinlikle", "certainly", "clearly", "definitely", "açıkça"]
         low_conf = ["belki", "maybe", "perhaps", "possibly", "muhtemelen", "might"]
 
@@ -642,15 +632,14 @@ class ReasoningEngine:
             if word in text_lower:
                 confidence -= 0.1
 
-        # TR: Sonraki adımlar genellikle daha güvenilir
-        # EN: Later steps are usually more confident
+        # Later steps are usually more confident
         confidence += min(0.15, step_number * 0.03)
 
         return max(0.1, min(0.95, confidence))
 
     @staticmethod
     def _extract_confidence(text: str) -> float:
-        """TR: Metinden güven yüzdesini çıkarır. / EN: Extracts confidence percentage from text."""
+        """Extracts confidence percentage from text."""
         import re
         match = re.search(r"(\d{1,3})%", text)
         if match:
@@ -659,7 +648,7 @@ class ReasoningEngine:
 
     @staticmethod
     def _split_branches(text: str) -> List[str]:
-        """TR: --- ile ayrılmış dalları böler. / EN: Splits branches separated by ---."""
+        """Splits branches separated by ---."""
         parts = [p.strip() for p in text.split("---") if p.strip()]
         if not parts:
             return [text.strip()] if text.strip() else []

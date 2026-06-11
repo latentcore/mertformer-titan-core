@@ -29,12 +29,12 @@ import torch.nn.functional as F
 
 
 # -----------------------------------------------------------------------------
-# TR: VERİ YAPILARI / EN: DATA STRUCTURES
+# DATA STRUCTURES
 # -----------------------------------------------------------------------------
 
 @dataclass
 class Episode:
-    """TR: Tek bir deneyim bölümü. / EN: A single experience episode."""
+    """A single experience episode."""
     task: str
     strategy_used: str  # "direct", "cot", "tot"
     thoughts: List[str] = field(default_factory=list)
@@ -50,7 +50,7 @@ class Episode:
 
 @dataclass
 class StrategyPerformance:
-    """TR: Strateji performans metrikleri. / EN: Strategy performance metrics."""
+    """Strategy performance metrics."""
     strategy: str
     total_uses: int = 0
     avg_score: float = 0.0
@@ -74,18 +74,17 @@ class StrategyPerformance:
 
 
 # -----------------------------------------------------------------------------
-# TR: DENEYİM DEPOSU / EN: EXPERIENCE STORE
+# EXPERIENCE STORE
 # -----------------------------------------------------------------------------
 
 class ExperienceStore:
     """
-    TR: Deneyimlerden öğrenen kalıcı depo.
-    EN: Persistent store that learns from experiences.
+    Persistent store that learns from experiences.
 
-    - JSONL tabanlı kalıcılık (GodMemory ile tutarlı)
-    - Semantik benzerlik ile geri çağırma (SenseEngine opsiyonel)
-    - Strateji performans izleme → MetaLearner'a veri sağlar
-    - FIFO eviction (max kapasiteye ulaşıldığında)
+    - JSONL-based persistence (consistent with GodMemory)
+    - Recall via semantic similarity (SenseEngine optional)
+    - Strategy performance tracking -> feeds data to MetaLearner
+    - FIFO eviction (when max capacity is reached)
     """
 
     MAX_EPISODES = 10_000
@@ -103,7 +102,7 @@ class ExperienceStore:
         self._load()
 
     def _load(self) -> None:
-        """TR: Kalıcı depodan yükle. / EN: Load from persistent store."""
+        """Load from persistent store."""
         if self.store_path is None or not self.store_path.exists():
             return
 
@@ -137,7 +136,7 @@ class ExperienceStore:
             print(f"⚠️ Experience Store load error: {e}")
 
     def _save_episode(self, episode: Episode) -> None:
-        """TR: Tek bir bölümü diske yaz. / EN: Write a single episode to disk."""
+        """Write a single episode to disk."""
         if self.store_path is None:
             return
         try:
@@ -164,12 +163,12 @@ class ExperienceStore:
             print(f"⚠️ Experience save error: {e}")
 
     def record_episode(self, episode: Episode) -> None:
-        """TR: Yeni deneyim kaydet. / EN: Record new experience."""
+        """Record new experience."""
         self.episodes.append(episode)
         self._update_stats(episode)
         self._save_episode(episode)
 
-        # TR: FIFO eviction / EN: FIFO eviction
+        # FIFO eviction
         if len(self.episodes) > self.MAX_EPISODES:
             self.episodes = self.episodes[-self.MAX_EPISODES:]
 
@@ -179,21 +178,20 @@ class ExperienceStore:
         top_k: int = 5,
     ) -> List[Episode]:
         """
-        TR: Benzer görevlerdeki deneyimleri hatırla.
-        EN: Recall experiences from similar tasks.
+        Recall experiences from similar tasks.
         """
         if not self.episodes:
             return []
 
-        # TR: Semantic recall varsa kullan / EN: Use semantic recall if available
+        # Use semantic recall if available
         if self.sense_engine is not None:
             return self._semantic_recall(task, top_k)
 
-        # TR: Keyword-based fallback / EN: Keyword-based fallback
+        # Keyword-based fallback
         return self._keyword_recall(task, top_k)
 
     def _semantic_recall(self, task: str, top_k: int) -> List[Episode]:
-        """TR: Semantik benzerlik ile geri çağırma. / EN: Recall by semantic similarity."""
+        """Recall by semantic similarity."""
         try:
             q_vec = torch.tensor(
                 self.sense_engine.encode_text(task), dtype=torch.float32
@@ -218,7 +216,7 @@ class ExperienceStore:
             return self._keyword_recall(task, top_k)
 
     def _keyword_recall(self, task: str, top_k: int) -> List[Episode]:
-        """TR: Anahtar kelime tabanlı geri çağırma. / EN: Keyword-based recall."""
+        """Keyword-based recall."""
         task_words = set(task.lower().split())
         scored: List[tuple[int, Episode]] = []
 
@@ -232,7 +230,7 @@ class ExperienceStore:
         return [ep for _, ep in scored[:top_k]]
 
     def _update_stats(self, episode: Episode) -> None:
-        """TR: Strateji istatistiklerini güncelle. / EN: Update strategy statistics."""
+        """Update strategy statistics."""
         strategy = episode.strategy_used
         if strategy not in self._strategy_stats:
             self._strategy_stats[strategy] = StrategyPerformance(strategy=strategy)
@@ -241,39 +239,37 @@ class ExperienceStore:
         n = stats.total_uses
         stats.total_uses += 1
 
-        # TR: Çevrimiçi ortalama güncelleme / EN: Online average update
+        # Online average update
         stats.avg_score = (stats.avg_score * n + episode.outcome_score) / (n + 1)
         stats.avg_iterations = (stats.avg_iterations * n + episode.iterations) / (n + 1)
         stats.avg_tool_count = (
             (stats.avg_tool_count * n + len(episode.tools_used)) / (n + 1)
         )
 
-        # TR: Başarı oranı güncelleme / EN: Success rate update
+        # Success rate update
         is_success = 1.0 if episode.outcome_score >= self.SUCCESS_THRESHOLD else 0.0
         stats.success_rate = (stats.success_rate * n + is_success) / (n + 1)
 
-        # TR: En iyi / en kötü / EN: Best / worst
+        # Best / worst
         stats.best_score = max(stats.best_score, episode.outcome_score)
         stats.worst_score = min(stats.worst_score, episode.outcome_score)
 
     def strategy_stats(self) -> Dict[str, StrategyPerformance]:
-        """TR: Strateji performans istatistikleri. / EN: Strategy performance statistics."""
+        """Strategy performance statistics."""
         return dict(self._strategy_stats)
 
     def best_strategy_for(self, task_type: str = "") -> str:
         """
-        TR: Verilen görev tipi için en iyi stratejiyi belirler.
-        EN: Determines the best strategy for the given task type.
+        Determines the best strategy for the given task type.
         """
         if not self._strategy_stats:
-            return "cot"  # TR: Varsayılan strateji / EN: Default strategy
+            return "cot"  # Default strategy
 
-        # TR: Benzer görevlerdeki geçmiş stratejileri kontrol et
-        # EN: Check past strategies for similar tasks
+        # Check past strategies for similar tasks
         if task_type:
             similar = self.recall_similar(task_type, top_k=10)
             if similar:
-                # TR: En başarılı stratejiyi bul / EN: Find most successful strategy
+                # Find most successful strategy
                 strategy_scores: Dict[str, List[float]] = {}
                 for ep in similar:
                     if ep.strategy_used not in strategy_scores:
@@ -287,7 +283,7 @@ class ExperienceStore:
                     )
                     return best[0]
 
-        # TR: Genel en iyi strateji / EN: Overall best strategy
+        # Overall best strategy
         if self._strategy_stats:
             best_stat = max(
                 self._strategy_stats.values(),
@@ -299,7 +295,7 @@ class ExperienceStore:
         return "cot"
 
     def summary(self) -> Dict[str, object]:
-        """TR: Depo özet raporu. / EN: Store summary report."""
+        """Store summary report."""
         return {
             "total_episodes": len(self.episodes),
             "strategies": {

@@ -6,7 +6,7 @@ Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -38,8 +38,6 @@ try:
     import wandb
 except ImportError:
     wandb = None
-from accelerate import Accelerator
-from accelerate.utils import DistributedType, set_seed
 try:
     import galore_torch
 except ImportError:
@@ -54,7 +52,7 @@ except Exception:
     ContinualLearningAdapter = None
 
 # -----------------------------------------------------------------------------
-# TR: 0. PROJE KÖK DİZİN TESPİTİ / EN: 0. PROJECT ROOT DETECTION
+# 0. PROJECT ROOT DETECTION
 # -----------------------------------------------------------------------------
 current_file = Path(__file__).resolve()
 project_root = current_file.parent
@@ -67,7 +65,7 @@ sys.path.insert(0, str(project_root))
 print(f"📍 PROJE ANA MERKEZİ: {project_root}")
 
 # -----------------------------------------------------------------------------
-# TR: İMPORTLAR / EN: IMPORTS
+# IMPORTS
 # -----------------------------------------------------------------------------
 try:
     from config.config import cfg
@@ -93,70 +91,74 @@ except ImportError:
     print("❌ Accelerate kütüphanesi eksik! 'pip install accelerate' yap.")
     sys.exit(1)
 
-# TR: Egitimde kullanilan tokenizer kimligi (checkpoint'e yazilir).
-# EN: Identity of the tokenizer used for training; stamped into every checkpoint
-#     so eval/demo reload the exact same tokenizer (no train/eval mismatch).
+# Identity of the tokenizer used for training; stamped into every checkpoint
+# so eval/demo reload the exact same tokenizer (no train/eval mismatch).
 RUNTIME_TOKENIZER_ID: Optional[dict] = None
 
 # -----------------------------------------------------------------------------
-# TR: 0.5. SAVE_DIR DÜZELTMESİ / EN: 0.5. SAVE_DIR FIX
+# 0.5. SAVE_DIR FIX
 # -----------------------------------------------------------------------------
 if not hasattr(cfg, "save_dir"):
     cfg.save_dir = "checkpoints/mertformer_titan_prod"
 
+# -----------------------------------------------------------------------------
+# 0.6. SPLIT TRAINER MODULES (pure re-exports for backwards compatibility)
+# -----------------------------------------------------------------------------
+# train/train.py remains the canonical entry point and public import surface.
+# Helper groups now live in train/trainer_core.py (core helpers),
+# train/trainer_data.py (datasets/collate/teacher payloads) and
+# train/trainer_eval.py (KD losses / metric reading). The explicit imports
+# below keep every historical `from train.train import X` and
+# `train.train.<name>` access working unchanged.
+from train.trainer_core import (
+    MertFormerInferenceWrapper,
+    _capture_rng_state,
+    _infer_curriculum_stage_from_step,
+    _normalize_state_dict_keys_for_model,
+    _restore_rng_state,
+    apply_freeze_policy,
+    build_stage_boundaries,
+    count_jsonl_records,
+    export_to_onnx,
+    get_curriculum_contract,
+    get_gpu_memory_usage,
+    get_student_device,
+    get_teacher_device,
+    get_wsd_schedule,
+    preflight_param_report,
+    seed_all,
+    validate_config,
+)
+from train.trainer_data import (
+    CurriculumDataset,
+    PrecomputedCurriculumDataset,
+    ValidationJsonlDataset,
+    _align_sparse_topk_payload,
+    _encode_with_eos_labels,
+    _is_sparse_topk_payload,
+    _shift_teacher_payload,
+    _stack_teacher_payloads,
+    _teacher_payload_to_device,
+    collate_fn,
+)
+from train.trainer_eval import (
+    _kd_loss_sparse_topk,
+    kd_loss_safe,
+    read_metric_from_json,
+)
+
+
 
 # -----------------------------------------------------------------------------
-# TR: 1. YARDIMCI FONİKSİYONLAR / EN: 1. HELPER FUNCTIONS
+# 1. HELPER FUNCTIONS
 # -----------------------------------------------------------------------------
-def seed_all(seed: int):
-    random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
-    
-    # TR: [PRO] Yeniden üretilebilirlik Modu / EN: [PRO] Reproducibility Mode
-    if getattr(cfg, "deterministic", False):
-        torch.backends.cudnn.deterministic = True
-        torch.backends.cudnn.benchmark = False
-        try:
-            torch.use_deterministic_algorithms(True, warn_only=True)
-            print("🔒 Deterministic Mode: ACTIVATED (Performance may slightly decrease)")
-        except AttributeError:
-            pass # Older pytorch versions
-
-
-def validate_config(cfg, stage="pre"):
-    """TR: Kritik config parametreleri için akıl sağlığı kontrolü (Aşamalı). / EN: Sanity check for critical config parameters (Staged)."""
-    required = ["hidden_size", "num_layers", "max_seq_len", "model_name", "learning_rate"]
-    
-    # TR: [PRO] Öğretmen Sonrası Doğrulama (vocab_size gerektirir)
-    # EN: [PRO] Post-Teacher Validation (requires vocab_size)
-    if stage == "post":
-        required.append("vocab_size")
-
-    for k in required:
-        if not hasattr(cfg, k):
-            raise ValueError(f"❌ CRITICAL CONFIG ERROR: Missing key '{k}'")
-    
-    if cfg.learning_rate <= 0: raise ValueError("Learning Rate must be > 0")
-    if getattr(cfg, "num_experts", 0) < 1: 
-        # [PRO] Explicitly validate MoE config if use_moe flag exists, or just warn/error
-        if getattr(cfg, "use_moe", False):
-             raise ValueError("❌ CRITICAL: MoE enabled (use_moe=True) but num_experts < 1")
-    if cfg.max_seq_len > 100000: print("⚠️ Warning: Unusual max_seq_len (>100k)")
-    
-    print(f"✅ Config Schema Verified ({stage}).")
-
-
 def check_disk_space(min_gb: float = 10.0, path: Optional[Path] = None) -> bool:
     """
-    TR: Diskte yeterli boş alan var mı kontrol eder.
-    EN: Checks if there is enough free disk space.
+    Checks if there is enough free disk space.
     """
     target = path or project_root
     try:
-        # TR: Disk boşluğu ölçümü
-        # EN: Disk free space measurement
+        # Disk free space measurement
         total, used, free = shutil.disk_usage(str(target))
         free_gb = free / (1024 ** 3)
         return free_gb >= float(min_gb)
@@ -164,38 +166,9 @@ def check_disk_space(min_gb: float = 10.0, path: Optional[Path] = None) -> bool:
         return True  # Fail-open to avoid breaking training
 
 
-def count_jsonl_records(path: Path) -> int:
-    """
-    TR: JSONL dosyasındaki boş olmayan satır sayısını döndürür.
-    EN: Returns number of non-empty lines in a JSONL file.
-    """
-    count = 0
-    with path.open("r", encoding="utf-8") as f:
-        for line in f:
-            if line.strip():
-                count += 1
-    return count
-
-
-def get_gpu_memory_usage(device: Optional[int] = None) -> tuple[float, float]:
-    """
-    TR: GPU bellek kullanımını (allocated/reserved) GB olarak döndürür.
-    EN: Returns GPU memory usage (allocated/reserved) in GB.
-    """
-    if not torch.cuda.is_available():
-        return 0.0, 0.0
-    # TR: Allocated/Reserved bellek raporu
-    # EN: Allocated/Reserved memory report
-    idx = device if device is not None else torch.cuda.current_device()
-    allocated = torch.cuda.memory_allocated(idx) / (1024 ** 3)
-    reserved = torch.cuda.memory_reserved(idx) / (1024 ** 3)
-    return allocated, reserved
-
-
 def write_energy_telemetry_baseline(project_root: Path, stage: str = "bootstrap") -> None:
     """
-    TR: Eğitim öncesi ve eğitim sırasında temel sistem metriklerini raporlar.
-    EN: Records baseline system metrics before/during training.
+    Records baseline system metrics before/during training.
     """
     reports_dir = project_root / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
@@ -238,146 +211,23 @@ def write_energy_telemetry_baseline(project_root: Path, stage: str = "bootstrap"
     (reports_dir / "thermal_baseline.json").write_text(json.dumps(thermal_baseline, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
-def get_curriculum_contract() -> tuple[List[str], List[float]]:
-    """
-    Portable training contract:
-    - stage names and ratios come from config single source of truth.
-    """
-    names = list(getattr(cfg, "curriculum_stage_names", []))
-    ratios = [float(x) for x in list(getattr(cfg, "curriculum_stage_ratios", []))]
-    if len(names) != len(ratios):
-        raise ValueError(
-            f"Curriculum mismatch: stage names ({len(names)}) != stage ratios ({len(ratios)})."
-        )
-    if len(names) != 5:
-        raise ValueError(f"Expected 5 curriculum stages, got {len(names)}.")
-    if abs(sum(ratios) - 1.0) > 1e-6:
-        raise ValueError(f"Curriculum ratios must sum to 1.0, got {sum(ratios):.8f}.")
-    return names, ratios
-
-
-def build_stage_boundaries(max_steps: int, stage_ratios: List[float]) -> List[int]:
-    boundaries: List[int] = []
-    cumulative = 0.0
-    for ratio in stage_ratios[:-1]:
-        cumulative += ratio
-        boundaries.append(int(max_steps * cumulative))
-    return boundaries
-
-
-def read_metric_from_json(path: Path, key: str) -> Optional[float]:
-    try:
-        if not path.exists():
-            return None
-        payload = json.loads(path.read_text(encoding="utf-8"))
-        value = payload.get(key)
-        if value is None:
-            return None
-        return float(value)
-    except Exception:
-        return None
-
-
 def write_training_runtime_manifest(payload: dict) -> None:
     out = project_root / "reports" / "training_runtime_manifest.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
-def get_student_device(accelerator=None):
-    if accelerator:
-        return accelerator.device
-    return torch.device(cfg.device)
-
-
-def get_teacher_device(accelerator=None):
-    # Accelerate will handle device placement if initialized
-    if accelerator:
-        return accelerator.device
-    if torch.cuda.is_available() and cfg.device == "cuda":
-        return torch.device("cuda")
-    return torch.device("cpu")
-
-
-@torch.no_grad()
-def preflight_param_report(model: nn.Module):
-    n_params = sum(p.numel() for p in model.parameters())
-    trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"🧠 Model Parametreleri: {n_params / 1e6:.2f} Milyon")
-    print(f"📚 Trainable: {trainable / 1e6:.2f} Milyon")
-
-
-def _capture_rng_state() -> dict:
-    """TR: [MED] Resume'un tekrar-uretilebilir olmasi icin RNG durumlarini topla.
-    EN: [MED] Capture RNG states so resume is reproducible."""
-    rng: dict = {}
-    try:
-        rng["torch"] = torch.get_rng_state()
-    except Exception:
-        pass
-    try:
-        if torch.cuda.is_available():
-            rng["cuda"] = torch.cuda.get_rng_state_all()
-    except Exception:
-        pass
-    try:
-        import numpy as _np
-        st = _np.random.get_state()
-        # TR: weights_only=True ile yuklenebilmesi icin numpy state'i builtin'lere cevir.
-        # EN: Convert numpy state to builtins so checkpoints load under weights_only=True.
-        rng["numpy"] = [st[0], [int(v) for v in st[1]], int(st[2]), int(st[3]), float(st[4])]
-    except Exception:
-        pass
-    try:
-        # random.getstate() -> (int, tuple[int,...], float|None): builtin-safe.
-        ver, state_tuple, gauss = random.getstate()
-        rng["python"] = [int(ver), [int(v) for v in state_tuple], gauss]
-    except Exception:
-        pass
-    return rng
-
-
-def _restore_rng_state(rng) -> None:
-    """TR: [MED] Checkpoint'teki RNG durumlarini geri yukle (best-effort)."""
-    if not isinstance(rng, dict):
-        return
-    try:
-        if "torch" in rng:
-            torch.set_rng_state(rng["torch"])
-    except Exception:
-        pass
-    try:
-        if "cuda" in rng and torch.cuda.is_available():
-            torch.cuda.set_rng_state_all(rng["cuda"])
-    except Exception:
-        pass
-    try:
-        if "numpy" in rng:
-            import numpy as _np
-            s = rng["numpy"]
-            state = (s[0], _np.array(s[1], dtype=_np.uint32), int(s[2]), int(s[3]), float(s[4]))
-            _np.random.set_state(state)
-    except Exception:
-        pass
-    try:
-        if "python" in rng:
-            p = rng["python"]
-            random.setstate((int(p[0]), tuple(int(v) for v in p[1]), p[2]))
-    except Exception:
-        pass
-
-
 def save_checkpoint_smart(
-    model,
-    optimizer,
-    scheduler,
-    step,
-    cfg,
-    keep_last_n=3,
-    val_loss=None,
-    best_val_loss=None,
-    write_final=False,
-):
+    model: nn.Module,
+    optimizer: torch.optim.Optimizer,
+    scheduler: Any,
+    step: int,
+    cfg: Any,
+    keep_last_n: int = 3,
+    val_loss: Optional[float] = None,
+    best_val_loss: Optional[float] = None,
+    write_final: bool = False,
+) -> Optional[float]:
     """
     Smart checkpoint saver - keeps only last N checkpoints + best checkpoint.
     
@@ -422,14 +272,11 @@ def save_checkpoint_smart(
         'scheduler': scheduler.state_dict(),
         'step': step,
         'config': str(cfg),
-        # TR: Eval/demo'nun AYNI tokenizer'i yuklemesi icin kimligi yaz.
-        # EN: Record tokenizer identity so eval/demo reload the identical tokenizer.
+        # Record tokenizer identity so eval/demo reload the identical tokenizer.
         'tokenizer_id': RUNTIME_TOKENIZER_ID,
-        # TR: [H3] Optimizer sinifini kaydet -> resume'da uyusmazlik uyarisi mumkun.
-        # EN: [H3] Record optimizer class so resume can warn on a class mismatch.
+        # [H3] Record optimizer class so resume can warn on a class mismatch.
         'optimizer_class': type(optimizer).__name__,
-        # TR: [MED] Tekrar-uretilebilir resume icin RNG durumlari.
-        # EN: [MED] RNG states for reproducible resume.
+        # [MED] RNG states for reproducible resume.
         'rng_state': _capture_rng_state(),
         'best_val_loss': (
             float(checkpoint_best_val_loss)
@@ -477,30 +324,7 @@ def save_checkpoint_smart(
     return best_val_loss if val_loss is not None else best_val_loss
 
 
-def _normalize_state_dict_keys_for_model(model_state: dict, model: nn.Module) -> dict:
-    """
-    Normalize checkpoint key prefixes when torch.compile wrappers differ between save/load.
-    """
-    if not model_state:
-        return model_state
-    model_keys = list(model.state_dict().keys())
-    if not model_keys:
-        return model_state
-
-    ckpt_has_orig = any(k.startswith("_orig_mod.") for k in model_state.keys())
-    model_has_orig = any(k.startswith("_orig_mod.") for k in model_keys)
-
-    if ckpt_has_orig and not model_has_orig:
-        return {
-            (k.replace("_orig_mod.", "", 1) if k.startswith("_orig_mod.") else k): v
-            for k, v in model_state.items()
-        }
-    if (not ckpt_has_orig) and model_has_orig:
-        return {f"_orig_mod.{k}": v for k, v in model_state.items()}
-    return model_state
-
-
-def _discover_resume_checkpoint(cfg) -> Optional[Path]:
+def _discover_resume_checkpoint(cfg: Any) -> Optional[Path]:
     """
     Find resume checkpoint.
     Priority:
@@ -571,7 +395,7 @@ def _enforce_resume_key_policy(
     )
 
 
-def _load_resume_payload(cfg, model: nn.Module, is_main_process: bool = True) -> Optional[dict]:
+def _load_resume_payload(cfg: Any, model: nn.Module, is_main_process: bool = True) -> Optional[dict]:
     """
     Load model state for resume before optimizer/scheduler wiring.
     """
@@ -621,593 +445,8 @@ def _load_resume_payload(cfg, model: nn.Module, is_main_process: bool = True) ->
     }
 
 
-def _infer_curriculum_stage_from_step(step: int, stage_boundaries: List[int]) -> int:
-    if step >= stage_boundaries[3]:
-        return 5
-    if step >= stage_boundaries[2]:
-        return 4
-    if step >= stage_boundaries[1]:
-        return 3
-    if step >= stage_boundaries[0]:
-        return 2
-    return 1
-
-
-
 # -----------------------------------------------------------------------------
-# TR: 1.5 INFERENCE SARLAYICI (ONNX TEMİZLEYİCİ)
-# EN: 1.5 INFERENCE WRAPPER (ONNX CLEANER)
-# -----------------------------------------------------------------------------
-class MertFormerInferenceWrapper(nn.Module):
-    """
-    TR: Sadece Inference için hafifletilmiş model kılıfı. Aux loss'u atar.
-    EN: Lightweight model wrapper for inference only. Discards aux loss.
-    """
-    def __init__(self, model):
-        super().__init__()
-        self.model = model
-
-    def forward(self, input_ids):
-        # TR: Aux loss'u yut, sadece logits döndür / EN: Swallow aux loss, return only logits
-        logits, _, _ = self.model(input_ids)
-        return logits
-
-
-def export_to_onnx(model, save_dir, model_name, device):
-    print(f"\n📦 ONNX DÖNÜŞÜMÜ BAŞLIYOR (CLEAN INFERENCE MODE)...")
-    onnx_path = save_dir / f"{model_name}.onnx"
-
-    # TR: Wrapper ile sar (Aux loss ve karmaşayı temizle) / EN: Wrap with wrapper (Clean aux loss and complexity)
-    inference_model = MertFormerInferenceWrapper(model)
-    inference_model.eval()
-
-    # TR: [OPT] Küçük dummy girdi kullan (dinamik eksenler değişken uzunlukları idare eder)
-    # EN: [OPT] Use small dummy input (dynamic axes handle variable lengths)
-    dummy_len = min(cfg.max_seq_len, 32)
-    dummy_input = torch.randint(0, cfg.vocab_size, (1, dummy_len)).to(device)
-
-    try:
-        exported = torch.onnx.export(
-            inference_model,
-            dummy_input,
-            str(onnx_path),
-            export_params=True,
-            opset_version=12, # [FIX] Legacy Stable Opset
-            do_constant_folding=False, # [FIX] Disable folding to avoid graph capture errors
-            input_names=['input_ids'],
-            output_names=['logits'],
-            dynamic_axes={
-                'input_ids': {0: 'batch_size', 1: 'sequence_length'},
-                'logits': {0: 'batch_size', 1: 'sequence_length'}
-            }
-        )
-        if hasattr(exported, "save"):
-            exported.save(str(onnx_path))
-        if not onnx_path.exists():
-            raise FileNotFoundError(
-                f"ONNX export returned success but file was not materialized: {onnx_path}"
-            )
-        print(f"✅ ONNX BAŞARIYLA KAYDEDİLDİ: {onnx_path}")
-    except Exception as e:
-        print(f"❌ ONNX DÖNÜŞÜM HATASI: {e}")
-
-
-# -----------------------------------------------------------------------------
-# TR: 2. VERİ SETLERİ (CURRICULUM + VALIDATION)
-# EN: 2. DATASETS (CURRICULUM + VALIDATION)
-# -----------------------------------------------------------------------------
-def _encode_with_eos_labels(tokenizer, text, max_len, pad_id, eos_id):
-    """TR: [H2] Tek satiri tokenize et, EOS ekle, max_len'e pad'le; label trailing
-    pad'de -100 tasir -> CE/KD pad'i yok sayar ama EOS denetlenir (pad==eos guvenli).
-    EN: [H2] Tokenize one row, append EOS, pad to max_len; labels carry -100 at
-    trailing pad so CE/KD ignore pad while EOS is supervised (pad==eos safe)."""
-    from train.packing import encode_row
-    ids = encode_row(tokenizer, text, max(1, int(max_len) - 1))
-    if eos_id is not None:
-        ids = ids + [int(eos_id)]
-    ids = ids[: int(max_len)]
-    true_len = len(ids)
-    pad_n = int(max_len) - true_len
-    input_list = ids + [int(pad_id)] * pad_n
-    label_list = ids + [-100] * pad_n
-    return (
-        torch.tensor(input_list, dtype=torch.long),
-        torch.tensor(label_list, dtype=torch.long),
-    )
-
-
-class ValidationJsonlDataset(IterableDataset):
-    """
-    TR: Validation için basit, sıralı (deterministik) okuyucu.
-    EN: Simple, sequential (deterministic) reader for validation.
-    """
-    def __init__(self, path: Path, max_len: int, tokenizer):
-        self.path = path
-        self.max_len = max_len
-        self.tokenizer = tokenizer
-        self.pad_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else 0
-        self.eos_id = tokenizer.eos_token_id
-
-    def __iter__(self):
-        with open(self.path, "r", encoding="utf-8") as f:
-            for line in f:
-                try:
-                    obj = json.loads(line)
-                    text = obj.get("text", "")
-                    if not text:
-                        continue
-                    input_ids, labels = _encode_with_eos_labels(
-                        self.tokenizer, text, self.max_len, self.pad_id, self.eos_id
-                    )
-                    yield input_ids, labels
-                except Exception:
-                    continue
-
-
-class CurriculumDataset(IterableDataset):
-    """
-    TR: Curriculum-aware dataset (RAM dostu Streaming + Worker Safe).
-    EN: Curriculum-aware dataset (RAM-friendly Streaming + Worker Safe).
-    """
-
-    def __init__(self, stage_paths: List[Path], max_len: int, tokenizer, current_stage: int = 1):
-        self.stage_paths = stage_paths
-        self.max_len = max_len
-        self.tokenizer = tokenizer
-        self.current_stage = current_stage
-        self.pad_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else 0
-
-        # TR: [MED] Byte-seek uzun satirlari over-sample ediyordu (uzun satir daha
-        #     fazla byte-uzayi kaplar -> rastgele byte-offset oraya daha sik dusiyor)
-        #     ve dosyanin ilk satirini hic vermiyordu -> stage-ici kaynak oranlari
-        #     bozuluyordu. Cozum: her bos-olmayan satirin byte-offset'ini bir kez
-        #     indeksle, sonra UNIFORM satir indexi sec (uzunluk yanliligi yok).
-        # EN: [MED] Byte-seek over-sampled long lines and never yielded the first
-        #     line, distorting intra-stage source ratios. Index each non-empty
-        #     line's byte offset once, then sample a UNIFORM line index.
-        self.file_offsets = {}
-        self.line_offsets = {}
-        for p in stage_paths:
-            if p.exists():
-                offsets = []
-                with open(p, "rb") as f:
-                    pos = f.tell()
-                    line = f.readline()
-                    while line:
-                        if line.strip():
-                            offsets.append(pos)
-                        pos = f.tell()
-                        line = f.readline()
-                    self.file_offsets[str(p)] = pos
-                self.line_offsets[str(p)] = offsets
-
-    def set_stage(self, stage: int):
-        """Update current curriculum stage."""
-        self.current_stage = stage
-
-    def __iter__(self):
-        # 1. WORKER SEED SYNC (Çoklu işlemci çakışmasını önle)
-        worker_info = get_worker_info()
-        if worker_info is not None:
-            # Her worker farklı bir seed alır
-            random.seed(cfg.seed + worker_info.id)
-
-        skipped_count = 0
-        total_attempts = 0
-
-        while True:
-            # [FIX] Fallback guard: If not enough stage files, use all available
-            n = len(self.stage_paths)
-            if n < 4:
-                # Fallback dataset or missing stages: disable curriculum
-                active_paths = self.stage_paths
-            elif self.current_stage == 1:
-                active_paths = [self.stage_paths[0]]
-            elif self.current_stage == 2:
-                active_paths = [self.stage_paths[1]]
-            elif self.current_stage == 3:
-                # Stage 3: Mix all previous stages (10% Stage1, 10% Stage2, 80% Stage3)
-                active_paths = self.stage_paths[:3]
-            elif self.current_stage == 4:
-                # Stage 4: Soul + Knowledge + Identity Mix
-                active_paths = self.stage_paths
-            else:
-                active_paths = self.stage_paths
-
-            # Select path based on stage logic or random choice from actives
-            if self.current_stage == 3 and len(active_paths) > 1:
-                r = random.random()
-                if r < 0.1: path = active_paths[0]
-                elif r < 0.2: path = active_paths[1]
-                else: path = active_paths[2]
-            else:
-                path = random.choice(active_paths)
-
-            if not path.exists():
-                continue
-
-            offsets = self.line_offsets.get(str(path), [])
-            if not offsets: continue
-
-            total_attempts += 1
-
-            # 2. VERİ KAYIP ALARMI (%5 eşik)
-            if total_attempts % 5000 == 0 and total_attempts > 0:
-                skip_rate = skipped_count / total_attempts
-                if skip_rate > 0.05:
-                    print(f"⚠️ DİKKAT: Veri atlama oranı yüksek: %{skip_rate*100:.1f} (JSON parse veya boş satır)")
-
-            try:
-                # [FIX] Binary mode seek is safe; text mode seek is fragile with UTF-8
-                with open(path, "rb") as f:
-                    # TR: [MED] UNIFORM satir-index sec, dogrudan o satirin offset'ine git.
-                    # EN: [MED] Pick a UNIFORM line index, seek to that line's offset.
-                    idx = random.randint(0, len(offsets) - 1)
-                    f.seek(offsets[idx])
-                    line_bytes = f.readline()
-
-                    if not line_bytes:
-                        skipped_count += 1
-                        continue
-
-                    # [TITAN FIX] Decode with error handling (errors='ignore' for max stability)
-                    try:
-                        line = line_bytes.decode("utf-8", errors="ignore")
-                    except Exception:
-                        skipped_count += 1
-                        continue
-
-                    obj = json.loads(line)
-                    text = obj.get("text", "")
-                    if not text:
-                        skipped_count += 1
-                        continue
-
-                    # TR: [H2] EOS ekle + label trailing pad'de -100 (pad==eos guvenli).
-                    # EN: [H2] Append EOS + labels -100 at trailing pad (pad==eos safe).
-                    input_ids, labels = _encode_with_eos_labels(
-                        self.tokenizer, text, self.max_len, self.pad_id,
-                        self.tokenizer.eos_token_id,
-                    )
-                    yield input_ids, labels
-            except Exception:
-                skipped_count += 1
-                continue
-
-
-class PrecomputedCurriculumDataset(IterableDataset):
-    """
-    TR: Önceden hesaplanmış logits ile deterministik curriculum dataset.
-    EN: Deterministic curriculum dataset paired with precomputed logits.
-    """
-
-    def __init__(self, stage_info, max_len: int, tokenizer, distill_manager):
-        self.stage_info = stage_info  # list of (stage_name, path)
-        self.max_len = max_len
-        self.tokenizer = tokenizer
-        self.distill_manager = distill_manager
-        self.current_stage = 1
-        self.pad_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else 0
-
-    def set_stage(self, stage: int):
-        self.current_stage = stage
-
-    def _stage_entry(self, stage: int) -> tuple[str, Path]:
-        if not self.stage_info:
-            raise RuntimeError("PrecomputedCurriculumDataset has no stage paths.")
-        idx = min(max(int(stage) - 1, 0), len(self.stage_info) - 1)
-        return self.stage_info[idx]
-
-    def _align_logits(self, logits: Any, target_len: int) -> Any:
-        # TR: Logit uzunluğunu token uzunluğuna hizala
-        # EN: Align logits length to token length
-        if _is_sparse_topk_payload(logits):
-            return _align_sparse_topk_payload(logits, target_len)
-
-        # logits: [seq, vocab]
-        if logits.dim() == 3 and logits.size(0) == 1:
-            logits = logits.squeeze(0)
-        if logits.dim() != 2:
-            raise ValueError(f"Invalid logits shape: {tuple(logits.shape)}")
-        seq_len = logits.size(0)
-        if seq_len > target_len:
-            logits = logits[:target_len]
-        elif seq_len < target_len:
-            pad = torch.zeros(target_len - seq_len, logits.size(1), dtype=logits.dtype)
-            logits = torch.cat([logits, pad], dim=0)
-        return logits
-
-    def _iter_stage(self, stage_name: str, path: Path):
-        # TR: [B2] Student akisini precompute ile AYNI packer'dan kur; her packed
-        #     dizide teacher shard kimligini HARD-ASSERT et (sessiz realign YOK).
-        #     Pad pozisyonlari label'da -100. Eski (non-packed) yola sadece
-        #     TITAN_ALLOW_LEGACY_LOGIT_REALIGN=1 ile dusulur.
-        # EN: [B2] Build the student stream from the SAME packer as precompute and
-        #     HARD-ASSERT each packed sequence's teacher-shard identity (no silent
-        #     realign). Pad positions are -100 in labels. Legacy non-packed path is
-        #     reachable only via TITAN_ALLOW_LEGACY_LOGIT_REALIGN=1.
-        import os as _os
-        from train.packing import (
-            LogitAlignmentError,
-            assert_sequence_identity,
-            extract_row_text,
-            iter_packed_sequences,
-        )
-
-        use_packing = bool(getattr(cfg, "sequence_packing", True))
-        verify = bool(getattr(cfg, "verify_logit_alignment", True))
-        legacy = _os.environ.get("TITAN_ALLOW_LEGACY_LOGIT_REALIGN", "0") == "1"
-        eos_id = self.tokenizer.eos_token_id
-        if eos_id is None:
-            eos_id = self.pad_id
-        logits_iter = iter(self.distill_manager.get_precomputed_loader(stage_name))
-
-        if use_packing and not legacy:
-            def _rows():
-                with open(path, "r", encoding="utf-8") as f:
-                    for li, line in enumerate(f):
-                        try:
-                            obj = json.loads(line)
-                        except Exception:
-                            continue
-                        yield li, extract_row_text(obj)
-
-            for seq in iter_packed_sequences(
-                _rows(), self.tokenizer, self.max_len, eos_id, self.pad_id
-            ):
-                try:
-                    t_item = next(logits_iter)
-                except StopIteration:
-                    return
-                stored_identity = t_item.get("identity") if isinstance(t_item, dict) else None
-                if verify:
-                    assert_sequence_identity(seq["input_ids"], seq["true_len"], stored_identity)
-                input_ids = torch.tensor(seq["input_ids"], dtype=torch.long)
-                labels = input_ids.clone()
-                tl = int(seq["true_len"])
-                if tl < labels.numel():
-                    labels[tl:] = -100  # ignore trailing pad (pad==eos safe)
-                yield input_ids, labels, t_item
-            return
-
-        # Legacy non-packed path (escape hatch only).
-        with open(path, "r", encoding="utf-8") as f:
-            for line in f:
-                try:
-                    obj = json.loads(line)
-                    text = extract_row_text(obj)
-                    if not text:
-                        continue
-                    enc = self.tokenizer(
-                        text,
-                        truncation=True,
-                        max_length=self.max_len,
-                        padding="max_length",
-                        return_tensors="pt",
-                    )
-                    input_ids = enc["input_ids"].squeeze(0)
-                    try:
-                        t_logits = next(logits_iter)
-                    except StopIteration:
-                        return
-                    t_logits = self._align_logits(t_logits, input_ids.size(0))
-                    labels = input_ids.clone()
-                    labels[input_ids == self.pad_id] = -100
-                    yield input_ids, labels, t_logits
-                except LogitAlignmentError:
-                    raise
-                except Exception:
-                    continue
-
-    def __iter__(self):
-        # TR: Offline logits için worker paralelliği kapalı
-        # EN: Disable worker parallelism for offline logits alignment
-        worker_info = get_worker_info()
-        if worker_info is not None:
-            raise RuntimeError("Precomputed logits require num_workers=0 for deterministic alignment.")
-
-        current_stage = self.current_stage
-        stage_name, path = self._stage_entry(current_stage)
-        stage_iter = self._iter_stage(stage_name, path)
-
-        while True:
-            if self.current_stage != current_stage:
-                current_stage = self.current_stage
-                stage_name, path = self._stage_entry(current_stage)
-                stage_iter = self._iter_stage(stage_name, path)
-
-            try:
-                yield next(stage_iter)
-            except StopIteration:
-                stage_iter = self._iter_stage(stage_name, path)
-
-
-def collate_fn(batch):
-    # TR: [FIX] 2 elemana sadeleştirildi (text kaldırıldı) / EN: [FIX] Simplified to 2 elements (removed text)
-    if len(batch[0]) == 3:
-        x, y, t = zip(*batch)
-        return torch.stack(x), torch.stack(y), _stack_teacher_payloads(t)
-    x, y = zip(*batch)
-    return torch.stack(x), torch.stack(y)
-
-
-# -----------------------------------------------------------------------------
-# TR: 3. BİLGİ DAMITMA KAYBI / EN: 3. KD LOSS (Knowledge Distillation)
-# -----------------------------------------------------------------------------
-def _is_sparse_topk_payload(value: Any) -> bool:
-    # A sparse Top-K teacher payload is a dict carrying matching indices/values
-    # tensors. The 'format' string is intentionally OPTIONAL: the COLLATED payload
-    # that crosses Accelerate's multi-GPU dispatch boundary is stripped to tensors
-    # only — a str/int dict value makes accelerate.utils.concatenate() raise
-    # TypeError on rank 0 while peers block at the next collective (NCCL hang).
-    # Dense payloads are bare Tensors, so a dict with both tensors is unambiguously
-    # the sparse case; if 'format' is present it must still be a known sparse tag.
-    if not isinstance(value, dict):
-        return False
-    if not (isinstance(value.get("indices"), torch.Tensor)
-            and isinstance(value.get("values"), torch.Tensor)):
-        return False
-    fmt = value.get("format")
-    return fmt is None or fmt in ("topk_sparse_v1", "topk_packed_v1")
-
-
-def _align_sparse_topk_payload(payload: dict, target_len: int, fill_value: float = -1e4) -> dict:
-    indices = payload["indices"].long()
-    values = payload["values"].float()
-    if indices.dim() == 3 and indices.size(0) == 1:
-        indices = indices.squeeze(0)
-        values = values.squeeze(0)
-    if indices.shape != values.shape or indices.dim() != 2:
-        raise ValueError(
-            "Sparse Top-K teacher payload must use matching [seq, top_k] indices/values tensors."
-        )
-    seq_len, top_k = indices.shape
-    if seq_len > target_len:
-        indices = indices[:target_len]
-        values = values[:target_len]
-    elif seq_len < target_len:
-        pad_len = target_len - seq_len
-        index_pad = torch.zeros(pad_len, top_k, dtype=indices.dtype)
-        value_pad = torch.full((pad_len, top_k), fill_value, dtype=values.dtype)
-        indices = torch.cat([indices, index_pad], dim=0)
-        values = torch.cat([values, value_pad], dim=0)
-    return {
-        "format": "topk_sparse_v1",
-        "indices": indices,
-        "values": values,
-        "vocab_size": int(payload.get("vocab_size", 0)),
-        "top_k": int(payload.get("top_k", top_k)),
-    }
-
-
-def _stack_teacher_payloads(payloads: tuple[Any, ...]) -> Any:
-    if all(isinstance(item, torch.Tensor) for item in payloads):
-        return torch.stack(payloads)
-    if all(_is_sparse_topk_payload(item) for item in payloads):
-        vocab_sizes = {int(item.get("vocab_size", 0)) for item in payloads}
-        top_ks = {int(item.get("top_k", item["indices"].size(-1))) for item in payloads}
-        if len(vocab_sizes) != 1 or len(top_ks) != 1:
-            raise ValueError("Sparse Top-K batch has inconsistent vocab_size or top_k metadata.")
-        # TENSOR-ONLY stacked payload. The non-tensor metadata (format/vocab_size/
-        # top_k) is deliberately dropped here: it is not read downstream (the KD loss
-        # uses indices/values; top_k == indices.size(-1); sparse-ness is detected from
-        # the tensors), and keeping it would crash accelerate's dispatch-time
-        # concatenate() on multi-GPU (str/int values) -> NCCL hang on the canonical
-        # offline_clean lane. The consistency check above still runs before we drop it.
-        return {
-            "indices": torch.stack([item["indices"].long() for item in payloads]),
-            "values": torch.stack([item["values"].float() for item in payloads]),
-        }
-    raise ValueError("Cannot mix dense and sparse teacher logits in the same batch.")
-
-
-def _teacher_payload_to_device(payload: Any, device: torch.device) -> Any:
-    if _is_sparse_topk_payload(payload):
-        return {
-            **payload,
-            "indices": payload["indices"].to(device=device, dtype=torch.long),
-            "values": payload["values"].to(device=device, dtype=torch.float32),
-        }
-    return payload.to(device)
-
-
-def _shift_teacher_payload(payload: Any) -> Any:
-    if _is_sparse_topk_payload(payload):
-        indices = payload["indices"]
-        values = payload["values"]
-        if indices.dim() == 3:
-            indices = indices[:, :-1, :].contiguous()
-            values = values[:, :-1, :].contiguous()
-        elif indices.dim() == 2:
-            indices = indices[:-1, :].contiguous()
-            values = values[:-1, :].contiguous()
-        else:
-            raise ValueError(f"Invalid sparse teacher indices shape: {tuple(indices.shape)}")
-        return {**payload, "indices": indices, "values": values}
-    return payload[..., :-1, :].contiguous()
-
-
-def _kd_loss_sparse_topk(student_logits, teacher_payload: dict, temp, mask=None):
-    indices = teacher_payload["indices"].to(device=student_logits.device, dtype=torch.long)
-    values = teacher_payload["values"].to(device=student_logits.device, dtype=torch.float32)
-    if indices.shape != values.shape or indices.dim() not in (2, 3):
-        raise ValueError(
-            "Sparse Top-K teacher payload must use matching [seq, top_k] or [batch, seq, top_k] tensors."
-        )
-    if tuple(indices.shape[:-1]) != tuple(student_logits.shape[:-1]):
-        raise ValueError(
-            f"Sparse KD shape mismatch: student={tuple(student_logits.shape)}, "
-            f"teacher_indices={tuple(indices.shape)}"
-        )
-    if indices.numel() and int(indices.max().item()) >= int(student_logits.size(-1)):
-        raise ValueError(
-            "Sparse teacher indices exceed student vocab dimension; tokenizer/vocab sync is required."
-        )
-
-    T = float(temp)
-    student_topk = torch.gather(student_logits.float(), dim=-1, index=indices)
-    token_kl = F.kl_div(
-        F.log_softmax(student_topk / T, dim=-1),
-        F.softmax(values / T, dim=-1),
-        reduction="none",
-    ).sum(dim=-1) * (T * T)
-    if mask is not None:
-        mask = mask.to(device=token_kl.device, dtype=torch.bool)
-        if mask.shape != token_kl.shape:
-            raise ValueError(f"KD mask shape mismatch: expected {token_kl.shape}, got {mask.shape}")
-        if not bool(mask.any().item()):
-            return token_kl.new_zeros(())
-        token_kl = token_kl.masked_select(mask)
-    return token_kl.mean()
-
-
-def kd_loss_safe(student_logits, teacher_logits, temp, mask=None):
-    if _is_sparse_topk_payload(teacher_logits):
-        return _kd_loss_sparse_topk(student_logits, teacher_logits, temp, mask=mask)
-
-    min_vocab = min(student_logits.size(-1), teacher_logits.size(-1))
-    s = student_logits[..., :min_vocab].float()
-    t = teacher_logits[..., :min_vocab].float().to(s.device)
-    T = float(temp)
-    token_kl = F.kl_div(
-        F.log_softmax(s / T, dim=-1),
-        F.softmax(t / T, dim=-1),
-        reduction="none",
-    ).sum(dim=-1) * (T * T)
-    if mask is not None:
-        mask = mask.to(device=token_kl.device, dtype=torch.bool)
-        if mask.shape != token_kl.shape:
-            raise ValueError(f"KD mask shape mismatch: expected {token_kl.shape}, got {mask.shape}")
-        if not bool(mask.any().item()):
-            return token_kl.new_zeros(())
-        token_kl = token_kl.masked_select(mask)
-    return token_kl.mean()
-
-# TR: V21.0 DÜZELTME: WSD Zamanlama (Isınma-Sabit-Azalma) Grokking için
-# EN: V21.0 FIX: WSD Scheduler (Warmup-Stable-Decay) for Grokking
-def get_wsd_schedule(optimizer, num_warmup_steps, num_training_steps, min_lr_ratio=0.1, stable_ratio=0.8):
-    """TR: Isınma, X% sabit tut, sonra keskin azalt. / EN: Warmup up, hold stable for X%, then decay sharply."""
-    from torch.optim.lr_scheduler import LambdaLR
-    def lr_lambda(current_step):
-        if current_step < num_warmup_steps:
-            return float(current_step) / float(max(1, num_warmup_steps))
-        
-        stable_steps = int(num_training_steps * stable_ratio)
-        if current_step < stable_steps:
-            return 1.0 # TR: Sabit Faz / EN: Stable Phase
-        
-        # TR: Azalma Fazı (1.0'dan min_lr_ratio'ya Kosinüs) / EN: Decay Phase (Cosine from 1.0 to min_lr_ratio)
-        decay_steps = num_training_steps - stable_steps
-        progress = float(current_step - stable_steps) / float(max(1, decay_steps))
-        return max(min_lr_ratio, 0.5 * (1.0 + math.cos(math.pi * progress)))
-        
-    return LambdaLR(optimizer, lr_lambda)
-
-
-
-
-# -----------------------------------------------------------------------------
-# TR: 5. ÖĞRETMEN VE MODEL KURULUMU / EN: 5. TEACHER & MODEL SETUP
+# 5. TEACHER & MODEL SETUP
 # -----------------------------------------------------------------------------
 class TeacherBundle:
     def __init__(self):
@@ -1289,7 +528,7 @@ class TeacherBundle:
             sys.exit(1)
 
     @torch.no_grad()
-    def get_logits(self, input_ids):
+    def get_logits(self, input_ids: torch.Tensor) -> Optional[torch.Tensor]:
         if self.model is None:
             return None
         # Ensure input is on correct device (Accelerate handles this but good to be safe)
@@ -1329,13 +568,13 @@ def _tokenizer_candidates() -> list[Path]:
     return unique
 
 
-def _ensure_pad_token(tokenizer):
+def _ensure_pad_token(tokenizer: Any) -> Any:
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     return tokenizer
 
 
-def _load_local_runtime_tokenizer():
+def _load_local_runtime_tokenizer() -> Any:
     last_error: Exception | None = None
     for path in _tokenizer_candidates():
         if not path.exists():
@@ -1354,14 +593,11 @@ def _load_local_runtime_tokenizer():
     raise FileNotFoundError("no local tokenizer artifact found")
 
 
-def load_teacher_tokenizer(prefer_local: bool = False):
+def load_teacher_tokenizer(prefer_local: bool = False) -> Any:
     """
-    TR: Egitim tokenizer'ini TEK kaynaktan (resolve_tokenizer) yukle. Politika
-        (teacher vs TR) yalnizca cfg.use_tr_tokenizer ile belirlenir; bu sayede
-        train/eval/demo ayni tokenizer'i alir. gpt2/sessiz fallback YOK.
-    EN: Load the training tokenizer from the single source of truth
-        (resolve_tokenizer). The teacher-vs-TR choice is governed solely by
-        cfg.use_tr_tokenizer so train/eval/demo agree. No gpt2/silent fallback.
+    Load the training tokenizer from the single source of truth
+    (resolve_tokenizer). The teacher-vs-TR choice is governed solely by
+    cfg.use_tr_tokenizer so train/eval/demo agree. No gpt2/silent fallback.
 
     The legacy ``prefer_local`` argument is accepted for backward compatibility
     but no longer changes the tokenizer family -- policy lives in the config.
@@ -1370,13 +606,10 @@ def load_teacher_tokenizer(prefer_local: bool = False):
 
 
 # -----------------------------------------------------------------------------
-# TR: 5.5 OPTİMİZER YARDIMCISI / EN: 5.5 OPTIMIZER HELPER
+# 5.5 OPTIMIZER HELPER
 # -----------------------------------------------------------------------------
-def build_optimizer(body_params, router_params, cfg):
-    """TR: [H3] Optimizer'i construction'da, use_galore/use_8bit_adam'i ONURLANDIRARAK
-    kur. Aktif sinifi ACIKCA logla -> config == gercek; "GaLore aciktir ama aslinda
-    duz AdamW calisiyor" sessiz uyusmazligini bitirir.
-    EN: [H3] Construct the optimizer honoring use_galore/use_8bit_adam (the class can
+def build_optimizer(body_params: List[Any], router_params: List[Any], cfg: Any) -> torch.optim.Optimizer:
+    """[H3] Construct the optimizer honoring use_galore/use_8bit_adam (the class can
     only be chosen here). Logs the ACTIVE class so config==reality (kills the
     phantom-GaLore mismatch)."""
     body_group = {"params": body_params, "lr": cfg.learning_rate, "weight_decay": cfg.weight_decay}
@@ -1411,47 +644,12 @@ def build_optimizer(body_params, router_params, cfg):
 
 
 # -----------------------------------------------------------------------------
-# TR: 6. DONDURMA DESTEĞİ / EN: 6. FREEZE SUPPORT
+# 7. MAIN TRAIN LOOP
 # -----------------------------------------------------------------------------
-def apply_freeze_policy(model, freeze_core_layers: bool):
-    """TR: Çekirdek katmanları dondur, MoE Router ve Liquid Layers eğitilebilir kalsın. / EN: Freeze core layers, keep MoE Router and Liquid Layers trainable."""
-    if not freeze_core_layers:
-        return
-
-    print("🔒 Applying freeze policy: Core layers frozen, MoE/Liquid trainable")
-
-    for name, param in model.named_parameters():
-        # TR: Varsayılan olarak her şeyi dondur / EN: Freeze everything by default
-        param.requires_grad = False
-
-        # TR: MoE router ve paylaşılan uzmanı aç / EN: Unfreeze MoE router and shared expert
-        if 'router' in name or 'shared_expert' in name or 'shared_gate' in name:
-            param.requires_grad = True
-
-        # TR: Liquid katmanlarını aç / EN: Unfreeze Liquid layers
-        if 'liquid' in name.lower() or 'tau' in name:
-            param.requires_grad = True
-
-        # TR: LM head ve embedding'leri aç (her zaman eğitilebilir) / EN: Unfreeze LM head and embeddings (always trainable)
-        if 'lm_head' in name or 'tok_embeddings' in name:
-            param.requires_grad = True
-
-        # TR: [TITAN FIX]: LayerNorm'lar her zaman eğitilebilir olmalı / EN: [TITAN FIX]: LayerNorms should always be trainable
-        if 'norm' in name.lower():
-            param.requires_grad = True
-
-    trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    total = sum(p.numel() for p in model.parameters())
-    print(f"📊 Freeze Status: {trainable / 1e6:.2f}M / {total / 1e6:.2f}M parameters trainable")
-
-
-# -----------------------------------------------------------------------------
-# TR: 7. ANA EĞİTİM DÖNGÜSÜ / EN: 7. MAIN TRAIN LOOP
-# -----------------------------------------------------------------------------
-def train():
-    # TR: Accelerate Başlatma / EN: Accelerate Init
+def train() -> None:
+    # Accelerate Init
     accelerator_project_config = ProjectConfiguration(project_dir=str(project_root), logging_dir=str(project_root / "logs"))
-    # TR: V24.0: Ampere (A100) hızlandırması için TF32 / EN: V24.0: TF32 for Ampere (A100) speedup
+    # V24.0: TF32 for Ampere (A100) speedup
     if torch.cuda.is_available():
         torch.set_float32_matmul_precision('high')
         print("⚡ TensorFloat-32 (TF32) activated for A100.")
@@ -1463,10 +661,10 @@ def train():
         log_with="all"
     )
 
-    # TR: Her şeyi seed'le / EN: Seed everything
+    # Seed everything
     set_seed(cfg.seed + accelerator.process_index)
     
-    # TR: Sadece ana süreç doğrulaması / EN: Only main process validation
+    # Only main process validation
     if accelerator.is_main_process:
         validate_config(cfg, stage="pre")
 
@@ -1497,8 +695,7 @@ def train():
 
 
     # V27.0 DISTILLATION MANAGER: Switch between Online (TeacherBundle) and Offline (Precomputed Logits)
-    # TR: Offline logits modu (öğretmen model yüklemeden distill)
-    # EN: Offline logits mode (distill without loading teacher model)
+    # Offline logits mode (distill without loading teacher model)
     use_offline_logits = getattr(cfg, "use_precomputed_logits", False)
     distill_manager = None
     teacher = None
@@ -1541,14 +738,14 @@ def train():
             print("⚠️  Datasets not found. Launching Data Alchemy Engine...")
             import subprocess
             try:
-                # Otomatik İndirme Tetikleyicisi
+                # Automatic download trigger
                 alchemy_script = project_root / "scripts" / "data_pipeline.py"
                 subprocess.check_call([sys.executable, str(alchemy_script)])
                 print("✅ Data Alchemy Complete. Re-checking datasets...")
 
-                # Tekrar kontrol et
+                # Re-check the datasets
                 if not all(p.exists() for p in stage_paths):
-                    # Belki sadece fallback oluştu, onu kontrol et
+                    # Maybe only the fallback file was created; check it
                     if fallback_path.exists():
                         stage_paths = [fallback_path]
                         stage_info = [("fallback", fallback_path)]
@@ -1562,9 +759,7 @@ def train():
     # Curriculum dataset
     if use_offline_logits:
         stage_names = [name for name, _ in stage_info]
-        # TR: [B2] Sadece varlik degil, KIMLIK hizalamasini da dogrula -> hizasiz
-        #     shard 'eksik' gibi ele alinir, train sessiz KD bozulmasi yapmaz.
-        # EN: [B2] Verify identity alignment (not just existence) so a misaligned
+        # [B2] Verify identity alignment (not just existence) so a misaligned
         #     shard set is treated as missing and train never silently corrupts KD.
         _verify_align = bool(getattr(cfg, "verify_logit_alignment", True))
         if not distill_manager.has_precomputed_logits(stage_names, verify_alignment=_verify_align):
@@ -1585,8 +780,7 @@ def train():
                 teacher_tokenizer = teacher.tokenizer
                 use_offline_logits = False
         else:
-            # TR: Logit'lerle senkron dataset (num_workers=0 zorunlu)
-            # EN: Logit-synced dataset (requires num_workers=0)
+            # Logit-synced dataset (requires num_workers=0)
             curriculum_ds = PrecomputedCurriculumDataset(stage_info, cfg.max_seq_len, teacher_tokenizer, distill_manager)
 
     if not use_offline_logits:
@@ -1652,9 +846,7 @@ def train():
     else:
         print(f"ℹ️  Epoch Mode Skipped. Using provided max_steps: {cfg.max_steps}")
 
-    # TR: Gercek tokenizer'dan vocab boyutunu turet (len() => eklenen ozel
-    #     token'lari da kapsar; Llama-3: 128000 attr ama 128256 len).
-    # EN: Derive vocab size from the real tokenizer via len() so added/special
+    # Derive vocab size from the real tokenizer via len() so added/special
     #     tokens are included (Llama-3: 128000 attr vs 128256 len). Closes the
     #     128256/128000 embedding/lm_head mismatch.
     cfg.vocab_size = len(teacher_tokenizer)
@@ -1669,8 +861,7 @@ def train():
         validate_config(cfg, stage="post")
 
     student = MertFormer()
-    # TR: Embedding/lm_head'i tokenizer'a kesin hizala (resize guvenlik agi).
-    # EN: Hard-align embedding/lm_head to the tokenizer (resize safety net).
+    # Hard-align embedding/lm_head to the tokenizer (resize safety net).
     student.resize_token_embeddings(cfg.vocab_size)
     # Note: .to(device) is handled by accelerator.prepare, but explicit move is fine before prepare
     student.to(student_device)
@@ -1713,8 +904,8 @@ def train():
     preflight_param_report(student)
 
     # GROKKING STRATEGY: Differential Learning Rates
-    # Router ve Tau parametrelerine yüksek LR, düşük Decay vererek 
-    # "yönlendirme mantığını" hızlı çözmesini (Grokking) sağlıyoruz.
+    # Router and Tau parameters get a higher LR and lower weight decay so the
+    # model resolves the "routing logic" quickly (Grokking).
     router_params = []
     body_params = []
     for n, p in student.named_parameters():
@@ -1727,8 +918,7 @@ def train():
 
     print(f"🧠 Grokking Setup: {len(router_params)} Router Params | {len(body_params)} Body Params")
 
-    # TR: [H3] Optimizer'i cfg.use_galore/use_8bit_adam'a gore gercekten kur.
-    # EN: [H3] Build the real optimizer per cfg.use_galore/use_8bit_adam.
+    # [H3] Build the real optimizer per cfg.use_galore/use_8bit_adam.
     opt = build_optimizer(body_params, router_params, cfg)
 
     # V21.0 FIX: WSD Scheduler (Warmup-Stable-Decay) moved to global scope
@@ -1742,8 +932,7 @@ def train():
 
     if resume_payload is not None:
         resume_state = resume_payload.get("state", {})
-        # TR: [H3] Optimizer sinifi degistiyse state_dict uyumsuz -> uyar.
-        # EN: [H3] Warn if the optimizer class changed (state_dict incompatible).
+        # [H3] Warn if the optimizer class changed (state_dict incompatible).
         saved_opt_class = resume_state.get("optimizer_class")
         if saved_opt_class and saved_opt_class != type(opt).__name__ and accelerator.is_main_process:
             print(
@@ -1756,8 +945,7 @@ def train():
                 opt.load_state_dict(resume_state["optimizer"])
             if "scheduler" in resume_state:
                 scheduler.load_state_dict(resume_state["scheduler"])
-            # TR: [MED] RNG durumlarini geri yukle -> tekrar-uretilebilir resume.
-            # EN: [MED] Restore RNG states for reproducible resume.
+            # [MED] Restore RNG states for reproducible resume.
             if "rng_state" in resume_state:
                 _restore_rng_state(resume_state["rng_state"])
             if accelerator.is_main_process:
@@ -2044,12 +1232,7 @@ def train():
                         shift_logits = s_logits[..., :-1, :].contiguous()
                         shift_labels = labels[..., 1:].contiguous()
 
-                        # TR: [H2] Datasets pad pozisyonlarini -100 (kanonik ignore)
-                        #     olarak isaretler. pad_id != eos_id ise geriye-uyum icin
-                        #     pad_id'yi de yok say; AMA pad_id == eos_id ise pad_id ile
-                        #     maskeleme YAPMA, yoksa EOS denetimi sessizce dusurulur
-                        #     (model durmayi ogrenemez = orijinal bug).
-                        # EN: [H2] Datasets mark padding as -100 (canonical ignore).
+                        # [H2] Datasets mark padding as -100 (canonical ignore).
                         #     When pad_id != eos_id, also ignore raw pad_id (back-compat);
                         #     when pad_id == eos_id, do NOT mask by ==pad_id, else EOS
                         #     supervision is dropped (the bug: model never learns to stop).
@@ -2089,14 +1272,11 @@ def train():
                         aux_coef = getattr(cfg, "router_aux_loss_coef", 0.01)
                         total_loss = (1.0 - alpha) * loss_ce + alpha * loss_distill + aux_coef * aux_loss
 
-                    # NaN Check — [H1] COLLECTIVE skip decision.
-                    # TR: Multi-GPU'da bir rank NaN gorup 'continue' ederken digerleri
-                    #     backward/clip_grad_norm_ (NCCL collective) yapinca deadlock
-                    #     olurdu. Skip bayragini all-reduce edip TUM rank'leri ayni
-                    #     dala sokuyoruz (sum>0 -> herkes atlar).
-                    # EN: On multi-GPU a single-rank 'continue' would deadlock peers at
-                    #     the collective backward/clip. All-reduce the skip flag so every
-                    #     rank takes the same branch (sum>0 -> all skip together).
+                    # NaN Check - [H1] COLLECTIVE skip decision.
+                    # On multi-GPU a single-rank 'continue' would deadlock peers at the
+                    #     collective backward/clip_grad_norm_ (NCCL collective). All-reduce
+                    #     the skip flag so every rank takes the same branch
+                    #     (sum>0 -> all skip together).
                     nan_flag = torch.tensor(
                         [0.0 if torch.isfinite(total_loss) else 1.0],
                         device=total_loss.device,
@@ -2119,10 +1299,7 @@ def train():
                     # Track micro-batch stats (for accurate averages)
                     accum_loss += total_loss.item()
                     accum_count += 1
-                    # TR: [B2/budget] Pad token'lari "token" sayma. Datasets pad'i -100
-                    #     ile isaretler; yalniz gercek (supervised) token'lari say ki
-                    #     token-butce provenance'i sisirilmesin.
-                    # EN: [B2/budget] Don't count pad tokens. Datasets mark pad as -100;
+                    # [B2/budget] Don't count pad tokens. Datasets mark pad as -100;
                     #     count only real (supervised) tokens so the token-budget
                     #     provenance is not pad-inflated.
                     real_tokens = int((labels != -100).sum().item())
@@ -2564,12 +1741,7 @@ def train():
                     opt.zero_grad(set_to_none=True)
                     if torch.cuda.is_available():
                         torch.cuda.empty_cache()
-                    # TR: [H1] Tek bir rank'te OOM olup 'continue' ile retry yapmak DDP'yi
-                    #     desync eder (peer'lar collective backward/clip'te NCCL timeout'a
-                    #     kadar bekler). Multi-GPU'da guvenli retry YOK -> temiz safety
-                    #     brake ile dur; operator daha kucuk batch ile resume eder.
-                    #     Tek-process'te retry guvenli.
-                    # EN: [H1] A single-rank OOM retry desyncs DDP (peers hang at the
+                    # [H1] A single-rank OOM retry desyncs DDP (peers hang at the
                     #     collective backward/clip -> NCCL timeout). No safe multi-GPU
                     #     retry -> clean safety-brake stop; operator resumes with a
                     #     smaller batch. Single-process retry stays safe.
