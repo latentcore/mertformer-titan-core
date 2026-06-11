@@ -1,6 +1,6 @@
 {
-  "generated_local": "2026-06-11T16:08:20",
-  "sync_mode": "audit",
+  "generated_local": "2026-06-11T20:48:07",
+  "sync_mode": "apply",
   "scope": "Desktop/Documents/Downloads plus application roots for project-related artifacts; unrelated applications remain audit-only.",
   "repo_root": "<REPO_ROOT>",
   "audited_roots": [
@@ -35,8 +35,8 @@
       "exists": true
     }
   ],
-  "entry_count": 3764,
-  "immutable_evidence_count": 819,
+  "entry_count": 3786,
+  "immutable_evidence_count": 831,
   "entries": [
     {
       "path": "/Applications/mertformer-titan-core.zip",
@@ -164,7 +164,7 @@
       "kind": "file",
       "exists": true,
       "size_bytes": 1698,
-      "sha256": "6392c62634a3d13a806c9a1a050a07db304b0652e2f2a04713e344eb41e13209",
+      "sha256": "96d48c62d878f1a4bdd1b4c6c7254e7eb1b284af8a4e6ff4bc4d9c939a49ce61",
       "duplicate_rank": 1,
       "duplicate_group_size": 1,
       "disposition": "sync_with_canonical_source",
@@ -7630,6 +7630,171 @@
     },
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_160226/RUN_FINAL_BUILD.ps1",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 2345,
+      "sha256": "23bf7a0ca552317f9a1b0910bda8f12fb8ecdb702ebf358178261eaaf38240ec",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "keep_as_external_artifact",
+      "mutation_policy": "audit_only",
+      "immutable_evidence": false,
+      "immutable_reason": null,
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_204725",
+      "source_root": "Desktop",
+      "kind": "dir",
+      "exists": true,
+      "size_bytes": null,
+      "sha256": null,
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "keep_project_directory",
+      "mutation_policy": "project_safe_cleanup",
+      "immutable_evidence": false,
+      "immutable_reason": null,
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_204725.zip",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 134922,
+      "sha256": "af52c83c1c8498658bac4ab8ba7655cf6d9041bd0b8d6acb0ea22d729b865d6f",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "keep_as_external_artifact",
+      "mutation_policy": "audit_only",
+      "immutable_evidence": false,
+      "immutable_reason": null,
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_204725.zip.sha256",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 117,
+      "sha256": "a8525d6a61ac741b79b88c99359e2351d81f12856ee6f3e0e5fb214d3c85836b",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "keep_sidecar_metadata",
+      "mutation_policy": "audit_only",
+      "immutable_evidence": false,
+      "immutable_reason": null,
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_204725/build_chess_5080_windows_delivery.py",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 10867,
+      "sha256": "3dbe343a97c7fd6eb2fa6ad8015142d1d83a92914b10655fb482e7ed3e8a30da",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "keep_as_external_artifact",
+      "mutation_policy": "audit_only",
+      "immutable_evidence": false,
+      "immutable_reason": null,
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_204725/build_windows_delivery.bat",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 379,
+      "sha256": "1c7c007114a08808e770e46cd34acce2e558edeeb669537984df8d4900721a17",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "keep_as_external_artifact",
+      "mutation_policy": "audit_only",
+      "immutable_evidence": false,
+      "immutable_reason": null,
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_204725/build_windows_delivery.ps1",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 395,
+      "sha256": "e3aaf3cae30bb2d65d57eb68190b685083e6b078167b71cf90bce4a41b38592d",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "keep_as_external_artifact",
+      "mutation_policy": "audit_only",
+      "immutable_evidence": false,
+      "immutable_reason": null,
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_204725/chess_5080_onefile.py",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 799081,
+      "sha256": "f4286998b4382ac7ed86c0035e40de1f5c07aef400b33c09ee97639cafd0e49f",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "keep_as_external_artifact",
+      "mutation_policy": "audit_only",
+      "immutable_evidence": false,
+      "immutable_reason": null,
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_204725/delivery_manifest.json",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 2212,
+      "sha256": "01091293d0a0e9a9e78ff8b83c5e98c2aa4f6bc45cda73ab733081c086f710c5",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "keep_as_external_artifact",
+      "mutation_policy": "audit_only",
+      "immutable_evidence": false,
+      "immutable_reason": null,
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_204725/README_BUILD.md",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 3769,
+      "sha256": "a41965f62db07c8f1eba3c9c5b1220a07454ce75aecd79a1a77c767ac1c5f7c0",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "keep_as_external_artifact",
+      "mutation_policy": "audit_only",
+      "immutable_evidence": false,
+      "immutable_reason": null,
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_204725/RUN_FINAL_BUILD.bat",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 103,
+      "sha256": "19d90acb27c03f94710de707119b74b8a7816bcca01a96ce423961ebe466880b",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "keep_as_external_artifact",
+      "mutation_policy": "audit_only",
+      "immutable_evidence": false,
+      "immutable_reason": null,
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260611_204725/RUN_FINAL_BUILD.ps1",
       "source_root": "Desktop",
       "kind": "file",
       "exists": true,
@@ -15700,6 +15865,186 @@
     },
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_160726.zip.sha256",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 21,
+      "sha256": "3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_203217.zip",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 3,
+      "sha256": "4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_203217.zip.sha256",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 21,
+      "sha256": "3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_203255.zip",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 3,
+      "sha256": "4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_203255.zip.sha256",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 21,
+      "sha256": "3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_204000.zip",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 3,
+      "sha256": "4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_204000.zip.sha256",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 21,
+      "sha256": "3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_204119.zip",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 3,
+      "sha256": "4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_204119.zip.sha256",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 21,
+      "sha256": "3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_204324.zip",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 3,
+      "sha256": "4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_204324.zip.sha256",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 21,
+      "sha256": "3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_204547.zip",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 3,
+      "sha256": "4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260611_204547.zip.sha256",
       "source_root": "Desktop",
       "kind": "file",
       "exists": true,
@@ -26434,21 +26779,6 @@
       "duplicate_group_size": 1,
       "disposition": "keep_as_external_artifact",
       "mutation_policy": "audit_only",
-      "immutable_evidence": false,
-      "immutable_reason": null,
-      "canonical_source": null
-    },
-    {
-      "path": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/mertformer_release.zip",
-      "source_root": "Documents",
-      "kind": "file",
-      "exists": true,
-      "size_bytes": 108406118,
-      "sha256": "d0b0f048e408edd9fbcef98e935d4dd4c95e87754373d8920e397e25fca06f36",
-      "duplicate_rank": 3,
-      "duplicate_group_size": 3,
-      "disposition": "delete_as_stale_generated",
-      "mutation_policy": "project_safe_cleanup",
       "immutable_evidence": false,
       "immutable_reason": null,
       "canonical_source": null
@@ -56500,25 +56830,25 @@
     }
   ],
   "sync_report": {
-    "sync_mode": "audit",
+    "sync_mode": "apply",
     "audit_rows": [
       {
         "id": "documents_release_zip",
         "source": "<REPO_ROOT>/artifacts/mertformer_release.zip",
         "target": "<HOME>/Documents/mertformer-titan-core.zip",
-        "status": "match",
-        "changed": false,
-        "source_sha256": "d0b0f048e408edd9fbcef98e935d4dd4c95e87754373d8920e397e25fca06f36",
-        "target_sha256": "d0b0f048e408edd9fbcef98e935d4dd4c95e87754373d8920e397e25fca06f36"
+        "status": "copied",
+        "changed": true,
+        "source_sha256": "f2e7b7362e49eefb1a917240a25d75a500fc7b5fec54f976da2b659eb5a6cce5",
+        "target_sha256": "f2e7b7362e49eefb1a917240a25d75a500fc7b5fec54f976da2b659eb5a6cce5"
       },
       {
         "id": "applications_release_zip",
         "source": "<REPO_ROOT>/artifacts/mertformer_release.zip",
         "target": "/Applications/mertformer-titan-core.zip",
-        "status": "match",
-        "changed": false,
-        "source_sha256": "d0b0f048e408edd9fbcef98e935d4dd4c95e87754373d8920e397e25fca06f36",
-        "target_sha256": "d0b0f048e408edd9fbcef98e935d4dd4c95e87754373d8920e397e25fca06f36"
+        "status": "copied",
+        "changed": true,
+        "source_sha256": "f2e7b7362e49eefb1a917240a25d75a500fc7b5fec54f976da2b659eb5a6cce5",
+        "target_sha256": "f2e7b7362e49eefb1a917240a25d75a500fc7b5fec54f976da2b659eb5a6cce5"
       },
       {
         "id": "desktop_repo_handoff",
@@ -56526,8 +56856,8 @@
         "target": "<HOME>/Desktop/MertFormer_Build30_Max_Closure_Handoff.md",
         "status": "match",
         "changed": false,
-        "source_sha256": "6392c62634a3d13a806c9a1a050a07db304b0652e2f2a04713e344eb41e13209",
-        "target_sha256": "6392c62634a3d13a806c9a1a050a07db304b0652e2f2a04713e344eb41e13209"
+        "source_sha256": "96d48c62d878f1a4bdd1b4c6c7254e7eb1b284af8a4e6ff4bc4d9c939a49ce61",
+        "target_sha256": "96d48c62d878f1a4bdd1b4c6c7254e7eb1b284af8a4e6ff4bc4d9c939a49ce61"
       },
       {
         "id": "applications_chess_onefile",
@@ -56540,7 +56870,73 @@
       }
     ],
     "handoff_dir": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11",
-    "handoff_copies": [],
+    "handoff_copies": [
+      {
+        "source": "<REPO_ROOT>/artifacts/target_machine_handoff_bundle.zip",
+        "target": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/target_machine_handoff_bundle.zip",
+        "sha256": "d66a9f524fb924036cb21ee80790bb13eb86248fafa6440229c8b9eeb5df8b0b"
+      },
+      {
+        "source": "<REPO_ROOT>/artifacts/target_machine_handoff_bundle.zip.sha256",
+        "target": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/target_machine_handoff_bundle.zip.sha256",
+        "sha256": "1471299ace4a1bac33218235ab1c4b7020890c879911349ea9bd564a539ff2fc"
+      },
+      {
+        "source": "<REPO_ROOT>/artifacts/mertformer_release.zip",
+        "target": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/mertformer_release.zip",
+        "sha256": "f2e7b7362e49eefb1a917240a25d75a500fc7b5fec54f976da2b659eb5a6cce5"
+      },
+      {
+        "source": "<REPO_ROOT>/artifacts/mertformer_release.zip.sha256",
+        "target": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/mertformer_release.zip.sha256",
+        "sha256": "71daa61f028be33202ba0cf8dd98da54ec79c6a2d0cb62f271e9fe17d15a3458"
+      },
+      {
+        "source": "<REPO_ROOT>/reports/final_truth_matrix.md",
+        "target": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/final_truth_matrix.md",
+        "sha256": "a3023718b0604f1997c86e955ac5ee57e358dac91f49645cd6d2299d3fdf1667"
+      },
+      {
+        "source": "<REPO_ROOT>/reports/repo_external_handoff.md",
+        "target": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/repo_external_handoff.md",
+        "sha256": "96d48c62d878f1a4bdd1b4c6c7254e7eb1b284af8a4e6ff4bc4d9c939a49ce61"
+      },
+      {
+        "source": "<REPO_ROOT>/reports/final_repo_audit.md",
+        "target": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/final_repo_audit.md",
+        "sha256": "f241fd6ba3233161763f194d66a0d69923b8d96ba5a08057d9eb502d1f4110d9"
+      },
+      {
+        "source": "<REPO_ROOT>/reports/train_readiness_decision.md",
+        "target": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/train_readiness_decision.md",
+        "sha256": "6984cb6e576f3db3fdd7ba0726d5aad94b1d0f17d7935afec80a9225df2d7cd7"
+      },
+      {
+        "source": "<REPO_ROOT>/reports/target_machine_handoff_manifest.md",
+        "target": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/target_machine_handoff_manifest.md",
+        "sha256": "820b2284e3a0cc7a6b11474b80a5858e4b8c60fbaaeef8c9b4b1c11f6a1a1627"
+      },
+      {
+        "source": "<REPO_ROOT>/INTERNAL_AGI_GAP.md",
+        "target": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/INTERNAL_AGI_GAP.md",
+        "sha256": "f4a6d63b031ef4b8c3db928f44c56fda3b652bb19b1e66634c0d7e9d2f6fbc9b"
+      },
+      {
+        "source": "<REPO_ROOT>/INTERNAL_AGI_GAP_TR.md",
+        "target": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/INTERNAL_AGI_GAP_TR.md",
+        "sha256": "8602371ddc283ae5f8ca9bcf4a11b131912c15070ca956c11cb8de5995ddc8a4"
+      },
+      {
+        "source": "<REPO_ROOT>/reports/scoped_external_intake_matrix.md",
+        "target": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/scoped_external_intake_matrix.md",
+        "sha256": "ed219f25c05dd82fe4935c89cd3afb4e16e3559b8e39238b6f69ff8c3eaeca8d"
+      },
+      {
+        "source": "<REPO_ROOT>/reports/scoped_external_intake_matrix.json",
+        "target": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_11/scoped_external_intake_matrix.json",
+        "sha256": "16e212ae4a986b8ec703e3e452b5b79d38a9cccd03a7b8afe4a329ad945d76dc"
+      }
+    ],
     "apply_errors": []
   },
   "immutable_report_json": "<REPO_ROOT>/reports/immutable_evidence_register.json",

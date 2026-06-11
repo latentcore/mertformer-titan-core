@@ -1372,95 +1372,13 @@ def load_teacher_tokenizer(prefer_local: bool = False):
 # -----------------------------------------------------------------------------
 # TR: 5.5 OPTİMİZER YARDIMCISI / EN: 5.5 OPTIMIZER HELPER
 # -----------------------------------------------------------------------------
-def rebuild_optimizer(model, opt, cfg):
-    """
-    TR: Optimizer gruplarını mevcut requires_grad durumuna göre yeniler.
-    EN: Rebuilds optimizer param groups based on current requires_grad state.
-    """
-    print("🔧 REBUILDING OPTIMIZER GROUPS...")
-    router_params, body_params = [], []
-    for n, p in model.named_parameters():
-        if not p.requires_grad:
-            continue
-        if "router" in n or "tau" in n or "shared_gate" in n:
-            router_params.append(p)
-        else:
-            body_params.append(p)
-
-    # [V27.0] GaLore & 8-bit Optimizer Logic
-    if cfg.use_galore and galore_torch is not None:
-        print(f"🚀 OPTIMIZER: Using GaLore + {'8-bit' if cfg.use_8bit_adam else 'Full'} AdamW")
-        optim_cls = galore_torch.GaLoreAdamW8bit if cfg.use_8bit_adam else galore_torch.GaLoreAdamW
-        
-        # Helper to create param groups with GaLore specific settings
-        opt.param_groups.clear()
-        
-        # Body (Rank projected)
-        opt.add_param_group({
-            'params': body_params,
-            'lr': cfg.learning_rate,
-            'weight_decay': cfg.weight_decay,
-            'rank': 128, # GaLore Rank
-            'update_proj_gap': 200,
-            'scale': 0.25
-        })
-        
-        # Router (Full rank sensitive) -> Keep standard or high rank
-        opt.add_param_group({
-            'params': router_params,
-            'lr': cfg.learning_rate * 1.5,
-            'weight_decay': 1e-4,
-            'rank': 64, 
-            'update_proj_gap': 200,
-            'scale': 0.25
-        })
-        
-    elif cfg.use_8bit_adam:
-        try:
-            import bitsandbytes as bnb
-            print("🚀 OPTIMIZER: Using Standard 8-bit AdamW")
-            # We need to re-init optimizer completely if class changes, 
-            # but rebuild_optimizer assumes 'opt' instance. 
-            # Limitation: changing optimizer class mid-flight is hard. 
-            # We assume initial optimizer IS correct class.
-            
-            # Re-assign params
-            opt.param_groups.clear()
-            opt.add_param_group({'params': body_params, 'lr': cfg.learning_rate, 'weight_decay': cfg.weight_decay})
-            opt.add_param_group({'params': router_params, 'lr': cfg.learning_rate * 1.5, 'weight_decay': 1e-4})
-            
-        except ImportError:
-            print("⚠️ 8-bit Adam requested but bitsandbytes not found. Using Standard AdamW.")
-            # Fallback standard logic
-            opt.param_groups.clear()
-            opt.add_param_group({'params': body_params, 'lr': cfg.learning_rate, 'weight_decay': cfg.weight_decay})
-            opt.add_param_group({'params': router_params, 'lr': cfg.learning_rate * 1.5, 'weight_decay': 1e-4})
-            
-    else:
-        # Standard Fallback
-        opt.param_groups.clear()
-        opt.add_param_group({
-            'params': body_params,
-            'lr': cfg.learning_rate,
-            'weight_decay': cfg.weight_decay
-        })
-        opt.add_param_group({
-            'params': router_params,
-            'lr': cfg.learning_rate * 1.5, # Grokking Boost (Safe Mode: 1.5x)
-            'weight_decay': 1e-4
-        })
-
-    print(f"✅ Optimizer Rebuilt: {len(body_params)} Body, {len(router_params)} Router params.")
-
-
 def build_optimizer(body_params, router_params, cfg):
     """TR: [H3] Optimizer'i construction'da, use_galore/use_8bit_adam'i ONURLANDIRARAK
-    kur (sinif ancak burada secilebilir; rebuild_optimizer sadece param_group
-    degistirebiliyordu). Aktif sinifi ACIKCA logla -> config == gercek; "GaLore
-    aciktir ama aslinda duz AdamW calisiyor" sessiz uyusmazligini bitirir.
+    kur. Aktif sinifi ACIKCA logla -> config == gercek; "GaLore aciktir ama aslinda
+    duz AdamW calisiyor" sessiz uyusmazligini bitirir.
     EN: [H3] Construct the optimizer honoring use_galore/use_8bit_adam (the class can
-    only be chosen here; rebuild_optimizer could only mutate param groups). Logs the
-    ACTIVE class so config==reality (kills the phantom-GaLore mismatch)."""
+    only be chosen here). Logs the ACTIVE class so config==reality (kills the
+    phantom-GaLore mismatch)."""
     body_group = {"params": body_params, "lr": cfg.learning_rate, "weight_decay": cfg.weight_decay}
     router_group = {"params": router_params, "lr": cfg.learning_rate * 1.5, "weight_decay": 1e-4}
     opt = None

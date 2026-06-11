@@ -1,6 +1,6 @@
 {
   "schema": "target_machine_handoff_manifest_v1",
-  "generated_utc": "2026-06-11T13:08:28Z",
+  "generated_utc": "2026-06-11T17:46:50Z",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "train_allowed": true,
   "decision_reason_code": "READY_REMOTE_BOOTSTRAP",
@@ -86,7 +86,7 @@
     {
       "path": "reports/train_readiness_decision.json",
       "size_bytes": 8224,
-      "sha256": "cdbc466c333330aabca4b54600b3c85a1f04bc06cb8277204ec26cc5183463ca"
+      "sha256": "d36e74fa475730a05e31414a91ee77fad72532169a9ea2ab9bd0a78adb7ebb95"
     },
     {
       "path": "reports/train_readiness_decision.md",
@@ -95,13 +95,13 @@
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 3014,
-      "sha256": "70269ecaebb87b9a1dfa02faa4c888ed6a4e4484980482f2ba72db246cc8f112"
+      "size_bytes": 4241,
+      "sha256": "8c31504a0bc821737f5c8886eadb34efc728957a4573e73551b8f531a060b55e"
     },
     {
       "path": "reports/start_gate_operator_decision.json",
       "size_bytes": 1691,
-      "sha256": "7f2852d0dbf6a62b4228d93084a1d80c4f5ad4942d933220e3ca14af2d4d5fe8"
+      "sha256": "ea4d1a5de571c2d7406fa387c6f5b8062a36e10ef5bf1c80580a0ed29416b756"
     },
     {
       "path": "reports/start_gate_operator_decision.md",
@@ -111,7 +111,7 @@
     {
       "path": "reports/repo_external_handoff.md",
       "size_bytes": 1698,
-      "sha256": "6392c62634a3d13a806c9a1a050a07db304b0652e2f2a04713e344eb41e13209"
+      "sha256": "bc2bac926ae26ab42707559c94461dae7e2828e3c407a75618873e7efd7a4ee7"
     }
   ],
   "operator_steps": [

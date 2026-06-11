@@ -129,7 +129,7 @@ Uzun vadeli hedefi, compute bütçesi sınırlı geliştiriciler, küçük ekipl
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `351 passed, 4 skipped` |
+| `python3 -m pytest -q` | `354 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -142,7 +142,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`351 passed, 4 skipped`)
+   - `pytest` geçti (`354 passed, 4 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -772,6 +772,13 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
       │                      └────────────────────────┬────────────────────────┘  │
       │    (Ekle) ────────────────────────────────────┘                           │
       │      ▼                                                                    │
+      │  ┌─────────────────────────────────────────────────────────────────────┐  │
+      │  │ [LIQUID MIXER] (Sadece Katman 4, 10, 16'da Aktif)                   │  │
+      │  │ » Çekirdek: CfC (Closed-form Continuous) Hücreleri                  │  │
+      │  │ » Denklem:  x(t) = (-1/τ)x(t) + A·I(t)                              │  │
+      │  │ » Görev: Uzun Vadeli Bağımlılık & Zamansal Akıl Yürütme             │  │
+      │  └───────────────────────────┬─────────────────────────────────────────┘  │
+      │                               ▼ [B, S, 2048]                              │
       │  ┌──────────────┐    ┌─────────────────────────────────────────────────┐  │
       │  │ RMSNorm (F)  │───►│ [ROUTER] LIQUID BAĞLAM FARKINDALIĞI             │  │
       │  └──────────────┘    │ » Giriş: [B, S, 2048]                           │  │
@@ -792,13 +799,6 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
       │                               ▼ [B, S, 2048]                              │
       │                     (Ağırlıklı Toplam Σ g(x)·E(x))                        │
       │                              │                                            │
-      │  ┌───────────────────────────▼─────────────────────────────────────────┐  │
-      │  │ [LIQUID MIXER] (Sadece Katman 4, 10, 16'da Aktif)                   │  │
-      │  │ » Çekirdek: CfC (Closed-form Continuous) Hücreleri                  │  │
-      │  │ » Denklem:  x(t) = (-1/τ)x(t) + A·I(t)                              │  │
-      │  │ » Görev: Uzun Vadeli Bağımlılık & Zamansal Akıl Yürütme             │  │
-      │  └───────────────────────────┬─────────────────────────────────────────┘  │
-      │                              │                                            │
       │    (Ekle) <──────────────────┘                                            │
       │      │ [B, S, 2048]                                                       │
       └──────┼────────────────────────────────────────────────────────────────────┘
@@ -807,6 +807,8 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
       │ [RMSNorm] + [LM HEAD] 1.58-bit İzdüşüm ──► ÇIKIŞ LOGİTLERİ [B, S, 128k]   │
       └───────────────────────────────────────────────────────────────────────────┘
 ```
+
+> Blok-içi çalışma sırası (kaynak doğruluk: `layers/mertformer_block.py`): **Attention → LiquidMixer (katman 4/10/16) → MoE/FFN**. Yukarıdaki `[ROUTER] LIQUID BAĞLAM FARKINDALIĞI` kutusu MoE'nin *zamansal router*'ıdır (her zaman vardır); bağımsız `[LIQUID MIXER]` ise MoE alt-bloğundan **önce**, yalnızca katman 4/10/16'da çalışır.
 
 ### 🦅 MertFormer Titan: Sinaptik Katman Hiyerarşisi
 

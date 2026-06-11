@@ -128,7 +128,7 @@ Its long-term target is to make efficient, auditable AI training and inference m
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `351 passed, 4 skipped` |
+| `python3 -m pytest -q` | `354 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -141,7 +141,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`351 passed, 4 skipped`)
+   - `pytest` passed (`354 passed, 4 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -789,6 +789,13 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
       │                      └────────────────────────┬────────────────────────┘  │
       │    (Add) ─────────────────────────────────────┘                           │
       │      ▼                                                                    │
+      │  ┌─────────────────────────────────────────────────────────────────────┐  │
+      │  │ [LIQUID MIXER] (Active only on Layers 4, 10, 16)                    │  │
+      │  │ » Core: CfC (Closed-form Continuous) Cells                          │  │
+      │  │ » Eq:   x(t) = (-1/τ)x(t) + A·I(t)                                  │  │
+      │  │ » Role: Long-term dependency & Temporal Reasoning                   │  │
+      │  └───────────────────────────┬─────────────────────────────────────────┘  │
+      │                               ▼ [B, S, 2048]                              │
       │  ┌──────────────┐    ┌─────────────────────────────────────────────────┐  │
       │  │ RMSNorm (F)  │───►│ [ROUTER] LIQUID CONTEXT AWARENESS               │  │
       │  └──────────────┘    │ » In: [B, S, 2048]                              │  │
@@ -809,13 +816,6 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
       │                               ▼ [B, S, 2048]                              │
       │                     (Weighted Summation Σ g(x)·E(x))                      │
       │                              │                                            │
-      │  ┌───────────────────────────▼─────────────────────────────────────────┐  │
-      │  │ [LIQUID MIXER] (Active only on Layers 4, 10, 16)                    │  │
-      │  │ » Core: CfC (Closed-form Continuous) Cells                          │  │
-      │  │ » Eq:   x(t) = (-1/τ)x(t) + A·I(t)                                  │  │
-      │  │ » Role: Long-term dependency & Temporal Reasoning                   │  │
-      │  └───────────────────────────┬─────────────────────────────────────────┘  │
-      │                              │                                            │
       │    (Add) <───────────────────┘                                            │
       │      │ [B, S, 2048]                                                       │
       └──────┼────────────────────────────────────────────────────────────────────┘
@@ -824,6 +824,8 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
       │ [RMSNorm] + [LM HEAD] 1.58-bit Projection ──► OUTPUT LOGITS [B, S, 128k]  │
       └───────────────────────────────────────────────────────────────────────────┘
 ```
+
+> Per-block execution order (source of truth: `layers/mertformer_block.py`): **Attention → LiquidMixer (layers 4/10/16) → MoE/FFN**. The `[ROUTER] LIQUID CONTEXT AWARENESS` box above is the MoE's *temporal router* (always present); the standalone `[LIQUID MIXER]` runs **before** the MoE sub-block, only on layers 4/10/16.
 
 ### 🦅 MertFormer Titan: Synaptic Layer Hierarchy
 
