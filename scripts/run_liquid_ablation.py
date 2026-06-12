@@ -65,20 +65,15 @@ def _pick_device(requested: str) -> str:
     return "cpu"
 
 
-def _load_real_tokens(seq_len: int) -> tuple[torch.Tensor | None, int, str]:
-    """Tokenize datasets/offline_demo/train.jsonl with the local TR tokenizer. Returns
-    (flat_token_tensor, vocab_size, source) or (None, 0, reason) to trigger the synthetic
-    fallback."""
-    data_path = PROJECT_ROOT / "datasets" / "offline_demo" / "train.jsonl"
-    tok_path = PROJECT_ROOT / "data" / "tokenizer" / "tr"
-    if not data_path.exists() or not (tok_path / "tokenizer.json").exists():
-        return None, 0, "real data/tokenizer not found"
-    try:
-        from transformers import AutoTokenizer
-
-        tok = AutoTokenizer.from_pretrained(str(tok_path), local_files_only=True)
+def _read_texts() -> tuple[list[str] | None, str]:
+    """Real text corpus. Prefers the (gitignored, local) offline_demo, else the TRACKED
+    datasets/validation.jsonl that ships with the repo — so a fresh Kaggle clone has real text."""
+    for rel in ("datasets/offline_demo/train.jsonl", "datasets/validation.jsonl"):
+        p = PROJECT_ROOT / rel
+        if not p.exists():
+            continue
         texts = []
-        for line in data_path.read_text(encoding="utf-8").splitlines():
+        for line in p.read_text(encoding="utf-8").splitlines():
             line = line.strip()
             if not line:
                 continue
@@ -87,14 +82,44 @@ def _load_real_tokens(seq_len: int) -> tuple[torch.Tensor | None, int, str]:
                 texts.append(str(obj.get("text", obj) if isinstance(obj, dict) else obj))
             except json.JSONDecodeError:
                 texts.append(line)
-        ids: list[int] = []
-        for t in texts:
-            ids.extend(tok.encode(t))
-        if len(ids) < seq_len + 1:
-            ids = (ids * (seq_len * 4 // max(1, len(ids)) + 2))  # repeat tiny corpus
-        return torch.tensor(ids, dtype=torch.long), len(tok), f"offline_demo+TR ({len(ids)} tokens)"
-    except Exception as exc:  # noqa: BLE001
-        return None, 0, f"real-data load failed: {exc}"
+        if texts:
+            return texts, rel
+    return None, "no local text corpus"
+
+
+def _make_tokenizer():
+    """Tokenizer chain for the real corpus: local TR tokenizer (Mac) -> a tiny public BPE
+    (gpt2, a free ~1MB download that works on Kaggle with internet on) -> char-level (no
+    download, fully offline). Returns (encode_fn, vocab_size, name)."""
+    tr = PROJECT_ROOT / "data" / "tokenizer" / "tr"
+    if (tr / "tokenizer.json").exists():
+        try:
+            from transformers import AutoTokenizer
+            tok = AutoTokenizer.from_pretrained(str(tr), local_files_only=True)
+            return (lambda s: tok.encode(s)), len(tok), "TR-local"
+        except Exception:  # noqa: BLE001
+            pass
+    try:
+        from transformers import AutoTokenizer
+        tok = AutoTokenizer.from_pretrained("gpt2")  # free, downloads on Kaggle
+        return (lambda s: tok.encode(s)), len(tok), "gpt2"
+    except Exception:  # noqa: BLE001 - offline / no network: fall back to char-level
+        return (lambda s: [ord(c) % 256 for c in s]), 256, "char-level"
+
+
+def _load_real_tokens(seq_len: int) -> tuple[torch.Tensor | None, int, str]:
+    """Flatten the real corpus into a token stream with the best available tokenizer. Returns
+    (tokens, vocab_size, source) or (None, 0, reason) to trigger the synthetic fallback."""
+    texts, src = _read_texts()
+    if texts is None:
+        return None, 0, src
+    encode, vocab, tname = _make_tokenizer()
+    ids: list[int] = []
+    for t in texts:
+        ids.extend(int(i) % vocab for i in encode(t))
+    if len(ids) < seq_len + 1:
+        ids = ids * (seq_len * 4 // max(1, len(ids)) + 2)  # repeat a tiny corpus
+    return torch.tensor(ids, dtype=torch.long), vocab, f"{src}+{tname} ({len(ids)} tok)"
 
 
 def _batch(tokens: torch.Tensor | None, vocab: int, bsz: int, seq: int, device: str, step: int):

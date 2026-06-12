@@ -1,0 +1,41 @@
+{
+  "summary": {
+    "data_source": "datasets/offline_demo/train.jsonl+TR-local (35634 tok)",
+    "vocab_size": 128000,
+    "device": "cpu",
+    "liquid_on_mean_last10": 211.99538,
+    "liquid_off_mean_last10": 232.25177,
+    "liquid_advantage_(off_minus_on)": 20.25639,
+    "verdict": "liquid HELPS (lower loss) \u2014 pilot signal only; not a claim until a larger measured run."
+  },
+  "variants": {
+    "liquid_on": {
+      "variant": "liquid_on",
+      "param_count": 100414978,
+      "param_millions": 100.4,
+      "steps": 3,
+      "elapsed_sec": 9.79,
+      "loss_curve": [
+        198.15657,
+        218.15225,
+        219.67732
+      ],
+      "final_loss": 219.67732,
+      "mean_last10": 211.99538
+    },
+    "liquid_off": {
+      "variant": "liquid_off",
+      "param_count": 99626242,
+      "param_millions": 99.6,
+      "steps": 3,
+      "elapsed_sec": 1.6,
+      "loss_curve": [
+        216.14287,
+        239.40855,
+        241.20389
+      ],
+      "final_loss": 241.20389,
+      "mean_last10": 232.25177
+    }
+  }
+}
