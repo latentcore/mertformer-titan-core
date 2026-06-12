@@ -92,17 +92,21 @@ class UnitaryQINN(nn.Module):
     - A is initialized with a small gaussian (for stability)
     """
 
-    def __init__(self, dim: int, num_iters: int = 6) -> None:
+    def __init__(self, dim: int, num_iters: int = 6, use_qinn: Optional[bool] = None) -> None:
         """
         UnitaryQINN initializer.
 
         Args:
             dim (int): Dimension
             num_iters (int): Newton-Schulz iteration count
+            use_qinn (Optional[bool]): [21] Per-instance enable override. When None (default)
+                the layer reads the global ``cfg.use_qinn``; pass True/False to make the
+                layer self-contained (no implicit global-config dependency).
         """
         super().__init__()
         self.dim = dim
         self.num_iters = num_iters
+        self._use_qinn_override = use_qinn
 
         # Small initialization: very small gaussian for stability
         self.A = nn.Parameter(torch.randn(dim, dim) * 1e-4)
@@ -116,8 +120,9 @@ class UnitaryQINN(nn.Module):
         Returns:
             torch.Tensor: Transformed tensor
         """
-        # If QINN is disabled, return input as-is
-        if not getattr(cfg, "use_qinn", False):
+        # If QINN is disabled, return input as-is. Per-instance override wins over global cfg.
+        enabled = self._use_qinn_override if self._use_qinn_override is not None else getattr(cfg, "use_qinn", False)
+        if not enabled:
             return x
 
         orig_dtype = x.dtype

@@ -457,6 +457,9 @@ class MertFormerConfig:
     # UPGRADE: Early Stopping & Validation
     early_stop_patience: int = 5  # Stop if no improvement for N validation checks
     val_check_interval: int = int(os.environ.get("TITAN_VAL_CHECK_INTERVAL", "1000"))  # Run validation every N steps
+    # [16] Number of validation micro-batches per check. Default 10 (behavior-preserving);
+    # raise via TITAN_VAL_STEPS for a less noisy early-stopping signal on claim-grade runs.
+    val_steps: int = int(os.environ.get("TITAN_VAL_STEPS", "10"))
     saturation_eval_interval_steps: int = 2000
     saturation_patience_windows: int = 3
     val_improve_min_rel: float = 0.002

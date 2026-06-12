@@ -39,8 +39,9 @@ class CausalWorldModelHead(nn.Module):
     """
     Lightweight causal dynamics head.
 
-    This module does not change the model forward signature. It computes
-    side-channel outputs for diagnostics/planning pathways.
+    [39] Diagnostic-only: this module does not change the model forward signature and its
+    outputs are NOT wired to any training loss. It computes side-channel outputs for
+    diagnostics/planning pathways (feature-flagged, off by default).
     """
 
     def __init__(self, hidden_size: int, horizon: int = 1) -> None:

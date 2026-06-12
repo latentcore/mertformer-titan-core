@@ -1940,6 +1940,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │       ├── readiness_scorecard_v1_2026-02-24.json  # JSON data artifact
 │   │       ├── report_interface_schema_v1.json  # JSON schema artifact
 │   │       └── web_validation_sources_2026-02-24.md  # documentation/report file
+│   ├── FACTS.json  # JSON data artifact
 │   ├── adr_index.md  # documentation/report file
 │   ├── architecture_honesty_audit.md  # documentation/report file
 │   ├── artifacts_zip_denylist_audit.json  # JSON data artifact
@@ -2258,6 +2259,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── chat.py  # Python module/script (automation script for chat)
 │   ├── check_57_matrix.py  # Python module/script (automation script for check 57 matrix)
 │   ├── check_doc_claim_consistency.py  # Python module/script (automation script for check doc claim consistency)
+│   ├── check_facts_consistency.py  # Python module/script (automation script for check facts consistency)
 │   ├── check_tokenizer_sync.py  # Python module/script (automation script for check tokenizer sync)
 │   ├── check_translation_pointer_policy.py  # Python module/script (automation script for check translation pointer policy)
 │   ├── checkpoint_restore_drill.py  # Python module/script (automation script for checkpoint restore drill)
@@ -2292,6 +2294,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── kaggle_onefile_demo_build30_colab_math_fastproof.py  # Python module/script (automation script for kaggle onefile demo build30 colab math fastproof)
 │   ├── kaggle_onefile_demo_build30_text_understanding.py  # Python module/script (automation script for kaggle onefile demo build30 text understanding)
 │   ├── kaggle_train_compare_build30.py  # Python module/script (automation script for kaggle train compare build30)
+│   ├── launch_8xb300.sh  # shell automation script
 │   ├── linkcheck_gate.py  # Python module/script (automation script for linkcheck gate)
 │   ├── liquid_train_impl_benchmark.py  # Python module/script (automation script for liquid train impl benchmark)
 │   ├── logbook_build.py  # Python module/script (automation script for logbook build)
@@ -2383,6 +2386,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_export_metadata.py  # Python module/script (automated test module for export metadata)
 │   ├── test_final_orchestrator_cli.py  # Python module/script (automated test module for final orchestrator cli)
 │   ├── test_flops_estimator.py  # Python module/script (automated test module for flops estimator)
+│   ├── test_freeze_policy.py  # Python module/script (automated test module for freeze policy)
 │   ├── test_gradient_checkpoint_moe.py  # Python module/script (automated test module for gradient checkpoint moe)
 │   ├── test_gsm8k_policy.py  # Python module/script (automated test module for gsm8k policy)
 │   ├── test_kaggle_compare_script.py  # Python module/script (automated test module for kaggle compare script)
@@ -2392,6 +2396,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_kaggle_onefile_config.py  # Python module/script (automated test module for kaggle onefile config)
 │   ├── test_kaggle_onefile_feature_coverage.py  # Python module/script (automated test module for kaggle onefile feature coverage)
 │   ├── test_kaggle_onefile_zero_shot_unseen.py  # Python module/script (automated test module for kaggle onefile zero shot unseen)
+│   ├── test_kd_mask.py  # Python module/script (automated test module for kd mask)
 │   ├── test_kernel_dispatcher.py  # Python module/script (automated test module for kernel dispatcher)
 │   ├── test_kernel_equivalence.py  # Python module/script (automated test module for kernel equivalence)
 │   ├── test_kpi_report_cli.py  # Python module/script (automated test module for kpi report cli)
@@ -2411,7 +2416,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_post_train_autorun_cli.py  # Python module/script (automated test module for post train autorun cli)
 │   ├── test_precompute_parallel.py  # Python module/script (automated test module for precompute parallel)
 │   ├── test_precompute_train_integration.py  # Python module/script (automated test module for precompute train integration)
+│   ├── test_qinn_orthogonality.py  # Python module/script (automated test module for qinn orthogonality)
 │   ├── test_resume_policy.py  # Python module/script (automated test module for resume policy)
+│   ├── test_rng_resume.py  # Python module/script (automated test module for rng resume)
 │   ├── test_scoped_external_tools.py  # Python module/script (automated test module for scoped external tools)
 │   ├── test_sdk_api.py  # Python module/script (automated test module for sdk api)
 │   ├── test_sdk_pilot_cli.py  # Python module/script (automated test module for sdk pilot cli)
@@ -2465,6 +2472,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── safety.py  # Python module/script (module for safety)
 │   └── tokenizer_resolver.py  # Python module/script (module for tokenizer resolver)
 ├── .gitignore  # git ignore policy
+├── .pre-commit-config.yaml  # YAML configuration file
 ├── AGENTS.md  # documentation/report file
 ├── CHANGELOG.md  # documentation/report file
 ├── CHANGELOG_TR.md  # Turkish document counterpart
@@ -2488,6 +2496,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── MODEL_CARD_TR.md  # Turkish document counterpart
 ├── MODEL_LICENSE.md  # documentation/report file
 ├── MODEL_LICENSE_TR.md  # Turkish document counterpart
+├── NOTICE  # artifact
 ├── OFFLINE_4060_DEMO.md  # documentation/report file
 ├── PITCH.md  # documentation/report file
 ├── PITCH_TR.md  # Turkish document counterpart
@@ -2520,6 +2529,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── WHITE_PAPER_LIQUIDROUTER.md  # documentation/report file
 ├── WHITE_PAPER_LIQUIDROUTER_TR.md  # Turkish document counterpart
 ├── conftest.py  # Python module/script (module for conftest)
+├── constraints.txt  # text artifact
 ├── launch_mertformer_kaggle_closure.command  # artifact
 ├── pyproject.toml  # project metadata
 ├── requirements.txt  # text artifact

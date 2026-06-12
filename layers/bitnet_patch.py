@@ -9,6 +9,11 @@ Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
+
+Role: standalone nn.Linear -> BitLinear conversion utility (apply_bitnet). The canonical
+model build instantiates BitLinear directly, so the MAIN path does NOT use this module; it
+is consumed by the self-contained onefile demo (scripts/mertformer_5080_final_onefile.py) and
+is available for ad-hoc conversion of an existing fp checkpoint.
 """
 
 __version__ = "1.0-BUILD30-V2"

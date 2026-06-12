@@ -1530,7 +1530,7 @@ def train() -> None:
                         student.eval()
                         val_loss_local = 0.0
                         val_samples_local = 0
-                        val_steps = 10
+                        val_steps = int(getattr(cfg, "val_steps", 10))  # [16] configurable via TITAN_VAL_STEPS
                         try:
                             # [PRO] Use dedicated validation dataloader if available
                             val_iter = iter(val_dl)

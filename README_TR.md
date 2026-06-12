@@ -1923,6 +1923,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   │       ├── readiness_scorecard_v1_2026-02-24.json  # JSON veri artefaktı
 │   │       ├── report_interface_schema_v1.json  # JSON şema artefaktı
 │   │       └── web_validation_sources_2026-02-24.md  # dokümantasyon/rapor dosyası
+│   ├── FACTS.json  # JSON veri artefaktı
 │   ├── adr_index.md  # dokümantasyon/rapor dosyası
 │   ├── architecture_honesty_audit.md  # dokümantasyon/rapor dosyası
 │   ├── artifacts_zip_denylist_audit.json  # JSON veri artefaktı
@@ -2241,6 +2242,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── chat.py  # Python modülü/scripti (chat için otomasyon scripti)
 │   ├── check_57_matrix.py  # Python modülü/scripti (check 57 matrix için otomasyon scripti)
 │   ├── check_doc_claim_consistency.py  # Python modülü/scripti (check doc claim consistency için otomasyon scripti)
+│   ├── check_facts_consistency.py  # Python modülü/scripti (check facts consistency için otomasyon scripti)
 │   ├── check_tokenizer_sync.py  # Python modülü/scripti (check tokenizer sync için otomasyon scripti)
 │   ├── check_translation_pointer_policy.py  # Python modülü/scripti (check translation pointer policy için otomasyon scripti)
 │   ├── checkpoint_restore_drill.py  # Python modülü/scripti (checkpoint restore drill için otomasyon scripti)
@@ -2275,6 +2277,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── kaggle_onefile_demo_build30_colab_math_fastproof.py  # Python modülü/scripti (kaggle onefile demo build30 colab math fastproof için otomasyon scripti)
 │   ├── kaggle_onefile_demo_build30_text_understanding.py  # Python modülü/scripti (kaggle onefile demo build30 text understanding için otomasyon scripti)
 │   ├── kaggle_train_compare_build30.py  # Python modülü/scripti (kaggle train compare build30 için otomasyon scripti)
+│   ├── launch_8xb300.sh  # kabuk otomasyon scripti
 │   ├── linkcheck_gate.py  # Python modülü/scripti (linkcheck gate için otomasyon scripti)
 │   ├── liquid_train_impl_benchmark.py  # Python modülü/scripti (liquid train impl benchmark için otomasyon scripti)
 │   ├── logbook_build.py  # Python modülü/scripti (logbook build için otomasyon scripti)
@@ -2366,6 +2369,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_export_metadata.py  # Python modülü/scripti (export metadata için otomatik test modülü)
 │   ├── test_final_orchestrator_cli.py  # Python modülü/scripti (final orchestrator cli için otomatik test modülü)
 │   ├── test_flops_estimator.py  # Python modülü/scripti (flops estimator için otomatik test modülü)
+│   ├── test_freeze_policy.py  # Python modülü/scripti (freeze policy için otomatik test modülü)
 │   ├── test_gradient_checkpoint_moe.py  # Python modülü/scripti (gradient checkpoint moe için otomatik test modülü)
 │   ├── test_gsm8k_policy.py  # Python modülü/scripti (gsm8k policy için otomatik test modülü)
 │   ├── test_kaggle_compare_script.py  # Python modülü/scripti (kaggle compare script için otomatik test modülü)
@@ -2375,6 +2379,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_kaggle_onefile_config.py  # Python modülü/scripti (kaggle onefile config için otomatik test modülü)
 │   ├── test_kaggle_onefile_feature_coverage.py  # Python modülü/scripti (kaggle onefile feature coverage için otomatik test modülü)
 │   ├── test_kaggle_onefile_zero_shot_unseen.py  # Python modülü/scripti (kaggle onefile zero shot unseen için otomatik test modülü)
+│   ├── test_kd_mask.py  # Python modülü/scripti (kd mask için otomatik test modülü)
 │   ├── test_kernel_dispatcher.py  # Python modülü/scripti (kernel dispatcher için otomatik test modülü)
 │   ├── test_kernel_equivalence.py  # Python modülü/scripti (kernel equivalence için otomatik test modülü)
 │   ├── test_kpi_report_cli.py  # Python modülü/scripti (kpi report cli için otomatik test modülü)
@@ -2394,7 +2399,9 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_post_train_autorun_cli.py  # Python modülü/scripti (post train autorun cli için otomatik test modülü)
 │   ├── test_precompute_parallel.py  # Python modülü/scripti (precompute parallel için otomatik test modülü)
 │   ├── test_precompute_train_integration.py  # Python modülü/scripti (precompute train integration için otomatik test modülü)
+│   ├── test_qinn_orthogonality.py  # Python modülü/scripti (qinn orthogonality için otomatik test modülü)
 │   ├── test_resume_policy.py  # Python modülü/scripti (resume policy için otomatik test modülü)
+│   ├── test_rng_resume.py  # Python modülü/scripti (rng resume için otomatik test modülü)
 │   ├── test_scoped_external_tools.py  # Python modülü/scripti (scoped external tools için otomatik test modülü)
 │   ├── test_sdk_api.py  # Python modülü/scripti (sdk api için otomatik test modülü)
 │   ├── test_sdk_pilot_cli.py  # Python modülü/scripti (sdk pilot cli için otomatik test modülü)
@@ -2448,6 +2455,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── safety.py  # Python modülü/scripti (safety için modül)
 │   └── tokenizer_resolver.py  # Python modülü/scripti (tokenizer resolver için modül)
 ├── .gitignore  # git ignore politikası
+├── .pre-commit-config.yaml  # YAML yapılandırma dosyası
 ├── AGENTS.md  # dokümantasyon/rapor dosyası
 ├── CHANGELOG.md  # dokümantasyon/rapor dosyası
 ├── CHANGELOG_TR.md  # Türkçe doküman karşılığı
@@ -2471,6 +2479,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── MODEL_CARD_TR.md  # Türkçe doküman karşılığı
 ├── MODEL_LICENSE.md  # dokümantasyon/rapor dosyası
 ├── MODEL_LICENSE_TR.md  # Türkçe doküman karşılığı
+├── NOTICE  # artefakt
 ├── OFFLINE_4060_DEMO.md  # dokümantasyon/rapor dosyası
 ├── PITCH.md  # dokümantasyon/rapor dosyası
 ├── PITCH_TR.md  # Türkçe doküman karşılığı
@@ -2503,6 +2512,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── WHITE_PAPER_LIQUIDROUTER.md  # dokümantasyon/rapor dosyası
 ├── WHITE_PAPER_LIQUIDROUTER_TR.md  # Türkçe doküman karşılığı
 ├── conftest.py  # Python modülü/scripti (conftest için modül)
+├── constraints.txt  # metin artefaktı
 ├── launch_mertformer_kaggle_closure.command  # artefakt
 ├── pyproject.toml  # proje metaverisi
 ├── requirements.txt  # metin artefaktı

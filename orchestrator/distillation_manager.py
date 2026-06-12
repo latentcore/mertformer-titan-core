@@ -135,8 +135,10 @@ class DistillationManager:
 
     def precompute_logits(self, dataset, stage_name, subset="train"):
         """
-        Iterates over the dataset, computes logits, and saves them to shards.
-        Safe against crashes: Saves every 5000 samples. 
+        [19] DEBUG-ONLY dense lane. Computes DENSE [seq, vocab] logits and saves them to shards
+        (every 5000 samples). The CANONICAL KD lane is the sparse Top-K path in
+        scripts/precompute_logits_topk.py; this method hard-fails unless
+        TITAN_ALLOW_DENSE_PRECOMPUTE=1 (tiny preflight/debug only).
         """
         self.load_teacher()
         if os.environ.get("TITAN_ALLOW_DENSE_PRECOMPUTE", "0") != "1":

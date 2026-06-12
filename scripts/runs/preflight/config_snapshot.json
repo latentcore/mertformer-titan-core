@@ -139,6 +139,7 @@
   "grad_clip": 2.0,
   "early_stop_patience": 5,
   "val_check_interval": 1000,
+  "val_steps": 10,
   "saturation_eval_interval_steps": 2000,
   "saturation_patience_windows": 3,
   "val_improve_min_rel": 0.002,
