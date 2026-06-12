@@ -9,7 +9,7 @@
 Kurumsal yapay zeka şu an bulut bağımlı bir maliyet (Opex) yüküdür. **MertFormer Titan**, bulut bağımlılığını, bulut inference maliyetini ve dış veri maruziyetini azaltmayı hedefleyen, 1.58-bit "Edge-Native" (Cihaz Özgü) bir mimari yönüdür ve son kullanıcı cihazlarında iddialı, düşük maliyetli kodlama modeli verimlilik hedefi sunar.
 
 ## ⚡ Ürün
-Otonom yazılım geliştirme süreçleri için optimize edilmiş 2.64B tasarım hedefli kodlama motoru (mevcut build runtime toplamı: ~3.70B).
+Otonom yazılım geliştirme süreçleri için optimize edilmiş 2.64B tasarım hedefli kodlama motoru (mevcut build runtime toplamı: ~3.67B).
 - **Hız**: Mobil NPU latency, fiziksel cihaz ölçümü yapılana kadar hedef profildir.
 - **Verimlilik**: Üçlü (Ternary) BitLinear ağırlıkları büyük ağırlık belleği azaltımı hedefler; tam runtime bellek her export yolunda ölçülmelidir.
 

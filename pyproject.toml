@@ -93,4 +93,11 @@ files = [
   "train/trainer_core.py",
   "train/trainer_data.py",
   "train/trainer_eval.py",
+  "model/transformers.py",
+  "eval/agentic_suite.py",
+  "eval/generalization_suite.py",
+  "eval/report_builder.py",
+  "utils/tokenizer_resolver.py",
+  "utils/safety.py",
+  "utils/dataset_registry.py",
 ]

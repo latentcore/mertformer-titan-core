@@ -2907,9 +2907,13 @@ class MoE(nn.Module):
         self.register_buffer("plasticity_step", torch.zeros((), dtype=torch.int64))
         self.register_buffer("expert_paging_swaps_in", torch.zeros((), dtype=torch.int64), persistent=False)
         self.register_buffer("expert_paging_swaps_out", torch.zeros((), dtype=torch.int64), persistent=False)
-        self.sync_proj = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
-        self.sync_load_proj = nn.Linear(self.num_experts, self.hidden_size, bias=False)
-        self.sync_gate = nn.Parameter(torch.tensor(0.0, dtype=torch.float32))
+        # Mirror canonical layers/moe.py: cross-expert sync projections are only
+        # materialized when the feature is enabled (idle params excluded from the
+        # measured runtime total on the canonical flag-off path).
+        if self.use_cross_expert_sync_bus:
+            self.sync_proj = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
+            self.sync_load_proj = nn.Linear(self.num_experts, self.hidden_size, bias=False)
+            self.sync_gate = nn.Parameter(torch.tensor(0.0, dtype=torch.float32))
 
     def _should_skip_expert_apply(self) -> bool:
         return bool(self.use_expert_paging and self.expert_paging_lazy_init)

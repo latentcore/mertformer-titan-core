@@ -108,7 +108,7 @@ class MertFormerOrchestrator:
         device: Optional[str] = None,
         load_model: bool = True,
         enable_voice: bool = False,
-    ):
+    ) -> None:
         """
         Args:
             device: Compute device (None = auto)
@@ -643,7 +643,7 @@ Titan:"""
 # -----------------------------------------------------------------------------
 # ENTRY POINT
 # -----------------------------------------------------------------------------
-def main():
+def main() -> None:
     """CLI Entry Point for Orchestrator."""
     try:
         # Load config to get model path or defaults

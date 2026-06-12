@@ -225,8 +225,8 @@ HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touc
 
 ### Parametre Açıklaması (İddia Sınırı)
 - **Tasarım hedefi (Build 30 V2):** `2.64B` parametre.
-- **Son ölçülen runtime toplamı:** `3,698,246,156` parametre (`~3.70B`).
-- **Yorum:** `2.64B` mimari/konumlandırma hedefidir; `~3.70B` mevcut ölçülen runtime toplamıdır ve olgusal iddialarda esas alınmalıdır.
+- **Son ölçülen runtime toplamı:** `3,672,982,022` parametre (`~3.67B`).
+- **Yorum:** `2.64B` mimari/konumlandırma hedefidir; `~3.67B` mevcut ölçülen runtime toplamıdır ve olgusal iddialarda esas alınmalıdır.
 
 Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 

@@ -376,9 +376,16 @@ class MoE(nn.Module):
             torch.zeros((), dtype=torch.int64),
             persistent=False,
         )
-        self.sync_proj = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
-        self.sync_load_proj = nn.Linear(self.num_experts, self.hidden_size, bias=False)
-        self.sync_gate = nn.Parameter(torch.tensor(0.0, dtype=torch.float32))
+        # Cross-expert sync bus projections are only materialized when the
+        # feature is enabled. The forward pass already guards their use behind
+        # the same flag, so on the canonical flag-off path these modules are
+        # never read; instantiating them unconditionally just carried ~25M idle
+        # parameters per build. Guarding here keeps the measured runtime total
+        # honest (idle params excluded) without changing flag-off behavior.
+        if self.use_cross_expert_sync_bus:
+            self.sync_proj = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
+            self.sync_load_proj = nn.Linear(self.num_experts, self.hidden_size, bias=False)
+            self.sync_gate = nn.Parameter(torch.tensor(0.0, dtype=torch.float32))
 
     def _should_skip_expert_apply(self) -> bool:
         """

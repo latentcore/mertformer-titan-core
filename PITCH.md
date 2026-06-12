@@ -8,7 +8,7 @@
 Enterprise AI is currently a cloud-dependent OPEX liability. **MertFormer Titan** is a sovereign, 1.58-bit "Edge-Native" SLM direction designed to reduce cloud dependency, cloud inference cost, and external data exposure while pursuing an ambitious low-cost coding-model efficiency target on consumer NPUs.
 
 ## ⚡ The Product
-A 2.64B design-target coding engine specialized for autonomous software lifecycle management (current build runtime total: ~3.70B).
+A 2.64B design-target coding engine specialized for autonomous software lifecycle management (current build runtime total: ~3.67B).
 - **Speed**: Mobile NPU latency remains a target profile until physical-device measurement.
 - **Efficiency**: Ternary BitLinear weights target large weight-memory reduction; full runtime memory must be measured per export path.
 

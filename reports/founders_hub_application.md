@@ -6,7 +6,7 @@
 - Stage: Prototype / Pre-train
 
 ## Product Summary
-MertFormer Titan is a 2.64B design-target, edge-native coding model optimized for on-device inference (current build runtime total: ~3.70B). It targets near GPT-3.5 class coding capability while reducing memory and compute costs through 1.58-bit quantization and LiquidRouter MoE routing.
+MertFormer Titan is a 2.64B design-target, edge-native coding model optimized for on-device inference (current build runtime total: ~3.67B). It targets near GPT-3.5 class coding capability while reducing memory and compute costs through 1.58-bit quantization and LiquidRouter MoE routing.
 
 ## Problem
 Cloud-based AI is costly and unsuitable for privacy-sensitive or low-connectivity environments. Many enterprises cannot run coding copilots on-device due to hardware and energy constraints.

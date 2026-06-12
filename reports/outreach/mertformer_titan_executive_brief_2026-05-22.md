@@ -129,7 +129,7 @@ Important boundary: the presence of the mechanism is code-level evidence; its fi
 | Item | Current Claim-Safe Statement |
 |---|---|
 | Design target parameter count | 2.64B design/positioning target |
-| Measured runtime parameter count | approximately 3.70B in current repo artifacts |
+| Measured runtime parameter count | approximately 3.67B in current repo artifacts |
 | Main architecture | BitNet-style + MoE + Liquid/CfC + MLA-labeled GQA |
 | Default model depth | 18 layers in main configuration |
 | Experts | 8 experts, top-2 routing |

@@ -8,7 +8,7 @@
 **Version:** Build 30 V2
 
 ## Özet
-MertFormer Titan, mobil hesaplama maliyetinde GPT-3.5 sınıfı bir verimlilik hedefini amaçlayan, 2.64B tasarım hedefli edge-native bir kodlama modelidir (mevcut ölçülen runtime toplamı: ~3.70B). 1.58-bit kuantizasyon, LiquidRouter MoE ve uzun bağlam dikkatini birleştirir.
+MertFormer Titan, mobil hesaplama maliyetinde GPT-3.5 sınıfı bir verimlilik hedefini amaçlayan, 2.64B tasarım hedefli edge-native bir kodlama modelidir (mevcut ölçülen runtime toplamı: ~3.67B). 1.58-bit kuantizasyon, LiquidRouter MoE ve uzun bağlam dikkatini birleştirir.
 
 ## Problem
 Kurumsal AI pahalıdır, buluta bağımlıdır ve gizlilik açısından risk taşır. Gecikme, veri egemenliği ve maliyetler regüle sektörlerde benimsemeyi zorlaştırır.

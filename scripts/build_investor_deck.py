@@ -27,7 +27,7 @@ SLIDES_EN = [
         "title": "MertFormer Titan",
         "bullets": [
             "Edge-native coding model (2.64B design target)",
-            "Current build runtime total: ~3.70B",
+            "Current build runtime total: ~3.67B",
             "Operator-mode verified pipeline",
             "Offline-first, mobile compute focus",
         ],
@@ -128,7 +128,7 @@ SLIDES_TR = [
         "title": "MertFormer Titan",
         "bullets": [
             "Edge-native kodlama modeli (2.64B tasarım hedefi)",
-            "Mevcut build runtime toplamı: ~3.70B",
+            "Mevcut build runtime toplamı: ~3.67B",
             "Operator-mode doğrulanmış pipeline",
             "Offline-öncelikli, mobil compute odaklı",
         ],

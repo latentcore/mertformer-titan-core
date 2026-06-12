@@ -1536,10 +1536,15 @@ def train() -> None:
                             val_iter = iter(val_dl)
                             for _ in range(val_steps):
                                 try:
-                                    val_input_ids, val_labels = next(val_iter)
+                                    _val_batch = next(val_iter)
                                 except StopIteration:
                                     val_iter = iter(val_dl)
-                                    val_input_ids, val_labels = next(val_iter)
+                                    _val_batch = next(val_iter)
+                                # Robust to both 2-tuple (validation.jsonl) and
+                                # 3-tuple (offline-logits fallback `val_dl = dl`)
+                                # batches: validation CE only needs ids + labels;
+                                # any teacher-logit payload (3rd element) is ignored.
+                                val_input_ids, val_labels = _val_batch[0], _val_batch[1]
 
                                 non_blocking = bool(getattr(cfg, "dataloader_non_blocking", True))
                                 val_input_ids = val_input_ids.to(student_device, non_blocking=non_blocking)

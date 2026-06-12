@@ -56,7 +56,7 @@ Result: no denylist path hits, no secret regex hits.
 Safe to claim now:
 
 - Architecture and gate discipline are implemented and evidenced.
-- Runtime measured total is ~3.70B while 2.64B remains design target reference.
+- Runtime measured total is ~3.67B while 2.64B remains design target reference.
 - Pilot technical readiness is GO.
 
 Must remain pending / conditional:

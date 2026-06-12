@@ -242,8 +242,8 @@ HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touc
 
 ### Parameter Disclosure (Claim Boundary)
 - **Design target (Build 30 V2):** `2.64B` parameters.
-- **Latest measured runtime total:** `3,698,246,156` parameters (`~3.70B`).
-- **Interpretation:** `2.64B` is the architecture/positioning target; `~3.70B` is the current measured runtime total and is the authoritative figure for factual claims.
+- **Latest measured runtime total:** `3,672,982,022` parameters (`~3.67B`).
+- **Interpretation:** `2.64B` is the architecture/positioning target; `~3.67B` is the current measured runtime total and is the authoritative figure for factual claims.
 
 Engineering truth (strict): see `reports/verified_matrix.md`.
 

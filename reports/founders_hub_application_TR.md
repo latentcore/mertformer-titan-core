@@ -6,7 +6,7 @@
 - Aşama: Prototype / Pre‑train
 
 ## Ürün Özeti
-MertFormer Titan, cihaz‑içi inference için optimize edilmiş 2.64B tasarım hedefli edge‑native bir kodlama modelidir (mevcut build runtime toplamı: ~3.70B). 1.58‑bit kuantizasyon ve LiquidRouter MoE ile maliyet ve bellek kullanımını düşürmeyi hedefler.
+MertFormer Titan, cihaz‑içi inference için optimize edilmiş 2.64B tasarım hedefli edge‑native bir kodlama modelidir (mevcut build runtime toplamı: ~3.67B). 1.58‑bit kuantizasyon ve LiquidRouter MoE ile maliyet ve bellek kullanımını düşürmeyi hedefler.
 
 ## Problem
 Bulut tabanlı AI pahalıdır ve gizlilik‑odaklı/low‑connectivity ortamlara uygun değildir. Kurumlar, cihaz‑içi kodlama copilotu çalıştırmakta zorlanır.

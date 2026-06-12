@@ -174,7 +174,9 @@ class MertFormer(nn.Module):
         aux_total = x.new_zeros(())
 
         # KV Cache management
-        present_key_values = [] if use_cache else None
+        present_key_values: Optional[List[Tuple[torch.Tensor, torch.Tensor]]] = (
+            [] if use_cache else None
+        )
 
         # Apply blocks sequentially
         for i, block in enumerate(self.layers):
@@ -187,13 +189,22 @@ class MertFormer(nn.Module):
             if self.use_gradient_checkpointing and self.training and not use_cache:
                 # Checkpointing: don't save activations during forward, recompute in backward
                 from torch.utils.checkpoint import checkpoint
-                # [V26.4 FIX] Checkpoint Hardening (Tensor-only closure)
-                def run_checkpointed(x_tensor):
+                # [V26.4 FIX] Checkpoint Hardening (Tensor-only closure).
+                # Bind per-iteration `past_kv`/`workspace_state` as default args so
+                # the closure captures them BY VALUE at def time. Without this they
+                # are captured by reference and the backward recompute would read
+                # the loop-final values (stale) when workspace broadcast is enabled.
+                # On the canonical path both are None, so this is a numeric no-op.
+                def run_checkpointed(
+                    x_tensor: torch.Tensor,
+                    _past_kv: Optional[Tuple[torch.Tensor, torch.Tensor]] = past_kv,
+                    _workspace: Optional[torch.Tensor] = workspace_state,
+                ) -> Tuple[torch.Tensor, torch.Tensor]:
                     x_out, aux_out, _ = block(
                         x_tensor,
-                        past_key_value=past_kv,
+                        past_key_value=_past_kv,
                         use_cache=False,
-                        workspace=workspace_state,
+                        workspace=_workspace,
                     )
                     return x_out, aux_out
                 
@@ -223,7 +234,7 @@ class MertFormer(nn.Module):
                 x = self.neuromod_gain_layer(x, workspace_state)
             
             if use_cache:
-                present_key_values.append(present_kv)
+                present_key_values.append(present_kv)  # type: ignore[arg-type, union-attr]  # list is non-None when use_cache; present_kv may be None for checkpointed layers
 
         # Final norm + LM head
         x = self.final_norm(x)

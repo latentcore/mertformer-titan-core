@@ -4,7 +4,7 @@ This note is for early discovery or compute-collaboration conversations. It is i
 
 ## 1. What is the project right now?
 - MertFormer Titan is a pilot-ready pre-training baseline for an offline-first, auditable, edge-oriented AI stack.
-- The current architecture centers on a 2.64B design target with a latest measured runtime total of ~3.70B.
+- The current architecture centers on a 2.64B design target with a latest measured runtime total of ~3.67B.
 - The repository is ready for controlled training and verification flows, but full benchmark claims remain blocked until a trained checkpoint exists.
 
 ## 2. What is still missing?

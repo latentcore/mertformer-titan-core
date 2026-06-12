@@ -3,7 +3,7 @@
 **Version:** Build 30 V2
 
 ## Mimari
-- Model boyutu: 2.64B parametre (tasarım hedefi); mevcut ölçülen runtime toplamı: ~3.70B.
+- Model boyutu: 2.64B parametre (tasarım hedefi); mevcut ölçülen runtime toplamı: ~3.67B.
 - Kuantizasyon: BitNet 1.58‑bit.
 - Yönlendirme: LiquidRouter MoE (zamansal dinamik).
 - Dikkat: MLA etiketli GQA attention (mevcut implementasyon) ile uzun bağlam hazırlığı.

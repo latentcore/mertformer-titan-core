@@ -505,7 +505,7 @@ def build_architecture_reports(summary: dict) -> None:
             '## Current Honesty Rules',
             '',
             '- Treat `2.64B` as the design target, not the measured runtime total.',
-            '- Treat `~3.70B` as the current measured runtime total when factual parameter claims are made.',
+            '- Treat `~3.67B` as the current measured runtime total when factual parameter claims are made.',
             '- Treat the 45K run as the first serious architecture validation run, not the final capability ceiling.',
             '- Do not convert deployment vision or benchmark scaffolding into trained-model claims.',
         ])
@@ -518,7 +518,7 @@ def build_architecture_reports(summary: dict) -> None:
             '',
             f'- generated_utc: `{utc_now()}`',
             '- design_target_params: `2.64B`',
-            '- measured_runtime_total_params: `3,698,246,156`',
+            '- measured_runtime_total_params: `3,672,982,022`',
             '- current_claim_boundary: measured runtime total is authoritative for factual claims',
             '',
             '## Notes',

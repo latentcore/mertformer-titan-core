@@ -21,7 +21,7 @@ def test_training_and_inference_flops_formulas():
 
 
 def test_default_params_is_design_target():
-    # Design-target default is intentionally preserved (not the measured 3.70B).
+    # Design-target default is intentionally preserved (not the measured 3.67B).
     assert DEFAULT_PARAMS == 2.64e9
 
 

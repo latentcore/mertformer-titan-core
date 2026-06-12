@@ -223,7 +223,6 @@ class MLA(nn.Module):
         self.num_heads = int(cfg.num_heads)
         self.head_dim = getattr(cfg, "head_dim", self.hidden_size // self.num_heads)
         self.num_kv_heads = getattr(cfg, "num_kv_heads", self.num_heads)
-        self.rope_theta = getattr(cfg, "rope_theta", 10000.0)
 
         # Guard against invalid GQA configs that would silently produce zero KV heads.
         # Requirement: 1 <= num_kv_heads <= num_heads and num_heads % num_kv_heads == 0.

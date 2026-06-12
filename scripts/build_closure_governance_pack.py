@@ -731,7 +731,7 @@ CLAIMS = [
     },
     {
         "claim_id": "claim.param_count_boundary",
-        "claim": "The 2.64B design target versus ~3.70B measured runtime total boundary is explicit.",
+        "claim": "The 2.64B design target versus ~3.67B measured runtime total boundary is explicit.",
         "mode": "measured",
         "status": "verified",
         "evidence": [

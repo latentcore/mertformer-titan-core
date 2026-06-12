@@ -8,7 +8,7 @@
 **Version:** Build 30 V2
 
 ## Summary
-MertFormer Titan is a 2.64B design-target parameter edge-native coding-model direction (latest measured runtime total: ~3.70B) designed to pursue strong low-cost coding-model efficiency under constrained compute. It combines 1.58-bit quantization, LiquidRouter MoE routing, and long-context attention for efficient on-device inference; capability and device claims remain blocked until trained-checkpoint and target-hardware evidence exist.
+MertFormer Titan is a 2.64B design-target parameter edge-native coding-model direction (latest measured runtime total: ~3.67B) designed to pursue strong low-cost coding-model efficiency under constrained compute. It combines 1.58-bit quantization, LiquidRouter MoE routing, and long-context attention for efficient on-device inference; capability and device claims remain blocked until trained-checkpoint and target-hardware evidence exist.
 
 ## Problem
 Enterprise AI is expensive, cloud-dependent, and risky for privacy-sensitive workflows. Latency, data sovereignty, and operating cost block adoption in regulated and low-connectivity environments.

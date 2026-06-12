@@ -14,6 +14,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from typing import Any, Tuple
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -65,7 +66,7 @@ def _numbers_match(a: str | None, b: str | None) -> bool:
         return a == b
 
 
-def _load_dataset():
+def _load_dataset() -> Any:
     from datasets import load_dataset
     from utils.dataset_registry import get_hf_revision
     revision = get_hf_revision("openai/gsm8k")
@@ -95,7 +96,9 @@ def _require_checkpoint_or_allow_random(
     )
 
 
-def _load_model_and_tokenizer(ckpt: str, allow_random_weights: bool = False):
+def _load_model_and_tokenizer(
+    ckpt: str, allow_random_weights: bool = False
+) -> Tuple[Any, Any, str]:
     import torch
     from config.config import cfg
 
@@ -195,7 +198,7 @@ def run_generation(
     return limit
 
 
-def score_predictions(pred_path: Path, summary_path: Path) -> dict:
+def score_predictions(pred_path: Path, summary_path: Path) -> dict[str, Any]:
     total = 0
     correct = 0
     with pred_path.open("r", encoding="utf-8") as f:

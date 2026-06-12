@@ -24,18 +24,18 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
-def _ensure_pad_token(tokenizer):
+def _ensure_pad_token(tokenizer: Any) -> Any:
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     return tokenizer
 
 
-def _resolve_cfg(cfg):
+def _resolve_cfg(cfg: Any) -> Any:
     if cfg is not None:
         return cfg
     from config.config import cfg as _cfg
@@ -43,7 +43,7 @@ def _resolve_cfg(cfg):
     return _cfg
 
 
-def _tr_tokenizer_candidates(cfg) -> list[Path]:
+def _tr_tokenizer_candidates(cfg: Any) -> list[Path]:
     """Local Turkish-tokenizer artifact search paths (never the teacher BPE)."""
     candidates: list[Path] = []
 
@@ -75,7 +75,7 @@ def _tr_tokenizer_candidates(cfg) -> list[Path]:
     return unique
 
 
-def _load_tr_tokenizer(cfg):
+def _load_tr_tokenizer(cfg: Any) -> Any:
     from transformers import AutoTokenizer
 
     last_error: Optional[Exception] = None
@@ -99,7 +99,7 @@ def _load_tr_tokenizer(cfg):
     )
 
 
-def _load_teacher_tokenizer(cfg):
+def _load_teacher_tokenizer(cfg: Any) -> Any:
     from transformers import AutoTokenizer
 
     hf_token = os.environ.get("HF_TOKEN")
@@ -131,7 +131,7 @@ def _load_teacher_tokenizer(cfg):
         ) from exc
 
 
-def resolve_tokenizer(cfg=None):
+def resolve_tokenizer(cfg: Any = None) -> Any:
     """Return the one runtime tokenizer for train / eval / demo.
 
     The choice of tokenizer family is governed solely by ``cfg.use_tr_tokenizer``
@@ -143,7 +143,7 @@ def resolve_tokenizer(cfg=None):
     return _load_teacher_tokenizer(cfg)
 
 
-def tokenizer_name_or_path(tokenizer) -> str:
+def tokenizer_name_or_path(tokenizer: Any) -> str:
     return (
         getattr(tokenizer, "_titan_name_or_path", None)
         or getattr(tokenizer, "name_or_path", "")
@@ -151,7 +151,7 @@ def tokenizer_name_or_path(tokenizer) -> str:
     )
 
 
-def tokenizer_identity(tokenizer, cfg=None) -> dict:
+def tokenizer_identity(tokenizer: Any, cfg: Any = None) -> dict:
     """Serializable identity stamped into checkpoints (``checkpoint['tokenizer_id']``).
 
     ``vocab_size`` uses ``len(tokenizer)`` so it includes added/special tokens
@@ -167,7 +167,7 @@ def tokenizer_identity(tokenizer, cfg=None) -> dict:
     }
 
 
-def load_tokenizer_from_identity(identity: Optional[dict]):
+def load_tokenizer_from_identity(identity: Optional[dict]) -> Any:
     """Reload the exact tokenizer recorded in a checkpoint. No silent fallback.
 
     Raises ValueError if the checkpoint carries no tokenizer identity or if the
