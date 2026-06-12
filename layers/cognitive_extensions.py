@@ -55,7 +55,12 @@ class ContinuousLatentODEStateChannel(nn.Module):
 
     def forward(self, x: torch.Tensor, dt: float = 1.0) -> torch.Tensor:
         bsz = x.size(0)
-        self._ensure_state(bsz, x.device, x.dtype)
+        # [26] During training, start each batch from a fresh state so runtime state does not
+        # leak across unrelated batches (the eval/cache path already resets via _ensure_state).
+        if self.training:
+            self.reset_state(bsz, x.device, x.dtype)
+        else:
+            self._ensure_state(bsz, x.device, x.dtype)
         summary = x.mean(dim=1)
         # Clone to avoid in-place version bump issues before backward.
         z = self.latent_state.detach().clone()

@@ -758,6 +758,12 @@ class MoE(nn.Module):
              elif self.collapse_detected.item() and max_load < 0.5:
                  # Recovery: Reset state
                  self.collapse_detected.fill_(False)
+             # [18] Synchronize the collapse flag across DDP ranks so structural-recovery jitter
+             # is applied consistently (each rank otherwise decides independently). No-op off-DDP.
+             if torch.distributed.is_available() and torch.distributed.is_initialized():
+                 _flag = self.collapse_detected.to(torch.int32)
+                 torch.distributed.all_reduce(_flag, op=torch.distributed.ReduceOp.MAX)
+                 self.collapse_detected.fill_(bool(_flag.item() > 0))
         else:
              load_balancing_loss = torch.tensor(0.0, device=x.device, dtype=logits_f.dtype)
 

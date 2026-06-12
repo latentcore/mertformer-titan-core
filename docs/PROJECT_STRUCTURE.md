@@ -5,9 +5,13 @@ Generated automatically from tracked files with inline role comments.
 ```text
 mertformer-titan-core/  # project root (git ls-files inventory)
 ├── .github/  # directory
+│   ├── ISSUE_TEMPLATE/  # directory
+│   │   ├── bug_report.md  # documentation/report file
+│   │   └── feature_request.md  # documentation/report file
 │   ├── workflows/  # directory
 │   │   └── ci.yml  # YAML configuration file
-│   └── CODEOWNERS  # artifact
+│   ├── CODEOWNERS  # artifact
+│   └── PULL_REQUEST_TEMPLATE.md  # documentation/report file
 ├── ablations/  # directory
 │   ├── bitlinear_off/  # directory
 │   │   ├── README.md  # primary documentation (EN)

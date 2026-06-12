@@ -36,3 +36,28 @@ a future reviewer/AI should not "fix" them:
 - **Llama naming**: the Llama 3.3 Community License requests derivative model NAMES include "Llama".
   Current posture: name "MertFormer Titan" + the "Built with Llama" NOTICE; full naming compliance is
   EXTERNAL-PENDING legal (see NOTICE and reports/teacher_output_license_assessment.md).
+
+## Mac-doable backlog dispositions (2026-06-13, Pass 7)
+
+Closed as won't-change-now WITH reasons, so the backlog has no silently-"open" rows:
+- **33 topk in bf16**: rejected — bf16 lowers top-k routing precision and would break the
+  `scripts/cfc_moe_tolerance_check.py` gate (the fp32 cast at layers/moe.py is deliberate).
+- **14 Liquid impl default**: already selectable via `TITAN_LIQUID_TRAIN_IMPL`
+  (baseline / precompute_input / packed_pair / packed_pair_compile). Flipping the DEFAULT is the
+  #1 MFU lever and needs pilot timing data → bound to the pilot, not changed blind.
+- **17 MoE capacity-loop vectorization**: GPU-perf only (benefit shows on CUDA); do it on the
+  training box where the speedup is measurable and the tolerance gate validates the numerics.
+- **20 teacher pad-mask**: saves compute on one sub-max-seq sequence per stage (already masked
+  downstream at train time) — GPU-perf only; do it on the teacher-precompute machine.
+- **36 legacy logit-realign path**: kept as a deliberate env-gated escape hatch
+  (`TITAN_ALLOW_LEGACY_LOGIT_REALIGN`, off by default); the canonical packing path is the default.
+- **48 sharded checkpoint (accelerator.save_state)**: needs real multi-GPU to implement+validate;
+  belongs on the training box. Single-GPU/Mac uses the standard checkpoint save.
+- **23 MLA→GQA rename / 34 train.py split / 68 whole-repo mypy**: permanently left — high blast
+  radius (onefile sha256 manifests / AST singleton tests / red CI gate) for ~zero functional gain.
+  The MLA naming gap is documented honestly in README and ARCHITECTURE.md.
+- **40 drift telemetry**: `lifelong_safety.safety_metrics()` already exposes `last_drift`; wiring it
+  into the run logger is purely additive and the layer is off by default → deferred (no behavior risk).
+- **24 / 25 / 31 / 38 test backlog**: additive pure-CPU coverage (RoPE position, block-order schema,
+  SIGTERM handler, packing resume-seam). No defect — `consumed_through` monotonicity and the freeze/RNG/
+  qinn/MoE-tolerance paths are already tested; these extend coverage and are deferred without risk.

@@ -1,7 +1,7 @@
 {
   "schema": "run_manifest_v1",
-  "run_id": "zero_touch_20260612T205436Z",
-  "generated_utc": "2026-06-12T20:54:36.528266+00:00",
+  "run_id": "zero_touch_20260612T214633Z",
+  "generated_utc": "2026-06-12T21:46:33.632565+00:00",
   "mode": "plan-only",
   "status": "planned",
   "reports_dir": "<REPO_ROOT>/reports",

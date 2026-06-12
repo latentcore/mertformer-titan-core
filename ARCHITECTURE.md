@@ -59,3 +59,16 @@ is a hypothesis, not a result. See the master report for the pilot-first sequenc
 (`layers/lifelong_safety.py`), `use_latent_ode_state_channel` (`layers/cognitive_extensions.py`),
 world-model head (`layers/world_model_head.py`, diagnostic-only). These are non-canonical and do not
 affect the measured param count or the default training path.
+
+## Projections (claim boundary)
+All capability / throughput / device numbers in README and reports are **projections or targets**,
+explicitly labeled (Est. / Projected / Not Measured / architecture simulation) — not measured results.
+The only measured facts today are structural (param count, test suite, gate status — see
+`reports/FACTS.json`); capability numbers become claims only after a trained checkpoint + an
+lm-eval run. See the README "Truth Boundary" / "Parameter Disclosure" sections.
+
+## Curriculum & the precomputed lane (stage-3 note)
+The 5-stage curriculum is honored fully in the ONLINE data path. In the canonical OFFLINE
+precomputed-KD lane, each stage maps to its own precomputed shard set; the stage-3 source *mixture*
+(the small TR/synthetic blend) is an online-path feature — the offline lane consumes the pre-baked
+stage-3 shards as produced, so the mixing ratio is a precompute-time decision, not a train-time one.

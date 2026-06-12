@@ -128,7 +128,7 @@ Its long-term target is to make efficient, auditable AI training and inference m
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `365 passed, 4 skipped` |
+| `python3 -m pytest -q` | `369 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -141,7 +141,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`365 passed, 4 skipped`)
+   - `pytest` passed (`369 passed, 4 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -1612,9 +1612,13 @@ Planned Turkish data sources:
 ```text
 mertformer-titan-core/  # project root (git ls-files inventory)
 ├── .github/  # directory
+│   ├── ISSUE_TEMPLATE/  # directory
+│   │   ├── bug_report.md  # documentation/report file
+│   │   └── feature_request.md  # documentation/report file
 │   ├── workflows/  # directory
 │   │   └── ci.yml  # YAML configuration file
-│   └── CODEOWNERS  # artifact
+│   ├── CODEOWNERS  # artifact
+│   └── PULL_REQUEST_TEMPLATE.md  # documentation/report file
 ├── ablations/  # directory
 │   ├── bitlinear_off/  # directory
 │   │   ├── README.md  # primary documentation (EN)

@@ -1,6 +1,6 @@
 {
   "schema": "code_truth_delta_audit_v1",
-  "generated_utc": "2026-06-12T20:54:37Z",
+  "generated_utc": "2026-06-12T21:46:34Z",
   "evidence_contract": {
     "required_columns": [
       "code_path",
@@ -682,6 +682,13 @@
       "summary": "fallback"
     },
     {
+      "path": "scripts/run_liquid_ablation.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "scripts/smart_runner.py",
       "markers": [
         "fallback"
@@ -772,6 +779,6 @@
       "tested_fallback": 6,
       "reference_safe": 1
     },
-    "marker_hit_count": 62
+    "marker_hit_count": 63
   }
 }

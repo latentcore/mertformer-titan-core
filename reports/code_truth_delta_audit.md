@@ -122,6 +122,7 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `scripts/mertformer_5080_final_onefile.py` | `scaffold`, `fallback` |
 | `scripts/mobile_export.py` | `fallback` |
 | `scripts/record_dataset_hashes.py` | `fallback` |
+| `scripts/run_liquid_ablation.py` | `fallback` |
 | `scripts/smart_runner.py` | `fallback` |
 | `scripts/test_onnx_export.py` | `fallback` |
 | `scripts/titan_preflight.py` | `fallback` |

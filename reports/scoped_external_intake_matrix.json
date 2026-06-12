@@ -1,5 +1,5 @@
 {
-  "generated_local": "2026-06-12T23:54:50",
+  "generated_local": "2026-06-13T00:46:48",
   "sync_mode": "audit",
   "scope": "Desktop/Documents/Downloads plus application roots for project-related artifacts; unrelated applications remain audit-only.",
   "repo_root": "<REPO_ROOT>",
@@ -35,8 +35,8 @@
       "exists": true
     }
   ],
-  "entry_count": 3943,
-  "immutable_evidence_count": 921,
+  "entry_count": 3947,
+  "immutable_evidence_count": 925,
   "entries": [
     {
       "path": "/Applications/mertformer-titan-core.zip",
@@ -164,7 +164,7 @@
       "kind": "file",
       "exists": true,
       "size_bytes": 1698,
-      "sha256": "8c6f020eff40e056b00223275262f0e034b7b980cefb31d0c82cf4733a26dab1",
+      "sha256": "5b3bfab9349ae89e3bb22b7a51432d9e4757da4b7ecd85e0c1bdfb9ca630038d",
       "duplicate_rank": 1,
       "duplicate_group_size": 1,
       "disposition": "sync_with_canonical_source",
@@ -18025,6 +18025,66 @@
     },
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_235304.zip.sha256",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 21,
+      "sha256": "3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260613_004313.zip",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 3,
+      "sha256": "4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260613_004313.zip.sha256",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 21,
+      "sha256": "3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260613_004459.zip",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 3,
+      "sha256": "4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260613_004459.zip.sha256",
       "source_root": "Desktop",
       "kind": "file",
       "exists": true,
@@ -59211,8 +59271,8 @@
         "target": "<HOME>/Desktop/MertFormer_Build30_Max_Closure_Handoff.md",
         "status": "match",
         "changed": false,
-        "source_sha256": "8c6f020eff40e056b00223275262f0e034b7b980cefb31d0c82cf4733a26dab1",
-        "target_sha256": "8c6f020eff40e056b00223275262f0e034b7b980cefb31d0c82cf4733a26dab1"
+        "source_sha256": "5b3bfab9349ae89e3bb22b7a51432d9e4757da4b7ecd85e0c1bdfb9ca630038d",
+        "target_sha256": "5b3bfab9349ae89e3bb22b7a51432d9e4757da4b7ecd85e0c1bdfb9ca630038d"
       },
       {
         "id": "applications_chess_onefile",
@@ -59224,7 +59284,7 @@
         "target_sha256": "4c782b06d7a3b70e4faede4f14c79aa9485ccf612e7d5b3cf136b66968608084"
       }
     ],
-    "handoff_dir": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_12",
+    "handoff_dir": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_06_13",
     "handoff_copies": [],
     "apply_errors": []
   },

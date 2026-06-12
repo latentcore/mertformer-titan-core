@@ -70,3 +70,11 @@ All notable changes to this project are tracked in this file.
 - `python3 -m pytest -q` passed.
 - `ruff check .` passed.
 - `bash scripts/verify_all.sh` passed.
+
+## Pass 7 (2026-06-13) — Mac-doable backlog zeroed + $0 Kaggle pilot
+- Added `scripts/run_liquid_ablation.py` + `docs/KAGGLE_PILOT.md`: a free LiquidRouter ON-vs-OFF
+  ablation pilot (~80–100M, pure CE, no teacher) — the single domino that unlocks the GPU-gated work.
+- LatentODE per-batch reset during training (no cross-batch state leak); MoE collapse flag DDP
+  all-reduce (guarded, no-op off-DDP); liquid-impl benchmark script; coverage config.
+- Docs: ARCHITECTURE.md Projections + stage-3 note; CPU quickstart. Backlog dispositions in DECISIONS.md.
+- Invariants held: param count locked; pytest green; ruff + scoped mypy + verify_all green.

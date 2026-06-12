@@ -177,7 +177,7 @@ Training reliability surfaces include:
 
 The project documentation records:
 
-- `pytest`: 365 passed, 4 skipped in the latest recorded closure context
+- `pytest`: 369 passed, 4 skipped in the latest recorded closure context
 - code quality checks passed in the latest recorded closure context
 - `bash scripts/verify_all.sh`: reported OK in the latest recorded closure context
 - training readiness decision: `TRAIN_ALLOWED / READY_REMOTE_BOOTSTRAP`
@@ -352,7 +352,7 @@ The current project should be reviewed as a serious pre-training architecture an
 | Core architecture code paths | implemented in repository |
 | BitNet + MoE + Liquid direction | implemented surfaces exist |
 | Attention truth | MLA-labeled GQA-style attention |
-| Unit/integration tests | latest recorded closure context reports 365 passed, 4 skipped |
+| Unit/integration tests | latest recorded closure context reports 369 passed, 4 skipped |
 | Offline verification | latest recorded closure context reports verify gate OK |
 | Training readiness | `TRAIN_ALLOWED / READY_REMOTE_BOOTSTRAP` |
 | Partial H200 evidence | captured through step 1880 and approximately 89 minutes |

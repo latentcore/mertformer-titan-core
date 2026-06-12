@@ -129,7 +129,7 @@ Uzun vadeli hedefi, compute bütçesi sınırlı geliştiriciler, küçük ekipl
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `365 passed, 4 skipped` |
+| `python3 -m pytest -q` | `369 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -142,7 +142,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`365 passed, 4 skipped`)
+   - `pytest` geçti (`369 passed, 4 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -1595,9 +1595,13 @@ Planlanan Türkçe veri kaynakları:
 ```text
 mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── .github/  # dizin
+│   ├── ISSUE_TEMPLATE/  # dizin
+│   │   ├── bug_report.md  # dokümantasyon/rapor dosyası
+│   │   └── feature_request.md  # dokümantasyon/rapor dosyası
 │   ├── workflows/  # dizin
 │   │   └── ci.yml  # YAML yapılandırma dosyası
-│   └── CODEOWNERS  # artefakt
+│   ├── CODEOWNERS  # artefakt
+│   └── PULL_REQUEST_TEMPLATE.md  # dokümantasyon/rapor dosyası
 ├── ablations/  # dizin
 │   ├── bitlinear_off/  # dizin
 │   │   ├── README.md  # ana dokümantasyon (EN)
