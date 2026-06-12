@@ -838,7 +838,10 @@ def train() -> None:
         val_dl = DataLoader(val_ds, batch_size=cfg.micro_batch_size, collate_fn=collate_fn, num_workers=0)
     else:
         print("⚠️ Validation set not found (datasets/validation.jsonl). Using training stream for sanity check.")
-        val_dl = dl # Fallback
+        # [R9] Build a SEPARATE DataLoader over the training dataset instead of aliasing `dl`:
+        # passing the same object to accelerator.prepare twice wraps it twice and double-advances
+        # the underlying IterableDataset. A distinct loader preserves the sanity-check intent safely.
+        val_dl = DataLoader(dl.dataset, batch_size=cfg.micro_batch_size, collate_fn=collate_fn, num_workers=0)
 
     # V26.3 CRITICAL FIX: Epoch Mode Calculation MOVED UP
     # Must be done BEFORE Scheduler initialization!
@@ -1094,13 +1097,6 @@ def train() -> None:
             if not open_ended_mode and global_step >= cfg.max_steps:
                 break
             # ---------------------------------------------------------------------
-            # V26.1 FIX: Avg Loss Calculation for Safety
-            # ---------------------------------------------------------------------
-            if len(grad_norm_history) > 0: # Proxy for "at least 1 step done"
-                 # (loss_history update happens at end of loop, so we check previous stats)
-                 pass
-
-            # ---------------------------------------------------------------------
             # V26.0 INTELLIGENT PILOT: Signal-Based Curriculum + Time Fallback
             # ---------------------------------------------------------------------
             
@@ -1161,9 +1157,6 @@ def train() -> None:
             # input_ids = input_ids.to(student_device)
             # labels = labels.to(student_device)
 
-            # ---------------------------------------------------------------------
-            # V25.1 SAFEGUARD: Liquid Warmup (Freeze Early Steps)
-            # ---------------------------------------------------------------------
             # ---------------------------------------------------------------------
             # V25.1 SAFEGUARD: Liquid Warmup (Freeze Early Steps)
             # V26.1 UPDATE: Liquid Re-Freeze Logic

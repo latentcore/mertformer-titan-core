@@ -439,6 +439,16 @@ def main() -> int:
         _terminate_children()
 
     signal.signal(signal.SIGINT, _on_sigint)
+    # [S6] Also reap workers on SIGTERM/SIGHUP (cluster preemption, the `timeout` command,
+    # systemd stop, a bare `kill`) and on normal exit — otherwise a parent death orphans one
+    # 70B-teacher GPU worker per device, each holding VRAM.
+    signal.signal(signal.SIGTERM, _on_sigint)
+    try:
+        signal.signal(signal.SIGHUP, _on_sigint)  # type: ignore[attr-defined]
+    except (AttributeError, ValueError):  # SIGHUP absent on Windows / non-main thread
+        pass
+    import atexit
+    atexit.register(_terminate_children)
 
     started = time.time()
     results: list[dict] = []

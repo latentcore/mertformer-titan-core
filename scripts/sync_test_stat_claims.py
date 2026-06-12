@@ -19,6 +19,16 @@ TARGETS = [
     # Outreach brief is a living surface that quotes the "latest recorded closure
     # context" test stat; auto-sync it so it never drifts behind the suite again.
     ROOT / "reports" / "outreach" / "mertformer_titan_executive_brief_2026-05-22.md",
+    # Present-tense GO/verification ledgers. These self-bill as the "final consistency
+    # ledger" / "GO Status" / "clean-room verification", so they must always carry the
+    # LIVE suite count, never a stale one. (Dated audits like codex_deep_audit_* keep
+    # their as-of counts and are intentionally NOT synced here.)
+    ROOT / "reports" / "go_status_matrix.md",
+    ROOT / "reports" / "go_status_matrix_TR.md",
+    ROOT / "reports" / "final_sync_matrix.md",
+    ROOT / "reports" / "final_sync_matrix_TR.md",
+    ROOT / "reports" / "cleanroom_verification.md",
+    ROOT / "reports" / "cleanroom_verification_TR.md",
 ]
 
 

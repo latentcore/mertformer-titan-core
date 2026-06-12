@@ -9,7 +9,7 @@ Notes:
 
 | Dataset | License | Reference URL | Status |
 | --- | --- | --- | --- |
-| `bigcode/the-stack-v2` | Other (mixed upstream licenses; gated Terms of Use) | https://huggingface.co/datasets/bigcode/the-stack-v2 | Verified (HF gated terms) |
+| `bigcode/the-stack-dedup` | Other (mixed upstream licenses; gated Terms of Use) | https://huggingface.co/datasets/bigcode/the-stack-dedup | Verified (HF gated terms) |
 | `TIGER-Lab/MathInstruct` | MIT | https://opensource.org/licenses/MIT | Verified (HF metadata) |
 | `openai/gsm8k` (`main`) | MIT | https://opensource.org/licenses/MIT | Verified (known) |
 | `HuggingFaceFW/fineweb-edu` | ODC-By 1.0 | https://opendatacommons.org/licenses/by/1-0/ | Verified (HF metadata) |

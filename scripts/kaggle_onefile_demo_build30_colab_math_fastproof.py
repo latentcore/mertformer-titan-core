@@ -3091,7 +3091,7 @@ def build_curriculum_sources(turkish_primary: bool = True) -> List[Dict[str, Any
                     "field": "code",
                     "requires_remote_code": True,
                 },
-                {"dataset": "bigcode/the-stack-v2", "split": "train[:0.02%]", "field": "content"},
+                {"dataset": "bigcode/the-stack-dedup", "split": "train[:0.02%]", "field": "content"},
             ],
         },
         {

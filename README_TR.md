@@ -129,7 +129,7 @@ Uzun vadeli hedefi, compute bütçesi sınırlı geliştiriciler, küçük ekipl
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `354 passed, 4 skipped` |
+| `python3 -m pytest -q` | `365 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -142,7 +142,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`354 passed, 4 skipped`)
+   - `pytest` geçti (`365 passed, 4 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -1129,6 +1129,8 @@ TITAN_OFFLINE=0 TITAN_WANDB=1 TITAN_INSTALL=1 bash run.sh
 Notlar:
 - Online mod `HF_TOKEN` gerektirir. WandB opsiyoneldir (`TITAN_WANDB=0`).
 - Bağımlılık kurulumu `TITAN_INSTALL=1` ile opt-in. Deterministik kurulum için bootstrap önerilir.
+- Token bütçesi (V2): varsayılan `TITAN_TOKEN_BUDGET_MODE=fixed_steps`, `TITAN_MAX_STEPS=45000`, `TITAN_TARGET_TOKENS_MIN=23.6B`.
+- Disk: offline Top-K teacher logit'leri `--top-k` ile ~doğrusal ölçeklenir (~23.6B-token bütçesi için `top_k=256`'da ≈36 TB, `top_k=32`'de ≈4.5 TB). `scripts/precompute_logits_topk.py` içindeki disk pre-flight gate teacher koşusu başlamadan zorlar (geçersiz kılma: `TITAN_SKIP_DISK_GATE=1`). Precompute edilmiş logit yoksa checkpoint/veri için ~1 TB hızlı SSD yeterlidir.
 
 ### Operator Modu Gate
 Tek girişli güvenlik ve hazır olma süiti (varsayılan güvenli mod):

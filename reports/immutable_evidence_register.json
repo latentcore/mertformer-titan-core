@@ -1,6 +1,6 @@
 {
-  "generated_local": "2026-06-12T17:31:05",
-  "entry_count": 893,
+  "generated_local": "2026-06-12T22:37:18",
+  "entry_count": 913,
   "entries": [
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260404_232149.zip",
@@ -3658,6 +3658,126 @@
     },
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_172621.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_214635.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_214635.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_215925.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_215925.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_220002.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_220002.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_220723.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_220723.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_221211.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_221211.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_221911.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_221911.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_222042.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_222042.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_222326.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_222326.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_222748.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_222748.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_223236.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260612_223236.zip.sha256",
       "kind": "file",
       "immutable_reason": "result_",
       "disposition": "preserve_immutable_evidence"

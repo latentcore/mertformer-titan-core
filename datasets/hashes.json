@@ -63,17 +63,15 @@
       "snapshot_date_utc": "2026-02-22T02:23:10Z",
       "status": "verified"
     },
-    "bigcode/the-stack-v2": {
-      "files_count": 921,
-      "files_lfs_sha256_count": 917,
+    "bigcode/the-stack-dedup": {
       "gated": "auto",
       "kind": "hf_repo_manifest",
-      "ref_url": "https://huggingface.co/datasets/bigcode/the-stack-v2",
-      "revision": "7408bfbcfd48e5833d62fd3dba48afd20d109473",
-      "sha256": "476c7b63893a7392d03f726d4646f6e44423b7e94e8b466b5b31eeb15fc3f942",
-      "snapshot": "hf://bigcode/the-stack-v2@7408bfbcfd48e5833d62fd3dba48afd20d109473",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
-      "status": "verified"
+      "ref_url": "https://huggingface.co/datasets/bigcode/the-stack-dedup",
+      "revision": null,
+      "sha256": null,
+      "snapshot": null,
+      "status": "pending_repin",
+      "note": "Switched from bigcode/the-stack-v2: v2 rows carry blob_id/src_encoding (the 'content' field is empty and needs Software-Heritage S3 resolution), which silently starved Stage-1's code corpus. the-stack-dedup exposes a real 'content' field. Re-pin revision/sha256 on the training machine (network required); production scripts/data_pipeline.py consumes this id with field='content'. See DECISIONS.md (D3)."
     },
     "codeparrot/github-code": {
       "files_count": 1132,

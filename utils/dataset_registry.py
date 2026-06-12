@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 from functools import lru_cache
 from pathlib import Path
+import sys
 
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -21,11 +22,26 @@ _HASHES_PATH = _PROJECT_ROOT / "datasets" / "hashes.json"
 @lru_cache(maxsize=1)
 def _load_hashes() -> dict:
     if not _HASHES_PATH.exists():
+        print(
+            f"⚠️ dataset hash registry missing ({_HASHES_PATH}) — dataset revisions/snapshots are unpinned.",
+            file=sys.stderr,
+        )
         return {}
     try:
-        return json.loads(_HASHES_PATH.read_text(encoding="utf-8"))
-    except Exception:
+        obj = json.loads(_HASHES_PATH.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001 - unreadable registry is non-fatal, treat as unpinned
+        print(
+            f"⚠️ dataset hash registry unreadable ({_HASHES_PATH}): {exc} — treating as unpinned.",
+            file=sys.stderr,
+        )
         return {}
+    sources = obj.get("sources", obj) if isinstance(obj, dict) else {}
+    if not sources:
+        print(
+            f"⚠️ dataset hash registry has no sources ({_HASHES_PATH}) — dataset revisions/snapshots are unpinned.",
+            file=sys.stderr,
+        )
+    return obj if isinstance(obj, dict) else {}
 
 
 def get_hf_revision(dataset_id: str) -> str | None:

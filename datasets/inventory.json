@@ -137,34 +137,34 @@
       }
     },
     {
-      "dataset": "bigcode/the-stack-v2",
+      "dataset": "bigcode/the-stack-dedup",
       "ref_count": 3,
       "refs": [
         {
-          "dataset": "bigcode/the-stack-v2",
+          "dataset": "bigcode/the-stack-dedup",
           "file": "scripts/data_pipeline.py",
           "line": 56,
           "kind": "pipeline_source",
-          "snippet": "\"dataset\": \"bigcode/the-stack-v2\","
+          "snippet": "\"dataset\": \"bigcode/the-stack-dedup\","
         },
         {
-          "dataset": "bigcode/the-stack-v2",
+          "dataset": "bigcode/the-stack-dedup",
           "file": "scripts/kaggle_onefile_demo_build30.py",
           "line": 2392,
           "kind": "pipeline_source",
-          "snippet": "{\"dataset\": \"bigcode/the-stack-v2\", \"split\": \"train[:0.02%]\", \"field\": \"content\"},"
+          "snippet": "{\"dataset\": \"bigcode/the-stack-dedup\", \"split\": \"train[:0.02%]\", \"field\": \"content\"},"
         },
         {
-          "dataset": "bigcode/the-stack-v2",
+          "dataset": "bigcode/the-stack-dedup",
           "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
           "line": 2936,
           "kind": "pipeline_source",
-          "snippet": "{\"dataset\": \"bigcode/the-stack-v2\", \"split\": \"train[:0.02%]\", \"field\": \"content\"},"
+          "snippet": "{\"dataset\": \"bigcode/the-stack-dedup\", \"split\": \"train[:0.02%]\", \"field\": \"content\"},"
         }
       ],
       "metadata": {
         "license": null,
-        "hf_url": "https://huggingface.co/datasets/bigcode/the-stack-v2"
+        "hf_url": "https://huggingface.co/datasets/bigcode/the-stack-dedup"
       }
     },
     {

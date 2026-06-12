@@ -1,0 +1,20 @@
+{
+  "_comment": "Single source of truth for cross-document numbers. Edit here, then run scripts/check_facts_consistency.py (wired into scripts/verify_all.sh) to catch any doc that drifts. test_stat is propagated by scripts/sync_test_stat_claims.py from the live pytest count.",
+  "design_target_params": "2.64B",
+  "measured_runtime_params": "3,672,982,022",
+  "measured_params_b": "~3.67B",
+  "stale_measured_params_historical_only": ["3,698,246,156", "3698246156", "~3.70B"],
+  "token_budget": "23.6B",
+  "target_tokens_min": 23600000000,
+  "max_steps": 45000,
+  "batch_size": 128,
+  "max_seq_len": 4096,
+  "num_layers": 18,
+  "hidden_size": 2048,
+  "num_experts": 8,
+  "active_experts": 2,
+  "moe_intermediate": 8192,
+  "vocab_size": 128256,
+  "teacher_model": "meta-llama/Llama-3.3-70B-Instruct",
+  "test_stat": "365 passed, 4 skipped"
+}

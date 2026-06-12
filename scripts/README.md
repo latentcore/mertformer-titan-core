@@ -219,6 +219,12 @@ bash scripts/macos_keepawake.sh --assert-seconds 10800 -- \
   bash zero_touch_start.sh --kaggle-onefile --mode verify
 ```
 
+For a rented 8x NVIDIA B300 box, use the dedicated wrapper (hardware asserts + canonical 45K env, delegates to `zero_touch_start.sh`; previews by default, trains only with `--go`):
+
+```bash
+HF_TOKEN=... bash scripts/launch_8xb300.sh --check-only   # or --dry-run, or --go
+```
+
 Or, on macOS, double-click:
 
 ```bash

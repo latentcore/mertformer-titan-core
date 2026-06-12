@@ -10,7 +10,7 @@ Durum etiketleri:
 | Alan | İddia | Durum | Kanıt |
 | --- | --- | --- | --- |
 | Sistem aşaması | Build 30 pre-training / claim-unverified | DOĞRULANDI | `README.md`, `README_TR.md`, `reports/snapshots/2026-02-24/evidence_snapshot_2026-02-24.json` |
-| Parametre ayrımı | 2.64B hedef, ~3.70B ölçülen runtime | DOĞRULANDI | `README.md`, `README_TR.md`, `reports/snapshots/2026-02-24/evidence_snapshot_2026-02-24.json` |
+| Parametre ayrımı | 2.64B hedef, ~3.67B ölçülen runtime | DOĞRULANDI | `README.md`, `README_TR.md`, `reports/param_accounting_report.md` |
 | Closure durumu | 57/57 closure gate yeşil | DOĞRULANDI | `reports/closure_57_matrix.md`, `reports/snapshots/2026-02-24/evidence_snapshot_2026-02-24.json` |
 | Benchmark claim gate | Eğitimli checkpoint yoksa `NOT ELIGIBLE FOR CLAIM` | DOĞRULANDI | `README.md`, `README_TR.md`, `reports/go_status_matrix.md` |
 | Pilot readiness | Teknik pilot readiness GO | DOĞRULANDI | `reports/go_status_matrix.md` |

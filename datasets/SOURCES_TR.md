@@ -11,9 +11,9 @@ Bkz:
 ## Eğitim Curriculum’u (`scripts/data_pipeline.py`)
 
 ### Stage 1 — Lojik / Kod + Matematik (hedef oran: %42)
-- `bigcode/the-stack-v2` (train; dil filtreli)
+- `bigcode/the-stack-dedup` (train; dil filtreli)
   Amaç: büyük ölçekli kod korpusu
-  Dataset card: https://huggingface.co/datasets/bigcode/the-stack-v2
+  Dataset card: https://huggingface.co/datasets/bigcode/the-stack-dedup
   Durum: kodda referansli; revision pin + manifest fingerprint `datasets/hashes.json` içinde kayıtlı
 - `TIGER-Lab/MathInstruct` (train)
   Amaç: matematik talimat/veri

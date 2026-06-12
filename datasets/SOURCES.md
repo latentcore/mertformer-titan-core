@@ -11,9 +11,9 @@ See also:
 ## Training Curriculum (from `scripts/data_pipeline.py`)
 
 ### Stage 1 — Logic / Code + Math (target ratio: 42%)
-- `bigcode/the-stack-v2` (train; filtered by language)
+- `bigcode/the-stack-dedup` (train; filtered by language)
   Purpose: large-scale code corpus
-  Dataset card: https://huggingface.co/datasets/bigcode/the-stack-v2
+  Dataset card: https://huggingface.co/datasets/bigcode/the-stack-dedup
   Status: referenced in code; revision pinned + manifest fingerprint recorded in `datasets/hashes.json`
 - `TIGER-Lab/MathInstruct` (train)
   Purpose: math instruction data

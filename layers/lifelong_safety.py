@@ -37,16 +37,13 @@ class LifelongSafetyLayer(nn.Module):
         self.drift_threshold = float(drift_threshold)
 
         self.register_buffer("running_mean", torch.zeros(self.hidden_size), persistent=False)
-        self.register_buffer("running_var", torch.ones(self.hidden_size), persistent=False)
         self.register_buffer("last_drift", torch.zeros(()), persistent=False)
         self.gain = nn.Parameter(torch.zeros(self.hidden_size))
 
     def _update_stats(self, x: torch.Tensor) -> None:
         with torch.no_grad():
             mean = x.detach().mean(dim=(0, 1))
-            var = x.detach().var(dim=(0, 1), unbiased=False)
             self.running_mean.mul_(self.ema_decay).add_(mean * (1.0 - self.ema_decay))
-            self.running_var.mul_(self.ema_decay).add_(var * (1.0 - self.ema_decay))
 
             drift = (mean - self.running_mean).abs().mean()
             self.last_drift.copy_(drift.detach())

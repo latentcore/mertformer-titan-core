@@ -53,7 +53,7 @@ STAGE_DIRS = {
 # EN: Sources are stage-local weights; normalized within the stage.
 STAGE1_SOURCES = [
     {
-        "dataset": "bigcode/the-stack-v2",
+        "dataset": "bigcode/the-stack-dedup",
         "split": "train",
         "field": "content",
         "ratio": 0.28,  # 28% of total

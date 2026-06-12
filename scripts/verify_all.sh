@@ -70,6 +70,9 @@ echo "[verify] Translation pointer policy gate ..."
 echo "[verify] Documentation claim consistency gate ..."
 "$PY" scripts/check_doc_claim_consistency.py
 
+echo "[verify] FACTS single-source consistency gate ..."
+"$PY" scripts/check_facts_consistency.py
+
 echo "[verify] Markdown integrity gate ..."
 "$PY" scripts/md_integrity_check.py --root .
 

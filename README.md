@@ -128,7 +128,7 @@ Its long-term target is to make efficient, auditable AI training and inference m
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `354 passed, 4 skipped` |
+| `python3 -m pytest -q` | `365 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -141,7 +141,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`354 passed, 4 skipped`)
+   - `pytest` passed (`365 passed, 4 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -213,6 +213,11 @@ HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touc
 4b. Canonical terminal-first Kaggle closure lane:
 ```bash
 bash zero_touch_start.sh --kaggle-onefile --mode train-end --profile auto
+```
+4b-bis. 8x NVIDIA B300 final training launch (operator wrapper — adds sm_100/cu128/8-GPU/bf16 hardware asserts + the canonical 45K env, then delegates to `zero_touch_start.sh`; **preview by default, trains only with `--go`**):
+```bash
+HF_TOKEN=... bash scripts/launch_8xb300.sh --check-only   # readiness gate, no GPU spend
+HF_TOKEN=... bash scripts/launch_8xb300.sh --go           # the real 45K run on 8xB300
 ```
 4c. macOS one-click launcher:
 ```bash

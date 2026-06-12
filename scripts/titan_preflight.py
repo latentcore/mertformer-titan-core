@@ -27,6 +27,52 @@ import torch
 import torch.nn as nn
 from typing import Dict, Any
 
+
+def _field_yields_text(rows, field, min_length: int, max_rows: int = 8) -> bool:
+    """Pure helper: does any of the first ``max_rows`` rows yield text of at least
+    ``min_length`` characters under ``field``? Uses the SAME extractor as the data
+    pipeline so a misconfigured field (e.g. an empty-by-schema 'content') is caught."""
+    import scripts.data_pipeline as _dp
+
+    for i, row in enumerate(rows):
+        if i >= int(max_rows):
+            break
+        text = _dp._extract_text(row, field)
+        if isinstance(text, str) and len(text.strip()) >= int(min_length):
+            return True
+    return False
+
+
+def _probe_sources_yield_text(hf_token, max_rows: int = 8) -> Dict[str, str]:
+    """Stream a few rows from each non-optional stage source and confirm its configured
+    field yields usable text. Returns {dataset_id: 'PASS' | 'SOURCE_FIELD_EMPTY' | 'WARN: ...'}.
+    Transient/network errors are WARN (non-fatal); a source that fetches rows but yields no
+    text under its field is SOURCE_FIELD_EMPTY (a real, loud blocker)."""
+    from datasets import load_dataset
+    import scripts.data_pipeline as _dp
+
+    sources = (
+        _dp.STAGE1_SOURCES + _dp.STAGE2_SOURCES + _dp.STAGE3_SOURCES
+        + _dp.STAGE4_SOURCES + _dp.STAGE5_SOURCES
+    )
+    results: Dict[str, str] = {}
+    for src in sources:
+        ds_id = str(src.get("dataset", ""))
+        if src.get("optional") or ds_id in results:
+            continue
+        try:
+            load_kwargs: Dict[str, Any] = {"split": src.get("split", "train"), "streaming": True}
+            if hf_token:
+                load_kwargs["token"] = hf_token
+            subset = src.get("subset")
+            ds = load_dataset(ds_id, subset, **load_kwargs) if subset else load_dataset(ds_id, **load_kwargs)
+            ok = _field_yields_text(ds, src.get("field", ""), int(src.get("min_length", 1)), max_rows)
+            results[ds_id] = "PASS" if ok else "SOURCE_FIELD_EMPTY"
+        except Exception as exc:  # noqa: BLE001 - transient/network is non-fatal
+            results[ds_id] = f"WARN: {exc}"
+    return results
+
+
 # --- CONFIGURATION ---
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -454,7 +500,7 @@ def strict_training_readiness_profile() -> int:
 
         # Minimal dataset API reachability checks (one representative from each stage family).
         required_datasets = [
-            "bigcode/the-stack-v2",
+            "bigcode/the-stack-dedup",
             "HuggingFaceFW/fineweb-edu",
             "wikimedia/wikipedia",
             "OpenAssistant/oasst_top1_2023-08-25",
@@ -479,6 +525,19 @@ def strict_training_readiness_profile() -> int:
         if failing_ds:
             reason_code = "DATASET_API_UNREACHABLE"
             raise RuntimeError(f"dataset API checks failed: {failing_ds}")
+
+        # [B1] Source field smoke-probe: prove each configured source actually yields text
+        # under its field+min_length. Catches the silent-empty-field class (the old
+        # the-stack-v2 'content' produced zero usable rows and starved Stage-1 code data).
+        field_probe = _probe_sources_yield_text(hf_token)
+        empty_sources = [k for k, v in field_probe.items() if v == "SOURCE_FIELD_EMPTY"]
+        checks["source_field_probe"] = {
+            "status": "PASS" if not empty_sources else "FAIL",
+            "results": field_probe,
+        }
+        if empty_sources:
+            reason_code = "SOURCE_FIELD_EMPTY"
+            raise RuntimeError(f"source field probe found empty-field sources: {empty_sources}")
 
         # Stage JSONL presence (warn unless strict override).
         missing_stage = [name for name, path in _stage_jsonl_paths().items() if not path.exists()]

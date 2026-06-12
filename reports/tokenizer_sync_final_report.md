@@ -1,6 +1,6 @@
 # Tokenizer Sync Final Report
 
-- generated_utc: `2026-06-12T14:30:54Z`
+- generated_utc: `2026-06-12T19:37:06Z`
 - canonical_spec: `interfaces/tokenizer_spec.json`
 - mirror_spec: `tokenizer/tokenizer.json`
 - local_runtime_cache: `data/tokenizer/tr`

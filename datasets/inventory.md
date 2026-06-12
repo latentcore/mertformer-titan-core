@@ -11,7 +11,7 @@ For license/provenance work, see `datasets/SOURCES*.md` and `datasets/LICENSES*.
 | `OpenAssistant/oasst_top1_2023-08-25` | Apache-2.0 | https://huggingface.co/datasets/OpenAssistant/oasst_top1_2023-08-25 | 3 |
 | `TFLai/Turkish-Alpaca` | Apache-2.0 | https://huggingface.co/datasets/TFLai/Turkish-Alpaca | 1 |
 | `TIGER-Lab/MathInstruct` | MIT | https://huggingface.co/datasets/TIGER-Lab/MathInstruct | 3 |
-| `bigcode/the-stack-v2` | Other (mixed upstream licenses; gated Terms of Use) | https://huggingface.co/datasets/bigcode/the-stack-v2 | 3 |
+| `bigcode/the-stack-dedup` | Other (mixed upstream licenses; gated Terms of Use) | https://huggingface.co/datasets/bigcode/the-stack-dedup | 3 |
 | `codeparrot/github-code` | TBD (demo-only) | https://huggingface.co/datasets/codeparrot/github-code | 2 |
 | `glaiveai/glaive-function-calling-v2` | Apache-2.0 | https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2 | 1 |
 | `gorilla-llm/gorilla-openfunctions-v2` | TBD | https://huggingface.co/datasets/gorilla-llm/gorilla-openfunctions-v2 | 1 |
@@ -48,7 +48,7 @@ For license/provenance work, see `datasets/SOURCES*.md` and `datasets/LICENSES*.
 - scripts/kaggle_onefile_demo_build30.py:2374 (pipeline_source)
 - scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py:2918 (pipeline_source)
 
-### `bigcode/the-stack-v2`
+### `bigcode/the-stack-dedup`
 - scripts/data_pipeline.py:56 (pipeline_source)
 - scripts/kaggle_onefile_demo_build30.py:2392 (pipeline_source)
 - scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py:2936 (pipeline_source)

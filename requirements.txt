@@ -3,6 +3,7 @@
 # ==============================================================================
 # Version: v1.0 (Build 30) - Pre-Training
 # Platform: CUDA / MPS / CPU
+# Pinned versions: see constraints.txt  (pip install -r requirements.txt -c constraints.txt)
 # ==============================================================================
 
 # Core ML Framework

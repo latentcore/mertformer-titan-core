@@ -9,7 +9,7 @@ Notlar:
 
 | Dataset | Lisans | Referans URL | Durum |
 | --- | --- | --- | --- |
-| `bigcode/the-stack-v2` | Other (karma upstream lisanslar; gated Terms of Use) | https://huggingface.co/datasets/bigcode/the-stack-v2 | Verified (HF gated koşulları) |
+| `bigcode/the-stack-dedup` | Other (karma upstream lisanslar; gated Terms of Use) | https://huggingface.co/datasets/bigcode/the-stack-dedup | Verified (HF gated koşulları) |
 | `TIGER-Lab/MathInstruct` | MIT | https://opensource.org/licenses/MIT | Verified (HF metadata) |
 | `openai/gsm8k` (`main`) | MIT | https://opensource.org/licenses/MIT | Verified (bilinen) |
 | `HuggingFaceFW/fineweb-edu` | ODC-By 1.0 | https://opendatacommons.org/licenses/by/1-0/ | Verified (HF metadata) |

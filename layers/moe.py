@@ -290,11 +290,13 @@ class MoE(nn.Module):
             getattr(cfg, "num_experts_per_tok", getattr(cfg, "active_experts", 1))
         )
 
-        # Safety checks
-        assert self.num_experts >= 1, "num_experts en az 1 olmalı."
-        assert (
-            1 <= self.active_experts <= self.num_experts
-        ), "active_experts mantıksız (1 <= k <= N)."
+        # Safety checks (explicit raises survive `python -O`, which strips asserts).
+        # TR: num_experts en az 1 olmalı. / EN: num_experts must be >= 1.
+        if self.num_experts < 1:
+            raise ValueError("num_experts must be >= 1.")
+        # TR: active_experts 1 <= k <= N olmalı. / EN: active_experts must satisfy 1 <= k <= num_experts.
+        if not (1 <= self.active_experts <= self.num_experts):
+            raise ValueError("active_experts must satisfy 1 <= k <= num_experts.")
 
         moe_intermediate = int(getattr(cfg, "moe_intermediate", self.hidden_size * 4))
 

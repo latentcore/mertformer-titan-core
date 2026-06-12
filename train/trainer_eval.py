@@ -20,6 +20,7 @@ __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
 import json
+import sys
 from pathlib import Path
 from typing import Any, Optional
 
@@ -95,7 +96,18 @@ def kd_loss_safe(
     if _is_sparse_topk_payload(teacher_logits):
         return _kd_loss_sparse_topk(student_logits, teacher_logits, temp, mask=mask)
 
-    min_vocab = min(student_logits.size(-1), teacher_logits.size(-1))
+    s_vocab, t_vocab = student_logits.size(-1), teacher_logits.size(-1)
+    if s_vocab != t_vocab and not getattr(kd_loss_safe, "_warned_vocab_mismatch", False):
+        # [S8] Dense KD positionally assumes aligned vocab indices for the first min(s,t) tokens.
+        # The canonical offline lane uses the sparse Top-K payload (explicit, validated indices);
+        # this dense branch is online/legacy only. Warn once so a silent base mismatch is visible.
+        print(
+            f"⚠️ KD dense vocab mismatch: student={s_vocab} teacher={t_vocab}; "
+            f"truncating to {min(s_vocab, t_vocab)} (assumes aligned indices).",
+            file=sys.stderr,
+        )
+        kd_loss_safe._warned_vocab_mismatch = True  # type: ignore[attr-defined]
+    min_vocab = min(s_vocab, t_vocab)
     s = student_logits[..., :min_vocab].float()
     t = teacher_logits[..., :min_vocab].float().to(s.device)
     T = float(temp)
