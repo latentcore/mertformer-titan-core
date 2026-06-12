@@ -1,6 +1,6 @@
 {
   "schema": "final_freeze_manifest_v1",
-  "generated_utc": "2026-06-12T20:26:42Z",
+  "generated_utc": "2026-06-12T20:55:06Z",
   "official_product_sentence": "Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre edilebilir zeka altyapısı.",
   "risk_ceiling": "Medium Refine",
   "guardrail": "If any task increases risk to 45K readiness, reproducibility, or closure confidence, demote it to phase-2.",

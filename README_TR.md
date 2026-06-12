@@ -2281,6 +2281,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── linkcheck_gate.py  # Python modülü/scripti (linkcheck gate için otomasyon scripti)
 │   ├── liquid_train_impl_benchmark.py  # Python modülü/scripti (liquid train impl benchmark için otomasyon scripti)
 │   ├── logbook_build.py  # Python modülü/scripti (logbook build için otomasyon scripti)
+│   ├── logbook_verify.py  # Python modülü/scripti (logbook verify için otomasyon scripti)
 │   ├── mac_simulation.py  # Python modülü/scripti (mac simulation için otomasyon scripti)
 │   ├── macos_keepawake.sh  # kabuk otomasyon scripti
 │   ├── mathfp_interactive_chat.py  # Python modülü/scripti (mathfp interactive chat için otomasyon scripti)
@@ -2457,6 +2458,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── .gitignore  # git ignore politikası
 ├── .pre-commit-config.yaml  # YAML yapılandırma dosyası
 ├── AGENTS.md  # dokümantasyon/rapor dosyası
+├── ARCHITECTURE.md  # dokümantasyon/rapor dosyası
 ├── CHANGELOG.md  # dokümantasyon/rapor dosyası
 ├── CHANGELOG_TR.md  # Türkçe doküman karşılığı
 ├── CHESS_5080_POC_INTERNAL.md  # dokümantasyon/rapor dosyası

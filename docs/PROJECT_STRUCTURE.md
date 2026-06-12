@@ -691,6 +691,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── linkcheck_gate.py  # Python module/script (automation script for linkcheck gate)
 │   ├── liquid_train_impl_benchmark.py  # Python module/script (automation script for liquid train impl benchmark)
 │   ├── logbook_build.py  # Python module/script (automation script for logbook build)
+│   ├── logbook_verify.py  # Python module/script (automation script for logbook verify)
 │   ├── mac_simulation.py  # Python module/script (automation script for mac simulation)
 │   ├── macos_keepawake.sh  # shell automation script
 │   ├── mathfp_interactive_chat.py  # Python module/script (automation script for mathfp interactive chat)
@@ -867,6 +868,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── .gitignore  # git ignore policy
 ├── .pre-commit-config.yaml  # YAML configuration file
 ├── AGENTS.md  # documentation/report file
+├── ARCHITECTURE.md  # documentation/report file
 ├── CHANGELOG.md  # documentation/report file
 ├── CHANGELOG_TR.md  # Turkish document counterpart
 ├── CHESS_5080_POC_INTERNAL.md  # documentation/report file

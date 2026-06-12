@@ -667,6 +667,13 @@ def _validate_training_contract(cfg: MertFormerConfig) -> None:
                 f"(e.g. an OOM batch fallback) before committing to a long run.",
                 file=sys.stderr,
             )
+            if os.environ.get("TITAN_STRICT_TOKEN_BUDGET", "0").strip().lower() in {"1", "true", "yes"}:
+                # [13] Opt-in launch-checklist guard: escalate the overshoot to a hard error
+                # (default off, so smoke/test runs and the normal path are unaffected).
+                raise ValueError(
+                    f"❌ TITAN_STRICT_TOKEN_BUDGET=1: planned {planned_tokens / 1e9:.2f}B tokens exceeds "
+                    f"target_tokens_min {target_min / 1e9:.2f}B by >5%. Fix batch_size/max_steps or unset the flag."
+                )
 
     if bool(getattr(cfg, "require_gated_teacher", False)) and not str(
         getattr(cfg, "teacher_model_id", "")
