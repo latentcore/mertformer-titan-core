@@ -112,11 +112,13 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── CHAIN_MAP_TR.md  # Turkish document counterpart
 │   ├── CHESS_ONEFILE_MASTER_TRUTH.md  # documentation/report file
 │   ├── CHESS_ONEFILE_MASTER_TRUTH_TR.md  # Turkish document counterpart
+│   ├── KAGGLE_PILOT.md  # documentation/report file
 │   ├── MERTFORMER_5080_ARTIFACT_INTAKE_CHECKLIST_TR.md  # Turkish document counterpart
 │   ├── MERTFORMER_5080_FINAL_ONEFILE_TRUTH.md  # documentation/report file
 │   ├── MERTFORMER_5080_FINAL_ONEFILE_TRUTH_TR.md  # Turkish document counterpart
 │   ├── PROJECT_MASTER_TRUTH.md  # documentation/report file
-│   └── PROJECT_MASTER_TRUTH_TR.md  # Turkish document counterpart
+│   ├── PROJECT_MASTER_TRUTH_TR.md  # Turkish document counterpart
+│   └── QUICKSTART_CPU.md  # documentation/report file
 ├── documents/  # directory
 │   ├── README_TR_before_final_simplification.md  # documentation/report file
 │   ├── README_before_final_simplification.md  # documentation/report file
@@ -262,6 +264,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── README.md  # primary documentation (EN)
 │   └── chess_release_contract.md  # documentation/report file
 ├── reports/  # directory
+│   ├── ablations/  # directory
+│   │   └── liquid_ablation_results.json  # JSON data artifact
 │   ├── benchmarks/  # directory
 │   │   ├── linkedin_sweetspot/  # directory
 │   │   │   ├── README.md  # primary documentation (EN)
@@ -630,6 +634,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── README_TR.md  # Turkish document counterpart
 │   ├── __init__.py  # Python module/script (scripts package initializer and exports)
 │   ├── apply_github_policy.sh  # shell automation script
+│   ├── benchmark_liquid_impls.py  # Python module/script (automation script for benchmark liquid impls)
 │   ├── benchmarks_internal.py  # Python module/script (automation script for benchmarks internal)
 │   ├── bitnet_kernel_benchmark_standalone.py  # Python module/script (automation script for bitnet kernel benchmark standalone)
 │   ├── bootstrap_venv.sh  # shell automation script
@@ -722,6 +727,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── repro_build_check.py  # Python module/script (automation script for repro build check)
 │   ├── resume_compat_check.py  # Python module/script (automation script for resume compat check)
 │   ├── run_and_clean_pycache.py  # Python module/script (run command + guaranteed post-run cache sweep; add --include-venv-caches for venv cache cleanup)
+│   ├── run_liquid_ablation.py  # Python module/script (automation script for run liquid ablation)
 │   ├── scaling_audit_math.py  # Python module/script (automation script for scaling audit math)
 │   ├── secret_scan.py  # Python module/script (automation script for secret scan)
 │   ├── smart_runner.py  # Python module/script (automation script for smart runner)
@@ -797,6 +803,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_kd_mask.py  # Python module/script (automated test module for kd mask)
 │   ├── test_kernel_dispatcher.py  # Python module/script (automated test module for kernel dispatcher)
 │   ├── test_kernel_equivalence.py  # Python module/script (automated test module for kernel equivalence)
+│   ├── test_kill_if_non_finite.py  # Python module/script (automated test module for kill if non finite)
 │   ├── test_kpi_report_cli.py  # Python module/script (automated test module for kpi report cli)
 │   ├── test_lifelong_safety.py  # Python module/script (automated test module for lifelong safety)
 │   ├── test_liquid_safeguard.py  # Python module/script (automated test module for liquid safeguard)

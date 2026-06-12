@@ -1,7 +1,7 @@
 # Immutable Evidence Register
 
-- generated_local: `2026-06-13T00:46:47`
-- entry_count: `925`
+- generated_local: `2026-06-13T01:30:21`
+- entry_count: `930`
 
 | Path | Kind | Reason | Disposition |
 | --- | --- | --- | --- |
@@ -647,6 +647,10 @@
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260613_004313.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260613_004459.zip` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260613_004459.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260613_012635.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260613_012635.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260613_012839.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260613_012839.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113659.json` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113738.json` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormerStream/.gradle/buildOutputCleanup` | `dir` | `output` | `preserve_immutable_evidence` |
@@ -850,6 +854,7 @@
 | `<HOME>/Documents/MertFormer_Oncompute_UltraSlim_SmokeJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-48c46c252a4dc46a6bd8907ab2155303c37a4e492d69e5c6d6a9f156ad603626/result-output.tar` | `file` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/MertFormer_Oncompute_UltraSlim_SmokeJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-48c46c252a4dc46a6bd8907ab2155303c37a4e492d69e5c6d6a9f156ad603626/result-output_extracted` | `dir` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/mertformer_outputs` | `dir` | `output` | `preserve_immutable_evidence` |
+| `<HOME>/Documents/mertformer_outputs/.DS_Store` | `file` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/mertformer_outputs/checkpoints` | `dir` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/mertformer_outputs/checkpoints/final.pt` | `file` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/mertformer_outputs/checkpoints/latest.pt` | `file` | `output` | `preserve_immutable_evidence` |

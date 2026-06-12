@@ -22,7 +22,7 @@ Pick ONE:
 **Option A — upload as a private Dataset (no token, simplest):**
 1. On your Mac: zip the repo (include the gitignored tokenizer/data so the pilot gets *real* text):
    ```bash
-   cd /Users/mertyunlu/Desktop/NİHAİ
+   cd <the folder that CONTAINS your mertformer-titan-core checkout>
    zip -r mertformer.zip mertformer-titan-core -x '*/.git/*' '*/.titan-venv/*'
    ```
 2. Kaggle → **Datasets → New Dataset →** upload `mertformer.zip` (set it Private).

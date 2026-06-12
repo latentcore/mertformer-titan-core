@@ -1702,11 +1702,13 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── CHAIN_MAP_TR.md  # Türkçe doküman karşılığı
 │   ├── CHESS_ONEFILE_MASTER_TRUTH.md  # dokümantasyon/rapor dosyası
 │   ├── CHESS_ONEFILE_MASTER_TRUTH_TR.md  # Türkçe doküman karşılığı
+│   ├── KAGGLE_PILOT.md  # dokümantasyon/rapor dosyası
 │   ├── MERTFORMER_5080_ARTIFACT_INTAKE_CHECKLIST_TR.md  # Türkçe doküman karşılığı
 │   ├── MERTFORMER_5080_FINAL_ONEFILE_TRUTH.md  # dokümantasyon/rapor dosyası
 │   ├── MERTFORMER_5080_FINAL_ONEFILE_TRUTH_TR.md  # Türkçe doküman karşılığı
 │   ├── PROJECT_MASTER_TRUTH.md  # dokümantasyon/rapor dosyası
-│   └── PROJECT_MASTER_TRUTH_TR.md  # Türkçe doküman karşılığı
+│   ├── PROJECT_MASTER_TRUTH_TR.md  # Türkçe doküman karşılığı
+│   └── QUICKSTART_CPU.md  # dokümantasyon/rapor dosyası
 ├── documents/  # dizin
 │   ├── README_TR_before_final_simplification.md  # dokümantasyon/rapor dosyası
 │   ├── README_before_final_simplification.md  # dokümantasyon/rapor dosyası
@@ -1852,6 +1854,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── README.md  # ana dokümantasyon (EN)
 │   └── chess_release_contract.md  # dokümantasyon/rapor dosyası
 ├── reports/  # dizin
+│   ├── ablations/  # dizin
+│   │   └── liquid_ablation_results.json  # JSON veri artefaktı
 │   ├── benchmarks/  # dizin
 │   │   ├── linkedin_sweetspot/  # dizin
 │   │   │   ├── README.md  # ana dokümantasyon (EN)
@@ -2220,6 +2224,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── README_TR.md  # Türkçe doküman karşılığı
 │   ├── __init__.py  # Python modülü/scripti (scripts paket başlatıcısı ve dışa aktarmalar)
 │   ├── apply_github_policy.sh  # kabuk otomasyon scripti
+│   ├── benchmark_liquid_impls.py  # Python modülü/scripti (benchmark liquid impls için otomasyon scripti)
 │   ├── benchmarks_internal.py  # Python modülü/scripti (benchmarks internal için otomasyon scripti)
 │   ├── bitnet_kernel_benchmark_standalone.py  # Python modülü/scripti (bitnet kernel benchmark standalone için otomasyon scripti)
 │   ├── bootstrap_venv.sh  # kabuk otomasyon scripti
@@ -2312,6 +2317,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── repro_build_check.py  # Python modülü/scripti (repro build check için otomasyon scripti)
 │   ├── resume_compat_check.py  # Python modülü/scripti (resume compat check için otomasyon scripti)
 │   ├── run_and_clean_pycache.py  # Python modülü/scripti (komut çalıştırma + garanti pycache temizliği; venv cache temizliği için --include-venv-caches kullan)
+│   ├── run_liquid_ablation.py  # Python modülü/scripti (run liquid ablation için otomasyon scripti)
 │   ├── scaling_audit_math.py  # Python modülü/scripti (scaling audit math için otomasyon scripti)
 │   ├── secret_scan.py  # Python modülü/scripti (secret scan için otomasyon scripti)
 │   ├── smart_runner.py  # Python modülü/scripti (smart runner için otomasyon scripti)
@@ -2387,6 +2393,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_kd_mask.py  # Python modülü/scripti (kd mask için otomatik test modülü)
 │   ├── test_kernel_dispatcher.py  # Python modülü/scripti (kernel dispatcher için otomatik test modülü)
 │   ├── test_kernel_equivalence.py  # Python modülü/scripti (kernel equivalence için otomatik test modülü)
+│   ├── test_kill_if_non_finite.py  # Python modülü/scripti (kill if non finite için otomatik test modülü)
 │   ├── test_kpi_report_cli.py  # Python modülü/scripti (kpi report cli için otomatik test modülü)
 │   ├── test_lifelong_safety.py  # Python modülü/scripti (lifelong safety için otomatik test modülü)
 │   ├── test_liquid_safeguard.py  # Python modülü/scripti (liquid safeguard için otomatik test modülü)
