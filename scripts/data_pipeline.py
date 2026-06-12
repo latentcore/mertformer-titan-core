@@ -64,7 +64,7 @@ STAGE1_SOURCES = [
     {
         "dataset": "TIGER-Lab/MathInstruct", # [FIX] Nvidia repo removed, switched to TIGER-Lab
         "split": "train",
-        "field": "instruction", # Fields: instruction, output
+        "field": {"join": ["instruction", "output"]}, # [P2] include the answer (output), not just the prompt
         "ratio": 0.015,  # 1.5% of total
         "filters": None,
         "min_length": 10,
@@ -74,7 +74,7 @@ STAGE1_SOURCES = [
         "dataset": "openai/gsm8k", 
         "split": "train",
         "subset": "main", # [FIX] Required config name
-        "field": "question", 
+        "field": {"join": ["question", "answer"]}, # [P2] include the answer, not just the question
         "ratio": 0.02, 
         "filters": None,
         "min_length": 10,
@@ -422,6 +422,19 @@ class RollingDeduper:
 
 
 def _extract_text(sample: Dict[str, object], field: object) -> str:
+    # [P2] Dict form {"join": [f1, f2, ...], "sep": "\n"} concatenates multiple fields
+    # (e.g. instruction+output, question+answer) so the answer/output is not dropped.
+    if isinstance(field, dict):
+        join_keys = field.get("join", [])
+        sep = field.get("sep", "\n")
+        if not isinstance(sep, str):
+            sep = "\n"
+        parts = []
+        if isinstance(join_keys, (list, tuple)):
+            for f in join_keys:
+                if isinstance(f, str) and f in sample and sample[f] is not None:
+                    parts.append(str(sample[f]))
+        return sep.join(parts)
     if isinstance(field, (list, tuple)):
         for f in field:
             if isinstance(f, str) and f in sample and sample[f] is not None:

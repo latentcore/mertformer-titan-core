@@ -86,7 +86,7 @@ except Exception:
 
 try:
     from accelerate import Accelerator
-    from accelerate.utils import ProjectConfiguration, set_seed
+    from accelerate.utils import ProjectConfiguration, set_seed, DistributedDataParallelKwargs
 except ImportError:
     print("❌ Accelerate kütüphanesi eksik! 'pip install accelerate' yap.")
     sys.exit(1)
@@ -654,11 +654,18 @@ def train() -> None:
         torch.set_float32_matmul_precision('high')
         print("⚡ TensorFloat-32 (TF32) activated for A100.")
     
+    # [P1 FIX] The DDP reducer must tolerate params that produce no grad in a step:
+    #   (a) the liquid/tau warmup+cooldown freeze flips requires_grad AFTER prepare(),
+    #   (b) MoE top-2 routing leaves some experts unrouted per micro-batch.
+    # find_unused_parameters=True prevents the multi-GPU reducer error; on single-GPU/CPU
+    # Accelerate does not wrap in DDP, so this is a no-op there (test suite unaffected).
+    ddp_kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
     accelerator = Accelerator(
         gradient_accumulation_steps=cfg.grad_accum_steps,
         mixed_precision="bf16" if (torch.cuda.is_available() and torch.cuda.is_bf16_supported()) else "fp16" if cfg.use_amp else "no",
         project_config=accelerator_project_config,
-        log_with="all"
+        log_with="all",
+        kwargs_handlers=[ddp_kwargs],
     )
 
     # Seed everything

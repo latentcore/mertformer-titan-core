@@ -14,6 +14,7 @@ import gc
 import json
 import logging
 import os
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -783,6 +784,34 @@ def main() -> int:
         if dataset_path.exists():
             total_est += _estimate_disk_mb(_count_jsonl(dataset_path), args.max_seq, args.top_k)
     logger.info("Estimated total disk: %.2f GB", total_est / 1024.0)
+
+    # [P0 FIX] Disk pre-flight gate. Sparse Top-K logits scale ~linearly with --top-k and
+    # can be enormous (top_k=256 over the full ~23.6B-token budget is tens of TB). Refuse to
+    # start a multi-hour teacher run that would run out of disk mid-way. This process writes
+    # only its own shard share (total_est / num_shards). Override with TITAN_SKIP_DISK_GATE=1.
+    if os.environ.get("TITAN_SKIP_DISK_GATE", "").strip().lower() not in {"1", "true", "yes"}:
+        try:
+            free_bytes: Optional[int] = shutil.disk_usage(logits_dir).free
+        except OSError:
+            free_bytes = None
+        if free_bytes is not None:
+            est_bytes = (total_est / max(1, num_shards)) * 1024.0 * 1024.0
+            required_bytes = est_bytes * 1.10  # +10% margin for shard headers / fs overhead
+            gib = 1024.0 ** 3
+            if required_bytes > free_bytes:
+                logger.error(
+                    "Insufficient disk for Top-%s logits at %s: need ~%.1f GB "
+                    "(est %.1f GB + 10%% margin) but only %.1f GB free. Lower --top-k "
+                    "(disk scales ~linearly with top_k), free space, or set "
+                    "TITAN_SKIP_DISK_GATE=1 to override.",
+                    args.top_k, logits_dir,
+                    required_bytes / gib, est_bytes / gib, free_bytes / gib,
+                )
+                return 1
+            logger.info(
+                "Disk gate OK: need ~%.1f GB, %.1f GB free at %s",
+                required_bytes / gib, free_bytes / gib, logits_dir,
+            )
 
     time.sleep(1)
     teacher, teacher_tokenizer = load_teacher(args.model_id, hf_token)

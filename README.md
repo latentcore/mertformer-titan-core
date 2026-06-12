@@ -181,7 +181,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Minimum Training Hardware (Claim-Safe)
 - Dev smoke/preflight: CPU/MPS, 16 GB RAM, 50 GB free disk.
-- Master training target: 8x A100 80GB (or equivalent), 1 TB fast SSD, NVLink recommended.
+- Master training target: 8x A100 80GB (or equivalent), NVLink recommended. NVMe/SSD must be sized to your sparse-logit budget: offline Top-K teacher logits scale ~linearly with `--top-k` (≈36 TB at `top_k=256` down to ≈4.5 TB at `top_k=32` for the ~23.6B-token budget). A disk pre-flight gate in `scripts/precompute_logits_topk.py` enforces this before the teacher run starts (override: `TITAN_SKIP_DISK_GATE=1`). Without precomputed logits, ~1 TB fast SSD suffices for checkpoints/data.
 
 ### Canonical readiness gate
 ```bash

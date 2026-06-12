@@ -15,6 +15,7 @@ __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
 import os
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -106,7 +107,10 @@ def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None) 
         use_8bit_adam = getattr(conf, "use_8bit_adam", True) if conf is not None else True
         max_seq_len = getattr(conf, "max_seq_len", 4096) if conf is not None else 4096
 
-        total_params = 2.64 * 10**9
+        # [P7] Measured dense total (~3.67B) for VRAM math; was the 2.64e9 design-target.
+        # CUDA-only path (gated above); never runs on Mac/MPS. Does not change the published
+        # design-target DEFAULT_PARAMS=2.64e9 in economics/flops_estimator.py.
+        total_params = 3.673 * 10**9
 
         # A. Static Memory (Fixed Cost)
         # Weights (BF16=2 bytes) + Grads (BF16=2 bytes) = 4 bytes per param
@@ -233,6 +237,10 @@ class MertFormerConfig:
     num_experts: int = 8
     num_experts_per_tok: int = 2
     active_experts: int = 2  # Alias for num_experts_per_tok (backward compatibility)
+    # [P4] Explicit MoE expert FFN width. Previously a silent getattr default in
+    # layers/moe.py (hidden_size*4 = 2048*4). Made explicit here at the SAME value so the
+    # measured 3,672,982,022 (~3.67B) param count is unchanged — do NOT alter this number.
+    moe_intermediate: int = 8192
     router_aux_loss_coef: float = 0.02
     aux_loss_coef: float = 0.02  # Alias for router_aux_loss_coef (backward compatibility)
     moe_every_n_layers: int = 3  # MoE on layers: 3, 6, 9, 12, 15, 18, 21 (0-indexed: 2, 5, 8, 11, 14, 17, 20)
@@ -635,6 +643,27 @@ def _validate_training_contract(cfg: MertFormerConfig) -> None:
         raise ValueError("❌ estimated_tokens_per_sample must be > 0.")
     if int(getattr(cfg, "token_probe_samples", 0)) <= 0:
         raise ValueError("❌ token_probe_samples must be > 0.")
+
+    # [P3] Non-fatal overshoot guard. In fixed_steps mode, warn (do NOT raise) when the
+    # planned budget (max_steps × global batch_size × max_seq_len) significantly EXCEEDS
+    # target_tokens_min — e.g. a batch-size fallback that silently inflates the run.
+    # Asymmetric on purpose: undershoot (small smoke/test runs) stays silent, so the
+    # max_steps=2 test path is unaffected.
+    if mode == "fixed_steps":
+        planned_tokens = (
+            int(getattr(cfg, "max_steps", 0))
+            * int(getattr(cfg, "batch_size", 0))
+            * int(getattr(cfg, "max_seq_len", 0))
+        )
+        target_min = int(getattr(cfg, "target_tokens_min", 0))
+        if target_min > 0 and planned_tokens > int(target_min * 1.05):
+            print(
+                f"⚠️  TOKEN BUDGET OVERSHOOT: planned {planned_tokens / 1e9:.2f}B tokens "
+                f"(max_steps×batch_size×max_seq_len) exceeds target_tokens_min "
+                f"{target_min / 1e9:.2f}B by >5%. Check for an inflated batch_size/max_steps "
+                f"(e.g. an OOM batch fallback) before committing to a long run.",
+                file=sys.stderr,
+            )
 
     if bool(getattr(cfg, "require_gated_teacher", False)) and not str(
         getattr(cfg, "teacher_model_id", "")

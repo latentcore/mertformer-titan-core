@@ -55,7 +55,9 @@ class LifelongSafetyLayer(nn.Module):
         if x.dim() != 3:
             raise ValueError(f"LifelongSafetyLayer expects [B,T,H], got {tuple(x.shape)}")
 
-        self._update_stats(x)
+        # [P12] EMA running stats should drift only during training, not at eval/inference.
+        if self.training:
+            self._update_stats(x)
 
         # Keep adaptation bounded and deterministic.
         bounded = torch.tanh(self.gain).to(device=x.device, dtype=x.dtype)
