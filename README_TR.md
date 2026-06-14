@@ -2291,6 +2291,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── kaggle_onefile_demo_build30_text_understanding.py  # Python modülü/scripti (kaggle onefile demo build30 text understanding için otomasyon scripti)
 │   ├── kaggle_train_compare_build30.py  # Python modülü/scripti (kaggle train compare build30 için otomasyon scripti)
 │   ├── launch_8xb300.sh  # kabuk otomasyon scripti
+│   ├── launch_ocean_45k.sh  # kabuk otomasyon scripti
 │   ├── linkcheck_gate.py  # Python modülü/scripti (linkcheck gate için otomasyon scripti)
 │   ├── liquid_train_impl_benchmark.py  # Python modülü/scripti (liquid train impl benchmark için otomasyon scripti)
 │   ├── logbook_build.py  # Python modülü/scripti (logbook build için otomasyon scripti)

@@ -1,24 +1,17 @@
 {
   "schema": "file_state_inventory_v1",
-  "generated_utc": "2026-06-14T23:20:55Z",
+  "generated_utc": "2026-06-14T23:57:46Z",
   "git_branch": "main",
-  "git_commit_short": "d701501",
-  "tracked_files": 867,
+  "git_commit_short": "ab9b990",
+  "tracked_files": 868,
   "modified_entries": [
-    "M ARCHITECTURE.md",
-    " M README.md",
+    "M README.md",
     " M README_TR.md",
-    " M TECHNICAL_REPORT.md",
-    " M TECHNICAL_REPORT_TR.md",
-    " M WHITE_PAPER_LIQUIDROUTER.md",
-    " M WHITE_PAPER_LIQUIDROUTER_TR.md",
-    " M ablations/no_liquid/README.md",
-    " M ablations/no_liquid/README_TR.md",
-    " M ablations/results.md",
     " M artifacts/mertformer_release.zip.sha256",
     " M docs/PROJECT_STRUCTURE.md",
     " M interfaces/run_manifest_v1.schema.json",
     " M packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256",
+    " M reports/FACTS.json",
     " M reports/backup_restore_report.json",
     " M reports/bench_cpp_report.json",
     " M reports/bench_metal_report.json",
@@ -65,7 +58,6 @@
     " M reports/md_lint_report.json",
     " M reports/one_command_full_sop.log",
     " M reports/one_command_full_sop_summary.md",
-    " M reports/outreach/liquid_ablation_pilot_note_2026-06-15.md",
     " M reports/ownership_proof_bundle.json",
     " M reports/policy_sync_report.json",
     " M reports/post_train_autorun_status.json",
@@ -98,13 +90,9 @@
     " M reports/training_readiness_manifest.json",
     " M reports/unicode_path_guard_report.json",
     " M reports/workspace_hygiene_manifest.json",
-    " M reports/xla_smoke_report.json",
-    " M scripts/README.md",
-    " M scripts/run_liquid_ablation.py"
+    " M reports/xla_smoke_report.json"
   ],
-  "untracked_entries": [
-    "?? scripts/launch_ocean_45k.sh"
-  ],
+  "untracked_entries": [],
   "reports_present": [
     "reports/FACTS.json",
     "reports/adr_index.md",

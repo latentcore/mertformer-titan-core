@@ -1,7 +1,7 @@
 # Immutable Evidence Register
 
-- generated_local: `2026-06-15T02:20:58`
-- entry_count: `965`
+- generated_local: `2026-06-15T02:57:50`
+- entry_count: `975`
 
 | Path | Kind | Reason | Disposition |
 | --- | --- | --- | --- |
@@ -675,6 +675,16 @@
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_021616.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_021837.zip` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_021837.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_022119.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_022119.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_024943.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_024943.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_025101.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_025101.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_025315.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_025315.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_025530.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_025530.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113659.json` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113738.json` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormerStream/.gradle/buildOutputCleanup` | `dir` | `output` | `preserve_immutable_evidence` |

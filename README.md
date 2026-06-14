@@ -2308,6 +2308,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── kaggle_onefile_demo_build30_text_understanding.py  # Python module/script (automation script for kaggle onefile demo build30 text understanding)
 │   ├── kaggle_train_compare_build30.py  # Python module/script (automation script for kaggle train compare build30)
 │   ├── launch_8xb300.sh  # shell automation script
+│   ├── launch_ocean_45k.sh  # shell automation script
 │   ├── linkcheck_gate.py  # Python module/script (automation script for linkcheck gate)
 │   ├── liquid_train_impl_benchmark.py  # Python module/script (automation script for liquid train impl benchmark)
 │   ├── logbook_build.py  # Python module/script (automation script for logbook build)
