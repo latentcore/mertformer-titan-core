@@ -1,5 +1,5 @@
 {
-  "_note": "Kaggle T4x2 pilot, 2026-06-14. Bu OZET dosyasi (exact headline + per-variant metadata). Tam 500-noktali loss_curve dizileri Kaggle cikti dosyasinda (Save Version -> download liquid_ablation_results.json). Hand-transcribe edilmedi (1000 float transcription hatasi riskini onlemek icin). Pilot sinyali; benchmark/iddia degil.",
+  "_note": "Kaggle T4x2 pilot, 2026-06-14. Bu OZET dosyasi (headline + per-variant metadata + caveats). Tam 500-noktali loss_curve dizileri artik repoda: reports/ablations/liquid_ablation_results.json (canonical; Kaggle stdout'tan transcribe + summary-validated) ve grafik reports/ablations/liquid_ablation_pilot_curve.png. Pilot sinyali; benchmark/iddia degil.",
   "run": {
     "where": "Kaggle T4 x2 (free, $0)",
     "date": "2026-06-14",

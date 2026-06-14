@@ -1,12 +1,12 @@
 {
   "schema": "smoke_run_report_v1",
-  "generated_utc": "2026-06-14T21:25:50Z",
+  "generated_utc": "2026-06-14T21:52:17Z",
   "status": "PASS",
   "steps": 12,
-  "checkpoint_path": "checkpoints/offline_smoke/smoke_2026-06-15_00-25-41.pt",
-  "elapsed_sec": 2.49,
+  "checkpoint_path": "checkpoints/offline_smoke/smoke_2026-06-15_00-52-08.pt",
+  "elapsed_sec": 2.77,
   "cmd": "<REPO_ROOT>/.titan-venv/bin/python scripts/train_smoke.py --steps 12 --cleanup --out-dir checkpoints/offline_smoke",
-  "stdout_tail": "[smoke] step=1/12 loss=121.8386 aux=0.0000\n[smoke] step=2/12 loss=122.0532 aux=0.0000\n[smoke] step=4/12 loss=119.8768 aux=0.0000\n[smoke] step=6/12 loss=119.4074 aux=0.0000\n[smoke] step=8/12 loss=118.2907 aux=0.0000\n[smoke] step=10/12 loss=120.1814 aux=0.0000\n[smoke] step=12/12 loss=119.0613 aux=0.0000\n[smoke] checkpoint=checkpoints/offline_smoke/smoke_2026-06-15_00-25-41.pt\n[smoke] cleaned up checkpoint\n[smoke] OK elapsed_sec=2.49\n",
+  "stdout_tail": "[smoke] step=1/12 loss=121.8386 aux=0.0000\n[smoke] step=2/12 loss=122.0532 aux=0.0000\n[smoke] step=4/12 loss=119.8768 aux=0.0000\n[smoke] step=6/12 loss=119.4074 aux=0.0000\n[smoke] step=8/12 loss=118.2907 aux=0.0000\n[smoke] step=10/12 loss=120.1814 aux=0.0000\n[smoke] step=12/12 loss=119.0613 aux=0.0000\n[smoke] checkpoint=checkpoints/offline_smoke/smoke_2026-06-15_00-52-08.pt\n[smoke] cleaned up checkpoint\n[smoke] OK elapsed_sec=2.77\n",
   "stderr_tail": "",
   "note": "Tiny offline motor proof; not a quality or scale claim."
 }

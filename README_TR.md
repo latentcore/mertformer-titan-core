@@ -12,6 +12,7 @@ Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_REMOTE_BOOTSTRA
 - Sıkı yerel lane: `offline_clean` (sabit öğretmen `meta-llama/Llama-3.3-70B-Instruct` ile strict precomputed KD).
 - Kalan non-winning blocker'lar: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
 - Son dış kanıt pointer'ı: [Ocean pre-45K H200 partial evidence](reports/ocean_pre45k_h200_20260514_partial_evidence.md) yalnız partial operational evidence'tır; final eval, checkpoint ve archive recovery hâlâ eksiktir.
+- Son repo-içi pilot sinyali: $0 Kaggle LiquidRouter ablasyonu (500 adım) — Δ(off−on)=+0.50, Liquid yön olarak yardım ediyor; **yalnız pilot sinyali, tek seed, benchmark iddiası değil**. Grafik: [reports/ablations/liquid_ablation_pilot_curve.png](reports/ablations/liquid_ablation_pilot_curve.png); veri: [reports/ablations/liquid_ablation_results.json](reports/ablations/liquid_ablation_results.json).
 - Hâlâ açık olan post-run evidence sınıfı: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle ve trained export/device measurements.
 
 ### En Kısa Doğru Okuma Sırası
@@ -1855,6 +1856,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   └── chess_release_contract.md  # dokümantasyon/rapor dosyası
 ├── reports/  # dizin
 │   ├── ablations/  # dizin
+│   │   ├── liquid_ablation_kaggle_20260614.json  # JSON veri artefaktı
 │   │   └── liquid_ablation_results.json  # JSON veri artefaktı
 │   ├── benchmarks/  # dizin
 │   │   ├── linkedin_sweetspot/  # dizin

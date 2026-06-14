@@ -12,6 +12,7 @@ Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_REMOTE_BOO
 - Strict local lane: `offline_clean` (strict precomputed KD with fixed teacher `meta-llama/Llama-3.3-70B-Instruct`).
 - Remaining non-winning blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
 - Latest external evidence pointer: [Ocean pre-45K H200 partial evidence](reports/ocean_pre45k_h200_20260514_partial_evidence.md) is partial operational evidence only; final eval, checkpoint, and archive recovery are still missing.
+- Latest in-repo pilot signal: $0 Kaggle LiquidRouter ablation (500 steps) — Δ(off−on)=+0.50, Liquid directionally helps; **pilot-signal-only, single seed, not a benchmark claim**. Curve: [reports/ablations/liquid_ablation_pilot_curve.png](reports/ablations/liquid_ablation_pilot_curve.png); data: [reports/ablations/liquid_ablation_results.json](reports/ablations/liquid_ablation_results.json).
 - Missing post-run evidence remains: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle, and trained export/device measurements.
 
 ### Shortest Truthful Review Path
@@ -1872,6 +1873,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── chess_release_contract.md  # documentation/report file
 ├── reports/  # directory
 │   ├── ablations/  # directory
+│   │   ├── liquid_ablation_kaggle_20260614.json  # JSON data artifact
 │   │   └── liquid_ablation_results.json  # JSON data artifact
 │   ├── benchmarks/  # directory
 │   │   ├── linkedin_sweetspot/  # directory

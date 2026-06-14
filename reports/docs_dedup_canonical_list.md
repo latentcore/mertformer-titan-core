@@ -345,6 +345,7 @@ Generated automatically.
 - `reports/one_pager_TR.md`
 - `reports/outreach/github_release_post.md`
 - `reports/outreach/huggingface_launch.md`
+- `reports/outreach/liquid_ablation_pilot_note_2026-06-15.md`
 - `reports/outreach/mertformer_titan_1_page_evidence_packet_2026-05-22.md`
 - `reports/outreach/mertformer_titan_executive_brief_2026-05-22.md`
 - `reports/outreach/reddit_post.md`

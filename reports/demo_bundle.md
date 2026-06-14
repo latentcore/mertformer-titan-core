@@ -1,6 +1,6 @@
 # Demo Bundle
 
-- generated_utc: `2026-06-14T21:25:56.113524+00:00`
+- generated_utc: `2026-06-14T21:52:24.346670+00:00`
 - checkpoint: `<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt`
 - note: A trained checkpoint was resolved for post-train closure.
 
