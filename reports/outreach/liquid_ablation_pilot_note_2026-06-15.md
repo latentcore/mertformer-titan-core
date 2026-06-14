@@ -1,11 +1,14 @@
-# LiquidRouter Ablation — $0 Kaggle Pilot Note (2026-06-15)
+# Liquid/CfC-Mixer (`use_liquid`) Ablation — $0 Kaggle Pilot Note (2026-06-15)
 
 **Claim mode: measured (pilot signal only). This is NOT a benchmark claim.**
 
 ## What I ran
-A controlled LiquidRouter on-vs-off ablation on a free Kaggle GPU (T4 x2), $0:
+A controlled `use_liquid` on-vs-off ablation on a free Kaggle GPU (T4 x2), $0:
 - ~100M-param proxy MertFormer, pure next-token cross-entropy (no teacher, no KD).
 - **Identical data + identical init (seed 1234); the only difference is `use_liquid`.**
+- The toggled component is the **CfC LiquidMixer** (`layers/liquid.py`) at layers [2,4,6]; the Conv1d
+  **LiquidRouter** (`layers/moe.py`) and the MoE stack stay ON in both arms — so this measures the CfC
+  mixer, not the router.
 - 500 steps per variant, seq 256, batch 8.
 
 ## Result

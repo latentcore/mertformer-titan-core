@@ -32,7 +32,7 @@ Conceptualized by a 17-year-old developer, this architecture is a high-ambition 
 
 ## 2. Deep Technical Architecture Analysis
 
-The cornerstone of the MertFormer Titan project is its hardware-aware structure that goes beyond standard transformer blocks. The model has **2.64 billion parameters**, yet its inference cost is significantly lower than classical models.
+The cornerstone of the MertFormer Titan project is its hardware-aware structure that goes beyond standard transformer blocks. The model has **2.64 billion parameters**, yet its inference cost is significantly lower than classical models. (Note: the **measured runtime parameter total is ~3.67B (3,672,982,022)** and is the figure used for factual claims; 2.64B is the architecture design target. README and `ARCHITECTURE.md` state this distinction the same way.)
 
 ### 2.1 BitNet b1.58 and the Ternary Computing Revolution
 While traditional models use 16-bit (BF16), MertFormer Titan reduces weights to values of $\{-1, 0, 1\}$ based on **BitNet b1.58** technology.

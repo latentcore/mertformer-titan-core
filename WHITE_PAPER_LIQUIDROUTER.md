@@ -37,3 +37,28 @@ This separation is intentional in Build30 V2 and must be reflected in partner-fa
 
 ## 6. Conclusion
 LiquidRouter is a temporal Conv routing component within MertFormer Titan’s sparse MoE stack. Build30 V2 documents this as an implementation-ready, claim-safe mechanism aligned with offline-first edge constraints.
+
+## 7. Experiment (Pilot Signal) and Limits
+
+**Claim mode: measured (pilot signal only). This is NOT a benchmark claim.**
+
+**Important scope distinction:** The $0 pilot below toggles the `cfg.use_liquid` flag — i.e. the
+**CfC LiquidMixer** in `layers/liquid.py` (layers [2,4,6]). The **Conv1d LiquidRouter** this paper
+describes (`layers/moe.py`) and the MoE stack stay ON in both arms. So this signal measures the CfC
+mixer; it does not directly test the router.
+
+- Setup: ~100M proxy MertFormer, pure next-token CE (no teacher, no KD), Kaggle T4×2, $0.
+- Identical data + identical init (seed 1234); the only difference is `use_liquid`. 500 steps, seq 256, batch 8.
+- Result: liquid ON mean_last10 = 11.489 vs OFF = 11.993 → **Δ(off−on) = +0.50** (the CfC mixer
+  directionally helps; lower loss).
+
+**Limits (honest):** Single seed; the gap (0.50) sits inside the step-to-step noise of the constant-lr,
+no-warmup curves — a direction signal, not a measured effect size. Tiny corpus (35,634 tokens / 128k
+vocab); end-loss hovers near the random baseline (ln 128000 ≈ 11.76). This proves the ablation pipeline
+works and points a direction; it is NOT evidence of trained capability, a benchmark, or that the model
+"works". That needs a larger, multi-seed, measured run (the 45K architecture-validation run). **No arXiv
+submission on a single-seed pilot — skeleton now, submission after the measured 45K run.**
+
+Evidence: `reports/ablations/liquid_ablation_results.json` (full 500-step curves),
+`reports/ablations/liquid_ablation_pilot_curve.png` (plot),
+`reports/outreach/liquid_ablation_pilot_note_2026-06-15.md` (public note).

@@ -33,8 +33,9 @@
   capacity control with overflow drop + renormalize, plus router-collapse detection/recovery.
   *Why:* more capacity at ~constant active FLOPs.
 - **Liquid / CfC mixer (`layers/liquid.py`)** — continuous-time recurrent dynamics on a few layers,
-  with a warmup freeze + spike-cooldown safeguard. *Why:* a research bet on long-range dynamics;
-  its value is the headline open ablation (see below).
+  with a warmup freeze + spike-cooldown safeguard. *Why:* a research bet on long-range dynamics; a $0
+  pilot now gives a single-seed *direction* signal (`use_liquid` toggle, Δ(off−on)=+0.50; see below),
+  not a measured result.
 - **DDP safety (`train/train.py`)** — `find_unused_parameters=True` because the liquid/tau warmup
   freeze and MoE top-2 routing both leave params without grads in a step.
 
@@ -50,8 +51,10 @@ the ~23.6B-token budget); a pre-flight disk gate enforces this.
 ## Open ablations (gate the research claims)
 
 The `ablations/` scaffold (`no_liquid/`, `no_moe/`, `bitlinear_off/`, `dense_only/`) is the place where
-the architecture's bets get *measured*. Until a pilot fills these, component value (especially LiquidRouter)
-is a hypothesis, not a result. See the master report for the pilot-first sequence.
+the architecture's bets get *measured*. The `no_liquid` cell now has a $0 single-seed pilot signal
+(`use_liquid` = the CfC mixer, not the Conv1d router; Δ(off−on)=+0.50, directional only); the rest — and
+a multi-seed measured result — still require training hardware. Component value remains a hypothesis until
+a measured run. See the master report for the pilot-first sequence.
 
 ## Feature flags (off by default)
 

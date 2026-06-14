@@ -32,7 +32,7 @@ Yapay zeka ekosistemi, bulut tabanlı devasa modellerden cihaz içi (on-device) 
 
 ## 2. Derin Teknik Mimari Analizi
 
-MertFormer Titan projesinin temel taşı, standart transformatör bloklarının ötesine geçerek donanım farkındalıklı (hardware-aware) bir yapı sunmasıdır. Model **2.64 milyar parametreye** sahiptir ancak çalışma anındaki yükü (inference cost) klasik modellerden çok daha düşüktür.
+MertFormer Titan projesinin temel taşı, standart transformatör bloklarının ötesine geçerek donanım farkındalıklı (hardware-aware) bir yapı sunmasıdır. Model **2.64 milyar parametreye** sahiptir ancak çalışma anındaki yükü (inference cost) klasik modellerden çok daha düşüktür. (Not: **ölçülen runtime parametre toplamı ~3.67B'dir (3.672.982.022)** ve olgusal iddialarda bu rakam esas alınır; 2.64B mimari tasarım hedefidir. README ve `ARCHITECTURE.md` bu ayrımı aynı şekilde belirtir.)
 
 ### 2.1 BitNet b1.58 ve Ternary Hesaplama Devrimi
 Geleneksel modeller 16-bit (BF16) kullanırken, MertFormer Titan **BitNet b1.58** teknolojisini temel alarak ağırlıkları $\{-1, 0, 1\}$ değerlerine indirger.

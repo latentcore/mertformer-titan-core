@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """
-$0 LiquidRouter ablation pilot — train a SMALL (~80M) MertFormer twice (Liquid ON vs OFF)
-with pure next-token CE (NO 70B teacher, NO KD, NO HF download) and compare loss curves.
+$0 Liquid/CfC-mixer (use_liquid) ablation pilot — train a SMALL (~80M) MertFormer twice
+(use_liquid ON vs OFF) with pure next-token CE (NO 70B teacher, NO KD, NO HF download) and
+compare loss curves. NOTE: this toggles cfg.use_liquid — the CfC LiquidMixer (layers/liquid.py)
+at layers [2,4,6]; MoE + the Conv1d LiquidRouter (layers/moe.py) stay ON in both arms, so this
+measures the CfC mixer, not the router.
 
 Designed to run for free on a Kaggle T4/P100 (or locally on CPU/MPS for a smoke). It builds
 MertFormer() directly with a patched config (the train_smoke.py pattern), bypassing the
@@ -188,7 +191,7 @@ def run_variant(use_liquid: bool, *, steps: int, device: str, bsz: int, seq: int
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="LiquidRouter ON-vs-OFF $0 ablation pilot.")
+    p = argparse.ArgumentParser(description="use_liquid (CfC mixer) ON-vs-OFF $0 ablation pilot.")
     p.add_argument("--steps", type=int, default=500, help="Steps per variant (use 3 for a Mac smoke).")
     p.add_argument("--device", default="auto", choices=["auto", "cpu", "mps", "cuda"])
     p.add_argument("--batch-size", type=int, default=8)
@@ -227,7 +230,7 @@ def main() -> int:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps({"summary": summary, "variants": results}, indent=2), encoding="utf-8")
 
-    print("\n=== LiquidRouter ablation (pilot signal) ===")
+    print("\n=== Liquid/CfC-mixer (use_liquid) ablation (pilot signal) ===")
     print(f"  params: ~{on['param_millions']}M | data: {source}")
     print(f"  liquid ON  mean_last10 = {on['mean_last10']}")
     print(f"  liquid OFF mean_last10 = {off['mean_last10']}")

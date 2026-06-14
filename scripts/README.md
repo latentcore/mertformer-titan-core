@@ -225,6 +225,14 @@ For a rented 8x NVIDIA B300 box, use the dedicated wrapper (hardware asserts + c
 HF_TOKEN=... bash scripts/launch_8xb300.sh --check-only   # or --dry-run, or --go
 ```
 
+Two lanes (both preview by default, train only with `--go`; secrets come from the environment, never the file):
+- `scripts/launch_8xb300.sh` — **offline_clean** lane (`TITAN_OFFLINE=1`, precomputed Top-K logits).
+- `scripts/launch_ocean_45k.sh` — **remote_bootstrap** lane (`TITAN_OFFLINE=0`, online gated teacher, Phase-0 skipped) + operator observability (redacted env snapshot, cuda.lock, 8x/bf16 GPU assert, pretests, verify_all, live `nvidia-smi` telemetry, post-run bundle):
+
+```bash
+HF_TOKEN=... bash scripts/launch_ocean_45k.sh --check-only   # or --dry-run, or --go
+```
+
 Or, on macOS, double-click:
 
 ```bash

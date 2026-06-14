@@ -12,7 +12,7 @@ Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_REMOTE_BOO
 - Strict local lane: `offline_clean` (strict precomputed KD with fixed teacher `meta-llama/Llama-3.3-70B-Instruct`).
 - Remaining non-winning blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
 - Latest external evidence pointer: [Ocean pre-45K H200 partial evidence](reports/ocean_pre45k_h200_20260514_partial_evidence.md) is partial operational evidence only; final eval, checkpoint, and archive recovery are still missing.
-- Latest in-repo pilot signal: $0 Kaggle LiquidRouter ablation (500 steps) — Δ(off−on)=+0.50, Liquid directionally helps; **pilot-signal-only, single seed, not a benchmark claim**. Curve: [reports/ablations/liquid_ablation_pilot_curve.png](reports/ablations/liquid_ablation_pilot_curve.png); data: [reports/ablations/liquid_ablation_results.json](reports/ablations/liquid_ablation_results.json).
+- Latest in-repo pilot signal: $0 Kaggle Liquid/CfC-mixer (`use_liquid`) ablation (500 steps) — Δ(off−on)=+0.50, the CfC mixer directionally helps; **pilot-signal-only, single seed, not a benchmark claim** (MoE + the Conv1d LiquidRouter stay on in both arms; this measures the CfC mixer, not the router). Curve: [reports/ablations/liquid_ablation_pilot_curve.png](reports/ablations/liquid_ablation_pilot_curve.png); data: [reports/ablations/liquid_ablation_results.json](reports/ablations/liquid_ablation_results.json).
 - Missing post-run evidence remains: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle, and trained export/device measurements.
 
 ### Shortest Truthful Review Path
@@ -2370,6 +2370,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_agi_cognitive.py  # Python module/script (automated test module for agi cognitive)
 │   ├── test_architecture_integrity.py  # Python module/script (automated test module for architecture integrity)
 │   ├── test_benchmark_tokenizer_id.py  # Python module/script (automated test module for benchmark tokenizer id)
+│   ├── test_bitnet_patch_skip.py  # Python module/script (automated test module for bitnet patch skip)
 │   ├── test_build_chess_5080_windows_delivery.py  # Python module/script (automated test module for build chess 5080 windows delivery)
 │   ├── test_build_chess_onefile_extension_report.py  # Python module/script (automated test module for build chess onefile extension report)
 │   ├── test_build_chess_teaching_contract_report.py  # Python module/script (automated test module for build chess teaching contract report)

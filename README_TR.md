@@ -12,7 +12,7 @@ Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_REMOTE_BOOTSTRA
 - Sıkı yerel lane: `offline_clean` (sabit öğretmen `meta-llama/Llama-3.3-70B-Instruct` ile strict precomputed KD).
 - Kalan non-winning blocker'lar: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
 - Son dış kanıt pointer'ı: [Ocean pre-45K H200 partial evidence](reports/ocean_pre45k_h200_20260514_partial_evidence.md) yalnız partial operational evidence'tır; final eval, checkpoint ve archive recovery hâlâ eksiktir.
-- Son repo-içi pilot sinyali: $0 Kaggle LiquidRouter ablasyonu (500 adım) — Δ(off−on)=+0.50, Liquid yön olarak yardım ediyor; **yalnız pilot sinyali, tek seed, benchmark iddiası değil**. Grafik: [reports/ablations/liquid_ablation_pilot_curve.png](reports/ablations/liquid_ablation_pilot_curve.png); veri: [reports/ablations/liquid_ablation_results.json](reports/ablations/liquid_ablation_results.json).
+- Son repo-içi pilot sinyali: $0 Kaggle Liquid/CfC-mixer (`use_liquid`) ablasyonu (500 adım) — Δ(off−on)=+0.50, CfC mixer yön olarak yardım ediyor; **yalnız pilot sinyali, tek seed, benchmark iddiası değil** (MoE + Conv1d LiquidRouter iki kolda da açık; bu, router'ı değil CfC mixer'ı ölçer). Grafik: [reports/ablations/liquid_ablation_pilot_curve.png](reports/ablations/liquid_ablation_pilot_curve.png); veri: [reports/ablations/liquid_ablation_results.json](reports/ablations/liquid_ablation_results.json).
 - Hâlâ açık olan post-run evidence sınıfı: trained final weights, best/latest checkpoint proof, checkpoint-bound benchmark outputs, trained demo bundle ve trained export/device measurements.
 
 ### En Kısa Doğru Okuma Sırası
@@ -2353,6 +2353,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── test_agi_cognitive.py  # Python modülü/scripti (agi cognitive için otomatik test modülü)
 │   ├── test_architecture_integrity.py  # Python modülü/scripti (architecture integrity için otomatik test modülü)
 │   ├── test_benchmark_tokenizer_id.py  # Python modülü/scripti (benchmark tokenizer id için otomatik test modülü)
+│   ├── test_bitnet_patch_skip.py  # Python modülü/scripti (bitnet patch skip için otomatik test modülü)
 │   ├── test_build_chess_5080_windows_delivery.py  # Python modülü/scripti (build chess 5080 windows delivery için otomatik test modülü)
 │   ├── test_build_chess_onefile_extension_report.py  # Python modülü/scripti (build chess onefile extension report için otomatik test modülü)
 │   ├── test_build_chess_teaching_contract_report.py  # Python modülü/scripti (build chess teaching contract report için otomatik test modülü)
