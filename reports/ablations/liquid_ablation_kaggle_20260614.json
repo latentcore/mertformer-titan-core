@@ -1,0 +1,29 @@
+{
+  "_note": "Kaggle T4x2 pilot, 2026-06-14. Bu OZET dosyasi (exact headline + per-variant metadata). Tam 500-noktali loss_curve dizileri Kaggle cikti dosyasinda (Save Version -> download liquid_ablation_results.json). Hand-transcribe edilmedi (1000 float transcription hatasi riskini onlemek icin). Pilot sinyali; benchmark/iddia degil.",
+  "run": {
+    "where": "Kaggle T4 x2 (free, $0)",
+    "date": "2026-06-14",
+    "steps_per_variant": 500,
+    "batch_size": 8,
+    "seq_len": 256,
+    "lr": "3e-4 (constant, no warmup/decay) -> aciklar end-loss oscillation",
+    "data_source": "datasets/offline_demo/train.jsonl+TR-local (35634 tok)",
+    "vocab_size": 128000
+  },
+  "summary": {
+    "liquid_on_mean_last10": 11.48907,
+    "liquid_off_mean_last10": 11.99322,
+    "liquid_advantage_(off_minus_on)": 0.50415,
+    "verdict": "liquid HELPS (lower loss) - pilot signal only; not a claim until a larger measured run.",
+    "honest_caveats": [
+      "Final loss ~11.5-12 ~= ln(128000)=11.76 (random baseline); best-step dips reached ~8.8-9.7 (below baseline -> model DID learn structure).",
+      "End-loss oscillates +/-3-5 because of constant lr (no warmup/cosine); real 45K config has warmup 3000 + cosine which smooths this.",
+      "Delta=0.5 sits within that noise band; single seed -> directional signal, not proof.",
+      "elapsed on=977s vs off=214s is confounded (on ran first, ate torch.compile warmup) -> NO speed claim."
+    ]
+  },
+  "variants": {
+    "liquid_on":  { "param_count": 100414978, "param_millions": 100.4, "final_loss": 11.83575, "mean_last10": 11.48907, "elapsed_sec": 977.18 },
+    "liquid_off": { "param_count": 99626242,  "param_millions": 99.6,  "final_loss": 11.60814, "mean_last10": 11.99322, "elapsed_sec": 214.81 }
+  }
+}

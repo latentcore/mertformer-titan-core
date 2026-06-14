@@ -1,5 +1,6 @@
 {
   "summary": {
+    "_note": "This file is a LOCAL 3-step CPU smoke (device=cpu, steps=3) — it only proves the path runs; it is NOT the measured pilot. The measured $0 Kaggle T4x2 500-step pilot is reports/ablations/liquid_ablation_kaggle_20260614.json (Delta(off-on)=+0.50, pilot-signal-only, single seed).",
     "data_source": "datasets/offline_demo/train.jsonl+TR-local (35634 tok)",
     "vocab_size": 128000,
     "device": "cpu",

@@ -2,10 +2,14 @@
 
 Generated automatically.
 
+- `.github/ISSUE_TEMPLATE/bug_report.md`
+- `.github/ISSUE_TEMPLATE/feature_request.md`
+- `.github/PULL_REQUEST_TEMPLATE.md`
 - `.lint-venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md`
 - `.lint-venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md`
 - `.pytest_cache/README.md`
 - `AGENTS.md`
+- `ARCHITECTURE.md`
 - `CHANGELOG.md`
 - `CHANGELOG_TR.md`
 - `CHESS_5080_POC_INTERNAL.md`
@@ -115,12 +119,14 @@ Generated automatically.
 - `docs/CHAIN_MAP_TR.md`
 - `docs/CHESS_ONEFILE_MASTER_TRUTH.md`
 - `docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md`
+- `docs/KAGGLE_PILOT.md`
 - `docs/MERTFORMER_5080_ARTIFACT_INTAKE_CHECKLIST_TR.md`
 - `docs/MERTFORMER_5080_FINAL_ONEFILE_TRUTH.md`
 - `docs/MERTFORMER_5080_FINAL_ONEFILE_TRUTH_TR.md`
 - `docs/PROJECT_MASTER_TRUTH.md`
 - `docs/PROJECT_MASTER_TRUTH_TR.md`
 - `docs/PROJECT_STRUCTURE.md`
+- `docs/QUICKSTART_CPU.md`
 - `documents/README_TR_before_final_simplification.md`
 - `documents/README_before_final_simplification.md`
 - `documents/README_snapshot_source.md`
