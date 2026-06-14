@@ -129,7 +129,7 @@ Its long-term target is to make efficient, auditable AI training and inference m
 ### ✅ Validation Evidence (Latest Local Run)
 | Gate | Result |
 | :--- | :--- |
-| `python3 -m pytest -q` | `369 passed, 4 skipped` |
+| `python3 -m pytest -q` | `370 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -142,7 +142,7 @@ This repository is no longer in idea/prototype-only state. The current working t
 
 ### Evidence Snapshot
 1. **Core quality gates passed**
-   - `pytest` passed (`369 passed, 4 skipped`)
+   - `pytest` passed (`370 passed, 4 skipped`)
    - `ruff check` passed (`All checks passed`)
    - `verify_all.sh` passed (`[verify] OK`)
 2. **Architecture and safety checks passed**
@@ -1874,6 +1874,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── reports/  # directory
 │   ├── ablations/  # directory
 │   │   ├── liquid_ablation_kaggle_20260614.json  # JSON data artifact
+│   │   ├── liquid_ablation_pilot_curve.png  # media asset
 │   │   └── liquid_ablation_results.json  # JSON data artifact
 │   ├── benchmarks/  # directory
 │   │   ├── linkedin_sweetspot/  # directory
@@ -1935,6 +1936,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── outreach/  # directory
 │   │   ├── github_release_post.md  # documentation/report file
 │   │   ├── huggingface_launch.md  # documentation/report file
+│   │   ├── liquid_ablation_pilot_note_2026-06-15.md  # documentation/report file
 │   │   ├── mertformer_titan_1_page_evidence_packet_2026-05-22.md  # documentation/report file
 │   │   ├── mertformer_titan_executive_brief_2026-05-22.md  # documentation/report file
 │   │   └── reddit_post.md  # documentation/report file

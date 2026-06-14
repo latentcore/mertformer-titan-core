@@ -1,6 +1,6 @@
 # Document Alignment Report
 
-- generated_utc: `2026-06-14T21:52:25Z`
+- generated_utc: `2026-06-14T22:26:47Z`
 - current_reason: `READY_REMOTE_BOOTSTRAP`
 - current_path: `remote_bootstrap`
 - blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE, online_teacher:MISSING_HF_TOKEN`

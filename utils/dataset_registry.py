@@ -35,7 +35,7 @@ def _load_hashes() -> dict:
             file=sys.stderr,
         )
         return {}
-    sources = obj.get("sources", obj) if isinstance(obj, dict) else {}
+    sources = obj.get("sources", {}) if isinstance(obj, dict) else {}
     if not sources:
         print(
             f"⚠️ dataset hash registry has no sources ({_HASHES_PATH}) — dataset revisions/snapshots are unpinned.",

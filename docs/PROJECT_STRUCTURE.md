@@ -266,6 +266,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── reports/  # directory
 │   ├── ablations/  # directory
 │   │   ├── liquid_ablation_kaggle_20260614.json  # JSON data artifact
+│   │   ├── liquid_ablation_pilot_curve.png  # media asset
 │   │   └── liquid_ablation_results.json  # JSON data artifact
 │   ├── benchmarks/  # directory
 │   │   ├── linkedin_sweetspot/  # directory
@@ -327,6 +328,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── outreach/  # directory
 │   │   ├── github_release_post.md  # documentation/report file
 │   │   ├── huggingface_launch.md  # documentation/report file
+│   │   ├── liquid_ablation_pilot_note_2026-06-15.md  # documentation/report file
 │   │   ├── mertformer_titan_1_page_evidence_packet_2026-05-22.md  # documentation/report file
 │   │   ├── mertformer_titan_executive_brief_2026-05-22.md  # documentation/report file
 │   │   └── reddit_post.md  # documentation/report file

@@ -35,6 +35,9 @@ class LifelongSafetyLayer(nn.Module):
         self.ema_decay = float(ema_decay)
         self.max_adaptation_gain = float(max_adaptation_gain)
         self.drift_threshold = float(drift_threshold)
+        # Adaptation scale is a non-negative constant; precompute it once instead of
+        # rebuilding a clamped tensor on every forward (identical math, less per-step work).
+        self._scale = max(0.0, self.max_adaptation_gain)
 
         self.register_buffer("running_mean", torch.zeros(self.hidden_size), persistent=False)
         self.register_buffer("last_drift", torch.zeros(()), persistent=False)
@@ -58,7 +61,7 @@ class LifelongSafetyLayer(nn.Module):
 
         # Keep adaptation bounded and deterministic.
         bounded = torch.tanh(self.gain).to(device=x.device, dtype=x.dtype)
-        scale = torch.clamp(torch.tensor(self.max_adaptation_gain, device=x.device, dtype=x.dtype), min=0.0)
+        scale = self._scale
 
         if float(self.last_drift.item()) > self.drift_threshold:
             # If drift is high, reduce adaptation (stability-first).

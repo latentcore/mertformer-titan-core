@@ -1,6 +1,6 @@
 # Parameter Accounting Report
 
-- generated_utc: `2026-06-14T21:52:24Z`
+- generated_utc: `2026-06-14T22:26:46Z`
 - design_target_params: `2.64B`
 - measured_runtime_total_params: `3,672,982,022`
 - current_claim_boundary: measured runtime total is authoritative for factual claims

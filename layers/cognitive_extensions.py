@@ -9,8 +9,29 @@ Research extension layers (feature-flag driven, non-breaking defaults)
 from typing import Optional
 
 import torch
+import torch.distributed as dist
 import torch.nn as nn
 import torch.nn.functional as F
+
+
+def _ddp_avg_(buf: torch.Tensor) -> None:
+    """Average a persistent runtime-state buffer across DDP ranks, in place.
+
+    Complete no-op unless ``torch.distributed`` is initialized with world_size > 1,
+    so the single-GPU / CPU path (and the full local test suite) is unaffected.
+
+    These layers carry non-parameter runtime state (``latent_state``, ``trace``) that
+    DDP does NOT synchronize automatically; without this the state would silently
+    diverge per rank. Correct-by-construction for the multi-rank case, but NOT
+    empirically verified here (no multi-GPU environment available).
+    """
+    if not (dist.is_available() and dist.is_initialized()):
+        return
+    world_size = dist.get_world_size()
+    if world_size <= 1:
+        return
+    dist.all_reduce(buf, op=dist.ReduceOp.SUM)
+    buf.div_(world_size)
 
 
 class GlobalWorkspaceBroadcast(nn.Module):
@@ -68,6 +89,8 @@ class ContinuousLatentODEStateChannel(nn.Module):
         z_next = z + float(dt) * dz
         with torch.no_grad():
             self.latent_state.copy_(z_next.detach())
+            # Keep the persistent latent state consistent across DDP ranks (no-op off-DDP).
+            _ddp_avg_(self.latent_state)
         return x + self.out_proj(z_next).unsqueeze(1).to(dtype=x.dtype)
 
 
@@ -103,6 +126,8 @@ class HebbianPlasticityLayer(nn.Module):
             with torch.no_grad():
                 activity = x.detach().pow(2).mean(dim=(0, 1)).to(self.trace.dtype)
                 self.trace.mul_(self.decay).add_(activity * (1.0 - self.decay))
+                # Keep the Hebbian trace consistent across DDP ranks (no-op off-DDP).
+                _ddp_avg_(self.trace)
         gain = 1.0 + self.eta * torch.tanh(self.trace.to(device=x.device, dtype=x.dtype))
         return x * gain.view(1, 1, -1)
 

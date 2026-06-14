@@ -179,7 +179,7 @@
           "launcher": "HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh"
         }
       },
-      "elapsed_s": 0.003,
+      "elapsed_s": 0.002,
       "path_name": "remote_bootstrap",
       "exit_code": 0,
       "stdout_tail": "TRAIN_READY:PASS reason_code=READY_RUNTIME_INJECTED_BOOTSTRAP\n",

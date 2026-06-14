@@ -130,7 +130,7 @@ Uzun vadeli hedefi, compute bütçesi sınırlı geliştiriciler, küçük ekipl
 ### ✅ Doğrulama Kanıtı (Son Yerel Koşu)
 | Kapı | Sonuç |
 | :--- | :--- |
-| `python3 -m pytest -q` | `369 passed, 4 skipped` |
+| `python3 -m pytest -q` | `370 passed, 4 skipped` |
 | `.titan-venv/bin/python -m ruff check .` | `All checks passed` |
 | `bash scripts/verify_all.sh` | `[verify] OK` |
 
@@ -143,7 +143,7 @@ Bu depo artık sadece fikir/prototip seviyesinde değildir. Mevcut working tree,
 
 ### Kanıt Özeti
 1. **Çekirdek kalite kapıları geçti**
-   - `pytest` geçti (`369 passed, 4 skipped`)
+   - `pytest` geçti (`370 passed, 4 skipped`)
    - `ruff check` geçti (`All checks passed`)
    - `verify_all.sh` geçti (`[verify] OK`)
 2. **Mimari ve güvenlik kontrolleri geçti**
@@ -1857,6 +1857,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── reports/  # dizin
 │   ├── ablations/  # dizin
 │   │   ├── liquid_ablation_kaggle_20260614.json  # JSON veri artefaktı
+│   │   ├── liquid_ablation_pilot_curve.png  # medya varlığı
 │   │   └── liquid_ablation_results.json  # JSON veri artefaktı
 │   ├── benchmarks/  # dizin
 │   │   ├── linkedin_sweetspot/  # dizin
@@ -1918,6 +1919,7 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── outreach/  # dizin
 │   │   ├── github_release_post.md  # dokümantasyon/rapor dosyası
 │   │   ├── huggingface_launch.md  # dokümantasyon/rapor dosyası
+│   │   ├── liquid_ablation_pilot_note_2026-06-15.md  # dokümantasyon/rapor dosyası
 │   │   ├── mertformer_titan_1_page_evidence_packet_2026-05-22.md  # dokümantasyon/rapor dosyası
 │   │   ├── mertformer_titan_executive_brief_2026-05-22.md  # dokümantasyon/rapor dosyası
 │   │   └── reddit_post.md  # dokümantasyon/rapor dosyası

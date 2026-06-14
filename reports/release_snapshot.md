@@ -20,7 +20,7 @@ bash scripts/verify_all.sh
 
 Expected outputs:
 - Secret scan: PASS
-- Pytest: PASS (`369 passed, 4 skipped`)
+- Pytest: PASS (`370 passed, 4 skipped`)
 - Preflight (offline): PASS
 - Operator gate (safe, offline): PASS
 
@@ -54,7 +54,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 - `MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`
 - Locked artifact status: `skipped (expected: AGE_RECIPIENT_FILE missing)`
 - SHA-256:
-  - `ff2b837d48515294d38a7d797012524b5a1152fe7109a90b72bc8ca6576c9c66` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`)
+  - `2ddd2b38823421a44dbade5b098e275a714d8258d68be252de0f53c18f798186` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`)
   - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`)
 
 ## Known Gates / Blockers

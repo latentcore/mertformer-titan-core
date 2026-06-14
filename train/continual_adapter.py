@@ -4,6 +4,7 @@ Continual learning adapter (lightweight, offline-safe).
 
 from __future__ import annotations
 
+from collections import deque
 from dataclasses import dataclass
 from typing import Dict, List
 
@@ -21,19 +22,20 @@ class ContinualAdapterState:
 class ReplayBuffer:
     def __init__(self, capacity: int = 1024) -> None:
         self.capacity = int(max(1, capacity))
-        self._items: List[torch.Tensor] = []
+        # deque(maxlen=...) bounds the buffer in O(1) and drops the oldest item
+        # automatically once full — no per-add reslicing of the whole list.
+        self._items: "deque[torch.Tensor]" = deque(maxlen=self.capacity)
 
     def add(self, sample: torch.Tensor) -> None:
         self._items.append(sample.detach().cpu())
-        if len(self._items) > self.capacity:
-            self._items = self._items[-self.capacity :]
 
     def sample(self, k: int = 16) -> List[torch.Tensor]:
+        # Deterministic tail window: the k most-recently-added samples, in
+        # insertion order (oldest -> newest). Not a random sample.
         if not self._items:
             return []
         k = min(int(max(1, k)), len(self._items))
-        # deterministic sampling window (tail)
-        return self._items[-k:]
+        return list(self._items)[-k:]
 
     def __len__(self) -> int:
         return len(self._items)
@@ -62,9 +64,16 @@ class ContinualLearningAdapter:
     def update(self, *, loss: float, sample: torch.Tensor | None = None) -> ContinualAdapterState:
         self.step += 1
         self.prev_loss_ema = self.running_loss_ema
-        self.running_loss_ema = (
-            self.running_loss_ema * self.loss_ema_decay + float(loss) * (1.0 - self.loss_ema_decay)
-        )
+        if self.step == 1:
+            # Cold-start: seed the EMA with the first observed loss rather than
+            # blending against the fictitious 0.0 init (which biased early steps
+            # toward zero and produced a spurious first-step "drift").
+            self.running_loss_ema = float(loss)
+            self.prev_loss_ema = float(loss)
+        else:
+            self.running_loss_ema = (
+                self.running_loss_ema * self.loss_ema_decay + float(loss) * (1.0 - self.loss_ema_decay)
+            )
         drift = abs(self.running_loss_ema - self.prev_loss_ema)
         self.drift_alert = drift > self.drift_threshold
 

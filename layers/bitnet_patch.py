@@ -33,7 +33,9 @@ def _convert_linear_modules(
     for name, child in list(module.named_children()):
         # V21.0 FIX: Whitelist check for sensitive layers
         # V25.1 UPDATE: Added 'tau' (generic) to protect ALL True Liquid params (tau_input_w, tau_hidden_w)
-        if any(x in name for x in ["router", "tau", "gate", "shared_expert_gate"]):
+        # V26 FIX: a trailing '_proj' (e.g. 'gate_proj') is a standard linear projection that MUST be
+        # quantized — exclude it so the 'gate' substring does not over-match and skip it.
+        if any(x in name for x in ["router", "tau", "gate", "shared_expert_gate"]) and not name.endswith("_proj"):
             if verbose:
                 print(f"Skipping sensitive layer (V21.0 FIX): {prefix}.{name} (Keeping FP16/BF16)")
             continue

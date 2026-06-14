@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import math
 import os
-from typing import Iterable, Any
+from typing import Any
 
 try:
     import torch
