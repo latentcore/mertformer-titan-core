@@ -87,6 +87,9 @@ def _kd_loss_sparse_topk(
     return token_kl.mean()
 
 
+_KD_DENSE_VOCAB_MISMATCH_WARNED = False
+
+
 def kd_loss_safe(
     student_logits: torch.Tensor,
     teacher_logits: Any,
@@ -97,7 +100,8 @@ def kd_loss_safe(
         return _kd_loss_sparse_topk(student_logits, teacher_logits, temp, mask=mask)
 
     s_vocab, t_vocab = student_logits.size(-1), teacher_logits.size(-1)
-    if s_vocab != t_vocab and not getattr(kd_loss_safe, "_warned_vocab_mismatch", False):
+    global _KD_DENSE_VOCAB_MISMATCH_WARNED
+    if s_vocab != t_vocab and not _KD_DENSE_VOCAB_MISMATCH_WARNED:
         # [S8] Dense KD positionally assumes aligned vocab indices for the first min(s,t) tokens.
         # The canonical offline lane uses the sparse Top-K payload (explicit, validated indices);
         # this dense branch is online/legacy only. Warn once so a silent base mismatch is visible.
@@ -106,7 +110,7 @@ def kd_loss_safe(
             f"truncating to {min(s_vocab, t_vocab)} (assumes aligned indices).",
             file=sys.stderr,
         )
-        kd_loss_safe._warned_vocab_mismatch = True  # type: ignore[attr-defined]
+        _KD_DENSE_VOCAB_MISMATCH_WARNED = True
     min_vocab = min(s_vocab, t_vocab)
     s = student_logits[..., :min_vocab].float()
     t = teacher_logits[..., :min_vocab].float().to(s.device)

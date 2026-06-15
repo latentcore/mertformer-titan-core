@@ -847,7 +847,7 @@ def train() -> None:
     # Must be done BEFORE Scheduler initialization!
     # [PRO] Only override max_steps if explicitly requested via EPOCH_MODE or if undefined
     # This allows test scripts to set max_steps=2 without interference.
-    if getattr(cfg, "epoch_mode", True) and (not hasattr(cfg, "max_steps") or cfg.max_steps is None or cfg.max_steps > 1000):
+    if getattr(cfg, "epoch_mode", False) and (not hasattr(cfg, "max_steps") or cfg.max_steps is None or cfg.max_steps > 1000):
         # V24.0: 12M samples (sweet spot for 1.5B model)
         NUM_EPOCHS = 3
         TOTAL_SAMPLES = 12_000_000  # Sweet spot: ~6B tokens
@@ -1169,11 +1169,11 @@ def train() -> None:
                      if "tau" in n or "liquid" in n:
                          p.requires_grad = False
                  
-                 # V26.5 SAFEGUARD: Clear gradients for frozen params (Safer than LR=0)
+                 # V26.5 SAFEGUARD: True freeze — grad=None so AdamW skips frozen params
+                 # (zero_() left decoupled weight-decay still shrinking the 'frozen' params).
                  for p in student.parameters():
                      if not p.requires_grad and p.grad is not None:
-                         p.grad.detach_()
-                         p.grad.zero_()
+                         p.grad = None
             elif global_step == cfg.liquid_warmup_steps:
                  # Unfreeze Logic - ONCE
                  if accelerator.is_main_process:
@@ -1195,11 +1195,10 @@ def train() -> None:
                      for n, p in student.named_parameters():
                         if "tau" in n or "liquid" in n:
                             p.requires_grad = False
-                     # V26.5 SAFEGUARD: Clear gradients for frozen params
+                     # V26.5 SAFEGUARD: True freeze — grad=None so AdamW skips frozen params.
                      for p in student.parameters():
                          if not p.requires_grad and p.grad is not None:
-                             p.grad.detach_()
-                             p.grad.zero_()
+                             p.grad = None
                              
                  elif global_step == liquid_frozen_until:
                      print(f"🧊 LIQUID COOLDOWN OVER. Unfreezing at {global_step}...")

@@ -1,27 +1,27 @@
 {
   "schema": "final_artifact_manifest_v1",
-  "generated_utc": "2026-06-14T23:57:46Z",
+  "generated_utc": "2026-06-15T07:35:50Z",
   "entries": [
     {
       "path": "artifacts/mertformer_release.zip",
-      "size_bytes": 108865568,
-      "sha256": "ea1fb3591373e6364cd91a8fbfaed031356b50f68bf94dcab1e489e30e501086",
+      "size_bytes": 108864832,
+      "sha256": "2d3033a004fa6c96dcab96a58a552d64fd52c9a3af8d14cdf450e3845974ca2f",
       "members": 1092,
       "contains_env": false,
       "contains_logs": false
     },
     {
       "path": "artifacts/mertformer_training_outputs_bundle.zip",
-      "size_bytes": 327877245,
-      "sha256": "37debc5576a88a722ea7f2dcfdd5b81758d298100de7fd46db1b74b82193d117",
-      "members": 1107,
+      "size_bytes": 327893720,
+      "sha256": "ff4caed650a28faaee0ac079ff63e6bcaa209d50d0d34980b2ef10e60bf1de34",
+      "members": 1113,
       "contains_env": false,
       "contains_logs": true
     },
     {
       "path": "artifacts/target_machine_handoff_bundle.zip",
-      "size_bytes": 143435,
-      "sha256": "55d70275555e72abb267905d5d3e6ed727aaba2e83ec7227132a23ee3df26a7a",
+      "size_bytes": 143432,
+      "sha256": "eace479f90ed1a0301bb2f6bc26344f92f162b72bc99e12178e6ea80f475dea1",
       "members": 24,
       "contains_env": false,
       "contains_logs": false
@@ -60,8 +60,8 @@
     },
     {
       "path": "packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip",
-      "size_bytes": 53083634,
-      "sha256": "68047e7305165fd88fc7de0612ec924af928f5b0e0db977fa03e3e0de5a6c519",
+      "size_bytes": 53083331,
+      "sha256": "6b093d1155942dd5512d943132b7058705307d1dd6f0bc3887a60490e8bce95b",
       "members": 1060,
       "contains_env": false,
       "contains_logs": false

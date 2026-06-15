@@ -433,7 +433,7 @@ class MertFormerConfig:
 
     learning_rate: float = 1.5e-3
     weight_decay: float = 0.1
-    warmup_steps: int = 3000  # [TITAN SCALE-UP] Adjusted for 45k total steps
+    warmup_steps: int = 3000  # informational only — scheduler uses int(max_steps*0.1) (=4500 @45k), not this field
 
     # Runtime fast paths (V2)
     liquid_fast_path: bool = os.environ.get("TITAN_LIQUID_FAST_PATH", "1") == "1"
@@ -446,7 +446,7 @@ class MertFormerConfig:
     # [V26.5 FIX] Explicitly disable Epoch Mode to respect max_steps=50k
     epoch_mode: bool = False
 
-    min_lr_ratio: float = 0.1  # Minimum LR ratio for cosine decay
+    min_lr_ratio: float = 0.1  # informational only — scheduler is called with min_lr_ratio=0.01, not this field
     # Reproducibility metadata strictness
     write_run_manifest: bool = True
 

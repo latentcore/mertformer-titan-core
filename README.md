@@ -2698,31 +2698,3 @@ Future **13B / 70B / 256B** exploration is treated as a conditional research tra
 **"We planted the seed; now it's time to watch the forest."**
 
 </div>
-
-## Build30 V1 Final Closure Addendum (2026-02-28)
-
-The one-file companion at `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` was upgraded to a closure contract release track:
-
-- Payload schemas upgraded: `build30_colab_math_fastproof_payload_v2`, `build30_colab_math_fastproof_compare_v2`, `kaggle_onefile_deep_build30_v6`.
-- Strict run/config governance: schema validation, required-key fail-fast, unknown-key reject, override/source trace.
-- Compile stall mitigation: compile default OFF, timeout fallback, compile/cudagraph guard telemetry.
-- Evidence extensions: ownership proof, runtime fingerprint, redacted env snapshot, reproducible command string.
-- Evaluation extensions: unseen-range zero-shot exact-match reporting and interpretability artifacts.
-- Feature tracking: exhaustive `feature_coverage_matrix` with per-feature IDs and completeness percent.
-
-## Build30 Kaggle Canon Addendum (2026-04-17)
-
-The canonical terminal-first Kaggle closure lane is now `scripts/kaggle_onefile_closure_build30.py`.
-
-The canonical single-cell Kaggle lane for a single T4 runtime is `scripts/kaggle_onecell_t4_build30.py`.
-
-- Single terminal-first modes: `train-end`, `verify`, `resume`, `package-only`, `bench-only`.
-- Auto profile selection prefers `t4x2_dist` for `GPU T4 x2`, `onecell_t4_sweetspot` for single-`T4`, `p100_safe` for `GPU P100`, and falls back to `sweetspot`.
-- The one-cell lane is copy/paste oriented: no repo imports at runtime, no terminal/CLI requirement, and no notebook input prompts by default.
-- The one-cell lane writes structured observability artifacts including `config_snapshot.json`, `runtime_preflight_report.json`, `layer_parity_manifest.json`, `event_manifest.json`, `final_summary.json`, `sha256_manifest.txt`, and `fatal_report.json` on hard failures.
-- Canonical checkpoint contract is normalized around `latest.pt`, `best.pt`, `manifest.json`, `public_summary.json`, and `stop_summary.json`.
-- Always-on closure artifacts include a first-100-step loss snapshot, auxiliary compare/text reports, canonical artifact index, sha256 manifest, and canonical evidence bundle zip.
-- Repo parity for the one-cell lane is explicit rather than implicit: embedded layer coverage is declared in `layer_parity_manifest.json`, with guarded/default-on/always-on states documented per file.
-- Kaggle accelerator quota is treated as floating/account-dependent runtime state rather than a fixed entitlement claim.
-- Legacy/reference one-file surfaces remain available at `scripts/kaggle_onefile_demo_build30.py` and `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`.
-- macOS users can launch the canonical lane via `launch_mertformer_kaggle_closure.command` without typing arguments.

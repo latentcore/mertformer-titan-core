@@ -11,6 +11,9 @@ ROOT = Path(__file__).resolve().parent.parent
 STAT_RE = re.compile(r"\d+\s+passed,\s*\d+\s+skipped")
 
 TARGETS = [
+    # FACTS.json is the single-source-of-truth; bind its test_stat to the live pytest count
+    # too (it was missing here, which let FACTS.json drift to 369 while README went to 370).
+    ROOT / "reports" / "FACTS.json",
     ROOT / "README.md",
     ROOT / "README_TR.md",
     ROOT / "reports" / "release_snapshot.md",

@@ -1,6 +1,6 @@
 {
   "schema": "workspace_hygiene_manifest_v1",
-  "generated_utc": "2026-06-14T23:56:28Z",
+  "generated_utc": "2026-06-15T07:33:19Z",
   "mode": "audit_only",
   "workspace_root": "<WORKSPACE_ROOT>",
   "repo_root": "<REPO_ROOT>",

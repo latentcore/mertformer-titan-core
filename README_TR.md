@@ -2681,26 +2681,3 @@ Gelecekteki **13B / 70B / 256B** araştırmaları koşullu bir hat olarak ele al
 **"Tohumu ektik, şimdi ormanı izleme vakti."**
 
 </div>
-
-## Build30 V1 Final Kapanis Eki (2026-02-28)
-
-`scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` one-file companion dosyasi kapanis sozlesmesi seviyesine yukseltilmistir:
-
-- Payload semalari guncellendi: `build30_colab_math_fastproof_payload_v2`, `build30_colab_math_fastproof_compare_v2`, `kaggle_onefile_deep_build30_v6`.
-- Kati run/config yonetisimi: schema dogrulamasi, zorunlu alan fail-fast, unknown-key reddi, override/source trace.
-- Compile stall mitigasyonu: compile varsayilan OFF, timeout fallback, compile/cudagraph guard telemetry.
-- Kanit genisletmeleri: ownership proof, runtime fingerprint, redacted env snapshot, reproduce komutu.
-- Eval genisletmeleri: unseen-range zero-shot exact-match raporlama ve interpretability artefaktlari.
-- Ozellik takibi: tum maddeleri kapsayan `feature_coverage_matrix` ve completeness yuzdesi.
-
-## Build30 Kaggle Tek-Hucre Eki (2026-04-19)
-
-Kanonik terminal-oncelikli Kaggle closure lane'i `scripts/kaggle_onefile_closure_build30.py` olarak kalir.
-
-Tek T4 GPU icin kopyala-yapistir, tek-hucre, repo-import'suz Kaggle lane'i ise `scripts/kaggle_onecell_t4_build30.py` dosyasidir.
-
-- Otomatik profil secimi: `GPU T4 x2` icin `t4x2_dist`, tek `T4` icin `onecell_t4_sweetspot`, `GPU P100` icin `p100_safe`, diger durumlarda `sweetspot`.
-- Tek-hucre lane'i varsayilan olarak non-interactive, no-menu, no-input ve single-T4 safe calisir.
-- Lane; `config_snapshot.json`, `runtime_preflight_report.json`, `layer_parity_manifest.json`, `event_manifest.json`, `final_summary.json`, `sha256_manifest.txt` ve fatal durumda `fatal_report.json` uretir.
-- Repo parity acik sekilde beyan edilir: `layers/` kapsami gomulu parity manifest ile, `always_on` / `default_on` / `guarded_off` durumlariyla yazilir.
-- Claim-boundary korunur: checkpoint yoksa egitim/benchmark iddiasi acik sekilde bloklu kalir.

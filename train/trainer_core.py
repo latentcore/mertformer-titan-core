@@ -281,7 +281,7 @@ def export_to_onnx(model: nn.Module, save_dir: Path, model_name: str, device: to
             dummy_input,  # type: ignore[arg-type]  # legacy export API accepts a bare Tensor
             str(onnx_path),
             export_params=True,
-            opset_version=12, # [FIX] Legacy Stable Opset
+            opset_version=17, # opset 17: QDQ/BitNet export needs 13+ (12 was anachronistic)
             do_constant_folding=False, # [FIX] Disable folding to avoid graph capture errors
             input_names=['input_ids'],
             output_names=['logits'],
