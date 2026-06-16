@@ -123,3 +123,21 @@ reports/final_master_plan_freeze.md
 reports/release_closure_note.md
 reports/final_freeze_manifest.md
 reports/final_freeze_manifest.json
+
+# More generated closure/health reports (regenerate locally via the closure builders;
+# kept on disk, out of the tracked tree). Test-read + scaffold-pointed ones stay tracked.
+reports/final_backlog_classification.md
+reports/final_backlog_classification.json
+reports/final_backlog_coverage_diff.md
+reports/final_backlog_missing_items.md
+reports/closure_risk_register.md
+reports/master_operating_plan.md
+reports/final_artifact_manifest.json
+reports/final_checksum_manifest.json
+reports/dataset_lineage_final.json
+reports/dataset_health_final.md
+reports/model_health_final.md
+reports/tokenizer_sync_final_report.md
+reports/kaggle_onefile_closure_verify.json
+reports/cleanup_scoped_closure_junk_report.json
+reports/release_closure_lock_report.json
