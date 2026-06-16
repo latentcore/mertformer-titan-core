@@ -71,3 +71,38 @@ Closed as won't-change-now WITH reasons, so the backlog has no silently-"open" r
 - **24 / 25 / 31 / 38 test backlog**: additive pure-CPU coverage (RoPE position, block-order schema,
   SIGTERM handler, packing resume-seam). No defect — `consumed_through` monotonicity and the freeze/RNG/
   qinn/MoE-tolerance paths are already tested; these extend coverage and are deferred without risk.
+
+## Verified findings — documented now, behavior fixes deferred to post-45K (2026-06-16)
+
+A live source pass (this repo, not analysis transcripts) verified the following. They are real,
+but intentionally NOT changed in this pass, because touching the loss / training behavior would
+confound the first 45K architecture-validation run. Each is logged with the exact mechanism and
+the post-45K action (see `V2_BACKLOG_SEED.md`).
+
+- **z-loss effective weight is ~`2e-6` (double-multiplied), not `1e-4`.** `layers/moe.py:775`
+  computes `z_loss = (z*z).mean() * cfg.z_loss_coef` (`z_loss_coef = 1e-4`, config.py:271) and folds
+  it into `aux_loss`; `train/train.py:1272` then multiplies the whole aux term again by
+  `router_aux_loss_coef = 0.02` (config.py:244). Net z-loss weight = `1e-4 * 0.02 = 2e-6`, ~50x below
+  the apparent `1e-4`. The Switch load-balance term is correct (paper alpha). z-loss only guards
+  router-logit blow-up; other stabilizers (BitLinear, jitter, capacity) currently cover for it.
+  Post-45K: pick the intended effective weight and apply it once (re-validate with
+  `scripts/cfc_moe_tolerance_check.py`).
+- **Liquid `dt` is fixed at `1.0` → the canonical CfC path is a gated RNN, not continuous-time.**
+  `layers/liquid.py` `LiquidCell.forward(..., dt=1.0)` is always called with the default; the
+  input-dependent exponential forget gate works, but the continuous-time advantage only appears with
+  variable `dt`. README/ARCHITECTURE describe it honestly as a research bet. Post-45K: either wire a
+  variable `dt` and ablate it, or relabel it as a gated RNN.
+- **`epoch_mode` defaults to `False`** (config.py:447 and `train.py` `getattr(..., False)`): verified
+  NOT a live footgun. If manually enabled it can inflate `max_steps` after the config-finalize
+  token-budget guard; left off by default, documented for awareness.
+- **GPU-perf only, deferred to the training box:** sequential MoE dispatch does not pass
+  `capacity_mask` (output is correct — `topk_vals` are renormalized — only wasted FLOPs);
+  per-micro-step `.item()` host-device syncs in the train loop. Both only matter (and are measurable)
+  on real GPU.
+- **`LiquidCell.mark_weights_updated()` (`layers/liquid.py:286`) is currently uncalled.** It is a
+  cache-invalidation API (`_weight_version += 1; _cache_ready = False`) — NOT dead code to delete, but
+  a *potential* JIT/quant-eval-cache staleness gap. Post-45K: confirm whether the eval cache needs this
+  hook; do NOT remove it.
+- **`rope_theta` is informational only** (GQA attention reads `rope_base`); annotated in config.py.
+
+None of the above is changed in this pass — no loss/behavior change before the 45K run.

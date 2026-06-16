@@ -42,6 +42,15 @@
 - demo packaging and canned prompts set
 - KPI scorecard contract v2
 
+## Track F — Post-45K verified-finding fixes (logged 2026-06-16; see DECISIONS.md)
+- z-loss double-multiply: pick intended effective weight (currently `1e-4 * 0.02 = 2e-6`), apply once, re-validate with `scripts/cfc_moe_tolerance_check.py`
+- Liquid variable-`dt`: wire input/time-dependent `dt` (currently fixed `1.0` → gated RNN) and ablate vs the gated-RNN baseline; otherwise relabel
+- Sequential MoE dispatch: pass `capacity_mask` to skip dropped-token FLOPs (GPU-perf; output already correct)
+- Train-loop `.item()` hot-path: remove per-micro-step host-device syncs (GPU-perf)
+- `LiquidCell.mark_weights_updated()`: confirm whether the JIT/quant eval cache needs this invalidation hook on weight update (do not remove blindly)
+- ONNX export opset: prod is `14` (`scripts/mobile_export.py`); revisit bump to 17/18 for S25 NPU QDQ once device profiling exists (legacy smoke test deliberately stays at 12)
+- `liquid_warmup_steps`: add an env override for parity with the other tunables (currently hardcoded `10000`)
+
 ## Engineering Rules
 - no direct edits on v1 closure branches
 - one feature family per PR

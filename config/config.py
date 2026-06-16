@@ -220,8 +220,10 @@ class MertFormerConfig:
 
     # [NEW] RoPE Theta: Frequency base for long context.
     # Standard is 10,000. Making it 100,000 eases "stretching" to 8K/16K later.
+    # NOTE: `rope_theta` is informational only — GQA attention (`layers/mla.py`)
+    # reads `rope_base`. Keep both equal; editing `rope_theta` alone has no effect.
     rope_theta: float = 100000.0
-    rope_base: float = 100000.0 # [FIX] Sync with rope_theta
+    rope_base: float = 100000.0  # canonical RoPE base read by GQA attention (kept == rope_theta)
 
     # -------------------------------------------------------------------------
     # 3. BITNET b1.58
