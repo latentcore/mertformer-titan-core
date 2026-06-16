@@ -11,9 +11,11 @@ IGNORE_PARTS = {".git", ".titan-venv", ".lint-venv", "node_modules"}
 # Link-integrity is only meaningful for live, tracked, non-frozen docs. The following are
 # scoped OUT (the gate stays strict for everything else):
 #   - pitch_kit: a gitignored, regenerated commercial kit (not part of the tracked repo);
+#   - archive/: frozen / superseded content (e.g. the pre-cut full README) whose old
+#     relative links intentionally no longer resolve from the new location;
 #   - *_before_final_simplification.md: frozen pre-simplification README snapshots that
 #     intentionally preserve the OLD layout/links as a historical record.
-IGNORE_PARTS_SCOPED = {"pitch_kit"}
+IGNORE_PARTS_SCOPED = {"pitch_kit", "archive"}
 FROZEN_SNAPSHOT_SUFFIX = "_before_final_simplification.md"
 
 

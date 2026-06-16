@@ -51,6 +51,11 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │       ├── README.md  # primary documentation (EN)
 │       ├── launch_mertformer_chess_gui.command  # artifact
 │       └── play_mertformer_chess_web.py  # Python module/script (module for play mertformer chess web)
+├── archive/  # directory
+│   └── documents/  # directory
+│       ├── README_TR_before_final_simplification.md  # documentation/report file
+│       ├── README_before_final_simplification.md  # documentation/report file
+│       └── README_snapshot_source.md  # documentation/report file
 ├── artifacts/  # directory
 │   └── mertformer_release.zip.sha256  # artifact checksum
 ├── assets/  # directory
@@ -113,10 +118,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── PROJECT_MASTER_TRUTH.md  # documentation/report file
 │   ├── PROJECT_MASTER_TRUTH_TR.md  # Turkish document counterpart
 │   └── QUICKSTART_CPU.md  # documentation/report file
-├── documents/  # directory
-│   ├── README_TR_before_final_simplification.md  # documentation/report file
-│   ├── README_before_final_simplification.md  # documentation/report file
-│   └── README_snapshot_source.md  # documentation/report file
 ├── economics/  # directory
 │   ├── cost_model.md  # documentation/report file
 │   ├── cost_model_TR.md  # Turkish document counterpart
@@ -881,6 +882,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── ABLATION_TR.md  # Turkish document counterpart
 ├── AGENTS.md  # documentation/report file
 ├── ARCHITECTURE.md  # documentation/report file
+├── BACKLOG.md  # documentation/report file
+├── BACKLOG_TR.md  # Turkish document counterpart
 ├── CHANGELOG.md  # documentation/report file
 ├── CHANGELOG_TR.md  # Turkish document counterpart
 ├── CHESS_5080_POC_INTERNAL.md  # documentation/report file
@@ -891,6 +894,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── DECISIONS.md  # documentation/report file
 ├── DECISIONS_TR.md  # Turkish document counterpart
 ├── Dockerfile  # container build baseline
+├── GOVERNANCE.md  # documentation/report file
+├── GOVERNANCE_TR.md  # Turkish document counterpart
 ├── IMPLEMENTATION_PLAN.md  # documentation/report file
 ├── IMPLEMENTATION_PLAN_TR.md  # Turkish document counterpart
 ├── INTERNAL_AGI_GAP.md  # documentation/report file
@@ -913,11 +918,15 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── README_SUMMARY_TR.md  # Turkish document counterpart
 ├── README_SUMMARY_TR.pdf  # artifact
 ├── README_TR.md  # Turkish document counterpart
+├── REPRODUCE.md  # documentation/report file
+├── REPRODUCE_TR.md  # Turkish document counterpart
 ├── SDK_GUIDE.md  # documentation/report file
 ├── SDK_GUIDE_TR.md  # Turkish document counterpart
 ├── SECURITY.md  # documentation/report file
 ├── SECURITY_TR.md  # Turkish document counterpart
 ├── START_HERE.md  # documentation/report file
+├── STATUS.md  # documentation/report file
+├── STATUS_TR.md  # Turkish document counterpart
 ├── TASK.md  # documentation/report file
 ├── TASK_TR.md  # Turkish document counterpart
 ├── TECHNICAL_REPORT.md  # documentation/report file
@@ -926,6 +935,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── TRAINING_PLAN_TR.md  # Turkish document counterpart
 ├── TROUBLESHOOTING.md  # documentation/report file
 ├── TROUBLESHOOTING_TR.md  # Turkish document counterpart
+├── TRUTH_MATRIX.md  # documentation/report file
+├── TRUTH_MATRIX_TR.md  # Turkish document counterpart
 ├── USAGE_GUIDE.md  # documentation/report file
 ├── USAGE_GUIDE_TR.md  # Turkish document counterpart
 ├── USE_POLICY.md  # documentation/report file

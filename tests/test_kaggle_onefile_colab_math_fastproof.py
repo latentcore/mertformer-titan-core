@@ -190,9 +190,10 @@ def test_logging_artifacts_written_and_compare_schema(tmp_path: Path, monkeypatc
 
 
 def test_readme_mentions_new_script():
+    # The demo script is documented in the scripts/ README (where script docs live);
+    # the front-page README.md/README_TR.md are intentionally kept sharp and do not
+    # enumerate individual demo scripts.
     files = [
-        Path(project_root) / "README.md",
-        Path(project_root) / "README_TR.md",
         Path(project_root) / "scripts" / "README.md",
         Path(project_root) / "scripts" / "README_TR.md",
     ]

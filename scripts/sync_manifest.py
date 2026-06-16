@@ -519,15 +519,18 @@ def main() -> int:
     build_structure_md(entry_paths, structure_path)
 
     readme_sync = {
+        # README carries only a POINTER to the canonical tree (kept full in
+        # docs/PROJECT_STRUCTURE.md). This keeps the front page sharp instead of
+        # re-injecting the full ~900-line tracked-file tree on every sync.
         "README.md": sync_readme_structure_block(
             root / "README.md",
             "### Canonical Layout (Build 30 V2)",
-            build_structure_lines(entry_paths, lang="en"),
+            ["Full tracked-file tree: docs/PROJECT_STRUCTURE.md"],
         ),
         "README_TR.md": sync_readme_structure_block(
             root / "README_TR.md",
             "### Kanonik Yerleşim (Build 30 V2)",
-            build_structure_lines(entry_paths, lang="tr"),
+            ["Tam tracked-dosya ağacı: docs/PROJECT_STRUCTURE.md"],
         ),
     }
     readme_sync_ok = all(readme_sync.values())
