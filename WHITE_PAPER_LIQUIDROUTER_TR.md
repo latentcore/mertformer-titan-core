@@ -38,27 +38,31 @@ Build30 V2 için bu ayrım bilinçli bir tasarım kararına karşılık gelir ve
 ## 6. Sonuç
 LiquidRouter, MertFormer Titan’ın seyrek MoE yığınında zamansal Conv yönlendirme bileşenidir. Build30 V2 bunu offline-first edge kısıtlarına uyumlu, implementasyon-gerçekliğinde ve claim-safe bir mekanizma olarak tanımlar.
 
-## 7. Deney (Pilot Sinyali) ve Sınırlar
+## 7. Deney (Ölçülmüş Ablasyon) ve Sınırlar
 
-**Claim modu: ölçülmüş (yalnız pilot sinyali). Bu bir benchmark iddiası DEĞİLDİR.**
+**Claim modu: ölçülmüş (küçük ölçek, yönsel). Bu bir benchmark iddiası DEĞİLDİR.**
+**Kanonik sonuçlar: [`ABLATION_TR.md`](ABLATION_TR.md).**
 
-**Önemli kapsam ayrımı:** Aşağıdaki $0 pilot, `cfg.use_liquid` bayrağını — yani `layers/liquid.py`
-içindeki **CfC LiquidMixer**'ı (katlar [2,4,6]) — açıp kapatır. Bu makalenin anlattığı **Conv1d
-LiquidRouter** (`layers/moe.py`) ve MoE yığını, iki kolda da AÇIK kalır. Dolayısıyla bu sinyal CfC
-mixer'ı ölçer; router'ı doğrudan test etmez.
+**Önemli kapsam ayrımı:** ablasyon `cfg.use_liquid` bayrağını — yani `layers/liquid.py` içindeki
+**CfC LiquidMixer**'ı — açıp kapatır. Bu makalenin anlattığı **Conv1d LiquidRouter** (`layers/moe.py`)
+ve MoE yığını iki kolda da AÇIK kalır; sinyal CfC mixer'ı ölçer, router'ı **doğrudan test etmez**.
 
-- Kurulum: ~100M proxy MertFormer, saf next-token CE (teacher/KD yok), Kaggle T4×2, $0.
-- Aynı veri + aynı init (seed 1234); tek fark `use_liquid`. 500 adım, seq 256, batch 8.
-- Sonuç: liquid ON mean_last10 = 11.489 vs OFF = 11.993 → **Δ(off−on) = +0.50** (CfC mixer yön olarak
-  yardım ediyor; daha düşük loss).
+**12-seed nihai (2026-06-15) — önceki tek-seed pilotu EZER.** 12 seed × AÇIK/KAPALI, small preset
+(hidden 384, 8 katman), 2-basamaklı toplama, Kaggle T4, ~900 sn/koşu:
+- Held-out ID exact-acc: KAPALI %96.32 vs AÇIK %94.69 (Δ −1.63 pp, p=0.305, d=−0.43, %95 GA [−4.63, +1.17]).
+- OOD (3-basamak): %0 / %0 (taban — ayırt edici değil). AÇIK duvar-saatinde ~%30 daha az adım; +%2.8 param.
+- **Hüküm:** gözle görülür doğruluk faydası yok, maliyet kesin (~%30 yavaş), ama görev tavan/taban
+  doygun + test underpowered + iso-zaman → **Liquid'in ölçekteki değeri konusunda sonuçsuz, çürütülmedi.**
+  45K'yı Liquid'e bağlamak için pozitif kanıt yok.
 
-**Sınırlar (dürüst):** Tek seed; fark (0.50) sabit-lr/warmup'sız eğrilerin adım-adım gürültüsü
-içindedir → ölçülmüş bir etki büyüklüğü değil, yön sinyalidir. Küçük corpus (35.634 token / 128k vocab);
-end-loss rastgele tabana (ln 128000 ≈ 11.76) yakın seyreder. Bu, ablation hattının çalıştığını ve bir
-yön gösterdiğini kanıtlar; eğitilmiş yetenek, benchmark veya modelin "çalıştığı" anlamına GELMEZ. Bunun
-için daha büyük, çok-seed, ölçülmüş bir koşu gerekir (45K mimari-doğrulama koşusu). **Tek seedle arXiv
+**Liquid hız/gecikme: İDDİA YOK** — doğrulanmış bir 45K koşusu ölçek-temsili veri üretene kadar
+(pilot/H200 sayıları confounded). Bkz. `ABLATION_TR.md`.
+
+**Sınırlar (dürüst):** küçük toy görev, T4, ~15 dk/seed — 3.67B model hakkında kanıt değil. Önceki
+tek-seed pilot (Δ(off−on)=+0.50) büyük ölçüde tek şanslı seed'di ve ezildi. **Toy-ölçek veriyle arXiv
 gönderimi yapılmaz — iskelet şimdi, gönderim ölçülmüş 45K koşusundan sonra.**
 
-Kanıt: `reports/ablations/liquid_ablation_results.json` (tam 500-adım eğriler),
-`reports/ablations/liquid_ablation_pilot_curve.png` (grafik),
-`reports/outreach/liquid_ablation_pilot_note_2026-06-15.md` (kamuya açık not).
+Kanıt (sha256-zincirli): [`reports/ablations/liquid_ablation_final_20260615/`](reports/ablations/liquid_ablation_final_20260615/)
+(`final_summary.json`, `MANIFEST.json`, grafikler). 2026-06-14 tek-seed pilotu
+(`reports/ablations/liquid_ablation_results.json`, `liquid_ablation_pilot_curve.png`) **superseded**
+tarihçe olarak korunur.

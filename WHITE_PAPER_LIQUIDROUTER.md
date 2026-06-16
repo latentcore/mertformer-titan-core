@@ -38,27 +38,32 @@ This separation is intentional in Build30 V2 and must be reflected in partner-fa
 ## 6. Conclusion
 LiquidRouter is a temporal Conv routing component within MertFormer Titan’s sparse MoE stack. Build30 V2 documents this as an implementation-ready, claim-safe mechanism aligned with offline-first edge constraints.
 
-## 7. Experiment (Pilot Signal) and Limits
+## 7. Experiment (Measured Ablation) and Limits
 
-**Claim mode: measured (pilot signal only). This is NOT a benchmark claim.**
+**Claim mode: measured (small-scale, directional). This is NOT a benchmark claim.**
+**Canonical results: [`ABLATION.md`](ABLATION.md).**
 
-**Important scope distinction:** The $0 pilot below toggles the `cfg.use_liquid` flag — i.e. the
-**CfC LiquidMixer** in `layers/liquid.py` (layers [2,4,6]). The **Conv1d LiquidRouter** this paper
-describes (`layers/moe.py`) and the MoE stack stay ON in both arms. So this signal measures the CfC
-mixer; it does not directly test the router.
+**Important scope distinction:** the ablation toggles `cfg.use_liquid` — i.e. the **CfC LiquidMixer**
+in `layers/liquid.py`. The **Conv1d LiquidRouter** this paper describes (`layers/moe.py`) and the MoE
+stack stay ON in both arms, so the signal measures the CfC mixer; it does **not** directly test the
+router.
 
-- Setup: ~100M proxy MertFormer, pure next-token CE (no teacher, no KD), Kaggle T4×2, $0.
-- Identical data + identical init (seed 1234); the only difference is `use_liquid`. 500 steps, seq 256, batch 8.
-- Result: liquid ON mean_last10 = 11.489 vs OFF = 11.993 → **Δ(off−on) = +0.50** (the CfC mixer
-  directionally helps; lower loss).
+**12-seed final (2026-06-15) — SUPERSEDES the earlier single-seed pilot.** 12 seeds × ON/OFF, small
+preset (hidden 384, 8 layers), 2-digit addition, Kaggle T4, ~900 s/run:
+- Held-out ID exact-acc: OFF 96.32% vs ON 94.69% (Δ −1.63 pp, p=0.305, d=−0.43, 95% CI [−4.63, +1.17]).
+- OOD (3-digit): 0% / 0% (floor — non-discriminative). ON ~30% fewer steps per wall-clock; +2.8% params.
+- **Verdict:** no visible accuracy benefit, cost certain (~30% slower), but the task is ceiling/floor-
+  saturated and the test is underpowered + iso-time → **inconclusive on Liquid's value at scale, not
+  disproven.** No positive evidence to bind the 45K run to Liquid.
 
-**Limits (honest):** Single seed; the gap (0.50) sits inside the step-to-step noise of the constant-lr,
-no-warmup curves — a direction signal, not a measured effect size. Tiny corpus (35,634 tokens / 128k
-vocab); end-loss hovers near the random baseline (ln 128000 ≈ 11.76). This proves the ablation pipeline
-works and points a direction; it is NOT evidence of trained capability, a benchmark, or that the model
-"works". That needs a larger, multi-seed, measured run (the 45K architecture-validation run). **No arXiv
-submission on a single-seed pilot — skeleton now, submission after the measured 45K run.**
+**Liquid speed/latency: NO CLAIM** until a verified 45K run produces scale-representative data (pilot/
+H200 numbers are confounded). See `ABLATION.md`.
 
-Evidence: `reports/ablations/liquid_ablation_results.json` (full 500-step curves),
-`reports/ablations/liquid_ablation_pilot_curve.png` (plot),
-`reports/outreach/liquid_ablation_pilot_note_2026-06-15.md` (public note).
+**Limits (honest):** small toy task, T4, ~15 min/seed — not proof about the 3.67B model. The earlier
+single-seed pilot (Δ(off−on)=+0.50) was largely one lucky seed and is superseded. **No arXiv submission
+on toy-scale data — skeleton now, submission only after a measured 45K run.**
+
+Evidence (sha256-chained): [`reports/ablations/liquid_ablation_final_20260615/`](reports/ablations/liquid_ablation_final_20260615/)
+(`final_summary.json`, `MANIFEST.json`, plots). The 2026-06-14 single-seed pilot
+(`reports/ablations/liquid_ablation_results.json`, `liquid_ablation_pilot_curve.png`) is retained as
+**superseded** history.

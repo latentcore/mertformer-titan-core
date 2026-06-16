@@ -1,0 +1,184 @@
+{
+  "schema": "mertformer_ablation_manifest_v1",
+  "generated_utc": "2026-06-16T00:27:13Z",
+  "run_dir": "/kaggle/working/mertformer_liquid_ablation_20260615_182505",
+  "files": [
+    {
+      "path": "final_summary.json",
+      "bytes": 16121,
+      "sha256": "62b0e4e4c7942486832f44fc5439924f1d0ed27e43be38c3c8c8b233c5030a1d"
+    },
+    {
+      "path": "logs/seed0_liquidOFF.jsonl",
+      "bytes": 280881,
+      "sha256": "381b3a07689ac3db88476f54a1b2796dc02364b24d9159abce567c6f488cfe1e"
+    },
+    {
+      "path": "logs/seed0_liquidON.jsonl",
+      "bytes": 202772,
+      "sha256": "1b4e974a1970e9f2c3d0f766345c431319d556e5af05aefb812ec60377a01cdf"
+    },
+    {
+      "path": "logs/seed10_liquidOFF.jsonl",
+      "bytes": 286469,
+      "sha256": "8ff9459898c05b8bd021b0ea8de7f49b75d54bcd55a5df3b05d2676fb3f8cae7"
+    },
+    {
+      "path": "logs/seed10_liquidON.jsonl",
+      "bytes": 210199,
+      "sha256": "a5a9a6895080019ce371bc3829898465de9713fa7ec860ef65fef7adca6bad91"
+    },
+    {
+      "path": "logs/seed11_liquidOFF.jsonl",
+      "bytes": 280344,
+      "sha256": "38e7cfa5a9e90924fac8a0233643946d881dc2695b80bef48b23a706ec2a6236"
+    },
+    {
+      "path": "logs/seed11_liquidON.jsonl",
+      "bytes": 199792,
+      "sha256": "c9368671b9808b7d3ad8cb28877d70ecb1941e307af407dd6900d44a1798901d"
+    },
+    {
+      "path": "logs/seed1_liquidOFF.jsonl",
+      "bytes": 277071,
+      "sha256": "a57902167e6b1e3504c98544743ba440ab08cad70d6499607b1e9a3fd98485ad"
+    },
+    {
+      "path": "logs/seed1_liquidON.jsonl",
+      "bytes": 197000,
+      "sha256": "dd856cd1b0c60f4491059f30bfc0c7fac42022346f1bed24d4aca92915720efc"
+    },
+    {
+      "path": "logs/seed2_liquidOFF.jsonl",
+      "bytes": 272886,
+      "sha256": "3d756e0713ee7a78996104307f4a189b37d713979e3b78bbde5d5df9d589bf21"
+    },
+    {
+      "path": "logs/seed2_liquidON.jsonl",
+      "bytes": 195022,
+      "sha256": "2a38b260bd779b1cb1d8baeabdf0b599b1d561d5be272284e6dd4380812d7ee6"
+    },
+    {
+      "path": "logs/seed3_liquidOFF.jsonl",
+      "bytes": 273344,
+      "sha256": "6b487a6b0f8d45af8ce86229e6de715d31652b84fbd53f924035e6ea410a4d46"
+    },
+    {
+      "path": "logs/seed3_liquidON.jsonl",
+      "bytes": 195088,
+      "sha256": "9241ad9bdfc69aa28c9a1b3138da712df248444579cc0d879b55a065a8a5f300"
+    },
+    {
+      "path": "logs/seed4_liquidOFF.jsonl",
+      "bytes": 272566,
+      "sha256": "90659caea96d687d2b61a99f55123b1575d93218805eefe8528050cb0ede516e"
+    },
+    {
+      "path": "logs/seed4_liquidON.jsonl",
+      "bytes": 200150,
+      "sha256": "78fae28c7ab9f092e9ae4f2e4bec08e115ba8b093f6be170d85baed6b53dc92e"
+    },
+    {
+      "path": "logs/seed5_liquidOFF.jsonl",
+      "bytes": 281584,
+      "sha256": "78cc946e65ae9c35e7972728c8287edea024413aa8fd306fd0beb4a9f562eb94"
+    },
+    {
+      "path": "logs/seed5_liquidON.jsonl",
+      "bytes": 195548,
+      "sha256": "c64f0c4930556630b5e872136b26f422431b70fb98e36a3ab005ef15ecfc9c06"
+    },
+    {
+      "path": "logs/seed6_liquidOFF.jsonl",
+      "bytes": 275842,
+      "sha256": "8ee7c50e936455bfd0f28861f283b3cf13894247355f430d20b8d0eff836711e"
+    },
+    {
+      "path": "logs/seed6_liquidON.jsonl",
+      "bytes": 197606,
+      "sha256": "2d1e795587dc641912f815c5a6b6f53e50dbbb2ba84e8d78d45a1e41e91eff24"
+    },
+    {
+      "path": "logs/seed7_liquidOFF.jsonl",
+      "bytes": 275173,
+      "sha256": "770130eb199918547dff443a8449890b57cbec5ff1f7f16043bec7c4d5a39e84"
+    },
+    {
+      "path": "logs/seed7_liquidON.jsonl",
+      "bytes": 198433,
+      "sha256": "48311651b20dd91129dae81289481cc67c7e46cb572c92d9ea0c97bbca7bb8ae"
+    },
+    {
+      "path": "logs/seed8_liquidOFF.jsonl",
+      "bytes": 277950,
+      "sha256": "2e9df6f3ff9f763dfcdd2e47eeab8de6ed97569ea4ce939b7912351c9bb03f46"
+    },
+    {
+      "path": "logs/seed8_liquidON.jsonl",
+      "bytes": 199818,
+      "sha256": "720791020bf0512bda88fd24cc18ea468f62303c700be4ec9f9e8954dd6e17c1"
+    },
+    {
+      "path": "logs/seed9_liquidOFF.jsonl",
+      "bytes": 284822,
+      "sha256": "0257972fdb8dcfc73335876b5d8e7efcd678177151e83b3a6e47e8ea729ad3da"
+    },
+    {
+      "path": "logs/seed9_liquidON.jsonl",
+      "bytes": 204296,
+      "sha256": "ab76fdf564f66339314e5bf39e05e7fc1c3eef98afb08d83fd85d1760c87d6f5"
+    },
+    {
+      "path": "plots/fig1_train_loss_log.png",
+      "bytes": 61030,
+      "sha256": "76ceef26520dd239b8769d433a638ed6749ba9021528be838235d2417c96eff8"
+    },
+    {
+      "path": "plots/fig2_loss_and_accuracy.png",
+      "bytes": 58098,
+      "sha256": "ac075614bae04672b10618efa716597f16899609bd375c1a5f6241acf3b11217"
+    },
+    {
+      "path": "plots/fig3_per_seed_scatter.png",
+      "bytes": 39834,
+      "sha256": "69c68a95137e8af74e17ddac42cff734fcde15f74449073be94a4a6d6f315f35"
+    },
+    {
+      "path": "telemetry_master.csv",
+      "bytes": 2635813,
+      "sha256": "523e00d124d8911ab0f108f8915a4f7def6fb6999320211c201de7099c14f501"
+    }
+  ],
+  "experiment": "mertformer_liquid_router_ablation_final",
+  "summary": {
+    "id": {
+      "metric": "ID exact-acc",
+      "mean_on": 0.9469166666666667,
+      "mean_off": 0.9632499999999998,
+      "delta_on_minus_off": -0.01633333333333309,
+      "t": -1.053196252035262,
+      "df": 19.537590540436206,
+      "p_value": 0.30510282937491806,
+      "cohens_d": -0.4299655694163435,
+      "ci95_lo": -0.04625000000000001,
+      "ci95_hi": 0.01166666666666672,
+      "significant": false,
+      "verdict": "No significant ID exact-acc difference (Liquid does not earn its cost here)"
+    },
+    "ood": {
+      "metric": "OOD exact-acc",
+      "mean_on": 0.0,
+      "mean_off": 0.0,
+      "delta_on_minus_off": 0.0,
+      "t": NaN,
+      "df": NaN,
+      "p_value": NaN,
+      "cohens_d": 0.0,
+      "ci95_lo": 0.0,
+      "ci95_hi": 0.0,
+      "significant": false,
+      "verdict": "No significant OOD exact-acc difference (Liquid does not earn its cost here)"
+    }
+  },
+  "decoupling_detected": false
+}

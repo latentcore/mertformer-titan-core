@@ -96,3 +96,8 @@ mertformer-titan-dealroom-private/
 
 # Personal local Claude Code settings (auto-accept perms)
 .claude/settings.local.json
+
+# Heavy ablation raw artifacts (sha256 manifest is the tracked proof; raw kept local/archive)
+reports/ablations/**/telemetry_master.csv
+reports/ablations/**/logs/
+reports/ablations/**/*.jsonl
