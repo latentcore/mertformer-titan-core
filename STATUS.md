@@ -1,0 +1,29 @@
+# STATUS — MertFormer Titan
+
+Canonical, hand-maintained status entry point. Generated detail lives under `reports/`
+(this file is the single source a reviewer should read first). Turkish: [STATUS_TR.md](STATUS_TR.md).
+
+## One glance
+- **Stage:** pre-training **closure-complete** — the canonical model has **NOT been trained yet**.
+- **Build:** `370 passed, 4 skipped` (offline-first `pytest`). See [REPRODUCE.md](REPRODUCE.md).
+- **Readiness:** `train_allowed = true` · `decision_reason_code = READY_REMOTE_BOOTSTRAP` · `start_gate = START_ALLOWED`.
+- **Crash-class bugs:** none (canonical model + orchestrator import cleanly).
+
+## Architecture (measured, not benchmarked)
+- 18 layers, hidden 2048, 16 heads / 8 KV (**GQA**), 8 experts top-2 (MoE every 3rd layer), Liquid/CfC mixer at layers [4,10,16], BitNet b1.58 ternary.
+- **Measured runtime params:** `3,672,982,022` (~3.67B). **Design target:** 2.64B. Both labels are deliberate — see [reports/param_accounting_report.md](reports/param_accounting_report.md).
+
+## What is measured vs not
+- **Measured:** repo-side self-tests, offline smoke harness, the 12-seed Liquid ablation (see [ABLATION.md](ABLATION.md) — verdict: **no measured accuracy benefit, ~30% slower, inconclusive at toy scale; no speed claim**).
+- **Not measured (the one real gap):** the canonical 3.67B model has never been trained — so "does it learn / converge / generalize" is **unverified**. This is hardware-bound, not a code edit.
+
+## The single remaining blocker: a real 45K GPU run
+- Needs H100/H200 + compute + days. Local K4 drills (checkpoint save→restore→resume) + import smoke are green.
+- Lane blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
+- Launch (target hardware): `bash zero_touch_start.sh`. See [REPRODUCE.md](REPRODUCE.md).
+
+## Canonical surfaces
+- [TRUTH_MATRIX.md](TRUTH_MATRIX.md) — claim → evidence. · [BACKLOG.md](BACKLOG.md) — deferred work.
+- [GOVERNANCE.md](GOVERNANCE.md) — policies/contracts index. · [REPRODUCE.md](REPRODUCE.md) — how to verify & launch.
+- [DECISIONS.md](DECISIONS.md) — deliberate decisions (incl. documented-not-changed findings).
+- Generated detail: `reports/closure_57_matrix.md`, `reports/repo_closure_scorecard.md`, `reports/final_truth_matrix.md`.
