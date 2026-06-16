@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-06-15T07:33:54.606990+00:00",
-  "md_file_count": 448,
+  "generated_utc": "2026-06-16T18:59:33.639712+00:00",
+  "md_file_count": 451,
   "duplicate_name_group_count": 25,
   "duplicate_name_groups": {
     "license.md": [
@@ -28,6 +28,7 @@
       "logs/README.md",
       "postmortems/README.md",
       "releases/README.md",
+      "reports/ablations/README.md",
       "reports/benchmarks/README.md",
       "reports/benchmarks/linkedin_sweetspot/README.md",
       "reports/benchmarks/math_fastproof/README.md",
@@ -138,11 +139,11 @@
     ],
     "sales_funnel_90d_tr.md": [
       "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/sales_funnel_90d_TR.md",
-      "reports/sales_funnel_90d_TR.md"
+      "private/commercial/sales_funnel_90d_TR.md"
     ],
     "founders_hub_application_tr.md": [
       "mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/founders_hub_application_TR.md",
-      "reports/founders_hub_application_TR.md"
+      "private/commercial/founders_hub_application_TR.md"
     ],
     "model_health.md": [
       "reports/model_health.md",

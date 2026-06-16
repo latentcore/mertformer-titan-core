@@ -73,7 +73,7 @@ This directory has a small local application packet zip for handoff and review.
 - SHA256 sidecar: \`applications/anthropic/$(basename "$sha_path")\`
 - SHA256: \`$sha\`
 - Size: \`$size_bytes\` bytes
-- Contents: 10 markdown application files
+- Contents: ${#files[@]} evidence-facing markdown application files
 
 ## Git Policy
 

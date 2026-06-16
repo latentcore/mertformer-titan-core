@@ -1,18 +1,18 @@
 {
   "schema": "final_checksum_manifest_v1",
-  "generated_utc": "2026-06-15T07:35:50Z",
+  "generated_utc": "2026-06-16T19:01:28Z",
   "entries": [
     {
       "path": "artifacts/mertformer_release.zip",
-      "sha256": "2d3033a004fa6c96dcab96a58a552d64fd52c9a3af8d14cdf450e3845974ca2f"
+      "sha256": "2491f98533afa63a1ba83f7cb715bc96a101fba0bb9be0c0bc0ac319192b25ca"
     },
     {
       "path": "artifacts/mertformer_training_outputs_bundle.zip",
-      "sha256": "ff4caed650a28faaee0ac079ff63e6bcaa209d50d0d34980b2ef10e60bf1de34"
+      "sha256": "d97f33419048e119485b9ac7a9ef7c98809ae6e838992e98ddc08f0fffbe5c9b"
     },
     {
       "path": "artifacts/target_machine_handoff_bundle.zip",
-      "sha256": "eace479f90ed1a0301bb2f6bc26344f92f162b72bc99e12178e6ea80f475dea1"
+      "sha256": "d19c7bbcae05087073b33ba2efade83788c6ac4ad47ccefcff854602947288ce"
     },
     {
       "path": "packages/MertFormer_5080_Final_Delivery_20260421_213941.zip",
@@ -32,7 +32,7 @@
     },
     {
       "path": "packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip",
-      "sha256": "6b093d1155942dd5512d943132b7058705307d1dd6f0bc3887a60490e8bce95b"
+      "sha256": "5ff46b844e1ddd4b8db7f2a213da4d5266eb85aa71979c4da1dc25fbd37b4953"
     }
   ]
 }

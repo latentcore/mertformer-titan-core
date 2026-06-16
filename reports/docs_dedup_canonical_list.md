@@ -8,6 +8,8 @@ Generated automatically.
 - `.lint-venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md`
 - `.lint-venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md`
 - `.pytest_cache/README.md`
+- `ABLATION.md`
+- `ABLATION_TR.md`
 - `AGENTS.md`
 - `ARCHITECTURE.md`
 - `CHANGELOG.md`
@@ -29,8 +31,6 @@ Generated automatically.
 - `MODEL_LICENSE.md`
 - `MODEL_LICENSE_TR.md`
 - `OFFLINE_4060_DEMO.md`
-- `PITCH.md`
-- `PITCH_TR.md`
 - `README.md`
 - `README_CHECKLIST.md`
 - `README_CHECKLIST_TR.md`
@@ -74,14 +74,8 @@ Generated automatically.
 - `adr/ADR-0005-parallel-precompute-orchestration.md`
 - `applications/anthropic/PACKET_POINTER_20260419.md`
 - `applications/anthropic/README.md`
-- `applications/anthropic/application_strategy.md`
-- `applications/anthropic/interview_prep.md`
 - `applications/anthropic/measured_evidence_summary.md`
-- `applications/anthropic/performance_engineer_fallback.md`
 - `applications/anthropic/project_summary.md`
-- `applications/anthropic/science_of_scaling_cv_seed.md`
-- `applications/anthropic/strongest_stories.md`
-- `applications/anthropic/tokens_variant_notes.md`
 - `applications/anthropic/why_anthropic_science_of_scaling.md`
 - `apps/chess_gui/README.md`
 - `apps/chess_gui/checkpoints/README.md`
@@ -212,10 +206,25 @@ Generated automatically.
 - `postmortems/_template_TR.md`
 - `postmortems/example_001.md`
 - `postmortems/example_001_TR.md`
+- `private/anthropic_internal/application_strategy.md`
+- `private/anthropic_internal/interview_prep.md`
+- `private/anthropic_internal/performance_engineer_fallback.md`
+- `private/anthropic_internal/science_of_scaling_cv_seed.md`
+- `private/anthropic_internal/strongest_stories.md`
+- `private/anthropic_internal/tokens_variant_notes.md`
+- `private/commercial/PITCH.md`
+- `private/commercial/PITCH_TR.md`
+- `private/commercial/founders_hub_application.md`
+- `private/commercial/founders_hub_application_TR.md`
+- `private/commercial/ip_licensing_split.md`
+- `private/commercial/ip_licensing_split_TR.md`
+- `private/commercial/sales_funnel_90d.md`
+- `private/commercial/sales_funnel_90d_TR.md`
 - `prompts/changelog.md`
 - `prompts/changelog_TR.md`
 - `releases/README.md`
 - `releases/chess_release_contract.md`
+- `reports/ablations/README.md`
 - `reports/adr_index.md`
 - `reports/architecture_honesty_audit.md`
 - `reports/asset_stack.md`
@@ -312,8 +321,6 @@ Generated automatically.
 - `reports/final_truth_constitution.md`
 - `reports/final_truth_matrix.md`
 - `reports/folder_structure_policy.md`
-- `reports/founders_hub_application.md`
-- `reports/founders_hub_application_TR.md`
 - `reports/go_nogo_signoff_onepager.md`
 - `reports/go_nogo_signoff_onepager_TR.md`
 - `reports/go_status_matrix.md`
@@ -321,8 +328,6 @@ Generated automatically.
 - `reports/gtm_master_plan.md`
 - `reports/immutable_evidence_register.md`
 - `reports/investable_definition.md`
-- `reports/ip_licensing_split.md`
-- `reports/ip_licensing_split_TR.md`
 - `reports/known_limits_v1.md`
 - `reports/kpi_contract_build30.md`
 - `reports/kpi_pack_v1.md`
@@ -387,8 +392,6 @@ Generated automatically.
 - `reports/review_checklist.md`
 - `reports/review_checklist_TR.md`
 - `reports/run_contract.md`
-- `reports/sales_funnel_90d.md`
-- `reports/sales_funnel_90d_TR.md`
 - `reports/scoped_external_intake_matrix.md`
 - `reports/security_compliance.md`
 - `reports/security_compliance_TR.md`
@@ -475,7 +478,7 @@ Generated automatically.
   - `reports/closure_57_matrix_TR.md`
 - `founders_hub_application_tr.md`
   - `mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/founders_hub_application_TR.md`
-  - `reports/founders_hub_application_TR.md`
+  - `private/commercial/founders_hub_application_TR.md`
 - `legal_cleanroom_signoff_internal.md`
   - `mertformer-titan-dealroom-private/04_SECURITY_LEGAL/legal_cleanroom_signoff_internal.md`
   - `reports/legal_cleanroom_signoff_internal.md`
@@ -524,6 +527,7 @@ Generated automatically.
   - `logs/README.md`
   - `postmortems/README.md`
   - `releases/README.md`
+  - `reports/ablations/README.md`
   - `reports/benchmarks/README.md`
   - `reports/benchmarks/linkedin_sweetspot/README.md`
   - `reports/benchmarks/math_fastproof/README.md`
@@ -559,7 +563,7 @@ Generated automatically.
   - `reports/report_accuracy_audit_TR.md`
 - `sales_funnel_90d_tr.md`
   - `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/sales_funnel_90d_TR.md`
-  - `reports/sales_funnel_90d_TR.md`
+  - `private/commercial/sales_funnel_90d_TR.md`
 - `security_compliance_tr.md`
   - `mertformer-titan-dealroom-private/04_SECURITY_LEGAL/security_compliance_TR.md`
   - `reports/security_compliance_TR.md`

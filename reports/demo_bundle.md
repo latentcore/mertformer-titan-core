@@ -1,8 +1,8 @@
 # Demo Bundle
 
-- generated_utc: `2026-06-16T16:32:40.233385+00:00`
-- checkpoint: `none`
-- note: No trained checkpoint resolved; this manifest only records current repo-side proof/demo assets.
+- generated_utc: `2026-06-16T19:01:27.447489+00:00`
+- checkpoint: `<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt`
+- note: A trained checkpoint was resolved for post-train closure.
 
 ## Items
 

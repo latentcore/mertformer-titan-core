@@ -1,7 +1,7 @@
 {
   "schema": "run_manifest_v1",
-  "run_id": "zero_touch_20260615T073529Z",
-  "generated_utc": "2026-06-15T07:35:29.369881+00:00",
+  "run_id": "zero_touch_20260616T190107Z",
+  "generated_utc": "2026-06-16T19:01:07.474554+00:00",
   "mode": "dry-run",
   "status": "dry-run",
   "reports_dir": "<REPO_ROOT>/reports",
