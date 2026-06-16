@@ -437,8 +437,7 @@ Report accuracy audit and strategic value summary.
 
 **Pitch & Assets**
 Investor-facing materials and launch assets.
-- [PITCH.md](PITCH.md) — Investor pitch (EN).
-- [PITCH_TR.md](PITCH_TR.md) — Investor pitch (TR).
+- Investor pitch (`PITCH`) is kept private (`private/commercial/`, gitignored), out of the reviewer-facing repo.
 - [reports/investor_deck.pptx](reports/investor_deck.pptx) — Investor deck (EN).
 - [reports/investor_deck_TR.pptx](reports/investor_deck_TR.pptx) — Investor deck (TR).
 - [reports/one_pager.md](reports/one_pager.md) — One-pager (EN).
@@ -1180,7 +1179,7 @@ The following items are implemented and tied to concrete files/logs:
 - Internal Truth Benchmarks (HumanEval/MBPP): `scripts/benchmarks_internal.py`
 - Phase 2: Asset Stack
 - Snake proof video generator: `.titan-venv/bin/python snake_demo.py --headless --record assets/snake_demo_proof.mp4 --record-seconds 30`
-- One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`, `PITCH.md`
+- One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`
 - Founders Hub Application Draft: `reports/founders_hub_application.md`
 - Phase 3: Future Horizons
 - White Paper: `WHITE_PAPER_LIQUIDROUTER.md`
@@ -2525,8 +2524,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── MODEL_LICENSE_TR.md  # Turkish document counterpart
 ├── NOTICE  # artifact
 ├── OFFLINE_4060_DEMO.md  # documentation/report file
-├── PITCH.md  # documentation/report file
-├── PITCH_TR.md  # Turkish document counterpart
 ├── README.md  # primary documentation (EN)
 ├── README_CHECKLIST.md  # documentation/report file
 ├── README_CHECKLIST_TR.md  # Turkish document counterpart

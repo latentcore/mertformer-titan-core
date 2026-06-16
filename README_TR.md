@@ -416,8 +416,7 @@ Rapor doğruluk denetimi ve stratejik değer özeti.
 
 **Sunum & Asset**
 Yatırımcı materyalleri ve lansman varlıkları.
-- [PITCH.md](PITCH.md) — Yatırımcı pitch (EN).
-- [PITCH_TR.md](PITCH_TR.md) — Yatırımcı pitch (TR).
+- Yatırımcı pitch (`PITCH`) özel tutulur (`private/commercial/`, gitignored), reviewer-facing repo dışında.
 - [reports/investor_deck.pptx](reports/investor_deck.pptx) — Yatırımcı deck (EN).
 - [reports/investor_deck_TR.pptx](reports/investor_deck_TR.pptx) — Yatırımcı deck (TR).
 - [reports/one_pager.md](reports/one_pager.md) — One-pager (EN).
@@ -1164,7 +1163,7 @@ Aşağıdaki maddeler uygulanmıştır ve kanıt dosyaları ile eşlenmiştir:
 - Internal Truth Benchmarks (HumanEval/MBPP): `scripts/benchmarks_internal.py`
 - Phase 2: Asset Stack
 - Snake kanıt videosu üretimi: `.titan-venv/bin/python snake_demo.py --headless --record assets/snake_demo_proof.mp4 --record-seconds 30`
-- One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`, `PITCH.md`
+- One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`
 - Founders Hub Başvuru Taslağı: `reports/founders_hub_application.md`
 - Phase 3: Future Horizons
 - White Paper: `WHITE_PAPER_LIQUIDROUTER.md`
@@ -2509,8 +2508,6 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 ├── MODEL_LICENSE_TR.md  # Türkçe doküman karşılığı
 ├── NOTICE  # artefakt
 ├── OFFLINE_4060_DEMO.md  # dokümantasyon/rapor dosyası
-├── PITCH.md  # dokümantasyon/rapor dosyası
-├── PITCH_TR.md  # Türkçe doküman karşılığı
 ├── README.md  # ana dokümantasyon (EN)
 ├── README_CHECKLIST.md  # dokümantasyon/rapor dosyası
 ├── README_CHECKLIST_TR.md  # Türkçe doküman karşılığı

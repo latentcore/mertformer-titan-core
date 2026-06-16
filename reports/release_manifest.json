@@ -1,7 +1,7 @@
 {
-  "generated_utc": "2026-06-16T16:47:10.222646+00:00",
+  "generated_utc": "2026-06-16T16:51:05.400547+00:00",
   "root": ".",
-  "entry_count": 864,
+  "entry_count": 862,
   "entries": [
     {
       "path": ".github/CODEOWNERS",
@@ -214,22 +214,10 @@
       "mtime_utc": "2026-04-05T10:23:31.325789+00:00"
     },
     {
-      "path": "PITCH.md",
-      "size_bytes": 1726,
-      "sha256": "a83b0d7f584adb4868b2a8c0f35584453102c9f4adc28114cc1ece2cdc67f51b",
-      "mtime_utc": "2026-06-12T03:54:34.755003+00:00"
-    },
-    {
-      "path": "PITCH_TR.md",
-      "size_bytes": 1903,
-      "sha256": "75ed9c4ab28313ea005aae28b755aafc44d548448944d29f10ba590613350ccb",
-      "mtime_utc": "2026-06-12T03:54:34.755094+00:00"
-    },
-    {
       "path": "README.md",
-      "size_bytes": 179965,
-      "sha256": "465bc775b31d7d4110d57d6c26b1c74dadeaf7a2550a9dd18ac7788ea8628a89",
-      "mtime_utc": "2026-06-16T16:29:04.785593+00:00"
+      "size_bytes": 179520,
+      "sha256": "1f6580a77a91ce6cbb1547f9133f7377124a005e42c0eb230cf3f81499fbc52c",
+      "mtime_utc": "2026-06-16T16:50:15.003402+00:00"
     },
     {
       "path": "README_CHECKLIST.md",
@@ -269,9 +257,9 @@
     },
     {
       "path": "README_TR.md",
-      "size_bytes": 186470,
-      "sha256": "65378e33095ecad647564e36f7e56832b9254df56bbdfff0d773d198daf84752",
-      "mtime_utc": "2026-06-16T16:29:13.901527+00:00"
+      "size_bytes": 185995,
+      "sha256": "a0a03b372694bad4e2cef247c9b02d52e9ef45daafe4846a6acec8f7f0340111",
+      "mtime_utc": "2026-06-16T16:50:40.103106+00:00"
     },
     {
       "path": "SDK_GUIDE.md",

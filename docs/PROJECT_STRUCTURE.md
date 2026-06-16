@@ -913,8 +913,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── MODEL_LICENSE_TR.md  # Turkish document counterpart
 ├── NOTICE  # artifact
 ├── OFFLINE_4060_DEMO.md  # documentation/report file
-├── PITCH.md  # documentation/report file
-├── PITCH_TR.md  # Turkish document counterpart
 ├── README.md  # primary documentation (EN)
 ├── README_CHECKLIST.md  # documentation/report file
 ├── README_CHECKLIST_TR.md  # Turkish document counterpart
