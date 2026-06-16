@@ -17,7 +17,7 @@ from config.config import cfg as canonical_cfg
 from layers.bitlinear import BitLinear as CanonicalBitLinear
 from layers.lifelong_safety import LifelongSafetyLayer as CanonicalLifelongSafetyLayer
 from layers.liquid import LiquidMixer as CanonicalLiquidMixer
-from layers.mla import MLA as CanonicalMLA
+from layers.mla import GQA as CanonicalMLA  # canonical attention (formerly MLA); onefile copy still named MLA
 from layers.moe import MoE as CanonicalMoE
 from layers.qinn import UnitaryQINN as CanonicalUnitaryQINN
 from layers.world_model_head import CausalWorldModelHead as CanonicalWorldModelHead
