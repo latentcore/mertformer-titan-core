@@ -371,14 +371,12 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── claim_registry.json  # JSON data artifact
 │   ├── cleanroom_verification.md  # documentation/report file
 │   ├── cleanroom_verification_TR.md  # Turkish document counterpart
-│   ├── cleanup_scoped_closure_junk_report.json  # JSON data artifact
 │   ├── cli_smoke_log.md  # documentation/report file
 │   ├── cli_smoke_log_TR.md  # Turkish document counterpart
 │   ├── closure_57_matrix.json  # JSON data artifact
 │   ├── closure_57_matrix.md  # documentation/report file
 │   ├── closure_57_matrix_TR.md  # Turkish document counterpart
 │   ├── closure_release_truthsync_master_protocol.md  # documentation/report file
-│   ├── closure_risk_register.md  # documentation/report file
 │   ├── cloud_readiness_report.md  # documentation/report file
 │   ├── code_truth_contract.md  # documentation/report file
 │   ├── code_truth_delta_audit.json  # JSON data artifact
@@ -395,8 +393,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── data_pipeline_token_probe.json  # JSON data artifact
 │   ├── dataset_health.md  # documentation/report file
 │   ├── dataset_health_TR.md  # Turkish document counterpart
-│   ├── dataset_health_final.md  # documentation/report file
-│   ├── dataset_lineage_final.json  # JSON data artifact
 │   ├── dealroom_reference.json  # JSON data artifact
 │   ├── demo_bundle.md  # documentation/report file
 │   ├── demo_bundle_manifest.json  # JSON data artifact
@@ -427,12 +423,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── feature_flag_governance.md  # documentation/report file
 │   ├── feature_flag_governance_TR.md  # Turkish document counterpart
 │   ├── file_state_inventory.json  # JSON data artifact
-│   ├── final_artifact_manifest.json  # JSON data artifact
-│   ├── final_backlog_classification.json  # JSON data artifact
-│   ├── final_backlog_classification.md  # documentation/report file
-│   ├── final_backlog_coverage_diff.md  # documentation/report file
-│   ├── final_backlog_missing_items.md  # documentation/report file
-│   ├── final_checksum_manifest.json  # JSON data artifact
 │   ├── final_commands.md  # documentation/report file
 │   ├── final_evidence_pack.md  # documentation/report file
 │   ├── final_orchestrator_status.json  # JSON data artifact
@@ -451,7 +441,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── hardening_bundle_summary.json  # JSON data artifact
 │   ├── immutable_evidence_register.json  # JSON data artifact
 │   ├── immutable_evidence_register.md  # documentation/report file
-│   ├── kaggle_onefile_closure_verify.json  # JSON data artifact
 │   ├── kernel_fuzz_report.json  # JSON data artifact
 │   ├── known_limits_v1.md  # documentation/report file
 │   ├── kpi_contract_build30.md  # documentation/report file
@@ -467,11 +456,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── logits_integrity_report.md  # documentation/report file
 │   ├── master_closure_matrix.json  # JSON data artifact
 │   ├── master_closure_matrix.md  # documentation/report file
-│   ├── master_operating_plan.md  # documentation/report file
 │   ├── md_lint_report.json  # JSON data artifact
 │   ├── model_health.md  # documentation/report file
 │   ├── model_health_TR.md  # Turkish document counterpart
-│   ├── model_health_final.md  # documentation/report file
 │   ├── ocean_2xh200_1024_first_launch_profile.md  # documentation/report file
 │   ├── ocean_pre45k_h200_20260514_clean_summary.json  # JSON data artifact
 │   ├── ocean_pre45k_h200_20260514_partial_evidence.md  # documentation/report file
@@ -504,7 +491,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── proje_zip_rebuild_manifest_v2.md  # documentation/report file
 │   ├── quality_gate_matrix.md  # documentation/report file
 │   ├── ram_guard_report.json  # JSON data artifact
-│   ├── release_closure_lock_report.json  # JSON data artifact
 │   ├── release_snapshot.md  # documentation/report file
 │   ├── release_snapshot_TR.md  # Turkish document counterpart
 │   ├── rented_machine_bringup.md  # documentation/report file
@@ -553,7 +539,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_verification_matrix_TR.md  # Turkish document counterpart
 │   ├── thermal_baseline.json  # JSON data artifact
 │   ├── tokenizer_parity_fix.md  # documentation/report file
-│   ├── tokenizer_sync_final_report.md  # documentation/report file
 │   ├── train_readiness_decision.json  # JSON data artifact
 │   ├── train_readiness_decision.md  # documentation/report file
 │   ├── training_outputs_bundle_manifest.json  # JSON data artifact
