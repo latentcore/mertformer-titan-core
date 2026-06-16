@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-16T16:22:42.744499+00:00",
+  "generated_utc": "2026-06-16T16:47:04.990525+00:00",
   "ok": true,
   "start_allowed": true,
   "train_allowed": true,
@@ -16,7 +16,7 @@
     "secret_scan": {
       "cmd": "<REPO_ROOT>/.titan-venv/bin/python scripts/secret_scan.py",
       "return_code": 0,
-      "stdout_tail": "OK: no secret patterns detected in git_tracked files. scanned=859\n",
+      "stdout_tail": "OK: no secret patterns detected in git_tracked files. scanned=853\n",
       "stderr_tail": "",
       "ok": true
     },
@@ -37,7 +37,7 @@
     "git_status": {
       "cmd": "git status --short --branch",
       "return_code": 0,
-      "stdout_tail": "## main...origin/main [ahead 5]\n M reports/chess_gui_onefile_sync_report.json\n M reports/chess_onefile_extension_report.json\n M reports/chess_teaching_contract_report.json\n M reports/chess_teaching_contract_report.md\n M reports/chess_training_readiness_report.json\n M reports/closure_57_matrix.json\n M reports/code_truth_delta_audit.json\n M reports/final_orchestrator_status.json\n M reports/final_orchestrator_status.md\n M reports/immutable_evidence_register.json\n M reports/immutable_evidence_register.md\n M reports/post_train_autorun_status.json\n M reports/post_train_autorun_status.md\n M reports/scoped_external_intake_matrix.json\n M reports/scoped_external_intake_matrix.md\n M reports/train_readiness_decision.json\n M reports/training_readiness_manifest.json\n M reports/workspace_hygiene_manifest.json\n",
+      "stdout_tail": "## main...origin/main\n M applications/anthropic/README.md\nD  applications/anthropic/application_strategy.md\nD  applications/anthropic/interview_prep.md\n M applications/anthropic/mertformer_anthropic_packet_20260419.zip.sha256\nD  applications/anthropic/performance_engineer_fallback.md\nD  applications/anthropic/science_of_scaling_cv_seed.md\nD  applications/anthropic/strongest_stories.md\nD  applications/anthropic/tokens_variant_notes.md\n M reports/chess_gui_onefile_sync_report.json\n M reports/chess_onefile_extension_report.json\n M reports/chess_teaching_contract_report.json\n M reports/chess_teaching_contract_report.md\n M reports/chess_training_readiness_report.json\n M reports/closure_57_matrix.json\n M reports/code_truth_delta_audit.json\n M reports/final_orchestrator_status.json\n M reports/final_orchestrator_status.md\n M reports/immutable_evidence_register.json\n M reports/immutable_evidence_register.md\n M reports/post_train_autorun_status.json\n M reports/post_train_autorun_status.md\n M reports/scoped_external_intake_matrix.json\n M reports/scoped_external_intake_matrix.md\n M reports/train_readiness_decision.json\n M reports/training_readiness_manifest.json\n M reports/workspace_hygiene_manifest.json\n M scripts/check_doc_claim_consistency.py\n M scripts/final_one_shot.sh\n",
       "stderr_tail": "",
       "ok": true
     },

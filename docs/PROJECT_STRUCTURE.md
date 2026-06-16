@@ -37,15 +37,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── anthropic/  # directory
 │       ├── PACKET_POINTER_20260419.md  # documentation/report file
 │       ├── README.md  # primary documentation (EN)
-│       ├── application_strategy.md  # documentation/report file
-│       ├── interview_prep.md  # documentation/report file
 │       ├── measured_evidence_summary.md  # documentation/report file
 │       ├── mertformer_anthropic_packet_20260419.zip.sha256  # artifact checksum
-│       ├── performance_engineer_fallback.md  # documentation/report file
 │       ├── project_summary.md  # documentation/report file
-│       ├── science_of_scaling_cv_seed.md  # documentation/report file
-│       ├── strongest_stories.md  # documentation/report file
-│       ├── tokens_variant_notes.md  # documentation/report file
 │       └── why_anthropic_science_of_scaling.md  # documentation/report file
 ├── apps/  # directory
 │   └── chess_gui/  # directory

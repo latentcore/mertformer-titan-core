@@ -1,5 +1,5 @@
 {
-  "generated_local": "2026-06-16T19:22:28",
+  "generated_local": "2026-06-16T19:46:50",
   "sync_mode": "audit",
   "scope": "Desktop/Documents/Downloads plus application roots for project-related artifacts; unrelated applications remain audit-only.",
   "repo_root": "<REPO_ROOT>",
@@ -35,8 +35,8 @@
       "exists": true
     }
   ],
-  "entry_count": 4653,
-  "immutable_evidence_count": 986,
+  "entry_count": 4655,
+  "immutable_evidence_count": 988,
   "entries": [
     {
       "path": "/Applications/mertformer-titan-core.zip",
@@ -164,7 +164,7 @@
       "kind": "file",
       "exists": true,
       "size_bytes": 1698,
-      "sha256": "b9d645abf86d28e64b106178e115c8be90ae7f393225ac83fdec583ee7786a22",
+      "sha256": "01b5e77459a2ab911bd505b9bc4b8da0cd8226b1ed8b4bd41596ff0a75c8e252",
       "duplicate_rank": 1,
       "duplicate_group_size": 1,
       "disposition": "sync_with_canonical_source",
@@ -19795,6 +19795,36 @@
     },
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_192045.zip.sha256",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 21,
+      "sha256": "3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_194505.zip",
+      "source_root": "Desktop",
+      "kind": "file",
+      "exists": true,
+      "size_bytes": 3,
+      "sha256": "4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2",
+      "duplicate_rank": 1,
+      "duplicate_group_size": 1,
+      "disposition": "preserve_immutable_evidence",
+      "mutation_policy": "preserve_immutable",
+      "immutable_evidence": true,
+      "immutable_reason": "result_",
+      "canonical_source": null
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_194505.zip.sha256",
       "source_root": "Desktop",
       "kind": "file",
       "exists": true,
@@ -41893,8 +41923,8 @@
       "source_root": "Documents",
       "kind": "file",
       "exists": true,
-      "size_bytes": 4884,
-      "sha256": "5396d08d71a021265fe2201c848845883e1f93096e7a4a9f6897a47127223c69",
+      "size_bytes": 4373,
+      "sha256": "c62d948dc7f9951a691a45712d08e28403ab01f17cd2443b650e3a92d9f54e48",
       "duplicate_rank": 1,
       "duplicate_group_size": 1,
       "disposition": "keep_as_external_artifact",
@@ -69861,8 +69891,8 @@
         "target": "<HOME>/Desktop/MertFormer_Build30_Max_Closure_Handoff.md",
         "status": "match",
         "changed": false,
-        "source_sha256": "b9d645abf86d28e64b106178e115c8be90ae7f393225ac83fdec583ee7786a22",
-        "target_sha256": "b9d645abf86d28e64b106178e115c8be90ae7f393225ac83fdec583ee7786a22"
+        "source_sha256": "01b5e77459a2ab911bd505b9bc4b8da0cd8226b1ed8b4bd41596ff0a75c8e252",
+        "target_sha256": "01b5e77459a2ab911bd505b9bc4b8da0cd8226b1ed8b4bd41596ff0a75c8e252"
       },
       {
         "id": "applications_chess_onefile",

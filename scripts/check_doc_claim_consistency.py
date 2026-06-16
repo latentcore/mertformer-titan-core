@@ -156,7 +156,6 @@ def main() -> int:
     anthropic_readme = read_text(ANTHROPIC_README)
     anthropic_project_summary = read_text(ANTHROPIC_PROJECT_SUMMARY)
     anthropic_measured_summary = read_text(ANTHROPIC_MEASURED_SUMMARY)
-    anthropic_interview_prep = read_text(ANTHROPIC_INTERVIEW_PREP)
     system_prompt = read_text(SYSTEM_PROMPT)
     readiness = load_readiness_truth()
     current_reason = str(readiness.get("decision_reason_code") or "UNKNOWN")
@@ -243,7 +242,6 @@ def main() -> int:
         ("applications/anthropic/README.md", anthropic_readme, [current_reason, current_path, *blockers], [stale_reason]),
         ("applications/anthropic/project_summary.md", anthropic_project_summary, [current_reason, current_path], [stale_reason]),
         ("applications/anthropic/measured_evidence_summary.md", anthropic_measured_summary, [current_reason, current_path], [stale_reason]),
-        ("applications/anthropic/interview_prep.md", anthropic_interview_prep, [current_reason, current_path], [stale_reason]),
     ]
     for name, text, required, forbidden in readiness_rules:
         check_readiness_surface(name, text, required, forbidden, errors)

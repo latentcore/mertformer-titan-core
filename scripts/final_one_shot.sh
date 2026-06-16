@@ -39,17 +39,15 @@ refresh_anthropic_packet() {
   local zip_path="$dir/mertformer_anthropic_packet_20260419.zip"
   local sha_path="$dir/mertformer_anthropic_packet_20260419.zip.sha256"
   local pointer_path="$dir/PACKET_POINTER_20260419.md"
+  # Evidence-facing packet only. Internal-strategy notes (interview_prep "Gaps To Say
+  # Out Loud", application_strategy, cv_seed "Do Not Claim", strongest_stories,
+  # tokens_variant_notes, performance_engineer_fallback) were moved OUT of the repo to
+  # private/anthropic_internal/ (gitignored) so they are never shipped to a reviewer.
   local files=(
     "README.md"
-    "application_strategy.md"
     "project_summary.md"
     "measured_evidence_summary.md"
     "why_anthropic_science_of_scaling.md"
-    "science_of_scaling_cv_seed.md"
-    "tokens_variant_notes.md"
-    "strongest_stories.md"
-    "interview_prep.md"
-    "performance_engineer_fallback.md"
   )
 
   rm -f "$zip_path" "$sha_path"

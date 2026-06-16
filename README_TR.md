@@ -1633,15 +1633,9 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   └── anthropic/  # dizin
 │       ├── PACKET_POINTER_20260419.md  # dokümantasyon/rapor dosyası
 │       ├── README.md  # ana dokümantasyon (EN)
-│       ├── application_strategy.md  # dokümantasyon/rapor dosyası
-│       ├── interview_prep.md  # dokümantasyon/rapor dosyası
 │       ├── measured_evidence_summary.md  # dokümantasyon/rapor dosyası
 │       ├── mertformer_anthropic_packet_20260419.zip.sha256  # artefakt sağlama toplamı
-│       ├── performance_engineer_fallback.md  # dokümantasyon/rapor dosyası
 │       ├── project_summary.md  # dokümantasyon/rapor dosyası
-│       ├── science_of_scaling_cv_seed.md  # dokümantasyon/rapor dosyası
-│       ├── strongest_stories.md  # dokümantasyon/rapor dosyası
-│       ├── tokens_variant_notes.md  # dokümantasyon/rapor dosyası
 │       └── why_anthropic_science_of_scaling.md  # dokümantasyon/rapor dosyası
 ├── apps/  # dizin
 │   └── chess_gui/  # dizin

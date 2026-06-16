@@ -14,16 +14,14 @@ Optional fallback only if the post-run story hardens materially:
 - `Interview bar`: stretch but credible
 - `Best positioning`: systems-focused research engineer, not already-proven frontier scaling scientist
 
-## Included Documents
-1. `application_strategy.md`
-2. `project_summary.md`
-3. `measured_evidence_summary.md`
-4. `why_anthropic_science_of_scaling.md`
-5. `science_of_scaling_cv_seed.md`
-6. `tokens_variant_notes.md`
-7. `strongest_stories.md`
-8. `interview_prep.md`
-9. `performance_engineer_fallback.md`
+## Included Documents (evidence-facing)
+1. `project_summary.md`
+2. `measured_evidence_summary.md`
+3. `why_anthropic_science_of_scaling.md`
+
+Internal-strategy notes (application_strategy, interview_prep, science_of_scaling_cv_seed,
+tokens_variant_notes, strongest_stories, performance_engineer_fallback) are kept **private**
+(`private/anthropic_internal/`, gitignored) and are NOT part of the reviewer-facing pack.
 
 ## Local Packet Artifact
 - Current local packet: `mertformer_anthropic_packet_20260419.zip`
@@ -33,7 +31,7 @@ Optional fallback only if the post-run story hardens materially:
 
 ## Submission Order
 1. Submit `Research Engineer, Science of Scaling - London` first.
-2. Use `application_strategy.md`, the measured-evidence summary, and strongest stories to keep the application claim-safe.
+2. Use the measured-evidence summary and project summary to keep the application claim-safe.
 3. Submit the `Tokens` variant in the same window if the primary package is coherent, but do not let it replace the primary Science of Scaling application.
 4. Only consider the `Performance Engineer` fallback if the post-run evidence materially strengthens that story.
 
@@ -49,7 +47,7 @@ Optional fallback only if the post-run story hardens materially:
 - Exact `45K` is preferred, not mandatory; the real gate is owned training evidence tied to checkpoints
 
 ## Canonical Review Path
-- `applications/anthropic/application_strategy.md`
+- `applications/anthropic/project_summary.md`
 - `START_HERE.md`
 - `docs/PROJECT_MASTER_TRUTH.md`
 - `reports/final_truth_matrix.md`
