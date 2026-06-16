@@ -1,6 +1,6 @@
 # Scoped External Intake Matrix
 
-- generated_local: `2026-06-16T19:46:50`
+- generated_local: `2026-06-16T21:34:59`
 - sync_mode: `audit`
 - scope: Desktop/Documents/Downloads plus application roots for project-related artifacts; unrelated applications remain audit-only.
 
@@ -26,7 +26,7 @@
 | `/Applications/MertFormerChessDownload/windows_final_command.txt` | `Applications` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `3bd9830e219ce45924d44ddb1834f211a835cef76ba5eb2047e6998ee257bb2f` |
 | `<HOME>/Desktop/chess_5080_onefile.py` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `a2774932c73b4e34f88f0132d6688492ccfe90efa255cbe6a8ab65962a6a6d1a` |
 | `<HOME>/Desktop/MertFormer_45K_Launch_Bundle_20260401_2130.zip.sha256` | `Desktop` | `file` | `keep_sidecar_metadata` | `audit_only` | `false` | `` | `2524cc25e77e3de5a98f5691c8029f24e84232ef505c3403306c319b7cc6be05` |
-| `<HOME>/Desktop/MertFormer_Build30_Max_Closure_Handoff.md` | `Desktop` | `file` | `sync_with_canonical_source` | `project_sync` | `false` | `<REPO_ROOT>/reports/repo_external_handoff.md` | `01b5e77459a2ab911bd505b9bc4b8da0cd8226b1ed8b4bd41596ff0a75c8e252` |
+| `<HOME>/Desktop/MertFormer_Build30_Max_Closure_Handoff.md` | `Desktop` | `file` | `sync_with_canonical_source` | `project_sync` | `false` | `<REPO_ROOT>/reports/repo_external_handoff.md` | `8c20d2b7a2cfaf2b34c7675ed65671c44f877b562eef328cf2f942d2e46fef18` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260404_233012` | `Desktop` | `dir` | `keep_project_directory` | `project_safe_cleanup` | `false` | `` | `` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260404_233012.zip` | `Desktop` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `1d769c54f558c6b8ae7383df128ee71fe5af66e2271e3ba00d77063ed8dd3240` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Delivery_20260404_233012.zip.sha256` | `Desktop` | `file` | `keep_sidecar_metadata` | `audit_only` | `false` | `` | `3aeeb35f1d468be023a37cdc33b3fa939ac9e1bf063bb5e66f01e571a9d16443` |
@@ -1338,6 +1338,10 @@
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_192045.zip.sha256` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_194505.zip` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_194505.zip.sha256` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_212722.zip` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_212722.zip.sha256` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_213315.zip` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `4a70fe9aa6436e02c2dea340fbd1e352e4ef2d8ce6ca52ad25d4b95471fc8bf2` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_213315.zip.sha256` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `3ac04911edb6f7d714674b79379c5c1baec9dbb3bd7fbbfcef46bddc2ca62fd0` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113659.json` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `b467aeeda7230d67cbf55315adb3c0e0f5fe77ace048dad82bc9c7909d809e2a` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113738.json` | `Desktop` | `file` | `preserve_immutable_evidence` | `preserve_immutable` | `true` | `` | `ca33f976ad516ce7ad99119556d9a7cdfbacfc90a3f302cb95869539dddeddeb` |
 | `<HOME>/Desktop/mertformer_chess_cache` | `Desktop` | `dir` | `keep_project_directory` | `project_safe_cleanup` | `false` | `` | `` |
@@ -2810,7 +2814,7 @@
 | `<HOME>/Documents/MertFormer_Math_Offline_Onefile_2026_05_01/RUN_20MIN.command` | `Documents` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `50773457984c37d9d29f6157e0be3946b703eda2afdcf9cbb1f0cb026ec1655f` |
 | `<HOME>/Documents/MertFormer_Nihai_Claude_Analiz_XRay_CORE_ONLY_SAFE_2026-06-15_031359.txt` | `Documents` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `6cd1dd368dd44de9ae710fc29268edfa9666100710268c5ba17d6e66967a9c24` |
 | `<HOME>/Documents/MertFormer_Nihai_Claude_Analiz_XRay_MINUS2_2026-06-15_030349.txt` | `Documents` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `072f40a405ce3abfdf2ec2c5184886719d2f4c4838b5a3b921dd5ff25293171f` |
-| `<HOME>/Documents/MertFormer_Nihai_Closure_Ozeti_2026-06-16.md` | `Documents` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `c62d948dc7f9951a691a45712d08e28403ab01f17cd2443b650e3a92d9f54e48` |
+| `<HOME>/Documents/MertFormer_Nihai_Closure_Özeti_2026-06-16.md` | `Documents` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `3272e4d597635c028e95c719e88d84386c22d5d9b39f72976770bc0c09107744` |
 | `<HOME>/Documents/MERTFORMER_NIHAI_EGITIM_BASLATMA_KOMUTU.txt` | `Documents` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `257f2207f84c5e96c6a32dc8c2563ffbf316943a78e4b0588591b9754af2b8bd` |
 | `<HOME>/Documents/MERTFORMER_NIHAI_EGITIM_BASLATMA_KOMUTU_v2_DUZELTILMIS.txt` | `Documents` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `850783c444771c10ca0868607749efe1493a13ed09c9a9b673328d17fab94569` |
 | `<HOME>/Documents/MertFormer_Nihai_Kalanlar_Garanti_Takip_Dosyası_2026-05-12.md` | `Documents` | `file` | `keep_as_external_artifact` | `audit_only` | `false` | `` | `d7616deb33a64ae263844ebb195e4c5420f51944a07e00db90a88107f89daced` |

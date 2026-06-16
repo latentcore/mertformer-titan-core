@@ -101,3 +101,10 @@ mertformer-titan-dealroom-private/
 reports/ablations/**/telemetry_master.csv
 reports/ablations/**/logs/
 reports/ablations/**/*.jsonl
+
+# Commercial layer kept out of the technical/evidence repo (canonical home is the
+# separate private dealroom repo). Generated investor decks are regenerated locally by
+# scripts/build_investor_deck.py; hand-authored pitch/funnel/IP/founders-hub source was
+# moved to private/commercial/ (under the already-ignored /private/).
+reports/investor_deck.pptx
+reports/investor_deck_TR.pptx

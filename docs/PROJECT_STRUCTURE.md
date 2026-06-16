@@ -462,8 +462,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── final_truth_matrix.md  # documentation/report file
 │   ├── folder_drift_report.json  # JSON data artifact
 │   ├── folder_structure_policy.md  # documentation/report file
-│   ├── founders_hub_application.md  # documentation/report file
-│   ├── founders_hub_application_TR.md  # Turkish document counterpart
 │   ├── github_policy_report.json  # JSON data artifact
 │   ├── go_nogo_signoff_onepager.md  # documentation/report file
 │   ├── go_nogo_signoff_onepager_TR.md  # Turkish document counterpart
@@ -476,8 +474,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── investable_definition.md  # documentation/report file
 │   ├── investor_deck.pptx  # artifact
 │   ├── investor_deck_TR.pptx  # artifact
-│   ├── ip_licensing_split.md  # documentation/report file
-│   ├── ip_licensing_split_TR.md  # Turkish document counterpart
 │   ├── kaggle_onefile_closure_verify.json  # JSON data artifact
 │   ├── kernel_fuzz_report.json  # JSON data artifact
 │   ├── known_limits_v1.md  # documentation/report file
@@ -554,8 +550,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── review_checklist_TR.md  # Turkish document counterpart
 │   ├── run_contract.md  # documentation/report file
 │   ├── runbook_validation_report.json  # JSON data artifact
-│   ├── sales_funnel_90d.md  # documentation/report file
-│   ├── sales_funnel_90d_TR.md  # Turkish document counterpart
 │   ├── sanitizer_report.json  # JSON data artifact
 │   ├── sbom.cdx.json  # JSON data artifact
 │   ├── scoped_external_intake_matrix.json  # JSON data artifact

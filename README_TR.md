@@ -416,9 +416,7 @@ Rapor doğruluk denetimi ve stratejik değer özeti.
 
 **Sunum & Asset**
 Yatırımcı materyalleri ve lansman varlıkları.
-- Yatırımcı pitch (`PITCH`) özel tutulur (`private/commercial/`, gitignored), reviewer-facing repo dışında.
-- [reports/investor_deck.pptx](reports/investor_deck.pptx) — Yatırımcı deck (EN).
-- [reports/investor_deck_TR.pptx](reports/investor_deck_TR.pptx) — Yatırımcı deck (TR).
+- Yatırımcıya dönük ticari materyaller (`PITCH`, investor deck, satış hunisi, sektörel IP-ayrımı, Founders Hub taslağı) bu teknik/kanıt reposunun dışında tutulur; kanonik yerleri ayrı private dealroom reposudur, yerel kopyaları `private/commercial/` altında (gitignored). Investor-deck PPTX'i `scripts/build_investor_deck.py` ile yerelde yeniden üretilir ve takip edilmez.
 - [reports/one_pager.md](reports/one_pager.md) — One-pager (EN).
 - [reports/one_pager_TR.md](reports/one_pager_TR.md) — One-pager (TR).
 - [reports/technical_snapshot.md](reports/technical_snapshot.md) — Teknik snapshot (EN).
@@ -433,8 +431,6 @@ Yatırımcı materyalleri ve lansman varlıkları.
 ![Snake Demo Önizleme](assets/snake_demo_preview.gif)
 
 Tam video: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
-- [reports/founders_hub_application.md](reports/founders_hub_application.md) — Founders Hub taslağı (EN).
-- [reports/founders_hub_application_TR.md](reports/founders_hub_application_TR.md) — Founders Hub taslağı (TR).
 - [reports/security_compliance.md](reports/security_compliance.md) — Güvenlik & uyum özeti (EN).
 - [reports/security_compliance_TR.md](reports/security_compliance_TR.md) — Güvenlik & uyum özeti (TR).
 - [reports/poc_protocol.md](reports/poc_protocol.md) — Pilot/PoC protokolü (EN).
@@ -443,16 +439,12 @@ Tam video: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
 - [reports/pilot_readiness_kit_TR.md](reports/pilot_readiness_kit_TR.md) — Pilot hazırlık kiti (TR).
 - [reports/pilot_offer_packages.md](reports/pilot_offer_packages.md) — Standart pilot teklif paketleri (EN).
 - [reports/pilot_offer_packages_TR.md](reports/pilot_offer_packages_TR.md) — Standart pilot teklif paketleri (TR).
-- [reports/sales_funnel_90d.md](reports/sales_funnel_90d.md) — 90 günlük B2B pilot satış hunisi (EN).
-- [reports/sales_funnel_90d_TR.md](reports/sales_funnel_90d_TR.md) — 90 günlük B2B pilot satış hunisi (TR).
 - [reports/drone_sitl_demo.md](reports/drone_sitl_demo.md) — SITL drone kanıt protokolü (EN).
 - [reports/drone_sitl_demo_TR.md](reports/drone_sitl_demo_TR.md) — SITL drone kanıt protokolü (TR).
 - [reports/pilots/README.md](reports/pilots/README.md) — Pilot kanıt klasörü standardı (EN).
 - [reports/pilots/README_TR.md](reports/pilots/README_TR.md) — Pilot kanıt klasörü standardı (TR).
 - [reports/pilot_acceptance_signoff.md](reports/pilot_acceptance_signoff.md) — Pilot kabul imza şablonu (EN).
 - [reports/pilot_acceptance_signoff_TR.md](reports/pilot_acceptance_signoff_TR.md) — Pilot kabul imza şablonu (TR).
-- [reports/ip_licensing_split.md](reports/ip_licensing_split.md) — Sektörel fikri hak ayrımı çerçevesi (EN).
-- [reports/ip_licensing_split_TR.md](reports/ip_licensing_split_TR.md) — Sektörel fikri hak ayrımı çerçevesi (TR).
 - [reports/dataset_health.md](reports/dataset_health.md) — Dataset sağlık raporu (EN).
 - [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset sağlık raporu (TR).
 - [reports/model_health.md](reports/model_health.md) — Model sağlık raporu (EN).
@@ -1164,7 +1156,7 @@ Aşağıdaki maddeler uygulanmıştır ve kanıt dosyaları ile eşlenmiştir:
 - Phase 2: Asset Stack
 - Snake kanıt videosu üretimi: `.titan-venv/bin/python snake_demo.py --headless --record assets/snake_demo_proof.mp4 --record-seconds 30`
 - One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`
-- Founders Hub Başvuru Taslağı: `reports/founders_hub_application.md`
+- Founders Hub Başvuru Taslağı: private dealroom reposunda tutulur (yerel kopya `private/commercial/` altında, gitignored)
 - Phase 3: Future Horizons
 - White Paper: `WHITE_PAPER_LIQUIDROUTER.md`
 - Verification Plan
@@ -2057,8 +2049,6 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── final_truth_matrix.md  # dokümantasyon/rapor dosyası
 │   ├── folder_drift_report.json  # JSON veri artefaktı
 │   ├── folder_structure_policy.md  # dokümantasyon/rapor dosyası
-│   ├── founders_hub_application.md  # dokümantasyon/rapor dosyası
-│   ├── founders_hub_application_TR.md  # Türkçe doküman karşılığı
 │   ├── github_policy_report.json  # JSON veri artefaktı
 │   ├── go_nogo_signoff_onepager.md  # dokümantasyon/rapor dosyası
 │   ├── go_nogo_signoff_onepager_TR.md  # Türkçe doküman karşılığı
@@ -2071,8 +2061,6 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── investable_definition.md  # dokümantasyon/rapor dosyası
 │   ├── investor_deck.pptx  # artefakt
 │   ├── investor_deck_TR.pptx  # artefakt
-│   ├── ip_licensing_split.md  # dokümantasyon/rapor dosyası
-│   ├── ip_licensing_split_TR.md  # Türkçe doküman karşılığı
 │   ├── kaggle_onefile_closure_verify.json  # JSON veri artefaktı
 │   ├── kernel_fuzz_report.json  # JSON veri artefaktı
 │   ├── known_limits_v1.md  # dokümantasyon/rapor dosyası
@@ -2149,8 +2137,6 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── review_checklist_TR.md  # Türkçe doküman karşılığı
 │   ├── run_contract.md  # dokümantasyon/rapor dosyası
 │   ├── runbook_validation_report.json  # JSON veri artefaktı
-│   ├── sales_funnel_90d.md  # dokümantasyon/rapor dosyası
-│   ├── sales_funnel_90d_TR.md  # Türkçe doküman karşılığı
 │   ├── sanitizer_report.json  # JSON veri artefaktı
 │   ├── sbom.cdx.json  # JSON veri artefaktı
 │   ├── scoped_external_intake_matrix.json  # JSON veri artefaktı

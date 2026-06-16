@@ -437,9 +437,7 @@ Report accuracy audit and strategic value summary.
 
 **Pitch & Assets**
 Investor-facing materials and launch assets.
-- Investor pitch (`PITCH`) is kept private (`private/commercial/`, gitignored), out of the reviewer-facing repo.
-- [reports/investor_deck.pptx](reports/investor_deck.pptx) — Investor deck (EN).
-- [reports/investor_deck_TR.pptx](reports/investor_deck_TR.pptx) — Investor deck (TR).
+- Investor-facing commercial materials (`PITCH`, investor deck, sales funnel, sectoral IP-split, Founders Hub draft) are kept out of this technical/evidence repo; their canonical home is the separate private dealroom repo, with local copies under `private/commercial/` (gitignored). The investor-deck PPTX is regenerated locally by `scripts/build_investor_deck.py` and is not tracked.
 - [reports/one_pager.md](reports/one_pager.md) — One-pager (EN).
 - [reports/one_pager_TR.md](reports/one_pager_TR.md) — One-pager (TR).
 - [reports/technical_snapshot.md](reports/technical_snapshot.md) — Technical snapshot (EN).
@@ -454,8 +452,6 @@ Investor-facing materials and launch assets.
 ![Snake Demo Preview](assets/snake_demo_preview.gif)
 
 Open full clip: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
-- [reports/founders_hub_application.md](reports/founders_hub_application.md) — Founders Hub draft (EN).
-- [reports/founders_hub_application_TR.md](reports/founders_hub_application_TR.md) — Founders Hub draft (TR).
 - [reports/security_compliance.md](reports/security_compliance.md) — Security & compliance brief (EN).
 - [reports/security_compliance_TR.md](reports/security_compliance_TR.md) — Security & compliance brief (TR).
 - [reports/poc_protocol.md](reports/poc_protocol.md) — Pilot/PoC protocol (EN).
@@ -464,16 +460,12 @@ Open full clip: [assets/snake_demo_proof.mp4](assets/snake_demo_proof.mp4)
 - [reports/pilot_readiness_kit_TR.md](reports/pilot_readiness_kit_TR.md) — Pilot readiness kit (TR).
 - [reports/pilot_offer_packages.md](reports/pilot_offer_packages.md) — Standard pilot offer packages (EN).
 - [reports/pilot_offer_packages_TR.md](reports/pilot_offer_packages_TR.md) — Standard pilot offer packages (TR).
-- [reports/sales_funnel_90d.md](reports/sales_funnel_90d.md) — 90-day B2B pilot sales funnel (EN).
-- [reports/sales_funnel_90d_TR.md](reports/sales_funnel_90d_TR.md) — 90-day B2B pilot sales funnel (TR).
 - [reports/drone_sitl_demo.md](reports/drone_sitl_demo.md) — SITL drone proof protocol (EN).
 - [reports/drone_sitl_demo_TR.md](reports/drone_sitl_demo_TR.md) — SITL drone proof protocol (TR).
 - [reports/pilots/README.md](reports/pilots/README.md) — Pilot evidence folder standard (EN).
 - [reports/pilots/README_TR.md](reports/pilots/README_TR.md) — Pilot evidence folder standard (TR).
 - [reports/pilot_acceptance_signoff.md](reports/pilot_acceptance_signoff.md) — Pilot acceptance signature template (EN).
 - [reports/pilot_acceptance_signoff_TR.md](reports/pilot_acceptance_signoff_TR.md) — Pilot acceptance signature template (TR).
-- [reports/ip_licensing_split.md](reports/ip_licensing_split.md) — Sectoral IP split framework (EN).
-- [reports/ip_licensing_split_TR.md](reports/ip_licensing_split_TR.md) — Sectoral IP split framework (TR).
 - [reports/dataset_health.md](reports/dataset_health.md) — Dataset health report (EN).
 - [reports/dataset_health_TR.md](reports/dataset_health_TR.md) — Dataset health report (TR).
 - [reports/model_health.md](reports/model_health.md) — Model health report (EN).
@@ -1180,7 +1172,7 @@ The following items are implemented and tied to concrete files/logs:
 - Phase 2: Asset Stack
 - Snake proof video generator: `.titan-venv/bin/python snake_demo.py --headless --record assets/snake_demo_proof.mp4 --record-seconds 30`
 - One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`
-- Founders Hub Application Draft: `reports/founders_hub_application.md`
+- Founders Hub Application Draft: kept in the private dealroom repo (local copy under `private/commercial/`, gitignored)
 - Phase 3: Future Horizons
 - White Paper: `WHITE_PAPER_LIQUIDROUTER.md`
 - Verification Plan
@@ -2073,8 +2065,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── final_truth_matrix.md  # documentation/report file
 │   ├── folder_drift_report.json  # JSON data artifact
 │   ├── folder_structure_policy.md  # documentation/report file
-│   ├── founders_hub_application.md  # documentation/report file
-│   ├── founders_hub_application_TR.md  # Turkish document counterpart
 │   ├── github_policy_report.json  # JSON data artifact
 │   ├── go_nogo_signoff_onepager.md  # documentation/report file
 │   ├── go_nogo_signoff_onepager_TR.md  # Turkish document counterpart
@@ -2087,8 +2077,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── investable_definition.md  # documentation/report file
 │   ├── investor_deck.pptx  # artifact
 │   ├── investor_deck_TR.pptx  # artifact
-│   ├── ip_licensing_split.md  # documentation/report file
-│   ├── ip_licensing_split_TR.md  # Turkish document counterpart
 │   ├── kaggle_onefile_closure_verify.json  # JSON data artifact
 │   ├── kernel_fuzz_report.json  # JSON data artifact
 │   ├── known_limits_v1.md  # documentation/report file
@@ -2165,8 +2153,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── review_checklist_TR.md  # Turkish document counterpart
 │   ├── run_contract.md  # documentation/report file
 │   ├── runbook_validation_report.json  # JSON data artifact
-│   ├── sales_funnel_90d.md  # documentation/report file
-│   ├── sales_funnel_90d_TR.md  # Turkish document counterpart
 │   ├── sanitizer_report.json  # JSON data artifact
 │   ├── sbom.cdx.json  # JSON data artifact
 │   ├── scoped_external_intake_matrix.json  # JSON data artifact

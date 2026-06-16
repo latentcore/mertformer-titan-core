@@ -8,10 +8,22 @@ from pathlib import Path
 MOJIBAKE_PATTERNS = ["Ã", "Ä", "Å", "�"]
 LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 IGNORE_PARTS = {".git", ".titan-venv", ".lint-venv", "node_modules"}
+# Link-integrity is only meaningful for live, tracked, non-frozen docs. The following are
+# scoped OUT (the gate stays strict for everything else):
+#   - pitch_kit: a gitignored, regenerated commercial kit (not part of the tracked repo);
+#   - *_before_final_simplification.md: frozen pre-simplification README snapshots that
+#     intentionally preserve the OLD layout/links as a historical record.
+IGNORE_PARTS_SCOPED = {"pitch_kit"}
+FROZEN_SNAPSHOT_SUFFIX = "_before_final_simplification.md"
 
 
 def should_skip(path: Path) -> bool:
-    return any(part in IGNORE_PARTS or part.startswith(".titan-venv") for part in path.parts)
+    if path.name.endswith(FROZEN_SNAPSHOT_SUFFIX):
+        return True
+    return any(
+        part in IGNORE_PARTS or part in IGNORE_PARTS_SCOPED or part.startswith(".titan-venv")
+        for part in path.parts
+    )
 
 
 def check_file(path: Path, root: Path) -> list[str]:
