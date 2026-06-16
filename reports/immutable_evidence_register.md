@@ -1,7 +1,7 @@
 # Immutable Evidence Register
 
-- generated_local: `2026-06-15T10:35:55`
-- entry_count: `981`
+- generated_local: `2026-06-16T19:22:27`
+- entry_count: `986`
 
 | Path | Kind | Reason | Disposition |
 | --- | --- | --- | --- |
@@ -691,6 +691,10 @@
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_102718.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_103136.zip` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260615_103136.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_191236.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_191236.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_192045.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_192045.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113659.json` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113738.json` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormerStream/.gradle/buildOutputCleanup` | `dir` | `output` | `preserve_immutable_evidence` |
@@ -901,6 +905,7 @@
 | `<HOME>/Documents/MertFormer_Oncompute_Master_Training_Package_20260504/repo_payload/mertformer-titan-core/tests/test_build_training_outputs_bundle.py` | `file` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/MertFormer_Oncompute_Recovery_HealthJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-240b82a6e6daf7a6951c29f2ea73662e27c97cdc2318c4dff08a78926e4e35da/result-output.tar` | `file` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/MertFormer_Oncompute_Recovery_HealthJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-240b82a6e6daf7a6951c29f2ea73662e27c97cdc2318c4dff08a78926e4e35da/result-output_extracted` | `dir` | `output` | `preserve_immutable_evidence` |
+| `<HOME>/Documents/MertFormer_Oncompute_Recovery_HealthJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-240b82a6e6daf7a6951c29f2ea73662e27c97cdc2318c4dff08a78926e4e35da/result-output_extracted/.DS_Store` | `file` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/MertFormer_Oncompute_Recovery_HealthJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-25e4492868431de9111d2f1d7cd60b2bf7e301d3a226ee2edf2e38ae5bc02b75/result-output.tar` | `file` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/MertFormer_Oncompute_Recovery_HealthJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-25e4492868431de9111d2f1d7cd60b2bf7e301d3a226ee2edf2e38ae5bc02b75/result-output_extracted` | `dir` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/MertFormer_Oncompute_UltraSlim_SmokeJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-48c46c252a4dc46a6bd8907ab2155303c37a4e492d69e5c6d6a9f156ad603626/result-output.tar` | `file` | `output` | `preserve_immutable_evidence` |

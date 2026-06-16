@@ -1873,6 +1873,14 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── chess_release_contract.md  # documentation/report file
 ├── reports/  # directory
 │   ├── ablations/  # directory
+│   │   ├── liquid_ablation_final_20260615/  # directory
+│   │   │   ├── plots/  # directory
+│   │   │   │   ├── fig1_train_loss_log.png  # media asset
+│   │   │   │   ├── fig2_loss_and_accuracy.png  # media asset
+│   │   │   │   └── fig3_per_seed_scatter.png  # media asset
+│   │   │   ├── MANIFEST.json  # JSON data artifact
+│   │   │   └── final_summary.json  # JSON data artifact
+│   │   ├── README.md  # primary documentation (EN)
 │   │   ├── liquid_ablation_kaggle_20260614.json  # JSON data artifact
 │   │   ├── liquid_ablation_pilot_curve.png  # media asset
 │   │   └── liquid_ablation_results.json  # JSON data artifact
@@ -2491,6 +2499,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── tokenizer_resolver.py  # Python module/script (module for tokenizer resolver)
 ├── .gitignore  # git ignore policy
 ├── .pre-commit-config.yaml  # YAML configuration file
+├── ABLATION.md  # documentation/report file
+├── ABLATION_TR.md  # Turkish document counterpart
 ├── AGENTS.md  # documentation/report file
 ├── ARCHITECTURE.md  # documentation/report file
 ├── CHANGELOG.md  # documentation/report file

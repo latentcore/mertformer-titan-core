@@ -1856,6 +1856,14 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   └── chess_release_contract.md  # dokümantasyon/rapor dosyası
 ├── reports/  # dizin
 │   ├── ablations/  # dizin
+│   │   ├── liquid_ablation_final_20260615/  # dizin
+│   │   │   ├── plots/  # dizin
+│   │   │   │   ├── fig1_train_loss_log.png  # medya varlığı
+│   │   │   │   ├── fig2_loss_and_accuracy.png  # medya varlığı
+│   │   │   │   └── fig3_per_seed_scatter.png  # medya varlığı
+│   │   │   ├── MANIFEST.json  # JSON veri artefaktı
+│   │   │   └── final_summary.json  # JSON veri artefaktı
+│   │   ├── README.md  # ana dokümantasyon (EN)
 │   │   ├── liquid_ablation_kaggle_20260614.json  # JSON veri artefaktı
 │   │   ├── liquid_ablation_pilot_curve.png  # medya varlığı
 │   │   └── liquid_ablation_results.json  # JSON veri artefaktı
@@ -2474,6 +2482,8 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   └── tokenizer_resolver.py  # Python modülü/scripti (tokenizer resolver için modül)
 ├── .gitignore  # git ignore politikası
 ├── .pre-commit-config.yaml  # YAML yapılandırma dosyası
+├── ABLATION.md  # dokümantasyon/rapor dosyası
+├── ABLATION_TR.md  # Türkçe doküman karşılığı
 ├── AGENTS.md  # dokümantasyon/rapor dosyası
 ├── ARCHITECTURE.md  # dokümantasyon/rapor dosyası
 ├── CHANGELOG.md  # dokümantasyon/rapor dosyası

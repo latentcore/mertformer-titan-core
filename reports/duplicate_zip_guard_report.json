@@ -1,8 +1,8 @@
 {
-  "generated_utc": "2026-06-15T07:36:01.385277+00:00",
-  "zip_count": 75,
-  "unique_sha_count": 69,
-  "duplicate_group_count": 5,
+  "generated_utc": "2026-06-16T16:22:47.824305+00:00",
+  "zip_count": 84,
+  "unique_sha_count": 71,
+  "duplicate_group_count": 4,
   "duplicate_groups": {
     "a62ac32a943e878cb7fc9b41c69f5d8320819860edd9ecd8ce8c5347136d78fc": [
       "<DOCUMENTS_PATH>/MertFormer_5080_Final_Onefile_Lab/archive/previous_20260421_201946/local_decrypt_test/mert5080_20260421_195115_hero_evidence_package_encrypted.zip",
@@ -16,10 +16,6 @@
       "<DOCUMENTS_PATH>/MertFormer_Final_PreTraining_Closure_2026_06_15/mertformer_release.zip",
       "<DOCUMENTS_PATH>/mertformer-titan-core.zip",
       "artifacts/mertformer_release.zip"
-    ],
-    "eace479f90ed1a0301bb2f6bc26344f92f162b72bc99e12178e6ea80f475dea1": [
-      "<DOCUMENTS_PATH>/MertFormer_Final_PreTraining_Closure_2026_06_15/target_machine_handoff_bundle.zip",
-      "artifacts/target_machine_handoff_bundle.zip"
     ],
     "295a1086ce2496a37f1518365d23b35f91c7600b89858eea9fe084fad013cd4e": [
       "<DOCUMENTS_PATH>/OCEAN_6H_PRE45K_H200_STRICT_KERNEL_READY_20260513/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-da273dc7b887e2765fc1b3c83d207c02ae9adeb23ae0763df08aac2bd54ff255/result-output(2)_extracted/outputs/mertformer_final_math_h200_outputs.zip",

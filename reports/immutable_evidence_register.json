@@ -1,6 +1,6 @@
 {
-  "generated_local": "2026-06-15T10:35:55",
-  "entry_count": 981,
+  "generated_local": "2026-06-16T19:22:27",
+  "entry_count": 986,
   "entries": [
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260404_232149.zip",
@@ -4119,6 +4119,30 @@
       "disposition": "preserve_immutable_evidence"
     },
     {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_191236.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_191236.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_192045.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260616_192045.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113659.json",
       "kind": "file",
       "immutable_reason": "result_",
@@ -5375,6 +5399,12 @@
     {
       "path": "<HOME>/Documents/MertFormer_Oncompute_Recovery_HealthJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-240b82a6e6daf7a6951c29f2ea73662e27c97cdc2318c4dff08a78926e4e35da/result-output_extracted",
       "kind": "dir",
+      "immutable_reason": "output",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Oncompute_Recovery_HealthJob_20260504/results/0xff1004b67de08fc505fbf0a2089010d0f23015338c7def8557697513c4a39935-240b82a6e6daf7a6951c29f2ea73662e27c97cdc2318c4dff08a78926e4e35da/result-output_extracted/.DS_Store",
+      "kind": "file",
       "immutable_reason": "output",
       "disposition": "preserve_immutable_evidence"
     },
