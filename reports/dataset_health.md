@@ -11,7 +11,7 @@
 
 | Stage | Dataset | Split | Logic | Status |
 |-------|---------|-------|-------|--------|
-| Stage 1 | `bigcode/the-stack-v2` | train | HTTP Check | ✅ Online |
+| Stage 1 | `bigcode/the-stack-dedup` | train | HTTP Check | ✅ Online |
 | Stage 1 | `TIGER-Lab/MathInstruct` | train | HTTP Check | ✅ Online |
 | Stage 1 | `openai/gsm8k` | train | HTTP Check | ✅ Online |
 | Stage 2 | `HuggingFaceFW/fineweb-edu` | train | HTTP Check | ✅ Online |

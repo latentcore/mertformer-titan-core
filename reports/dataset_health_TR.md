@@ -11,7 +11,7 @@
 
 | Aşama | Veri Seti | Kırılım (Split) | Mantık | Durum |
 |-------|---------|-------|-------|--------|
-| Aşama 1 | `bigcode/the-stack-v2` | train | HTTP Kontrolü | ✅ Çevrimiçi |
+| Aşama 1 | `bigcode/the-stack-dedup` | train | HTTP Kontrolü | ✅ Çevrimiçi |
 | Aşama 1 | `TIGER-Lab/MathInstruct` | train | HTTP Kontrolü | ✅ Çevrimiçi |
 | Aşama 1 | `openai/gsm8k` | train | HTTP Kontrolü | ✅ Çevrimiçi |
 | Aşama 2 | `HuggingFaceFW/fineweb-edu` | train | HTTP Kontrolü | ✅ Çevrimiçi |

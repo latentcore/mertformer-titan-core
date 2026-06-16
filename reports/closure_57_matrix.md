@@ -5,8 +5,10 @@
 - all_green: True
 - no_pending_in_scope: True
 - in_scope_pending_ids: []
-- out_of_scope_pending_ids: [8, 9, 11, 12, 51, 52, 54, 55, 56, 57]
-- evidence_pending_ids: [8, 9, 11, 12, 51, 52, 54, 55, 56, 57]
+- out_of_scope_pending_ids: [8, 9, 11, 12, 51, 52, 53, 54, 55, 56, 57]
+- evidence_pending_ids: [8, 9, 11, 12, 51, 52, 53, 54, 55, 56, 57]
+
+> Legend: **Green** = code + integration + test scaffolding is present; it does NOT mean the capability is proven. `agi`/`asi` rows are **out-of-scope pending** (require benchmark / long-horizon evidence) — see `INTERNAL_AGI_GAP.md` and `MISSION.md`.
 
 | # | Area | Name | Code | Integration | Test | Green | Pending Scope |
 |---:|---|---|:---:|:---:|:---:|:---:|:---|
@@ -62,7 +64,7 @@
 | 50 | product | pilot ops + sla telemetry | ✅ | ✅ | ✅ | ✅ | — |
 | 51 | product | kpi validated pilots | ✅ | ✅ | ✅ | ✅ | out-of-scope |
 | 52 | agi | generalization proof | ✅ | ✅ | ✅ | ✅ | out-of-scope |
-| 53 | agi | robust tool-use + planning autonomy | ✅ | ✅ | ✅ | ✅ | — |
+| 53 | agi | robust tool-use + planning autonomy | ✅ | ✅ | ✅ | ✅ | out-of-scope |
 | 54 | agi | continual learning without forgetting | ✅ | ✅ | ✅ | ✅ | out-of-scope |
 | 55 | asi | recursive self-improvement governance | ✅ | ✅ | ✅ | ✅ | out-of-scope |
 | 56 | asi | formal alignment scaffold | ✅ | ✅ | ✅ | ✅ | out-of-scope |

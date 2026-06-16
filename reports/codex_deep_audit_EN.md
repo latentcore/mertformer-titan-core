@@ -1,4 +1,6 @@
 # Codex Deep Audit — MertFormer Titan (v1.0 Build 30)
+
+> **AS OF 2026-02-06 — SUPERSEDED.** The counts below (158 passed, 254 tracked files) are historical; current canonical truth is `reports/FACTS.json` (370 passed, 4 skipped; ~860 tracked files). The MLA→GQA rename is already reflected in the body; only the counts are stale.
 **Repo:** `.`
 **Audit date (local):** 2026-02-06
 **Audit type:** Code + Docs + Run Verification (offline-first)

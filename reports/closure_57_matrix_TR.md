@@ -5,8 +5,10 @@
 - hepsi_yesil: True
 - kapsam_ici_pending_yok: True
 - kapsam_ici_pending_idler: []
-- kapsam_disi_pending_idler: [8, 9, 11, 12, 51, 52, 54, 55, 56, 57]
-- kanit_bekleyen_idler: [8, 9, 11, 12, 51, 52, 54, 55, 56, 57]
+- kapsam_disi_pending_idler: [8, 9, 11, 12, 51, 52, 53, 54, 55, 56, 57]
+- kanit_bekleyen_idler: [8, 9, 11, 12, 51, 52, 53, 54, 55, 56, 57]
+
+> Açıklama: **Yeşil** = kod + entegrasyon + test iskelesi mevcut; yeteneğin kanıtlandığı anlamına GELMEZ. `agi`/`asi` satırları **kapsam-dışı pending**'dir (benchmark / uzun-vadeli kanıt gerektirir) — bkz. `INTERNAL_AGI_GAP.md` ve `MISSION.md`.
 
 | # | Alan | Bileşen | Kod | Entegrasyon | Test | Yeşil | Pending Kapsamı |
 |---:|---|---|:---:|:---:|:---:|:---:|:---|
@@ -62,7 +64,7 @@
 | 50 | product | pilot ops + sla telemetry | ✅ | ✅ | ✅ | ✅ | — |
 | 51 | product | kpi validated pilots | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
 | 52 | agi | generalization proof | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
-| 53 | agi | robust tool-use + planning autonomy | ✅ | ✅ | ✅ | ✅ | — |
+| 53 | agi | robust tool-use + planning autonomy | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
 | 54 | agi | continual learning without forgetting | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
 | 55 | asi | recursive self-improvement governance | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |
 | 56 | asi | formal alignment scaffold | ✅ | ✅ | ✅ | ✅ | kapsam-dışı |

@@ -1,4 +1,6 @@
 # Codex Deep Audit — MertFormer Titan (v1.0 Build 30)
+
+> **STAND 2026-02-06 — SUPERSEDED.** Die folgenden Zahlen (158 passed, 254 Dateien) sind historisch; aktuelle kanonische Wahrheit ist `reports/FACTS.json` (370 passed, 4 skipped; ~860 Dateien).
 **Repo:** `.`
 **Audit-Datum (lokal):** 2026-02-06
 **Audit-Typ:** Code + Dokumentation + Run-Verifikation (offline-first)

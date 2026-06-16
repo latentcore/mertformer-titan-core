@@ -16,7 +16,7 @@
 
 ## Architecture Under Test
 This was a reduced synthetic arithmetic proof configuration, not the full 45K
-or full ~3.70B runtime path.
+or full ~3.67B runtime path.
 
 - BitNet-style layers enabled.
 - MoE: `8` experts, top-2 routing (`8x2`).

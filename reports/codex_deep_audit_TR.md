@@ -1,4 +1,6 @@
 # Codex Derin Denetim — MertFormer Titan (v1.0 Build 30)
+
+> **2026-02-06 İTİBARIYLA — SUPERSEDED (geçersiz kılındı).** Aşağıdaki sayılar (158 passed, 254 dosya) tarihseldir; güncel kanonik gerçek `reports/FACTS.json`'dur (370 passed, 4 skipped; ~860 dosya). MLA→GQA yeniden adlandırması gövdeye işlenmiştir; sadece sayılar bayattır.
 **Repo:** `.`
 **Denetim Tarihi (yerel):** 2026-02-06
 **Denetim Tipi:** Kod + Dokümantasyon + Çalıştirmali Doğrulama (offline-first)

@@ -13,7 +13,7 @@ from typing import Iterable
 
 
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_OUT_OF_SCOPE_PENDING_IDS = {8, 9, 11, 12, 51, 52, 54, 55, 56, 57}
+DEFAULT_OUT_OF_SCOPE_PENDING_IDS = {8, 9, 11, 12, 51, 52, 53, 54, 55, 56, 57}
 
 
 @dataclass
@@ -65,7 +65,7 @@ def _has_any(paths: Iterable[str]) -> bool:
 
 
 def build_checks() -> list[ItemCheck]:
-    pending = {8, 9, 11, 12, 51, 52, 54, 55, 56, 57}
+    pending = {8, 9, 11, 12, 51, 52, 53, 54, 55, 56, 57}
 
     checks: list[ItemCheck] = [
         ItemCheck(1, "foundation", "crash/deadlock/silent corruption zero", _exists("scripts/operator_mode_gate.py"), _exists("scripts/verify_all.sh"), _exists("tests/test_train_loop_sanity.py"), 1 in pending, ["scripts/operator_mode_gate.py", "tests/test_train_loop_sanity.py"]),
@@ -165,6 +165,8 @@ def write_reports(payload: dict, json_path: Path, md_path: Path, md_tr_path: Pat
         f"- out_of_scope_pending_ids: {payload['out_of_scope_pending_ids']}",
         f"- evidence_pending_ids: {payload['evidence_pending_ids']}",
         "",
+        "> Legend: **Green** = code + integration + test scaffolding is present; it does NOT mean the capability is proven. `agi`/`asi` rows are **out-of-scope pending** (require benchmark / long-horizon evidence) — see `INTERNAL_AGI_GAP.md` and `MISSION.md`.",
+        "",
         "| # | Area | Name | Code | Integration | Test | Green | Pending Scope |",
         "|---:|---|---|:---:|:---:|:---:|:---:|:---|",
     ]
@@ -189,6 +191,8 @@ def write_reports(payload: dict, json_path: Path, md_path: Path, md_tr_path: Pat
         f"- kapsam_ici_pending_idler: {payload['in_scope_pending_ids']}",
         f"- kapsam_disi_pending_idler: {payload['out_of_scope_pending_ids']}",
         f"- kanit_bekleyen_idler: {payload['evidence_pending_ids']}",
+        "",
+        "> Açıklama: **Yeşil** = kod + entegrasyon + test iskelesi mevcut; yeteneğin kanıtlandığı anlamına GELMEZ. `agi`/`asi` satırları **kapsam-dışı pending**'dir (benchmark / uzun-vadeli kanıt gerektirir) — bkz. `INTERNAL_AGI_GAP.md` ve `MISSION.md`.",
         "",
         "| # | Alan | Bileşen | Kod | Entegrasyon | Test | Yeşil | Pending Kapsamı |",
         "|---:|---|---|:---:|:---:|:---:|:---:|:---|",
