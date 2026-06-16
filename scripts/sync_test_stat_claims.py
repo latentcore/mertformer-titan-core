@@ -19,9 +19,8 @@ TARGETS = [
     ROOT / "reports" / "release_snapshot.md",
     ROOT / "reports" / "release_snapshot_TR.md",
     ROOT / "reports" / "one_command_full_sop_summary.md",
-    # Outreach brief is a living surface that quotes the "latest recorded closure
-    # context" test stat; auto-sync it so it never drifts behind the suite again.
-    ROOT / "reports" / "outreach" / "mertformer_titan_executive_brief_2026-05-22.md",
+    # (The outreach executive brief moved to private/commercial/ — no longer a tracked
+    #  reviewer surface, so it is not synced here.)
     # Present-tense GO/verification ledgers. These self-bill as the "final consistency
     # ledger" / "GO Status" / "clean-room verification", so they must always carry the
     # LIVE suite count, never a stale one. (Dated audits like codex_deep_audit_* keep

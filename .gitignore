@@ -108,3 +108,9 @@ reports/ablations/**/*.jsonl
 # moved to private/commercial/ (under the already-ignored /private/).
 reports/investor_deck.pptx
 reports/investor_deck_TR.pptx
+# Generated commercial governance docs (emitted by build_offline_closure_pack.py); they
+# regenerate locally but leave the tracked/reviewer-facing tree.
+reports/gtm_master_plan.md
+reports/commercial_handover_pack.md
+reports/legal_ip_pack.md
+reports/investable_definition.md
