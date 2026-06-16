@@ -4,7 +4,7 @@
 **Denetim Tipi:** Kod + Dokümantasyon + Çalıştirmali Doğrulama (offline-first)
 
 ## Kısa Özet (6-10 satır)
-Bu repo; “mobile-first / NPU hedefli” bir LLM mimarisi için BitLinear (düşük-bit ağırlık simülasyonu), GQA (grouped-query) attention, MoE + LiquidRouter routing ve Liquid/CfC dinamik katmanlarini bir araya getiren kapsamlı bir Ar-Ge + engineering PoC çalışmasi. Mimarinin ve eğitim iskeletinin çalıştigi doğrulandi: secret scan PASS, preflight PASS, operator-mode gate PASS, pytest PASS (`158 passed, 4 skipped`) ve `run.sh --test` offline-first PASS. Dataset kaynak/lisans envanteri artık kodla hizalı (inventory + LICENSES + snapshot/hash registry mevcut; `datasets/hashes.json` pinlenmis revision + manifest fingerprint içeriyor); bununla birlikte `bigcode/the-stack-v2` gibi gated/karma lisanslı kaynaklar kurumsal eğitimde hukuki onay süreci gerektirir. Dokümantasyon geniş ama performans/NPU hız/enerji gibi rakamlar şu an “hedef/iddia” seviyesinde (reprodusibl checkpoint + benchmark raporu yok). Seviye: **Engineering PoC / Ar-Ge (Pre-Training)**; “review-ready” (mühendislik incelemesi ve eğitime başlamak için) ama “production-ready” değil (eğitim + benchmark + cihaz profili eksik). Git geçmişi tek author gösteriyor; en olası ekip: 1 kişi (belirsizlik payı: tool/yardımcı katkılar Git’te gorunmeyebilir).
+Bu repo; “mobile-first / NPU hedefli” bir LLM mimarisi için BitLinear (düşük-bit ağırlık simülasyonu), GQA (grouped-query) attention, MoE + LiquidRouter routing ve Liquid/CfC dinamik katmanlarını bir araya getiren kapsamlı bir Ar-Ge + engineering PoC çalışması. Mimarinin ve eğitim iskeletinin çalıştığı doğrulandı: secret scan PASS, preflight PASS, operator-mode gate PASS, pytest PASS (`158 passed, 4 skipped`) ve `run.sh --test` offline-first PASS. Dataset kaynak/lisans envanteri artık kodla hizalı (inventory + LICENSES + snapshot/hash registry mevcut; `datasets/hashes.json` pinlenmiş revision + manifest fingerprint içeriyor); bununla birlikte `bigcode/the-stack-v2` gibi gated/karma lisanslı kaynaklar kurumsal eğitimde hukuki onay süreci gerektirir. Dokümantasyon geniş ama performans/NPU hız/enerji gibi rakamlar şu an “hedef/iddia” seviyesinde (reprodusibl checkpoint + benchmark raporu yok). Seviye: **Engineering PoC / Ar-Ge (Pre-Training)**; “review-ready” (mühendislik incelemesi ve eğitime başlamak için) ama “production-ready” değil (eğitim + benchmark + cihaz profili eksik). Git geçmişi tek author gösteriyor; en olası ekip: 1 kişi (belirsizlik payı: tool/yardımcı katkılar Git’te görünmeyebilir).
 
 ---
 
@@ -50,7 +50,7 @@ En büyük tracked dosyalar (örnek; Verified (Run)):
 - Görünen commit aralığı: **2026-02-02** ile **2026-02-06**
 
 Yorum (Assumption):
-- Tek author + tutarlı “yazım stili” nedeniyle en olası: 1 ana geliştirici (tools/assistant kullanımi Git’te gorunmeyebilir).
+- Tek author + tutarlı “yazım stili” nedeniyle en olası: 1 ana geliştirici (tools/assistant kullanımı Git’te görünmeyebilir).
 
 ---
 
@@ -177,14 +177,14 @@ Gerekçe (Verified (Code)+Verified (Run)):
 ## 9) Ekip Tahmini (Kaç kişi?)
 **Kanıt (Verified (Run)):** Git geçmişi **1 author** gösteriyor (103 commit).
 **En olası:** **1 kişi** ana geliştirici.
-**Alternatif (Assumption):** 1 ana geliştirici + ara ara reviewer/tool (Git’te gorunmeyebilir).
+**Alternatif (Assumption):** 1 ana geliştirici + ara ara reviewer/tool (Git’te görünmeyebilir).
 **Güvenli cümle:** “En az 1, çok büyük olasılıkla 1”.
 
 ---
 
 ## 10) Net Öneriler (2 hafta / 2 ay)
 ### 10.1 2 haftada (P0/P1)
-- Hedef donanımda ilk eğitim koşusunu yap (pinlenmis datasetler: `datasets/hashes.json`).
+- Hedef donanımda ilk eğitim koşusunu yap (pinlenmiş datasetler: `datasets/hashes.json`).
 - Benchmark çıktılarını `reports/benchmarks/` altına al; README hedef -> Verified güncelle.
 - Gated/karma lisanslı kaynaklar için uyum sign-off’u dokümante et (veya kaynak değiştir).
 
