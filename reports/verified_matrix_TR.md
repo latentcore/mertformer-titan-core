@@ -1,7 +1,7 @@
 # Verified vs Target Matrisi (Mühendislik Gerçeği)
 
 > **Dış inceleme notu:** Compute sponsorship değerlendiriyorsanız önce
-> `reports/outreach_compute_sponsorship_messages.md` okunmalıdır. Bu matris,
+> `private/commercial/outreach_compute_sponsorship_messages.md` okunmalıdır. Bu matris,
 > doğrulanmış yüzeyleri hedeflerden ayırır ve claim-boundary referansı olarak
 > kullanılmalıdır.
 

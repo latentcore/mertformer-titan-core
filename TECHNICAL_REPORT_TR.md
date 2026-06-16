@@ -1,7 +1,7 @@
 # MertFormer Titan Onyx Storm Mimarisinin Teknik Analizi ve Stratejik Değerlemesi
 
 > **Dış inceleme notu:** Compute sponsorship değerlendirmesi için önce
-> `reports/outreach_compute_sponsorship_messages.md` ve
+> `private/commercial/outreach_compute_sponsorship_messages.md` ve
 > `reports/ocean_pre45k_h200_20260514_partial_evidence.md` okunmalıdır. Bu rapor
 > teknik arka plan ve stratejik çerçevedir; benchmark, production, deployment,
 > AGI veya model üstünlüğü iddiası değildir.

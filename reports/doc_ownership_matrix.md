@@ -66,7 +66,7 @@ Operational ownership map for closure-critical surfaces.
 | `reports/ocean_pre45k_h200_20260514_partial_evidence.md` | repo maintainer | when the policy, command ladder, or product wording changes | supporting |
 | `reports/ocean_pre45k_h200_20260514_clean_summary.json` | repo maintainer | when the policy, command ladder, or product wording changes | supporting |
 | `reports/closure_release_truthsync_master_protocol.md` | repo maintainer | when the policy, command ladder, or product wording changes | supporting |
-| `reports/outreach_compute_sponsorship_messages.md` | repo maintainer | when the policy, command ladder, or product wording changes | supporting |
+| `private/commercial/outreach_compute_sponsorship_messages.md` | repo maintainer | when the policy, command ladder, or product wording changes | supporting |
 | `reports/repo_external_handoff.md` | automation | every verify or final refresh run | supporting |
 | `reports/final_repo_audit.md` | automation | every verify or final refresh run | authoritative |
 | `reports/go_status_matrix.md` | archive | never overwrite without an explicit archival update | supporting |

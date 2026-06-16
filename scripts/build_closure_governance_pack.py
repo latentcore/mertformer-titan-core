@@ -532,7 +532,7 @@ SOURCE_DOCS = [
         "notes": "Links the external operator protocol as supporting context; it does not override AGENTS.md or current readiness outputs.",
     },
     {
-        "path": "reports/outreach_compute_sponsorship_messages.md",
+        "path": "private/commercial/outreach_compute_sponsorship_messages.md",
         "role": "claim-safe compute and referral outreach snippets",
         "audience": "operators",
         "update_mode": "manual",

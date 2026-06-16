@@ -1,7 +1,7 @@
 # Technical Analysis and Strategic Valuation of the MertFormer Titan Onyx Storm Architecture
 
 > **External review note:** For compute sponsorship, start with
-> `reports/outreach_compute_sponsorship_messages.md` and
+> `private/commercial/outreach_compute_sponsorship_messages.md` and
 > `reports/ocean_pre45k_h200_20260514_partial_evidence.md`. This report is
 > technical background and strategic framing; it is not a benchmark, production,
 > deployment, AGI, or model-superiority claim.

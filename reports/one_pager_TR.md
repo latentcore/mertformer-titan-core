@@ -1,7 +1,7 @@
 # MertFormer Titan One-Pager (TR)
 
 > **Dış inceleme notu:** Compute sponsorship değerlendiriyorsanız önce
-> `reports/outreach_compute_sponsorship_messages.md` okunmalıdır. Bu one-pager
+> `private/commercial/outreach_compute_sponsorship_messages.md` okunmalıdır. Bu one-pager
 > arka plan materyalidir; benchmark, production, deployment, AGI veya model
 > üstünlüğü iddiası olarak okunmamalıdır.
 

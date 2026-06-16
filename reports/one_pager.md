@@ -1,7 +1,7 @@
 # MertFormer Titan One-Pager
 
 > **External review note:** If you are evaluating compute sponsorship, start
-> with `reports/outreach_compute_sponsorship_messages.md`. This one-pager is
+> with `private/commercial/outreach_compute_sponsorship_messages.md`. This one-pager is
 > background material and should not be read as a benchmark, production,
 > deployment, AGI, or model-superiority claim.
 

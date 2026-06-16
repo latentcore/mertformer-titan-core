@@ -163,7 +163,7 @@ def build_handoff_body(readiness: dict, matrix: dict, freeze: dict, desktop_copy
         f"- train_readiness_reason: `{readiness.get('decision_reason_code', 'UNKNOWN')}`",
         f"- recommended_path: `{readiness.get('recommended_path') or 'none'}`",
         "- latest_partial_external_evidence: `reports/ocean_pre45k_h200_20260514_partial_evidence.md`",
-        "- outreach_boundary: `reports/outreach_compute_sponsorship_messages.md`",
+        "- outreach_boundary: `private/commercial/outreach_compute_sponsorship_messages.md`",
         f"- desktop_copy_status: `{desktop_copy['status']}`",
         f"- desktop_copy_path: `{desktop_copy['display_path']}`",
         f"- desktop_copy_reason: `{desktop_copy['reason'] or 'none'}`",
