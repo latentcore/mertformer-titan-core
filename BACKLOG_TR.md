@@ -3,7 +3,7 @@
 Kanonik backlog giriş noktası. English: [BACKLOG.md](BACKLOG.md). Tohum ayrıntı: [V2_BACKLOG_SEED.md](V2_BACKLOG_SEED.md).
 
 ## Sert engel (kod düzenlemesi değil)
-- **45K GPU koşusu (K1)** — kanonik 3.67B modeli H100/H200'de eğit; ilk gerçek loss eğrisini, checkpoint'i, model card'ı üret. "target/vision" iddialarını "measured"a çeviren tek şey budur. Bkz. [STATUS_TR.md](STATUS_TR.md).
+- **45K GPU koşusu (K1)** — kanonik 3.67B modeli H100/H200'de eğit; ilk gerçek loss eğrisini, checkpoint'i, model card'ı üret. "target/vision" iddialarını "measured"a çeviren tek şey budur. **Ara 250M/500M koşusu YOK** — doğrudan 45K (bkz. [DECISIONS_TR.md](DECISIONS_TR.md)). Bkz. [STATUS_TR.md](STATUS_TR.md).
 
 ## 45K sonrası — doğrulanmış bulgular, koşu öncesi kasıtlı DEĞİŞTİRİLMEDİ (koşu confound olmasın)
 Her biri mekanizmasıyla [DECISIONS_TR.md](DECISIONS_TR.md)'de belgeli:

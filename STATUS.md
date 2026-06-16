@@ -21,6 +21,7 @@ Canonical, hand-maintained status entry point. Generated detail lives under `rep
 - Needs H100/H200 + compute + days. Local K4 drills (checkpoint save→restore→resume) + import smoke are green.
 - Lane blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
 - Launch (target hardware): `bash zero_touch_start.sh`. See [REPRODUCE.md](REPRODUCE.md).
+- **No intermediate-scale run** (250M / 500M) before or after — straight to the canonical 3.67B 45K (a smaller model has its own dynamics and does not predict 45K). The only retained pre-flight is the free `TITAN_MAX_STEPS=2` import/K4 smoke of the canonical architecture (not a sub-scale model). See [DECISIONS.md](DECISIONS.md).
 
 ## Canonical surfaces
 - [TRUTH_MATRIX.md](TRUTH_MATRIX.md) — claim → evidence. · [BACKLOG.md](BACKLOG.md) — deferred work.

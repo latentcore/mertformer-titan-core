@@ -157,3 +157,18 @@ the post-45K action (see `V2_BACKLOG_SEED.md`).
 - **`rope_theta` is informational only** (GQA attention reads `rope_base`); annotated in config.py.
 
 None of the above is changed in this pass — no loss/behavior change before the 45K run.
+
+## Training scale — no intermediate run, straight to 45K (2026-06-17)
+- **Decision:** there will be **no intermediate-scale model run (e.g. 250M / 500M)** before or
+  after the canonical run — not for TÜBİTAK or any other milestone. The next and only training
+  job is the **canonical 3.67B 45K run (K1)**.
+- **Why:** a smaller *model* has its own training dynamics (MoE 8-top2 and the Liquid/CfC mixer
+  behave differently at small scale — the toy-scale ablation already showed the Liquid effect
+  washes out into noise), so it does **not** predict 45K behaviour and is not worth the
+  compute/time as a "proof" surface.
+- **NOT covered by this decision (kept):** the **free pre-45K smoke is not a sub-scale model.**
+  It is the *canonical 3.67B architecture itself* run for a few steps via `TITAN_MAX_STEPS=2`
+  (no behaviour-param change) plus the K4 checkpoint chain (save → restore → resume). That only
+  verifies the code imports/instantiates/steps and that artifacts round-trip — cheap insurance
+  against burning expensive 45K compute on a broken import/checkpoint chain (the last H200 run
+  died at artifact retrieval). It is a "does the real code run" check, not a "250M deneme".

@@ -21,6 +21,7 @@ Kanonik, elle tutulan durum giriş noktası. Üretilen ayrıntı `reports/` alt�
 - H100/H200 + compute + gün gerektirir. Yerel K4 drill'leri (checkpoint save→restore→resume) + import smoke yeşildir.
 - Lane engelleri: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
 - Başlatma (hedef donanım): `bash zero_touch_start.sh`. Bkz. [REPRODUCE.md](REPRODUCE.md).
+- **Ara-ölçek koşu YOK** (250M / 500M) — öncesi ya da sonrası; doğrudan kanonik 3.67B 45K (küçük modelin kendi dinamiği var, 45K'yı öngörmez). Korunan tek ön-koşu: kanonik mimarinin ücretsiz `TITAN_MAX_STEPS=2` import/K4 smoke'u (alt-ölçek model değil). Bkz. [DECISIONS_TR.md](DECISIONS_TR.md).
 
 ## Kanonik yüzeyler
 - [TRUTH_MATRIX_TR.md](TRUTH_MATRIX_TR.md) — iddia → kanıt. · [BACKLOG_TR.md](BACKLOG_TR.md) — ertelenen iş.

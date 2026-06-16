@@ -3,7 +3,7 @@
 Canonical backlog entry point. Turkish: [BACKLOG_TR.md](BACKLOG_TR.md). Seed detail: [V2_BACKLOG_SEED.md](V2_BACKLOG_SEED.md).
 
 ## Hard gate (not a code edit)
-- **45K GPU run (K1)** — train the canonical 3.67B model on H100/H200; produce the first real loss curve, checkpoint, model card. This is the only thing that converts "target/vision" claims to "measured". See [STATUS.md](STATUS.md).
+- **45K GPU run (K1)** — train the canonical 3.67B model on H100/H200; produce the first real loss curve, checkpoint, model card. This is the only thing that converts "target/vision" claims to "measured". **No intermediate 250M/500M run** — straight to 45K (see [DECISIONS.md](DECISIONS.md)). See [STATUS.md](STATUS.md).
 
 ## Post-45K — verified findings, deliberately NOT changed pre-run (so the run is un-confounded)
 Each is documented with its mechanism in [DECISIONS.md](DECISIONS.md):
