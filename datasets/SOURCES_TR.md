@@ -105,15 +105,15 @@ Bkz:
   Durum: dahili (trackli) + SHA256 `datasets/hashes.json` içinde kayıtlı
 
 
-## Demo / tek-dosya datasetleri (eğitim disi)
+## Demo / tek-dosya datasetleri (eğitim dışı)
 - `codeparrot/github-code` (demo baseline; sadece onefile scriptlerinde)
-  Amac: Kaggle/Colab demo icin legacy kod korpusu
+  Amaç: Kaggle/Colab demo için legacy kod korpusu
   Dataset card: https://huggingface.co/datasets/codeparrot/github-code
-  Durum: onefile demo referansi; **Build30 V2 core egitimde kullanilmaz**
+  Durum: onefile demo referansı; **Build30 V2 core eğitimde kullanılmaz**
 
-## Legacy / izleme amacli datasetler (Build30 V2 mufredatinda yok)
+## Legacy / izleme amaçlı datasetler (Build30 V2 müfredatında yok)
 - `mlabonne/guanaco-llama2-1k` (legacy trace; Build30 V2 pipeline'da yok)
-  Amac: onceki deneylerde kullanilan kucuk instruction alt kumesi
+  Amaç: önceki deneylerde kullanılan küçük instruction alt kümesi
   Dataset card: https://huggingface.co/datasets/mlabonne/guanaco-llama2-1k
-  Durum: hashes kayitlari traceability icin tutulur; **Build30 V2 core egitimde kullanilmaz**
+  Durum: hashes kayıtları traceability için tutulur; **Build30 V2 core eğitimde kullanılmaz**
 

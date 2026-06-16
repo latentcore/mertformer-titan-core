@@ -102,7 +102,7 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 - `build_code_truth_audit.py` — Maturity etiketleri, dört sütunlu kanıt zorunluluğu ve marker taraması ile code-truth delta audit üretir.
 - `build_workspace_hygiene_manifest.py` — Quarantine-first workspace hygiene manifest üretir; `--apply-quarantine` yalnız üretilen manifest insan gözüyle incelendikten sonra kullanılmalıdır.
 - `clean_runtime_artifacts.sh` — Runtime artefaktlarını temizler (kök `kaggle_onefile_build30_*.jsonl` dahil).
-- `run_and_clean_pycache.py` — Herhangi bir komutu çalıştırır ve koşu sonunda cache temizliğini garanti eder (`--full-clean` ile `.DS_Store`, `.cache`, `.ipynb_checkpoints`, `.tox`, `.nox`, `.hypothesis`, `.vs`; venv cache icin `--include-venv-caches`).
+- `run_and_clean_pycache.py` — Herhangi bir komutu çalıştırır ve koşu sonunda cache temizliğini garanti eder (`--full-clean` ile `.DS_Store`, `.cache`, `.ipynb_checkpoints`, `.tox`, `.nox`, `.hypothesis`, `.vs`; venv cache için `--include-venv-caches`).
 - `zip_denylist_audit.py` — Release zip'i denylist yol/secret pattern kontrolünden geçirir.
 - `build_scoped_external_intake_matrix.py` — Scoped Desktop/Documents/Downloads/Applications proje artefaktlarını hash'leyip closure intake matrix'ine sınıflandırır.
 - `cleanup_scoped_closure_junk.py` — Repo + scoped external dizinlerde closure artığı çöpü (`__pycache__`, `.pyc`, stale duplicate zip) temizler.

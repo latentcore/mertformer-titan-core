@@ -22,6 +22,6 @@ Bu doküman, bu repo tarafından üretilen veya referanslanan **dahili** dataset
 
 ## Review Kapısı (Gate)
 Production eğitimden önce:
-- `datasets/LICENSES*.md` icinde **cekirdek eğitim datasetleri** icin `TBD` kalamaz; opsiyonel/demo datasetler dogrulanana kadar devre disi kalmalidir.
+- `datasets/LICENSES*.md` içinde **çekirdek eğitim datasetleri** için `TBD` kalamaz; opsiyonel/demo datasetler doğrulanana kadar devre dışı kalmalıdır.
 - `datasets/hashes.json` eğitimde kullanılan snapshot için doldurulmuş olmalı.
 
