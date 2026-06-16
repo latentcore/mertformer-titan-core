@@ -17,7 +17,7 @@ Kanonik koşu: `run_20260315_180151`
 
 ## Harici Artifactlar (Git-ignored; hash kayıtlı)
 - Evidence zip:
-  - Yol: `/Users/mertyunlu/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_evidence.zip`
+  - Yol: `<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_evidence.zip`
   - SHA256: `922c1ef0bc1bb9f020726066997c0404acba383e3be79fbaff0717f6c882bd17`
 - Sentetik dataset JSONL:
   - `run_20260315_180151_train.jsonl`

@@ -17,7 +17,7 @@ Canonical run: `run_20260315_180151`
 
 ## External Artifacts (Git-ignored; hash recorded)
 - Evidence zip:
-  - Path: `/Users/mertyunlu/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_evidence.zip`
+  - Path: `<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_180151/run_20260315_180151_evidence.zip`
   - SHA256: `922c1ef0bc1bb9f020726066997c0404acba383e3be79fbaff0717f6c882bd17`
 - Synthetic dataset JSONL files:
   - `run_20260315_180151_train.jsonl`

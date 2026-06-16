@@ -122,16 +122,23 @@ def test_pilot_report_skip_verify_reason(tmp_path: Path):
     assert "verify_all failed" not in reasons
 
 
-def test_no_desktop_paths_in_tracked_files():
+def test_no_home_paths_in_tracked_files():
+    # No leaked absolute macOS home paths (Desktop/Downloads/Documents) in tracked
+    # files. The redaction-regex source + the test needles are excluded because they
+    # contain the pattern as machinery, not as a leak.
     result = subprocess.run(
         [
             "git",
             "grep",
-            "-n",
-            "/Users/mertyunlu/Desktop/",
+            "-nE",
+            r"/Users/mertyunlu/(Desktop|Downloads|Documents)/",
             "--",
             ".",
             ":(exclude)tests/test_sdk_pilot_cli.py",
+            ":(exclude)tests/test_mertformer_5080_final_onefile.py",
+            ":(exclude)mertformer_sdk/pilot.py",
+            ":(exclude)scripts/start_gate.py",
+            ":(exclude)scripts/one_command_full_sop.sh",
         ],
         capture_output=True,
         text=True,

@@ -162,9 +162,9 @@ def run_verify_all(*, project_root: Path | None = None, offline: bool = True) ->
     # Sanitize absolute project root paths for portability/privacy.
     try:
         tail = tail.replace(str(root), "<PROJECT_ROOT>")
-        # Extra scrub: remove any leaked macOS Desktop paths (including those
-        # appearing inside test error messages).
-        tail = re.sub(r"/Users/[^/]+/Desktop/", "<DESKTOP>/", tail)
+        # Extra scrub: remove any leaked macOS home paths (Desktop/Downloads/
+        # Documents), including those appearing inside test error messages.
+        tail = re.sub(r"/Users/[^/]+/(Desktop|Downloads|Documents)/", r"<HOME>/\1/", tail)
     except Exception:
         pass
     summary["output_tail"] = tail

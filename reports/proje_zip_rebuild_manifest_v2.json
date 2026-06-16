@@ -1,7 +1,7 @@
 {
   "schema": "proje_zip_rebuild_manifest_v2",
   "generated_at_utc": "2026-02-28T18:33:16Z",
-  "zip_path": "/Users/mertyunlu/Documents/Proje.zip",
+  "zip_path": "<HOME>/Documents/Proje.zip",
   "zip_sha256": "071f238393037352cc3d1efe82677ea3ba6510dabbe5bfba3c99cd1c9011922f",
   "included_roots": [
     "Proje",

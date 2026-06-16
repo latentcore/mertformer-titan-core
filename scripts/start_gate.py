@@ -18,7 +18,7 @@ DECISION_MD = DEFAULT_REPORTS / "start_gate_operator_decision.md"
 def sanitize_text(text: str) -> str:
     out = text
     out = out.replace(str(ROOT), "<REPO_ROOT>")
-    out = re.sub(r"/Users/[^/]+/Desktop/[^\s\"']+", "<DESKTOP_PATH>", out)
+    out = re.sub(r"/Users/[^/]+/(?:Desktop|Downloads|Documents)/[^\s\"']+", "<HOME_PATH>", out)
     return out
 
 

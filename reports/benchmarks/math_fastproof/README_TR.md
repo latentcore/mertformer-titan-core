@@ -19,10 +19,10 @@ Kanonik koşu: `run_20260315_050133`
 
 ## Harici Artifactlar (Git-ignored; hash kayıtlı)
 - Evidence zip:
-  - Yol: `/Users/mertyunlu/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_evidence.zip`
+  - Yol: `<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_evidence.zip`
   - SHA256: `26c7cdea097c88e6b1ce5a4400c16e9f417887d1a06fcc257111db80c5254be7`
 - Final checkpoint:
-  - Yol: `/Users/mertyunlu/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_model_final.pt`
+  - Yol: `<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_model_final.pt`
   - SHA256: `e39819c37b78900118667172bc94669d5c6548d46d29b9cae177cf457860d797`
 
 ## Yeniden Üretim

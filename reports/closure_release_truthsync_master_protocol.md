@@ -16,7 +16,7 @@ The active authority order remains:
 8. `USAGE_GUIDE.md` / `TRAINING_PLAN.md`
 
 ## External Protocol
-- Local operator document: `/Users/mertyunlu/Documents/MertFormer_Kapanış_Release_TruthSync_Master_Protokolu_2026-05-12.md`
+- Local operator document: `<HOME>/Documents/MertFormer_Kapanış_Release_TruthSync_Master_Protokolu_2026-05-12.md`
 - Protocol version: `MertFormer Build30 Closure / Release / Truth-Sync Master Protocol v1`
 - Created: `2026-05-12 15:05 +03`
 - Last cited in this repo pass: `2026-05-14`

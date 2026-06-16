@@ -19,10 +19,10 @@ Canonical run: `run_20260315_050133`
 
 ## External Artifacts (Git-ignored; hash recorded)
 - Evidence zip:
-  - Path: `/Users/mertyunlu/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_evidence.zip`
+  - Path: `<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_evidence.zip`
   - SHA256: `26c7cdea097c88e6b1ce5a4400c16e9f417887d1a06fcc257111db80c5254be7`
 - Final checkpoint:
-  - Path: `/Users/mertyunlu/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_model_final.pt`
+  - Path: `<HOME>/Downloads/content/mertformer_outputs/runs/run_20260315_050133/run_20260315_050133_model_final.pt`
   - SHA256: `e39819c37b78900118667172bc94669d5c6548d46d29b9cae177cf457860d797`
 
 ## Reproduce

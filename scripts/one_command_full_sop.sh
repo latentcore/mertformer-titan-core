@@ -43,7 +43,7 @@ if not p.exists():
     raise SystemExit(0)
 text = p.read_text(encoding="utf-8", errors="replace")
 text = text.replace(root, "<REPO_ROOT>")
-text = re.sub(r"/Users/[^/\s]+/Desktop/[^\s\"']+", "<DESKTOP_PATH>", text)
+text = re.sub(r"/Users/[^/\s]+/(?:Desktop|Downloads|Documents)/[^\s\"']+", "<HOME_PATH>", text)
 p.write_text(text, encoding="utf-8")
 PY
 }
@@ -111,7 +111,7 @@ from pathlib import Path
 
 def _sanitize(text: str, root: str) -> str:
     out = text.replace(root, "<REPO_ROOT>")
-    out = re.sub(r"/Users/[^/\s]+/Desktop/[^\s\"']+", "<DESKTOP_PATH>", out)
+    out = re.sub(r"/Users/[^/\s]+/(?:Desktop|Downloads|Documents)/[^\s\"']+", "<HOME_PATH>", out)
     return out
 
 
