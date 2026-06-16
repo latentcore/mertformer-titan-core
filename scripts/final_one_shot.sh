@@ -35,7 +35,11 @@ run_zip_with_tolerance() {
 }
 
 refresh_anthropic_packet() {
-  local dir="$ROOT_DIR/applications/anthropic"
+  # The entire Anthropic application packet now lives under private/anthropic_internal/
+  # (gitignored): the core repo is single-persona (technical/evidence). The packet is
+  # still built locally for handoff, but nothing it writes is tracked.
+  local dir="$ROOT_DIR/private/anthropic_internal"
+  [ -d "$dir" ] || { echo "[final] anthropic packet dir absent ($dir); skipping"; return 0; }
   local zip_path="$dir/mertformer_anthropic_packet_20260419.zip"
   local sha_path="$dir/mertformer_anthropic_packet_20260419.zip.sha256"
   local pointer_path="$dir/PACKET_POINTER_20260419.md"
@@ -69,8 +73,8 @@ This directory has a small local application packet zip for handoff and review.
 
 ## Local Artifact
 
-- Zip: \`applications/anthropic/$(basename "$zip_path")\`
-- SHA256 sidecar: \`applications/anthropic/$(basename "$sha_path")\`
+- Zip: \`private/anthropic_internal/$(basename "$zip_path")\`
+- SHA256 sidecar: \`private/anthropic_internal/$(basename "$sha_path")\`
 - SHA256: \`$sha\`
 - Size: \`$size_bytes\` bytes
 - Contents: ${#files[@]} evidence-facing markdown application files

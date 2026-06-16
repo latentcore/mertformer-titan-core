@@ -35,7 +35,7 @@ Long-term target: reduce the cost barrier for auditable AI training and inferenc
 5. [reports/systems_performance_case_study.md](reports/systems_performance_case_study.md)
 6. [reports/offline_assistant_case_study.md](reports/offline_assistant_case_study.md)
 7. [reports/chess_proof_teaching_case_study.md](reports/chess_proof_teaching_case_study.md)
-8. [applications/anthropic/README.md](applications/anthropic/README.md)
+8. [STATUS.md](STATUS.md)
 
 ## Canonical Commands
 ```bash
