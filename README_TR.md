@@ -246,11 +246,16 @@ Mühendislik gerçeği (katı): `reports/verified_matrix_TR.md`.
 
 ---
 
-### 🏰 Stratejik Hendek (The Strategic Moat)
-**Neden MertFormer Titan kopyalanamaz?**
-1.  **Cihaz Özgü Mimari (Edge-Native Focus)**: Büyük teknoloji şirketlerinin modelleri bulut üzerinde devasa hesaplama gücü için optimize edilmiştir. Titan'ın 1.58-bit katmanları, donanıma doğrudan entegre (hardware-aware) olarak tasarlanmıştır; bu, sonradan kuantize edilen modellere göre net bir verimlilik farkı yaratır.
-2.  **Liquid Momentum**: Tescilli `LiquidRouter`, veriyi sadece statik bir girdi olarak değil, bir zamansal akış (momentum) olarak işler. Bu matematiksel yaklaşım, sistemi rakiplerin sadece işlem gücüyle kapatamayacağı bir avantajla konumlandırır.
-3.  **Adli Güven**: Zincirlenmiş eğitim logları ve kriptografik çıktılar, projenin şeffaflığını ve kurumsal/askeri güven standartlarına uyumunu doğrular.
+### Tasarım gerekçesi (claim-boundary)
+Bunlar tasarım *niyetleridir*, kanıtlanmış avantajlar değil. **Hiçbir "moat" ya da üstünlük iddiası
+yapılmaz** — 12-seed Liquid ablasyonu ([ABLATION_TR.md](ABLATION_TR.md)) toy ölçekte ölçülmüş bir
+doğruluk faydası göstermiyor.
+1.  **Cihaz-özgü, düşük-bit:** 1.58-bit (BitNet) katmanlar, sonradan kuantize edilmek yerine
+    donanım-farkındalıklı tasarlanmıştır — cihaz ölçümü bekleyen bir verimlilik *hedefi*.
+2.  **Zamansal yönlendirme (araştırma bahsi):** `LiquidRouter` (causal Conv1d + rolling state) kısa
+    token geçmişiyle yönlendirir. Bu kanıtlanmamış bir araştırma yönüdür, rekabet avantajı değil (bkz. ABLATION_TR.md).
+3.  **Adli güven:** zincirlenmiş eğitim logları + kriptografik çıktılar, gerçek koşular üretildiğinde
+    şeffaflık ve uyum doğrulamasını destekler.
 
 ### 🔒 Lisans Sınırı (Hızlı Not)
 - Bu depo **özel ve gizlidir**.

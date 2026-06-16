@@ -142,27 +142,19 @@ MertFormer Titan is not general software; it is an **"NPU-Native"** engine. The 
 
 ---
 
-## 5. Strategic Valuation and Career Potential
+## 5. Strategic Context (claim-boundary)
 
-### 5.1 Intellectual Property (IP) Value
-A 17-year-old engineer producing a working architecture that combines BitNet, MoE, and Liquid networks is a **"High Alpha"** situation in the market.
-*   **Microsoft Founders Hub:** Excellent candidate for grants and GPU support.
-*   **Thiel Fellowship:** $250,000 fellowship funding path; official eligibility and amount should be rechecked at application time.
+Commercial valuation, fundraising, and career framing are kept **out** of this technical report and
+live in the private dealroom (`mertformer-titan-dealroom-private`). In scope here:
 
-### 5.2 Career Path
-This project allows the developer to skip the "Junior" level and position themselves directly as an **"AI Systems Architect."**
-*   **Startup Exit:** "Acqui-hire" potential by Samsung/Qualcomm.
-*   **Research:** A living portfolio for OpenAI/DeepMind/Microsoft Research.
-
----
-
-## 6. Strategic & Commercial Value
-
-For an investor, MertFormer Titan is not just software; it is the most valuable mining hardware of the **AI Gold Rush** era.
-
-*   **The Market's New Focus:** Cloud-based AI (OpenAI, Google) carries billions of dollars in annual server costs and data leakage risks. The market is shifting to "On-Device AI."
-*   **NPU Direction:** Tech giants like Apple and Samsung have signaled this shift by adding NPUs (Neural Processing Units) to their hardware. MertFormer targets this hardware class, but device utilization claims require physical target-device measurements.
-*   **Accessibility and Economics:** The project targets lower-cost validation and local inference paths, but full training cost, deployment cost, and commercial economics remain unverified until checkpoint-bound runs and measured deployment evidence exist.
+*   **Direction:** an on-device, low-bit (BitNet b1.58) + sparse-MoE + GQA architecture targeting
+    NPU-class hardware (e.g. Samsung S25). Device-utilization, latency, energy, and cost figures are
+    **target/estimate** until physical target-device measurement + checkpoint-bound runs exist.
+*   **Market context (neutral):** the industry is adding on-device NPUs; this architecture targets
+    that hardware class. No market-size, valuation, or "moat" claim is made here.
+*   **Honest posture:** no benchmark, production, deployment, or model-superiority claim. The value to
+    evaluate is the engineering discipline (low-bit runtime, training reliability, evidence/claim
+    discipline), not a finished frontier model.
 
 ---
 

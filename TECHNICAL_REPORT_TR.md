@@ -143,27 +143,19 @@ MertFormer Titan, genel bir yazılım değil, **"NPU-Native"** bir motordur. Aş
 
 ---
 
-## 5. Stratejik Değerleme ve Kariyer Potansiyeli
+## 5. Stratejik Bağlam (claim-boundary)
 
-### 5.1 Fikri Mülkiyet (IP) Değeri
-17 yaşında bir mühendisin BitNet, MoE ve Liquid ağlarını birleştiren çalışan bir mimari üretmesi, piyasada **"Yüksek Alfa" (High Alpha)** durumudur.
-*   **Microsoft Founders Hub:** Hibe ve GPU desteği için mükemmel aday.
-*   **Thiel Fellowship:** 250.000$ fellowship destek yolu; resmi uygunluk ve tutar başvuru anında tekrar kontrol edilmelidir.
+Ticari değerleme, fonlama ve kariyer çerçevesi bu teknik rapordan **çıkarılmıştır** ve özel dealroom
+(`mertformer-titan-dealroom-private`) içinde tutulur. Burada kapsam:
 
-### 5.2 Kariyer Yolu
-Bu proje, geliştiricinin "Junior" seviyesini atlayıp doğrudan **"AI Systems Architect"** olarak konumlanmasını sağlar.
-*   **Startup Exit:** Samsung/Qualcomm tarafından "acqui-hire" (yetenek için satın alma) potansiyeli.
-*   **Araştırma:** OpenAI/DeepMind/Microsoft Research için canlı bir portfolyo.
-
----
-
-## 6. Stratejik ve Ticari Değer (Strategic & Commercial Value)
-
-Bir yatırımcı için MertFormer Titan, sadece bir yazılım değil, **"Yapay Zeka Altını" (AI Gold Rush)** döneminin en değerli madencilik donanımıdır.
-
-*   **Pazarın Yeni Odak Noktası:** Bulut tabanlı yapay zeka (OpenAI, Google) yıllık milyarlarca dolarlık sunucu maliyeti ve veri sızıntısı riski taşır. Pazar, "On-Device AI"ya (Cihaz İçi YZ) kaymaktadır.
-*   **NPU Yönü:** Apple ve Samsung gibi devler, donanımlarına NPU (Neural Processing Unit) ekleyerek bu değişimin sinyalini vermiştir. MertFormer bu donanım sınıfını hedefler; fakat cihaz kullanım iddiaları fiziksel hedef cihaz ölçümü ister.
-*   **Erişilebilirlik ve Ekonomi:** Proje daha düşük maliyetli doğrulama ve yerel çıkarım yollarını hedefler; ancak tam eğitim maliyeti, deployment maliyeti ve ticari ekonomi, checkpoint-bound run ve ölçülmüş deployment kanıtı oluşana kadar doğrulanmış sayılmaz.
+*   **Yön:** cihaz-içi, düşük-bit (BitNet b1.58) + sparse-MoE + GQA mimarisi; NPU sınıfı donanımı
+    (örn. Samsung S25) hedefler. Cihaz kullanımı, gecikme, enerji ve maliyet rakamları, fiziksel
+    hedef-cihaz ölçümü + checkpoint-bound koşu oluşana kadar **target/estimate**'tir.
+*   **Pazar bağlamı (nötr):** sektör cihaz-içi NPU ekliyor; bu mimari o donanım sınıfını hedefler.
+    Burada pazar-büyüklüğü, değerleme ya da "moat" iddiası yapılmaz.
+*   **Dürüst duruş:** benchmark, production, deployment ya da model-üstünlüğü iddiası yok.
+    Değerlendirilecek değer, bitmiş bir frontier model değil; mühendislik disiplinidir (düşük-bit
+    runtime, eğitim güvenilirliği, kanıt/iddia disiplini).
 
 ---
 

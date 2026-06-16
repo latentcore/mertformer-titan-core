@@ -268,11 +268,15 @@ Engineering truth (strict): see `reports/verified_matrix.md`.
 
 ---
 
-### 🏰 The Strategic Moat
-**Why MertFormer Titan remains unparalleled:**
-1.  **Edge-Native Architecture**: Models from Big Tech are optimized for massive compute on the cloud. Titan's 1.58-bit layers are designed as hardware-aware components from the ground up, creating a clear efficiency gap compared to post-quantized models.
-2.  **Liquid Momentum**: The proprietary `LiquidRouter` treats data as a temporal flow (momentum), not just a static input. This mathematical approach positions the system with an advantage that competitors cannot close with hardware power alone.
-3.  **Forensic Trust**: Chained training logs and cryptographic outputs are designed to support transparency and compliance verification once real runs are produced.
+### Design rationale (claim-boundary)
+These are design *intentions*, not proven advantages. **No "moat" or superiority claim is made** — the
+12-seed Liquid ablation ([ABLATION.md](ABLATION.md)) shows no measured accuracy benefit at toy scale.
+1.  **Edge-native, low-bit:** the 1.58-bit (BitNet) layers are designed as hardware-aware components
+    rather than post-quantized — an efficiency *target* pending on-device measurement.
+2.  **Temporal routing (research bet):** `LiquidRouter` (causal Conv1d + rolling state) routes with a
+    short token history. This is an unproven research direction, not a competitive advantage (see ABLATION.md).
+3.  **Forensic trust:** chained training logs + cryptographic outputs support transparency and
+    compliance verification once real runs are produced.
 
 ### 🔒 License Boundary (Quick Note)
 - This repository is **proprietary and confidential**.
