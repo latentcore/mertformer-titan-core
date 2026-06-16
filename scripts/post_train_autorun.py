@@ -239,6 +239,22 @@ def build_state_machine_text() -> str:
     return "\n".join(lines)
 
 
+def _demo_asset_kind(path: Path, checkpoint: Path | None) -> str:
+    """Honest per-asset classification.
+
+    The snake demo is a pygame heuristic autoplayer (NOT model-driven), and the
+    drone flow is a software-in-the-loop simulation — neither is a trained-model
+    output, so they must never be tagged ``trained_demo`` even when a checkpoint
+    exists. Only genuinely checkpoint-bound assets get ``trained_demo``.
+    """
+    name = path.name.lower()
+    if "snake_demo" in name:
+        return "ui_demo"
+    if "drone_sitl" in name:
+        return "sitl_sim_demo"
+    return "trained_demo" if checkpoint and path.exists() else "repo_proof_or_placeholder"
+
+
 def build_demo_bundle(root: Path, reports_dir: Path, checkpoint: Path | None) -> dict:
     assets = [
         root / "assets" / "snake_demo_proof.mp4",
@@ -254,7 +270,7 @@ def build_demo_bundle(root: Path, reports_dir: Path, checkpoint: Path | None) ->
             {
                 "path": str(path.relative_to(root)),
                 "exists": path.exists(),
-                "kind": "trained_demo" if checkpoint and path.exists() else "repo_proof_or_placeholder",
+                "kind": _demo_asset_kind(path, checkpoint),
             }
             for path in assets
         ],

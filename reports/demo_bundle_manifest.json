@@ -1,28 +1,28 @@
 {
   "schema": "demo_bundle_manifest_v1",
-  "generated_utc": "2026-06-15T07:35:49.445354+00:00",
-  "checkpoint": "<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt",
+  "generated_utc": "2026-06-16T16:32:40.233385+00:00",
+  "checkpoint": null,
   "items": [
     {
       "path": "assets/snake_demo_proof.mp4",
       "exists": true,
-      "kind": "trained_demo"
+      "kind": "ui_demo"
     },
     {
       "path": "assets/snake_demo_preview.gif",
       "exists": true,
-      "kind": "trained_demo"
+      "kind": "ui_demo"
     },
     {
       "path": "reports/drone_sitl_demo.md",
       "exists": true,
-      "kind": "trained_demo"
+      "kind": "sitl_sim_demo"
     },
     {
       "path": "reports/drone_sitl_demo_TR.md",
       "exists": true,
-      "kind": "trained_demo"
+      "kind": "sitl_sim_demo"
     }
   ],
-  "note": "A trained checkpoint was resolved for post-train closure."
+  "note": "No trained checkpoint resolved; this manifest only records current repo-side proof/demo assets."
 }
