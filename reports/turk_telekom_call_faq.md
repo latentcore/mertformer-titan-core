@@ -30,7 +30,7 @@ This note is for early discovery or compute-collaboration conversations. It is i
 ## 6. Which technical details should be memorized first?
 - Distillation and teacher-student setup.
 - MoE routing basics and what makes LiquidRouter different.
-- MLA-labeled GQA as the current attention truth.
+- GQA (grouped-query) as the current attention truth.
 - BitNet / low-bit efficiency tradeoffs.
 - ONNX / mobile / edge deployment path.
 - Why checkpoint + benchmark evidence is the real gate.

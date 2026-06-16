@@ -4,7 +4,7 @@
 **Audit type:** Code + Docs + Run Verification (offline-first)
 
 ## Executive Summary (6-10 lines)
-This repository is an R&D + engineering PoC for a “mobile-first / NPU-targeted” LLM stack that combines BitLinear (low-bit weight simulation), MLA-labeled GQA attention, MoE + LiquidRouter routing, and Liquid/CfC dynamics. Core engineering readiness is verified: tracked-file secret scan PASS, preflight PASS, operator-mode gate PASS, pytest PASS (`158 passed, 4 skipped`), and `run.sh --test` PASS in offline-first mode. Dataset compliance artifacts are now present and aligned with code references (dataset inventory + SOURCES/LICENSES + pinned snapshot/hash registry in `datasets/hashes.json`); however, using gated/mixed-license sources (notably `bigcode/the-stack-v2`) still requires a corporate legal/compliance sign-off. Documentation is extensive, but performance/NPU speed/energy numbers remain targets until a real training run produces checkpoints and benchmark outputs. Maturity level: **Engineering PoC / R&D (Pre-Training), review-ready** (for engineering inspection and to start training), but not “production-ready” without post-training evidence. Git history shows a single author; the most likely team size is one primary developer (with normal uncertainty: tooling/assistants are not visible in Git).
+This repository is an R&D + engineering PoC for a “mobile-first / NPU-targeted” LLM stack that combines BitLinear (low-bit weight simulation), GQA (grouped-query) attention, MoE + LiquidRouter routing, and Liquid/CfC dynamics. Core engineering readiness is verified: tracked-file secret scan PASS, preflight PASS, operator-mode gate PASS, pytest PASS (`158 passed, 4 skipped`), and `run.sh --test` PASS in offline-first mode. Dataset compliance artifacts are now present and aligned with code references (dataset inventory + SOURCES/LICENSES + pinned snapshot/hash registry in `datasets/hashes.json`); however, using gated/mixed-license sources (notably `bigcode/the-stack-v2`) still requires a corporate legal/compliance sign-off. Documentation is extensive, but performance/NPU speed/energy numbers remain targets until a real training run produces checkpoints and benchmark outputs. Maturity level: **Engineering PoC / R&D (Pre-Training), review-ready** (for engineering inspection and to start training), but not “production-ready” without post-training evidence. Git history shows a single author; the most likely team size is one primary developer (with normal uncertainty: tooling/assistants are not visible in Git).
 
 ---
 
@@ -64,7 +64,7 @@ Interpretation (Assumption):
   - `moe.py`: MoE dispatch + LiquidRouter + aux loss + collapse handling
   - `liquid.py`: CfC/LiquidCell + optional JIT path
   - `qinn.py`: optional unitary layer (Cayley transform)
-  - `mertformer_block.py`: block composition (Norm -> MLA-labeled GQA -> optional Liquid -> FFN/MoE -> optional QINN)
+  - `mertformer_block.py`: block composition (Norm -> GQA -> optional Liquid -> FFN/MoE -> optional QINN)
 - **Training:** `train/train.py` (Accelerate, curriculum, offline distillation, checkpoints, export)
 - **Ops / Verification:** `run.sh`, `scripts/bootstrap_venv.sh`, `scripts/verify_all.sh`, `scripts/titan_preflight.py`, `scripts/operator_mode_gate.py`
 - **Dataset compliance:** `scripts/extract_dataset_refs.py` (inventory), `scripts/record_dataset_hashes.py` (snapshot/hash registry), `datasets/SOURCES*.md`, `datasets/LICENSES*.md`, `datasets/hashes.json`

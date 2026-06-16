@@ -762,7 +762,7 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
       │  TRANSFORMER BLOĞU [Katman 0-17]  (Yinelemeli Süreç)                      │
       │                                                                           │
       │  ┌──────────────┐    ┌─────────────────────────────────────────────────┐  │
-      │  │ RMSNorm (F)  │───►│ [MLA ETIKETLI GQA] ATTENTION       │  │
+      │  │ RMSNorm (F)  │───►│ GQA ATTENTION                      │  │
       │  └──────────────┘    │ » GQA başlıkları: Q=16, KV=8 (varsayılan profil)                 │  │
       │                      │ » İşlem: Softmax(Q·K^T / √d) · V                │  │
       │                      │ » Donanım: FlashAttn2 Kernel (SRAM Optimize)    │  │
@@ -814,19 +814,19 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
 Verinin 0'dan 17'ye kadar olan yolculuğu:
 
 *   **Katman 0 (Giriş Bloğu):** Vektörleştirilen verinin ilk durağıdır; temel kelime ilişkileri kurulur ve `RMSNorm` ile sinyal genliği stabilize edilir.
-*   **Katman 1 (Gramer Temeli):** Dilin en temel yapı taşları işlenir; `MLA` etiketli GQA attention mekanizması ilk odaklanma haritasını oluşturur.
+*   **Katman 1 (Gramer Temeli):** Dilin en temel yapı taşları işlenir; GQA attention mekanizması ilk odaklanma haritasını oluşturur.
 *   **Katman 2 (Verimlilik Mührü):** Kelimeler arası basit bağlamlar kurulur; `BitNet 1.58-bit` yapısı sayesinde tüm ağırlıklar $\{-1, 0, +1\}$ uzayında en düşük enerjiyle işlenir.
 *   **Katman 3 (Uzman Dağıtımı):** Anlamsal yoğunluk artar; `MoE` yapısı devreye girerek veriyi ilgili 8 uzmandan en uygun 2'sine yönlendirir.
 *   **Katman 4 (İlk Liquid Teması):** **Kritik Eşik.** İlk `LiquidMixer` (CfC) burada devreye girerek veriye ilk "zamansal akış" ve "momentum" algısını yükler.
-*   **Katman 5 (Akışkan Dikkat):** Akışkanlık kazanan veri, `MLA` etiketli GQA attention tarafından daha derin bir boyutta süzülerek bağlamsal ilişkiler güçlendirilir.
+*   **Katman 5 (Akışkan Dikkat):** Akışkanlık kazanan veri, GQA attention tarafından daha derin bir boyutta süzülerek bağlamsal ilişkiler güçlendirilir.
 *   **Katman 6 (Karmaşık Sözdizimi):** Cümle içindeki dolaylı yapılar çözülür; `MoE` uzmanları spesifik analizlere devam eder.
 *   **Katman 7 (Matematiksel Kararlılık):** Mantıksal çıkarımların temeli atılır; `UnitaryQINN` yolu yalnızca `use_qinn=true` olduğunda devreye alınır (Build 30 V2 varsayılanı: KAPALI).
-*   **Katman 8 (Soyutlama):** Veri somut kelimelerden soyut kavramlara evrilir; hiyerarşik yapı `MLA` etiketli GQA attention ile derinleştirilir.
+*   **Katman 8 (Soyutlama):** Veri somut kelimelerden soyut kavramlara evrilir; hiyerarşik yapı GQA attention ile derinleştirilir.
 *   **Katman 9 (Niyet Analizi):** Karar mekanizmaları güçlenir; model kullanıcı niyetini ve sorunun arka planını kavramaya başlar.
 *   **Katman 10 (İkinci Liquid Teması):** **Kritik Eşik.** İkinci `LiquidMixer` burada aktifleşir; karmaşık mantık yürütme sırasında verinin zamansal hafızası ve hızı dinamik olarak tazelenir.
 *   **Katman 11 (Stratejik Karar):** Akışkanlık kazanan mantık, `MoE` uzmanları tarafından stratejik yanıt parametrelerine dönüştürülür.
 *   **Katman 12 (Üst Seviye Anlam):** Bilgi "bilgelik" seviyesine yaklaşır; cümlenin tonu, amaçı ve hedefi bu aşamada netleşir.
-*   **Katman 13 (Yanıt İnşası):** Üretilecek cevabın iskeleti kurulur; `MLA` etiketli GQA attention cevabın en kritik noktalarına odaklanır.
+*   **Katman 13 (Yanıt İnşası):** Üretilecek cevabın iskeleti kurulur; GQA attention cevabın en kritik noktalarına odaklanır.
 *   **Katman 14 (Kültürel Adaptasyon):** Teknik detaylar ile Türkçe kültürel ve deyimsel yapılar bu aşamada modele enjekte edilir.
 *   **Katman 15 (Ön Final Analizi):** Cevap son formunu almadan önceki son büyük denetim ve kalite kontrol katmanıdır.
 *   **Katman 16 (Nihai Liquid Mührü):** **Kritik Eşik.** Son `LiquidMixer` devreye girer; tüm bilgi çıkıştan önce nihai bir "akışkan zekaya" dönüştürülür ve zamansal tutarlılık mühürlenir.
@@ -849,7 +849,7 @@ graph TD
     subgraph "Her Katmanın (Blok) Mühendislik Kalbi"
         style BlockInner fill:#1a1a1a,stroke:#3fb1e3,stroke-width:2px
         BlockInner[Giriş] --> Norm1[RMSNorm]
-        Norm1 --> MLA["MLA Etiketli GQA Dikkat Bloğu (Mevcut Implementasyon)"]
+        Norm1 --> MLA["GQA Dikkat Bloğu (Mevcut Implementasyon)"]
         MLA --> Norm2[RMSNorm]
         Norm2 --> Router{"LiquidRouter (Zamansal Seçici)"}
         Router -- "En Uygun 2 Uzman" --> MoE["BitSwiGLU Uzmanları"]
@@ -1086,7 +1086,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 2026-03-07 21:25:01,761 - [INFO] - ✅ Secrets check completed.
 2026-03-07 21:25:01,761 - [INFO] - ✈️ STEP 2: ARCHITECTURAL AUDIT...
 2026-03-07 21:25:01,761 - [INFO] - ✅ Layer configuration validated: No Liquid/MoE conflicts.
-2026-03-07 21:25:01,761 - [INFO] - ✅ MLA Dimensions: Consistent (2048 features).
+2026-03-07 21:25:01,761 - [INFO] - ✅ GQA Dimensions: Consistent (2048 features).
 2026-03-07 21:25:01,761 - [INFO] - ✅ BitNet b1.58 logic: ACTIVE (Locked).
 2026-03-07 21:25:01,761 - [INFO] - ✈️ STEP 3: DATA & DISTILLATION TEST...
 2026-03-07 21:25:02,483 - [INFO] - ✈️ Offline mode: skipping Hugging Face connectivity checks.
@@ -1177,7 +1177,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 
 Neleri doğrular:
 - Secrets kontrolü (token parçası yazdırmaz; offline modda secrets yoksa `TITAN_PREFLIGHT_REQUIRE_SECRETS=1` haricinde FAIL etmez)
-- Mimari audit (cfg + MLA boyutları)
+- Mimari audit (cfg + GQA boyutları)
 - Distillation dry-run (teacher mock; geçici logits; cleanup)
 - MoE/Liquid gradient sağlığı
 
@@ -1204,7 +1204,7 @@ Aşağıdaki blok, bir MertFormer Ajanının karmaşık bir hatayı nasıl anali
 
 ```bash
 [TITAN-ORCHESTRATOR] ⚡ Ajan 'Architect' yetkilendirildi...
-[ARCHITECT] 🔍 Analiz ediliyor: MLA Layer-4 boyut uyuşmazlığı.
+[ARCHITECT] 🔍 Analiz ediliyor: GQA Layer-4 boyut uyuşmazlığı.
 [ARCHITECT] 💡 Sebep tespit edildi: GQA Repetition faktörü Mini-Titan konfigürasyonunda hatalı.
 [TITAN-SEC] 🛡️ Güvenlik Denetimi: Kod değişikliği güvenli. İmza: 0x88AF
 [ARCHITECT] 🛠️  Yama uygulandı: cfg.num_kv_heads = 2
@@ -2059,8 +2059,6 @@ mertformer-titan-core/  # proje kökü (git ls-files envanteri)
 │   ├── immutable_evidence_register.json  # JSON veri artefaktı
 │   ├── immutable_evidence_register.md  # dokümantasyon/rapor dosyası
 │   ├── investable_definition.md  # dokümantasyon/rapor dosyası
-│   ├── investor_deck.pptx  # artefakt
-│   ├── investor_deck_TR.pptx  # artefakt
 │   ├── kaggle_onefile_closure_verify.json  # JSON veri artefaktı
 │   ├── kernel_fuzz_report.json  # JSON veri artefaktı
 │   ├── known_limits_v1.md  # dokümantasyon/rapor dosyası
@@ -2562,7 +2560,7 @@ Bu proje **gizli ve tescillidir**. Tüm hakları **MertFormer AI Team** tarafın
 - **Microsoft Research**: BitNet kuantizasyon araştırması
 - **Liquid AI**: Liquid Neural Networks (CfC) ilhamı
 - **Araştırma Konumlandırması**: MertFormer, MoE yönlendirmesine liquid dinamiklerini entegre ederek zamansal zekaya ortogonal bir yaklaşım geliştirir.
-- **DeepSeek**: MLA literatürü için ilham (bu repoda mevcut implementasyon MLA etiketli GQA)
+- **DeepSeek**: MLA literatürü için ilham (bu repoda mevcut implementasyon GQA, grouped-query)
 - **HazyResearch / Stanford (Tri Dao ve ekip)**: Flash Attention 2
 - **PyTorch**: Temel eğitim ve çıkarım çerçevesi
 - **Triton**: Deneysel düşük-bit kernel çalışmaları
@@ -2646,7 +2644,7 @@ Gelecekteki **13B / 70B / 256B** araştırmaları koşullu bir hat olarak ele al
 ### 🚫 MertFormer Titan Ne Değildir?
 *   **Genel Bir Chatbot Değildir**: Özellikle kod orkestrasyonu ve yapısal mantık yürütme için optimize edilmiştir.
 *   **Bulut-Ölçekli Altyapı Rakibi Değildir**: Devasa veri merkezleri üzerinden genel bulut hizmeti vermek yerine, özel ve yerel cihaz içi "uç" (edge) yürütme için optimize edilmiştir.
-*   **Sıradan Bir Transformer Değildir**: CfC, MLA etiketli GQA attention ve BitNet katmanlarının standart dışı bir sentezidir.
+*   **Sıradan Bir Transformer Değildir**: CfC, GQA attention ve BitNet katmanlarının standart dışı bir sentezidir.
 
 ---
 

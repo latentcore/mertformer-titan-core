@@ -6,7 +6,7 @@
 - Model boyutu: 2.64B parametre (tasarım hedefi); mevcut ölçülen runtime toplamı: ~3.67B.
 - Kuantizasyon: BitNet 1.58‑bit.
 - Yönlendirme: LiquidRouter MoE (zamansal dinamik).
-- Dikkat: MLA etiketli GQA attention (mevcut implementasyon) ile uzun bağlam hazırlığı.
+- Dikkat: GQA attention (grouped-query, mevcut implementasyon) ile uzun bağlam hazırlığı.
 
 ## Eğitim Pipeline
 - Offline logits destekli distillation.

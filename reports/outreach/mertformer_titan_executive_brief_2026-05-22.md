@@ -27,7 +27,7 @@
 | **LiquidRouter** | This project's temporal routing component for MoE. It uses short-history convolutional context to help choose experts. |
 | **CfC / Liquid Neural Networks** | Continuous-time neural layers intended to model temporal flow or changing state over a sequence. |
 | **GQA (Grouped-Query Attention)** | An efficient attention mechanism that shares key/value heads across groups of query heads to reduce memory cost. |
-| **MLA-labeled GQA** | The code uses the class name MLA, but the current inspected attention implementation is best described as GQA-style, not a proven full latent-MLA bottleneck. |
+| **GQA (grouped-query)** | The attention class is named GQA (renamed from MLA on 2026-06-16); the inspected implementation is GQA-style, not a proven full latent-MLA bottleneck. |
 | **Knowledge Distillation** | Training a smaller student model with guidance from a larger teacher model. |
 | **Top-K logits / sparse shards** | A storage strategy that keeps only the highest-scoring teacher outputs instead of storing the full output distribution. |
 | **DDP (Distributed Data Parallel)** | A multi-GPU training method where GPUs process different batches and synchronize gradients. |
@@ -101,7 +101,7 @@ The architecture uses BitNet-style low-bit linear layers in core model paths. Th
 
 Important boundary: theoretical compression is not the same as measured deployment speed. Mobile or production performance requires trained checkpoints and device profiling.
 
-### 4.2 MLA-Labeled GQA Attention
+### 4.2 GQA Attention (Grouped-Query)
 
 The attention module is labeled MLA in the codebase, but the current implementation is best described as GQA-style attention:
 
@@ -130,7 +130,7 @@ Important boundary: the presence of the mechanism is code-level evidence; its fi
 |---|---|
 | Design target parameter count | 2.64B design/positioning target |
 | Measured runtime parameter count | approximately 3.67B in current repo artifacts |
-| Main architecture | BitNet-style + MoE + Liquid/CfC + MLA-labeled GQA |
+| Main architecture | BitNet-style + MoE + Liquid/CfC + GQA (grouped-query) |
 | Default model depth | 18 layers in main configuration |
 | Experts | 8 experts, top-2 routing |
 | Tokenizer direction | Llama-3-family tokenizer surface in the main path |
@@ -351,7 +351,7 @@ The current project should be reviewed as a serious pre-training architecture an
 |---|---|
 | Core architecture code paths | implemented in repository |
 | BitNet + MoE + Liquid direction | implemented surfaces exist |
-| Attention truth | MLA-labeled GQA-style attention |
+| Attention truth | GQA (grouped-query)-style attention |
 | Unit/integration tests | latest recorded closure context reports 370 passed, 4 skipped |
 | Offline verification | latest recorded closure context reports verify gate OK |
 | Training readiness | `TRAIN_ALLOWED / READY_REMOTE_BOOTSTRAP` |

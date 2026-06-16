@@ -6,7 +6,7 @@
 - Model size: 2.64B parameters (design target); latest measured runtime total: ~3.67B.
 - Quantization: BitNet 1.58-bit for weights.
 - Routing: LiquidRouter MoE with temporal dynamics.
-- Attention: MLA-labeled GQA attention (current implementation) with long-context readiness.
+- Attention: GQA attention (grouped-query, current implementation) with long-context readiness.
 - QINN: present as an experimental path, disabled by default in the current baseline configuration.
 
 ## Active Runtime Components

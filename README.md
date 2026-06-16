@@ -783,7 +783,7 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
       │  TRANSFORMER BLOCK [Layers 0-17]  (Iterative Process)                     │
       │                                                                           │
       │  ┌──────────────┐    ┌─────────────────────────────────────────────────┐  │
-      │  │ RMSNorm (F)  │───►│ [MLA-LABELED GQA] ATTENTION                    │   │
+      │  │ RMSNorm (F)  │───►│ GQA ATTENTION                                  │   │
       │  └──────────────┘    │ » GQA heads: Q=16, KV=8 (default profile)       │  │
       │                      │ » Op: Softmax(Q·K^T / √d) · V                   │  │
       │                      │ » H/W: FlashAttn2 Kernel (SRAM Optimized)       │  │
@@ -835,19 +835,19 @@ python3 scripts/chess_5080_onefile.py --mode train --profile strength_4060_24h
 The journey of data from Layer 0 to 17:
 
 *   **Layer 0 (Input Block):** First stop for vectorized data; basic word relationships are established and signal amplitude is stabilized using `RMSNorm`.
-*   **Layer 1 (Grammar Foundation):** Processing the most fundamental building blocks of language; the `MLA`-labeled GQA attention mechanism creates the initial focus map.
+*   **Layer 1 (Grammar Foundation):** Processing the most fundamental building blocks of language; the GQA attention mechanism creates the initial focus map.
 *   **Layer 2 (Efficiency Seal):** Simple context between words is established; thanks to the `BitNet 1.58-bit` structure, all weights are processed with the lowest energy in the $\{-1, 0, +1\}$ space.
 *   **Layer 3 (Expert Distribution):** Semantic density increases; the `MoE` structure directs data to the most appropriate 2 out of 8 experts.
 *   **Layer 4 (First Liquid Contact):** **Critical Threshold.** The first `LiquidMixer` (CfC) kicks in here, instilling the first sense of "temporal flow" and "momentum."
-*   **Layer 5 (Fluid Attention):** Data gaining fluidity is filtered by `MLA`-labeled GQA attention in a deeper dimension, strengthening contextual relationships.
+*   **Layer 5 (Fluid Attention):** Data gaining fluidity is filtered by GQA attention in a deeper dimension, strengthening contextual relationships.
 *   **Layer 6 (Complex Syntax):** Indirect structures within sentences are resolved; `MoE` experts continue specific analyses.
 *   **Layer 7 (Mathematical Stability):** Foundation for logical inferences is laid; the `UnitaryQINN` path remains available only when `use_qinn=true` (Build 30 V2 default: OFF).
-*   **Layer 8 (Abstraction):** Data evolves from concrete words to abstract concepts; the hierarchical structure is deepened with `MLA`-labeled GQA attention.
+*   **Layer 8 (Abstraction):** Data evolves from concrete words to abstract concepts; the hierarchical structure is deepened with GQA attention.
 *   **Layer 9 (Intent Analysis):** Decision mechanisms strengthen; the model begins to grasp user intent and the background of the question.
 *   **Layer 10 (Second Liquid Contact):** **Critical Threshold.** The second `LiquidMixer` activates here; data's temporal memory and speed are dynamically refreshed during complex reasoning.
 *   **Layer 11 (Strategic Decision):** Logic gaining fluidity is converted into strategic response parameters by `MoE` experts.
 *   **Layer 12 (High-Level Meaning):** Information approaches the "wisdom" level; the tone, purpose, and target of the sentence become clear at this stage.
-*   **Layer 13 (Response Construction):** The skeleton of the generated answer is built; `MLA`-labeled GQA attention focuses on the most critical points of the response.
+*   **Layer 13 (Response Construction):** The skeleton of the generated answer is built; GQA attention focuses on the most critical points of the response.
 *   **Layer 14 (Cultural Adaptation):** Technical details and cultural/idiomatic structures are injected into the model at this stage.
 *   **Layer 15 (Pre-Final Analysis):** The final major audit and quality control layer before the response takes its final form.
 *   **Layer 16 (Final Liquid Seal):** **Critical Threshold.** Final `LiquidMixer` engages; all information is transformed into a final "fluid intelligence" and temporal consistency is sealed before exit.
@@ -869,7 +869,7 @@ graph TD
     subgraph "The Engineering Heart of Every Layer (Block)"
         style BlockInner fill:#1a1a1a,stroke:#3fb1e3,stroke-width:2px
         BlockInner[Input] --> Norm1[RMSNorm]
-        Norm1 --> MLA["MLA-labeled GQA Attention (Current Implementation)"]
+        Norm1 --> MLA["GQA Attention (Current Implementation)"]
         MLA --> Norm2[RMSNorm]
         Norm2 --> Router{"LiquidRouter (Temporal Selector)"}
         Router -- "Top-2 Experts" --> MoE["BitSwiGLU Experts"]
@@ -1105,7 +1105,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 2026-03-07 21:25:01,761 - [INFO] - ✅ Secrets check completed.
 2026-03-07 21:25:01,761 - [INFO] - ✈️ STEP 2: ARCHITECTURAL AUDIT...
 2026-03-07 21:25:01,761 - [INFO] - ✅ Layer configuration validated: No Liquid/MoE conflicts.
-2026-03-07 21:25:01,761 - [INFO] - ✅ MLA Dimensions: Consistent (2048 features).
+2026-03-07 21:25:01,761 - [INFO] - ✅ GQA Dimensions: Consistent (2048 features).
 2026-03-07 21:25:01,761 - [INFO] - ✅ BitNet b1.58 logic: ACTIVE (Locked).
 2026-03-07 21:25:01,761 - [INFO] - ✈️ STEP 3: DATA & DISTILLATION TEST...
 2026-03-07 21:25:02,483 - [INFO] - ✈️ Offline mode: skipping Hugging Face connectivity checks.
@@ -1220,7 +1220,7 @@ The following block demonstrates how a MertFormer Agent analyzes and resolves a 
 
 ```bash
 [TITAN-ORCHESTRATOR] ⚡ Agent 'Architect' authorized...
-[ARCHITECT] 🔍 Analyzing: MLA Layer-4 dimension mismatch.
+[ARCHITECT] 🔍 Analyzing: GQA Layer-4 dimension mismatch.
 [ARCHITECT] 💡 Root cause found: GQA Repetition factor mismatch in Mini-Titan config.
 [TITAN-SEC] 🛡️ Security Audit: Patch safe. Signature: 0x88AF
 [ARCHITECT] 🛠️  Applied Patch: cfg.num_kv_heads = 2
@@ -2075,8 +2075,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── immutable_evidence_register.json  # JSON data artifact
 │   ├── immutable_evidence_register.md  # documentation/report file
 │   ├── investable_definition.md  # documentation/report file
-│   ├── investor_deck.pptx  # artifact
-│   ├── investor_deck_TR.pptx  # artifact
 │   ├── kaggle_onefile_closure_verify.json  # JSON data artifact
 │   ├── kernel_fuzz_report.json  # JSON data artifact
 │   ├── known_limits_v1.md  # documentation/report file
@@ -2578,7 +2576,7 @@ This project is **confidential and proprietary**. All rights are reserved by the
 - **Microsoft Research**: BitNet quantization research
 - **Liquid AI**: Liquid Neural Networks (CfC) inspiration
 - **Research Positioning**: MertFormer explores an orthogonal path to temporal intelligence by integrating liquid dynamics into MoE routing.
-- **DeepSeek**: MLA literature inspiration (current implementation in this repo is MLA-labeled GQA)
+- **DeepSeek**: MLA literature inspiration (current implementation in this repo is GQA, grouped-query)
 - **HazyResearch / Stanford (Tri Dao et al.)**: Flash Attention 2
 - **PyTorch**: Core training and inference framework
 - **Triton**: Experimental low-bit kernel research
@@ -2661,7 +2659,7 @@ Future **13B / 70B / 256B** exploration is treated as a conditional research tra
 ### 🚫 What MertFormer Titan Is NOT
 *   **Not a General Chatbot**: Optimized specifically for code orchestration and structural reasoning.
 *   **Not a Cloud-Scale Infrastructure Competitor**: Designed for private, local execution rather than massive web-scale serving via data centers.
-*   **Not a Legacy Transformer**: This is a non-standard synthesis of CfC, MLA-labeled GQA attention, and BitNet layers.
+*   **Not a Legacy Transformer**: This is a non-standard synthesis of CfC, GQA attention, and BitNet layers.
 
 ---
 

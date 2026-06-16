@@ -472,8 +472,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── immutable_evidence_register.json  # JSON data artifact
 │   ├── immutable_evidence_register.md  # documentation/report file
 │   ├── investable_definition.md  # documentation/report file
-│   ├── investor_deck.pptx  # artifact
-│   ├── investor_deck_TR.pptx  # artifact
 │   ├── kaggle_onefile_closure_verify.json  # JSON data artifact
 │   ├── kernel_fuzz_report.json  # JSON data artifact
 │   ├── known_limits_v1.md  # documentation/report file
