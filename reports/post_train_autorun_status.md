@@ -1,24 +1,15 @@
 # Post-Train Autorun Status
 
 - schema: `post_train_autorun_status_v1`
-- mode: `plan-only`
-- status: `planned`
-- generated_utc: `2026-06-16T19:04:46.313890+00:00`
+- mode: `demo-only`
+- status: `completed`
+- generated_utc: `2026-06-16T21:26:32.152934+00:00`
 - checkpoint: `<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt`
 
 ## Steps
 
 | Step | Status | Return Code | Notes |
 | --- | --- | --- | --- |
-| `checkpoint_resolution` | `planned` | `n/a` | Resolve best/latest checkpoint for post-train tasks. |
-| `benchmarks_internal` | `planned` | `n/a` | Run internal benchmark suite on the resolved checkpoint. |
-| `golden_eval` | `planned` | `n/a` | Run golden sample evaluation on the resolved checkpoint. |
-| `demo_bundle_manifest` | `planned` | `n/a` | Build demo bundle manifest and summary. |
-| `mobile_export` | `planned` | `n/a` | Refresh ONNX/mobile export artifacts. |
-| `logbook_build` | `planned` | `n/a` | Append run information to the unified logbook. |
-| `readme_sync` | `planned` | `n/a` | Refresh manifest/doc sync and claim alignment. |
-| `closure_governance_pack` | `planned` | `n/a` | Refresh grouped closure and truth reports. |
-| `release_build30` | `planned` | `n/a` | Refresh release zip package and release snapshot. |
-| `artifact_release_zip` | `planned` | `n/a` | Refresh tracked artifact release zip. |
-| `training_outputs_bundle` | `planned` | `n/a` | Build the downloadable training outputs bundle zip plus manifest. |
-| `evidence_pack` | `planned` | `n/a` | Write the current evidence pack summary. |
+| `checkpoint_resolution` | `completed` | `0` | <REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt |
+| `demo_bundle_manifest` | `completed` | `0` | A trained checkpoint was resolved for post-train closure. |
+| `evidence_pack` | `completed` | `0` | reports/final_evidence_pack.md refreshed. |

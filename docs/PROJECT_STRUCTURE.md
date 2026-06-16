@@ -33,14 +33,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── ADR-0003-chess-oneclick-delivery-runtime-contract.md  # documentation/report file
 │   ├── ADR-0004-blocker-fix-pass-core-override.md  # documentation/report file
 │   └── ADR-0005-parallel-precompute-orchestration.md  # documentation/report file
-├── applications/  # directory
-│   └── anthropic/  # directory
-│       ├── PACKET_POINTER_20260419.md  # documentation/report file
-│       ├── README.md  # primary documentation (EN)
-│       ├── measured_evidence_summary.md  # documentation/report file
-│       ├── mertformer_anthropic_packet_20260419.zip.sha256  # artifact checksum
-│       ├── project_summary.md  # documentation/report file
-│       └── why_anthropic_science_of_scaling.md  # documentation/report file
 ├── apps/  # directory
 │   └── chess_gui/  # directory
 │       ├── checkpoints/  # directory
@@ -52,10 +44,28 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │       ├── launch_mertformer_chess_gui.command  # artifact
 │       └── play_mertformer_chess_web.py  # Python module/script (module for play mertformer chess web)
 ├── archive/  # directory
-│   └── documents/  # directory
-│       ├── README_TR_before_final_simplification.md  # documentation/report file
-│       ├── README_before_final_simplification.md  # documentation/report file
-│       └── README_snapshot_source.md  # documentation/report file
+│   ├── ablations/  # directory
+│   │   └── liquid_ablation_pilot_note_2026-06-15.md  # documentation/report file
+│   ├── audits/  # directory
+│   │   └── codex_deep_audit_DE.md  # documentation/report file
+│   ├── closure/  # directory
+│   │   ├── closure_report_build30_v2.md  # documentation/report file
+│   │   ├── presentation_readiness_final.md  # documentation/report file
+│   │   └── report_truth_matrix.md  # documentation/report file
+│   ├── documents/  # directory
+│   │   ├── README_TR_before_final_simplification.md  # documentation/report file
+│   │   ├── README_before_final_simplification.md  # documentation/report file
+│   │   └── README_snapshot_source.md  # documentation/report file
+│   ├── templates/  # directory
+│   │   ├── cold_vs_warm.md  # documentation/report file
+│   │   ├── cost_model.md  # documentation/report file
+│   │   ├── drift_report.md  # documentation/report file
+│   │   ├── efficiency_report.md  # documentation/report file
+│   │   ├── notes.md  # documentation/report file
+│   │   ├── scaling_breakpoints.md  # documentation/report file
+│   │   └── stats.md  # documentation/report file
+│   ├── readme_TR_full_2026-06-16.md  # documentation/report file
+│   └── readme_full_2026-06-16.md  # documentation/report file
 ├── artifacts/  # directory
 │   └── mertformer_release.zip.sha256  # artifact checksum
 ├── assets/  # directory
@@ -119,9 +129,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── PROJECT_MASTER_TRUTH_TR.md  # Turkish document counterpart
 │   └── QUICKSTART_CPU.md  # documentation/report file
 ├── economics/  # directory
-│   ├── cost_model.md  # documentation/report file
 │   ├── cost_model_TR.md  # Turkish document counterpart
-│   ├── efficiency_report.md  # documentation/report file
 │   ├── efficiency_report_TR.md  # Turkish document counterpart
 │   └── flops_estimator.py  # Python module/script (module for flops estimator)
 ├── eval/  # directory
@@ -143,7 +151,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── exp_001_baseline/  # directory
 │       ├── config.yaml  # YAML configuration file
 │       ├── metrics.json  # JSON data artifact
-│       ├── notes.md  # documentation/report file
 │       └── notes_TR.md  # Turkish document counterpart
 ├── interfaces/  # directory
 │   ├── backlog_item_v1.schema.json  # JSON schema artifact
@@ -172,7 +179,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── qinn.py  # Python module/script (QINN experimental regulation layer (feature-flag))
 │   └── world_model_head.py  # Python module/script (world-model auxiliary head)
 ├── limits/  # directory
-│   ├── scaling_breakpoints.md  # documentation/report file
 │   ├── scaling_breakpoints_TR.md  # Turkish document counterpart
 │   └── stress_curves.png  # media asset
 ├── logs/  # directory
@@ -317,24 +323,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   ├── smoke_train_metrics.json  # JSON data artifact
 │   │   ├── summary.json  # JSON data artifact
 │   │   └── summary.md  # documentation/report file
-│   ├── commercial_handover/  # directory
-│   │   ├── contract_terms_checklist.md  # documentation/report file
-│   │   ├── contract_terms_checklist_TR.md  # Turkish document counterpart
-│   │   ├── handover_scope.md  # documentation/report file
-│   │   ├── handover_scope_TR.md  # Turkish document counterpart
-│   │   ├── known_issues.md  # documentation/report file
-│   │   ├── known_issues_TR.md  # Turkish document counterpart
-│   │   ├── ownership_and_role.md  # documentation/report file
-│   │   ├── ownership_and_role_TR.md  # Turkish document counterpart
-│   │   ├── sla_kpi_90_180.md  # documentation/report file
-│   │   └── sla_kpi_90_180_TR.md  # Turkish document counterpart
-│   ├── outreach/  # directory
-│   │   ├── github_release_post.md  # documentation/report file
-│   │   ├── huggingface_launch.md  # documentation/report file
-│   │   ├── liquid_ablation_pilot_note_2026-06-15.md  # documentation/report file
-│   │   ├── mertformer_titan_1_page_evidence_packet_2026-05-22.md  # documentation/report file
-│   │   ├── mertformer_titan_executive_brief_2026-05-22.md  # documentation/report file
-│   │   └── reddit_post.md  # documentation/report file
 │   ├── pilots/  # directory
 │   │   ├── README.md  # primary documentation (EN)
 │   │   └── README_TR.md  # Turkish document counterpart
@@ -390,18 +378,15 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── closure_57_matrix.md  # documentation/report file
 │   ├── closure_57_matrix_TR.md  # Turkish document counterpart
 │   ├── closure_release_truthsync_master_protocol.md  # documentation/report file
-│   ├── closure_report_build30_v2.md  # documentation/report file
 │   ├── closure_risk_register.md  # documentation/report file
 │   ├── cloud_readiness_report.md  # documentation/report file
 │   ├── code_truth_contract.md  # documentation/report file
 │   ├── code_truth_delta_audit.json  # JSON data artifact
 │   ├── code_truth_delta_audit.md  # documentation/report file
-│   ├── codex_deep_audit_DE.md  # documentation/report file
 │   ├── codex_deep_audit_DE_TR.md  # Turkish document counterpart
 │   ├── codex_deep_audit_EN.md  # documentation/report file
 │   ├── codex_deep_audit_EN_TR.md  # Turkish document counterpart
 │   ├── codex_deep_audit_TR.md  # Turkish document counterpart
-│   ├── commercial_handover_pack.md  # documentation/report file
 │   ├── contamination_report_build30.md  # documentation/report file
 │   ├── current_delta_addendum_2026_05_15.md  # documentation/report file
 │   ├── customer_ready_definition.md  # documentation/report file
@@ -427,7 +412,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── drone_sitl_demo_TR.md  # Turkish document counterpart
 │   ├── dry_run_report.json  # JSON data artifact
 │   ├── dry_run_report.md  # documentation/report file
-│   ├── duplicate_source_of_truth_report.md  # documentation/report file
 │   ├── duplicate_zip_guard_report.json  # JSON data artifact
 │   ├── edge_readiness_plan.md  # documentation/report file
 │   ├── efficiency_convergence_analysis.md  # documentation/report file
@@ -451,15 +435,11 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── final_checksum_manifest.json  # JSON data artifact
 │   ├── final_commands.md  # documentation/report file
 │   ├── final_evidence_pack.md  # documentation/report file
-│   ├── final_freeze_manifest.json  # JSON data artifact
-│   ├── final_freeze_manifest.md  # documentation/report file
-│   ├── final_master_plan_freeze.md  # documentation/report file
 │   ├── final_orchestrator_status.json  # JSON data artifact
 │   ├── final_orchestrator_status.md  # documentation/report file
 │   ├── final_repo_audit.md  # documentation/report file
 │   ├── final_sync_matrix.md  # documentation/report file
 │   ├── final_sync_matrix_TR.md  # Turkish document counterpart
-│   ├── final_truth_constitution.md  # documentation/report file
 │   ├── final_truth_matrix.md  # documentation/report file
 │   ├── folder_drift_report.json  # JSON data artifact
 │   ├── folder_structure_policy.md  # documentation/report file
@@ -468,11 +448,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── go_nogo_signoff_onepager_TR.md  # Turkish document counterpart
 │   ├── go_status_matrix.md  # documentation/report file
 │   ├── go_status_matrix_TR.md  # Turkish document counterpart
-│   ├── gtm_master_plan.md  # documentation/report file
 │   ├── hardening_bundle_summary.json  # JSON data artifact
 │   ├── immutable_evidence_register.json  # JSON data artifact
 │   ├── immutable_evidence_register.md  # documentation/report file
-│   ├── investable_definition.md  # documentation/report file
 │   ├── kaggle_onefile_closure_verify.json  # JSON data artifact
 │   ├── kernel_fuzz_report.json  # JSON data artifact
 │   ├── known_limits_v1.md  # documentation/report file
@@ -482,7 +460,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── kpi_report_v1.json  # JSON data artifact
 │   ├── latency_baseline.json  # JSON data artifact
 │   ├── legal_cleanroom_signoff_internal.md  # documentation/report file
-│   ├── legal_ip_pack.md  # documentation/report file
 │   ├── license_gate_report.json  # JSON data artifact
 │   ├── linkcheck_report.json  # JSON data artifact
 │   ├── local_50step_proof_report.json  # JSON data artifact
@@ -505,7 +482,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── one_command_full_sop_summary.md  # documentation/report file (single-command end-to-end SOP summary; overwritten each run)
 │   ├── one_pager.md  # documentation/report file
 │   ├── one_pager_TR.md  # Turkish document counterpart
-│   ├── outreach_compute_sponsorship_messages.md  # documentation/report file
 │   ├── owner_matrix.md  # documentation/report file
 │   ├── ownership_proof_bundle.json  # JSON data artifact
 │   ├── package_smoke_report.json  # JSON data artifact
@@ -514,8 +490,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── phase2_carryover.md  # documentation/report file
 │   ├── pilot_acceptance_signoff.md  # documentation/report file
 │   ├── pilot_acceptance_signoff_TR.md  # Turkish document counterpart
-│   ├── pilot_offer_packages.md  # documentation/report file
-│   ├── pilot_offer_packages_TR.md  # Turkish document counterpart
 │   ├── pilot_readiness_kit.md  # documentation/report file
 │   ├── pilot_readiness_kit_TR.md  # Turkish document counterpart
 │   ├── plot_contract.md  # documentation/report file
@@ -526,13 +500,11 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── post_train_autorun_status.json  # JSON data artifact
 │   ├── post_train_autorun_status.md  # documentation/report file
 │   ├── post_train_state_machine.md  # documentation/report file
-│   ├── presentation_readiness_final.md  # documentation/report file
 │   ├── proje_zip_rebuild_manifest_v2.json  # JSON data artifact
 │   ├── proje_zip_rebuild_manifest_v2.md  # documentation/report file
 │   ├── quality_gate_matrix.md  # documentation/report file
 │   ├── ram_guard_report.json  # JSON data artifact
 │   ├── release_closure_lock_report.json  # JSON data artifact
-│   ├── release_closure_note.md  # documentation/report file
 │   ├── release_snapshot.md  # documentation/report file
 │   ├── release_snapshot_TR.md  # Turkish document counterpart
 │   ├── rented_machine_bringup.md  # documentation/report file
@@ -542,7 +514,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── repo_external_handoff.md  # documentation/report file
 │   ├── report_accuracy_audit.md  # documentation/report file
 │   ├── report_accuracy_audit_TR.md  # Turkish document counterpart
-│   ├── report_truth_matrix.md  # documentation/report file
 │   ├── repro_build_report.json  # JSON data artifact
 │   ├── resume_compat_report.json  # JSON data artifact
 │   ├── review_checklist.md  # documentation/report file
@@ -565,8 +536,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── start_gate_report.json  # JSON data artifact
 │   ├── startup_selfcheck_report.json  # JSON data artifact
 │   ├── static_analysis_report.json  # JSON data artifact
-│   ├── strategic_value.md  # documentation/report file
-│   ├── strategic_value_TR.md  # Turkish document counterpart
 │   ├── support_maintenance_policy.md  # documentation/report file
 │   ├── surface_lifecycle_matrix.md  # documentation/report file
 │   ├── system_hardware.md  # documentation/report file
@@ -844,9 +813,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── tr/  # directory
 │   │   ├── README.md  # primary documentation (EN)
 │   │   └── README_TR.md  # Turkish document counterpart
-│   ├── drift_report.md  # documentation/report file
 │   ├── drift_report_TR.md  # Turkish document counterpart
-│   ├── stats.md  # documentation/report file
 │   ├── stats_TR.md  # Turkish document counterpart
 │   └── tokenizer.json  # JSON data artifact
 ├── tools/  # directory
@@ -867,7 +834,6 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── trainer_data.py  # Python module/script (module for trainer data)
 │   └── trainer_eval.py  # Python module/script (module for trainer eval)
 ├── training_dynamics/  # directory
-│   ├── cold_vs_warm.md  # documentation/report file
 │   └── cold_vs_warm_TR.md  # Turkish document counterpart
 ├── utils/  # directory
 │   ├── __init__.py  # Python module/script (utils package initializer and exports)
