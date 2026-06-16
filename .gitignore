@@ -114,3 +114,12 @@ reports/gtm_master_plan.md
 reports/commercial_handover_pack.md
 reports/legal_ip_pack.md
 reports/investable_definition.md
+
+# Redundant/superseded generated closure reports (regenerated locally by the closure
+# builders; canonical entry is the root STATUS/TRUTH_MATRIX/BACKLOG scaffold).
+reports/duplicate_source_of_truth_report.md
+reports/final_truth_constitution.md
+reports/final_master_plan_freeze.md
+reports/release_closure_note.md
+reports/final_freeze_manifest.md
+reports/final_freeze_manifest.json
