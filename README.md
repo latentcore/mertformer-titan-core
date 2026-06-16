@@ -52,7 +52,7 @@ Current exact repo-side readiness: `TRAIN_ALLOWED` with reason `READY_REMOTE_BOO
 - Costly compute is not a personal-funding requirement; the actual gate is truthful verified evidence and coherent systems signal.
 
 ### Explicit Implementation Notes
-- `MLA-labeled GQA attention (current implementation)`
+- `GQA attention (grouped-query, current implementation)`
 - `Routing policy: token-choice top-k.`
 - `prompts/system_v1.txt` remains the only canonical system prompt surface in this closure pass.
 - Closure-57 transparency note: `out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]`
@@ -559,9 +559,9 @@ Security, provenance, reproducibility, and ops notes.
 <a id="overview"></a>
 ## 🎯 Overview
 
-MertFormer Titan is a **2.64B design-target parameter** language model direction for **on-device inference** on mobile platforms. Combining **BitNet 1.58-bit quantization**, **Liquid Neural Networks**, **Sparse Mixture of Experts (MoE)**, and **MLA-labeled GQA attention (current implementation)**, it targets strong low-cost coding-model efficiency after training while keeping capability claims blocked until checkpoint-bound benchmarks exist.
+MertFormer Titan is a **2.64B design-target parameter** language model direction for **on-device inference** on mobile platforms. Combining **BitNet 1.58-bit quantization**, **Liquid Neural Networks**, **Sparse Mixture of Experts (MoE)**, and **GQA attention (grouped-query, current implementation)**, it targets strong low-cost coding-model efficiency after training while keeping capability claims blocked until checkpoint-bound benchmarks exist.
 
-Architecture truth note: `layers/mla.py` class naming is `MLA`, while the current attention core is GQA-based (`num_kv_heads` projection + KV head replication). Full latent-MLA bottleneck remains a roadmap item.
+Architecture truth note: `layers/mla.py` defines the `GQA` class (grouped-query attention: `num_kv_heads` projection + KV head replication). A true latent-MLA (low-rank KV bottleneck) is intentionally NOT implemented and remains a roadmap item. The class was formerly named `MLA`; see `DECISIONS.md` ("MLA -> GQA rename").
 
 Name expansion:
 - **MERT**: **Modular Edge Reasoning Transformer**
@@ -616,7 +616,7 @@ See the full map: [`docs/CHAIN_MAP.md`](docs/CHAIN_MAP.md)
 - **Dynamic**: Time-constant adaptation with jitter boost for stability.
 - **Academic value**: A new paradigm in conditional computation.
 
-### 3. **MLA-labeled GQA Attention (Current Implementation)** 🧠
+### 3. **GQA Attention (Grouped-Query, Current Implementation)** 🧠
 - GQA-based KV sharing (`num_heads=16`, `num_kv_heads=8` default profile).
 - LLaMA-3 compatible RoPE (interleaved & decoupled)
 - Optional hierarchical KV cache path (short/long split) for decode efficiency.
@@ -890,7 +890,7 @@ MertFormer Titan (2.64B Parameters)
 ├── Embedding Layer (128256 vocab, Llama-3 tokenizer)
 ├── 18× Transformer Blocks
 │   ├── RMSNorm (fused with torch.compile)
-│   ├── MLA-labeled GQA attention (current implementation)
+│   ├── GQA attention (grouped-query, current implementation)
 │   │   ├── BitLinear Projections (Q, K, V, O)
 │   │   ├── RoPE (theta=100K, long-context ready)
 │   │   ├── QK Normalization (stability)

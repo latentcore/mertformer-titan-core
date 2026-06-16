@@ -202,9 +202,15 @@ def apply_rope_optimized(
 
 
 
-class MLA(nn.Module):
+class GQA(nn.Module):
     """
-    Multi-Head Latent Attention - LLaMA-3 compatible attention mechanism.
+    Grouped-Query Attention (GQA) - LLaMA-3 compatible attention mechanism.
+
+    Implemented as GQA: a reduced set of KV heads (``num_kv_heads``) is
+    projected and then replicated to the query heads at runtime. A true
+    latent-MLA (low-rank KV bottleneck) is intentionally NOT implemented.
+    Formerly exported as ``MLA``; renamed to match the implementation
+    (see DECISIONS.md: "MLA -> GQA rename").
 
     Features:
     - LLaMA-3 interleaved RoPE
@@ -216,7 +222,7 @@ class MLA(nn.Module):
     """
 
     def __init__(self) -> None:
-        """MLA initializer."""
+        """GQA initializer."""
         super().__init__()
         # Config-driven parameters
         self.hidden_size = int(cfg.hidden_size)

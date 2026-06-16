@@ -16,7 +16,7 @@
 The AI ecosystem is evolving from massive cloud-based models toward on-device, energy-efficient, and privacy-focused Small Language Models (SLMs). At the forefront of this evolution, the **MertFormer Titan (Onyx Storm) v1.0 (Build 30 V2)** project is a strategic synthesis of the four most advanced paradigms in modern deep learning literature:
 
 1.  **BitNet 1.58-bit Quantization** (Efficiency)
-2.  **MLA-labeled GQA Attention (current implementation)** (Memory)
+2.  **GQA Attention (grouped-query, current implementation)** (Memory)
 3.  **Sparse Mixture of Experts (MoE)** (Capacity)
 4.  **Liquid Neural Networks (LNN)** (Dynamism)
 
@@ -46,8 +46,8 @@ $$w_q = \text{clamp}(\text{round}(\frac{w}{\gamma + \epsilon}), -1, 1)$$
 
 *   **Residual Scaling Effect (Target):** Signal stability is maintained across 18 layers using the 1/√2 (1/sqrt(2)) factor; empirical validation required.
 
-### 2.2 MLA-labeled GQA Attention (current implementation)
-The `mla.py` module currently implements a GQA-style attention core under the `MLA` class name. KV heads are reduced and shared (`num_kv_heads`) and then broadcast to query heads at runtime.
+### 2.2 GQA Attention (grouped-query, current implementation)
+The `mla.py` module implements a GQA attention core in the `GQA` class. KV heads are reduced and shared (`num_kv_heads`) and then broadcast to query heads at runtime. (The class was formerly named `MLA`; renamed to match the implementation — a true latent-MLA bottleneck is not implemented.)
 
 *   **Current mechanism:** GQA projection + KV head replication (not latent down/up bottleneck).
 *   **Cache efficiency path:** Optional hierarchical short/long KV cache mode can reduce decode-time memory pressure (target behavior; profile-dependent).
@@ -189,7 +189,7 @@ The architecture is technically consistent and the hardware target is precise, w
 ## 9. Moat Validation & Release Roadmap
 
 Steps to validate the project's "Moat" according to VC standards:
-1. **Whitepaper**: Publication of a technical paper proving the mathematical synergy of `LiquidRouter + MLA-labeled GQA + BitNet`.
+1. **Whitepaper**: Publication of a technical paper proving the mathematical synergy of `LiquidRouter + GQA + BitNet`.
 2. **Open Benchmarks**: Independent verification of MMLU, GSM8K, and HumanEval scores.
 3. **Live Demo**: A video demonstrating 100% on-device code generation on a physical Samsung S25.
 

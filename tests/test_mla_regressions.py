@@ -8,7 +8,7 @@ project_root = str(Path(__file__).parent.parent)
 sys.path.insert(0, project_root)
 
 from config.config import cfg
-from layers.mla import MLA, RotaryEmbedding
+from layers.mla import GQA, RotaryEmbedding
 
 
 @contextmanager
@@ -50,7 +50,7 @@ def test_rotary_cache_growth_no_exception():
 
 def test_decoupled_rope_with_none_rope_dim_is_safe():
     with _cfg_patch(**_mla_tiny_overrides(rope_dim=None)):
-        mla = MLA()
+        mla = GQA()
         x = torch.randn(1, 4, 128)
         y, _ = mla(x, decoupled_rope=True, past_key_value=None, use_cache=False)
         assert y.shape == (1, 4, 128)
@@ -59,7 +59,7 @@ def test_decoupled_rope_with_none_rope_dim_is_safe():
 
 def test_decoupled_rope_with_small_custom_rope_dim_is_safe():
     with _cfg_patch(**_mla_tiny_overrides(rope_dim=4)):
-        mla = MLA()
+        mla = GQA()
         x = torch.randn(1, 4, 128)
         y, _ = mla(x, decoupled_rope=True, past_key_value=None, use_cache=False)
         assert y.shape == (1, 4, 128)
@@ -68,7 +68,7 @@ def test_decoupled_rope_with_small_custom_rope_dim_is_safe():
 
 def test_mla_has_no_static_causal_mask_buffer():
     with _cfg_patch(**_mla_tiny_overrides(rope_dim=None)):
-        mla = MLA()
+        mla = GQA()
         buffer_names = dict(mla.named_buffers()).keys()
         assert "causal_mask" not in buffer_names
 
@@ -78,7 +78,7 @@ def test_mla_rope_base_fallback_matches_config_default():
     try:
         delattr(cfg, "rope_base")
         with _cfg_patch(**_mla_tiny_overrides(rope_dim=None)):
-            mla = MLA()
+            mla = GQA()
             assert mla.rope_base == 100000.0
             assert mla.rotary_emb.base == 100000.0
     finally:
@@ -87,7 +87,7 @@ def test_mla_rope_base_fallback_matches_config_default():
 
 def test_mla_kv_cache_offset_path_shape_and_finite():
     with _cfg_patch(**_mla_tiny_overrides(rope_dim=None)):
-        mla = MLA()
+        mla = GQA()
         x_prefill = torch.randn(1, 6, 128)
         y_prefill, past = mla(x_prefill, decoupled_rope=False, past_key_value=None, use_cache=True)
         assert y_prefill.shape == (1, 6, 128)
@@ -108,7 +108,7 @@ def test_flash_attn_disabled_fallback_still_runs(monkeypatch):
 
     monkeypatch.setattr(mla_mod, "FLASH_ATTN_AVAILABLE", False)
     with _cfg_patch(**_mla_tiny_overrides(rope_dim=None)):
-        mla = mla_mod.MLA()
+        mla = mla_mod.GQA()
         mla.train()
         x = torch.randn(1, 4, 128)
         y, _ = mla(x, decoupled_rope=False, past_key_value=None, use_cache=False)

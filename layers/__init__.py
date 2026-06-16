@@ -19,7 +19,7 @@ from layers.bitlinear import BitLinear, activation_quant, weight_quant
 from layers.ffn import MertFormerFFN
 from layers.liquid import LiquidCell, LiquidMixer
 from layers.mertformer_block import MertFormerBlock, RMSNorm
-from layers.mla import MLA, RotaryEmbedding, apply_rope_optimized, rotate_half
+from layers.mla import GQA, RotaryEmbedding, apply_rope_optimized, rotate_half
 from layers.moe import MoE, BitSwiGLU, LiquidRouter
 
 __all__ = [
@@ -27,8 +27,8 @@ __all__ = [
     "BitSwiGLU",
     "LiquidCell",
     "LiquidMixer",
+    "GQA",
     "LiquidRouter",
-    "MLA",
     "MertFormerBlock",
     "MertFormerFFN",
     "MoE",

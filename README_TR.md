@@ -53,7 +53,7 @@ Mevcut exact repo-side readiness: `TRAIN_ALLOWED`, reason `READY_REMOTE_BOOTSTRA
 - Büyük compute, kişisel finansman zorunluluğu değildir; asıl kapı dürüst verified evidence ve coherent systems signal’dır.
 
 ### Açık Teknik Notlar
-- `MLA etiketli GQA dikkat bloğu (mevcut implementasyon)`
+- `GQA dikkat bloğu (grouped-query, mevcut implementasyon)`
 - `Yönlendirme politikası: token-choice top-k.`
 - `prompts/system_v1.txt`, bu closure turunda tek kanonik system prompt yüzeyi olarak kilitli kalır.
 - Closure-57 şeffaflık notu: `out_of_scope_pending_ids=[8, 9, 11, 12, 51, 52, 54, 55, 56, 57]`
@@ -537,9 +537,9 @@ Güvenlik, veri kökeni, yeniden üretilebilirlik ve operasyon notları.
 <a id="genel-bakış"></a>
 ## 🎯 Genel Bakış
 
-MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** için tasarlanmış **2.64B tasarım-hedef parametreli** bir dil modeli yönüdür. **BitNet 1.58-bit kuantizasyon**, **Liquid Neural Networks**, **Seyrek Uzmanlar Karışımı (MoE)** ve **MLA etiketli GQA dikkat bloğu (mevcut implementasyon)** teknolojilerini birleştirerek eğitim sonrası güçlü ve düşük maliyetli kodlama modeli verimliliği hedefler; capability iddiaları checkpoint-bound benchmark kanıtı oluşana kadar kapalıdır.
+MertFormer Titan, mobil platformlarda **cihaz içi çıkarım (inference)** için tasarlanmış **2.64B tasarım-hedef parametreli** bir dil modeli yönüdür. **BitNet 1.58-bit kuantizasyon**, **Liquid Neural Networks**, **Seyrek Uzmanlar Karışımı (MoE)** ve **GQA dikkat bloğu (grouped-query, mevcut implementasyon)** teknolojilerini birleştirerek eğitim sonrası güçlü ve düşük maliyetli kodlama modeli verimliliği hedefler; capability iddiaları checkpoint-bound benchmark kanıtı oluşana kadar kapalıdır.
 
-Mimari doğruluk notu: `layers/mla.py` sınıf adı `MLA` olarak korunur; mevcut attention çekirdeği GQA tabanlıdır (`num_kv_heads` projeksiyonu + KV head çoğaltma). Tam latent-MLA bottleneck yol haritası kalemidir.
+Mimari doğruluk notu: `layers/mla.py`, `GQA` sınıfını tanımlar (grouped-query attention: `num_kv_heads` projeksiyonu + KV head çoğaltma). Gerçek latent-MLA (düşük-ranklı KV bottleneck) bilinçli olarak uygulanmamıştır ve yol haritası kalemidir. Sınıf eskiden `MLA` adındaydı; bkz. `DECISIONS.md` ("MLA -> GQA rename").
 
 İsim açılımı:
 - **MERT**: **Modüler Uçta Akıl Yürütme Transformer**
@@ -594,7 +594,7 @@ Tam harita: [`docs/CHAIN_MAP_TR.md`](docs/CHAIN_MAP_TR.md)
 - **Dinamik**: Stabilite için zaman sabiti adaptasyonu ve jitter desteği.
 - **Akademik Değer**: Koşullu hesaplamada (conditional computation) yeni bir paradigma.
 
-### 3. **MLA Etiketli GQA Dikkat Bloğu (Mevcut Implementasyon)** 🧠
+### 3. **GQA Dikkat Bloğu (Grouped-Query, Mevcut Implementasyon)** 🧠
 - GQA tabanlı KV paylaşımı (`num_heads=16`, `num_kv_heads=8` varsayılan profil).
 - LLaMA-3 uyumlu RoPE (interleaved & decoupled)
 - Opsiyonel hiyerarşik KV cache yolu (kısa/uzun ayrımı) ile decode verimliliği.
@@ -869,7 +869,7 @@ MertFormer Titan (2.64B Parametre)
 ├── Gömme Katmanı (Embedding Layer) (128256 kelime hazinesi, Llama-3 tokenizer)
 ├── 18× Transformer Blokları
 │   ├── RMSNorm (torch.compile ile birleştirilmiş)
-│   ├── MLA etiketli GQA dikkat bloğu (mevcut implementasyon)
+│   ├── GQA dikkat bloğu (grouped-query, mevcut implementasyon)
 │   │   ├── BitLinear İzdüşümleri (Q, K, V, O)
 │   │   ├── RoPE (theta=100K, uzun bağlam hazır)
 │   │   ├── QK Normalizasyonu (stabilite)

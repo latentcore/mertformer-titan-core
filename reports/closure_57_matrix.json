@@ -1,6 +1,6 @@
 {
   "schema": "closure_57_matrix_v1",
-  "generated_at_utc": "2026-06-15T07:33:30Z",
+  "generated_at_utc": "2026-06-16T15:52:27Z",
   "total_items": 57,
   "green_items": 57,
   "all_green": true,
@@ -259,7 +259,7 @@
     {
       "id": 18,
       "area": "model",
-      "name": "mla",
+      "name": "gqa attention",
       "code": true,
       "integration": true,
       "test": true,

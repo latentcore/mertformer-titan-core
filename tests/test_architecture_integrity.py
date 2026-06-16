@@ -40,7 +40,7 @@ def patched_cfg():
     cfg.device = "cpu"
     cfg.max_seq_len = 128
     
-    # [FIX] Ensure MLA shape consistency: 4 * 32 = 128
+    # [FIX] Ensure GQA shape consistency: 4 * 32 = 128
     cfg.num_heads = 4
     cfg.head_dim = 32
     # [FIX] Keep KV heads <= Q heads and divisible for GQA repeat_interleave

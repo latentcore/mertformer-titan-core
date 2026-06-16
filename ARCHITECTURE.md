@@ -26,9 +26,10 @@
 - **BitLinear (BitNet b1.58)** — ternary {-1,0,+1} weight simulation via straight-through
   estimation; the routing/`tau`/gate/norm layers are kept FP16/BF16 (see `layers/bitnet_patch.py`
   whitelist) because quantizing routing collapses expert selection. *Why:* edge/NPU memory budget.
-- **GQA attention (`layers/mla.py`, class still named `MLA`)** — grouped-query KV (8 KV heads) keeps
+- **GQA attention (`layers/mla.py`, class `GQA`)** — grouped-query KV (8 KV heads) keeps
   the KV cache small for long context on-device. *Why:* mobile KV-cache footprint. (Naming: a true
-  latent-MLA is intentionally NOT implemented; see DECISIONS / README truth-boundary.)
+  latent-MLA low-rank KV bottleneck is intentionally NOT implemented; the class was renamed
+  `MLA` -> `GQA` to match the implementation — see DECISIONS / README truth-boundary.)
 - **Sparse MoE (`layers/moe.py`)** — 8 experts, top-2 routing + a shared expert, Switch-style
   capacity control with overflow drop + renormalize, plus router-collapse detection/recovery.
   *Why:* more capacity at ~constant active FLOPs.

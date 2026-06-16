@@ -29,7 +29,7 @@ from layers.cognitive_extensions import (
 )
 from layers.lifelong_safety import LifelongSafetyLayer
 from layers.liquid import LiquidMixer
-from layers.mla import MLA
+from layers.mla import GQA
 from layers.moe import MoE
 from layers.qinn import UnitaryQINN
 
@@ -73,7 +73,7 @@ class MertFormerBlock(nn.Module):
     MertFormer Transformer Block - Combination of Attention, FFN/MoE, Liquid, QINN.
 
     Features:
-    - Attention: MLA (LLaMA-3 Compatible)
+    - Attention: GQA (LLaMA-3 Compatible)
     - FeedForward: MoE (Z-Loss fix) or SwiGLU Dense FFN
     - Stability: RMSNorm + optional UnitaryQINN
     - LiquidMixer: Optional, residual + LayerNorm
@@ -103,7 +103,7 @@ class MertFormerBlock(nn.Module):
         self.residual_scale = (2 * num_layers) ** -0.5
 
         # Attention mechanism
-        self.attn = MLA()
+        self.attn = GQA()
 
         # FeedForward / MoE selection
         self.use_moe = bool(getattr(cfg, "use_moe", False))

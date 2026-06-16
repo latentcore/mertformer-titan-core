@@ -27,7 +27,7 @@
 | 15 | deploy | edge/runtime smoke | ✅ | ✅ | ✅ | ✅ | — |
 | 16 | model | bitnet | ✅ | ✅ | ✅ | ✅ | — |
 | 17 | model | transformer stack | ✅ | ✅ | ✅ | ✅ | — |
-| 18 | model | mla | ✅ | ✅ | ✅ | ✅ | — |
+| 18 | model | gqa attention | ✅ | ✅ | ✅ | ✅ | — |
 | 19 | model | decoupled rope | ✅ | ✅ | ✅ | ✅ | — |
 | 20 | model | gqa | ✅ | ✅ | ✅ | ✅ | — |
 | 21 | model | hierarchical kv cache | ✅ | ✅ | ✅ | ✅ | — |

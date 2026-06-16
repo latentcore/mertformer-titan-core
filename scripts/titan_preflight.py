@@ -836,12 +836,12 @@ def architectural_audit():
         log(f"Architectural conflict detected: {e}", "error")
         return False
         
-    # 2. MLA Dimension Consistency
+    # 2. GQA Attention Dimension Consistency
     if cfg.hidden_size != cfg.num_heads * cfg.head_dim:
-        log(f"MLA Dimension Mismatch: hidden_size({cfg.hidden_size}) != heads({cfg.num_heads}) * head_dim({cfg.head_dim})", "error")
+        log(f"GQA Dimension Mismatch: hidden_size({cfg.hidden_size}) != heads({cfg.num_heads}) * head_dim({cfg.head_dim})", "error")
         return False
     else:
-        log(f"MLA Dimensions: Consistent ({cfg.hidden_size} features).", "success")
+        log(f"GQA Dimensions: Consistent ({cfg.hidden_size} features).", "success")
         
     # 3. BitNet Sanity
     log("BitNet b1.58 logic: ACTIVE (Locked).", "success")

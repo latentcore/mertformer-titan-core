@@ -85,7 +85,7 @@ def build_checks() -> list[ItemCheck]:
         ItemCheck(15, "deploy", "edge/runtime smoke", _exists("scripts/train_smoke.py"), _exists("scripts/kaggle_train_compare_build30.py"), _exists("tests/test_kaggle_compare_script.py"), 15 in pending, ["scripts/train_smoke.py"]),
         ItemCheck(16, "model", "bitnet", _exists("layers/bitlinear.py"), _exists("layers/bitnet_patch.py"), _exists("tests/test_kernel_equivalence.py"), 16 in pending, ["layers/bitlinear.py"]),
         ItemCheck(17, "model", "transformer stack", _exists("model/transformers.py"), _exists("layers/mertformer_block.py"), _exists("tests/test_model.py"), 17 in pending, ["model/transformers.py"]),
-        ItemCheck(18, "model", "mla", _exists("layers/mla.py"), _grep("layers/mertformer_block.py", "MLA"), _exists("tests/test_mla_regressions.py"), 18 in pending, ["layers/mla.py"]),
+        ItemCheck(18, "model", "gqa attention", _exists("layers/mla.py"), _grep("layers/mertformer_block.py", "GQA"), _exists("tests/test_mla_regressions.py"), 18 in pending, ["layers/mla.py"]),
         ItemCheck(19, "model", "decoupled rope", _grep("layers/mla.py", "decoupled_rope"), _exists("layers/mla.py"), _exists("tests/test_mla_regressions.py"), 19 in pending, ["layers/mla.py"]),
         ItemCheck(20, "model", "gqa", _grep("layers/mla.py", "num_kv_heads"), _exists("layers/mla.py"), _exists("tests/test_mla_regressions.py"), 20 in pending, ["layers/mla.py"]),
         ItemCheck(21, "model", "hierarchical kv cache", _grep("layers/mla.py", "use_hierarchical_kv_cache"), _grep("layers/mla.py", "_build_hierarchical_kv"), _exists("tests/test_cognitive_extensions.py"), 21 in pending, ["layers/mla.py"]),

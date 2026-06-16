@@ -53,9 +53,19 @@ Closed as won't-change-now WITH reasons, so the backlog has no silently-"open" r
   (`TITAN_ALLOW_LEGACY_LOGIT_REALIGN`, off by default); the canonical packing path is the default.
 - **48 sharded checkpoint (accelerator.save_state)**: needs real multi-GPU to implement+validate;
   belongs on the training box. Single-GPU/Mac uses the standard checkpoint save.
-- **23 MLA→GQA rename / 34 train.py split / 68 whole-repo mypy**: permanently left — high blast
-  radius (onefile sha256 manifests / AST singleton tests / red CI gate) for ~zero functional gain.
-  The MLA naming gap is documented honestly in README and ARCHITECTURE.md.
+- **23 MLA→GQA rename — DONE (2026-06-16) in the canonical path.** The attention class in
+  `layers/mla.py` is now `GQA` (it was always grouped-query — `num_kv_heads` projection + KV head
+  replication — never a latent-MLA low-rank bottleneck). Updated in the same change: importers
+  (`layers/__init__.py`, `layers/mertformer_block.py`), tests (`test_mla_regressions.py`,
+  `test_architecture_integrity.py`), the 57-matrix grep (item 18), the doc-claim-consistency
+  required phrase, and the README / ARCHITECTURE / TECHNICAL_REPORT prose (EN + TR). Deliberately
+  kept: the filename `layers/mla.py` (path stability for manifests/mypy list) and the public env
+  knob `TITAN_MLA_KV_PACK`. The 5 vendored *onefile* delivery copies (`scripts/*onefile*`,
+  `chess_5080`, `kaggle_*`) keep their internal `MLA` symbol on purpose — they are frozen,
+  self-contained delivery bundles whose sha256 manifests / AST singleton tests would otherwise
+  break for zero functional gain.
+- **34 train.py split / 68 whole-repo mypy**: permanently left — high blast radius (AST singleton
+  tests / red CI gate) for ~zero functional gain.
 - **40 drift telemetry**: `lifelong_safety.safety_metrics()` already exposes `last_drift`; wiring it
   into the run logger is purely additive and the layer is off by default → deferred (no behavior risk).
 - **24 / 25 / 31 / 38 test backlog**: additive pure-CPU coverage (RoPE position, block-order schema,
