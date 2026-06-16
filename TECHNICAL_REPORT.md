@@ -20,7 +20,7 @@ The AI ecosystem is evolving from massive cloud-based models toward on-device, e
 3.  **Sparse Mixture of Experts (MoE)** (Capacity)
 4.  **Liquid Neural Networks (LNN)** (Dynamism)
 
-Conceptualized by a 17-year-old developer, this architecture is a high-ambition engineering prototype and commercial hypothesis aimed at next-generation hardware platforms like the Samsung Galaxy S25 and Snapdragon 8 Elite.
+This architecture is an engineering prototype targeting next-generation on-device hardware platforms such as the Samsung Galaxy S25 and Snapdragon 8 Elite.
 
 ---
 
@@ -178,10 +178,10 @@ The architecture is technically consistent and the hardware target is precise, w
 
 ---
 
-## 9. Moat Validation & Release Roadmap
+## 9. Validation Roadmap (claim-boundary)
 
-Steps to validate the project's "Moat" according to VC standards:
-1. **Whitepaper**: Publication of a technical paper proving the mathematical synergy of `LiquidRouter + GQA + BitNet`.
+Steps required before any production or capability claim — none of the below is complete yet:
+1. **Whitepaper**: A technical paper documenting the `LiquidRouter + GQA + BitNet` design and its measured ablation results (incl. the inconclusive Liquid ablation).
 2. **Open Benchmarks**: Independent verification of MMLU, GSM8K, and HumanEval scores.
 3. **Live Demo**: A video demonstrating 100% on-device code generation on a physical Samsung S25.
 

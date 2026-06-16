@@ -20,7 +20,7 @@ Yapay zeka ekosistemi, bulut tabanlı devasa modellerden cihaz içi (on-device) 
 3.  **Seyrek Uzmanlar Karışımı (MoE)** (Kapasite)
 4.  **Liquid Sınır Ağları (LNN)** (Dinamizm)
 
-17 yaşında bir geliştirici tarafından ortaya konan bu mimari, Samsung Galaxy S25 ve Snapdragon 8 Elite gibi yeni nesil donanım platformlarını hedefleyen yüksek iddialı bir mühendislik prototipi ve ticari hipotezdir.
+Bu mimari, Samsung Galaxy S25 ve Snapdragon 8 Elite gibi yeni nesil cihaz-içi donanım platformlarını hedefleyen bir mühendislik prototipidir.
 
 ---
 
@@ -179,10 +179,10 @@ Mimari tutarlı ve donanım hedefi nettir; pazar ilgisi ise kanıt-temelli outre
 
 ---
 
-## 9. Hendek Doğrulama ve Yayın Yol Haritası (Moat Validation)
+## 9. Doğrulama Yol Haritası (claim-boundary)
 
-VC standartlarına uygun olarak, projenin "Hendek" (Moat) değerini kanıtlama adımları:
-1. **Whitepaper**: `LiquidRouter + GQA + BitNet` sinerjisinin matematiksel ispatını içeren teknik makalenin yayını.
+Herhangi bir üretim ya da yetenek iddiasından ÖNCE gereken adımlar — aşağıdakilerin hiçbiri henüz tamamlanmadı:
+1. **Whitepaper**: `LiquidRouter + GQA + BitNet` tasarımını ve ölçülen ablation sonuçlarını (sonuçsuz çıkan Liquid ablation'ı dahil) belgeleyen teknik makale.
 2. **Açık Benchmark**: MMLU, GSM8K ve HumanEval skorlarının bağımsız denetçilerce doğrulanması.
 3. **Canlı Demo**: Fiziksel bir Samsung S25 üzerinde 100% cihaz içi (on-device) kod üretimi videosu.
 

@@ -24,8 +24,8 @@ MODEL_CARD_EN = ROOT / "MODEL_CARD.md"
 MODEL_CARD_TR = ROOT / "MODEL_CARD_TR.md"
 README_SUMMARY_EN = ROOT / "README_SUMMARY.md"
 README_SUMMARY_TR = ROOT / "README_SUMMARY_TR.md"
-DOC_README_EN = ROOT / "documents" / "README_before_final_simplification.md"
-DOC_README_TR = ROOT / "documents" / "README_TR_before_final_simplification.md"
+DOC_README_EN = ROOT / "archive" / "documents" / "README_before_final_simplification.md"
+DOC_README_TR = ROOT / "archive" / "documents" / "README_TR_before_final_simplification.md"
 ANTHROPIC_README = ROOT / "applications" / "anthropic" / "README.md"
 ANTHROPIC_PROJECT_SUMMARY = ROOT / "applications" / "anthropic" / "project_summary.md"
 ANTHROPIC_MEASURED_SUMMARY = ROOT / "applications" / "anthropic" / "measured_evidence_summary.md"
@@ -237,8 +237,8 @@ def main() -> int:
         ("MODEL_CARD_TR.md", model_card_tr, [current_path], [stale_reason]),
         ("README_SUMMARY.md", summary_en, [current_reason, current_path, *blockers], [stale_reason]),
         ("README_SUMMARY_TR.md", summary_tr, [current_reason, current_path, *blockers], [stale_reason]),
-        ("documents/README_before_final_simplification.md", doc_readme_en, [current_reason, current_path, *blockers], [stale_reason]),
-        ("documents/README_TR_before_final_simplification.md", doc_readme_tr, [current_reason, current_path, *blockers], [stale_reason]),
+        ("archive/documents/README_before_final_simplification.md", doc_readme_en, [current_reason, current_path, *blockers], [stale_reason]),
+        ("archive/documents/README_TR_before_final_simplification.md", doc_readme_tr, [current_reason, current_path, *blockers], [stale_reason]),
         ("applications/anthropic/README.md", anthropic_readme, [current_reason, current_path, *blockers], [stale_reason]),
         ("applications/anthropic/project_summary.md", anthropic_project_summary, [current_reason, current_path], [stale_reason]),
         ("applications/anthropic/measured_evidence_summary.md", anthropic_measured_summary, [current_reason, current_path], [stale_reason]),
