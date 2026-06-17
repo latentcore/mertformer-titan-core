@@ -31,3 +31,15 @@
 ## 8) Token budget runs longer than expected
 **Symptom:** Training exceeds planned steps.
 **Fix:** Use `TITAN_TOKEN_BUDGET_MODE=fixed_steps` or set `TITAN_MAX_STEPS` explicitly.
+
+## 9) NCCL hang / deadlock (multi-GPU)
+**Symptom:** Multi-GPU training stalls with no progress; a rank appears stuck in a collective; `NCCL timeout` in logs.
+**Fix:** Ensure all ranks reach every collective (NaN/skip paths must broadcast the same decision — the train loop already DDP-syncs these). Set `NCCL_TIMEOUT` higher for slow I/O, and avoid passing non-tensor metadata through Accelerate `concatenate()` (drops str/int by design — see `train/trainer_data.py`). If it persists, restart from the last checkpoint.
+
+## 10) Checkpoint corruption / truncated checkpoint
+**Symptom:** Resume fails with an unpickling/`EOFError`/size-mismatch on `best.pt`/`latest.pt`/`final.pt`.
+**Fix:** Checkpoints are written atomically (`*.pt.tmp` → `os.replace`), so a provider kill leaves the previous checkpoint intact — resume from `latest.pt` (or `best.pt`). Verify integrity with the SHA256 sidecar before reuse. Never resume from a `*.pt.tmp` file.
+
+## 11) Tokenizer mismatch (train/eval)
+**Symptom:** Eval or resume produces garbage; vocab size differs; a `gpt2`-style tokenizer (vocab 50257) is loaded instead of the canonical Llama-3 tokenizer (vocab 128256).
+**Fix:** The canonical path uses `utils/tokenizer_resolver.py` with **no silent fallback** and stamps a `tokenizer_identity` hash into every checkpoint/shard. If a mismatch is reported, confirm `cfg.teacher_model_id` / the resolved tokenizer and re-run; do not override with a generic tokenizer.

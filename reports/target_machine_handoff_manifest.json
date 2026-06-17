@@ -1,6 +1,6 @@
 {
   "schema": "target_machine_handoff_manifest_v1",
-  "generated_utc": "2026-06-17T07:19:44Z",
+  "generated_utc": "2026-06-17T22:35:44Z",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "train_allowed": true,
   "decision_reason_code": "READY_REMOTE_BOOTSTRAP",
@@ -15,8 +15,8 @@
     },
     {
       "path": "run.sh",
-      "size_bytes": 24446,
-      "sha256": "444a0799dcf03d49cb9e9ccde708fcdf0a9a53d625a4dae85de2679c58d679ae"
+      "size_bytes": 24432,
+      "sha256": "4965dfb15360e65c9ff575ae558fdcb39908dc44ebb12b1001bcc1936abf361e"
     },
     {
       "path": "launch_mertformer_kaggle_closure.command",
@@ -30,8 +30,8 @@
     },
     {
       "path": "scripts/smart_runner.py",
-      "size_bytes": 5300,
-      "sha256": "0bccfd2cb7df961b45e9caa84d6a118e677310ece8aee7af9daf35dd3671a89c"
+      "size_bytes": 5298,
+      "sha256": "bb43a538032de18f92b93d821d2b1840a6fe5e850a710055247e96590600965d"
     },
     {
       "path": "scripts/precompute_logits_topk.py",
@@ -86,7 +86,7 @@
     {
       "path": "reports/train_readiness_decision.json",
       "size_bytes": 8224,
-      "sha256": "60d22d56aecc9b202907759562444cca205723f341bed4754110dd9050849fee"
+      "sha256": "a3f82fbd1c796cc5aa15d8a91f5e0606da2f6966afc6b6209ba31f7b6456d85d"
     },
     {
       "path": "reports/train_readiness_decision.md",
@@ -95,13 +95,13 @@
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 4425,
-      "sha256": "cc835341fae575ed75f04c7fc6386dd468ff115e93f7e6b742faeceb632cea85"
+      "size_bytes": 4433,
+      "sha256": "5a628079d83b2a937f92624b5f05b890cb0e11e5b186c3e21a270a9e23b4ec89"
     },
     {
       "path": "reports/start_gate_operator_decision.json",
       "size_bytes": 1691,
-      "sha256": "1db7a453c59d010d7f1f4a5caa3f52aa54a6a08ad0c71085fafa903e8d85680e"
+      "sha256": "91f47729c0995f9ca9c03c559aacb14e5ab5f9365a280954e4982eab05d1f758"
     },
     {
       "path": "reports/start_gate_operator_decision.md",
@@ -111,7 +111,7 @@
     {
       "path": "reports/repo_external_handoff.md",
       "size_bytes": 1709,
-      "sha256": "13c516f4dbb1a7b4f7c6d1830750b71a588fb5bdf01e96e3e6d80f36c70fa42b"
+      "sha256": "0238a26819f7579f6ce4f0bc90692dd921322ddf3baf0f5017b9b5993fd9f383"
     }
   ],
   "operator_steps": [

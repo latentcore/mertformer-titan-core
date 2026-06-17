@@ -1,7 +1,7 @@
 # ==============================================================================
 # MERTFORMER TITAN - REQUIREMENTS
 # ==============================================================================
-# Version: v1.0 (Build 30) - Pre-Training
+# Version: v1.0-BUILD30-V2 - Pre-Training
 # Platform: CUDA / MPS / CPU
 # Pinned versions: see constraints.txt  (pip install -r requirements.txt -c constraints.txt)
 # ==============================================================================

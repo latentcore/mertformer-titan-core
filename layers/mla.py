@@ -256,7 +256,7 @@ class GQA(nn.Module):
             raise ValueError(f"rope_dim must be even, got {rope_dim_eff}")
         self._rope_dim_eff = rope_dim_eff
 
-        # [V27.0] Cached Rotary Embeddings (Optimized)
+        # Cached rotary embeddings (optimized)
         self.rotary_emb = RotaryEmbedding(
             dim=self._rope_dim_eff,
             max_seq_len=getattr(cfg, "max_seq_len", 8192),
@@ -381,7 +381,7 @@ class GQA(nn.Module):
                  "Increase cfg.max_seq_len or use sliding window attention."
              )
 
-        # [V27.0] Optimized Cached RoPE Application
+        # Optimized cached RoPE application
         # 1. Get cached cos/sin for current positions
         cos, sin = self.rotary_emb(q, seq_len=T, offset=kv_seq_len - T)
         

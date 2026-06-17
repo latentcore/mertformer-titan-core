@@ -38,7 +38,7 @@ class RMSNorm(nn.Module):
     """
     Root Mean Square Normalization - Faster alternative to LayerNorm.
 
-    V27.0: torch.compile removed for safer export/inference control.
+    Note: torch.compile removed for safer export/inference control.
     """
 
     def __init__(self, dim: int, eps: float = 1e-6) -> None:

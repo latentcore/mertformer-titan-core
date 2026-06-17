@@ -124,7 +124,7 @@ def main():
     t_data.join()
     
     print("\n" + "="*60)
-    print("🚀 LAUNCHING BUILD 27 TRAINING (TITAN v1.0 (Build 30))")
+    print("🚀 LAUNCHING TRAINING (MertFormer Titan Build 30 V2)")
     print("="*60)
     
     # 4. Launch Training

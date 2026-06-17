@@ -149,7 +149,7 @@ def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None) 
         max_micro_batch = max(1, max_micro_batch)
 
     # -------------------------------------------------------------------------
-    # 4. BUILD 27 OPTIMIZATION
+    # 4. Batch-size optimization
     # -------------------------------------------------------------------------
     ideal_micro_batch = target_global_batch // max(1, num_gpus)
     
@@ -402,7 +402,7 @@ class MertFormerConfig:
     # [REPORT FIX] 1.3 -> 1.0 (BitNet requires a sharp teacher)
     teacher_temp: float = 1.0
     
-    # [V27.0] Distillation Optimization
+    # Distillation optimization
     use_precomputed_logits: bool = os.environ.get("TITAN_USE_PRECOMPUTED_LOGITS", "1") == "1"
     # [TITAN PREFLIGHT] Support override for testing
     precomputed_logits_path: str = os.environ.get("TITAN_LOGITS_PATH", "./datasets/logits/")
@@ -419,7 +419,7 @@ class MertFormerConfig:
     # reports/ocean_2xh200_1024_first_launch_profile.md and DECISIONS.md.
     batch_size: int = int(os.environ.get("TITAN_BATCH_SIZE", "128"))
 
-    # [V27.0 AUTO-CONFIG] Automatic GPU-based batch size optimization
+    # Auto-config: automatic GPU-based batch-size optimization
     # micro_batch_size and grad_accum_steps are now computed automatically
     micro_batch_size: Optional[int] = field(default=None)  # Auto-configured
     grad_accum_steps: Optional[int] = field(default=None)  # Auto-configured
@@ -524,7 +524,7 @@ class MertFormerConfig:
     use_torch_compile: bool = False
     torch_compile_mode: str = "max-autotune"
 
-    # [V27.0] Advanced Optimizers (VRAM Optimization)
+    # Advanced optimizers (VRAM optimization)
     use_8bit_adam: bool = True  # Enable 8-bit Optimizer
     use_galore: bool = True     # Enable Gradient Low-Rank Projection
 

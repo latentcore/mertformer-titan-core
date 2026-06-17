@@ -340,7 +340,7 @@ if [[ "${TITAN_INSTALL:-0}" == "1" ]]; then
 fi
 
 # ------------------------------------------------------------------------------
-# ⚡ 4.5. NCCL TUNING (MULTI-GPU OPTIMIZATION) - V27.0
+# ⚡ 4.5. NCCL TUNING (MULTI-GPU OPTIMIZATION)
 # ------------------------------------------------------------------------------
 # NCCL: NVIDIA Collective Communications Library (Multi-GPU iletişim optimizasyonu)
 # Sadece Linux + Multi-GPU sistemlerde aktif olur
@@ -528,7 +528,7 @@ echo "ℹ️  run.sh remains valid for legacy helper/test/demo flows and compati
 mkdir -p logs
 
 # Port 29501 çakışmayı önler, logları hem ekrana hem dosyaya yazar.
-# V27.0 SMART RUNNER: Starts Parallel Data Pipeline -> Distillation -> Training
+# Smart runner: starts parallel data pipeline -> distillation -> training
 "$PYTHON_BIN" scripts/smart_runner.py 2>&1 | tee logs/production_run.log
 
 # ------------------------------------------------------------------------------

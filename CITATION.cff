@@ -1,11 +1,12 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it."
-title: "MertFormer Titan (Onyx Storm)"
+title: "MertFormer Titan (Build 30 V2)"
 version: "v1.0-TITAN-BUILD30-V2"
-date-released: "2026-03-13"
+# date-released intentionally omitted: the canonical model is not yet trained/released (pre-training PoC).
 authors:
   - family-names: "Yunlu"
     given-names: "Mert"
+    affiliation: "Independent researcher, Ankara, Turkey"
 repository-code: "https://github.com/latentcore/mertformer-titan-core"
 url: "https://github.com/latentcore/mertformer-titan-core"
 abstract: "Offline-first, auditable mobile-edge LLM infrastructure using BitNet 1.58-bit quantization, LiquidRouter MoE, and CfC dynamics."

@@ -279,3 +279,38 @@ was verified live and only the genuinely-real, safe items were fixed:
   residual_scale/GaLore/8bit-Adam/val_steps) and architecture observations — document-only, to avoid confounding the run.
 - **User action (cannot be done from here):** revoke the `gho_` OAuth token visible in the parallel chat
   (GitHub → Settings → Developer settings → revoke). Not committed to the repo; repo risk low.
+
+**NİHAİ EKSİKLİKLER cleanup — verified subset (2026-06-18, Pass 4.6).** A parallel app/web Claude compiled an
+all-day "final deficiency list" (~207 items spanning repo + GitHub + 2 gists + life/personal/career). Each was
+re-verified live (3 Explore agents); only the genuinely-real, safe items were fixed (training-math untouched,
+pytest 370 unchanged):
+- **Stale version markers (cosmetic, runtime-zero):** removed `BUILD 27` / `V27.0` prefixes from 14 comment/print/
+  docstring sites (`config/config.py`, `train/train.py`, `layers/mla.py`, `layers/mertformer_block.py`, `run.sh`,
+  `scripts/smart_runner.py`, `scripts/mac_simulation.py`) — comments only, no logic. (`version_checker.py` keeps its
+  banned-token data.)
+- **Reviewer-facing identity docs (truth-sync):** `CITATION.cff` — removed false `date-released: 2026-03-13` (model
+  not released), dropped "(Onyx Storm)" to match README, added author affiliation. `LICENSE`(+`_TR`) — "MertFormer
+  AI Team" → "Mert Yünlü" (solo author), softened "partners/investors" overclaim, removed the self-contradicting
+  "confidential Swarm Orchestrator / LiquidRouter" naming (LiquidRouter is public in the whitepaper).
+  `SECURITY.md`(+`_TR`) — stripped internal jargon ("45K ship gate", "Medium Refine", "Build 30 Max Closure"), added
+  a real vuln-reporting channel (GitHub Security Advisories). `CONTRIBUTING.md`(+`_TR`) — `codex/`→`feature/`/`fix/`,
+  added an honest AI-assistance disclosure (covers the `Co-Authored-By: Claude` git-history concern without rewriting
+  history). `requirements.txt` header → Build 30 V2.
+- **Observability (additive, canonical path):** `orchestrator/distillation_manager.py` resume-state `except: pass`
+  now logs the failure before the (unchanged) shard-count fallback — useful for a long 45K resume.
+- **Docs/parity:** `TROUBLESHOOTING.md`(+`_TR`) gained NCCL-hang / checkpoint-corruption / tokenizer-mismatch
+  scenarios; created EN twins for two tiny TR-orphans (`training_dynamics/cold_vs_warm.md`,
+  `experiments/exp_001_baseline/notes.md`).
+- **Verified NOT-a-bug / FALSE finding (left):** "git tag not pushed" is FALSE (all 13 tags incl. `v1.0-TITAN-BUILD30-V2`
+  are on remote); moe_dispatch parallel-vs-sequential, CI `@v6`, secret_scan↔policy regex — all previously confirmed.
+  Pass-4.5 fixes (secret_scan `gho_`, base.yaml, registry, pip_freeze, ruff, CHANGELOG) re-verified present.
+- **Verified real but LEFT (quarantine / freeze / external):** `orchestrator/core.py` gpt2-fallback +
+  `self_audit.py` silent-except are in the inert out-of-scope AGI scaffold (quarantined, not in the canonical path).
+  All pre-45K-freeze architecture items (z-loss/dt/dispatch/mark_weights_updated/warmup_steps/dropout/GaLore/
+  8bit-Adam/val_steps/opset/LiquidRouter-naming) untouched. Post-45K/infra (22 test gaps, ML-science ablations, MLOps,
+  ethics/RAI, attack analyses) deferred. TR-orphans whose EN lives in `archive/templates/` (economics) left as legacy;
+  EN-only docs (ARCHITECTURE/START_HERE/...) intentional (English-primary).
+- **Skipped with reason:** README CI badge — repo is PRIVATE, a live Actions badge 404s externally and would force a
+  gist `4_README` re-sync; the inline "370 passed" status already conveys it.
+- **External / user action:** life/personal/career items live in the external Grand Master life doc (app sandbox), not
+  this repo; the `gho_` token revoke remains the user's to do.

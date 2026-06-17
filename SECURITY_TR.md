@@ -13,19 +13,18 @@ Bu doküman, MertFormer Titan için güvenlik, yönetişim ve deployment sınır
 - `measured`, `target` ve `vision` ifadeleri ayrı kalmalıdır.
 - `verified`, `hypothesis` ve `creative_or_folklore` modları birbirine karıştırılamaz.
 
-## Readiness Guardrail
-- Bu geçişte ana ship gate 45K readiness’tir.
-- Runtime-invasive değişiklikler ancak 45K yoluna açıkça zarar vermediği gösterilirse kabul edilir; aksi halde phase-2’ye taşınır.
-- Bu geçişin resmi risk tavanı Medium Refine’dır.
+## Değişiklik Kontrolü
+- Eğitim davranışını etkileyebilecek değişiklikler açık inceleme ister ve denetlenebilir kalmalıdır.
+- Runtime-invasive değişiklikler, kanonik eğitim yoluna açıkça zarar vermediği gösterilmedikçe ertelenir.
 
 ## Veri ve Secret Yönetimi
 - Veri lisanslarına, provenance zincirine ve saklama sınırlarına uyun.
 - Secret’ları versiyon kontrolü ve release artefaktlarından uzak tutun.
 - Veri seti, rapor ve release bundle’ları için audit-ready manifest üretin.
 
-## Raporlama
-- Olayları `postmortems/` altında şablonla kaydedin.
-- Çözümden sonra mitigation adımlarını güncelleyin.
+## Güvenlik Açığı Bildirimi
+- Güvenlik açıklarını gizli olarak GitHub Security Advisories üzerinden bildirin (depo → **Security** sekmesi → **Report a vulnerability**). Public issue açmayın.
+- Operasyonel olaylar `postmortems/` altında şablonla kaydedilir; çözümden sonra mitigation adımları güncellenir.
 
 ## Durum
-Bu politika Build 30 Max Closure geçişi için aktiftir.
+Bu politika mevcut pre-training (Build 30 V2) aşaması için aktiftir.

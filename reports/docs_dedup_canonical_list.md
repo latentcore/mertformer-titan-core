@@ -149,6 +149,7 @@ Generated automatically.
 - `evidence/build30_t4_onecell/EVIDENCE_POINTER.md`
 - `evidence/build30_t4_onecell/smoke_test_result.md`
 - `evidence/chess_evidence_contract.md`
+- `experiments/exp_001_baseline/notes.md`
 - `experiments/exp_001_baseline/notes_TR.md`
 - `interfaces/inference_contract.md`
 - `interfaces/inference_contract_TR.md`
@@ -464,6 +465,7 @@ Generated automatically.
 - `tools/contracts/README_TR.md`
 - `tools/sandbox/README.md`
 - `tools/sandbox/README_TR.md`
+- `training_dynamics/cold_vs_warm.md`
 - `training_dynamics/cold_vs_warm_TR.md`
 
 ## Duplicate Name Groups
@@ -488,6 +490,9 @@ Generated automatically.
 - `closure_57_matrix_tr.md`
   - `mertformer-titan-dealroom-private/03_TECH_EVIDENCE/closure_57_matrix_TR.md`
   - `reports/closure_57_matrix_TR.md`
+- `cold_vs_warm.md`
+  - `archive/templates/cold_vs_warm.md`
+  - `training_dynamics/cold_vs_warm.md`
 - `founders_hub_application_tr.md`
   - `mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/founders_hub_application_TR.md`
   - `private/commercial/founders_hub_application_TR.md`
@@ -506,6 +511,9 @@ Generated automatically.
 - `model_health_tr.md`
   - `reports/model_health_TR.md`
   - `scripts/reports/model_health_TR.md`
+- `notes.md`
+  - `archive/templates/notes.md`
+  - `experiments/exp_001_baseline/notes.md`
 - `one_pager_tr.md`
   - `mertformer-titan-dealroom-private/02_EXECUTIVE/one_pager_TR.md`
   - `reports/one_pager_TR.md`

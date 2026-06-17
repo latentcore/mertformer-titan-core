@@ -54,7 +54,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 - `MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`
 - Locked artifact status: `skipped (expected: AGE_RECIPIENT_FILE missing)`
 - SHA-256:
-  - `3efb95c210afdd9b571056211c539dd1a7970398d0c326d496d041d4c0f47310` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`)
+  - `d2ed15876d53f90b2ce040e6adad6503cc7eed2d484b75942f912f62ea0ab4d4` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`)
   - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`)
 
 ## Known Gates / Blockers

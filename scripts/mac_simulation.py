@@ -167,7 +167,7 @@ def run_mac_simulation():
     duration = end_infer - start_infer
     tps = total_tokens / duration
     
-    print(f"\n📊 BUILD 27 VERDICT (MacBook M4):")
+    print(f"\n📊 SIMULATION VERDICT (MacBook M4):")
     print(f"   ----------------------------------------")
     print(f"   ⏱️  Time Taken    : {duration:.2f}s")
     print(f"   ⚡ GENERATION SPEED: {tps:.2f} tokens/sec")

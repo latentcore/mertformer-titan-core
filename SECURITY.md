@@ -13,19 +13,18 @@ This document defines the security, governance, and deployment boundaries for Me
 - `measured`, `target`, and `vision` statements must remain distinct.
 - `verified`, `hypothesis`, and `creative_or_folklore` output modes must not be conflated.
 
-## Readiness Guardrail
-- 45K readiness is the primary ship gate for this pass.
-- Runtime-invasive changes are allowed only when clearly non-invasive to the 45K path; otherwise they move to phase-2.
-- Medium Refine is the official risk ceiling for this pass.
+## Change Control
+- Changes that could affect training behavior require explicit review and must remain auditable.
+- Runtime-invasive changes are deferred unless clearly non-invasive to the canonical training path.
 
 ## Data and Secret Handling
 - Respect dataset licenses, provenance, and retention boundaries.
 - Keep secrets out of version control and release artifacts.
 - Maintain audit-ready manifests for datasets, reports, and release bundles.
 
-## Reporting
-- Record incidents in `postmortems/` using the provided template.
-- Update mitigation steps after resolution.
+## Reporting a Vulnerability
+- Report security vulnerabilities privately via GitHub Security Advisories (repository → **Security** tab → **Report a vulnerability**). Do not open a public issue.
+- Operational incidents are recorded in `postmortems/` using the provided template; mitigation steps are updated after resolution.
 
 ## Status
-This policy is active for the Build 30 Max Closure pass.
+This policy is active for the current pre-training (Build 30 V2) phase.

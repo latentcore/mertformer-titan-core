@@ -31,3 +31,15 @@
 ## 8) Token bütçesi beklenenden uzun sürüyor
 **Belirti:** Eğitim planlanan adım sayısını aşıyor.
 **Çözüm:** `TITAN_TOKEN_BUDGET_MODE=fixed_steps` veya `TITAN_MAX_STEPS` kullanın.
+
+## 9) NCCL hang / deadlock (çoklu GPU)
+**Belirti:** Çoklu-GPU eğitim ilerlemeden takılır; bir rank collective'de kilitlenir; loglarda `NCCL timeout`.
+**Çözüm:** Tüm rank'lerin her collective'e ulaştığından emin olun (NaN/skip yolları aynı kararı broadcast etmeli — train loop bunları zaten DDP-sync eder). Yavaş I/O için `NCCL_TIMEOUT` artırın; Accelerate `concatenate()`'e tensör-olmayan metadata geçmeyin (str/int bilinçli düşürülür — bkz. `train/trainer_data.py`). Sürerse son checkpoint'ten yeniden başlatın.
+
+## 10) Checkpoint bozulması / kesik checkpoint
+**Belirti:** Resume `best.pt`/`latest.pt`/`final.pt` üzerinde unpickling/`EOFError`/boyut-uyumsuzluğu ile patlar.
+**Çözüm:** Checkpoint'ler atomik yazılır (`*.pt.tmp` → `os.replace`), bu yüzden provider öldürse bile önceki checkpoint sağlam kalır — `latest.pt` (veya `best.pt`)'ten resume edin. Yeniden kullanmadan önce SHA256 sidecar ile bütünlüğü doğrulayın. Asla `*.pt.tmp` dosyasından resume etmeyin.
+
+## 11) Tokenizer uyumsuzluğu (train/eval)
+**Belirti:** Eval veya resume saçma üretir; vocab boyutu farklı; kanonik Llama-3 tokenizer (vocab 128256) yerine `gpt2`-tipi tokenizer (vocab 50257) yüklenir.
+**Çözüm:** Kanonik yol `utils/tokenizer_resolver.py` kullanır (**sessiz fallback yok**) ve her checkpoint/shard'a `tokenizer_identity` hash'i basar. Uyumsuzluk bildirilirse `cfg.teacher_model_id` / çözülen tokenizer'ı doğrulayıp tekrar koşun; genel bir tokenizer ile override etmeyin.

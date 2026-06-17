@@ -1,7 +1,7 @@
 {
-  "generated_utc": "2026-06-17T07:19:55.392549+00:00",
-  "md_file_count": 463,
-  "duplicate_name_group_count": 25,
+  "generated_utc": "2026-06-17T22:35:54.302096+00:00",
+  "md_file_count": 465,
+  "duplicate_name_group_count": 27,
   "duplicate_name_groups": {
     "license.md": [
       ".lint-venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md",
@@ -76,6 +76,14 @@
     "technical_report_tr.md": [
       "TECHNICAL_REPORT_TR.md",
       "mertformer-titan-dealroom-private/09_APPENDIX/technical_report_TR.md"
+    ],
+    "cold_vs_warm.md": [
+      "archive/templates/cold_vs_warm.md",
+      "training_dynamics/cold_vs_warm.md"
+    ],
+    "notes.md": [
+      "archive/templates/notes.md",
+      "experiments/exp_001_baseline/notes.md"
     ],
     "chess_4060_24h.md": [
       "checklists/chess_4060_24h.md",

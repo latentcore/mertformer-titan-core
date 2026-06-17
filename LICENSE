@@ -1,14 +1,14 @@
 PROPRIETARY AND CONFIDENTIAL LICENSE NOTICE
 ==============================================================================
-Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
+Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 ==============================================================================
-This repository is private and shared only with authorized reviewers, 
-partners, and investors.
+This repository is private and shared only with authorized reviewers
+and collaborators.
 ==============================================================================
 
 1. OWNERSHIP
-This software, including all source code, documentation, logos, and associated 
-assets, is the sole and exclusive property of the MertFormer AI Team ("Owner").
+This software, including all source code, documentation, logos, and associated
+assets, is the sole and exclusive property of Mert Yünlü ("Owner").
 
 2. RESTRICTIONS
 Unauthorized use, copying, modification, distribution, or decompilation of this 
@@ -16,11 +16,10 @@ software is strictly prohibited. Access to this software is granted solely under
 explicit written agreement or employment contract with the Owner.
 
 3. CONFIDENTIALITY
-The algorithms, architectural designs (specifically the Swarm Orchestrator and 
-LiquidRouter), and training methodologies contained herein constitute 
-confidential and proprietary technology. Any disclosure to third parties 
-without a signed Non-Disclosure Agreement (NDA) is a violation of 
-intellectual property laws.
+The algorithms, architectural designs, and training methodologies contained
+herein constitute confidential and proprietary technology. Any disclosure to
+third parties without a signed Non-Disclosure Agreement (NDA) is a violation
+of intellectual property laws.
 
 4. NO WARRANTY
 THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 

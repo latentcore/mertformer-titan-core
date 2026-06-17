@@ -61,8 +61,10 @@ class DistillationManager:
                 with state_file.open("r", encoding="utf-8") as f:
                     data = json.load(f)
                 return int(max(0, data.get("processed_samples", 0)))
-            except Exception:
-                pass
+            except Exception as exc:
+                # Corrupt/unreadable resume-state JSON: fall back to shard count below.
+                # Logged (not silent) so a bad resume state is visible during a long run.
+                print(f"[distill] resume-state read failed for {state_file} ({exc}); falling back to shard count")
 
         processed = 0
         for file in _list_logits_files(self.logits_dir, stage_name, subset=subset):

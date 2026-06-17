@@ -713,7 +713,7 @@ def train() -> None:
         logger.log_meta()
 
 
-    # V27.0 DISTILLATION MANAGER: Switch between Online (TeacherBundle) and Offline (Precomputed Logits)
+    # Distillation manager: switch between online (TeacherBundle) and offline (precomputed logits)
     # Offline logits mode (distill without loading teacher model)
     use_offline_logits = getattr(cfg, "use_precomputed_logits", False)
     distill_manager = None
@@ -890,7 +890,7 @@ def train() -> None:
     resume_payload = _load_resume_payload(cfg, student, is_main_process=accelerator.is_main_process)
 
     # -------------------------------------------------------------------------
-    # V27.0: MAXIMUM PERFORMANCE - torch.compile with max-autotune
+    # Maximum performance: torch.compile with max-autotune
     # -------------------------------------------------------------------------
     use_compile = getattr(cfg, "use_torch_compile", True)
     compile_mode = getattr(cfg, "torch_compile_mode", "max-autotune")
@@ -1434,7 +1434,7 @@ def train() -> None:
                             }
                         )
 
-                        # V27.0: Periodic Safety Checks
+                        # Periodic safety checks
                         if global_step % 1000 == 0:
                             # Disk space check
                             if not check_disk_space(min_gb=50):
