@@ -377,7 +377,11 @@ class MertFormerConfig:
     # [USER OVERRIDE] Teacher Model configuration
     # User confirmed usage of Llama 3.3 70B (assumes A100/H100 or multi-gpu setup)
     teacher_model_id: str = os.environ.get("TITAN_TEACHER_MODEL_ID", "meta-llama/Llama-3.3-70B-Instruct")
-    distill_alpha: float = 0.8 # [USER OPTIMIZATION] 80% trust in the teacher
+    # Teacher trust (KD weight). Env-overridable, default 0.8 (unchanged behavior).
+    # Set TITAN_DISTILL_ALPHA=0 for a teacher-free smoke: the 70B teacher is never
+    # loaded/downloaded (train.py only loads it when distill_alpha > 0) and the loss
+    # becomes pure cross-entropy (alpha resolves to 0 when there are no teacher logits).
+    distill_alpha: float = float(os.environ.get("TITAN_DISTILL_ALPHA", "0.8"))
     distill_intermediate_layers: bool = True
 
     # -------------------------------------------------------------------------

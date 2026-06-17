@@ -216,3 +216,10 @@ register; §10 reframed as "speculative, not implemented, out of scope"); `ARCHI
 truth-synced to the 12-seed verdict; the inert `orchestrator/` AGI runtime + flag-off cognitive layers are
 documented as out-of-scope (not deleted); the MoE-intermediate doc typo was fixed (8192, not 5632 — 5632 is the
 dense FFN). closure_57 item 20 renamed from "gqa" to "kv-head sharing" (de-dup vs item 18).
+
+**Teacher-free smoke knob (behavior-neutral):** `config.py` `distill_alpha` is now env-overridable
+(`TITAN_DISTILL_ALPHA`, default 0.8 — unchanged default behavior). `TITAN_DISTILL_ALPHA=0` lets the
+canonical training entry run a smoke WITHOUT loading/downloading the 70B teacher (train.py only loads
+it when `distill_alpha > 0`; loss falls back to pure cross-entropy). This is the one-command teacher-free
+pre-45K smoke documented in REPRODUCE(.md/_TR). Not a training-dynamics change for the real run (default
+stays 0.8).
