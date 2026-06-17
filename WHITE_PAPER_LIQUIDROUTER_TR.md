@@ -66,3 +66,12 @@ Kanıt (sha256-zincirli): [`reports/ablations/liquid_ablation_final_20260615/`](
 (`final_summary.json`, `MANIFEST.json`, grafikler). 2026-06-14 tek-seed pilotu
 (`reports/ablations/liquid_ablation_results.json`, `liquid_ablation_pilot_curve.png`) **superseded**
 tarihçe olarak korunur.
+
+
+## 8. arXiv Gönderimi (45K Sonrası)
+
+**Önerilen başlık:** "LiquidRouter: Temporal-Aware Expert Routing for Sparse MoE via Causal Depthwise Convolution"
+
+**Hedef kategori:** cs.LG (birincil), cs.CL (ikincil)
+
+**Durum:** İskelet hazır. Gönderim 45K checkpoint + benchmark sonuçlarına bağlıdır. Göndermeden önce 3-7. bölümleri ölçülen verilerle doldur.
