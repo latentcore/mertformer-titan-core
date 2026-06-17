@@ -31,7 +31,7 @@
 | 17 | model | transformer stack | ✅ | ✅ | ✅ | ✅ | — |
 | 18 | model | gqa attention | ✅ | ✅ | ✅ | ✅ | — |
 | 19 | model | decoupled rope | ✅ | ✅ | ✅ | ✅ | — |
-| 20 | model | gqa | ✅ | ✅ | ✅ | ✅ | — |
+| 20 | model | kv-head sharing (grouped-query KV) | ✅ | ✅ | ✅ | ✅ | — |
 | 21 | model | hierarchical kv cache | ✅ | ✅ | ✅ | ✅ | — |
 | 22 | model | moe + liquidrouter | ✅ | ✅ | ✅ | ✅ | — |
 | 23 | model | liquid/cfc mixer | ✅ | ✅ | ✅ | ✅ | — |

@@ -2013,7 +2013,12 @@ def test_moe_matches_canonical_eval_path() -> None:
         expert_paging_verbose=False,
     ):
         canonical = CanonicalMoE().eval()
-        canonical.load_state_dict(mirrored.state_dict())
+        # strict=False: the canonical MoE's runtime telemetry buffers
+        # (collapse_detected / expert_activity_mask / last_*) are now persistent=False,
+        # so they are absent from its state_dict while the vendored onefile mirror still
+        # carries them. They are telemetry only and do not affect the forward output
+        # (the parity asserts below validate the actual eval-path equivalence).
+        canonical.load_state_dict(mirrored.state_dict(), strict=False)
         x = torch.randn(2, 3, 16)
         out_mirror, aux_mirror = mirrored(x)
         out_canonical, aux_canonical = canonical(x)

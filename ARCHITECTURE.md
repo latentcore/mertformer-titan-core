@@ -34,9 +34,10 @@
   capacity control with overflow drop + renormalize, plus router-collapse detection/recovery.
   *Why:* more capacity at ~constant active FLOPs.
 - **Liquid / CfC mixer (`layers/liquid.py`)** — continuous-time recurrent dynamics on a few layers,
-  with a warmup freeze + spike-cooldown safeguard. *Why:* a research bet on long-range dynamics; a $0
-  pilot now gives a single-seed *direction* signal (`use_liquid` toggle, Δ(off−on)=+0.50; see below),
-  not a measured result.
+  with a warmup freeze + spike-cooldown safeguard. *Why:* a research bet on long-range dynamics. A
+  12-seed toy-scale ablation ([ABLATION.md](ABLATION.md)) found **no measured accuracy benefit**
+  (OFF 96.32% / ON 94.69%, Δ−1.63pp, p=0.305) at **~30% slower** wall-clock; value at real scale is
+  inconclusive (cost certain, benefit unmeasured). The earlier single-seed +0.50 pilot is superseded.
 - **DDP safety (`train/train.py`)** — `find_unused_parameters=True` because the liquid/tau warmup
   freeze and MoE top-2 routing both leave params without grads in a step.
 
@@ -52,17 +53,26 @@ the ~23.6B-token budget); a pre-flight disk gate enforces this.
 ## Open ablations (gate the research claims)
 
 The `ablations/` scaffold (`no_liquid/`, `no_moe/`, `bitlinear_off/`, `dense_only/`) is the place where
-the architecture's bets get *measured*. The `no_liquid` cell now has a $0 single-seed pilot signal
-(`use_liquid` = the CfC mixer, not the Conv1d router; Δ(off−on)=+0.50, directional only); the rest — and
-a multi-seed measured result — still require training hardware. Component value remains a hypothesis until
-a measured run. See the master report for the pilot-first sequence.
+the architecture's bets get *measured*. The `no_liquid` bet has now been **measured at toy scale**: a
+12-seed ablation ([ABLATION.md](ABLATION.md)) shows **no accuracy benefit** from the CfC mixer
+(OFF 96.32% / ON 94.69%, Δ−1.63pp, p=0.305, Cohen's d=−0.43) at ~30% slower wall-clock — superseding the
+earlier single-seed +0.50 pilot (one lucky seed). The reading is **inconclusive at scale** (the toy task
+is ceiling-saturated and the test underpowered): the cost is certain, the benefit unmeasured. The
+`no_moe` / `bitlinear_off` / `dense_only` bets remain hypotheses until a measured run.
 
-## Feature flags (off by default)
+## Feature flags (off by default) & out-of-scope surfaces
 
 `use_qinn` (orthogonal Cayley transform, `layers/qinn.py`), `use_lifelong_safety_layer`
-(`layers/lifelong_safety.py`), `use_latent_ode_state_channel` (`layers/cognitive_extensions.py`),
-world-model head (`layers/world_model_head.py`, diagnostic-only). These are non-canonical and do not
-affect the measured param count or the default training path.
+(`layers/lifelong_safety.py`), `use_latent_ode_state_channel` / `use_neuromodulatory_gain`
+(`layers/cognitive_extensions.py`), and the world-model head (`layers/world_model_head.py`,
+diagnostic-only) are **flag-OFF on the canonical path**: not instantiated, zero measured params,
+inert during the 45K run.
+
+The `orchestrator/` cognitive runtime (`cognitive_loop.py`, `reasoning_engine.py`, `planner.py`,
+`self_audit.py`, etc.) is an **inference/agentic sandbox that is NOT part of pre-training**. The only
+`orchestrator/` modules the 45K training path imports are `distillation_manager.py` and `telemetry.py`.
+Everything else there, plus the flags above, is **explicitly out of scope for the trained model** —
+kept for research continuity, not a capability claim, and not exercised by the canonical run.
 
 ## Projections (claim boundary)
 All capability / throughput / device numbers in README and reports are **projections or targets**,

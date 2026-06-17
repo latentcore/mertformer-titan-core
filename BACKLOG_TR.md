@@ -19,3 +19,4 @@ Her biri mekanizmasıyla [DECISIONS_TR.md](DECISIONS_TR.md)'de belgeli:
 
 ## Kapsam dışı (belgeli, repo'da takip edilmiyor)
 - `reports/closure_57_matrix.md`'deki AGI/ASI yetenek satırları **kapsam-dışı pending**'dir (benchmark / uzun-vadeli kanıt gerektirir) — bkz. [INTERNAL_AGI_GAP.md](INTERNAL_AGI_GAP.md).
+- `orchestrator/` cognitive runtime + flag-off katmanlar (`cognitive_extensions.py`, `world_model_head.py`, `lifelong_safety.py`, `qinn.py`) kanonik 45K yolunda **inert** — kapsam-dışı, eğitilen modele dahil değil. Belgeli (silinmedi); bkz. [ARCHITECTURE.md](ARCHITECTURE.md) "out-of-scope surfaces".

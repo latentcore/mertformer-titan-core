@@ -292,11 +292,18 @@ def save_checkpoint_smart(
     if write_final:
         state['is_final'] = True
 
-    # Save regular checkpoint
-    torch.save(state, save_path)
-    torch.save(state, latest_path)
+    # Save regular checkpoint atomically: write to a temp file then os.replace into
+    # place. A mid-write process kill (exactly the provider failure we already hit)
+    # can otherwise leave a half-written *.pt that crashes the next resume; os.replace
+    # is atomic on the same filesystem, so a reader always sees a complete file.
+    def _atomic_torch_save(_state, _dst):
+        _tmp = f"{_dst}.tmp"
+        torch.save(_state, _tmp)
+        os.replace(_tmp, _dst)
+    _atomic_torch_save(state, save_path)
+    _atomic_torch_save(state, latest_path)
     if write_final:
-        torch.save(state, final_path)
+        _atomic_torch_save(state, final_path)
         print(f"🏁 Final Checkpoint Kaydedildi: {final_name}")
     
     # Save best checkpoint if this is the best so far
@@ -411,7 +418,12 @@ def _load_resume_payload(cfg: Any, model: nn.Module, is_main_process: bool = Tru
             print("ℹ️  Auto-resume enabled, no checkpoint found. Starting fresh.")
         return None
 
-    state = torch.load(ckpt_path, map_location="cpu")
+    # weights_only=False: this is our OWN trusted checkpoint, and its optimizer
+    # state (GaLoreAdamW8bit / bitsandbytes AdamW8bit) carries non-tensor objects
+    # that the weights_only=True default (torch >= 2.6) refuses to unpickle, which
+    # would make the entire resume crash — i.e. break the crash-recovery path we
+    # depend on after a provider kill. Explicit, not relying on the torch default.
+    state = torch.load(ckpt_path, map_location="cpu", weights_only=False)
     if not isinstance(state, dict) or "model" not in state:
         raise RuntimeError(f"Invalid checkpoint format: {ckpt_path}")
 
@@ -1365,10 +1377,15 @@ def train() -> None:
                             print(f"⚠️  WARNING: Gradient norm collapse detected! Avg: {avg_recent:.6f}")
                             print(f"   Model may have stopped learning. Consider adjusting learning rate.")
 
-                    # Engine Overheating Protection
+                    # Engine Overheating Protection — log a gradient spike, but do
+                    # NOT permanently ratchet cfg.grad_clip down. The old behavior
+                    # (cfg.grad_clip *= 0.7, floor 0.1, never recovers) could latch the
+                    # clip at 0.1 after a handful of early BitNet-STE spikes and then
+                    # silently over-clip the rest of the 45K run. clip_grad_norm_ already
+                    # clamps THIS step at the configured value, and the NaN/Inf + 3-strike
+                    # spike guards handle genuine instability, so the clip stays transient.
                     if grad_norm_val > 10.0:
-                        print(f"⚠️  CRITICAL: Gradient norm {grad_norm_val:.2f} exceeds safety threshold! Reducing clip threshold.")
-                        cfg.grad_clip = max(cfg.grad_clip * 0.7, 0.1)
+                        print(f"⚠️  WARNING: Gradient norm {grad_norm_val:.2f} exceeds soft threshold (transient; clip held at {cfg.grad_clip}).")
 
                     # Log Metrics (Main Process)
                     if global_step % cfg.log_interval == 0 and logger and accelerator.is_main_process:
@@ -1442,11 +1459,17 @@ def train() -> None:
                             "grad_norm": avg_grad_norm,
                             "max_grad_norm": max_grad_norm_seen
                         }
-                        telemetry_snapshot = system_snapshot(project_root)
-                        for key, value in telemetry_snapshot.items():
-                            if key == "timestamp_utc" or value is None:
-                                continue
-                            log_data[key] = value
+                        # Throttle the host system snapshot — it shells out for GPU/host
+                        # stats, so at log_interval=1 it would fire a subprocess every step
+                        # (~45K subprocess spawns across the run). Run it at most every
+                        # TITAN_TELEMETRY_INTERVAL optimizer steps, independent of log_interval.
+                        _telemetry_interval = int(os.environ.get("TITAN_TELEMETRY_INTERVAL", "100"))
+                        if global_step % max(_telemetry_interval, 1) == 0:
+                            telemetry_snapshot = system_snapshot(project_root)
+                            for key, value in telemetry_snapshot.items():
+                                if key == "timestamp_utc" or value is None:
+                                    continue
+                                log_data[key] = value
                         if continual_state is not None:
                             log_data["continual_ema_loss"] = float(continual_state.running_loss_ema)
                             log_data["continual_replay_size"] = int(continual_state.replay_size)

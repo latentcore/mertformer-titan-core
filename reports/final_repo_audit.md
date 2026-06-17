@@ -1,8 +1,8 @@
 # Final Repo Audit
 
-- generated_utc: `2026-06-16T23:19:16Z`
+- generated_utc: `2026-06-17T01:12:50Z`
 - git_branch: `main`
-- git_commit_short: `9a28375`
+- git_commit_short: `e1e3785`
 - readiness_final_status: `TRAIN_ALLOWED`
 - readiness_reason_code: `READY_REMOTE_BOOTSTRAP`
 - recommended_path: `remote_bootstrap`
@@ -10,7 +10,7 @@
 ## Working Tree
 
 - tracked_files: `821`
-- modified_entries: `88`
+- modified_entries: `94`
 - untracked_entries: `0`
 
 ## Canonical Gates
@@ -30,11 +30,11 @@
 
 ## Artifacts
 
-- `artifacts/mertformer_release.zip` (109222707 bytes)
-- `artifacts/mertformer_training_outputs_bundle.zip` (328631084 bytes)
-- `artifacts/target_machine_handoff_bundle.zip` (143456 bytes)
+- `artifacts/mertformer_release.zip` (109235533 bytes)
+- `artifacts/mertformer_training_outputs_bundle.zip` (328662926 bytes)
+- `artifacts/target_machine_handoff_bundle.zip` (143514 bytes)
 - `packages/MertFormer_5080_Final_Delivery_20260421_213941.zip` (122233 bytes)
 - `packages/MertFormer_5080_Final_Delivery_20260421_221701.zip` (122904 bytes)
 - `packages/MertFormer_5080_Final_Delivery_20260421_221919.zip` (362147 bytes)
 - `packages/MertFormer_5080_Final_Delivery_20260421_222608.zip` (362057 bytes)
-- `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip` (53265703 bytes)
+- `packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip` (53272164 bytes)

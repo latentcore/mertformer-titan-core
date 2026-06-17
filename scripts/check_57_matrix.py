@@ -87,7 +87,7 @@ def build_checks() -> list[ItemCheck]:
         ItemCheck(17, "model", "transformer stack", _exists("model/transformers.py"), _exists("layers/mertformer_block.py"), _exists("tests/test_model.py"), 17 in pending, ["model/transformers.py"]),
         ItemCheck(18, "model", "gqa attention", _exists("layers/mla.py"), _grep("layers/mertformer_block.py", "GQA"), _exists("tests/test_mla_regressions.py"), 18 in pending, ["layers/mla.py"]),
         ItemCheck(19, "model", "decoupled rope", _grep("layers/mla.py", "decoupled_rope"), _exists("layers/mla.py"), _exists("tests/test_mla_regressions.py"), 19 in pending, ["layers/mla.py"]),
-        ItemCheck(20, "model", "gqa", _grep("layers/mla.py", "num_kv_heads"), _exists("layers/mla.py"), _exists("tests/test_mla_regressions.py"), 20 in pending, ["layers/mla.py"]),
+        ItemCheck(20, "model", "kv-head sharing (grouped-query KV)", _grep("layers/mla.py", "num_kv_heads"), _exists("layers/mla.py"), _exists("tests/test_mla_regressions.py"), 20 in pending, ["layers/mla.py"]),
         ItemCheck(21, "model", "hierarchical kv cache", _grep("layers/mla.py", "use_hierarchical_kv_cache"), _grep("layers/mla.py", "_build_hierarchical_kv"), _exists("tests/test_cognitive_extensions.py"), 21 in pending, ["layers/mla.py"]),
         ItemCheck(22, "model", "moe + liquidrouter", _exists("layers/moe.py"), _grep("layers/mertformer_block.py", "MoE"), _exists("tests/test_architecture_integrity.py"), 22 in pending, ["layers/moe.py"]),
         ItemCheck(23, "model", "liquid/cfc mixer", _exists("layers/liquid.py"), _grep("layers/mertformer_block.py", "LiquidMixer"), _exists("tests/test_architecture_integrity.py"), 23 in pending, ["layers/liquid.py"]),

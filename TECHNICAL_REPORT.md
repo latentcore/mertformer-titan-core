@@ -1,4 +1,4 @@
-# Technical Analysis and Strategic Valuation of the MertFormer Titan Onyx Storm Architecture
+# Technical Analysis of the MertFormer Titan Architecture
 
 > **External review note:** For compute sponsorship, start with
 > `private/commercial/outreach_compute_sponsorship_messages.md` and
@@ -13,7 +13,7 @@
 ---
 
 ## 1. Executive Summary
-The AI ecosystem is evolving from massive cloud-based models toward on-device, energy-efficient, and privacy-focused Small Language Models (SLMs). At the forefront of this evolution, the **MertFormer Titan (Onyx Storm) v1.0 (Build 30 V2)** project is a strategic synthesis of the four most advanced paradigms in modern deep learning literature:
+The AI ecosystem is shifting from large cloud-based models toward on-device, energy-efficient Small Language Models (SLMs). The **MertFormer Titan v1.0 (Build 30 V2)** project combines four paradigms from recent deep-learning literature:
 
 1.  **BitNet 1.58-bit Quantization** (Efficiency)
 2.  **GQA Attention (grouped-query, current implementation)** (Memory)
@@ -55,7 +55,7 @@ The `mla.py` module implements a GQA attention core in the `GQA` class. KV heads
 *   **Truth boundary:** Full latent-MLA bottleneck remains a roadmap item.
 
 ### 2.3 Liquid Neural Networks (CfC)
-The "living" heart of the project. Inspired by biological neurons (C. elegans), Closed-Form Continuous-time (CfC) cells work with input-dependent differential equations.
+A continuous-time recurrent mixer on a few layers. Inspired by biological neurons (C. elegans), Closed-Form Continuous-time (CfC) cells use input-dependent differential equations. (Value boundary: a 12-seed toy ablation showed no measured accuracy benefit at ~30% slower wall-clock; see [ABLATION.md](ABLATION.md).)
 
 *   **Time Perception:** The `tau` (time constant) parameter is dynamic.
 *   **Continuity:** It tracks momentum between tokens.
@@ -73,19 +73,20 @@ Routing policy is token-choice top-k and should be read separately from the CfC 
 | Number of Experts | 8 |
 | Active Experts (Top-k) | 2 |
 | Router | `LiquidRouter` (Conv1d + state buffer) |
-| Intermediate Dim | 5632 (SwiGLU) |
+| MoE expert intermediate (`moe_intermediate`) | 8192 (SwiGLU) |
+| Dense-FFN intermediate (`intermediate_size`) | 5632 (SwiGLU) |
 
 **Strategic Edge of LiquidRouter (Claim-Safe):**
 *   **Temporal routing:** It analyzes data-arrival speed and short history (`Fluid Path`) without claiming formal superiority.
 *   **Causal Conv1d Integration:** Displays strategic intelligence by considering the past 4-token window (`history_window`) during expert selection.
 *   **Hardware efficiency (Target):** Aims for lower routing instability and better NPU behavior; requires device profiling.
 
-### 2.5 Synaptic Layer Hierarchy (Layer-by-Layer Taxonomy)
-MertFormer Titan's 18-layer structure transforms data into gradual "wisdom":
-*   **L0-L2 (Foundation):** Basic grammar setup with RMSNorm stabilization and BitNet efficiency.
-*   **L3-L9 (Abstraction):** Evolution of data into abstract concepts and intent analysis through MoE expert distribution and the first **Liquid Contact (L4)**.
-*   **L10-L15 (Reasoning):** Strengthened temporal memory with the second **Liquid Contact (L10)**; processes of strategic decision and cultural adaptation.
-*   **L16-L17 (Wisdom & Final):** Transformation into fluid intelligence with the **Final Liquid Seal (L16)** and generation of logits through the LM Head.
+### 2.5 Layer Taxonomy (Layer-by-Layer)
+MertFormer Titan's 18-layer stack, by role:
+*   **L0-L2 (Foundation):** Base representation with RMSNorm stabilization and BitNet ternary linears.
+*   **L3-L9 (Mid):** MoE expert distribution; first Liquid/CfC mixer at **L4**.
+*   **L10-L15 (Deep):** Second Liquid/CfC mixer at **L10**; deeper feature composition.
+*   **L16-L17 (Output):** Third Liquid/CfC mixer at **L16**; logits via the LM head.
 
 ---
 
@@ -169,12 +170,7 @@ The model's reliability is supported by explicit verification and logging mechan
 
 ## 8. Conclusion
 
-MertFormer Titan Onyx Storm is less a standard LLM and more a **"high-performance kernel"** designed for the future ecosystem of on-device AI.
-
-**Vision:**
-> *"We planted the seed; now it's time to watch the forest."*
-
-The architecture is technically consistent and the hardware target is precise, while market interest should be tested through evidence-backed outreach. Success now depends on the quality of operational execution and checkpoint-bound evidence.
+MertFormer Titan is an on-device-oriented architecture (BitNet + MoE + Liquid/CfC + GQA) built with a disciplined evidence boundary. The architecture is internally consistent and the hardware target is concrete, but component value and model quality remain hypotheses: there is no trained checkpoint yet. What to evaluate is the engineering discipline (low-bit runtime, training reliability, claim discipline) — not a finished model. Success now depends on operational execution and checkpoint-bound evidence.
 
 ---
 
@@ -187,13 +183,12 @@ Steps required before any production or capability claim — none of the below i
 
 ---
 
-## 10. Future Research Horizons (v28+)
+## 10. Speculative Research Horizons (out of scope; not implemented)
 
-To further bridge the gap between artificial and biological neural efficiency, the next iterations of the Titan architecture will explore:
-*   **Persistent Contextual Memory**: Developing a vector-based "Episodic Cache" that allows the model to remember user-specific coding styles and project history without weight instability.
-*   **Synaptic Plasticity (Research Path)**: Exploring "Hebbian-inspired" on-inference updates within isolated Liquid layers for real-time behavioral adaptation.
-*   **Homeostatic Regulation**: Developing dynamic neuro-modulatory gating to ensure signal stability and autonomous sensitivity adjustment across deep layers.
-*   **Emotional Weighting (Neuromodulation)**: Integrating "Affective Gating" mechanisms that simulate neurotransmitter-driven priority shifts (urgency, confidence) to enhance decision-making under uncertainty.
+The following are **long-range research directions only**. None is implemented on the canonical training path, none is part of the 45K run or the trained model, and none is claimed as a capability — they are listed for transparency, not as features:
+*   **Persistent contextual memory** — a vector-based episodic cache for user/project context across sessions (research idea; not built).
+*   **On-inference plasticity** — Hebbian-style updates confined to isolated Liquid layers for real-time adaptation (research idea; not built).
+*   **Adaptive gain regulation** — dynamic per-layer gating for signal stability (research idea; not built).
 
 ---
 

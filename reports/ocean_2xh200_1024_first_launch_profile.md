@@ -30,6 +30,22 @@ MERTFORMER_FUSED_BACKWARD=0
 
 `packed_pair_compile` is intentionally not part of the first long run. `ACCELERATE_CONFIG_FILE` stays optional and should point only to a target-matching profile under `repro/`.
 
+## Token Budget (canonical 23.6B vs this 1024 profile)
+
+`config/config.py` defaults to `batch_size=128` and `target_tokens_min=23.6B`
+(45,000 × 128 × 4096). This 1024-first profile multiplies the global batch by 8, so
+the same 45,000 steps process **~188B tokens (~51 tok/param) — 8× the 23.6B default**.
+The WSD learning-rate schedule and the 5-stage curriculum are **step-based and are NOT
+rescaled** by batch size, so each stage simply sees ~8× more tokens.
+
+- **Canonical budget: 23.6B** (config default). Use it by keeping `TITAN_BATCH_SIZE=128`
+  (omit the override). This is the `DECISIONS.md` canonical 45K target.
+- **Opt-in higher-throughput budget: ~188B** via `TITAN_BATCH_SIZE=1024` (this profile).
+  A deliberate compute-budget choice, not a silent default.
+- **Guard:** set `TITAN_STRICT_TOKEN_BUDGET=1` to make `config/config.py` **hard-fail**
+  (instead of stderr-warn) when planned tokens exceed `target_tokens_min` by >5% — so a
+  1024 launch that was meant to be 23.6B cannot start by accident.
+
 ## Failure Policy
 
 `scripts/final_orchestrator.py` starts with batch `1024`. It retries `512` and then `256` only when the child result contains a clear OOM signal such as CUDA out-of-memory or `oom_backoff_exhausted`. Teacher/data/config/auth/test failures are not batch-fallback events and should stop the launch.

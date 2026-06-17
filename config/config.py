@@ -408,8 +408,13 @@ class MertFormerConfig:
     # -------------------------------------------------------------------------
     # 8. HYPERPARAMETERS
     # -------------------------------------------------------------------------
+    # Canonical 45K target is batch_size=128 -> ~23.6B tokens (target_tokens_min).
+    # TITAN_BATCH_SIZE=1024 (Ocean 1024-first profile) is an EXPLICIT opt-in that
+    # yields ~188B tokens (8x); LR/curriculum are step-based and not rescaled. The
+    # TITAN_STRICT_TOKEN_BUDGET guard below hard-fails a >5% overshoot. See
+    # reports/ocean_2xh200_1024_first_launch_profile.md and DECISIONS.md.
     batch_size: int = int(os.environ.get("TITAN_BATCH_SIZE", "128"))
-    
+
     # [V27.0 AUTO-CONFIG] Automatic GPU-based batch size optimization
     # micro_batch_size and grad_accum_steps are now computed automatically
     micro_batch_size: Optional[int] = field(default=None)  # Auto-configured
@@ -477,7 +482,11 @@ class MertFormerConfig:
     save_dir: str = "./checkpoints/mertformer_titan_prod"
 
     # Logging Frequency
-    log_interval: int = int(os.environ.get("TITAN_LOG_INTERVAL", "1"))
+    # Default 10 (was 1): at 1 the per-step metric collection + host snapshot fire
+    # every single optimizer step across a 45K run. 10 keeps a fine loss curve
+    # (~4.5K points) while cutting logging overhead ~10x. Env-overridable. The
+    # expensive host snapshot is throttled further via TITAN_TELEMETRY_INTERVAL.
+    log_interval: int = int(os.environ.get("TITAN_LOG_INTERVAL", "10"))
     save_interval: int = int(os.environ.get("TITAN_SAVE_INTERVAL", "1000"))
 
     export_format: str = "onnx_dynamic"

@@ -1,4 +1,4 @@
-# MertFormer Titan Onyx Storm Mimarisinin Teknik Analizi ve Stratejik Değerlemesi
+# MertFormer Titan Mimarisinin Teknik Analizi
 
 > **Dış inceleme notu:** Compute sponsorship değerlendirmesi için önce
 > `private/commercial/outreach_compute_sponsorship_messages.md` ve
@@ -13,7 +13,7 @@
 ---
 
 ## 1. Yönetici Özeti
-Yapay zeka ekosistemi, bulut tabanlı devasa modellerden cihaz içi (on-device) çalışan, enerji verimliliği yüksek ve gizlilik odaklı Küçük Dil Modellerine (SLM) doğru evrilmektedir. Bu evrimin en uç noktasında yer alan **MertFormer Titan (Onyx Storm) v1.0 (Build 30 V2)** projesi, modern derin öğrenme literatüründeki en gelişmiş dört paradigmanın stratejik bir sentezidir:
+Yapay zeka ekosistemi, bulut tabanlı devasa modellerden cihaz içi (on-device), enerji verimli Küçük Dil Modellerine (SLM) doğru kayıyor. **MertFormer Titan v1.0 (Build 30 V2)** projesi, son derin öğrenme literatüründen dört paradigmayı birleştirir:
 
 1.  **BitNet 1.58-bit Kuantizasyonu** (Verimlilik)
 2.  **GQA dikkat bloğu (grouped-query, mevcut implementasyon)** (Bellek)
@@ -54,7 +54,7 @@ $$w_q = \text{clamp}(\text{round}(\frac{w}{\gamma + \epsilon}), -1, 1)$$
 *   **Doğruluk sınırı:** Tam latent-MLA bottleneck bu sürümde roadmap kalemidir.
 
 ### 2.3 Liquid Neural Networks (CfC)
-Projenin "canlı" kalbi. Biyolojik nöronlardan (C. elegans) esinlenen Kapalı Form Sürekli Zamanlı (CfC) hücreleri, girdiye bağımlı diferansiyel denklemlerle çalışır.
+Birkaç katmanda sürekli-zamanlı yinelemeli bir mikser. Biyolojik nöronlardan (C. elegans) esinlenen Kapalı Form Sürekli Zamanlı (CfC) hücreleri, girdiye bağımlı diferansiyel denklemlerle çalışır. (Değer sınırı: 12-seed toy ablation ölçülen doğruluk faydası göstermedi, ~%30 daha yavaş; bkz. [ABLATION.md](ABLATION.md).)
 
 *   **Zaman Algısı:** `tau` (zaman sabiti) parametresi dinamiktir.
 *   **Süreklilik:** Tokenlar arası momentumu takip eder.
@@ -72,19 +72,20 @@ Yönlendirme politikası token-choice top-k'dır ve `LiquidMixer/LiquidCell` iç
 | Uzman Sayısı | 8 |
 | Aktif Uzman (Top-k) | 2 |
 | Yönlendirici | `LiquidRouter` (Conv1d + state buffer) |
-| Ara Boyut | 5632 (SwiGLU) |
+| MoE uzman ara boyutu (`moe_intermediate`) | 8192 (SwiGLU) |
+| Dense-FFN ara boyutu (`intermediate_size`) | 5632 (SwiGLU) |
 
 **LiquidRouter'ın Stratejik Farkı (Claim-Safe):**
 *   **Zamansal yönlendirme:** Verinin geliş hızını ve kısa geçmişini (`Fluid Path`) analiz eder; formal üstünlük iddiası içermez.
 *   **Causal Conv1d Entegrasyonu:** Uzman seçimi sırasında geçmiş 4 token'lık pencereyi (`history_window`) dikkate alarak stratejik bir zeka sergiler.
 *   **Donanım verimliliği (Hedef):** Yönlendirme kararsızlığını azaltmayı ve NPU davranışını iyileştirmeyi hedefler; cihaz profili gerekir.
 
-### 2.5 Sinaptik Katman Hiyerarşisi (Layer-by-Layer Taxonomy)
-MertFormer Titan'ın 18 katmanlı yapısı, veriyi kademeli bir "bilgeliğe" dönüştürür:
-*   **L0-L2 (Foundation):** RMSNorm stabilizasyonu ve BitNet verimliliği ile temel gramer kurulumu.
-*   **L3-L9 (Abstraction):** MoE uzman dağıtımı ve ilk **Liquid Teması (L4)** ile verinin soyut kavramlara ve niyet analizine evrilmesi.
-*   **L10-L15 (Reasoning):** İkinci **Liquid Teması (L10)** ile güçlenen zamansal hafıza; stratejik karar ve kültürel adaptasyon süreçleri.
-*   **L16-L17 (Wisdom & Final):** **Nihai Liquid Mührü (L16)** ile akışkan zekaya dönüşüm ve LM Head üzerinden logits üretimi.
+### 2.5 Katman Taksonomisi (Katman-Katman)
+MertFormer Titan'ın 18 katmanlı yığını, role göre:
+*   **L0-L2 (Temel):** RMSNorm stabilizasyonu ve BitNet ternary linear'larla taban temsil.
+*   **L3-L9 (Orta):** MoE uzman dağıtımı; **L4**'te ilk Liquid/CfC mikser.
+*   **L10-L15 (Derin):** **L10**'da ikinci Liquid/CfC mikser; daha derin özellik kompozisyonu.
+*   **L16-L17 (Çıkış):** **L16**'da üçüncü Liquid/CfC mikser; LM head üzerinden logits.
 
 ---
 
@@ -170,12 +171,7 @@ Modelin güvenilirliği, açık doğrulama ve loglama mekanizmalarıyla destekle
 
 ## 8. Sonuç
 
-MertFormer Titan Onyx Storm, basit bir LLM olmanın ötesinde, cihaz içi yapay zeka ekosistemi için tasarlanmış **"yüksek performanslı bir çekirdek (kernel)"** mimarisidir.
-
-**Vizyon:**
-> *"Tohumu ektik, şimdi ormanı izleme vakti."*
-
-Mimari tutarlı ve donanım hedefi nettir; pazar ilgisi ise kanıt-temelli outreach ile test edilmelidir. Projenin başarısı, operasyonel yürütme kalitesi ve checkpoint-bound kanıtla belirlenecektir.
+MertFormer Titan, disiplinli bir kanıt sınırıyla kurulmuş cihaz-içi odaklı bir mimaridir (BitNet + MoE + Liquid/CfC + GQA). Mimari kendi içinde tutarlı ve donanım hedefi somut; ama bileşen değeri ve model kalitesi hâlâ hipotez: henüz eğitilmiş checkpoint yok. Değerlendirilecek şey mühendislik disiplini (low-bit runtime, eğitim güvenilirliği, claim disiplini) — bitmiş bir model değil. Başarı artık operasyonel yürütme ve checkpoint-bound kanıtla belirlenecek.
 
 ---
 
@@ -188,13 +184,12 @@ Herhangi bir üretim ya da yetenek iddiasından ÖNCE gereken adımlar — aşa�
 
 ---
 
-## 10. Gelecek Araştırma Ufukları (v28+)
+## 10. Spekülatif Araştırma Ufukları (kapsam-dışı; uygulanmadı)
 
-Yapay ve biyolojik sinirsel verimlilik arasındaki farkı daha da kapatmak için, Titan mimarisinin sonraki iterasyonları şunları keşfedecektir:
-*   **Kalıcı Bağlamsal Hafıza**: Ağırlık dengesizliği yaratmadan, modelin kullanıcıya özel kodlama stillerini ve proje geçmişini hatırlamasını sağlayan vektör tabanlı bir "Episodik Önbellek" (Episodic Cache) geliştirilmesi.
-*   **Sinaptik Plastisite (Araştırma Yolu)**: Gerçek zamanlı davranışsal adaptasyon için izole edilmiş Liquid katmanları içinde "Hebbian" ilhamlı çıkarım-içi güncellemelerin keşfedilmesi.
-*   **Homeostatik Regülasyon**: Derin katmanlarda sinyal kararlılığını ve otonom hassasiyet ayarını sağlamak için dinamik nöro-modülatör kapılama mekanizmaları.
-*   **Duygusal Ağırlıklandırma (Nöromodülasyon)**: Belirsizlik durumlarında karar verme sürecini geliştirmek için nörotransmitter güdümlü öncelik değişimlerini (aciliyet, güven) simüle eden "Duygusal Kapılama" düzeneklerinin entegrasyonu.
+Aşağıdakiler **yalnızca uzun-vadeli araştırma yönleridir**. Hiçbiri kanonik eğitim yolunda uygulanmadı, hiçbiri 45K koşusunun ya da eğitilen modelin parçası değil ve hiçbiri yetenek olarak iddia edilmiyor — şeffaflık için listeleniyor, özellik olarak değil:
+*   **Kalıcı bağlamsal hafıza** — oturumlar arası kullanıcı/proje bağlamı için vektör tabanlı episodik önbellek (araştırma fikri; inşa edilmedi).
+*   **Çıkarım-içi plastisite** — izole Liquid katmanlarında gerçek-zamanlı adaptasyon için Hebbian-tarzı güncellemeler (araştırma fikri; inşa edilmedi).
+*   **Uyarlanır kazanç regülasyonu** — sinyal kararlılığı için dinamik katman-bazlı kapılama (araştırma fikri; inşa edilmedi).
 
 ---
 

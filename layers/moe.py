@@ -359,15 +359,22 @@ class MoE(nn.Module):
         self.moe_capacity_factor: float = float(getattr(cfg, "moe_capacity_factor", 1.25))
         self.dispatch_mode: str = str(getattr(cfg, "moe_dispatch_mode", "sequential")).lower()
         
-        # Telemetry & Collapse State
-        self.register_buffer("last_expert_load", torch.zeros(self.num_experts))
-        self.register_buffer("last_router_entropy", torch.tensor(0.0))
-        self.register_buffer("last_router_max_load", torch.tensor(0.0))
-        self.register_buffer("last_capacity_overflow_ratio", torch.tensor(0.0))
-        self.register_buffer("collapse_detected", torch.tensor(False))
-        self.register_buffer("expert_activity_mask", torch.ones(self.num_experts, dtype=torch.bool))
-        self.register_buffer("expert_usage_ema", torch.zeros(self.num_experts))
-        self.register_buffer("plasticity_step", torch.zeros((), dtype=torch.int64))
+        # Telemetry & Collapse State.
+        # persistent=False on all of these: they are runtime telemetry / derived
+        # recovery state, NOT learned parameters. Writing them into a checkpoint
+        # would leak a stale `collapse_detected` flag or a structural-plasticity
+        # `expert_activity_mask` across a resume boundary (e.g. resume with jitter
+        # already latched on). They are recomputed every forward, so dropping them
+        # from the checkpoint is both correct and cleaner. Mirrors the paging
+        # counters below, which were already persistent=False.
+        self.register_buffer("last_expert_load", torch.zeros(self.num_experts), persistent=False)
+        self.register_buffer("last_router_entropy", torch.tensor(0.0), persistent=False)
+        self.register_buffer("last_router_max_load", torch.tensor(0.0), persistent=False)
+        self.register_buffer("last_capacity_overflow_ratio", torch.tensor(0.0), persistent=False)
+        self.register_buffer("collapse_detected", torch.tensor(False), persistent=False)
+        self.register_buffer("expert_activity_mask", torch.ones(self.num_experts, dtype=torch.bool), persistent=False)
+        self.register_buffer("expert_usage_ema", torch.zeros(self.num_experts), persistent=False)
+        self.register_buffer("plasticity_step", torch.zeros((), dtype=torch.int64), persistent=False)
         self.register_buffer(
             "expert_paging_swaps_in",
             torch.zeros((), dtype=torch.int64),
@@ -758,12 +765,13 @@ class MoE(nn.Module):
              elif self.collapse_detected.item() and max_load < 0.5:
                  # Recovery: Reset state
                  self.collapse_detected.fill_(False)
-             # [18] Synchronize the collapse flag across DDP ranks so structural-recovery jitter
-             # is applied consistently (each rank otherwise decides independently). No-op off-DDP.
-             if torch.distributed.is_available() and torch.distributed.is_initialized():
-                 _flag = self.collapse_detected.to(torch.int32)
-                 torch.distributed.all_reduce(_flag, op=torch.distributed.ReduceOp.MAX)
-                 self.collapse_detected.fill_(bool(_flag.item() > 0))
+             # [18] The per-rank collapse flag is intentionally NOT all_reduced here.
+             # A collective inside MoE.forward re-fires during gradient-checkpointing
+             # reentrant recompute and can interleave with DDP's own gradient-bucket
+             # all_reduces (collective-ordering / NCCL-deadlock hazard on multi-GPU),
+             # and it forces a per-step host-device sync. The collapse flag is a local
+             # recovery heuristic (drives jitter on this rank); cross-rank consensus is
+             # not required, so we keep it rank-local and collective-free.
         else:
              load_balancing_loss = torch.tensor(0.0, device=x.device, dtype=logits_f.dtype)
 

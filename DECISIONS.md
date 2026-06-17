@@ -172,3 +172,47 @@ None of the above is changed in this pass — no loss/behavior change before the
   verifies the code imports/instantiates/steps and that artifacts round-trip — cheap insurance
   against burning expensive 45K compute on a broken import/checkpoint chain (the last H200 run
   died at artifact retrieval). It is a "does the real code run" check, not a "250M deneme".
+
+## Pre-45K de-risk pass — operational hardening applied, training-behavior still deferred (2026-06-17)
+
+Two independent senior reviews (a doc/candidate review and a 6-round 45K code audit) were run; findings
+were verified live (file:line) and split into a *safe* set (applied) and a *training-behavior* set (kept
+document-only per the rule above). The code review's verdict: no guaranteed crash on the canonical
+single-pass path; the real residual de-risk is a 2-GPU smoke test + the run itself.
+
+**Applied — correctness / operational hardening (does NOT change training math, so it cannot confound the run):**
+- **grad_clip ratchet removed (`train/train.py`).** The old code permanently mutated `cfg.grad_clip *= 0.7`
+  (floor 0.1, never recovering) on any grad-norm spike — a few early BitNet-STE spikes could latch the clip
+  at 0.1 and silently over-clip the rest of 45K. The spike is now logged only; the clip stays at the
+  configured value (transient). Latent-bug fix, not a tuning change.
+- **Atomic checkpoint save (`train/train.py`):** temp file + `os.replace`, so a mid-write kill can no longer
+  leave a corrupt `.pt` that breaks the next resume (the exact provider failure we hit before).
+- **Resume `torch.load(..., weights_only=False)` (`train/train.py`):** explicit, so GaLore8bit/bnb optimizer
+  state unpickles and the crash-recovery path actually works on pinned torch.
+- **MoE runtime buffers `persistent=False` (`layers/moe.py`):** `collapse_detected` / `expert_activity_mask`
+  + telemetry buffers no longer leak into checkpoints (stale flag across a resume boundary).
+- **Removed the in-`MoE.forward` `all_reduce` (`layers/moe.py`):** a collective inside forward re-fires during
+  gradient-checkpointing recompute and can interleave with DDP's gradient all_reduces (NCCL-deadlock hazard on
+  multi-GPU) + a per-step host sync. The collapse flag is a local heuristic; kept rank-local.
+- **Telemetry throttle (`config.py` log_interval 1→10; `train.py` host snapshot every `TITAN_TELEMETRY_INTERVAL=100`):**
+  drops the per-step subprocess across 45K. Logging only; no math change.
+
+**Token budget (Q2): 23.6B canonical + 1024 opt-in.** `config/config.py` keeps `batch_size=128` / `23.6B`.
+`TITAN_BATCH_SIZE=1024` (Ocean 1024-first profile) is an EXPLICIT opt-in that yields ~188B (8×); the LR schedule
+and curriculum are step-based and not rescaled. The `TITAN_STRICT_TOKEN_BUDGET=1` guard hard-fails a >5%
+overshoot. Documented in `config/config.py` and `reports/ocean_2xh200_1024_first_launch_profile.md`.
+
+**Still deferred — training-behavior, document-only (same rule as the section above):**
+- z-loss effective `2e-6` and Liquid `dt=1.0` (documented above).
+- **dropout 0.1 + attention_dropout 0.1 + label_smoothing 0.1** on top of BitNet-STE noise: for an undertrained
+  regime (~6.4 tok/param at 23.6B) this stacks four regularizers and may slow learning (LLaMA/PaLM use dropout
+  0.0). NOT changed — a run-config tuning call decided at launch.
+- **early-stop `patience=5` × `val_check_interval=1000`** could cut 45K early across curriculum-stage shifts.
+  NOT changed — monitor at run time / tune at launch.
+
+**Doc / presentation (Q3 — frontier-lab polish):** `TECHNICAL_REPORT.md(+_TR)` reviewer-facing language was made
+clinical (dropped the "Synaptic / wisdom / fluid intelligence / living heart / Emotional Weighting / Onyx Storm"
+register; §10 reframed as "speculative, not implemented, out of scope"); `ARCHITECTURE.md` Liquid section was
+truth-synced to the 12-seed verdict; the inert `orchestrator/` AGI runtime + flag-off cognitive layers are
+documented as out-of-scope (not deleted); the MoE-intermediate doc typo was fixed (8192, not 5632 — 5632 is the
+dense FFN). closure_57 item 20 renamed from "gqa" to "kv-head sharing" (de-dup vs item 18).

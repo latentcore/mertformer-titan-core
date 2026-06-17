@@ -19,3 +19,4 @@ Each is documented with its mechanism in [DECISIONS.md](DECISIONS.md):
 
 ## Out of scope (documented, not pursued in repo)
 - AGI/ASI capability rows in `reports/closure_57_matrix.md` are **out-of-scope pending** (require benchmark / long-horizon evidence) — see [INTERNAL_AGI_GAP.md](INTERNAL_AGI_GAP.md).
+- The `orchestrator/` cognitive runtime + flag-off layers (`cognitive_extensions.py`, `world_model_head.py`, `lifelong_safety.py`, `qinn.py`) are **inert on the canonical 45K path** — out-of-scope, not part of the trained model. Documented (not deleted); see [ARCHITECTURE.md](ARCHITECTURE.md) "out-of-scope surfaces".
