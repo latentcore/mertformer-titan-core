@@ -67,3 +67,12 @@ Evidence (sha256-chained): [`reports/ablations/liquid_ablation_final_20260615/`]
 (`final_summary.json`, `MANIFEST.json`, plots). The 2026-06-14 single-seed pilot
 (`reports/ablations/liquid_ablation_results.json`, `liquid_ablation_pilot_curve.png`) is retained as
 **superseded** history.
+
+
+## 8. arXiv Submission (Post-45K)
+
+**Proposed title:** "LiquidRouter: Temporal-Aware Expert Routing for Sparse MoE via Causal Depthwise Convolution"
+
+**Target category:** cs.LG (primary), cs.CL (secondary)
+
+**Status:** Skeleton ready. Submission blocked on 45K checkpoint + benchmark results. Fill sections 3-7 with measured data before submitting.
