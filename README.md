@@ -63,4 +63,4 @@ Full tracked-file tree: docs/PROJECT_STRUCTURE.md
 ```
 
 ## License
-Apache-2.0 (see [LICENSE](LICENSE)). Built with Llama — see [NOTICE](NOTICE) and [MODEL_LICENSE.md](MODEL_LICENSE.md).
+Proprietary & Confidential — all rights reserved; see [LICENSE](LICENSE). Built with Llama — see [NOTICE](NOTICE) and [MODEL_LICENSE.md](MODEL_LICENSE.md).

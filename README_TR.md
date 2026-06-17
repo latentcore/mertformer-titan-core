@@ -63,4 +63,4 @@ Tam tracked-dosya ağacı: docs/PROJECT_STRUCTURE.md
 ```
 
 ## Lisans
-Apache-2.0 (bkz. [LICENSE](LICENSE)). Built with Llama — bkz. [NOTICE](NOTICE) ve [MODEL_LICENSE_TR.md](MODEL_LICENSE_TR.md).
+Proprietary & Confidential — tüm haklar saklı; bkz. [LICENSE](LICENSE). Built with Llama — bkz. [NOTICE](NOTICE) ve [MODEL_LICENSE_TR.md](MODEL_LICENSE_TR.md).

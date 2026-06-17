@@ -223,3 +223,13 @@ canonical training entry run a smoke WITHOUT loading/downloading the 70B teacher
 it when `distill_alpha > 0`; loss falls back to pure cross-entropy). This is the one-command teacher-free
 pre-45K smoke documented in REPRODUCE(.md/_TR). Not a training-dynamics change for the real run (default
 stays 0.8).
+
+**License contradiction resolved → Proprietary (2026-06-17).** README/README_TR footers claimed
+`Apache-2.0` while the authoritative `LICENSE` file is **Proprietary & Confidential, all rights reserved**
+(and `CONTRIBUTING` closes external contribution, `CITATION.cff` already says `Proprietary`, `pyproject.toml`
+points `license = {file = "LICENSE"}`, repo is private + commercial dealroom). The README footers were the
+lone error and are fixed to "Proprietary & Confidential — all rights reserved; see LICENSE". Resolved toward
+proprietary deliberately: it matches every other metadata surface and is the safe direction (a stray
+`Apache-2.0` would be an accidental open-source grant — irreversible). Llama obligations are unchanged and
+remain disclosed via `NOTICE` + `MODEL_LICENSE.md` ("Built with Llama"). NOT legal advice; a future decision
+to actually open-source (and reconcile Llama-derived components) is a separate, deliberate call.
