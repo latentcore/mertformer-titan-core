@@ -11,6 +11,16 @@ MertFormer Titan is an offline-first, auditable AI systems repository built arou
 
 Long-term target: reduce the cost barrier for auditable AI training and inference for compute-constrained developers, small teams, and local institutions. This is a target, not a benchmark claim, until checkpoint-bound runs and target-hardware measurements exist.
 
+## Architecture (at a glance)
+| Component | What | Why |
+|---|---|---|
+| BitNet b1.58 | ternary weights (-1 / 0 / +1) | edge memory + energy budget |
+| GQA attention | 16 query / 8 KV heads | smaller KV cache, mobile footprint |
+| Sparse MoE | 8 experts, top-2 (every 3rd layer) | capacity at ~constant active FLOPs |
+| Liquid/CfC mixer | continuous-time recurrence at layers [4, 10, 16] | temporal-dynamics research bet (12-seed ablation: no measured benefit) |
+
+18 layers · hidden 2048 · ~3.67B measured params (2.64B design target). Full detail: [ARCHITECTURE.md](ARCHITECTURE.md).
+
 ## Current Exact State
 - Stage: `pilot-ready pre-training baseline`
 - Repo-side readiness: `TRAIN_ALLOWED`
@@ -47,7 +57,7 @@ bash scripts/final_one_shot.sh
 ```
 
 ## Strongest Signals
-- training efficiency and systems-debugging discipline
+- real distributed-training debugging — NCCL hang, MoE gradient-checkpoint crash, EOS-masking fixes (ADR-0004) + atomic-checkpoint / resume hardening
 - backend routing and fallback honesty
 - offline-first, governance-gated assistant foundations
 - claim-safe verification and repo truth sync

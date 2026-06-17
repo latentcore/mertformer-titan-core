@@ -1,8 +1,7 @@
 # MertFormer Titan (Build 30 V2)
 
 Cihaz-içi (on-device) odaklı bir LLM araştırma yığını: **BitNet b1.58 ternary ağırlıklar**,
-seyrek **Mixture-of-Experts (MoE)**, **Liquid/CfC mixer** ve **GQA attention
-(grouped-query, current implementation)**. Kanıt-önce: bu repo **pre-training,
+seyrek **Mixture-of-Experts (MoE)**, **Liquid/CfC mixer** ve **GQA attention** (grouped-query). Kanıt-önce: bu repo **pre-training,
 closure-complete bir mühendislik PoC**'sidir — kanonik model **henüz eğitilmedi** ve gerçek
 bir koşu checkpoint üretene kadar hiçbir yetenek/benchmark iddiası yapılmaz.
 

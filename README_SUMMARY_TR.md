@@ -11,6 +11,16 @@ MertFormer Titan; low-bit runtime altyapısı, yerel assistant foundation ve dis
 
 Uzun vadeli hedef: compute bütçesi sınırlı geliştiriciler, küçük ekipler ve yerel kurumlar için denetlenebilir AI eğitim/çıkarım maliyet bariyerini düşürmek. Bu, checkpoint-bound koşular ve hedef donanım ölçümleri oluşana kadar benchmark claim değil, target statüsündedir.
 
+## Mimari (tek bakışta)
+| Bileşen | Ne | Neden |
+|---|---|---|
+| BitNet b1.58 | ternary ağırlıklar (-1 / 0 / +1) | edge bellek + enerji bütçesi |
+| GQA attention | 16 query / 8 KV head | daha küçük KV cache, mobil ayak izi |
+| Seyrek MoE | 8 expert, top-2 (her 3. katman) | sabit aktif FLOP'ta kapasite |
+| Liquid/CfC mixer | [4, 10, 16] katmanlarında sürekli-zaman recurrence | temporal-dinamik araştırma bahsi (12-seed ablation: ölçülen fayda yok) |
+
+18 katman · hidden 2048 · ~3.67B ölçülen param (2.64B tasarım hedefi). Tam ayrıntı: [ARCHITECTURE.md](ARCHITECTURE.md).
+
 ## Mevcut Exact Durum
 - Aşama: `pilot-ready pre-training baseline`
 - Repo-side readiness: `TRAIN_ALLOWED`
@@ -47,7 +57,7 @@ bash scripts/final_one_shot.sh
 ```
 
 ## En Güçlü Sinyaller
-- training efficiency ve systems-debugging disiplini
+- gerçek distributed-training debugging — NCCL hang, MoE gradient-checkpoint crash, EOS-masking düzeltmeleri (ADR-0004) + atomik-checkpoint / resume sertleştirme
 - backend routing ve fallback dürüstlüğü
 - governance-gated, offline-first assistant foundation
 - claim-safe verification ve repo truth sync

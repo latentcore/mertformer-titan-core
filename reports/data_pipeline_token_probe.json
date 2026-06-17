@@ -1,6 +1,6 @@
 {
   "schema": "data_pipeline_token_probe_v1",
-  "generated_utc": "2026-06-17T02:14:06Z",
+  "generated_utc": "2026-06-17T02:29:51Z",
   "probe_mode": "row_count_and_local_tokenizer_boundary",
   "stage_rows": {
     "stage1": 41,

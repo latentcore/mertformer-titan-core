@@ -1,8 +1,7 @@
 # MertFormer Titan (Build 30 V2)
 
 An on-device-oriented LLM research stack combining **BitNet b1.58 ternary weights**, a
-**sparse Mixture-of-Experts (MoE)**, a **Liquid/CfC mixer**, and **GQA attention
-(grouped-query, current implementation)**. Evidence-first: this repo is a **pre-training,
+**sparse Mixture-of-Experts (MoE)**, a **Liquid/CfC mixer**, and **GQA attention** (grouped-query). Evidence-first: this repo is a **pre-training,
 closure-complete engineering PoC** — the canonical model has **not been trained yet**, and
 no capability/benchmark claim is made until a real run produces checkpoints.
 
