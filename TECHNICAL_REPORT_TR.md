@@ -6,9 +6,9 @@
 > teknik arka plan ve stratejik çerçevedir; benchmark, production, deployment,
 > AGI veya model üstünlüğü iddiası değildir.
 
-**Tarih:** 2026-03-13
+**Tarih:** 2026-06-18
 **Versiyon:** v1.0 (Build 30 V2)
-**Yazar:** MertFormer AI Team
+**Yazar:** Mert Yünlü
 
 ---
 

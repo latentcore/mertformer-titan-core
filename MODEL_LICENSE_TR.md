@@ -3,7 +3,7 @@
 Bu model ve tüm türev çıktılar **proprietary** ve **gizlidir**.
 
 ## Özet
-- **Sahip:** MertFormer AI Team
+- **Sahip:** Mert Yünlü
 - **Kullanım:** Yalnızca yazılı anlaşma veya iş sözleşmesi ile.
 - **Dağıtım:** Yazılı izin olmadan yasaktır.
 - **Türevler:** İnce ayar, distillasyon ve tüm adaptasyonlar proprietary kabul edilir.

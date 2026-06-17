@@ -151,6 +151,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── exp_001_baseline/  # directory
 │       ├── config.yaml  # YAML configuration file
 │       ├── metrics.json  # JSON data artifact
+│       ├── notes.md  # documentation/report file
 │       └── notes_TR.md  # Turkish document counterpart
 ├── interfaces/  # directory
 │   ├── backlog_item_v1.schema.json  # JSON schema artifact
@@ -819,6 +820,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── trainer_data.py  # Python module/script (module for trainer data)
 │   └── trainer_eval.py  # Python module/script (module for trainer eval)
 ├── training_dynamics/  # directory
+│   ├── cold_vs_warm.md  # documentation/report file
 │   └── cold_vs_warm_TR.md  # Turkish document counterpart
 ├── utils/  # directory
 │   ├── __init__.py  # Python module/script (utils package initializer and exports)

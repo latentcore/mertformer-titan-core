@@ -3,7 +3,7 @@
 This model and all derived artifacts are **proprietary** and **confidential**.
 
 ## Summary
-- **Owner:** MertFormer AI Team
+- **Owner:** Mert Yünlü
 - **Usage:** Only under explicit written agreement or employment contract.
 - **Distribution:** Prohibited without written consent.
 - **Derivatives:** Any fine-tunes, distillations, or adaptations are also proprietary.

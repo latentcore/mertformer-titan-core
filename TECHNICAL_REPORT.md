@@ -6,9 +6,9 @@
 > technical background and strategic framing; it is not a benchmark, production,
 > deployment, AGI, or model-superiority claim.
 
-**Date:** 2026-03-13
+**Date:** 2026-06-18
 **Version:** v1.0 (Build 30 V2)
-**Author:** MertFormer AI Team
+**Author:** Mert Yünlü
 
 ---
 

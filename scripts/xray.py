@@ -2,7 +2,7 @@
 ==============================================================================
 MERTFORMER TITAN (ONYX STORM) - PROJECT AUDITOR (X-RAY)
 -------------------------------------------------------------------------------
-Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
+Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
