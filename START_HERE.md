@@ -28,7 +28,7 @@ MertFormer Titan is an offline-first, auditable AI systems project with three co
 5. `reports/systems_performance_case_study.md` - systems and low-bit runtime story
 6. `reports/offline_assistant_case_study.md` - offline assistant and RAG story
 7. `reports/chess_proof_teaching_case_study.md` - benchmark honesty and teaching discipline story
-8. `reports/final_backlog_missing_items.md` - exact remaining blocker classes
+8. `reports/final_backlog_missing_items.md` - exact remaining blocker classes *(generated locally by the closure ladder — `bash scripts/verify_all.sh`; not version-controlled)*
 9. `STATUS.md` - canonical status entry point
 10. `MISSION.md` - mission framing and claim philosophy
 

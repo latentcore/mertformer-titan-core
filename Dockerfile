@@ -19,10 +19,10 @@ RUN apt-get update && apt-get install -y \
     ninja-build \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python Dependencies
-COPY requirements.txt .
+# Install Python Dependencies (constraints.txt pins exact versions for reproducibility)
+COPY requirements.txt constraints.txt ./
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -c constraints.txt -r requirements.txt
 
 # Pre-Install Flash Attention 2 (Time Saver: ~10 mins)
 # We do this at build time so runtime is instant.

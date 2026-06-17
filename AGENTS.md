@@ -40,6 +40,8 @@ Project closure constitution for contributors and coding agents.
 
 Historical snapshots, archived reports, and legacy audits are supporting context only unless the current source-of-truth files explicitly point back to them.
 
+> Note: items 3–4 (and `reports/final_backlog_missing_items.md`) are **generated locally by the closure ladder** (`bash scripts/verify_all.sh`) and are intentionally **not version-controlled**; if absent when browsing on GitHub, regenerate them locally.
+
 ## Acceptance Criteria
 - Code path exists and is wired into a real command or report.
 - Tests or verification gates cover the changed behavior where practical.

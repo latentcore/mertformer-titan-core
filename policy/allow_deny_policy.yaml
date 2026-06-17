@@ -47,5 +47,6 @@ deny:
     hf_token: '\\bhf_[A-Za-z0-9]{24,}\\b'
     wandb_token: '\\bwandb_[A-Za-z0-9]{10,}\\b'
     openai_key: '\\bsk-[A-Za-z0-9]{10,}\\b'
-    github_token: '\\bghp_[A-Za-z0-9]{20,}\\b'
+    github_token: '\\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{20,}\\b'
+    github_fine_grained_pat: '\\bgithub_pat_[A-Za-z0-9_]{60,}\\b'
     aws_access_key: '\\bAKIA[0-9A-Z]{16}\\b'

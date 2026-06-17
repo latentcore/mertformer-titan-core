@@ -4,7 +4,7 @@
 ## 1. Özet
 MertFormer Titan içinde **LiquidRouter**, MoE kapılama hattında zamansal token yönlendirmesi için kullanılır. Mevcut implementasyonda LiquidRouter, `layers/moe.py` içinde **causal depthwise Conv1d + rolling state buffer** mekanizmasıdır. Bu yol, `layers/liquid.py` içindeki CfC (`LiquidMixer/LiquidCell`) yolundan ayrı değerlendirilmelidir.
 
-## 2. Problem: Statik MoE Kararsızlığı
+## 2. Problem: Durumsuz (Stateless) MoE Kararsızlığı
 Geleneksel MoE yönlendiricileri bazı uzmanlara aşırı yük bindirebilir ve ardışık tokenlar arasında dengesiz uzman geçişleri üretebilir. Bu durum edge çalışma zamanında yönlendirme oynaklığını artırabilir.
 
 ## 3. Build30 V2 Mevcut Yönlendirme Mekanizması

@@ -23,7 +23,9 @@ PATTERNS: dict[str, re.Pattern[str]] = {
     "hf_token": re.compile(r"\bhf_[A-Za-z0-9]{24,}\b"),
     "wandb_token": re.compile(r"\bwandb_[A-Za-z0-9]{10,}\b"),
     "openai_key": re.compile(r"\bsk-[A-Za-z0-9]{10,}\b"),
-    "github_token": re.compile(r"\bghp_[A-Za-z0-9]{20,}\b"),
+    # Covers PAT (ghp_), OAuth (gho_), user-to-server (ghu_), server-to-server (ghs_), refresh (ghr_).
+    "github_token": re.compile(r"\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{20,}\b"),
+    "github_fine_grained_pat": re.compile(r"\bgithub_pat_[A-Za-z0-9_]{60,}\b"),
     "aws_access_key": re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
     # Common 40-hex API keys (heuristic) but only when the line contains key-like context.
     # Avoid false positives from git SHAs or checksums.

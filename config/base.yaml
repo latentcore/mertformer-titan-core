@@ -84,7 +84,7 @@ use_accelerate: true
 # IO
 output_dir: ./checkpoints/mertformer_titan_prod
 save_dir: ./checkpoints/mertformer_titan_prod
-log_interval: 1
+log_interval: 10   # matches config.py default (TITAN_LOG_INTERVAL); per-step logging adds 45K I/O overhead
 save_interval: 1000
 export_format: onnx_dynamic
 

@@ -17,8 +17,8 @@
 - [x] Internal Truth Benchmarking runner (HumanEval/MBPP): `scripts/benchmarks_internal.py`
 
 ## Phase 2: Minimal Prototype Stack (Asset’ler)
-- [x] Investor Deck / One-Pager / Technical Snapshot: `reports/one_pager.md`, `reports/technical_snapshot.md`, `PITCH.md`, `TECHNICAL_REPORT.md`
-- [x] Microsoft Founders Hub Başvuru Taslağı: `reports/founders_hub_application.md`
+- [x] Investor Deck / One-Pager / Technical Snapshot: `TECHNICAL_REPORT.md` (tracked). Ticari öğeler (`one_pager.md`, `technical_snapshot.md`, `PITCH.md`) `private/commercial/`'a taşındı — untracked.
+- [x] Microsoft Founders Hub Başvuru Taslağı: `private/commercial/founders_hub_application.md` (`reports/`'tan taşındı; untracked). 2026-05-31'de yapıldı.
 
 ## Phase 3: Future Horizons (v29 Backlog)
 - [x] White Paper & Defense Licensing (post-validation): `WHITE_PAPER_LIQUIDROUTER.md`

@@ -2,6 +2,32 @@
 
 All notable changes to this project are tracked in this file.
 
+## Unreleased - 2026-06-17
+
+### Added
+- WHITE_PAPER_LIQUIDROUTER (EN+TR): arXiv submission section (Section 8) with proposed title — gated post-45K.
+- `TITAN_DISTILL_ALPHA` env knob enabling a teacher-free pre-45K smoke (the 70B teacher is never downloaded when set to 0).
+- README_SUMMARY (EN+TR): "Architecture at a glance" component table (BitNet / GQA / sparse MoE / Liquid-CfC).
+- Canonical root scaffold (STATUS / TRUTH_MATRIX / BACKLOG / GOVERNANCE / REPRODUCE, EN+TR) as the single reviewer entry point.
+
+### Changed
+- Attention class renamed MLA → GQA (always grouped-query; filename `layers/mla.py` kept for manifest/SHA stability).
+- 45K-pre-run operational hardening: atomic checkpoint save (`os.replace`), removed the in-forward MoE collapse-flag `all_reduce`, telemetry buffers `persistent=False`, removed the permanent grad-clip ratchet (now transient), telemetry throttle.
+- Liquid ablation canonicalized to the 12-seed verdict (OFF 96.32% / ON 94.69%, Δ−1.63 pp, p=0.305, inconclusive — no measured benefit, ~30% slower); the single-seed +0.50 pilot is superseded across ablation surfaces.
+- TECHNICAL_REPORT (EN+TR) clinical rewrite; §3.1 "12x" relabeled Target/estimate; §7 SHA256 step-chaining relabeled "designed"; MoE expert intermediate corrected to 8192.
+- README cut 178KB → ~4KB (full snapshot archived); single-persona technical/evidence surface; commercial/GTM material moved under `private/`.
+- License surface resolved to Proprietary & Confidential across README / README_TR (matching LICENSE).
+
+### Fixed
+- `pyproject.toml`: added the missing `mertformer_sdk.kernels.cpp` package.
+- `.pre-commit-config.yaml`: ruff pinned to v0.15.5 (matches constraints.txt).
+- `Dockerfile`: now applies `constraints.txt` for reproducible builds.
+- `registry/mertformer_v0.1.json`: version synced to Build 30 V2 (was v27.0).
+- `scripts/secret_scan.py` + `policy/allow_deny_policy.yaml`: GitHub-token patterns extended to gho_/ghu_/ghs_/ghr_ and fine-grained PAT.
+
+### Validation
+- `370 passed, 4 skipped` (offline-first pytest); readiness `TRAIN_ALLOWED / READY_REMOTE_BOOTSTRAP`. No trained/benchmark claim — the one remaining gap is a real 45K GPU run.
+
 ## Unreleased - 2026-05-24
 
 ### Added

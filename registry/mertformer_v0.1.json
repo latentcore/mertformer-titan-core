@@ -1,6 +1,6 @@
 {
-  "model_id": "mertformer_titan_v27_base",
-  "version": "v27.0-TITAN-FINAL",
+  "model_id": "mertformer_titan_build30_v2_base",
+  "version": "1.0-BUILD30-V2",
   "status": "pretraining-ready",
   "checkpoint": null,
   "config": "config/base.yaml",

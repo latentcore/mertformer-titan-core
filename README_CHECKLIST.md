@@ -13,8 +13,8 @@
 - [x] **Inference:** Sample usage shown in code blocks.
 
 ## 3️⃣ Visuals / Diagrams
-- [x] **Mermaid:** Architecture flow verified.
-- [x] **ASCII Art:** "MertFormer Titan" banner checked.
+- [n/a] **Mermaid:** Architecture flow — removed in the 178KB→4KB README cut; see `ARCHITECTURE.md` / `docs/PROJECT_STRUCTURE.md`.
+- [n/a] **ASCII Art:** "MertFormer Titan" banner — removed in the 4KB README cut.
 
 ## 4️⃣ Metrics / FAQ / Benchmarks
 - [x] **Forensic Data:** Sample PoC hash included; production metrics marked as pending.
@@ -34,5 +34,5 @@
 
 ---
 **Status:** 🟡 **PRE-TRAINING / DRAFT**
-**Verified By:** Antigravity Agent
-**Date:** 2026-02-05
+**Verified By:** Antigravity Agent (initial) · refreshed in the Build 30 V2 closure pass
+**Date:** 2026-02-05 (initial) · 2026-06-17 (post-4KB-README-cut refresh)

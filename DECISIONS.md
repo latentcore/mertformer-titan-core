@@ -252,3 +252,30 @@ each was checked against the live repo and only the genuinely-real ones were fix
   weights), so whether the student name must carry "Llama" is a genuine legal-judgment question, not a clear
   rename. Disclosed via `NOTICE` + `MODEL_LICENSE.md`; flagged for IP/legal review before any public model
   release. Not renamed on an uncertain reading.
+
+**Findings-list cleanup + whitepaper fast-forward sync (2026-06-17, Pass 4.5).** An app/web Claude added an
+arXiv submission section (Section 8) to `WHITE_PAPER_LIQUIDROUTER(.md/_TR.md)` and pushed via the GitHub API
+(commits `eed0a4d` EN + `0e8f040` TR); the local working copy was a **clean fast-forward behind**, synced with
+`git merge --ff-only origin/main` (no divergence/conflict). A separate "final findings list" (F/P/D/C/L/S/B/A)
+was verified live and only the genuinely-real, safe items were fixed:
+- **Docs (EN+TR):** WHITE_PAPER_TR §2 "Statik"→"Durumsuz (Stateless)"; CHANGELOG (+TR) gained a 2026-06-17
+  section (June work); IMPLEMENTATION_PLAN (+TR) Founders-Hub line de-staled (submitted 2026-05-31); TASK (+TR)
+  repointed moved-to-`private/commercial/` refs; README_CHECKLIST (+TR) refreshed (Antigravity/2026-02-05 +
+  removed Mermaid/ASCII rows post-4KB-cut); `ablations/results(.md/_TR)` + `no_liquid/README(.md/_TR)`
+  truth-synced to the 12-seed verdict (single-seed +0.50 pilot labeled **superseded**); AGENTS.md + START_HERE.md
+  annotate the closure-ladder-generated (gitignored) `reports/final_*` files as "regenerate locally".
+- **Config/security:** `.pre-commit-config.yaml` ruff→v0.15.5 (matches `constraints.txt`); `config/base.yaml`
+  log_interval 1→10; `Dockerfile` now applies `constraints.txt`; `registry/mertformer_v0.1.json` v27.0→Build 30 V2;
+  `scripts/secret_scan.py` + `policy/allow_deny_policy.yaml` GitHub-token patterns extended to gho_/ghu_/ghs_/ghr_ +
+  fine-grained PAT (kept in sync); `repro/pip_freeze.txt` chess line added.
+- **Verified NOT-a-bug (left as-is):** moe_dispatch_mode parallel-vs-DECISIONS-sequential (no contradiction —
+  sequential is documented GPU-perf-only deferred); secret_scan↔policy regex "mismatch" (patterns were identical —
+  the real gap was the missing `gho_`, now fixed in both); CI `actions/*@v6` (exists; repo CI green).
+- **Verified intentional (left):** env.lock/cuda.lock placeholders (filled on training hardware); `warmup_steps`
+  dead field (already self-documented "informational only" — not touched pre-45K); ADR-0001's reference to the
+  gitignored `final_truth_constitution.md` (historical ADR kept immutable); dataset license-TBD entries (disabled,
+  verified at enable time).
+- **Pre-45K freeze (untouched):** all post-45K backlog code items (z-loss/dt/dispatch/`.item()`/opset/RMSNorm/
+  residual_scale/GaLore/8bit-Adam/val_steps) and architecture observations — document-only, to avoid confounding the run.
+- **User action (cannot be done from here):** revoke the `gho_` OAuth token visible in the parallel chat
+  (GitHub → Settings → Developer settings → revoke). Not committed to the repo; repo risk low.

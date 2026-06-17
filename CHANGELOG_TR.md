@@ -3,6 +3,32 @@
 Bu dosya projedeki önemli değişiklikleri takip eder.
 
 
+## Unreleased - 2026-06-17
+
+### Eklenenler
+- WHITE_PAPER_LIQUIDROUTER (EN+TR): arXiv gönderim bölümü (Section 8) + önerilen başlık — 45K sonrasına kapılı.
+- `TITAN_DISTILL_ALPHA` env knob'u: öğretmensiz 45K-öncesi smoke (0 olduğunda 70B teacher hiç indirilmez).
+- README_SUMMARY (EN+TR): "Architecture at a glance" bileşen tablosu (BitNet / GQA / seyrek MoE / Liquid-CfC).
+- Kök kanonik scaffold (STATUS / TRUTH_MATRIX / BACKLOG / GOVERNANCE / REPRODUCE, EN+TR) — tek reviewer giriş noktası.
+
+### Değişenler
+- Attention sınıfı MLA → GQA yeniden adlandırıldı (her zaman grouped-query; `layers/mla.py` dosya adı manifest/SHA kararlılığı için korundu).
+- 45K-öncesi operasyonel sertleştirme: atomik checkpoint (`os.replace`), forward-içi MoE collapse-flag `all_reduce` kaldırıldı, telemetri buffer'ları `persistent=False`, kalıcı grad-clip ratchet kaldırıldı (artık transient), telemetri throttle.
+- Liquid ablasyonu 12-seed verdict'e kanonikleştirildi (OFF %96.32 / ON %94.69, Δ−1.63 pp, p=0.305, inconclusive — ölçülen fayda yok, ~%30 yavaş); tek-seed +0.50 pilotu tüm ablasyon yüzeylerinde ezildi.
+- TECHNICAL_REPORT (EN+TR) klinik rewrite; §3.1 "12x" → Target/estimate; §7 SHA256 → "designed"; MoE expert intermediate 8192'ye düzeltildi.
+- README 178KB → ~4KB kesildi (tam snapshot arşivlendi); tek-persona teknik/kanıt yüzeyi; ticari/GTM materyali `private/` altına taşındı.
+- Lisans yüzeyi README / README_TR genelinde Proprietary & Confidential'e çözüldü (LICENSE ile uyumlu).
+
+### Düzeltilenler
+- `pyproject.toml`: eksik `mertformer_sdk.kernels.cpp` paketi eklendi.
+- `.pre-commit-config.yaml`: ruff v0.15.5'e pinlendi (constraints.txt ile uyumlu).
+- `Dockerfile`: yeniden üretilebilir build için artık `constraints.txt` uygular.
+- `registry/mertformer_v0.1.json`: sürüm Build 30 V2'ye senklendi (v27.0 idi).
+- `scripts/secret_scan.py` + `policy/allow_deny_policy.yaml`: GitHub token pattern'leri gho_/ghu_/ghs_/ghr_ ve fine-grained PAT'e genişletildi.
+
+### Doğrulama
+- `370 passed, 4 skipped` (offline-first pytest); readiness `TRAIN_ALLOWED / READY_REMOTE_BOOTSTRAP`. Trained/benchmark iddiası yok — kalan tek boşluk gerçek 45K GPU koşusu.
+
 ## Unreleased - 2026-05-24
 
 ### Eklenenler

@@ -21,7 +21,7 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 
 ## Phase 2: Asset Production
 - One-pager ve technical snapshot.
-- Founders Hub başvuru taslağı.
+- Founders Hub başvurusu: 2026-05-31'de yapıldı (taslak `private/commercial/` altında arşivlendi).
 
 ## Phase 3: Future Horizons
 - White paper ve defense licensing (validation sonrası).

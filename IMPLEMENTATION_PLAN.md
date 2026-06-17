@@ -21,7 +21,7 @@ Boring stability and learning speed. Success is operational discipline measured 
 
 ## Phase 2: Asset Production
 - One-pager and technical snapshot for rapid investor review.
-- Founders Hub application draft ready for submission.
+- Founders Hub application: submitted 2026-05-31 (draft archived under `private/commercial/`).
 
 ## Phase 3: Future Horizons
 - White paper and defense licensing after validation.
