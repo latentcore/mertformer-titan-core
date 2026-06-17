@@ -55,7 +55,8 @@ cat > reports/github_policy_report.json <<JSON
 {
   "status": "${status}",
   "repo": "${OWNER_REPO}",
-  "return_code": ${rc}
+  "return_code": ${rc},
+  "note": "Best-effort branch-protection hardening. GitHub's branch-protection API returns HTTP 403 (return_code 1) on private/non-Pro repositories, so 'skipped_or_failed' here is EXPECTED and is NOT a closure / readiness / release blocker (see master protocol section 0.8)."
 }
 JSON
 

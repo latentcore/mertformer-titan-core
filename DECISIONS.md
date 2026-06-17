@@ -233,3 +233,22 @@ proprietary deliberately: it matches every other metadata surface and is the saf
 `Apache-2.0` would be an accidental open-source grant — irreversible). Llama obligations are unchanged and
 remain disclosed via `NOTICE` + `MODEL_LICENSE.md` ("Built with Llama"). NOT legal advice; a future decision
 to actually open-source (and reconcile Llama-derived components) is a separate, deliberate call.
+
+**External review pass — 5 flagged items, verified live (2026-06-17).** A separate review flagged 5 items;
+each was checked against the live repo and only the genuinely-real ones were fixed:
+- ✅ **FIXED:** `pyproject.toml` was missing `mertformer_sdk.kernels.cpp` (its `cpp/__init__.py` exists
+  alongside metal/vulkan/npu) → added, so `pip install -e .` installs the subpackage.
+- ✅ **FIXED (claim discipline):** `TECHNICAL_REPORT(+_TR)` §3.1 "12x acceleration" is now labeled
+  **Target/estimate** (not measured at 45K); §7 SHA256 step-chaining reframed to **"designed"** (no completed
+  45K chain exists yet).
+- ✅ **Self-documented:** `scripts/apply_github_policy.sh` now writes a `note` into `github_policy_report.json`,
+  so `return_code: 1` reads as the **EXPECTED best-effort 403** (private/non-Pro branch-protection, §0.8), not a real failure.
+- ❌ **NOT a bug (reviewer's stale-knowledge call):** `ci.yml` uses `actions/checkout@v6` + `setup-python@v6`.
+  These **exist** (released by mid-2026) and the repo's **own CI shows green `success` runs today** — downgrading
+  to v4/v5 would regress a working pipeline. Left as-is.
+- ✅ **Already done:** README/README_TR `Apache-2.0`→`Proprietary` was fixed in the prior pass.
+- **Llama naming (EXTERNAL-PENDING legal):** the Llama 3.3 Community License carries a "Built with Llama" /
+  naming clause. MertFormer Titan uses Llama-3.3 only as a **KD teacher** + the Llama-3 tokenizer (no Llama
+  weights), so whether the student name must carry "Llama" is a genuine legal-judgment question, not a clear
+  rename. Disclosed via `NOTICE` + `MODEL_LICENSE.md`; flagged for IP/legal review before any public model
+  release. Not renamed on an uncertain reading.

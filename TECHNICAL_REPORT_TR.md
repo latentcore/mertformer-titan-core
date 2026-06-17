@@ -95,7 +95,7 @@ MertFormer Titan'ın 18 katmanlı yığını, role göre:
 
 ### 3.1 Çevrimdışı Damıtma (Offline Distillation)
 `distillation_manager.py` ile Llama-3.3-70B modelinin çıktıları (logits) önceden diske kaydedilir.
-*   **Hız:** Eğitim sırasında 12 kat hızlanma.
+*   **Hız (Hedef / tahmin):** online 70B teacher'a kıyasla ~12 kat eğitim hızlanması (offline precompute, adım-başına teacher forward'unu kaldırır); 45K'da henüz ölçülmedi.
 *   **Bellek:** Training sırasında teacher modelin VRAM'e yüklenmesine gerek kalmaz.
 
 ### 3.2 5 Aşamalı Müfredat (Curriculum)
@@ -163,7 +163,7 @@ Ticari değerleme, fonlama ve kariyer çerçevesi bu teknik rapordan **çıkarı
 ## 7. Adli Doğrulama ve Güvenlik (Forensic Verification)
 
 Modelin güvenilirliği, açık doğrulama ve loglama mekanizmalarıyla desteklenmektedir:
-*   **SHA256 Chaining:** Eğitimdeki her adım, bir önceki adımın özetiyle mühürlenir (`TITAN_POC_PROOF.jsonl`).
+*   **SHA256 Chaining (tasarım):** eğitim, her adımı bir önceki adımın özetiyle mühürleyecek şekilde *tasarlanmıştır* (`TITAN_POC_PROOF.jsonl`); zincir gerçek bir koşuyla üretilir — henüz tamamlanmış bir 45K zinciri yok.
 *   **Proof-of-Life:** Benchmark sonuçları, benchmark koşuları tamamlandıktan sonra kriptografik hash'ler ve proof-of-life artifact'larına bağlanacak şekilde tasarlanmıştır.
 *   **Z-Loss ve Çökme Koruması:** `z_loss` ve `switch_loss` mekanizmaları ile modelin tek bir uzmana çökmesi (collapse) engellenir.
 

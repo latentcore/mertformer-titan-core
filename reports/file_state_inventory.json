@@ -1,16 +1,17 @@
 {
   "schema": "file_state_inventory_v1",
-  "generated_utc": "2026-06-17T02:01:11Z",
+  "generated_utc": "2026-06-17T02:14:06Z",
   "git_branch": "main",
-  "git_commit_short": "6b68e19",
+  "git_commit_short": "053dce4",
   "tracked_files": 821,
   "modified_entries": [
     "M DECISIONS.md",
     " M DECISIONS_TR.md",
-    " M README.md",
-    " M README_TR.md",
+    " M TECHNICAL_REPORT.md",
+    " M TECHNICAL_REPORT_TR.md",
     " M artifacts/mertformer_release.zip.sha256",
     " M packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256",
+    " M pyproject.toml",
     " M reports/backup_restore_report.json",
     " M reports/bench_cpp_report.json",
     " M reports/bench_metal_report.json",
@@ -43,6 +44,7 @@
     " M reports/final_orchestrator_status.json",
     " M reports/final_orchestrator_status.md",
     " M reports/folder_drift_report.json",
+    " M reports/github_policy_report.json",
     " M reports/hardening_bundle_summary.json",
     " M reports/immutable_evidence_register.json",
     " M reports/immutable_evidence_register.md",
@@ -86,7 +88,8 @@
     " M reports/training_readiness_manifest.json",
     " M reports/unicode_path_guard_report.json",
     " M reports/workspace_hygiene_manifest.json",
-    " M reports/xla_smoke_report.json"
+    " M reports/xla_smoke_report.json",
+    " M scripts/apply_github_policy.sh"
   ],
   "untracked_entries": [],
   "reports_present": [

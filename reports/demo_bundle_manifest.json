@@ -1,6 +1,6 @@
 {
   "schema": "demo_bundle_manifest_v1",
-  "generated_utc": "2026-06-17T02:01:11.183257+00:00",
+  "generated_utc": "2026-06-17T02:14:06.062793+00:00",
   "checkpoint": "<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt",
   "items": [
     {

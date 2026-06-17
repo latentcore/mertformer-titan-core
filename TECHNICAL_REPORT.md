@@ -96,7 +96,7 @@ To bring the 2.64B model closer to the intelligence of a 70B model, a "Teacher-S
 
 ### 3.1 Offline Distillation
 With `distillation_manager.py`, the outputs (logits) of the Llama-3.3-70B model are pre-recorded to disk.
-*   **Speed:** 12x acceleration during training.
+*   **Speed (Target / estimate):** ~12x training speedup vs. an online 70B teacher (offline precompute removes the per-step teacher forward); not yet measured at 45K.
 *   **Memory:** No need to load the teacher model into VRAM during training.
 
 ### 3.2 5-Stage Curriculum
@@ -162,7 +162,7 @@ live in the private dealroom (`mertformer-titan-dealroom-private`). In scope her
 ## 7. Forensic Verification & Security
 
 The model's reliability is supported by explicit verification and logging mechanisms:
-*   **SHA256 Chaining:** Every step in training is sealed with the hash of the previous step (`TITAN_POC_PROOF.jsonl`).
+*   **SHA256 Chaining (designed):** training is *designed* to seal each step with the hash of the previous step (`TITAN_POC_PROOF.jsonl`); the chain is emitted by a real run — there is no completed 45K chain yet.
 *   **Proof-of-Life:** Benchmark results are designed to be tied to cryptographic hashes and proof-of-life artifacts after benchmark runs.
 *   **Dynamic Balance:** `z_loss` and `switch_loss` mechanisms prevent the model from collapsing into a single expert.
 

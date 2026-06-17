@@ -1,5 +1,6 @@
 {
   "status": "skipped_or_failed",
   "repo": "latentcore/mertformer-titan-core",
-  "return_code": 1
+  "return_code": 1,
+  "note": "Best-effort branch-protection hardening. GitHub's branch-protection API returns HTTP 403 (return_code 1) on private/non-Pro repositories, so 'skipped_or_failed' here is EXPECTED and is NOT a closure / readiness / release blocker (see master protocol section 0.8)."
 }
