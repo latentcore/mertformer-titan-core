@@ -219,6 +219,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── __init__.py  # Python module/script (model package initializer and exports)
 │   └── transformers.py  # Python module/script (MertFormer model assembly and forward graph)
 ├── orchestrator/  # directory
+│   ├── README.md  # primary documentation (EN)
+│   ├── README_TR.md  # Turkish document counterpart
 │   ├── __init__.py  # Python module/script (orchestrator package initializer and exports)
 │   ├── agent_registry.py  # Python module/script (orchestrator runtime component for agent registry)
 │   ├── alignment_contracts.py  # Python module/script (orchestrator runtime component for alignment contracts)

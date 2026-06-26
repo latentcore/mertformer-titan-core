@@ -16,7 +16,7 @@
 
 ## Decision
 - Use `AGENTS.md` plus the generated governance pack as the active authority chain for repo-side closure.
-- Treat `reports/source_of_truth_map.md`, `reports/final_truth_constitution.md`, `reports/final_truth_matrix.md`, `reports/known_limits_v1.md`, and `reports/repo_closure_scorecard.md` as the current repo-side truth layer.
+- Treat `reports/source_of_truth_map.md`, `reports/final_truth_constitution.md`, `reports/final_truth_matrix.md`, `reports/known_limits_v1.md`, and `reports/repo_closure_scorecard.md` as the current repo-side truth layer. (`reports/final_truth_constitution.md` is generated locally by the closure ladder — `bash scripts/verify_all.sh` — and is intentionally not version-controlled; regenerate it locally if absent when browsing on GitHub.)
 - Separate repo-side closure truth from post-run evidence, external validation, legal sign-off, and release claims.
 
 ## Tradeoffs

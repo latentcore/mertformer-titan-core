@@ -310,7 +310,7 @@ def save_checkpoint_smart(
     if val_loss is not None and best_val_loss is not None:
         if val_loss < best_val_loss:
             print(f"🏆 NEW BEST! Val Loss: {val_loss:.4f} (Previous: {best_val_loss:.4f})")
-            torch.save(state, best_path)
+            _atomic_torch_save(state, best_path)
             best_val_loss = val_loss
         else:
             print(f"📊 Val Loss: {val_loss:.4f} (Best: {best_val_loss:.4f})")

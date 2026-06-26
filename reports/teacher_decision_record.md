@@ -1,6 +1,6 @@
 # Teacher Decision Record
 
-- generated_utc: `2026-06-17T23:04:40Z`
+- generated_utc: `2026-06-26T18:18:00Z`
 - canonical_training_lane: `offline_clean`
 - remote_handoff_lane: `remote_bootstrap`
 - alternate_lane: `online_teacher`

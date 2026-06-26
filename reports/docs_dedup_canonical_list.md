@@ -216,6 +216,8 @@ Generated automatically.
 - `mertformer-titan-dealroom-private/MANIFEST/final_operator_checklist.md`
 - `mertformer-titan-dealroom-private/MANIFEST/private_only_certificate_v1.md`
 - `mertformer-titan-dealroom-private/MANIFEST/release_signoff_v1.md`
+- `orchestrator/README.md`
+- `orchestrator/README_TR.md`
 - `postmortems/README.md`
 - `postmortems/README_TR.md`
 - `postmortems/_template.md`
@@ -544,6 +546,7 @@ Generated automatically.
   - `evidence/README.md`
   - `knowledge/README.md`
   - `logs/README.md`
+  - `orchestrator/README.md`
   - `postmortems/README.md`
   - `private/anthropic_internal/README.md`
   - `releases/README.md`
@@ -568,6 +571,7 @@ Generated automatically.
   - `configs/README_TR.md`
   - `datasets/README_TR.md`
   - `logs/README_TR.md`
+  - `orchestrator/README_TR.md`
   - `postmortems/README_TR.md`
   - `reports/benchmarks/README_TR.md`
   - `reports/benchmarks/linkedin_sweetspot/README_TR.md`
