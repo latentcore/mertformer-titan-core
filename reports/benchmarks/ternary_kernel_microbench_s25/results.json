@@ -1,0 +1,66 @@
+{
+  "name": "MertFormer ternary CPU-kernel microbenchmark (Galaxy S25, ARM NEON)",
+  "created": "2026-06-27",
+  "claim_class": "measured",
+  "scope_boundary": {
+    "is_microbenchmark": true,
+    "is_full_model_inference": false,
+    "is_integrated_with_main_kernel_dispatcher": false,
+    "interpretation": "Standalone single-op ternary matmul microbenchmark, hand-written for this evidence. Measures one GEMM-class kernel on real S25 CPU. It does NOT measure full-model tokens/sec, NPU performance, or the canonical bitlinear.py / triton path. It is related performance evidence, not main-architecture performance."
+  },
+  "hardware": {
+    "device": "Samsung Galaxy S25",
+    "isa": "aarch64 (ARMv9), NEON + dotprod (ASIMDDP)",
+    "runtime": "CxxDroid (Android, clang)",
+    "thread_count": 1,
+    "note": "Single-thread; no multi-core. Numbers are from the physical device, NOT emulation."
+  },
+  "build": {
+    "compiler": "clang (CxxDroid)",
+    "flags": "-O3 (SDOT turbo auto-enabled via inline-asm + runtime HWCAP detection; optional -march=armv8.2-a+dotprod)",
+    "ffast_math": false,
+    "fairness": "float baseline and ternary kernels share identical N/ITERS/data/seed; ground truth computed in double precision"
+  },
+  "config": { "N": 256, "ITERS": 8, "seed": 1453, "weights": "ternary {-1,0,+1}", "activations": "uniform[-1,1]" },
+  "results": {
+    "float_naive_baseline_ms": 426.493,
+    "tiers": [
+      {
+        "tier": "NEON FMA exact",
+        "best_config": "4x8",
+        "time_ms": 141.852,
+        "speedup_vs_float": 3.01,
+        "accuracy": "bit-exact",
+        "max_abs_diff_vs_float_naive": 0.0,
+        "note": "Mathematically identical to float baseline (x*w exact for w in {-1,0,1}); diff = 0.000e+00. No approximation."
+      },
+      {
+        "tier": "NEON SDOT turbo",
+        "best_config": "4x8",
+        "time_ms": 51.433,
+        "speedup_vs_float": 8.29,
+        "accuracy": "APPROXIMATE",
+        "rms_error_vs_double": 0.0297,
+        "note": "int8-quantized activations via vdotq_s32 (16 MAC/instr). NOT bit-exact. ~0.4% rms error. This is the low-bit deployment-mode number, not an exact result."
+      }
+    ],
+    "secondary_configs": {
+      "NEON_FMA_4x4": { "time_ms": 154.900, "speedup": 2.75, "accuracy": "bit-exact" },
+      "NEON_FMA_8x2": { "time_ms": 197.380, "speedup": 2.16, "accuracy": "bit-exact" },
+      "SDOT_4x4":     { "time_ms": 58.215,  "speedup": 7.33, "accuracy": "approximate (~0.4% rms)" },
+      "SDOT_8x2":     { "time_ms": 66.982,  "speedup": 6.37, "accuracy": "approximate (~0.4% rms)" }
+    }
+  },
+  "does_not_prove": [
+    "full-model tokens/sec on S25",
+    "NPU performance (this is CPU/NEON, not NPU)",
+    "end-to-end inference latency",
+    "that the canonical 3.67B model runs at any particular speed",
+    "production or mobile-deployment readiness"
+  ],
+  "reproducibility": {
+    "source_files": ["ternary_matmul_arm.cpp"],
+    "verification": "FMA tiers self-check max|kernel - float_naive| = 0 at runtime; SDOT reports rms vs double ground truth",
+    "cross_checked": "Logic cross-compiled with both gcc-aarch64 and clang and run under qemu-aarch64 before on-device measurement"
+  }
+}

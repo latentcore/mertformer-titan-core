@@ -314,3 +314,59 @@ pytest 370 unchanged):
   gist `4_README` re-sync; the inline "370 passed" status already conveys it.
 - **External / user action:** life/personal/career items live in the external Grand Master life doc (app sandbox), not
   this repo; the `gho_` token revoke remains the user's to do.
+
+## Final repo-wide audit closure (2026-06-27, Pass 5) — document, do NOT "re-fix"
+
+A massive multi-agent audit read every tracked file, surfaced findings, verified the real
+ones against live code, then fixed them in two surgical, behavior-preserving waves
+(Wave A = T1/T2 structural+label+bug, 263 applied / 131 files; Wave B = T0 mechanical).
+pytest stayed 370 passed / 4 skipped throughout; verify_all green. The decisions below are
+deliberate — a future reviewer/AI should not undo them:
+
+- **`layers/mla.py` kept (NO rename), label-only fix.** The class implements grouped-query
+  attention (GQA: `num_kv_heads`=8 < `num_heads`=16), not latent-MLA. Labels/docstrings were
+  corrected to "GQA" (incl. `scripts/sync_manifest.py` role-override → "grouped-query attention
+  (GQA) implementation"). The filename/module/state-dict keys are **intentionally NOT renamed**:
+  rename would break path+SHA continuity in `release_manifest.json` /
+  `immutable_evidence_register.json` / onefile hardcoded SHA references and the mirror-parity
+  surface (`EMBEDDED_LAYER_PARITY`, `MIRROR_REQUIRED_FAMILIES['mla']`) for zero functional gain.
+  A filename is an identifier (bound to the evidence chain), not a claim; the false claim
+  ("latent attention") was the only thing that needed fixing, and it was.
+- **Liquid/CfC stays on the 45K path.** The 12-seed ablation is inconclusive (Δ small,
+  p=0.305); removing it is equally unproven. Kept by sealed decision. Separately, the `Liquid`/
+  `Fluid Dynamics` labels in `layers/moe.py` were clarified (it is a causal depthwise Conv1d +
+  BitLinear gate, NOT a continuous-time CfC cell; the real CfC lives in `liquid.py`); names/param
+  paths kept because they are bound to the sealed checkpoint/state_dict contract.
+- **`orchestrator/` + speculative layers (`qinn.py`, `world_model_head.py`) = inert / out-of-scope.**
+  Marked honestly as feature-flagged OFF on the 45K path (not wired to any training loss); real
+  bugs inside them were fixed but they were NOT promoted or removed. `qinn.py.__version__` now
+  sources from `mertformer_sdk.__version__` (single source of truth) instead of a hand-maintained
+  fossil string. `world_model_head` `*_logits` fields documented as tanh-compressed states (NOT
+  logits); names kept for test/mirror-parity backward-compat.
+- **`mertformer_sdk/kernels/{cpp,metal,vulkan,npu}` = honest stubs.** `bitnet_cpu.cpp` labeled as
+  plain `torch::matmul` (not a ternary kernel); `metal/vulkan/npu/engine.py` labeled as `F.linear`
+  fallback stubs (no custom shader yet, roadmap). Kept and labeled, not removed — the canonical
+  low-bit paths are `bitlinear.py` (PyTorch STE) for training and `triton_fused_bitlinear.py` for
+  GPU; these CPU/accelerator stubs are not on the main path.
+- **Generated reports fixed at the generator, not by hand.** `scripts/sync_manifest.py`
+  `matrix_payload` is now a REAL comparison (`missing_in_structure`/`missing_in_manifest` set
+  diffs; `ok` computed), no longer a hardcoded green. `docs/PROJECT_STRUCTURE.md` and all
+  `reports/*` are regenerated from source — never hand-edited.
+- **2.64B design target vs 3.67B measured params** is NOT a contradiction: one is the design
+  target, the other the measured instantiated count. Both are reported as such (measured/target
+  discipline); resolving which size actually trains is a real pre-45K task, documented, not hidden.
+- **`tokenizer/tokenizer.json` is a frozen byte-mirror** of `interfaces/tokenizer_spec.json`
+  (enforced by `check_tokenizer_sync.py`). A Wave-A honesty edit to its `note` field was reverted —
+  the frozen mirror must stay byte-identical; metadata honesty was not worth touching a frozen file.
+- **S25 ternary CPU-kernel microbenchmark added as scope-bounded measured evidence**
+  (`reports/benchmarks/ternary_kernel_microbench_s25/`: README + results.json + source .cpp).
+  It is a single-op CPU/NEON microbenchmark (FMA tier bit-exact 3.01×; SDOT turbo ~8.3×,
+  approximate int8). It is explicitly NOT full-model t/s, NOT NPU, and NOT integrated into the
+  canonical kernel dispatcher. Reported as related kernel evidence only.
+- **`config/` vs `configs/` and multiple entrypoints (`run.sh`, `zero_touch_start.sh`,
+  `launch_*.command`) kept as-is.** Restructuring/merging would ripple through many path
+  references and risks breaking the frozen run for cosmetic tidiness; documented here instead.
+  Canonical training entry remains `run.sh`; `config/config.py` is the runtime default surface.
+- **No endless-polish loop.** This is the final cosmetic/hygiene/truth-sync pass. The remaining
+  real gate is owned compute → 45K run → checkpoint → checkpoint-bound eval. Further "polish" is
+  explicitly out of scope.
