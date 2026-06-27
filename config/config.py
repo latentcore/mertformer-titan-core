@@ -229,7 +229,7 @@ class MertFormerConfig:
     # 3. BITNET b1.58
     # -------------------------------------------------------------------------
     use_bitnet: bool = True  # BitNet active
-    weight_quantization: str = "absmax_per_tensor"  # Weight quantize
+    weight_quantization: str = "rms_per_channel"  # per-row RMS scale (layers/bitlinear.py weight_quant); ternary {-1,0,+1}
     activation_bits: int = 8  # Activation bits
 
     # -------------------------------------------------------------------------

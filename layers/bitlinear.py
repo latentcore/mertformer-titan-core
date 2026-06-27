@@ -160,7 +160,9 @@ def weight_quant(w: torch.Tensor) -> torch.Tensor:
     Returns:
         torch.Tensor: Quantize edilmiş ağırlık / Quantized weight
     """
-    # RMS Scale: Mean yerine RMS kullan (daha stabil)
+    # RMS Scale: Mean yerine RMS kullan (daha stabil), per-row (dim=1).
+    # PARITE: layers/liquid.py:jit_quant ile kilitli (ikisi de per-row RMS). Bunu
+    # absmean'e cevirirsen jit_quant'i da cevir, yoksa train/eval ayrisir.
     scale = torch.sqrt((w ** 2).mean(dim=1, keepdim=True)).clamp(min=1e-5)
 
     # Normalize et ve [-1, 1] aralığına quantize et

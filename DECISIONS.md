@@ -382,3 +382,16 @@ deliberate — a future reviewer/AI should not undo them:
 - **`__author__` is uniformly `"Mert Yünlü"`** (was split with bare `"Mert"` in a few files).
 - **`sync_manifest.py` mla role-override** explicitly notes the legacy `mla` filename is kept for
   SHA/manifest continuity while the implementation is GQA (see the mla decision above).
+
+### Wave D addendum (2026-06-28) — post-audit correctness/stability fixes (do NOT revert)
+- **All `RMSNorm` upcast variance to FP32.** `layers/mertformer_block.py` `RMSNorm.forward`
+  (used by block norm1/norm2 AND final_norm) now computes `x.float().pow(2).mean(...).rsqrt()`
+  then casts back — mirroring `layers/mla.py` `_QKRMSNorm`. Do NOT revert to bf16-variance for
+  speed: the precision/consistency win matters at 3.67B scale; pytest 370/4 unchanged after the
+  change (no exact-value test depended on bf16 variance).
+- **`config.weight_quantization` relabeled** `"absmax_per_tensor"` → `"rms_per_channel"` to match
+  the actual code (`bitlinear.py weight_quant` = per-row RMS). Label-only; the field is not read
+  anywhere (verified), so this is a truth-fix not a behavior change.
+- **Quant parity note** added in `bitlinear.py weight_quant`: it must stay in lockstep with
+  `liquid.py jit_quant` (both per-row RMS); switching one to absmean without the other would
+  desync train(weight_quant)/eval(jit_quant).

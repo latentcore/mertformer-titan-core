@@ -63,9 +63,10 @@ class RMSNorm(nn.Module):
         Returns:
             torch.Tensor: Normalized tensor
         """
-        # Fused RMS calculation (torch.compile optimizes this)
-        norm = x.pow(2).mean(dim=-1, keepdim=True)
-        return x * torch.rsqrt(norm + self.eps) * self.weight
+        # Compute RMS in FP32 for stability (mirrors layers/mla.py _QKRMSNorm);
+        # torch.compile still fuses this.
+        rms = x.float().pow(2).mean(dim=-1, keepdim=True).add(self.eps).rsqrt()
+        return x * rms.to(x.dtype) * self.weight.to(x.dtype)
 
 
 class MertFormerBlock(nn.Module):
