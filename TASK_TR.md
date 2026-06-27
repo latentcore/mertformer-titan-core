@@ -1,4 +1,4 @@
-# Görev: Specialized Edge Coding Launch (Operator Mode - Pre-Training)
+# Görev: Specialized Edge Coding Launch (Operator Mode - Locked and Sealed)
 
 ## Phase -1: Safety & Failure Budget
 - [x] Auto-Kill NaN Injection (kill switch testi): `scripts/nan_kill_test.py`
