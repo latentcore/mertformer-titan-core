@@ -35,7 +35,7 @@
 - `scripts/build_train_readiness_contract.py` · `6830` bytes · sha256=`a5b9d55acb37672a41bd7a6f21fa960f04c152541f9de523f0d0feaa198e8568`
 - `reports/train_readiness_decision.json` · `8224` bytes · sha256=`a3f82fbd1c796cc5aa15d8a91f5e0606da2f6966afc6b6209ba31f7b6456d85d`
 - `reports/train_readiness_decision.md` · `1005` bytes · sha256=`6984cb6e576f3db3fdd7ba0726d5aad94b1d0f17d7935afec80a9225df2d7cd7`
-- `reports/start_gate_report.json` · `6017` bytes · sha256=`48f9487a32af96c8a09cf873065134e2cb2e97a50784b415a74820d5ea488f7e`
-- `reports/start_gate_operator_decision.json` · `1691` bytes · sha256=`31571c9a7b6cc9ba329c2ee5d5b4d0362a4d550a4e74f954404ae46d56c8cf73`
+- `reports/start_gate_report.json` · `6051` bytes · sha256=`ed628d857eb198e6caeed429c242ed02c8c4070811fc989e7f58d65bba41eace`
+- `reports/start_gate_operator_decision.json` · `1691` bytes · sha256=`0778accb023a9a9c6e0f1b4f37447101b0db0665143e16c8d3a6de2db54c04f3`
 - `reports/start_gate_operator_decision.md` · `1515` bytes · sha256=`9b766f60c680fe78b0dd566b8bbbb730585a0b567b9933ab61317f89af558361`
-- `reports/repo_external_handoff.md` · `1709` bytes · sha256=`b8558b3832e1bfae9f83a660f75f873330c6aa2f218a1662f729fd566cdb9d8b`
+- `reports/repo_external_handoff.md` · `1709` bytes · sha256=`7b746f22563fa6c98393033efde4898c36c137aa3440748f3f0b42f2bf9dde75`

@@ -1,15 +1,17 @@
 {
   "schema": "file_state_inventory_v1",
-  "generated_utc": "2026-06-27T22:17:44Z",
+  "generated_utc": "2026-06-27T22:54:22Z",
   "git_branch": "main",
-  "git_commit_short": "12af130",
+  "git_commit_short": "f49b5b8",
   "tracked_files": 828,
   "modified_entries": [
-    "M DECISIONS.md",
+    "M DECISIONS_TR.md",
+    " M MODEL_CARD_TR.md",
+    " M README_CHECKLIST_TR.md",
+    " M SDK_GUIDE_TR.md",
+    " M TECHNICAL_REPORT_TR.md",
     " M artifacts/mertformer_release.zip.sha256",
-    " M config/config.py",
-    " M layers/bitlinear.py",
-    " M layers/mertformer_block.py",
+    " M experiments/exp_001_baseline/notes_TR.md",
     " M packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256",
     " M reports/backup_restore_report.json",
     " M reports/bench_cpp_report.json",
@@ -38,6 +40,7 @@
     " M reports/duplicate_zip_guard_report.json",
     " M reports/energy_baseline.json",
     " M reports/fallback_policy_report.json",
+    " M reports/feature_flag_governance_TR.md",
     " M reports/file_sync_matrix.json",
     " M reports/final_evidence_pack.md",
     " M reports/final_orchestrator_status.json",
@@ -79,6 +82,7 @@
     " M reports/system_stats.jsonl",
     " M reports/target_machine_handoff_manifest.json",
     " M reports/target_machine_handoff_manifest.md",
+    " M reports/technical_snapshot_TR.md",
     " M reports/thermal_baseline.json",
     " M reports/train_readiness_decision.json",
     " M reports/training_outputs_bundle_manifest.json",
@@ -87,7 +91,7 @@
     " M reports/unicode_path_guard_report.json",
     " M reports/workspace_hygiene_manifest.json",
     " M reports/xla_smoke_report.json",
-    " M scripts/runs/preflight/config_snapshot.json"
+    " M repro/python_TR.md"
   ],
   "untracked_entries": [],
   "reports_present": [
