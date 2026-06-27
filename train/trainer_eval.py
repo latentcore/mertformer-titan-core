@@ -16,7 +16,7 @@ every symbol so all historical imports keep working unchanged.
 ==============================================================================
 """
 
-__version__ = "1.0"
+__version__ = "1.0-BUILD30-V2"
 __author__ = "Mert Yünlü"
 
 import json

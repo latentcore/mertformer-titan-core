@@ -78,8 +78,8 @@ PYTHON_ROLE_OVERRIDES: dict[str, tuple[str, str]] = {
         "çekirdek transformer blok bileşimi",
     ),
     "layers/mla.py": (
-        "grouped-query attention (GQA) implementation",
-        "grouped-query attention (GQA) implementasyonu",
+        "grouped-query attention (GQA); legacy 'mla' filename kept for SHA/manifest continuity",
+        "grouped-query attention (GQA); 'mla' dosya adı SHA/manifest sürekliliği için korundu",
     ),
     "layers/moe.py": (
         "mixture-of-experts routing and expert execution",

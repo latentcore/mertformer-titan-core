@@ -12,7 +12,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import torch
 import torch.nn as nn
@@ -96,7 +96,7 @@ class MertFormerBlock(nn.Module):
         self.norm1 = RMSNorm(H, eps=eps)
         self.norm2 = RMSNorm(H, eps=eps)
         
-        # V23.0: Residual Scaling (deep network stabilization)
+        # Residual Scaling (deep network stabilization)
         # Scale residual connections based on layer depth
         # Inspired by DeepNorm: 1/sqrt(2*N) formula
         num_layers = int(getattr(cfg, "num_layers", 24))
@@ -200,7 +200,7 @@ class MertFormerBlock(nn.Module):
         # 1. Attention (with KV Cache)
         h = self.norm1(x)
         attn_out, present_key_value = self.attn(h, past_key_value=past_key_value, use_cache=use_cache)
-        # V23.0: Residual Scaling
+        # Residual Scaling
         x = x + attn_out * self.residual_scale
 
         # 2. [ARCH UPDATE] LiquidMixer (Liquid-Guided Flow)
@@ -221,7 +221,7 @@ class MertFormerBlock(nn.Module):
             ff_out = self.ff(h)
             aux_loss = h.new_zeros(())
 
-        # V23.0: Residual Scaling
+        # Residual Scaling
         x = x + ff_out * self.residual_scale
         if self.hebbian_layer is not None:
             x = self.hebbian_layer(x)

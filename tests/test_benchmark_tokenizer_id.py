@@ -6,7 +6,7 @@ Covers the post_train_autorun checkpoint_required decode paths:
   - scripts/golden_score.py        (autorun 'golden_eval' step)
   - scripts/golden_eval.py         (golden sample decode)
 
-Each test stops at the tokenizer-resolution boundary so no 1.5B model is built.
+Each test stops at the tokenizer-resolution boundary so no full model is built.
 """
 
 from __future__ import annotations
