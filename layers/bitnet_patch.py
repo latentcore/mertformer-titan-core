@@ -17,7 +17,7 @@ is available for ad-hoc conversion of an existing fp checkpoint.
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import torch
 import torch.nn as nn
@@ -31,13 +31,13 @@ def _convert_linear_modules(
     verbose: bool = True,
 ):
     for name, child in list(module.named_children()):
-        # V21.0 FIX: Whitelist check for sensitive layers
-        # V25.1 UPDATE: Added 'tau' (generic) to protect ALL True Liquid params (tau_input_w, tau_hidden_w)
-        # V26 FIX: a trailing '_proj' (e.g. 'gate_proj') is a standard linear projection that MUST be
+        # Whitelist check for sensitive layers.
+        # 'tau' (generic) protects ALL True Liquid params (tau_input_w, tau_hidden_w).
+        # A trailing '_proj' (e.g. 'gate_proj') is a standard linear projection that MUST be
         # quantized — exclude it so the 'gate' substring does not over-match and skip it.
         if any(x in name for x in ["router", "tau", "gate", "shared_expert_gate"]) and not name.endswith("_proj"):
             if verbose:
-                print(f"Skipping sensitive layer (V21.0 FIX): {prefix}.{name} (Keeping FP16/BF16)")
+                print(f"Skipping sensitive layer: {prefix}.{name} (Keeping FP16/BF16)")
             continue
 
         child_prefix = f"{prefix}.{name}" if prefix else name

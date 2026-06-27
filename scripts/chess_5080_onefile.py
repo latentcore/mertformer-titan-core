@@ -1589,8 +1589,9 @@ def env_snapshot(cfg: Dict[str, Any]) -> Dict[str, Any]:
             vm = psutil.virtual_memory()
             snap["ram_total_gb"] = round(float(vm.total) / (1024 ** 3), 3)
             snap["cpu_count_logical"] = int(psutil.cpu_count(logical=True) or 0)
-        except Exception:
-            pass
+        except Exception as exc:
+            # best-effort: hata yutulmasin, snapshot icine gozlemlenebilir iz birak
+            snap["psutil_error"] = f"{type(exc).__name__}: {exc}"
     if torch.cuda.is_available():
         props = torch.cuda.get_device_properties(0)
         snap["cuda_name"] = props.name
@@ -2163,7 +2164,11 @@ def _import_optional_sdk_module(module_name: str) -> Optional[Any]:
         sys.path.insert(0, str(REPO_ROOT))
     try:
         return importlib.import_module(module_name)
-    except Exception:
+    except ImportError:
+        return None
+    except Exception as exc:
+        # Modul bulundu ama icindeki gercek hata: sessizce yutma, uyari ver.
+        logging.warning("optional SDK module %s import failed: %s", module_name, exc)
         return None
 
 
@@ -2212,7 +2217,9 @@ def _try_lowbit_kernel(x: torch.Tensor, w: torch.Tensor, bias: Optional[torch.Te
             # fallback ile birebir ayni islemi (duz F.linear) yapar; 'optimized'
             # adi yaniltici olup yalnizca backend etiketi olarak korunmustur.
             return F.linear(activation_quant(x), weight_quant(w), bias)
-    except Exception:
+    except Exception as exc:
+        # Kernel dispatch hatasi: eager fallback'e dusulur ama iz birakilir (tani icin).
+        logging.debug("lowbit kernel dispatch failed, falling back to eager: %s", exc)
         return None
     return None
 
@@ -5086,15 +5093,25 @@ def get_rng_state() -> Dict[str, Any]:
 
 
 def restore_rng_state(state: Dict[str, Any]) -> None:
-    with contextlib.suppress(Exception):
+    # best-effort; ama RNG restore basarisizligi resume reprodusibilitesini bozar,
+    # bu yuzden sessizce yutmak yerine en az bir uyari birakilir.
+    try:
         random.setstate(state["python"])
-    with contextlib.suppress(Exception):
+    except (KeyError, TypeError, ValueError) as exc:
+        logging.warning("RNG restore (python) failed: %s", exc)
+    try:
         np.random.set_state(state["numpy"])
-    with contextlib.suppress(Exception):
+    except (KeyError, TypeError, ValueError) as exc:
+        logging.warning("RNG restore (numpy) failed: %s", exc)
+    try:
         torch.set_rng_state(state["torch"])
+    except (KeyError, TypeError, RuntimeError) as exc:
+        logging.warning("RNG restore (torch) failed: %s", exc)
     if torch.cuda.is_available() and "cuda" in state:
-        with contextlib.suppress(Exception):
+        try:
             torch.cuda.set_rng_state_all(state["cuda"])
+        except (KeyError, TypeError, RuntimeError) as exc:
+            logging.warning("RNG restore (cuda) failed: %s", exc)
 
 
 def save_checkpoint(
@@ -6391,7 +6408,9 @@ def ensure_interactive_console() -> None:
         sys.stdin = open("CONIN$", "r", encoding="utf-8", buffering=1)
         sys.stdout = open("CONOUT$", "w", encoding="utf-8", buffering=1)
         sys.stderr = open("CONOUT$", "w", encoding="utf-8", buffering=1)
-    except Exception:
+    except (OSError, AttributeError) as exc:
+        # Windows konsol ayirma basarisiz: sessizce don ama tani icin uyari birak.
+        print(f"[warn] ensure_interactive_console failed: {exc}", file=sys.stderr)
         return
 
 
@@ -8039,7 +8058,9 @@ def _read_json_if_exists(path: Path) -> Dict[str, Any]:
         return {}
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
+    except Exception as exc:
+        # Bozuk/yarim JSON sessizce {} donerse gate/consumer mantigini yaniltir.
+        logging.warning("failed to read JSON %s: %s", path, exc)
         return {}
 
 
@@ -8048,7 +8069,9 @@ def _read_text_if_exists(path: Path) -> str:
         return ""
     try:
         return path.read_text(encoding="utf-8")
-    except Exception:
+    except Exception as exc:
+        # I/O veya encoding hatasi sessizce bos string'e dusmesin; iz birak.
+        logging.warning("failed to read text %s: %s", path, exc)
         return ""
 
 
@@ -10822,6 +10845,9 @@ def render_closure_gap_summary_md(report: Dict[str, Any]) -> str:
         f"- project_external_validation_readiness_status: `{report.get('project_external_validation_readiness_status', 'unknown')}`",
         f"- project_artifact_lock_readiness_status: `{report.get('project_artifact_lock_readiness_status', 'unknown')}`",
         f"- project_final_release_cutover_status: `{report.get('project_final_release_cutover_status', 'unknown')}`",
+        f"- project_real_run_execution_queue_status: `{report.get('project_real_run_execution_queue_status', 'unknown')}`",
+        f"- project_benchmark_evidence_lock_status: `{report.get('project_benchmark_evidence_lock_status', 'unknown')}`",
+        f"- project_final_signoff_cutset_status: `{report.get('project_final_signoff_cutset_status', 'unknown')}`",
         f"- generated_truth_status: `{report.get('generated_truth_status', 'unknown')}`",
         f"- generated_truth_crosscheck_status: `{report.get('generated_truth_crosscheck_status', 'unknown')}`",
     ]
@@ -16632,17 +16658,20 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     atomic_write_text(err_path, json.dumps(err, indent=2, ensure_ascii=False) + "\n")
     print(json.dumps(err, indent=2, ensure_ascii=False), file=sys.stderr)
     return 1
-    
+
 
 if __name__ == "__main__":
     exit_code = 0
     try:
         exit_code = main()
     finally:
-        with contextlib.suppress(Exception):
+        try:
             cfg_for_delete = LAST_RUNTIME_CFG
             if cfg_for_delete is None:
                 parsed_args = build_argument_parser().parse_known_args()[0]
                 cfg_for_delete = resolve_runtime_config(parsed_args, RUN_CONFIG)
             schedule_self_delete_if_needed(cfg_for_delete, exit_code == 0 and LAST_RUN_SUCCESS, LAST_FINAL_ZIP)
+        except Exception as exc:
+            # self-delete planlama hatasi gorunur olsun (sessizce yutma).
+            print(f"[warn] self-delete scheduling failed: {exc}", file=sys.stderr)
     raise SystemExit(exit_code)

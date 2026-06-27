@@ -5,6 +5,7 @@ import argparse
 import json
 import shutil
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -57,7 +58,12 @@ def tracked_repo_paths(repo_root: Path) -> set[str]:
             capture_output=True,
             check=True,
         )
-    except Exception:
+    except Exception as exc:
+        print(
+            f"[warn] git ls-files failed for {repo_root}: {exc}; "
+            "treating all paths as untracked",
+            file=sys.stderr,
+        )
         return set()
     raw = proc.stdout.decode("utf-8", errors="ignore")
     return {path for path in raw.split("\0") if path}

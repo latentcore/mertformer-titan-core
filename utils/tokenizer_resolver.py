@@ -1,8 +1,8 @@
 """Single source of truth for the MertFormer Titan runtime tokenizer.
 
-TR: Egitim, eval ve demo tokenizer'i HER ZAMAN bu modulden alir. Boylece
-    train/eval/demo arasinda tokenizer ailesi uyusmazligi (Llama BPE vs TR
-    WordPiece) olusamaz.
+TR: Eğitim, eval ve demo tokenizer'i HER ZAMAN bu modülden alır. Böylece
+    train/eval/demo arasında tokenizer ailesi uyuşmazlığı (Llama BPE vs TR
+    WordPiece) oluşamaz.
 EN: Train, eval and demo MUST obtain the tokenizer through this module so a
     tokenizer-family mismatch (Llama BPE vs Turkish WordPiece) can never arise
     between training and evaluation.

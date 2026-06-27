@@ -3,8 +3,8 @@
 Durum: **Ölçüm bekliyor** (üretim koşuları gerekir).
 
 Eğitim koşuları sonrası doldurun:
-- Tokens/seç
-- GPU kullanımi
+- Tokens/saniye
+- GPU kullanımı
 - Bellek ayak izi
 - Enerji tahminleri
 - 1M token maliyeti

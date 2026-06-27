@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import subprocess
 import time
 from dataclasses import dataclass, asdict
@@ -42,9 +43,16 @@ def _status(value: float, target: float, higher_is_better: bool = True, critical
 
 
 def _load_json(path: Path) -> Dict[str, Any] | None:
+    # Missing file -> silently None (expected: optional artifact). A corrupt /
+    # unreadable file is different: keep the None fallback (callers treat it as
+    # "missing") but surface a warning so a broken artifact is not mistaken for
+    # an absent one.
+    if not path.exists():
+        return None
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
+    except (json.JSONDecodeError, OSError, UnicodeDecodeError) as exc:
+        logging.warning("kpi _load_json: bozuk/okunamayan dosya %s: %s", path, exc)
         return None
 
 

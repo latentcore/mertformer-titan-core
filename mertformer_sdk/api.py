@@ -1,6 +1,7 @@
 """Public SDK API for MertFormer Titan."""
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -16,8 +17,10 @@ def enable_lowbit_kernels(enabled: bool = True) -> None:
     try:
         from layers.bitlinear import set_lowbit_kernel_enabled
         set_lowbit_kernel_enabled(enabled)
-    except Exception:
-        # Keep silent to avoid breaking core training paths
+    except (ImportError, AttributeError) as exc:
+        # Fallback kept (do not break core training paths), but surface the
+        # reason instead of swallowing it silently.
+        logging.warning("enable_lowbit_kernels failed, kernels left unchanged: %s", exc)
         return
 
 

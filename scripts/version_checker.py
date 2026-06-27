@@ -5,6 +5,7 @@ Scans the repository for deprecated version markers (legacy labels). Exits non-z
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 IGNORE_DIRS = {".git", "logs", "checkpoints", "datasets"}
@@ -43,7 +44,10 @@ def scan(root: Path) -> list[tuple[Path, int, str, str]]:
             continue
         try:
             text = path.read_text(encoding="utf-8")
-        except Exception:
+        except Exception as e:
+            # Unreadable file -> skip, but warn so the scan's incompleteness is visible
+            # (silently skipping would weaken the banned-token gate invisibly).
+            print(f"WARN: skipped {path}: {e}", file=sys.stderr)
             continue
         for i, line in enumerate(text.splitlines(), start=1):
             for token in BANNED_TOKENS:

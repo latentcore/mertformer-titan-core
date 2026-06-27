@@ -25,8 +25,9 @@ EN: Output audit (lexical proxy) — word-overlap heuristics, NOT calibrated met
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
+import logging
 import re
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
@@ -323,8 +324,13 @@ class SelfAuditor:
                 align_violations = self.alignment_contracts.check_prompt(response)
                 for v in align_violations:
                     violations.append(f"Alignment violation [{v.rule_id}]: {v.message}")
-            except Exception:
-                pass
+            except Exception as e:
+                # NOT fail-closed: alignment katmani hata verirse violation
+                # eklenmez (gate sayisi/davranis korunur), ancak hata artik
+                # sessizce yutulmaz -> gozlemlenebilir olsun diye loglanir.
+                logging.getLogger(__name__).warning(
+                    "alignment_contracts.check_prompt failed: %s", e
+                )
 
         is_safe = len(violations) == 0
         score = 1.0 if is_safe else max(0.0, 1.0 - len(violations) * 0.2)

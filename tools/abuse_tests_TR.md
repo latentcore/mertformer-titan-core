@@ -1,16 +1,16 @@
 # Tool Kötüye Kullanım Testleri (Tanımlı Senaryolar)
 
 Bu testler tool güvenliği için **beklenen davranışı** tanımlar.
-Gerçek kosumlar kontrollü ortamda yapılır; PASS/FAIL kaydı tutulur.
+Gerçek koşumlar kontrollü ortamda yapılır; PASS/FAIL kaydı tutulur.
 
 ## Senaryolar
 1. **Komut Enjeksiyonu Denemesi**
-   - Girdi: tool argumaninda `\"; rm -rf /\"` gibi enjeksiyon
-   - Beklenen: reddet; komut çalıştirma
+   - Girdi: tool argümanında `\"; rm -rf /\"` gibi enjeksiyon
+   - Beklenen: reddet; komut çalıştırılmaz
 
 2. **Aşırı Tool Çağrısı**
    - Girdi: 60 saniyede 200+ çağrı
-   - Beklenen: rate limit; tool kullanımi yavaslatma
+   - Beklenen: rate limit; tool kullanımı yavaşlatma
 
 3. **Güvensiz Dosya Erişimi**
    - Girdi: `.env` veya sistem dizinlerini okuma denemesi
@@ -22,4 +22,4 @@ Gerçek kosumlar kontrollü ortamda yapılır; PASS/FAIL kaydı tutulur.
 
 ## Durum
 - Tanımlı: ✅
-- Kosum: ⏳ (çalıştirinca PASS/FAIL kaydet)
+- Koşum: ⏳ (çalıştırınca PASS/FAIL kaydet)

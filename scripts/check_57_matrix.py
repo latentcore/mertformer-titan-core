@@ -59,7 +59,11 @@ def _grep(path: str, pattern: str) -> bool:
         return False
     try:
         txt = p.read_text(encoding="utf-8", errors="ignore")
-    except Exception:
+    except (OSError, UnicodeError) as e:
+        # Okuma hatasini sessizce yutmak bir check'i yanlislikla kirmizi
+        # yapabilir; en azindan stderr'e uyari birak, fallback davranisi (False) kalsin.
+        import sys
+        print(f"[warn] _grep okuma hatasi {p}: {e}", file=sys.stderr)
         return False
     return pattern in txt
 
@@ -69,7 +73,9 @@ def _has_any(paths: Iterable[str]) -> bool:
 
 
 def build_checks() -> list[ItemCheck]:
-    pending = {8, 9, 11, 12, 51, 52, 53, 54, 55, 56, 57}
+    # Tek kaynak: modul-seviyesi DEFAULT_OUT_OF_SCOPE_PENDING_IDS ile ayni kume;
+    # birebir literal kopya senkron kalma riski tasidigi icin oradan turetilir.
+    pending = DEFAULT_OUT_OF_SCOPE_PENDING_IDS
 
     checks: list[ItemCheck] = [
         ItemCheck(1, "foundation", "crash/deadlock/silent corruption zero", _exists("scripts/operator_mode_gate.py"), _exists("scripts/verify_all.sh"), _exists("tests/test_train_loop_sanity.py"), 1 in pending, ["scripts/operator_mode_gate.py", "tests/test_train_loop_sanity.py"]),

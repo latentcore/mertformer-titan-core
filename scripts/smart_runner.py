@@ -12,7 +12,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import os
 import time
@@ -124,7 +124,7 @@ def main():
     t_data.join()
     
     print("\n" + "="*60)
-    print("🚀 LAUNCHING TRAINING (MertFormer Titan Build 30 V2)")
+    print("🚀 LAUNCHING TRAINING (MertFormer Titan)")
     print("="*60)
     
     # 4. Launch Training

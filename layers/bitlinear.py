@@ -12,7 +12,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import os
 from typing import Tuple
@@ -40,7 +40,7 @@ def _kernel_strict() -> bool:
 
 
 def _unavailable(backend: str) -> None:
-    # TR: [strict-mode fix] Secilen backend kullanilamiyorsa strict modda sessiz
+    # TR: [strict-mode fix] Seçilen backend kullanılamıyorsa strict modda sessiz
     #     torch fallback yerine HATA ver; aksi halde None dondur (yumusak fallback).
     # EN: [strict-mode fix] When the selected backend is unavailable, raise under
     #     strict mode instead of silently torch-falling-back; else return None.
@@ -160,7 +160,7 @@ def weight_quant(w: torch.Tensor) -> torch.Tensor:
     Returns:
         torch.Tensor: Quantize edilmiş ağırlık / Quantized weight
     """
-    # [V26.0 FIX] RMS Scale: Mean yerine RMS kullan (daha stabil)
+    # RMS Scale: Mean yerine RMS kullan (daha stabil)
     scale = torch.sqrt((w ** 2).mean(dim=1, keepdim=True)).clamp(min=1e-5)
 
     # Normalize et ve [-1, 1] aralığına quantize et

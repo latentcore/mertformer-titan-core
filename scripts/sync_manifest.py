@@ -6,6 +6,7 @@ import hashlib
 import json
 import re
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -121,7 +122,10 @@ def tracked_files(root: Path) -> list[Path]:
         raw = proc.stdout.decode("utf-8", errors="replace")
         rels = [p for p in raw.split("\0") if p]
         return [root / rel for rel in rels]
-    except Exception:
+    except Exception as exc:
+        # git ls-files unavailable/failed: warn so the empty-list fallback
+        # (which then triggers filesystem-walk discovery) is observable.
+        print(f"[sync_manifest] warn: git ls-files failed: {exc!r}", file=sys.stderr)
         return []
 
 

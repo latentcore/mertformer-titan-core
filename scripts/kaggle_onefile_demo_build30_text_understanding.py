@@ -25,7 +25,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import argparse
 import json
@@ -52,7 +52,6 @@ def _safe_write_json(path: Path, payload: Dict) -> None:
 
 
 def _sha256_file(path: Path) -> str:
-    h = 0
     try:
         import hashlib
         hh = hashlib.sha256()
@@ -63,7 +62,11 @@ def _sha256_file(path: Path) -> str:
                     break
                 hh.update(b)
         return hh.hexdigest()
-    except Exception:
+    except Exception as e:
+        # Hash hesaplanamadi: sapmayi sessizce yutmamak icin stderr'e uyari yaz;
+        # geriye donus degeri olarak "error" korunuyor (cikti dogrulamasi bunu gate olarak isleyebilir).
+        import sys
+        print(f"[warn] _sha256_file basarisiz ({path}): {type(e).__name__}: {e}", file=sys.stderr)
         return "error"
 
 

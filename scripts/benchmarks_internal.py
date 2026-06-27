@@ -130,8 +130,8 @@ def main() -> None:
             )
             return
         print(f"⚠️  Checkpoint not found: {ckpt_path}. Running on random weights (--allow-random).")
-        # TR: Yalnizca smoke yolu: ogretmen tokenizer'i, yoksa offline test
-        #     tokenizer'i. Bu fallback checkpoint decode yolunda DEGIL.
+        # TR: Yalnızca smoke yolu: öğretmen tokenizer'ı, yoksa offline test
+        #     tokenizer'ı. Bu fallback checkpoint decode yolunda DEĞİL.
         # EN: Smoke-only tokenizer: teacher, else the offline test tokenizer.
         #     This fallback never runs on the checkpoint decode path.
         hf_token = os.environ.get("HF_TOKEN")

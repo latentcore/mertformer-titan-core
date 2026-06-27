@@ -15,6 +15,7 @@ import csv
 import hashlib
 import json
 import re
+import sys
 import time
 from pathlib import Path
 from typing import Any, Dict, Iterable
@@ -104,7 +105,7 @@ def _ensure_logbook_header(path: Path) -> None:
         first = f.readline().strip()
     try:
         obj = json.loads(first) if first else {}
-    except Exception:
+    except json.JSONDecodeError:
         obj = {}
 
     if obj.get("type") != "logbook_header":
@@ -150,7 +151,7 @@ def _load_seen_hashes(path: Path) -> set[str]:
                 continue
             try:
                 obj = json.loads(line)
-            except Exception:
+            except json.JSONDecodeError:
                 continue
             if obj.get("type") in {"log_import_start", "log_import_end"}:
                 sha = obj.get("source_sha256")
@@ -171,7 +172,7 @@ def _import_jsonl(out, path: Path, meta: Dict[str, Any]) -> int:
                 continue
             try:
                 payload = json.loads(line)
-            except Exception:
+            except json.JSONDecodeError:
                 payload = {"raw": line.strip()}
             record = {
                 "type": "log_entry",
@@ -223,7 +224,8 @@ def _import_log(out, path: Path, meta: Dict[str, Any]) -> int:
 def _import_manifest(out, path: Path, meta: Dict[str, Any]) -> int:
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
-    except Exception as exc:
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"[logbook_build] warning: failed to parse manifest {path}: {exc}", file=sys.stderr)
         payload = {"error": f"failed to parse manifest: {exc}"}
     record = {
         "type": "log_manifest",

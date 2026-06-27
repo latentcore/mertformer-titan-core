@@ -6,13 +6,13 @@ Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) - Pre-Training
+Version: v1.0 - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__version__ = "1.0"
+__author__ = "Mert Yünlü"
 
 # NOTE: inert / out-of-scope; 45K egitim yolunda kapali (feature-flag).
 # Bu orchestrator modulu egitim hattinda calistirilmaz; yalnizca opsiyonel

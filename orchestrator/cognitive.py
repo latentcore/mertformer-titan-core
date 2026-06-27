@@ -21,10 +21,11 @@ __version__ = "1.0-BUILD30"
 __author__ = "Mert Yünlü"
 
 import time
-import random
-import math
+import logging
 from typing import List, Dict, Any, Optional
 import networkx as nx  # type: ignore
+
+logger = logging.getLogger(__name__)
 
 # -----------------------------------------------------------------------------
 # 1. WORLD MODEL & SIMULATOR
@@ -49,7 +50,7 @@ class WorldModel:
             try:
                 self.entity_embeddings[fact[:64]] = self.sense_engine.encode_text(fact)
             except Exception:
-                pass
+                logger.debug("remember_fact: encode_text failed", exc_info=True)
 
     def add_entity(self, entity: str, properties: Optional[Dict] = None):
         """Add entity (with semantic info)."""
@@ -58,7 +59,7 @@ class WorldModel:
             try:
                 self.entity_embeddings[entity] = self.sense_engine.encode_text(entity)
             except Exception:
-                pass
+                logger.debug("add_entity: encode_text failed", exc_info=True)
 
     def add_relation(self, source: str, target: str, relation: str, strength: float = 1.0):
         """Add relation between entities."""
@@ -97,6 +98,7 @@ class WorldModel:
             scored.sort(key=lambda x: x[0], reverse=True)
             return [s[1] for s in scored[:top_k]]
         except Exception:
+            logger.debug("_semantic_recall failed; falling back to keyword recall", exc_info=True)
             return self._keyword_recall(query, top_k)
 
     def predict_next_state(self, entity: str, action: str) -> str:

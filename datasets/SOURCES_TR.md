@@ -6,7 +6,7 @@ Bu bir uyum/provenans kontrol listesidir; “eğitim garantisi” değildir.
 Bkz:
 - `datasets/inventory_TR.md` (koddan otomatik çıkarılan referanslar)
 - `datasets/LICENSES_TR.md` (lisans tablosu)
-- `datasets/hashes.json` (snapshot hash’leri; gerçek eğitim öncesi doldurulmeli)
+- `datasets/hashes.json` (snapshot hash’leri; gerçek eğitim öncesi doldurulmalı)
 
 ## Eğitim Curriculum’u (`scripts/data_pipeline.py`)
 
@@ -62,7 +62,7 @@ Bkz:
   Dataset card: https://huggingface.co/datasets/teknium/OpenHermes-2.5
   Durum: kodda referansli; lisans `datasets/LICENSES_TR.md` içinde doğrulanmalı
 
-### Stage 5 — Araç Kullanımi / Function Calling (hedef oran: %12)
+### Stage 5 — Araç Kullanımı / Function Calling (hedef oran: %12)
 - `glaiveai/glaive-function-calling-v2` (train)
   Amaç: function calling / tool use
   Dataset card: https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2

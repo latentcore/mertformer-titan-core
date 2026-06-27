@@ -116,7 +116,7 @@ def main() -> int:
                 "meta": {
                     "steps": args.steps,
                     "device": device,
-                    "python": os.sys.version.split()[0],
+                    "python": sys.version.split()[0],
                     "torch": torch.__version__,
                 },
                 "cfg": {
@@ -138,8 +138,8 @@ def main() -> int:
             try:
                 ckpt_path.unlink()
                 print("[smoke] cleaned up checkpoint")
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"[smoke] warning: checkpoint cleanup failed: {e}", file=sys.stderr)
 
     finally:
         # Restore cfg.

@@ -10,20 +10,25 @@ must be measured on target hardware before any performance claim is made.
 """
 from __future__ import annotations
 
+import logging
 import os
 from typing import Optional
 
 import torch
+
+_logger = logging.getLogger(__name__)
 
 try:
     import triton
     import triton.language as tl
 
     _TRITON_AVAILABLE = True
-except Exception:
+except Exception as _triton_import_err:  # broad on purpose: env/CUDA issues, not just ImportError
     triton = None
     tl = None
     _TRITON_AVAILABLE = False
+    # Surface the reason so the fused path being disabled is observable (debug-level, non-fatal).
+    _logger.debug("Triton fused BitLinear unavailable: %r", _triton_import_err)
 
 
 def is_triton_fused_available() -> bool:

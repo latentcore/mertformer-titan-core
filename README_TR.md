@@ -38,7 +38,7 @@ bash zero_touch_start.sh --check-only # readiness verdict + engeller (eğitim yo
 Tam doğrulama/başlatma akışı: [REPRODUCE_TR.md](REPRODUCE_TR.md).
 
 ### Config örneği (mevcut varsayılanlar)
-Birkaç temsili `config/config.py` varsayılanı (yalnız dokümantasyon — burada düzenleme):
+Birkaç temsili `config/config.py` varsayılanı (yalnız dokümantasyon — burada düzenleme yapmayın):
 ```python
 use_torch_compile = False
 moe_intermediate = 8192     # ölçülen 3.67B toplamı bu tutar

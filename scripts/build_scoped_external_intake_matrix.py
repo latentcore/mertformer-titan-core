@@ -289,7 +289,8 @@ def unlock_target(target: Path) -> None:
     try:
         current_mode = target.stat().st_mode
         os.chmod(target, current_mode | 0o200)
-    except Exception:
+    except OSError:
+        # best-effort chmod; tutulamayan izin/erisim hatalarini sessizce gec
         pass
 
 

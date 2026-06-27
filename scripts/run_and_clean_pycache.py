@@ -138,8 +138,9 @@ def cleanup(
         try:
             f.unlink(missing_ok=True)
             removed_files += 1
-        except Exception:
-            pass
+        except Exception as e:
+            # best-effort cleanup; surface the failure instead of swallowing it silently
+            print(f"[cleanup:warn] could not remove file {f}: {e}", file=sys.stderr)
 
     for d in dirs_to_remove:
         if dry_run:
@@ -147,8 +148,9 @@ def cleanup(
         try:
             shutil.rmtree(d, ignore_errors=True)
             removed_dirs += 1
-        except Exception:
-            pass
+        except Exception as e:
+            # best-effort cleanup; surface the failure instead of swallowing it silently
+            print(f"[cleanup:warn] could not remove dir {d}: {e}", file=sys.stderr)
 
     return {
         "dirs_found": len(dirs_to_remove),

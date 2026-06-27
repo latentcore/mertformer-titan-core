@@ -5,7 +5,7 @@ Kanıt sınıfları: **measured** (koşuldu, tekrarlanabilir) · **target** (tas
 
 | İddia | Sınıf | Kanıt |
 |---|---|---|
-| Mimari: 18K / 2048 / GQA(16:8) / MoE 8-top2 / Liquid[4,10,16] / BitNet b1.58 | measured | kod: `config/config.py`, `model/transformers.py`, `layers/` |
+| Mimari: 18L / 2048 / GQA(16:8) / MoE 8-top2 / Liquid[4,10,16] / BitNet b1.58 | measured | kod: `config/config.py`, `model/transformers.py`, `layers/` |
 | Ölçülen runtime param = 3,672,982,022 (~3.67B) | measured | `reports/param_accounting_report.md`, `reports/FACTS.json` |
 | Tasarım hedefi param = 2.64B | target | `economics/flops_estimator.py` `DEFAULT_PARAMS` |
 | Test suite: 370 passed, 4 skipped (offline) | measured | `pytest` — bkz. [REPRODUCE.md](REPRODUCE.md) |

@@ -14,7 +14,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 def main() -> None:
     cmd = [sys.executable, "scripts/benchmarks_internal.py", "--run"]
-    subprocess.run(cmd, cwd=str(PROJECT_ROOT), check=False)
+    result = subprocess.run(cmd, cwd=str(PROJECT_ROOT), check=False)
+    if result.returncode != 0:
+        raise SystemExit(result.returncode)
 
 
 if __name__ == "__main__":

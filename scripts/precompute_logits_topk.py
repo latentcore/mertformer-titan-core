@@ -128,15 +128,16 @@ def _load_done_samples(logits_dir: Path, stage_name: str) -> int:
         try:
             data = json.loads(state_path.read_text(encoding="utf-8"))
             return int(data.get("lines_consumed", data.get("done_samples", 0)))
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("resume state parse failed for %s, falling back to shard count: %s", state_path, exc)
 
     total = 0
     for shard in _stage_shards(logits_dir, stage_name):
         try:
             payload = torch.load(shard, map_location="cpu", weights_only=False)
             total += _unwrap_payload_for_count(payload)
-        except Exception:
+        except Exception as exc:
+            logger.warning("skipping unreadable/corrupt shard %s during count: %s", shard, exc)
             continue
     return total
 
@@ -146,7 +147,8 @@ def _next_chunk_idx(logits_dir: Path, stage_name: str) -> int:
     for shard in _stage_shards(logits_dir, stage_name):
         try:
             indices.append(int(shard.stem.rsplit("_part_", 1)[-1]))
-        except Exception:
+        except Exception as exc:
+            logger.debug("skipping shard with unparseable index %s: %s", shard, exc)
             continue
     return (max(indices) + 1) if indices else 0
 

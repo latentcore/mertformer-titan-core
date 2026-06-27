@@ -2,6 +2,9 @@
 
 This module keeps backend routing deterministic and config-driven.
 All non-native backends must gracefully fallback to safe PyTorch math.
+Concretely, at present every non-Triton backend label (including
+``mps_optimized``) resolves to the same PyTorch ``F.linear`` / ``torch.matmul``
+fallback; none of them currently implements a distinct optimized kernel.
 
 HONEST-LABEL NOTE: Only ``triton_cuda`` (when Triton is available) maps to a
 genuinely distinct kernel. The remaining labels

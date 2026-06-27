@@ -5,6 +5,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 import time
 from pathlib import Path
 from typing import Any
@@ -28,7 +29,7 @@ def _git_sha(root: Path) -> str | None:
             text=True,
         )
         return out.strip()
-    except Exception:
+    except (subprocess.SubprocessError, OSError):
         return None
 
 
@@ -165,8 +166,10 @@ def run_verify_all(*, project_root: Path | None = None, offline: bool = True) ->
         # Extra scrub: remove any leaked macOS home paths (Desktop/Downloads/
         # Documents), including those appearing inside test error messages.
         tail = re.sub(r"/Users/[^/]+/(Desktop|Downloads|Documents)/", r"<HOME>/\1/", tail)
-    except Exception:
-        pass
+    except Exception as exc:
+        # Sanitization is privacy-critical; keep the original tail as fallback
+        # but surface the failure so leaked absolute paths can be diagnosed.
+        print(f"[pilot] warning: output_tail sanitize failed: {exc}", file=sys.stderr)
     summary["output_tail"] = tail
     return summary
 

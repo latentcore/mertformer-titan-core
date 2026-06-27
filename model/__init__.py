@@ -6,7 +6,7 @@ Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30 V2) - Pre-Training
+Version: v1.0 - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 
 Public API surface for the assembled MertFormer model.

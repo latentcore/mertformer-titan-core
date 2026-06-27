@@ -21,7 +21,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 # (memory.py/sense_engine.py carry the same string). Not derived from a single
 # source of truth; treat as cosmetic, not an authoritative build version.
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import pathlib
 

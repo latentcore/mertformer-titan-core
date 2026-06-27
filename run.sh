@@ -2,7 +2,7 @@
 # ==============================================================================
 # 🚀 MERTFORMER TITAN - ULTIMATE LAUNCHPAD
 # ------------------------------------------------------------------------------
-# Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
+# Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 # Version: v1.0 (Build 30) — Pre-Training
 # Status : PRE-TRAINING (UNVERIFIED)
 # ==============================================================================

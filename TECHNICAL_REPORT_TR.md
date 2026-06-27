@@ -142,8 +142,6 @@ MertFormer Titan, genel bir yazılım değil, **"NPU-Native"** bir motordur. Aş
 
 ---
 
----
-
 ## 5. Stratejik Bağlam (claim-boundary)
 
 Ticari değerleme, fonlama ve kariyer çerçevesi bu teknik rapordan **çıkarılmıştır** ve özel dealroom

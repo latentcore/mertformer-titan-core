@@ -14,7 +14,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import sys
 import re
@@ -128,7 +128,7 @@ def main():
 
     if ckpt_path.exists():
         checkpoint = torch.load(ckpt_path, map_location=device)
-        # TR: Tokenizer'i checkpoint kimliginden yukle; yoksa ACIK hata.
+        # TR: Tokenizer'ı checkpoint kimliğinden yükle; yoksa AÇIK hata.
         # EN: Load tokenizer from checkpoint identity; missing -> explicit error
         #     (no silent teacher fallback -> train/eval tokenizer must match).
         tokenizer = load_tokenizer_from_identity(checkpoint.get("tokenizer_id"))

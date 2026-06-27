@@ -4,7 +4,7 @@ title: "MertFormer Titan (Build 30 V2)"
 version: "v1.0-TITAN-BUILD30-V2"
 # date-released intentionally omitted: the canonical model is not yet trained/released (pre-training PoC).
 authors:
-  - family-names: "Yunlu"
+  - family-names: "Yünlü"
     given-names: "Mert"
     affiliation: "Independent researcher, Ankara, Turkey"
 repository-code: "https://github.com/latentcore/mertformer-titan-core"

@@ -16,11 +16,12 @@ try:
     from mertformer_sdk import __version__  # single source of truth
 except Exception:  # pragma: no cover - SDK optional at import time
     __version__ = "unknown"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import sys
 import torch
 import argparse
+import traceback
 from pathlib import Path
 
 # Add project root to path
@@ -67,7 +68,7 @@ def chat():
         if ckpt_path.exists():
             print(f"📦 Loading Checkpoint: {ckpt_path.name}")
             checkpoint = torch.load(ckpt_path, map_location=device)
-            # TR: Tokenizer'i checkpoint kimliginden al (eval/demo ile ayni yol).
+            # TR: Tokenizer'i checkpoint kimliğinden al (eval/demo ile aynı yol).
             # EN: Take the tokenizer from the checkpoint identity (same path as
             #     eval) so the demo decodes with the training tokenizer.
             tokenizer = load_tokenizer_from_identity(checkpoint.get("tokenizer_id"))
@@ -84,6 +85,7 @@ def chat():
             print("⚠️  Initializing with random weights (Untrained Mode)")
     except Exception as e:
         print(f"❌ Error loading checkpoint: {e}")
+        traceback.print_exc()
         return
 
     # 3. Load Tokenizer (single resolver) when no checkpoint identity was used.
@@ -156,6 +158,7 @@ def chat():
             break
         except Exception as e:
             print(f"❌ Error: {e}")
+            traceback.print_exc()
 
 if __name__ == "__main__":
     chat()

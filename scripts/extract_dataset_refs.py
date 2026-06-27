@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import os
 import re
 from dataclasses import dataclass, asdict
@@ -50,7 +51,8 @@ def _scan_file(path: Path, root: Path) -> list[Ref]:
     refs: list[Ref] = []
     try:
         text = path.read_text(encoding="utf-8", errors="ignore")
-    except Exception:
+    except Exception as e:
+        logging.warning("extract_dataset_refs: failed to read %s: %s", path, e)
         return refs
 
     for i, line in enumerate(text.splitlines(), start=1):
@@ -94,7 +96,8 @@ def _fetch_metadata(dataset_id: str, token: str | None) -> dict[str, Any]:
             "private": bool(getattr(info, "private", False)),
             "hf_url": f"https://huggingface.co/datasets/{dataset_id}",
         }
-    except Exception:
+    except Exception as e:
+        logging.warning("extract_dataset_refs: metadata fetch failed for %s: %s", dataset_id, e)
         return {"license": None, "homepage": None, "gated": None, "sha": None, "private": None, "hf_url": f"https://huggingface.co/datasets/{dataset_id}"}
 
 def _load_license_map(repo_root: Path) -> dict[str, str]:

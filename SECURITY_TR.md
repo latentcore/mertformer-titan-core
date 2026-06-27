@@ -6,7 +6,7 @@ Bu doküman, MertFormer Titan için güvenlik, yönetişim ve deployment sınır
 ## Çekirdek Güvenlik Sınırları
 - Sistem zararlı, yasa dışı veya kötü amaçlı kullanım için kullanılmaz.
 - Sistem otonom saldırı veya gizli gözetim aracı gibi çerçevelenmez.
-- High-risk kararlar insan onayı ister ve denetlenebilir kalmalıdır.
+- Yüksek riskli kararlar insan onayı ister ve denetlenebilir kalmalıdır.
 
 ## Doğruluk ve Kanıt Disiplini
 - Kanıt yoksa claim yoktur.
@@ -15,7 +15,7 @@ Bu doküman, MertFormer Titan için güvenlik, yönetişim ve deployment sınır
 
 ## Değişiklik Kontrolü
 - Eğitim davranışını etkileyebilecek değişiklikler açık inceleme ister ve denetlenebilir kalmalıdır.
-- Runtime-invasive değişiklikler, kanonik eğitim yoluna açıkça zarar vermediği gösterilmedikçe ertelenir.
+- Çalışma zamanına müdahale eden değişiklikler, kanonik eğitim yoluna açıkça zarar vermediği gösterilmedikçe ertelenir.
 
 ## Veri ve Secret Yönetimi
 - Veri lisanslarına, provenance zincirine ve saklama sınırlarına uyun.

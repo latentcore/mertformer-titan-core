@@ -3,7 +3,7 @@
 ==============================================================================
 MERTFORMER TITAN — TRAINING LOG VISUALIZER
 ------------------------------------------------------------------------------
-Build 30 V2 · Forensic-grade training analysis
+Forensic-grade training analysis
 
 Usage:
     python scripts/plot_training_log.py <path_to_jsonl_log>
@@ -174,7 +174,7 @@ def plot_dashboard(steps, evals, config_info, out_path: str, dark: bool = True):
 
     # ── Title ────────────────────────────────────────────────────────────
     model_name = config_info.get("model_name", "MertFormer")
-    version = config_info.get("version", "Build 30")
+    version = config_info.get("version", "unknown")
     profile = config_info.get("profile", "")
     title = f"{model_name}  |  {version}"
     if profile:

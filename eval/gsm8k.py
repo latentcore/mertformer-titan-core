@@ -44,7 +44,7 @@ def _extract_gold(answer: str | None) -> str | None:
 def _extract_pred(text: str | None) -> str | None:
     if not text:
         return None
-    # TR: [H6 fix] Once GSM8K '#### <sayi>' isaretini ara; yoksa son sayiya dus.
+    # TR: [H6 fix] Önce GSM8K '#### <sayı>' işaretini ara; yoksa son sayıya düş.
     #     (Decode artik yalniz uretilen token'lari icerir, sorudaki sayilar degil.)
     # EN: [H6 fix] Prefer the GSM8K '#### <num>' marker; else fall back to the last
     #     number. (Decode now contains only generated tokens, not question digits.)
@@ -62,7 +62,7 @@ def _numbers_match(a: str | None, b: str | None) -> bool:
         return False
     try:
         return float(a) == float(b)
-    except Exception:
+    except (ValueError, TypeError):
         return a == b
 
 
@@ -72,7 +72,12 @@ def _load_dataset() -> Any:
     revision = get_hf_revision("openai/gsm8k")
     try:
         return load_dataset("openai/gsm8k", "main", split="test", revision=revision)
-    except Exception:
+    except Exception as e:
+        print(
+            f"[gsm8k] load_dataset with config 'main' failed ({type(e).__name__}: {e}); "
+            "retrying without config.",
+            file=sys.stderr,
+        )
         return load_dataset("openai/gsm8k", split="test", revision=revision)
 
 
@@ -165,7 +170,7 @@ def run_generation(
 
             input_ids = tokenizer(question, return_tensors="pt").input_ids.to(device)
             with torch.no_grad():
-                # TR: [H6 fix] eos_token_id ver -> EOS'ta dur; tum budceyi harcama.
+                # TR: [H6 fix] eos_token_id ver -> EOS'ta dur; tüm bütçeyi harcama.
                 # EN: [H6 fix] pass eos_token_id so generation stops on EOS.
                 output = model.generate(
                     input_ids,
@@ -173,8 +178,8 @@ def run_generation(
                     temperature=0.2,
                     eos_token_id=tokenizer.eos_token_id,
                 )
-            # TR: [H6 fix] Yalniz uretilen token'lari decode et (prompt'u haric tut)
-            #     ki _extract_pred sorudaki sayilari okumasin.
+            # TR: [H6 fix] Yalnız üretilen token'ları decode et (prompt'u hariç tut)
+            #     ki _extract_pred sorudaki sayıları okumasın.
             # EN: [H6 fix] Decode only the newly generated tokens (exclude prompt)
             #     so _extract_pred can't read numbers from the question.
             completion = tokenizer.decode(

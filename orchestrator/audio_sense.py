@@ -48,6 +48,7 @@ class AudioSense:
             try:
                 self.recognizer = sr.Recognizer()
             except Exception as e:
+                logger.warning("Mikrofon kütüphanesi başlatılamadı: %s", e)
                 print(f"⚠️ Mikrofon kütüphanesi başlatılamadı: {e}")
                 self.recognizer = None
 
@@ -107,6 +108,7 @@ class AudioSense:
             print("⚠️ Anlaşılamadı.")
             return ""
         except Exception as e:
+            logger.warning("Ses tanıma hatası: %s", e)
             print(f"⚠️ Ses tanıma hatası: {e}")
             return ""
     

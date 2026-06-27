@@ -159,7 +159,7 @@ live in the private dealroom (`mertformer-titan-dealroom-private`). In scope her
 
 ---
 
-## 7. Forensic Verification & Security
+## 6. Forensic Verification & Security
 
 The model's reliability is supported by explicit verification and logging mechanisms:
 *   **SHA256 Chaining (designed):** training is *designed* to seal each step with the hash of the previous step (`TITAN_POC_PROOF.jsonl`); the chain is emitted by a real run — there is no completed 45K chain yet.
@@ -168,13 +168,13 @@ The model's reliability is supported by explicit verification and logging mechan
 
 ---
 
-## 8. Conclusion
+## 7. Conclusion
 
 MertFormer Titan is an on-device-oriented architecture (BitNet + MoE + Liquid/CfC + GQA) built with a disciplined evidence boundary. The architecture is internally consistent and the hardware target is concrete, but component value and model quality remain hypotheses: there is no trained checkpoint yet. What to evaluate is the engineering discipline (low-bit runtime, training reliability, claim discipline) — not a finished model. Success now depends on operational execution and checkpoint-bound evidence.
 
 ---
 
-## 9. Validation Roadmap (claim-boundary)
+## 8. Validation Roadmap (claim-boundary)
 
 Steps required before any production or capability claim — none of the below is complete yet:
 1. **Whitepaper**: A technical paper documenting the `LiquidRouter + GQA + BitNet` design and its measured ablation results (incl. the inconclusive Liquid ablation).
@@ -183,7 +183,7 @@ Steps required before any production or capability claim — none of the below i
 
 ---
 
-## 10. Speculative Research Horizons (out of scope; not implemented)
+## 9. Speculative Research Horizons (out of scope; not implemented)
 
 The following are **long-range research directions only**. None is implemented on the canonical training path, none is part of the 45K run or the trained model, and none is claimed as a capability — they are listed for transparency, not as features:
 *   **Persistent contextual memory** — a vector-based episodic cache for user/project context across sessions (research idea; not built).
@@ -192,14 +192,14 @@ The following are **long-range research directions only**. None is implemented o
 
 ---
 
-## 11. Lawful Safety Constraints
+## 10. Lawful Safety Constraints
 
 - Deployment is policy-bound and auditable.
 - Human authorization is required for operational actions.
 - Covert surveillance/tracking and unauthorized intervention are explicitly excluded.
 - Build closure uses `Code+Test Green` criteria; heavy training evidence is reported as `Evidence Pending`.
 
-## 12. Closure-57 Gate
+## 11. Closure-57 Gate
 
 ```bash
 python3 scripts/check_57_matrix.py

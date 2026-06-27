@@ -120,7 +120,7 @@ class LiquidRouter(nn.Module):
         self.hidden_size = hidden_size
         self.num_experts = num_experts
         
-        # [V26.0 FIX] Router Quantization: Use BitLinear for consistent 1.58-bit
+        # Router Quantization: Use BitLinear for consistent 1.58-bit
         self.main_proj = BitLinear(hidden_size, num_experts, bias=False)
         
         # Fluid Dynamics: Lightweight history (History/Momentum)
@@ -133,11 +133,11 @@ class LiquidRouter(nn.Module):
             padding=0, # Left padding is applied manually
             bias=False
         )
-        # [V26.0 FIX] Router Quantization
+        # Router Quantization
         self.fluid_gate = BitLinear(hidden_size, num_experts, bias=False)
         nn.init.zeros_(self.fluid_gate.weight)
         
-        # [FIX 2] Stateful Inference Buffer
+        # Stateful Inference Buffer
         # Holds the state of the last (history_window - 1) tokens during inference
         # Inference cache, excluded from checkpoints (runtime state)
         self.register_buffer(
@@ -167,7 +167,7 @@ class LiquidRouter(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # x: [Batch, Seq, Hidden] or [Batch*Seq, Hidden] (must be made 3D if flattened)
 
-        # [FIX 1] Dimension Handling
+        # Dimension Handling
         is_flat = False
         if x.dim() == 2:
             is_flat = True
@@ -205,7 +205,7 @@ class LiquidRouter(nn.Module):
 
         else:
             # Inference step (Single Token)
-            # [FIX 4] Batch-Safe Cache Handling
+            # Batch-Safe Cache Handling
             # Check for batch size mismatch (e.g. beam search expansion)
             if self.inference_state.size(0) != B:
                 if self.inference_state.size(0) == 1:
@@ -359,7 +359,7 @@ class MoE(nn.Module):
         self._expert_resident: Set[int] = set()
         self._paging_bootstrapped: bool = False
         
-        # V26.5: Switch Loss and Collapse Recovery
+        # Switch Loss and Collapse Recovery
         self.use_switch_loss: bool = bool(getattr(cfg, "use_switch_loss", False))
         self.router_jitter_boost: float = float(getattr(cfg, "router_jitter_boost", 0.1))
         self.collapse_threshold: float = 0.85  # Max load threshold for collapse detection
@@ -660,7 +660,7 @@ class MoE(nn.Module):
         # -----------------------------
         # 1) Router & Gating (LIQUID FIX)
         # -----------------------------
-        # [FIX 1] Pass 3D tensor to LiquidRouter to preserve temporal context
+        # Pass 3D tensor to LiquidRouter to preserve temporal context
         logits = self.router(x) # (B, T, E)
         
         # Flatten after routing for dispatch logic
@@ -689,7 +689,7 @@ class MoE(nn.Module):
         if self.training and applied_jitter > 0.0:
             logits_f = logits_f + torch.randn_like(logits_f) * applied_jitter
 
-        # [OPT 1] Top-K First, then Softmax (NPU Optimization)
+        # Top-K First, then Softmax (NPU Optimization)
         # Old method: Softmax(all) -> TopK
         # New method: TopK -> Softmax(selected)
         # This method saves FLOPs and yields sharper decisions.
@@ -725,7 +725,7 @@ class MoE(nn.Module):
             )
 
         # [TELEMETRY] Load Calculation (Always compute for monitoring)
-        # [FIX 2] MPS Safe Bincount: Use scatter_add_ instead of bincount for compatibility
+        # MPS Safe Bincount: Use scatter_add_ instead of bincount for compatibility
         flat_idx = topk_idx[capacity_mask].reshape(-1)
         counts = torch.zeros(E, device=flat_idx.device, dtype=torch.float32)
         if flat_idx.numel() > 0:
@@ -751,7 +751,7 @@ class MoE(nn.Module):
             )
 
         # -----------------------------
-        # 2) Aux Loss (Load Balancing) - V26.5: Switch/L2 Option
+        # 2) Aux Loss (Load Balancing) - Switch/L2 Option
         # -----------------------------
         # Importance: cumulative probability of the gates (must be computed over all experts)
         if self.training:
@@ -765,7 +765,7 @@ class MoE(nn.Module):
                  # L2 Loss: more stable, recommended for the Liquid Router
                  load_balancing_loss = ((importance - load) ** 2).mean() * float(E)
              
-             # V26.5: Router Collapse Detection & Recovery
+             # Router Collapse Detection & Recovery
              max_load = load.max().item()
              if max_load > self.collapse_threshold:
                  self.collapse_detected.fill_(True)
@@ -800,11 +800,11 @@ class MoE(nn.Module):
             out_flat = self._dispatch_sequential(x_flat, topk_idx, topk_vals)
 
         # -----------------------------
-        # 4) Shared Expert (Dtype Safe & [FIX 3] Sigmoid Gate)
+        # 4) Shared Expert (Dtype Safe & Sigmoid Gate)
         # -----------------------------
         shared_out = self.shared_expert(x_flat)  # (N, H)
 
-        # [FIX 3] Sigmoid Gate: force the gate into the 0-1 range.
+        # Sigmoid Gate: force the gate into the 0-1 range.
         # Prevents negative learning and provides stability.
         gate_val = torch.sigmoid(self.shared_gate) # (1,)
         
@@ -824,7 +824,7 @@ class MoE(nn.Module):
         # Restore the shape
         out = out_flat.reshape(B, T, H)
 
-        # [FIX 3] Keep aux_loss as float32 for precision stability
+        # Keep aux_loss as float32 for precision stability
         return out, aux_loss
 
     def _dispatch_sequential(

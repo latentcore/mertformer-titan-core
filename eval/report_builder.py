@@ -5,6 +5,7 @@ Collects benchmark outputs (if present) and produces a concise summary.
 from __future__ import annotations
 
 import json
+import logging
 import time
 from pathlib import Path
 from typing import Any, Dict
@@ -29,7 +30,11 @@ def _load_json(path: Path) -> Dict[str, Any]:
         return {}
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
+    except (json.JSONDecodeError, OSError) as exc:
+        # Corrupt/unreadable report: keep the empty-dict fallback so the summary
+        # degrades to pending/partial, but surface the failure so it is not
+        # silently misread as a missing file.
+        logging.warning("report_builder: failed to load JSON from %s: %s", path, exc)
         return {}
 
 

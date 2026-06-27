@@ -12,7 +12,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import os
 import sys
@@ -254,7 +254,7 @@ class MertFormerConfig:
     expert_paging_offload_device: str = "cpu"
     expert_paging_verbose: bool = False
 
-    # V26.5: Switch Loss Option & Router Jitter for collapse prevention
+    # Switch Loss Option & Router Jitter for collapse prevention
     use_switch_loss: bool = True  # [AUDIT FIX] Enable Aggressive Load Balancing
     router_jitter: float = 0.02  # [AUDIT FIX] Increase exploration noise
     router_jitter_boost: float = 0.1  # Emergency jitter when collapse detected
@@ -275,9 +275,9 @@ class MertFormerConfig:
     moe_capacity_enforce: bool = True
     moe_capacity_factor: float = 1.25
 
-    # V25.1 SAFEGUARD: Liquid Warmup Steps (Freeze for first N steps)
+    # SAFEGUARD: Liquid Warmup Steps (Freeze for first N steps)
     liquid_warmup_steps: int = 10000
-    # V26.11 SAFEGUARD: Liquid spike tracking (3-strike rule)
+    # SAFEGUARD: Liquid spike tracking (3-strike rule)
     liquid_spike_threshold: float = 5.0
     liquid_spike_patience: int = 3
     liquid_spike_cooldown_steps: int = 200
@@ -454,7 +454,7 @@ class MertFormerConfig:
     # [TITAN PREFLIGHT] Support env var override for testing
     max_steps: int = int(os.environ.get("TITAN_MAX_STEPS", 45000))  
 
-    # [V26.5 FIX] Explicitly disable Epoch Mode to respect max_steps=50k
+    # Explicitly disable Epoch Mode to respect max_steps
     epoch_mode: bool = False
 
     min_lr_ratio: float = 0.1  # informational only — scheduler is called with min_lr_ratio=0.01, not this field
@@ -502,7 +502,7 @@ class MertFormerConfig:
     # FIX: Mixed Precision Training
     use_amp: bool = field(default_factory=lambda: torch.cuda.is_available())  # Auto-enable only on CUDA
 
-    # [V26.5 DDP] Use Hugging Face Accelerate
+    # [DDP] Use Hugging Face Accelerate
     use_accelerate: bool = True
 
     # FIX: DataLoader Optimization
@@ -515,7 +515,7 @@ class MertFormerConfig:
     freeze_core_layers: bool = False  # If True, freeze everything except MoE Router and Liquid Layers
 
     # -------------------------------------------------------------------------
-    # 10. V22.0 UPGRADES: Gradient Checkpointing, Label Smoothing, Attention Dropout
+    # 10. UPGRADES: Gradient Checkpointing, Label Smoothing, Attention Dropout
     # -------------------------------------------------------------------------
     # Gradient Checkpointing: 40% VRAM savings, for large batches
     use_gradient_checkpointing: bool = True

@@ -5,8 +5,11 @@ MERTFORMER TITAN (ONYX STORM) - AGI ORCHESTRATOR PACKAGE
 Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
+NOTE: Bu paket (orchestrator/) inert / out-of-scope; 45K egitim yolunda
+kapalidir. Burada tutulan surum etiketi legacy bir etikettir, kanonik
+surum kaynagi degildir.
+
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
@@ -92,4 +95,5 @@ __all__ = [
     "CognitiveResult",
 ]
 
-__version__ = "1.0-BUILD30-V2"
+# Legacy build etiketi; kanonik surum kaynagi degil (inert orchestrator paketi).
+__version__ = "1.0"

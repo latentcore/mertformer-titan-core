@@ -12,7 +12,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import torch
 import torch.nn as nn
@@ -36,7 +36,7 @@ class MertFormer(nn.Module):
     - N MertFormerBlock layers (Attention + FFN / MoE)
     - Final RMSNorm
     - LM Head (optional weight tying)
-    - KV Cache support (inference acceleration) [V21.0]
+    - KV Cache support (inference acceleration)
 
     Forward:
         input_ids (B, T) -> logits (B, T, V), aux_loss (scalar)
@@ -71,7 +71,7 @@ class MertFormer(nn.Module):
         if tie_weights:
             self.lm_head.weight = self.tok_embeddings.weight
         
-        # V22.0: Gradient Checkpointing (40% VRAM savings)
+        # Gradient Checkpointing (40% VRAM savings)
         self.use_gradient_checkpointing = getattr(cfg, "use_gradient_checkpointing", False)
         self.use_global_workspace_broadcast = bool(getattr(cfg, "use_global_workspace_broadcast", False))
         self.workspace_blend = float(getattr(cfg, "workspace_blend", 0.7))
@@ -157,7 +157,7 @@ class MertFormer(nn.Module):
         # Embedding
         x = self.tok_embeddings(input_ids)  # (B, T, H)
         
-        # V23.0: Embedding Scaling (GPT/LLaMA standard)
+        # Embedding Scaling (GPT/LLaMA standard)
         # Provides stability by scaling embeddings for large hidden_size
         x = x * (self.cfg.hidden_size ** 0.5)
         
@@ -185,11 +185,11 @@ class MertFormer(nn.Module):
             if self.latent_ode_channel is not None:
                 x = self.latent_ode_channel(x, dt=self.latent_ode_dt)
             
-            # V22.0: Gradient Checkpointing (VRAM savings during training)
+            # Gradient Checkpointing (VRAM savings during training)
             if self.use_gradient_checkpointing and self.training and not use_cache:
                 # Checkpointing: don't save activations during forward, recompute in backward
                 from torch.utils.checkpoint import checkpoint
-                # [V26.4 FIX] Checkpoint Hardening (Tensor-only closure).
+                # Checkpoint Hardening (Tensor-only closure).
                 # Bind per-iteration `past_kv`/`workspace_state` as default args so
                 # the closure captures them BY VALUE at def time. Without this they
                 # are captured by reference and the backward recompute would read

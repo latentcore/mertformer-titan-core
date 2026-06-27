@@ -2418,8 +2418,10 @@ class InMemoryRunLogger:
                 self._jsonl_fp.flush()
             if self.line_count_total % self.fsync_every == 0:
                 os.fsync(self._jsonl_fp.fileno())
-        except Exception:
-            pass
+        except Exception as e:
+            self._jsonl_flush_errors = getattr(self, "_jsonl_flush_errors", 0) + 1
+            if self._jsonl_flush_errors <= 3:
+                warnings.warn(f"[RunLogger] jsonl flush/fsync failed: {type(e).__name__}: {e}")
 
     def _append_record(self, rec: Dict[str, Any]) -> None:
         payload = json.dumps(rec, ensure_ascii=False, sort_keys=True)
@@ -2431,8 +2433,10 @@ class InMemoryRunLogger:
         if self._jsonl_fp is not None:
             try:
                 self._jsonl_fp.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + "\n")
-            except Exception:
-                pass
+            except Exception as e:
+                self._jsonl_write_errors = getattr(self, "_jsonl_write_errors", 0) + 1
+                if self._jsonl_write_errors <= 3:
+                    warnings.warn(f"[RunLogger] jsonl write failed (chain-hash log integrity at risk): {type(e).__name__}: {e}")
         self._maybe_flush()
 
     def log_event(self, kind: str, data: Dict[str, Any]) -> None:
@@ -2463,8 +2467,8 @@ class InMemoryRunLogger:
             try:
                 self._jsonl_fp.flush()
                 self._jsonl_fp.close()
-            except Exception:
-                pass
+            except Exception as e:
+                warnings.warn(f"[RunLogger] jsonl finalize/close failed: {type(e).__name__}: {e}")
             self._jsonl_fp = None
         return {
             "run_name": self.run_name,
@@ -2833,7 +2837,10 @@ class SentencePieceTokenizer:
             filt.append(ii)
         try:
             return self.sp.decode(filt)
-        except Exception:
+        except Exception as e:
+            if not getattr(self, "_decode_warned", False):
+                self._decode_warned = True
+                warnings.warn(f"[tokenizer.decode] decode failed, returning empty string: {type(e).__name__}: {e}")
             return ""
 
     def state_dict(self) -> Dict[str, Any]:
@@ -3224,8 +3231,6 @@ def _load_hf_candidate_dataset(
             return ds, "streaming", "ok"
         except Exception as e:
             streaming_err = f"{type(e).__name__}:{e}"
-        else:
-            streaming_err = "unknown"
     else:
         streaming_err = "streaming_disabled"
 
@@ -3349,8 +3354,9 @@ def _hf_candidate_worker(
     except Exception as e:
         try:
             q.put({"ok": False, "reason": _format_exception(e), "rows": rows})
-        except Exception:
-            pass
+        except Exception as e2:
+            # Queue is broken/full; parent will hit timeout. Surface a hint to stderr.
+            print(f"[data:worker] failed to report error via queue: {type(e2).__name__}: {e2}", file=sys.stderr)
 
 
 def _load_candidate_rows_process_timeout(
@@ -3399,6 +3405,7 @@ def _load_candidate_rows_process_timeout(
             try:
                 result = q.get_nowait()
             except Exception:
+                # Race: queue emptied between empty() check and get; treat as no result.
                 result = {}
             break
         if not p.is_alive():
@@ -3416,15 +3423,15 @@ def _load_candidate_rows_process_timeout(
         try:
             p.terminate()
         except Exception:
-            pass
+            pass  # best-effort process cleanup; ignore terminate errors
     try:
         p.join(timeout=1.0)
     except Exception:
-        pass
+        pass  # best-effort process cleanup; ignore join errors
     try:
         q.close()
     except Exception:
-        pass
+        pass  # best-effort queue cleanup; ignore close errors
 
     if timed_out:
         return [], "timeout", "worker_timeout", True
@@ -4208,8 +4215,8 @@ class LiquidMixer(nn.Module):
             try:
                 self._compiled_forward = torch.compile(self._forward_slow, mode="reduce-overhead")
                 return
-            except Exception:
-                pass
+            except Exception as e:
+                warnings.warn(f"[LiquidMixer] torch.compile failed, using eager fallback: {type(e).__name__}: {e}")
         self._compiled_forward = self._forward_slow
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -4217,7 +4224,8 @@ class LiquidMixer(nn.Module):
             self._maybe_compile()
             try:
                 return self._compiled_forward(x)
-            except Exception:
+            except Exception as e:
+                warnings.warn(f"[LiquidMixer] compiled forward failed, using eager fallback: {type(e).__name__}: {e}")
                 return self._forward_slow(x)
         return self._forward_slow(x)
 
@@ -4820,8 +4828,8 @@ class MertFormerTiny(nn.Module):
                             dtype=self.tok_embeddings.weight.dtype,
                         )
                     )
-                except Exception:
-                    pass
+                except Exception as e:
+                    warnings.warn(f"[reset_router_state] router set_state failed: {type(e).__name__}: {e}")
 
 
 def parity_self_check(model: MertFormerTiny, cfg: Dict[str, Any], device: str) -> Dict[str, Any]:
@@ -5070,8 +5078,8 @@ def prune_checkpoints_rolling5(ckpt_dir: Path) -> List[str]:
             try:
                 p.unlink()
                 removed.append(str(p))
-            except Exception:
-                pass
+            except Exception as e:
+                warnings.warn(f"[prune_checkpoints_rolling5] failed to unlink {p}: {type(e).__name__}: {e}")
     return removed
 
 
@@ -5083,8 +5091,8 @@ def collect_rng_state() -> Dict[str, Any]:
     if torch.cuda.is_available():
         try:
             out["cuda_rng_state_all"] = torch.cuda.get_rng_state_all()
-        except Exception:
-            pass
+        except Exception as e:
+            warnings.warn(f"[collect_rng_state] cuda RNG state capture failed (resume reproducibility may be affected): {type(e).__name__}: {e}")
     return out
 
 
@@ -5096,8 +5104,8 @@ def restore_rng_state(state: Dict[str, Any]) -> None:
             torch.set_rng_state(state["torch_rng_state"])
         if "cuda_rng_state_all" in state and torch.cuda.is_available():
             torch.cuda.set_rng_state_all(state["cuda_rng_state_all"])
-    except Exception:
-        pass
+    except Exception as e:
+        warnings.warn(f"[restore_rng_state] RNG restore failed (resume reproducibility may be affected): {type(e).__name__}: {e}")
 
 
 def save_checkpoint_atomic(
@@ -6193,7 +6201,8 @@ def maybe_plot_curves(curve: Dict[str, List[float]], out_dir: Path, write_files:
         plt.savefig(p)
         plt.close()
         return str(p)
-    except Exception:
+    except Exception as e:
+        warnings.warn(f"[maybe_plot_curves] plot generation failed: {type(e).__name__}: {e}")
         return None
 
 
@@ -6225,8 +6234,8 @@ def maybe_plot_presentation_assets(
         plt.savefig(p_loss)
         plt.close()
         paths["loss_overlay"] = str(p_loss)
-    except Exception:
-        pass
+    except Exception as e:
+        warnings.warn(f"[maybe_plot_presentation_assets] loss_overlay plot failed: {type(e).__name__}: {e}")
     try:
         p_data = out_dir / "data_contribution.png"
         sources = payload.get("data_source_scorecard", {}).get("source_totals", [])[:10]
@@ -6242,8 +6251,8 @@ def maybe_plot_presentation_assets(
             plt.savefig(p_data)
             plt.close()
             paths["data_contribution"] = str(p_data)
-    except Exception:
-        pass
+    except Exception as e:
+        warnings.warn(f"[maybe_plot_presentation_assets] data_contribution plot failed: {type(e).__name__}: {e}")
     try:
         p_stab = out_dir / "stability_panel.png"
         st = payload.get("stability_index", {})
@@ -6263,8 +6272,8 @@ def maybe_plot_presentation_assets(
         plt.savefig(p_stab)
         plt.close()
         paths["stability_panel"] = str(p_stab)
-    except Exception:
-        pass
+    except Exception as e:
+        warnings.warn(f"[maybe_plot_presentation_assets] stability_panel plot failed: {type(e).__name__}: {e}")
     return paths
 
 
@@ -6692,8 +6701,8 @@ def generate_text(
     if hasattr(model, "reset_router_state"):
         try:
             model.reset_router_state(batch_size=1)
-        except Exception:
-            pass
+        except Exception as e:
+            warnings.warn(f"[generate_text] reset_router_state failed: {type(e).__name__}: {e}")
     system = "Sistem: Türkçe, net ve teknik yanıt ver.\n"
     full_prompt = system + "Kullanıcı: " + prompt + "\nAsistan:"
     ids = tokenizer.encode(full_prompt, add_bos=True, add_eos=False)
@@ -7922,16 +7931,28 @@ def maybe_plot_mathfp_interpretability_assets(
         plt.savefig(p_bar)
         plt.close()
         out["moe_expert_bar_proxy"] = str(p_bar)
-    except Exception:
-        pass
+    except Exception as e:
+        warnings.warn(f"[maybe_plot_mathfp_interpretability_assets] moe_expert_bar_proxy plot failed: {type(e).__name__}: {e}")
 
     try:
         p_heat = run_dir / "gradient_flow_heatmap.png"
         rows = []
+
+        def _scalar(v):
+            # layer_grad_norm_samples is List[List[float]] (per-step layer-norm vectors);
+            # reduce each step vector to its mean so every variant becomes one heatmap row.
+            if isinstance(v, (list, tuple)):
+                nums = [float(z) for z in v if isinstance(z, (int, float))]
+                return sum(nums) / len(nums) if nums else 0.0
+            try:
+                return float(v)
+            except (TypeError, ValueError):
+                return 0.0
+
         for row in compare_payload.get("variant_results", []):
             g = row.get("layer_grad_norm_samples", [])
             if isinstance(g, list) and g:
-                rows.append([float(x) for x in g[:64]])
+                rows.append([_scalar(x) for x in g[:64]])
         if rows:
             width = max(len(r) for r in rows)
             mat = []
@@ -7948,8 +7969,8 @@ def maybe_plot_mathfp_interpretability_assets(
             plt.savefig(p_heat)
             plt.close()
             out["gradient_flow_heatmap"] = str(p_heat)
-    except Exception:
-        pass
+    except Exception as e:
+        warnings.warn(f"[maybe_plot_mathfp_interpretability_assets] gradient_flow_heatmap plot failed: {type(e).__name__}: {e}")
     return out
 
 
@@ -8888,8 +8909,8 @@ if __name__ == "__main__":
             try:
                 tb_path.parent.mkdir(parents=True, exist_ok=True)
                 tb_path.write_text(tb, encoding="utf-8")
-            except Exception:
-                pass
+            except Exception as e2:
+                print("[warn] traceback write failed", type(e2).__name__, str(e2), file=sys.stderr)
         if str(st_path):
             try:
                 write_last_state(
@@ -8900,8 +8921,8 @@ if __name__ == "__main__":
                         "run_dir": str(_RUNTIME_LAST_LAYOUT.get("run_dir", "")),
                     },
                 )
-            except Exception:
-                pass
+            except Exception as e2:
+                print("[warn] last_state write failed", type(e2).__name__, str(e2), file=sys.stderr)
         run_id = Path(str(_RUNTIME_LAST_LAYOUT.get("run_dir", "unknown"))).name or "unknown"
         print(f"FINAL_STATUS: provisional reason=fatal_exception run_id={run_id}")
         raise

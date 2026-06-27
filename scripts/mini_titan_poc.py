@@ -22,8 +22,8 @@ NOT (durustluk): Bu bir POC betigidir, kanonik mimari paritesi DEGILDIR.
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__version__ = "5.0-FORENSIC"
+__author__ = "Mert Yünlü"
 
 import os
 import io
@@ -76,7 +76,8 @@ def _safe_json(obj: Any) -> Any:
                 "dtype": str(getattr(obj, "dtype", None)),
                 "device": str(getattr(obj, "device", None)),
             }
-        except:
+        except Exception as e:
+            print(f"[warn] tensor serialize failed: {e}", file=sys.stderr)
             return {"__tensor__": True}
     return {"__repr__": repr(obj), "__type__": type(obj).__name__}
 
@@ -90,7 +91,8 @@ def sha256_file(path: Union[str, Path], chunk_size: int = 1024 * 1024) -> str:
                 if not b: break
                 h.update(b)
         return h.hexdigest()
-    except:
+    except Exception as e:
+        print(f"[warn] sha256_file failed for {p}: {e}", file=sys.stderr)
         return "error_reading_file"
 
 def try_git_commit(repo_dir: Union[str, Path]) -> Optional[str]:
@@ -393,8 +395,8 @@ def get_dataset():
                 if len(chunk)<129: chunk = F.pad(chunk, (0, 129-len(chunk)))
                 return chunk[:-1], chunk[1:]
         return DS(), DS() # Use same for val in PoC speed
-    except:
-        print("⚠️ Using Dummy Data")
+    except Exception as e:
+        print(f"⚠️ Using Dummy Data (real dataset load failed: {e})")
         class Dummy(Dataset):
             def __len__(self): return 5000
             def __getitem__(self, i): d=torch.randint(0, cfg.vocab_size, (129,)); return d[:-1], d[1:]

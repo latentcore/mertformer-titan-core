@@ -3,9 +3,9 @@
 Tool kullanımı için güvenli yürütme sınırlarını tanımlar.
 
 ## İzinli
-- Proje klasorunde salt-okuma erişimi
-- Deterministik tool kullanımi (yan etki yok)
-- Sınırlı CPU/GPU kullanımi
+- Proje klasöründe salt-okuma erişimi
+- Deterministik tool kullanımı (yan etki yok)
+- Sınırlı CPU/GPU kullanımı
 
 ## Yasak
 - Sistem düzeyinde yıkıcı işlemler
@@ -15,4 +15,4 @@ Tool kullanımı için güvenli yürütme sınırlarını tanımlar.
 ## Varsayılanlar
 - Tool çağrıları açık ve loglu olur
 - Her tool için timeout uygulanır
-- Hatalar net neden kodlariyla verilir
+- Hatalar net neden kodlarıyla verilir

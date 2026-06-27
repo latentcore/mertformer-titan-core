@@ -10,7 +10,7 @@ try:
         _quantize_activation,
         _quantize_weight,
     )
-except Exception:
+except ImportError:
     triton_ternary_linear = None
     is_triton_available = lambda: False  # type: ignore
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-V2 checkpoint resume compatibility check.
+Checkpoint resume compatibility check.
 Creates a tiny model, saves a checkpoint, then loads via train/train.py resume helpers.
 Writes reports/resume_compat_report.json.
 """
@@ -157,12 +157,14 @@ def main() -> int:
         try:
             report_path.parent.mkdir(parents=True, exist_ok=True)
             report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        except Exception:
-            pass
+        except Exception as exc:
+            # best-effort rapor yazimi; basarisiz olursa en azindan stderr'e uyari birak
+            print(f"[warn] resume_compat report yazilamadi: {type(exc).__name__}: {exc}", file=sys.stderr)
         try:
             shutil.rmtree(tmp_dir)
-        except Exception:
-            pass
+        except Exception as exc:
+            # best-effort tmp temizligi; sessizce yutmak yerine uyari logla
+            print(f"[warn] resume_compat tmp temizlenemedi: {type(exc).__name__}: {exc}", file=sys.stderr)
 
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0 if report.get("status") == "PASS" else 1

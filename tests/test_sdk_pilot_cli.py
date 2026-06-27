@@ -8,6 +8,8 @@ from pathlib import Path
 from mertformer_sdk import cli
 from mertformer_sdk import pilot
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
 
 def test_cli_verify_forces_offline(monkeypatch, capsys):
     called = {"offline": None}
@@ -143,11 +145,12 @@ def test_no_home_paths_in_tracked_files():
         capture_output=True,
         text=True,
         check=False,
+        cwd=REPO_ROOT,
     )
     assert result.returncode == 1, result.stdout
 
 
 def test_readme_config_sample_matches_current_defaults():
-    readme = Path("README.md").read_text(encoding="utf-8")
+    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
     assert "use_torch_compile = False" in readme
     assert "gradient_checkpoint_policy" not in readme

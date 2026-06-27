@@ -1,6 +1,6 @@
 # Tool Sözleşmeleri
 
-Tool cagirilari için giriş/çıkış sözleşmelerini tanımlar.
+Tool çağrıları için giriş/çıkış sözleşmelerini tanımlar.
 
 ## Sözleşme Şablonu
 - **name**: tool adı (string)

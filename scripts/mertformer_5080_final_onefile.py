@@ -545,7 +545,12 @@ _RUNTIME_LAST_LAYOUT: Dict[str, str] = {}
 
 
 def _signal_stop_handler(signum: int, _frame: Any) -> None:
-    sig_name = "SIGTERM" if int(signum) == int(getattr(signal, "SIGTERM", 15)) else str(signum)
+    if int(signum) == int(getattr(signal, "SIGTERM", 15)):
+        sig_name = "SIGTERM"
+    elif int(signum) == int(getattr(signal, "SIGINT", 2)):
+        sig_name = "SIGINT"
+    else:
+        sig_name = str(signum)
     _RUNTIME_SIGNAL_STATE["sigterm"] = True
     _RUNTIME_SIGNAL_STATE["signal"] = sig_name
 
@@ -553,8 +558,9 @@ def _signal_stop_handler(signum: int, _frame: Any) -> None:
 def install_runtime_signal_handlers() -> None:
     try:
         signal.signal(signal.SIGTERM, _signal_stop_handler)
-    except Exception:
-        pass
+        signal.signal(signal.SIGINT, _signal_stop_handler)
+    except Exception as e:
+        print(f"[warn] install_runtime_signal_handlers failed: {e}", file=sys.stderr)
 
 
 def ensure_writable_dir(path: Path, label: str) -> None:
@@ -641,7 +647,7 @@ def atomic_text_write(path: Path, text: str) -> None:
 
 
 def hash_file(path):
-    return file_sha256(_M5080Path(path) if '_M5080Path' in globals() else Path(path))
+    return file_sha256(Path(path))
 
 
 def write_output_sha256_manifest(output_files: Dict[str, str], out_path: Path) -> None:
@@ -775,7 +781,8 @@ def write_onecell_fatal_report(run_dir: str, err: Exception, tb: str) -> str:
     try:
         atomic_json_write(path, payload)
         return str(path)
-    except Exception:
+    except Exception as e:
+        print(f"[warn] write_onecell_fatal_report failed: {e}", file=sys.stderr)
         return ""
 
 
@@ -937,8 +944,8 @@ def run_data_preflight(cfg: Dict[str, Any]) -> Dict[str, Any]:
 def write_last_state(path: Path, payload: Dict[str, Any]) -> None:
     try:
         atomic_json_write(path, payload)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[warn] write_last_state failed: {e}", file=sys.stderr)
 
 
 def append_csv_row(path: Path, fieldnames: Sequence[str], row: Dict[str, Any]) -> None:
@@ -1095,7 +1102,8 @@ def get_total_vram_gb(device: str) -> float:
     if device == "cuda" and torch.cuda.is_available():
         try:
             return float(torch.cuda.get_device_properties(0).total_memory / (1024 ** 3))
-        except Exception:
+        except Exception as e:
+            print(f"[warn] get_total_vram_gb failed: {e}", file=sys.stderr)
             return 0.0
     return 0.0
 
@@ -1522,8 +1530,6 @@ def maybe_autocast(device: str, enabled: bool):
 
 
 def hash_config(cfg: Dict[str, Any]) -> str:
-    import hashlib
-
     blob = json.dumps(cfg, sort_keys=True, ensure_ascii=False).encode("utf-8")
     return hashlib.sha256(blob).hexdigest()
 
@@ -1757,7 +1763,11 @@ def build_benchmark_winner_matrix(bench: Dict[str, Any]) -> Dict[str, Any]:
     for k, row in metrics.items():
         mv = row["mertformer"]
         vv = row["vanilla"]
-        if row["prefer"] == "higher":
+        # Equality or both-unmeasured (0.0/inf defaults) is a tie, not a silent
+        # win for vanilla. Only declare a side when one strictly beats the other.
+        if mv == vv or not (math.isfinite(mv) and math.isfinite(vv)):
+            winners[k] = "tie"
+        elif row["prefer"] == "higher":
             winners[k] = "mertformer" if mv > vv else "vanilla"
         else:
             winners[k] = "mertformer" if mv < vv else "vanilla"
@@ -2053,8 +2063,10 @@ class InMemoryRunLogger:
                 self._jsonl_fp.flush()
             if self.line_count_total % self.fsync_every == 0:
                 os.fsync(self._jsonl_fp.fileno())
-        except Exception:
-            pass
+        except Exception as e:
+            if not getattr(self, "_flush_warned", False):
+                print(f"[warn] run logger flush/fsync failed: {e}", file=sys.stderr)
+                self._flush_warned = True
 
     def _append_record(self, rec: Dict[str, Any]) -> None:
         payload = json.dumps(rec, ensure_ascii=False, sort_keys=True)
@@ -2066,8 +2078,10 @@ class InMemoryRunLogger:
         if self._jsonl_fp is not None:
             try:
                 self._jsonl_fp.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + "\n")
-            except Exception:
-                pass
+            except Exception as e:
+                if not getattr(self, "_write_warned", False):
+                    print(f"[warn] run logger jsonl write failed: {e}", file=sys.stderr)
+                    self._write_warned = True
         self._maybe_flush()
 
     def log_event(self, kind: str, data: Dict[str, Any]) -> None:
@@ -2098,8 +2112,8 @@ class InMemoryRunLogger:
             try:
                 self._jsonl_fp.flush()
                 self._jsonl_fp.close()
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"[warn] run logger close failed: {e}", file=sys.stderr)
             self._jsonl_fp = None
         return {
             "run_name": self.run_name,
@@ -2859,8 +2873,6 @@ def _load_hf_candidate_dataset(
             return ds, "streaming", "ok"
         except Exception as e:
             streaming_err = f"{type(e).__name__}:{e}"
-        else:
-            streaming_err = "unknown"
     else:
         streaming_err = "streaming_disabled"
 
@@ -2984,8 +2996,8 @@ def _hf_candidate_worker(
     except Exception as e:
         try:
             q.put({"ok": False, "reason": _format_exception(e), "rows": rows})
-        except Exception:
-            pass
+        except Exception as put_err:
+            print(f"[warn] hf candidate worker could not report failure: {put_err}", file=sys.stderr)
 
 
 def _load_candidate_rows_process_timeout(
@@ -3034,7 +3046,7 @@ def _load_candidate_rows_process_timeout(
             try:
                 result = q.get_nowait()
             except Exception:
-                result = {}
+                result = {}  # race: queue emptied between check and get; treat as no result
             break
         if not p.is_alive():
             break
@@ -3051,15 +3063,15 @@ def _load_candidate_rows_process_timeout(
         try:
             p.terminate()
         except Exception:
-            pass
+            pass  # best-effort cleanup: process may already be gone
     try:
         p.join(timeout=1.0)
     except Exception:
-        pass
+        pass  # best-effort cleanup: join failure is non-fatal here
     try:
         q.close()
     except Exception:
-        pass
+        pass  # best-effort cleanup: queue close failure is non-fatal here
 
     if timed_out:
         return [], "timeout", "worker_timeout", True
@@ -4336,8 +4348,8 @@ class LegacyOnecellMertFormerTiny(nn.Module):
                             dtype=self.tok_embeddings.weight.dtype,
                         )
                     )
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(f"[warn] reset_router_state set_state failed: {e}", file=sys.stderr)
 
 
 def legacy_parity_self_check(model: LegacyOnecellMertFormerTiny, cfg: Dict[str, Any], device: str) -> Dict[str, Any]:
@@ -4377,6 +4389,7 @@ def legacy_parity_self_check(model: LegacyOnecellMertFormerTiny, cfg: Dict[str, 
             "arch_contract": ARCH_PARITY_CONTRACT["name"],
         }
     except Exception as e:
+        print(f"[warn] legacy_parity_self_check failed: {_format_exception(e)}", file=sys.stderr)
         return {
             "ok": False,
             "error": _format_exception(e),
@@ -4592,8 +4605,8 @@ def collect_rng_state() -> Dict[str, Any]:
     if torch.cuda.is_available():
         try:
             out["cuda_rng_state_all"] = torch.cuda.get_rng_state_all()
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[warn] collect_rng_state: cuda rng capture failed: {e}", file=sys.stderr)
     return out
 
 
@@ -4605,8 +4618,8 @@ def restore_rng_state(state: Dict[str, Any]) -> None:
             torch.set_rng_state(state["torch_rng_state"])
         if "cuda_rng_state_all" in state and torch.cuda.is_available():
             torch.cuda.set_rng_state_all(state["cuda_rng_state_all"])
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[warn] restore_rng_state failed (reproducibility may be affected): {e}", file=sys.stderr)
 
 
 def save_checkpoint_atomic(
@@ -4759,8 +4772,6 @@ def evaluate_model(
         ppl_cap_applied = True
     ppl_capped = float(math.exp(min(20.0, vl)))
     if abs(ppl_capped - ppl_raw) > 1e-6 and math.isfinite(ppl_raw):
-        ppl_cap_applied = True
-    if not math.isfinite(ppl_raw):
         ppl_cap_applied = True
     return {
         "val_loss": vl,
@@ -4940,12 +4951,14 @@ def train_loop_deep(
     if device == "cuda" and bool(cfg["amp_enabled"]):
         try:
             scaler = torch.amp.GradScaler("cuda", enabled=True)  # type: ignore[attr-defined]
-        except Exception:
+        except (AttributeError, TypeError) as e:
+            print(f"[warn] torch.amp.GradScaler unavailable, falling back to torch.cuda.amp: {e}", file=sys.stderr)
             scaler = torch.cuda.amp.GradScaler(enabled=True)
     else:
         try:
             scaler = torch.amp.GradScaler("cuda", enabled=False)  # type: ignore[attr-defined]
-        except Exception:
+        except (AttributeError, TypeError) as e:
+            print(f"[warn] torch.amp.GradScaler unavailable, falling back to torch.cuda.amp: {e}", file=sys.stderr)
             scaler = torch.cuda.amp.GradScaler(enabled=False)
 
     expected_run_hash = hash_config(cfg)
@@ -5690,7 +5703,8 @@ def maybe_plot_curves(curve: Dict[str, List[float]], out_dir: Path, write_files:
         plt.savefig(p)
         plt.close()
         return str(p)
-    except Exception:
+    except Exception as e:
+        print(f"[warn] maybe_plot_curves failed: {e}", file=sys.stderr)
         return None
 
 
@@ -5722,8 +5736,8 @@ def maybe_plot_presentation_assets(
         plt.savefig(p_loss)
         plt.close()
         paths["loss_overlay"] = str(p_loss)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[warn] presentation asset loss_overlay failed: {e}", file=sys.stderr)
     try:
         p_data = out_dir / "data_contribution.png"
         sources = payload.get("data_source_scorecard", {}).get("source_totals", [])[:10]
@@ -5739,8 +5753,8 @@ def maybe_plot_presentation_assets(
             plt.savefig(p_data)
             plt.close()
             paths["data_contribution"] = str(p_data)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[warn] presentation asset data_contribution failed: {e}", file=sys.stderr)
     try:
         p_stab = out_dir / "stability_panel.png"
         st = payload.get("stability_index", {})
@@ -5760,8 +5774,8 @@ def maybe_plot_presentation_assets(
         plt.savefig(p_stab)
         plt.close()
         paths["stability_panel"] = str(p_stab)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[warn] presentation asset stability_panel failed: {e}", file=sys.stderr)
     return paths
 
 
@@ -6185,8 +6199,8 @@ def generate_text(
     if hasattr(model, "reset_router_state"):
         try:
             model.reset_router_state(batch_size=1)
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[warn] generate_text reset_router_state failed: {e}", file=sys.stderr)
     system = "Sistem: Türkçe, net ve teknik yanıt ver.\n"
     full_prompt = system + "Kullanıcı: " + prompt + "\nAsistan:"
     ids = tokenizer.encode(full_prompt, add_bos=True, add_eos=False)
@@ -7037,7 +7051,7 @@ def run_all() -> Dict[str, Any]:
 
 
 # =============================================================================
-# MertFormer 5080 Final Onefile Lab Rebuild Overlay v2
+# MertFormer 5080 Final Onefile Lab Rebuild Overlay
 # Active model path: embedded repo modules -> model.transformers.MertFormer.
 # =============================================================================
 import base64 as _m5080_base64
@@ -7264,8 +7278,8 @@ def _m5080_apply_repo_cfg(one_cfg):
 # Preserve exact repo BitLinear by default. The repo bitlinear.py is embedded and active.
 try:
     RUN_CONFIG["strict_bitnet"] = False
-except Exception:
-    pass
+except Exception as e:
+    print(f"[warn] could not set RUN_CONFIG['strict_bitnet']: {e}", file=sys.stderr)
 
 try:
     _old_prepare_runtime_config = _m5080_prepare_runtime_config
@@ -7403,6 +7417,7 @@ class RepoParityMertFormerModel(torch.nn.Module):
                         return float(val.detach().float().cpu().item())
                     return float(val)
                 except Exception:
+                    # optional telemetry scalar: missing/None attr -> default (non-fatal)
                     return float(default)
             stats.append({
                 "layer": idx,
@@ -7497,8 +7512,8 @@ def collect_bitnet_telemetry(model, *args, **kwargs):
                 zero_ratios.append(float(zero_ratio))
                 weight_scales.append(float(scale.item()))
                 rows.append({"name": name, "zero_ratio": float(zero_ratio), "weight_scale": float(scale.item())})
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[warn] collect_bitnet_telemetry skipped {name}: {e}", file=sys.stderr)
     return {
         "bitlinear_count": count,
         "repo_bitlinear_count": count,
@@ -7531,6 +7546,7 @@ def parity_self_check(model, *args, **kwargs):
         try:
             device = next(model.parameters()).device
         except Exception:
+            # model has no parameters to infer device from -> default to cpu
             device = "cpu"
     try:
         was_training = model.training
@@ -7968,8 +7984,8 @@ try:
             "interactive_menu": False,
         },
     })
-except Exception:
-    pass
+except Exception as e:
+    print(f"[warn] RUN_PROFILES.update failed: {e}", file=sys.stderr)
 
 
 def build_arg_parser():
@@ -8049,6 +8065,11 @@ def run_all(args=None):
     RUN_CONFIG.clear()
     RUN_CONFIG.update(cfg)
     payload = _old_run_all()
+    # NOTE: This process exit code is informational only and is NOT a pass/fail
+    # gate. A successful completion always returns 0 regardless of the run's
+    # final_verdict / strict_green_checks. Do not treat a 0 exit as evidence of
+    # a green verdict; consumers must inspect payload["final_verdict"] and
+    # payload["strict_green_checks"] for the real outcome.
     return 0 if isinstance(payload, dict) else 0
 
 

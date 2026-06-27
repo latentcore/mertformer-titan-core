@@ -12,6 +12,7 @@ import argparse
 import json
 import hashlib
 import random
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
@@ -151,7 +152,8 @@ def _load_local_golden(path: Path) -> list[dict[str, Any]]:
                 continue
             try:
                 obj = json.loads(line)
-            except Exception:
+            except Exception as e:
+                print(f"[warn] _load_local_golden: skipping malformed JSONL line: {e}", file=sys.stderr)
                 continue
             txt = _clean_text(str(obj.get("prompt", "")))
             if txt:
@@ -175,9 +177,9 @@ DEFAULT_STAGE_PATHS = [
 
 
 def _training_fingerprinter():
-    """TR: [H5] Egitim pipeline'inin RollingDeduper fingerprint'ini (blake2b,
-    normalize) YENIDEN kullan -> val-vs-train dislamasi, korpusun deduplandigi AYNI
-    algoritmayla yapilir. EN: Reuse the training pipeline's RollingDeduper
+    """TR: [H5] Eğitim pipeline'inin RollingDeduper fingerprint'ini (blake2b,
+    normalize) YENİDEN kullan -> val-vs-train dışlaması, korpusun deduplandığı AYNI
+    algoritmayla yapılır. EN: Reuse the training pipeline's RollingDeduper
     fingerprint so val-vs-train exclusion uses the SAME algorithm."""
     from scripts.data_pipeline import RollingDeduper
     return RollingDeduper(enabled=True)._fingerprint
@@ -201,12 +203,14 @@ def _load_training_fingerprints(stage_paths):
                         continue
                     try:
                         obj = json.loads(line)
-                    except Exception:
+                    except Exception as e:
+                        print(f"[warn] _load_training_fingerprints: skipping malformed JSONL line in {p}: {e}", file=sys.stderr)
                         continue
                     t = str(obj.get("text", "") or "").strip()
                     if t:
                         seen.add(fp(t))
-        except Exception:
+        except Exception as e:
+            print(f"[warn] _load_training_fingerprints: failed reading stage file {p}: {e}", file=sys.stderr)
             continue
     return seen, used
 
@@ -246,7 +250,7 @@ def build_validation_set(
 
     if offline_rebuild:
         # TR: [H5] Networksuz yeniden kur: mevcut val + golden'dan training fingerprint
-        #     ile dislayarak sertifikali (sizintisiz) altkume uret.
+        #     ile dışlayarak sertifikalı (sızıntısız) altküme üret.
         # EN: [H5] Network-free rebuild: from existing val + golden, exclude training
         #     fingerprints to certify a leakage-free subset.
         pool = []
@@ -258,7 +262,8 @@ def build_validation_set(
                         continue
                     try:
                         pool.append(json.loads(line))
-                    except Exception:
+                    except Exception as e:
+                        print(f"[warn] offline_rebuild: skipping malformed JSONL line in {current_val_path}: {e}", file=sys.stderr)
                         continue
         pool.extend(_load_local_golden(ROOT / "datasets" / "golden_samples.jsonl"))
         rng.shuffle(pool)
@@ -415,8 +420,8 @@ def main() -> int:
     prov_path = ROOT / "datasets" / "validation_provenance.json"
     try:
         prov_path.write_text(json.dumps(provenance, ensure_ascii=False, indent=2), encoding="utf-8")
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[warn] failed writing provenance artifact {prov_path}: {e}", file=sys.stderr)
 
     print(json.dumps({"out": str(out), "count": len(rows), "provenance": provenance}, ensure_ascii=False))
     # NOTE: after any val rebuild, run scripts/record_dataset_hashes.py because

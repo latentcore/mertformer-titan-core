@@ -1,7 +1,7 @@
 # Dahili Dataset Politikası (Stage Setleri, Golden Samples)
 
 Bu doküman, bu repo tarafından üretilen veya referanslanan **dahili** datasetler için politikayı tanımlar:
-- **Stage setleri**: `scripts/data_pipeline.py` ile üretilen yerel curriculum snapshot'lari (örneğin `datasets/stage*/stage*_data.jsonl`).
+- **Stage setleri**: `scripts/data_pipeline.py` ile üretilen yerel curriculum snapshot'ları (örneğin `datasets/stage*/stage*_data.jsonl`).
 - **Golden samples**: kısa regression/sanity prompt setleri (örneğin `datasets/golden_samples.jsonl`).
 
 ## Sınıflandırma

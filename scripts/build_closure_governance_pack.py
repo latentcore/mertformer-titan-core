@@ -16,7 +16,17 @@ def rel(path: Path) -> str:
 
 
 def read_json(path: Path) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise FileNotFoundError(
+            f"Required input file missing: {path}. "
+            f"Generate it (e.g. via the closure matrix / training readiness build steps) before running this pack."
+        ) from exc
+    except json.JSONDecodeError as exc:
+        raise ValueError(
+            f"Input file is not valid JSON: {path} ({exc}). Regenerate or repair the file before re-running."
+        ) from exc
 
 
 def write_text(path: Path, text: str) -> None:
@@ -2024,9 +2034,9 @@ def build_coverage_diff(matrix: dict) -> str:
         "| --- | --- | --- |",
     ]
     for category, count in sorted(category_counts.items()):
-        groups = mapping.get(category, [])
+        mapped_groups = mapping.get(category, [])
         lines.append(
-            f"| `{category}` | `{count}` | {', '.join(f'`{group}`' for group in groups) if groups else 'unmapped'} |"
+            f"| `{category}` | `{count}` | {', '.join(f'`{group}`' for group in mapped_groups) if mapped_groups else 'unmapped'} |"
         )
 
     lines.extend(

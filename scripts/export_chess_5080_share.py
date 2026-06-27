@@ -84,14 +84,14 @@ def render_run_final_ps1() -> str:
         Write-Host ''
         Write-Host '=== MertFormer Chess 5080 Windows Delivery Build ===' -ForegroundColor Cyan
         Write-Host "Workspace: $deliveryRoot" -ForegroundColor DarkGray
-        Write-Host 'Build basliyor...' -ForegroundColor Green
+        Write-Host 'Build başlıyor...' -ForegroundColor Green
         Write-Host ''
 
         & (Join-Path $deliveryRoot 'build_windows_delivery.ps1')
 
         $exePath = Join-Path $deliveryRoot 'external_delivery\\mertformer_chess_5080.exe'
         if (-not (Test-Path $exePath)) {
-            throw 'EXE uretilmedi. internal_build altindaki build report dosyasini kontrol et.'
+            throw 'EXE üretilmedi. internal_build altındaki build report dosyasını kontrol et.'
         }
 
         $exeInfo = Get-Item $exePath
@@ -104,16 +104,16 @@ def render_run_final_ps1() -> str:
         Write-Host "BOYUT : $exeSizeMb MB" -ForegroundColor White
         Write-Host "SHA256: $exeHash" -ForegroundColor Yellow
         Write-Host ''
-        Write-Host 'Windows operatora gidecek final dosya budur:' -ForegroundColor Cyan
+        Write-Host 'Windows operatöre gidecek final dosya budur:' -ForegroundColor Cyan
         Write-Host "  $exePath" -ForegroundColor White
         Write-Host ''
         Write-Host 'Notlar:' -ForegroundColor Magenta
-        Write-Host '- Bu build compiled Windows executable uretir; kaynak .py dosyasi final teslim değildir.'
-        Write-Host '- Derlenen EXE pratikte kaynak koda göre daha korumalıdır, ama tersine mühendislik teorik olarak tamamen imkansiz değildir.'
-        Write-Host '- Arena modu source/runtime yuzeyinde desteklenir; anlamli oyun icin egitilmis checkpoint kullan.'
-        Write-Host '- Final EXE runtime artefactlarini kendi yaninda olusturdugu runtime/ kokeni altinda toplar; Desktop spam hedeflenmez.'
-        Write-Host '- Stockfish benchmark gerekiyorsa runtime stockfish binarysini indirip cachelemeyi dener; manuel stockfish.exe koymak zorunlu degildir.'
-        Write-Host '- Runtime sonucu sifreli archive uretecekse EXE yi calistirmadan once MERTFORMER_CHESS_ARCHIVE_PASSWORD ortam degiskenini hedef makinede ayarla.'
+        Write-Host '- Bu build compiled Windows executable üretir; kaynak .py dosyası final teslim değildir.'
+        Write-Host '- Derlenen EXE pratikte kaynak koda göre daha korumalıdır, ama tersine mühendislik teorik olarak tamamen imkânsız değildir.'
+        Write-Host '- Arena modu source/runtime yüzeyinde desteklenir; anlamlı oyun için eğitilmiş checkpoint kullan.'
+        Write-Host '- Final EXE runtime artefactlarını kendi yanında oluşturduğu runtime/ kökeni altında toplar; Desktop spam hedeflenmez.'
+        Write-Host '- Stockfish benchmark gerekiyorsa runtime stockfish binarysini indirip cachelemeyi dener; manuel stockfish.exe koymak zorunlu değildir.'
+        Write-Host '- Runtime sonucu şifreli archive üretecekse EXE yi çalıştırmadan önce MERTFORMER_CHESS_ARCHIVE_PASSWORD ortam değişkenini hedef makinede ayarla.'
         """
     )
 

@@ -12,7 +12,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import torch
 import torch.nn as nn
@@ -147,7 +147,8 @@ def test_export():
             os.remove(data_path)
         os.remove(save_path)
         print("   Cleanup OK.")
-        assert True
+        # Real invariant: exported ONNX file must have had non-zero size.
+        assert size > 0, f"ONNX export produced empty file: {size:.2f} KB"
         
     except Exception as e:
         print(f"❌ ONNX Export Failed: {e}")

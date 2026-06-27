@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-$0 Liquid/CfC-mixer (use_liquid) ablation pilot — train a SMALL (~80M) MertFormer twice
+Liquid/CfC-mixer (use_liquid) ablation pilot — train a SMALL (~80M) MertFormer twice
 (use_liquid ON vs OFF) with pure next-token CE (NO 70B teacher, NO KD, NO HF download) and
 compare loss curves. NOTE: this toggles cfg.use_liquid — the CfC LiquidMixer (layers/liquid.py)
 at layers [2,4,6]; MoE + the Conv1d LiquidRouter (layers/moe.py) stay ON in both arms, so this

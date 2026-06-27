@@ -20,7 +20,7 @@ try:
     from mertformer_sdk import __version__  # single source of truth
 except Exception:  # pragma: no cover - SDK optional at import time
     __version__ = "unknown"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import torch
 import torch.nn as nn

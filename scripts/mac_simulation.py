@@ -35,7 +35,6 @@ def run_mac_simulation():
     check_ram()
 
     # 1. Load FULL Production Config
-    # 1. Load FULL Production Config
     # CRITICAL FIX: MertFormer uses global 'cfg'. We must modify the global instance in-place.
     from config.config import cfg
     
@@ -96,8 +95,13 @@ def run_mac_simulation():
         print(f"✅ Model Built in {time.time() - start_load:.2f}s")
         check_ram()
     except Exception as e:
+        # FIX (sessiz_except): build basarisizliginda sessizce return etmek process
+        # exit kodunu 0 birakip betigi 'basarili' gosteriyordu. Tani amacli traceback
+        # bas ve non-zero exit ile cik ki CI/cagiran katman hatayi gorsun.
         print(f"❌ Model Build Failed: {e}")
-        return
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
 
     # 3. Training Step (Micro-Batch)
     print(f"\n🏋️  STEP 1: Training Stability Check (Zero-Overhead)")
@@ -207,7 +211,7 @@ def run_mac_simulation():
         # Log Architecture Meta
         logger.log_event("benchmark_start", {
             "device": "mps",
-            "model": "MertFormer Titan v1.0 (Build 30)",
+            "model": "MertFormer Titan",
             "seq_len": cfg.max_seq_len,
             "params": params_str
         })
@@ -242,11 +246,14 @@ def run_mac_simulation():
     os.makedirs(ckpt_path.parent, exist_ok=True)
     
     print(f"   Target: {ckpt_path}")
-    print(f"   Size: ~5.3 GB (BFloat16)")
-    
+
     try:
         torch.save(model.state_dict(), ckpt_path)
+        # FIX (claim_unmeasured): sabit '~5.3 GB' iddiasi yerine kaydedilen
+        # dosyanin gercek boyutunu oku ve raporla.
+        ckpt_size_gb = ckpt_path.stat().st_size / (1024**3)
         print(f"✅ Model Saved Successfully!")
+        print(f"   Size (measured): {ckpt_size_gb:.2f} GB (BFloat16)")
         print(f"   You can now use this file for ONNX/CoreML conversion tests.")
     except Exception as e:
         print(f"❌ Save Failed: {e}")

@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import logging
 import os
 from datetime import datetime, timezone
 from pathlib import Path
@@ -13,12 +14,14 @@ def sanitize_path(path: Path, repo_root: Path, documents_root: Path) -> str:
     text = str(path)
     try:
         text = text.replace(str(repo_root.resolve()), "<REPO_ROOT>")
-    except Exception:
-        pass
+    except OSError as exc:
+        # Sanitizasyon basarisiz olursa ham yol sizmasin diye gorunur iz birak.
+        logging.debug("repo_root sanitize basarisiz (%s): %s", path, exc)
     try:
         text = text.replace(str(documents_root.resolve()), "<DOCUMENTS_PATH>")
-    except Exception:
-        pass
+    except OSError as exc:
+        # Sanitizasyon basarisiz olursa ham yol sizmasin diye gorunur iz birak.
+        logging.debug("documents_root sanitize basarisiz (%s): %s", path, exc)
     return text
 
 

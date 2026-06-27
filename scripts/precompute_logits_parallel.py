@@ -159,7 +159,8 @@ def _collect_worker_states(logits_dir: Path, stage_name: str) -> list[dict]:
     for path in sorted(logits_dir.glob(f"{stage_name}_{P.SUBSET}_shard*of*_state.json")):
         try:
             states.append(json.loads(path.read_text(encoding="utf-8")))
-        except Exception:
+        except Exception as exc:
+            logger.warning("Skipping unreadable worker-state file %s: %s", path, exc)
             continue
     return states
 

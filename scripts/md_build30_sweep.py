@@ -13,6 +13,7 @@ ideal olarak tek bir release manifest kaynagindan turetilmelidir.
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 # DIKKAT: Asagidaki tum ciftler old==new (ozdes); replace cagrilari no-op'tur.
@@ -52,7 +53,8 @@ def sweep(root: Path, apply: bool) -> tuple[int, int]:
         scanned += 1
         try:
             text = path.read_text(encoding="utf-8")
-        except Exception:
+        except (OSError, UnicodeDecodeError) as exc:
+            print(f"[skip] {path}: {exc}", file=sys.stderr)
             continue
         updated = text
         for old, new in REPLACEMENTS:

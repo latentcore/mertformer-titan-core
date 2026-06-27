@@ -51,7 +51,13 @@ def _mark(ok: bool) -> str:
 def _run(cmd: list[str]) -> str:
     try:
         return _subprocess.check_output(cmd, text=True, stderr=_subprocess.DEVNULL)
-    except Exception:
+    except Exception as _exc:  # noqa: BLE001 - best-effort probe; fallback stays
+        import sys as _sys
+
+        print(
+            f"[warn] _run komutu basarisiz ({cmd[0] if cmd else '?'}): {_exc!r}",
+            file=_sys.stderr,
+        )
         return ""
 
 
@@ -85,8 +91,8 @@ def _linux_info() -> dict[str, str]:
         return m.group(1).strip() if m else ""
 
     info["cpu"] = _grab(r"Model name:\s*(.+)", lscpu)
-    info["cpu_cores"] = _grab(r"CPU\\(s\\):\s*(\\d+)", lscpu)
-    info["memory"] = _grab(r"Mem:\\s*(\\S+)", mem)
+    info["cpu_cores"] = _grab(r"CPU\(s\):\s*(\d+)", lscpu)
+    info["memory"] = _grab(r"Mem:\s*(\S+)", mem)
     info["gpu"] = _grab(r"VGA compatible controller: (.+)", gpu)
     return info
 

@@ -1,10 +1,10 @@
 """Shared, deterministic sequence packing + per-sequence identity.
 
-TR: Bu modul hem `scripts/precompute_logits_topk.py` (teacher) hem de
-    `train/train.py` (student) tarafindan kullanilir. Tek bir deterministik
-    packer + kimlik (identity) hash'i, teacher logit'leri ile student token'larinin
-    byte-byte hizali kalmasini GARANTI eder. Hizasizlik = sessiz KD bozulmasi;
-    bu modul onu yapisal olarak imkansiz kilar (load-time hard-assert).
+TR: Bu modül hem `scripts/precompute_logits_topk.py` (teacher) hem de
+    `train/train.py` (student) tarafından kullanılır. Tek bir deterministik
+    packer + kimlik (identity) hash'i, teacher logit'leri ile student token'larının
+    byte-byte hizalı kalmasını GARANTİ eder. Hizasızlık = sessiz KD bozulması;
+    bu modül onu yapısal olarak imkansız kılar (load-time hard-assert).
 
 EN: This module is imported by BOTH `scripts/precompute_logits_topk.py` (teacher)
     and `train/train.py` (student). A single deterministic packer + a per-sequence

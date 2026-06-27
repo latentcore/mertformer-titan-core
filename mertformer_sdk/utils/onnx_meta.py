@@ -11,7 +11,12 @@ def add_bitpack_metadata(path: str | Path, meta_file: str = "titan_s25_bitpack.j
     """
     try:
         import onnx
-    except Exception:
+    except ImportError as exc:
+        import logging
+
+        logging.getLogger(__name__).warning(
+            "onnx not installed; skipping bitpack metadata for %s (%s)", path, exc
+        )
         return
 
     model = onnx.load(str(path))

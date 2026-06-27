@@ -282,4 +282,6 @@ def test_orchestrator_pure_helpers():
     cmd = O.build_worker_command(2, 1, 4, top_k=256, chunk_size=2000, batch_size=4,
                                  max_seq=4096, logits_dir=Path("/tmp/l"), model_id="m", python_exe="py")
     assert cmd[:5] == ["py", str(O.WORKER_SCRIPT), "--stage", "2", "--num-shards"]
-    assert "--shard-id" in cmd and "1" in cmd
+    assert "--shard-id" in cmd
+    i = cmd.index("--shard-id")
+    assert cmd[i + 1] == "1"

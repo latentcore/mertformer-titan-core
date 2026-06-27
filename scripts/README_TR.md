@@ -98,7 +98,7 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 - `secret_scan.py` — Track'li dosyalarda olası secret pattern taraması (CI gate).
 - `check_tokenizer_sync.py` — Kanonik tokenizer spec senkronunu zorunlu kılar (`interfaces/tokenizer_spec.json` -> `tokenizer/tokenizer.json`).
 - `check_translation_pointer_policy.py` — Derin denetim TR counterpart dosyalarında pointer politikasını zorunlu kılar.
-- `check_doc_claim_consistency.py` — Ana dokümanlarda claim/evidence tutarliligini kontrol eder.
+- `check_doc_claim_consistency.py` — Ana dokümanlarda claim/evidence tutarlılığını kontrol eder.
 - `build_code_truth_audit.py` — Maturity etiketleri, dört sütunlu kanıt zorunluluğu ve marker taraması ile code-truth delta audit üretir.
 - `build_workspace_hygiene_manifest.py` — Quarantine-first workspace hygiene manifest üretir; `--apply-quarantine` yalnız üretilen manifest insan gözüyle incelendikten sonra kullanılmalıdır.
 - `clean_runtime_artifacts.sh` — Runtime artefaktlarını temizler (kök `kaggle_onefile_build30_*.jsonl` dahil).

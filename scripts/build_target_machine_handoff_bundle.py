@@ -108,7 +108,7 @@ def build_bundle_readme(decision: dict, files: list[str], steps: list[str]) -> s
         "## Exact Steps",
         "",
     ]
-    lines.extend(f"{idx}. {item}" for idx, item in enumerate(steps, start=1))
+    lines.extend(f"{step_no}. {item}" for step_no, item in enumerate(steps, start=1))
     lines.extend(["", "## Included Files", ""])
     lines.extend(f"- `{item}`" for item in files)
     return "\n".join(lines)

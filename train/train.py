@@ -6,13 +6,13 @@ Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) - Pre-Training
+Version: v1.0 - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__version__ = "1.0"
+__author__ = "Mert Yünlü"
 
 import glob
 import json
@@ -479,7 +479,7 @@ class TeacherBundle:
 
             if cfg.distill_alpha > 0.0:
                 print(f"🔄 Teacher ({cfg.teacher_model_id}) Loading...")
-                # V26.5 DDP FIX: Avoid device_map="auto" in DDP. 
+                # DDP FIX: Avoid device_map="auto" in DDP.
                 # Accelerate handles student, but teacher is static.
                 # In DDP, each process should load teacher to its own device (or CPU offload).
                 # device_map="auto" tries to use all GPUs, causing conflict in DDP.
@@ -660,7 +660,7 @@ def build_optimizer(body_params: List[Any], router_params: List[Any], cfg: Any) 
 def train() -> None:
     # Accelerate Init
     accelerator_project_config = ProjectConfiguration(project_dir=str(project_root), logging_dir=str(project_root / "logs"))
-    # V24.0: TF32 for Ampere (A100) speedup
+    # TF32 for Ampere (A100) speedup
     if torch.cuda.is_available():
         torch.set_float32_matmul_precision('high')
         print("⚡ TensorFloat-32 (TF32) activated for A100.")
@@ -854,12 +854,12 @@ def train() -> None:
         # the underlying IterableDataset. A distinct loader preserves the sanity-check intent safely.
         val_dl = DataLoader(dl.dataset, batch_size=cfg.micro_batch_size, collate_fn=collate_fn, num_workers=0)
 
-    # V26.3 CRITICAL FIX: Epoch Mode Calculation MOVED UP
+    # CRITICAL FIX: Epoch Mode Calculation MOVED UP
     # Must be done BEFORE Scheduler initialization!
     # [PRO] Only override max_steps if explicitly requested via EPOCH_MODE or if undefined
     # This allows test scripts to set max_steps=2 without interference.
     if getattr(cfg, "epoch_mode", False) and (not hasattr(cfg, "max_steps") or cfg.max_steps is None or cfg.max_steps > 1000):
-        # V24.0: 12M samples (sweet spot for 3.67B model)
+        # 12M samples (sweet spot for 3.67B model)
         NUM_EPOCHS = 3
         TOTAL_SAMPLES = 12_000_000  # Sweet spot: ~6B tokens
         cfg.max_steps = int((TOTAL_SAMPLES / (cfg.micro_batch_size * cfg.grad_accum_steps)) * NUM_EPOCHS)
@@ -942,7 +942,7 @@ def train() -> None:
     # [H3] Build the real optimizer per cfg.use_galore/use_8bit_adam.
     opt = build_optimizer(body_params, router_params, cfg)
 
-    # V21.0 FIX: WSD Scheduler (Warmup-Stable-Decay) moved to global scope
+    # WSD Scheduler (Warmup-Stable-Decay) moved to global scope
 
     scheduler = get_wsd_schedule(
         opt,
@@ -1004,7 +1004,7 @@ def train() -> None:
     # Gradient Norm Monitoring
     max_grad_norm_seen = 0.0
     grad_norm_history = []
-    loss_history = [] # V26.1 FIX: Track Loss History for Signal-Based Curriculum
+    loss_history = [] # Track Loss History for Signal-Based Curriculum
     grad_norm_collapse_threshold = 0.01  # If grad norm < 0.01, model stopped learning
     continual_adapter = None
     continual_state = None
@@ -1025,9 +1025,9 @@ def train() -> None:
                     f"drift_threshold={getattr(cfg, 'continual_drift_threshold', 0.2):.3f})"
                 )
     
-    # V26.1 SAFEGUARD: Liquid Auto-Freeze State
+    # SAFEGUARD: Liquid Auto-Freeze State
     liquid_frozen_until = 0 # Step count until Liquid is unfrozen
-    liquid_spike_counter = 0 # V26.11 SAFEGUARD: 3-Strike Rule
+    liquid_spike_counter = 0 # SAFEGUARD: 3-Strike Rule
     liquid_spike_threshold = float(getattr(cfg, "liquid_spike_threshold", 5.0))
     liquid_spike_patience = int(getattr(cfg, "liquid_spike_patience", 3))
     liquid_spike_cooldown_steps = int(getattr(cfg, "liquid_spike_cooldown_steps", 200))
@@ -1108,7 +1108,7 @@ def train() -> None:
             if not open_ended_mode and global_step >= cfg.max_steps:
                 break
             # ---------------------------------------------------------------------
-            # V26.0 INTELLIGENT PILOT: Signal-Based Curriculum + Time Fallback
+            # INTELLIGENT PILOT: Signal-Based Curriculum + Time Fallback
             # ---------------------------------------------------------------------
             
             # Use rolling average loss if available
@@ -1169,8 +1169,8 @@ def train() -> None:
             # labels = labels.to(student_device)
 
             # ---------------------------------------------------------------------
-            # V25.1 SAFEGUARD: Liquid Warmup (Freeze Early Steps)
-            # V26.1 UPDATE: Liquid Re-Freeze Logic
+            # SAFEGUARD: Liquid Warmup (Freeze Early Steps)
+            # Liquid Re-Freeze Logic
             # ---------------------------------------------------------------------
             
             # 1. Warmup Phase
@@ -1180,7 +1180,7 @@ def train() -> None:
                      if "tau" in n or "liquid" in n:
                          p.requires_grad = False
                  
-                 # V26.5 SAFEGUARD: True freeze — grad=None so AdamW skips frozen params
+                 # SAFEGUARD: True freeze — grad=None so AdamW skips frozen params
                  # (zero_() left decoupled weight-decay still shrinking the 'frozen' params).
                  for p in student.parameters():
                      if not p.requires_grad and p.grad is not None:
@@ -1208,7 +1208,7 @@ def train() -> None:
                      for n, p in student.named_parameters():
                         if "tau" in n or "liquid" in n:
                             p.requires_grad = False
-                     # V26.5 SAFEGUARD: True freeze — grad=None so AdamW skips frozen params.
+                     # SAFEGUARD: True freeze — grad=None so AdamW skips frozen params.
                      for p in student.parameters():
                          if not p.requires_grad and p.grad is not None:
                              p.grad = None
@@ -1341,7 +1341,7 @@ def train() -> None:
                                 sample=replay_sample,
                             )
 
-                        # V26.11 SAFEGUARD: Liquid spike tracking (3-strike rule)
+                        # SAFEGUARD: Liquid spike tracking (3-strike rule)
                         liquid_spike_counter, liquid_frozen_until, spike_triggered = update_liquid_spike_state(
                             loss_value=float(total_loss.item()),
                             threshold=liquid_spike_threshold,
@@ -1365,7 +1365,7 @@ def train() -> None:
 
                     max_grad_norm_seen = max(max_grad_norm_seen, grad_norm_val)
                     grad_norm_history.append(grad_norm_val)
-                    loss_history.append(total_loss.item())  # V26.2 FIX: Use total_loss.item()
+                    loss_history.append(total_loss.item())  # Use total_loss.item()
                     if len(grad_norm_history) > 100:
                         grad_norm_history.pop(0)
                     if len(loss_history) > 100:
@@ -1481,7 +1481,7 @@ def train() -> None:
                                     f"| replay={continual_state.replay_size}"
                                 )
 
-                        # [V26.6 TELEMETRY] MoE Router Health (log-interval only)
+                        # [TELEMETRY] MoE Router Health (log-interval only)
                         moe_loads = []
                         moe_entropies = []
                         moe_overflows = []

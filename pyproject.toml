@@ -110,4 +110,4 @@ omit = ["*/tests/*", ".titan-venv/*", "scripts/*onefile*", "*/mac_simulation.py"
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "raise NotImplementedError", "if __name__ == .__main__."]
-# Informational only — coverage is NOT a CI gate (kept off the 365-passed/4-skipped path).
+# Informational only — coverage is NOT a CI gate (kept off the test-gated path).

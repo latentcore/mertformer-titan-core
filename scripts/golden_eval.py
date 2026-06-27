@@ -45,7 +45,7 @@ def run_model(prompts: List[Dict[str, str]], ckpt: str) -> None:
 
     if Path(ckpt).exists():
         checkpoint = torch.load(ckpt, map_location=device)
-        # TR: Tokenizer'i checkpoint kimliğinden yükle; yoksa ACIK hata (sessiz
+        # TR: Tokenizer'ı checkpoint kimliğinden yükle; yoksa AÇIK hata (sessiz
         #     teacher fallback YOK). EN: Tokenizer strictly from checkpoint
         #     identity; missing -> explicit error (same pattern as eval/gsm8k.py).
         tokenizer = load_tokenizer_from_identity(checkpoint.get("tokenizer_id"))

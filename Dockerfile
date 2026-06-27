@@ -5,7 +5,7 @@
 FROM pytorch/pytorch:2.6.0-cuda12.4-cudnn9-devel
 
 # Metadata
-LABEL maintainer="MertFormer Team"
+LABEL maintainer="Mert Yünlü"
 LABEL version="Build 30 V2"
 LABEL description="MertFormer Titan Production Training Environment"
 

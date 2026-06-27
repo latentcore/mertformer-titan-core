@@ -676,8 +676,6 @@ def main() -> None:
         print("\n👋 Titan shutting down.")
     except Exception as e:
         print(f"\n❌ Titan Crash: {e} (Check if model checkpoints exist!)")
-        # import traceback
-        # traceback.print_exc()
 
 if __name__ == "__main__":
     main()

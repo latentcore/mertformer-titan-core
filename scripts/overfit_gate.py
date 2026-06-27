@@ -30,6 +30,7 @@ def patched_cfg():
         "intermediate_size": cfg.intermediate_size,
         "num_experts": cfg.num_experts,
         "num_experts_per_tok": cfg.num_experts_per_tok,
+        "active_experts": getattr(cfg, "active_experts", cfg.num_experts_per_tok),
         "num_heads": cfg.num_heads,
         "num_attention_heads": getattr(cfg, "num_attention_heads", cfg.num_heads),
         "num_kv_heads": getattr(cfg, "num_kv_heads", cfg.num_heads),
@@ -158,9 +159,11 @@ def run_overfit(
         input_ids = batch_tensor[:, :-1]
         labels = batch_tensor[:, 1:]
 
-        logits, aux_loss, _ = model(input_ids)
+        logits, _aux_loss, _ = model(input_ids)
         loss = F.cross_entropy(logits.reshape(-1, cfg.vocab_size), labels.reshape(-1))
-        loss = loss + aux_loss.float() * 0.0
+        # aux_loss is intentionally ignored here: this gate runs with use_moe=False,
+        # so there is no real MoE balancing loss to add. The previous
+        # "+ aux_loss.float() * 0.0" was a no-op and has been removed.
 
         if start_loss is None:
             start_loss = float(loss.item())

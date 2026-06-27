@@ -16,7 +16,7 @@ offline teacher-distillation helper and is not part of the frozen training run.
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import os
 import torch
@@ -228,7 +228,7 @@ class DistillationManager:
                             print(f"📦 Saved Chunk {chunk_idx}: {save_path}")
                             self._save_processed_samples(stage_name, subset, processed_total)
                             
-                            # [V27.5 FIX] Memory Cleanup Strategy
+                            # Memory cleanup: free chunk buffer after save
                             del all_logits
                             all_logits = []
                             processed_in_current_chunk = 0

@@ -408,8 +408,8 @@ def _signal_stop_handler(signum: int, _frame: Any) -> None:
 def install_runtime_signal_handlers() -> None:
     try:
         signal.signal(signal.SIGTERM, _signal_stop_handler)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[warn] failed to install SIGTERM handler: {type(e).__name__}: {e}", file=sys.stderr)
 
 
 def ensure_writable_dir(path: Path, label: str) -> None:
@@ -2534,8 +2534,6 @@ def _load_hf_candidate_dataset(
             return ds, "streaming", "ok"
         except Exception as e:
             streaming_err = f"{type(e).__name__}:{e}"
-        else:
-            streaming_err = "unknown"
     else:
         streaming_err = "streaming_disabled"
 
@@ -2726,15 +2724,15 @@ def _load_candidate_rows_process_timeout(
         try:
             p.terminate()
         except Exception:
-            pass
+            pass  # best-effort process teardown; errors here are non-fatal
     try:
         p.join(timeout=1.0)
     except Exception:
-        pass
+        pass  # best-effort process teardown; errors here are non-fatal
     try:
         q.close()
     except Exception:
-        pass
+        pass  # best-effort queue cleanup; errors here are non-fatal
 
     if timed_out:
         return [], "timeout", "worker_timeout", True
@@ -4008,8 +4006,11 @@ class MertFormerTiny(nn.Module):
                             dtype=self.tok_embeddings.weight.dtype,
                         )
                     )
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(
+                        f"[warn] router set_state reset failed: {type(e).__name__}: {e}",
+                        file=sys.stderr,
+                    )
 
 
 def parity_self_check(model: MertFormerTiny, cfg: Dict[str, Any], device: str) -> Dict[str, Any]:
@@ -4251,8 +4252,11 @@ def prune_checkpoints_rolling5(ckpt_dir: Path) -> List[str]:
             try:
                 p.unlink()
                 removed.append(str(p))
-            except Exception:
-                pass
+            except Exception as e:
+                print(
+                    f"[warn] failed to prune checkpoint {p}: {type(e).__name__}: {e}",
+                    file=sys.stderr,
+                )
     return removed
 
 
@@ -4277,8 +4281,12 @@ def restore_rng_state(state: Dict[str, Any]) -> None:
             torch.set_rng_state(state["torch_rng_state"])
         if "cuda_rng_state_all" in state and torch.cuda.is_available():
             torch.cuda.set_rng_state_all(state["cuda_rng_state_all"])
-    except Exception:
-        pass
+    except Exception as e:
+        print(
+            f"[warn] RNG state restore failed; resume reproducibility may be affected: "
+            f"{type(e).__name__}: {e}",
+            file=sys.stderr,
+        )
 
 
 def save_checkpoint_atomic(
@@ -5398,8 +5406,8 @@ def maybe_plot_presentation_assets(
         plt.savefig(p_loss)
         plt.close()
         paths["loss_overlay"] = str(p_loss)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[warn] failed to render loss_overlay plot: {type(e).__name__}: {e}", file=sys.stderr)
     try:
         p_data = out_dir / "data_contribution.png"
         sources = payload.get("data_source_scorecard", {}).get("source_totals", [])[:10]
@@ -5415,8 +5423,8 @@ def maybe_plot_presentation_assets(
             plt.savefig(p_data)
             plt.close()
             paths["data_contribution"] = str(p_data)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[warn] failed to render data_contribution plot: {type(e).__name__}: {e}", file=sys.stderr)
     try:
         p_stab = out_dir / "stability_panel.png"
         st = payload.get("stability_index", {})
@@ -5436,8 +5444,8 @@ def maybe_plot_presentation_assets(
         plt.savefig(p_stab)
         plt.close()
         paths["stability_panel"] = str(p_stab)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[warn] failed to render stability_panel plot: {type(e).__name__}: {e}", file=sys.stderr)
     return paths
 
 
@@ -5861,8 +5869,11 @@ def generate_text(
     if hasattr(model, "reset_router_state"):
         try:
             model.reset_router_state(batch_size=1)
-        except Exception:
-            pass
+        except Exception as e:
+            print(
+                f"[warn] reset_router_state failed before generation: {type(e).__name__}: {e}",
+                file=sys.stderr,
+            )
     system = "Sistem: Türkçe, net ve teknik yanıt ver.\n"
     full_prompt = system + "Kullanıcı: " + prompt + "\nAsistan:"
     ids = tokenizer.encode(full_prompt, add_bos=True, add_eos=False)
@@ -6712,8 +6723,8 @@ if __name__ == "__main__":
             try:
                 tb_path.parent.mkdir(parents=True, exist_ok=True)
                 tb_path.write_text(tb, encoding="utf-8")
-            except Exception:
-                pass
+            except Exception as write_err:
+                print(f"[warn] failed to write traceback file: {type(write_err).__name__}: {write_err}", file=sys.stderr)
         if str(st_path):
             try:
                 write_last_state(
@@ -6724,8 +6735,8 @@ if __name__ == "__main__":
                         "run_dir": str(_RUNTIME_LAST_LAYOUT.get("run_dir", "")),
                     },
                 )
-            except Exception:
-                pass
+            except Exception as write_err:
+                print(f"[warn] failed to write last_state file: {type(write_err).__name__}: {write_err}", file=sys.stderr)
         run_id = Path(str(_RUNTIME_LAST_LAYOUT.get("run_dir", "unknown"))).name or "unknown"
         print(f"FINAL_STATUS: provisional reason=fatal_exception run_id={run_id}")
         raise

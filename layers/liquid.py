@@ -50,7 +50,7 @@ class LiquidCell(nn.Module):
     TR: True Liquid Cell (CfC) - Dynamic Tau & Decoupled Projections.
     EN: True Liquid Cell (CfC) - Dynamic Tau & Decoupled Projections.
 
-    V25.0 UPGRADE:
+    Notes:
     - Decoupled `tau` weights from `value` weights.
     - Tau is now input-dependent (True Liquid).
     """
@@ -64,11 +64,11 @@ class LiquidCell(nn.Module):
         
         # TR: 2. Zaman-Sabiti Projeksiyonları (Tau = softplus(W_tau*x + R_tau*h + bias))
         # EN: 2. Time-Constant Projections (Tau = softplus(W_tau*x + R_tau*h + bias))
-        # TR: V25.0: Zaman-sabiti için ayrı ağırlıklar / EN: V25.0: Separate weights for time-constant
+        # TR: Zaman-sabiti için ayrı ağırlıklar / EN: Separate weights for time-constant
         self.tau_input_w = BitLinear(h, h, bias=False)
         self.tau_hidden_w = BitLinear(h, h, bias=False)
-        # TR: V26.5: Daha yavaş bozulma = daha uzun zamansal hafıza için 0.5 ile başlat
-        # EN: V26.5: Initialize with 0.5 for slower decay = longer temporal memory
+        # TR: Daha yavaş bozulma = daha uzun zamansal hafıza için 0.5 ile başlat
+        # EN: Initialize with 0.5 for slower decay = longer temporal memory
         self.tau_bias = nn.Parameter(torch.ones(1, h) * 0.5)
 
     def forward(
@@ -83,7 +83,7 @@ class LiquidCell(nn.Module):
         A = torch.tanh(val_in + val_rec)
         
         # TR: --- Zaman Sabiti ("Tau" terimi) --- / EN: --- Time Constant (The "Tau" term) ---
-        # TR: V25.0: Tamamen girdi-bağımlı dinamik tau / EN: V25.0: Fully input-dependent dynamic tau
+        # TR: Tamamen girdi-bağımlı dinamik tau / EN: Fully input-dependent dynamic tau
         tau_in = self.tau_input_w(x)
         tau_rec = self.tau_hidden_w(h_prev)
         # TR: softplus tau > 0 olmasını sağlar.
@@ -132,7 +132,7 @@ def jit_liquid_loop_cached(
     EN: JIT-Compiled Recurrent Loop for NPU.
     
     This function is compiled to a static graph node, removing Python control flow overhead.
-    V24.0: BitNet quantization integrated for consistent 1.58-bit inference.
+    BitNet quantization integrated for consistent 1.58-bit inference.
     """
     B, T, H = input_seq.shape
     h = h_init
@@ -146,8 +146,8 @@ def jit_liquid_loop_cached(
         
         # TR: --- JIT için manuel olarak açılmış LiquidCell.forward ---
         # EN: --- Manually unrolled LiquidCell.forward for JIT ---
-        # TR: V24.0: Ağırlıkları quantize ederek çarp (BitNet Simülasyonu)
-        # EN: V24.0: Multiply with quantized weights (BitNet Simulation)
+        # TR: Ağırlıkları quantize ederek çarp (BitNet Simülasyonu)
+        # EN: Multiply with quantized weights (BitNet Simulation)
         val_in = torch.matmul(x_t, input_w_q_t)
         val_rec = torch.matmul(h, hidden_w_q_t)
         A = torch.tanh(val_in + val_rec)
@@ -155,8 +155,8 @@ def jit_liquid_loop_cached(
         tau_in = torch.matmul(x_t, tau_input_w_q_t)
         tau_rec = torch.matmul(h, tau_hidden_w_q_t)
         
-        # TR: V25.1 GÜVENLİK: Tau Sınırı (Patlama/Kaybolmayı Önle)
-        # EN: V25.1 SAFEGUARD: Tau Cap (Prevent Exploding/Vanishing)
+        # TR: GÜVENLİK: Tau Sınırı (Patlama/Kaybolmayı Önle)
+        # EN: SAFEGUARD: Tau Cap (Prevent Exploding/Vanishing)
         # TR: softplus tek başına büyüyebilir; clamp 'her şeyi unutmayı' engeller.
         # EN: softplus alone can grow large; clamping ensures we don't 'forget everything'.
         raw_tau = torch.nn.functional.softplus(tau_in + tau_rec + tau_bias)
@@ -203,8 +203,8 @@ def jit_liquid_loop(
 
 class LiquidMixer(nn.Module):
     """
-    TR: Liquid Mixer Build30 V2 - fast_path (torch.compile guarded).
-    EN: Liquid Mixer Build30 V2 - fast_path (torch.compile guarded).
+    TR: Liquid Mixer - fast_path (torch.compile guarded).
+    EN: Liquid Mixer - fast_path (torch.compile guarded).
     """
 
     def __init__(
@@ -352,7 +352,7 @@ class LiquidMixer(nn.Module):
                 )
             h = h_init
         
-        # TR: [V26.0 FIX] Eğitim vs Çıkarım Yolu / EN: [V26.0 FIX] Training vs Inference Path
+        # TR: Eğitim vs Çıkarım Yolu / EN: Training vs Inference Path
         # TR: Eğitim: Python döngüsü (LiquidCell) kullan -> STE gradyanları çalışır.
         # EN: Training: Python loop (LiquidCell) use -> STE gradients work.
         # TR: Çıkarım: JIT döngüsü kullan -> NPU optimizasyonu.
@@ -400,8 +400,8 @@ class LiquidMixer(nn.Module):
                 self._q_tau_bias,
             )
         
-        # TR: [V26.4 FIX] Residual'ı Geri Yükle (Block Liquid için residual eklemez)
-        # EN: [V26.4 FIX] Restore Residual (Block does NOT add residual for Liquid)
+        # TR: Residual'ı Geri Yükle (Block Liquid için residual eklemez)
+        # EN: Restore Residual (Block does NOT add residual for Liquid)
         y = self.norm(out_seq + x)
         if return_state:
             return y, h

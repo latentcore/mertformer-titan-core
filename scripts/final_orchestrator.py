@@ -539,10 +539,10 @@ def build_training_env(resume_policy: str, start_gate_payload: dict | None = Non
         env["TITAN_OFFLINE"] = "1"
         env["TITAN_REQUIRE_GATED_TEACHER"] = "1"
         env["TITAN_USE_PRECOMPUTED_LOGITS"] = "1"
-        # TR: [tier-2 BLOCKER] offline_clean precompute teacher tokenizer'i kullanir ve
-        #     TR'yi REDDEDER; burada TR=1 zorlamak student'i farkli bir tokenizer'a
+        # TR: [tier-2 BLOCKER] offline_clean precompute teacher tokenizer'i kullanır ve
+        #     TR'yi REDDEDER; burada TR=1 zorlamak student'i farklı bir tokenizer'a
         #     sokup logit-alignment gate'ini (TOKENIZER_IDENTITY_DRIFT) tetikler ->
-        #     her kanonik run bloklanir. offline_clean = teacher-tokenizer KD.
+        #     her kanonik run bloklanır. offline_clean = teacher-tokenizer KD.
         # EN: [tier-2 BLOCKER] offline_clean precompute uses the teacher tokenizer and
         #     REFUSES TR; forcing TR=1 here puts the student on a different tokenizer
         #     and trips the logit-alignment gate (TOKENIZER_IDENTITY_DRIFT) -> every

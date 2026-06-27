@@ -15,7 +15,7 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 - Golden samples, 50 promptluk stabil mantık kontrol seti.
 
 ## Phase 1: Telemetry-Driven Execution
-- Expected vs Actual: tokens/seç, loss slope ve GPU kullanımının karşılaştırılması.
+- Expected vs Actual: tokens/sn, loss slope ve GPU kullanımının karşılaştırılması.
 - Master training, telemetry threshold’ları ve failure budget ile yönetilir.
 - Internal truth benchmarking, HumanEval/MBPP çıktıları ile yapılır.
 
@@ -41,18 +41,18 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
 - Asset stack eksiksizdir.
 
 ## Acil Kapanış Protokolü (v1.0 (Build 30))
-- Eğitim/teacher akışı zorunlu olmadıkça degistirilmez.
+- Eğitim/teacher akışı zorunlu olmadıkça değiştirilmez.
 - Tüm kernel yolları opt-in ve deneysel kalır.
 - README/README_TR uyumu (Docs Index + Dizin) sağlanır.
-- Testler kosulur ve cache temizliği yapılır.
+- Testler koşulur ve cache temizliği yapılır.
 
 ## QAT Planı (Ne Zaman / Nasıl)
 - Ne zaman: Stabil bir temel checkpoint alındıktan sonra.
 - Nasıl:
-  - Faz A (Pilot, 1-2 gün): 1-5% alt küme ile QAT ac, sabit seed kullan.
+  - Faz A (Pilot, 1-2 gün): 1-5% alt küme ile QAT aç, sabit seed kullan.
   - Faz B (Karşılaştırma, 1 gün): loss/throughput değerlerini baseline ile karşılaştır.
-  - Faz C (Yayginlastirma, 2-3 gün): Faz B olumluysa tam müfredat için ac.
-- Hedef: Low-bit inference kalitesini artirirken stabiliteyi korumak.
+  - Faz C (Yaygınlaştırma, 2-3 gün): Faz B olumluysa tam müfredat için aç.
+- Hedef: Low-bit inference kalitesini artırırken stabiliteyi korumak.
 - Çıkış kriteri: Val loss gerilemesin, stabilite spike olmasın.
 
 ## Türkçe Tokenizer POC (Risk Kontrollü)
@@ -62,7 +62,7 @@ Sıkıcı istikrar ve öğrenme hızı. Başarı, yalnızca loss değil, sistem 
   - Faz A (30-60 dk): 500-1,000 sample tokenize et, ortalama token uzunluğunu karşılaştır.
   - Faz B (1-2 saat): 200-step mini-train (CPU/MPS), loss trendini karşılaştır.
   - Faz C (aynı gün): loss bozulursa otomatik geri dönüş.
-- Çıkış kriteri: %5'ten fazla token uzunluğu sismegi yok ve loss stabil.
+- Çıkış kriteri: %5'ten fazla token uzunluğu şişmesi yok ve loss stabil.
 
 ## Kernel Deneysel + Tensor Core Opt-in
 - Deneysel low-bit kernel opt-in (CUDA + Triton gerekli).

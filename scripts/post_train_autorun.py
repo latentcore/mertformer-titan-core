@@ -131,7 +131,8 @@ def maybe_cfg(root: Path):
         from config.config import cfg  # type: ignore
 
         return cfg
-    except Exception:
+    except (ImportError, AttributeError) as exc:
+        print(f"[warn] maybe_cfg: config.config import/load failed: {exc!r}", file=sys.stderr)
         return None
     finally:
         try:

@@ -6,7 +6,7 @@ Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30 V2) - Pre-Training
+Version: v1.0 - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 
 Module: Core training helpers (seeding, config validation, device
@@ -17,7 +17,7 @@ every symbol so all historical imports keep working unchanged.
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import math
 import random
@@ -301,7 +301,7 @@ def export_to_onnx(model: nn.Module, save_dir: Path, model_name: str, device: to
         print(f"❌ ONNX DÖNÜŞÜM HATASI: {e}")
 
 
-# V21.0 FIX: WSD scheduler (Warmup-Stable-Decay) for grokking.
+# WSD scheduler (Warmup-Stable-Decay) for grokking.
 
 
 def get_wsd_schedule(

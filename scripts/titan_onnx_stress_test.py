@@ -14,7 +14,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 # NOTE: manually-maintained local version label (fossil); not derived from a
 # central release manifest and may drift from the repo's actual version.
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 try:
     import onnxruntime as ort
@@ -86,8 +86,8 @@ def stress_test():
         try:
             answer = enc.decode(generated_tokens)
             print(f"🤖 TITAN: {answer}")
-        except:
-            print(f"🤖 TITAN: (Decoding Error - Raw Tokens: {generated_tokens})")
+        except Exception as e:
+            print(f"🤖 TITAN: (Decoding Error: {e} - Raw Tokens: {generated_tokens})")
             
         print(f"📊 Speed: {15/(end-start):.2f} tokens/sec")
 

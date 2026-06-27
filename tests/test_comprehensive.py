@@ -161,7 +161,7 @@ class TestONNXCycle:
             assert onnx_path.exists(), "ONNX file not created!"
             assert onnx_path.stat().st_size > 1000, "ONNX file suspiciously small!"
             
-            print(f"\n✅ ONNX Export Successful: {onnx_path.stat().st_size / 1024:.1f} KB")
+            print(f"\n[OK] ONNX Export Successful: {onnx_path.stat().st_size / 1024:.1f} KB")
 
 
 # =============================================================================
@@ -206,7 +206,7 @@ class TestCheckpointConsistency:
                 assert t1.shape == t2.shape, f"Shape mismatch for {key}"
                 assert torch.allclose(t1, t2, atol=1e-6), f"Value mismatch for {key}"
             
-            print(f"\n✅ Checkpoint Roundtrip Successful: {len(model1.state_dict())} tensors verified")
+            print(f"\n[OK] Checkpoint Roundtrip Successful: {len(model1.state_dict())} tensors verified")
 
 
 # =============================================================================
@@ -254,7 +254,7 @@ class TestCurriculumTransition:
             assert current_stage == expected_stage, \
                 f"Stage mismatch: got {current_stage}, expected {expected_stage}. {description}"
         
-        print(f"\n✅ Curriculum Stage Transitions Verified: All 5 scenarios passed")
+        print(f"\n[OK] Curriculum Stage Transitions Verified: All 5 scenarios passed")
 
 
 # =============================================================================
@@ -285,8 +285,8 @@ class TestMoERouterCollapse:
         load1 = moe.get_expert_load()
         max_load1 = load1.max().item()
         
-        print(f"\n   📊 Varied Input Load: {load1.tolist()}")
-        print(f"   📊 Max Load: {max_load1:.3f}")
+        print(f"\n   [data] Varied Input Load: {load1.tolist()}")
+        print(f"   [data] Max Load: {max_load1:.3f}")
         
         # Check collapse detection buffer exists
         assert hasattr(moe, "collapse_detected"), "collapse_detected buffer missing!"
@@ -295,7 +295,7 @@ class TestMoERouterCollapse:
         # With varied input and multiple experts, collapse shouldn't happen
         assert max_load1 < 1.0, "Max load should be < 1.0 for multi-expert selection"
         
-        print(f"\n✅ MoE Collapse Detection Mechanism Verified")
+        print(f"\n[OK] MoE Collapse Detection Mechanism Verified")
     
     def test_jitter_boost_on_collapse(self, tiny_cfg, device):
         """
@@ -318,7 +318,7 @@ class TestMoERouterCollapse:
         assert moe.router_jitter >= initial_jitter, \
             "Jitter should increase on collapse detection"
         
-        print(f"\n✅ Jitter Boost Mechanism: {initial_jitter:.3f} -> {moe.router_jitter:.3f}")
+        print(f"\n[OK] Jitter Boost Mechanism: {initial_jitter:.3f} -> {moe.router_jitter:.3f}")
 
 
 # =============================================================================
@@ -388,9 +388,9 @@ class TestTrainingDryRun:
         avg_grad = sum(grad_norms) / len(grad_norms)
         assert avg_grad > 0, "Zero average gradient"
         
-        print(f"\n✅ 5-Step Training Dry-Run Complete")
-        print(f"   📊 Losses: {[f'{l:.3f}' for l in losses]}")
-        print(f"   📊 Avg Grad Norm: {avg_grad:.4f}")
+        print(f"\n[OK] 5-Step Training Dry-Run Complete")
+        print(f"   [data] Losses: {[f'{l:.3f}' for l in losses]}")
+        print(f"   [data] Avg Grad Norm: {avg_grad:.4f}")
 
 
 # =============================================================================
@@ -412,7 +412,7 @@ class TestLiquidInitialization:
         assert abs(tau_mean - 0.5) < 0.01, \
             f"tau_bias should be ~0.5 for longer memory, got {tau_mean}"
         
-        print(f"\n✅ Liquid tau_bias Initialization: {tau_mean:.3f} (expected: 0.5)")
+        print(f"\n[OK] Liquid tau_bias Initialization: {tau_mean:.3f} (expected: 0.5)")
 
 
 # =============================================================================
@@ -430,7 +430,7 @@ class TestConfigConsistency:
         assert fresh_cfg.num_layers == fresh_cfg.num_hidden_layers, \
             "num_layers and num_hidden_layers should match in default config"
         
-        print(f"\n✅ Config Aliases Consistent: num_layers={fresh_cfg.num_layers}")
+        print(f"\n[OK] Config Aliases Consistent: num_layers={fresh_cfg.num_layers}")
     
     def test_moe_liquid_no_overlap(self):
         """Test MoE and Liquid layers don't overlap (on fresh config)."""
@@ -440,7 +440,7 @@ class TestConfigConsistency:
         # Should not raise on default config
         try:
             validate_layer_config(fresh_cfg)
-            print("\n✅ MoE/Liquid Layer Validation: No conflicts")
+            print("\n[OK] MoE/Liquid Layer Validation: No conflicts")
         except ValueError as e:
             pytest.fail(f"Layer validation failed: {e}")
 

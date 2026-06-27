@@ -1,12 +1,15 @@
 """Loader for optional C++ CPU kernel with safe fallback."""
 from __future__ import annotations
 
+import logging
 import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
 import torch
+
+_LOG = logging.getLogger(__name__)
 
 
 @lru_cache(maxsize=1)
@@ -29,7 +32,8 @@ def load_cpp_kernel(build: bool | None = None):
 
     try:
         from torch.utils.cpp_extension import load
-    except Exception:
+    except Exception as exc:
+        _LOG.warning("cpp kernel disabled: cpp_extension import failed: %s", exc)
         return None
 
     src = Path(__file__).resolve().parent / "bitnet_cpu.cpp"
@@ -43,7 +47,8 @@ def load_cpp_kernel(build: bool | None = None):
             verbose=False,
             extra_cflags=["-O2"],
         )
-    except Exception:
+    except Exception as exc:
+        _LOG.warning("cpp kernel disabled: build/load failed: %s", exc)
         return None
 
 

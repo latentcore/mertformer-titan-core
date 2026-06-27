@@ -11,8 +11,8 @@ Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__version__ = "1.0-BUILD30"
+__author__ = "Mert Yünlü"
 
 import os
 import sys
@@ -205,7 +205,8 @@ def _precompute_done_samples(logits_root: Path, stage_name: str) -> int:
         return 0
     try:
         payload = json.loads(state_path.read_text(encoding="utf-8"))
-    except Exception:
+    except Exception as exc:
+        logging.warning("precompute state unreadable (%s): %s", state_path, exc)
         return 0
     # [tier-2 MED] Read the canonical lines_consumed first; done_samples is only a
     # back-compat mirror that a future writer might drop.
@@ -242,6 +243,7 @@ def _local_tokenizer_ready() -> tuple[bool, str]:
     try:
         meta = json.loads(tokenizer_meta.read_text(encoding="utf-8"))
     except Exception as exc:
+        logging.warning("tokenizer metadata unreadable (%s): %s", tokenizer_meta, exc)
         return False, f"tokenizer metadata unreadable: {exc}"
 
     note = str(meta.get("note", "")).lower()
@@ -860,15 +862,15 @@ def data_distill_test():
         hf_logging.set_verbosity_error()
         hf_logging.disable_default_handler()
         hf_logging.disable_propagation()
-    except Exception:
-        pass
+    except Exception as exc:
+        logging.debug("huggingface_hub log suppression skipped: %s", exc)
     try:
         from datasets.utils import logging as ds_logging
         ds_logging.set_verbosity_error()
         ds_logging.disable_default_handler()
         ds_logging.disable_propagation()
-    except Exception:
-        pass
+    except Exception as exc:
+        logging.debug("datasets log suppression skipped: %s", exc)
     # Underlying HTTP clients (httpx/httpcore/urllib3) may still emit INFO logs.
     for name in ("httpx", "httpcore", "urllib3"):
         logging.getLogger(name).setLevel(logging.WARNING)

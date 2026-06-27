@@ -626,7 +626,7 @@ HTML = r"""
         </div>
       </section>
       <section>
-        <h2 class="section-title">Stockfish 1600 Probe</h2>
+        <h2 class="section-title">Stockfish 1100 Probe</h2>
         <div class="benchmark-panel">
           <div class="benchmark-summary">
             <div style="font-weight:800; margin-bottom:4px;" id="benchStatusMain">Benchmark idle</div>
@@ -1572,12 +1572,14 @@ class ArenaState:
             if name == "score":
                 try:
                     payload["score"] = str(value)
-                except Exception:
+                except Exception as e:
+                    print(f"[warn] engine info 'score' serialize failed: {type(e).__name__}: {e}", file=sys.stderr)
                     payload["score"] = repr(value)
             elif name == "pv":
                 try:
                     payload["pv"] = [move.uci() for move in value]
-                except Exception:
+                except (AttributeError, TypeError) as e:
+                    print(f"[warn] engine info 'pv' serialize failed: {type(e).__name__}: {e}", file=sys.stderr)
                     payload["pv"] = repr(value)
             elif isinstance(value, (int, float, str, bool)) or value is None:
                 payload[name] = value
@@ -2044,7 +2046,8 @@ def build_state(preferred_device: Optional[str]) -> ArenaState:
                 if item.get("target_elo") == DEFAULT_STOCKFISH_ELO
                 or "stockfish_1100_" in str(item.get("json_path", ""))
             ][:12]
-        except Exception:
+        except Exception as e:
+            print(f"[warn] benchmark history load failed: {type(e).__name__}: {e}", file=sys.stderr)
             state.benchmark_history = []
     state.stockfish_path = detect_stockfish_path()
     if state.stockfish_path:

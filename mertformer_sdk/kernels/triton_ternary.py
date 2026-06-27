@@ -13,18 +13,22 @@ development/benchmarking only and should not be relied on as the sealed path.
 """
 from __future__ import annotations
 
+import logging
 from typing import Optional
 
 import torch
+
+_logger = logging.getLogger(__name__)
 
 try:
     import triton
     import triton.language as tl
     _TRITON_AVAILABLE = True
-except Exception:
+except Exception as _triton_import_error:  # optional dependency; keep import-time fallback
     triton = None
     tl = None
     _TRITON_AVAILABLE = False
+    _logger.debug("triton unavailable, falling back to non-triton path: %r", _triton_import_error)
 
 
 def is_triton_available() -> bool:

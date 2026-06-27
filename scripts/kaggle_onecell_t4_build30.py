@@ -1049,6 +1049,9 @@ def pick_device(requested: str) -> str:
 
 
 def get_total_vram_gb(device: str) -> float:
+    # NOTE: 0.0 here means "not measured" (non-CUDA backend or query failed),
+    # not an actual 0 GB measurement. Downstream consumers must not treat 0.0
+    # as a real telemetry value.
     if device == "cuda" and torch.cuda.is_available():
         try:
             return float(torch.cuda.get_device_properties(0).total_memory / (1024 ** 3))
@@ -1144,6 +1147,9 @@ def reset_device_peak_memory(device: str) -> None:
 
 
 def get_device_peak_memory_gb(device: str) -> float:
+    # NOTE: 0.0 here means "not measured" (non-CUDA/MPS backend, unsupported torch
+    # build, or query failed), not an actual 0 GB peak. Do not treat 0.0 as a real
+    # measurement in stability/efficiency calculations.
     if device == "cuda" and torch.cuda.is_available():
         try:
             return float(torch.cuda.max_memory_allocated() / (1024 ** 3))
@@ -2022,8 +2028,13 @@ class InMemoryRunLogger:
         if self._jsonl_fp is not None:
             try:
                 self._jsonl_fp.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + "\n")
-            except Exception:
-                pass
+            except Exception as e:
+                # Keep best-effort behavior but leave a diagnostic trail: a silent
+                # write loss here would break the chain-hash log integrity claim.
+                try:
+                    sys.stderr.write(f"[warn] jsonl write failed: {e}\n")
+                except Exception:
+                    pass
         self._maybe_flush()
 
     def log_event(self, kind: str, data: Dict[str, Any]) -> None:
@@ -2940,8 +2951,13 @@ def _hf_candidate_worker(
     except Exception as e:
         try:
             q.put({"ok": False, "reason": _format_exception(e), "rows": rows})
-        except Exception:
-            pass
+        except Exception as put_err:
+            # If the error cannot even be enqueued, the parent only sees a timeout;
+            # emit to stderr so the worker's real failure reason is recoverable.
+            try:
+                sys.stderr.write(f"[warn] hf_candidate_worker failed and could not enqueue error: {put_err}\n")
+            except Exception:
+                pass
 
 
 def _load_candidate_rows_process_timeout(
@@ -3004,6 +3020,9 @@ def _load_candidate_rows_process_timeout(
         time.sleep(0.2)
     if not result and p.is_alive():
         timed_out = True
+        # Best-effort process/queue teardown: terminate/join/close may legitimately
+        # fail if the worker is already gone; we intentionally ignore those errors
+        # since the result has already been collected (or the timeout recorded).
         try:
             p.terminate()
         except Exception:
@@ -4274,8 +4293,13 @@ class MertFormerTiny(nn.Module):
                             dtype=self.tok_embeddings.weight.dtype,
                         )
                     )
-                except Exception:
-                    pass
+                except Exception as e:
+                    # Best-effort reset; surface failures so router-state leakage
+                    # between sequences does not stay invisible.
+                    try:
+                        sys.stderr.write(f"[warn] reset_router_state set_state failed: {e}\n")
+                    except Exception:
+                        pass
 
 
 def parity_self_check(model: MertFormerTiny, cfg: Dict[str, Any], device: str) -> Dict[str, Any]:
@@ -4521,8 +4545,13 @@ def prune_checkpoints_rolling5(ckpt_dir: Path) -> List[str]:
             try:
                 p.unlink()
                 removed.append(str(p))
-            except Exception:
-                pass
+            except Exception as e:
+                # Surface prune failures: a silent miss here means the rolling-5
+                # retention policy is quietly violated (disk/permission issues).
+                try:
+                    sys.stderr.write(f"[warn] checkpoint prune failed for {p}: {e}\n")
+                except Exception:
+                    pass
     return removed
 
 
@@ -4534,8 +4563,13 @@ def collect_rng_state() -> Dict[str, Any]:
     if torch.cuda.is_available():
         try:
             out["cuda_rng_state_all"] = torch.cuda.get_rng_state_all()
-        except Exception:
-            pass
+        except Exception as e:
+            # Surface the miss: a missing cuda_rng_state_all silently breaks
+            # checkpoint reproducibility on resume.
+            try:
+                sys.stderr.write(f"[warn] collect cuda rng state failed: {e}\n")
+            except Exception:
+                pass
     return out
 
 
@@ -4547,8 +4581,13 @@ def restore_rng_state(state: Dict[str, Any]) -> None:
             torch.set_rng_state(state["torch_rng_state"])
         if "cuda_rng_state_all" in state and torch.cuda.is_available():
             torch.cuda.set_rng_state_all(state["cuda_rng_state_all"])
-    except Exception:
-        pass
+    except Exception as e:
+        # Keep best-effort resume but surface the failure: a silent miss here would
+        # quietly break run reproducibility after a resume.
+        try:
+            sys.stderr.write(f"[warn] restore_rng_state failed: {e}\n")
+        except Exception:
+            pass
 
 
 def save_checkpoint_atomic(
@@ -5636,7 +5675,11 @@ def maybe_plot_curves(curve: Dict[str, List[float]], out_dir: Path, write_files:
         plt.savefig(p)
         plt.close()
         return str(p)
-    except Exception:
+    except Exception as e:
+        try:
+            sys.stderr.write(f"[warn] training curve plot failed: {e}\n")
+        except Exception:
+            pass
         return None
 
 
@@ -5668,8 +5711,11 @@ def maybe_plot_presentation_assets(
         plt.savefig(p_loss)
         plt.close()
         paths["loss_overlay"] = str(p_loss)
-    except Exception:
-        pass
+    except Exception as e:
+        try:
+            sys.stderr.write(f"[warn] loss_overlay plot failed: {e}\n")
+        except Exception:
+            pass
     try:
         p_data = out_dir / "data_contribution.png"
         sources = payload.get("data_source_scorecard", {}).get("source_totals", [])[:10]
@@ -5685,8 +5731,11 @@ def maybe_plot_presentation_assets(
             plt.savefig(p_data)
             plt.close()
             paths["data_contribution"] = str(p_data)
-    except Exception:
-        pass
+    except Exception as e:
+        try:
+            sys.stderr.write(f"[warn] data_contribution plot failed: {e}\n")
+        except Exception:
+            pass
     try:
         p_stab = out_dir / "stability_panel.png"
         st = payload.get("stability_index", {})
@@ -5706,8 +5755,11 @@ def maybe_plot_presentation_assets(
         plt.savefig(p_stab)
         plt.close()
         paths["stability_panel"] = str(p_stab)
-    except Exception:
-        pass
+    except Exception as e:
+        try:
+            sys.stderr.write(f"[warn] stability_panel plot failed: {e}\n")
+        except Exception:
+            pass
     return paths
 
 
@@ -6054,8 +6106,16 @@ def backup_run_to_drive(layout: ArtifactLayout, cfg: Dict[str, Any]) -> Dict[str
         try:
             shutil.copy2(p, d)
             report["copied_count"] += 1
-        except Exception:
+        except Exception as e:
             report["failed_count"] += 1
+            # Record the first failure detail so backup copy errors are diagnosable
+            # instead of only visible as an opaque failed_count.
+            if not report["warning"]:
+                report["warning"] = f"copy_failed:{rel}:{type(e).__name__}:{e}"
+            try:
+                sys.stderr.write(f"[warn] drive backup copy failed for {rel}: {e}\n")
+            except Exception:
+                pass
     return report
 
 
@@ -6142,8 +6202,13 @@ def generate_text(
     if hasattr(model, "reset_router_state"):
         try:
             model.reset_router_state(batch_size=1)
-        except Exception:
-            pass
+        except Exception as e:
+            # Best-effort reset before generation; surface failures so stale
+            # router state does not silently affect outputs.
+            try:
+                sys.stderr.write(f"[warn] generate_text reset_router_state failed: {e}\n")
+            except Exception:
+                pass
     system = "Sistem: Türkçe, net ve teknik yanıt ver.\n"
     full_prompt = system + "Kullanıcı: " + prompt + "\nAsistan:"
     ids = tokenizer.encode(full_prompt, add_bos=True, add_eos=False)

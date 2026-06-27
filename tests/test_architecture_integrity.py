@@ -80,10 +80,15 @@ def test_bitlinear_ternary_weights():
     
     from layers.bitlinear import weight_quant
     w_quant = weight_quant(layer.weight)
-    
-    # Normalized weights should be roughly in [-1, 1]
-    scale = w_quant.abs().mean()
-    
+
+    # weight_quant returns scaled values (STE): w_q_real = round(w/scale).clamp(-1,1) * scale.
+    # Recover the per-row scale (RMS) to verify the underlying ternary levels {-1, 0, 1}.
+    scale = torch.sqrt((layer.weight ** 2).mean(dim=1, keepdim=True)).clamp(min=1e-5)
+    levels = torch.round(w_quant / scale)
+    assert torch.isin(
+        levels, torch.tensor([-1.0, 0.0, 1.0])
+    ).all(), "BitLinear quantized weights are not ternary {-1, 0, 1}!"
+
     y = layer(x)
     assert not torch.isnan(y).any(), "BitLinear output contains NaNs!"
     
