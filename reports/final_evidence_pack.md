@@ -1,6 +1,6 @@
 # Final Evidence Pack
 
-- generated_utc: `2026-06-26T18:18:00.614720+00:00`
+- generated_utc: `2026-06-27T05:06:27.435828+00:00`
 - mode: `demo-only`
 - checkpoint: `<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt`
 

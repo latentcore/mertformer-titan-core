@@ -1,12 +1,11 @@
 {
   "schema": "file_state_inventory_v1",
-  "generated_utc": "2026-06-26T18:18:00Z",
+  "generated_utc": "2026-06-27T05:06:27Z",
   "git_branch": "main",
-  "git_commit_short": "0d5306b",
-  "tracked_files": 823,
+  "git_commit_short": "c47f891",
+  "tracked_files": 825,
   "modified_entries": [
-    "M adr/ADR-0001-source-of-truth-and-claim-boundary.md",
-    " M artifacts/mertformer_release.zip.sha256",
+    "M artifacts/mertformer_release.zip.sha256",
     " M packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256",
     " M reports/backup_restore_report.json",
     " M reports/bench_cpp_report.json",
@@ -29,7 +28,6 @@
     " M reports/demo_bundle_manifest.json",
     " M reports/determinism_report.json",
     " M reports/differential_backend_report.json",
-    " M reports/docs_dedup_canonical_list.md",
     " M reports/docs_packages_hash_manifest.json",
     " M reports/dry_run_report.json",
     " M reports/dry_run_report.md",
@@ -87,10 +85,7 @@
     " M reports/xla_smoke_report.json",
     " M train/train.py"
   ],
-  "untracked_entries": [
-    "?? orchestrator/README.md",
-    "?? orchestrator/README_TR.md"
-  ],
+  "untracked_entries": [],
   "reports_present": [
     "reports/FACTS.json",
     "reports/adr_index.md",

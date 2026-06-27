@@ -328,7 +328,7 @@ def save_checkpoint_smart(
             except OSError as e:
                 print(f"⚠️ Silme Hatası: {e}")
     
-    return best_val_loss if val_loss is not None else best_val_loss
+    return best_val_loss
 
 
 def _discover_resume_checkpoint(cfg: Any) -> Optional[Path]:
@@ -544,8 +544,7 @@ class TeacherBundle:
         if self.model is None:
             return None
         # Ensure input is on correct device (Accelerate handles this but good to be safe)
-        if hasattr(self, 'device'):
-             input_ids = input_ids.to(self.device)
+        input_ids = input_ids.to(self.device)
         return self.model(input_ids).logits
 
 
@@ -860,7 +859,7 @@ def train() -> None:
     # [PRO] Only override max_steps if explicitly requested via EPOCH_MODE or if undefined
     # This allows test scripts to set max_steps=2 without interference.
     if getattr(cfg, "epoch_mode", False) and (not hasattr(cfg, "max_steps") or cfg.max_steps is None or cfg.max_steps > 1000):
-        # V24.0: 12M samples (sweet spot for 1.5B model)
+        # V24.0: 12M samples (sweet spot for 3.67B model)
         NUM_EPOCHS = 3
         TOTAL_SAMPLES = 12_000_000  # Sweet spot: ~6B tokens
         cfg.max_steps = int((TOTAL_SAMPLES / (cfg.micro_batch_size * cfg.grad_accum_steps)) * NUM_EPOCHS)
@@ -1269,7 +1268,7 @@ def train() -> None:
 
                         # Dynamic Distillation Alpha
                         progress_pct = min(global_step / max(1, cfg.max_steps), 1.0)
-                        start_alpha = getattr(cfg, "distill_alpha", 0.6)
+                        start_alpha = getattr(cfg, "distill_alpha", 0.8)
                         
                         if progress_pct < 0.3:
                             dyn_alpha = start_alpha
@@ -1336,13 +1335,13 @@ def train() -> None:
                             if isinstance(input_ids, torch.Tensor) and input_ids.ndim >= 2 and input_ids.size(0) > 0:
                                 replay_sample = input_ids[0]
                             continual_state = continual_adapter.update(
-                                loss=float(total_loss.detach().item()),
+                                loss=float(total_loss.item()),
                                 sample=replay_sample,
                             )
 
                         # V26.11 SAFEGUARD: Liquid spike tracking (3-strike rule)
                         liquid_spike_counter, liquid_frozen_until, spike_triggered = update_liquid_spike_state(
-                            loss_value=float(total_loss.detach().item()),
+                            loss_value=float(total_loss.item()),
                             threshold=liquid_spike_threshold,
                             counter=liquid_spike_counter,
                             patience=liquid_spike_patience,
@@ -1552,7 +1551,7 @@ def train() -> None:
                         student.eval()
                         val_loss_local = 0.0
                         val_samples_local = 0
-                        val_steps = int(getattr(cfg, "val_steps", 10))  # [16] configurable via TITAN_VAL_STEPS
+                        val_steps = int(getattr(cfg, "val_steps", 10))  # [16] configurable via cfg.val_steps
                         try:
                             # [PRO] Use dedicated validation dataloader if available
                             val_iter = iter(val_dl)
