@@ -77,8 +77,8 @@ PYTHON_ROLE_OVERRIDES: dict[str, tuple[str, str]] = {
         "çekirdek transformer blok bileşimi",
     ),
     "layers/mla.py": (
-        "multi-head latent attention implementation",
-        "çok başlı latent attention implementasyonu",
+        "grouped-query attention (GQA) implementation",
+        "grouped-query attention (GQA) implementasyonu",
     ),
     "layers/moe.py": (
         "mixture-of-experts routing and expert execution",
@@ -396,6 +396,21 @@ def structure_comment(rel: str, is_dir: bool, lang: str = "en") -> str:
     return comments["artifact"]
 
 
+def flatten_tree(node: dict[str, Any], parent_parts: tuple[str, ...] = ()) -> list[str]:
+    """Reconstruct the relative file paths actually emitted into the structure tree.
+
+    Used to diff the rendered PROJECT_STRUCTURE tree against the manifest entry
+    list so the file_sync_matrix gate reflects a real comparison rather than a
+    hardcoded green result.
+    """
+    paths: list[str] = []
+    for name in node.get("files", []):
+        paths.append("/".join(parent_parts + (name,)))
+    for name, child in node.get("dirs", {}).items():
+        paths.extend(flatten_tree(child, parent_parts + (name,)))
+    return paths
+
+
 def build_tree(paths: list[str]) -> dict[str, Any]:
     root: dict[str, Any] = {"dirs": {}, "files": []}
     for rel in sorted(paths):
@@ -535,13 +550,21 @@ def main() -> int:
     }
     readme_sync_ok = all(readme_sync.values())
 
+    # Real drift check: diff the manifest entry list against the paths actually
+    # rendered into the structure tree (flattened back out of build_tree). This
+    # binds the matrix gate to a genuine comparison instead of a hardcoded green.
+    structure_paths = flatten_tree(build_tree(entry_paths))
+    manifest_set = set(entry_paths)
+    structure_set = set(structure_paths)
+    missing_in_structure = sorted(manifest_set - structure_set)
+    missing_in_manifest = sorted(structure_set - manifest_set)
     matrix_payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
-        "manifest_count": len(entry_paths),
-        "structure_count": len(entry_paths),
-        "missing_in_structure": [],
-        "missing_in_manifest": [],
-        "ok": True,
+        "manifest_count": len(manifest_set),
+        "structure_count": len(structure_set),
+        "missing_in_structure": missing_in_structure,
+        "missing_in_manifest": missing_in_manifest,
+        "ok": not missing_in_structure and not missing_in_manifest,
     }
 
     matrix_path.parent.mkdir(parents=True, exist_ok=True)

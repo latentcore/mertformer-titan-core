@@ -5,16 +5,29 @@ MERTFORMER TITAN (ONYX STORM) - WEB SENSE (SEARCH & RESEARCH)
 Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
-Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) - Pre-Training
-Status : PRE-TRAINING (UNVERIFIED)
+Module: orchestrator/web_sense.py - DuckDuckGo web search & URL reading helper.
+
+NOTE (scope): Bu modul orchestrator/ altinda yer alir ve 45K egitim yolunda
+KAPALIDIR (inert / out-of-scope; feature-flag ile devre disi). Asagidaki
+"Project / Version / Status" satirlari tum orchestrator dosyalarinda tekrar
+eden ortak boilerplate banner'in fosilidir; bu modulun (DuckDuckGo arama)
+gercek islevini tanimlamaz ve egitim build surumunu temsil ETMEZ.
+
+Project: (boilerplate banner - modul ile dogrudan ilgisiz)
+Version: bkz. __version__ (legacy build etiketi, kanonik surum kaynagi degil)
+Status : orchestrator yardimci modulu
 ==============================================================================
 """
 
+# Legacy build etiketi (fosil); kanonik surum kaynagi degildir, yalniz geriye
+# donuk uyumluluk icin korunuyor.
 __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
+import logging
 from typing import List, Callable, Optional
+
+logger = logging.getLogger(__name__)
 
 # Web libraries - optional
 try:
@@ -72,6 +85,7 @@ class WebSense:
 
             return "\n".join(results)
         except Exception as e:
+            logger.warning("Web araması başarısız (query=%r): %s", query, e)
             return f"Web Arama Hatası: {e}"
 
     def deep_research(self, query: str, llm_callback: Callable[[str, float], str]) -> str:
@@ -126,4 +140,5 @@ Kurallar:
                 text = text[:MAX_URL_CHARS] + "..."
             return text or "Sayfada anlamlı metin bulunamadı."
         except Exception as e:
+            logger.warning("URL okuma başarısız (url=%r): %s", url, e)
             return f"Site Okuma Hatası: {e}"

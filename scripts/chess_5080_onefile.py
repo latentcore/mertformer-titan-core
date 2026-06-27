@@ -1368,15 +1368,22 @@ def _import_runtime_dependencies() -> None:
         importlib.import_module("chess.engine")
         importlib.import_module("chess.pgn")
         globals_ns["chess"] = chess_mod
-    except Exception:  # pragma: no cover - import guarded by bootstrap in __main__
+    except Exception as exc:  # pragma: no cover - import guarded by bootstrap in __main__
+        # python-chess zorunlu bir bagimliliktir; None'a dusulurse asagidaki
+        # SystemExit tetiklenir. Hata sebebini yutmamak icin stderr'e yaziyoruz.
+        print(f"[warn] python-chess import basarisiz: {exc!r}", file=sys.stderr)
         globals_ns["chess"] = None
     try:
         globals_ns["psutil"] = importlib.import_module("psutil")
-    except Exception:  # pragma: no cover
+    except Exception as exc:  # pragma: no cover - optional runtime dependency
+        # psutil opsiyoneldir; eksikse None'a duser ama sebebi loglanir.
+        print(f"[warn] psutil import basarisiz (opsiyonel): {exc!r}", file=sys.stderr)
         globals_ns["psutil"] = None
     try:
         globals_ns["pyzipper"] = importlib.import_module("pyzipper")
-    except Exception:  # pragma: no cover - optional runtime dependency
+    except Exception as exc:  # pragma: no cover - optional runtime dependency
+        # pyzipper opsiyoneldir; eksikse None'a duser ama sebebi loglanir.
+        print(f"[warn] pyzipper import basarisiz (opsiyonel): {exc!r}", file=sys.stderr)
         globals_ns["pyzipper"] = None
 
 
@@ -1844,6 +1851,9 @@ def resolve_runtime_config(args: argparse.Namespace, base_cfg: Optional[Dict[str
         else:
             cfg["device"] = "cpu"
 
+    # NOT: mps cihazi burada cuda-disi genel kisitli yola dusurulur (bf16 kapali,
+    # compile kapali, batch <= 32). mps icin ayri olculmus/optimize bir hizlandirma
+    # yolu YOKTUR; pratikte cpu-benzeri kisitli fallback davranisi gosterir.
     if str(cfg["device"]) != "cuda":
         cfg["use_bf16"] = False
         cfg["compile_policy"] = "off"
@@ -2198,6 +2208,9 @@ def _try_lowbit_kernel(x: torch.Tensor, w: torch.Tensor, bias: Optional[torch.Te
                 return None
             return npu_linear(activation_quant(x), weight_quant(w), bias)
         if backend == "mps_optimized":
+            # NOT: Ozel/optimize bir MPS lowbit kerneli YOKTUR. Bu dal, eager
+            # fallback ile birebir ayni islemi (duz F.linear) yapar; 'optimized'
+            # adi yaniltici olup yalnizca backend etiketi olarak korunmustur.
             return F.linear(activation_quant(x), weight_quant(w), bias)
     except Exception:
         return None
@@ -2345,6 +2358,17 @@ def apply_rope_optimized(
 
 
 class MLA(nn.Module):
+    """GQA (grouped-query attention).
+
+    NOT: Sinif adi tarihsel sebeple 'MLA' olsa da gercek mekanizma
+    GQA'dir (grouped-query attention). Latent / low-rank KV bottleneck
+    (multi-head latent attention) BURADA UYGULANMAMISTIR; q/k/v dogrudan
+    num_heads / num_kv_heads uzerinden projekte edilir ve KV head'leri
+    repeat_interleave ile cogaltilir. Kanonik kaynak layers/mla.py'de ayni
+    sinif dogru sekilde 'class GQA' olarak adlandirilmistir. (Dosya/modul
+    adi parite icin korunmustur; yalnizca etiket netlestirilmistir.)
+    """
+
     def __init__(self, arch_cfg: MirrorModelConfig) -> None:
         super().__init__()
         self.hidden_size = arch_cfg.hidden_size
@@ -7318,6 +7342,11 @@ def build_mirror_parity_report(cfg: Dict[str, Any]) -> Dict[str, Any]:
         "required_families": sorted(MIRROR_REQUIRED_FAMILIES.keys()),
         "required_symbols": {family_name: list(symbols) for family_name, symbols in MIRROR_REQUIRED_FAMILIES.items()},
         "audit_status": "ok" if not missing_families else "failed",
+        # DURUSTLUK NOTU: 'audit_status' yalnizca gerekli sembol ADLARININ
+        # globals() icinde mevcut olup olmadigina bakar. Fonksiyonel parite
+        # (callable/signature/forward-smoke) DOGRULANMAZ; 'ok' = 'semboller
+        # mevcut' demektir, davranissal esitlik garantisi DEGILDIR.
+        "audit_scope": "symbol_name_presence_only_not_functional_parity",
         "missing_families": missing_families,
         "enabled_flags": enabled_flags,
         "available_but_disabled": sorted(flag for flag, enabled in enabled_flags.items() if not enabled),
@@ -10187,6 +10216,11 @@ def render_trained_artifact_registry_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_core_complete_decision_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    """STUB: gercek olcum/karar hesabi YOK; her cagrida sabit 'pending' kayit.
+
+    Yonetim karari gerektiren bu yuzey yalnizca durust bir 'pending' iskeleti
+    uretir; layout girdisi kullanilmaz.
+    """
     del layout
     return {
         "schema": "chess_core_complete_decision_stub_v1",
@@ -10208,6 +10242,11 @@ def render_core_complete_decision_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_research_continues_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    """STUB: gercek olcum/karar hesabi YOK; her cagrida sabit 'pending' kayit.
+
+    Yonetim karari gerektiren bu yuzey yalnizca durust bir 'pending' iskeleti
+    uretir; layout girdisi kullanilmaz.
+    """
     del layout
     return {
         "schema": "chess_research_continues_stub_v1",
@@ -10229,6 +10268,11 @@ def render_research_continues_stub_md(report: Dict[str, Any]) -> str:
 
 
 def build_product_maintenance_only_stub(layout: ArtifactLayout, payload: Dict[str, Any]) -> Dict[str, Any]:
+    """STUB: gercek olcum/karar hesabi YOK; her cagrida sabit 'pending' kayit.
+
+    Yonetim karari gerektiren bu yuzey yalnizca durust bir 'pending' iskeleti
+    uretir; layout girdisi kullanilmaz.
+    """
     del layout
     return {
         "schema": "chess_product_maintenance_only_stub_v1",
@@ -14020,6 +14064,10 @@ def build_project_artifact_lock_readiness_report(layout: ArtifactLayout, payload
         "artifact_class_count": len({str(row.get("artifact_lock_class", "")) for row in rows if str(row.get("artifact_lock_class", ""))}),
         "direct_release_prereq_count": sum(1 for row in rows if bool(row.get("direct_release_prereq", False))),
         "bridged_surface_count": sum(1 for row in rows if int(row.get("bridged_release_evidence_count", 0)) > 0),
+        # DURUSTLUK NOTU: 'status' yalnizca satir VARLIGINA bakar (rows bos mu),
+        # satir basina 'ready' kosulsuzdur ve required/bridged kanit dogrulamaz.
+        # Bu ozet bir GECME-KAPISI DEGILDIR.
+        "status_basis": "row_presence_only_not_evidence_verified_gate",
         "status": "ready" if rows else "incomplete",
         "rows": rows,
     }
@@ -14118,6 +14166,10 @@ def build_project_final_release_cutover_report(layout: ArtifactLayout, payload: 
         "external_signoff_count": sum(1 for row in rows if bool(row.get("in_external_signoff_queue", False))),
         "release_decision_count": sum(1 for row in rows if bool(row.get("in_release_decision_queue", False))),
         "terminal_label": str(release_path.get("terminal_label", "")),
+        # DURUSTLUK NOTU: 'status' yalnizca satir VARLIGINA bakar (rows bos mu),
+        # satir basina 'ready' kosulsuzdur ve required evidence/dependency
+        # cozumunu DOGRULAMAZ. Bu ozet bir GECME-KAPISI DEGILDIR.
+        "status_basis": "row_presence_only_not_evidence_verified_gate",
         "status": "ready" if rows else "incomplete",
         "rows": rows,
     }
@@ -15813,7 +15865,10 @@ def write_release_evidence_reports(layout: ArtifactLayout, payload: Dict[str, An
     _write_release_evidence_reports_once(layout, payload)
     # The release/evidence chain is self-referential: later generated summaries can
     # change gate readiness, so we refresh the truth matrix once more and run a final
-    # pass to converge the derived reports onto the last consistent state.
+    # pass over the derived reports.
+    # DURUSTLUK NOTU: Bu sabit 3-gecisli sema bir HEURISTIK'tir; gercek bir
+    # fixpoint / "degisim-yok" kontrolu YAPILMAZ. 3 gecisin yakinsama icin yeterli
+    # oldugu OLCULMEMIS bir varsayimdir; yakinsama garanti edilmez.
     truth = build_artifact_truth_matrix(layout, payload)
     atomic_json(layout.reports_dir / "artifact_truth_matrix.json", truth)
     atomic_write_text(layout.reports_dir / "artifact_truth_matrix.md", render_artifact_truth_matrix_md(truth))
@@ -15962,6 +16017,14 @@ def schedule_self_delete_if_needed(cfg: Dict[str, Any], success: bool, final_zip
         return
     if not target_path.exists():
         return
+    # GUVENLIK NOTU: Bu yol yalnizca opt-in (share_mode + enable_self_delete) ile
+    # tetiklenir ve hedefi sessizce siler. Teshis edilebilirlik icin silmeden
+    # once gorunur bir uyari logla. (Hedefin repo koku disinda olup olmadigi
+    # burada dogrulanmaz; cagiran sorumludur.)
+    print(
+        f"[warn] self-delete planlandi: hedef={target_path} (share_mode opt-in)",
+        file=sys.stderr,
+    )
     if platform.system() == "Windows":
         cmd_path = target_path.with_suffix(".cleanup.cmd")
         cmd_path.write_text(

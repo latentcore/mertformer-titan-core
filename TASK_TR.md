@@ -20,7 +20,7 @@
 - [x] Investor Deck / One-Pager / Technical Snapshot: `TECHNICAL_REPORT.md` (tracked). Ticari öğeler (`one_pager.md`, `technical_snapshot.md`, `PITCH.md`) `private/commercial/`'a taşındı — untracked.
 - [x] Microsoft Founders Hub Başvuru Taslağı: `private/commercial/founders_hub_application.md` (`reports/`'tan taşındı; untracked). 2026-05-31'de yapıldı.
 
-## Phase 3: Future Horizons (v29 Backlog)
+## Phase 3: Future Horizons (Backlog)
 - [x] White Paper & Defense Licensing (post-validation): `WHITE_PAPER_LIQUIDROUTER.md`
 
 ## Verification Plan

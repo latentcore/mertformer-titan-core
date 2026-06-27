@@ -12,7 +12,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import math
 import os
@@ -85,7 +85,7 @@ class _QKRMSNorm(nn.Module):
         self.weight = nn.Parameter(torch.ones(dim))
     
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # [V26.5 FIX] Compute RMS in FP32 for stability
+        # Compute RMS in FP32 for stability
         # x.float() -> pow(2) -> mean -> rsqrt
         rms = x.float().pow(2).mean(dim=-1, keepdim=True).add(self.eps).rsqrt()
         # Scale back to original dtype
@@ -218,7 +218,7 @@ class GQA(nn.Module):
     - FP32-stable Softmax
     - BitLinear projections
     - Causal mask buffer optimization
-    - KV Cache support (inference speedup) [V21.0]
+    - KV Cache support (inference speedup)
     """
 
     def __init__(self) -> None:
@@ -265,7 +265,7 @@ class GQA(nn.Module):
         
         # Projections (BitLinear for efficiency)
         self.q_proj = BitLinear(self.hidden_size, self.num_heads * self.head_dim, bias=False)
-        # [V27.1 FIX] Correct KV Head Projection for GQA
+        # Correct KV Head Projection for GQA
         self.k_proj = BitLinear(self.hidden_size, self.num_kv_heads * self.head_dim, bias=False)
         self.v_proj = BitLinear(self.hidden_size, self.num_kv_heads * self.head_dim, bias=False)
         self.o_proj = BitLinear(self.num_heads * self.head_dim, self.hidden_size, bias=False)
@@ -343,7 +343,7 @@ class GQA(nn.Module):
         use_cache: bool = False,
     ) -> Tuple[torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]:
         """
-        Forward pass - Sequence processing with multi-head attention.
+        Forward pass - Sequence processing with grouped-query attention (GQA).
         """
         B, T, C = x.shape
 
@@ -363,7 +363,7 @@ class GQA(nn.Module):
             k = self.k_proj(x).view(B, T, self.num_kv_heads, self.head_dim).transpose(1, 2)
             v = self.v_proj(x).view(B, T, self.num_kv_heads, self.head_dim).transpose(1, 2)
         
-        # V23.0: QK Normalization (attention stabilization)
+        # QK Normalization (attention stabilization)
         q = self.q_norm(q)
         k = self.k_norm(k)
 
@@ -374,7 +374,7 @@ class GQA(nn.Module):
             # past_k shape: [B, H, T_past, D]
             kv_seq_len = past_k.shape[2] + T
 
-        # [V26.5 SAFEGUARD] KV Sequence Length Guard
+        # KV Sequence Length Guard
         if kv_seq_len > self.max_seq:
              raise ValueError(
                  f"kv_seq_len ({kv_seq_len}) exceeds max_seq ({self.max_seq}). "
@@ -427,7 +427,7 @@ class GQA(nn.Module):
         else:
             k, v = k_full, v_full
 
-        # [V27.1 FIX] GQA Broadcasting (Repeat KV heads to match Q heads)
+        # GQA Broadcasting (Repeat KV heads to match Q heads)
         if self.num_kv_heads != self.num_heads:
              # Shape: [B, num_kv_heads, T, D] -> [B, num_heads, T, D]
              # We repeat each KV head (num_heads // num_kv_heads) times

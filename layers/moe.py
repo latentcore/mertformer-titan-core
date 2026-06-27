@@ -106,6 +106,14 @@ class LiquidRouter(nn.Module):
     - Main Path: looks at the current token (Standard Routing).
     - Fluid Path: looks at the 'momentum' of previous tokens (Context Momentum).
     - Mechanism: Causal Depthwise Conv1d and Rolling Buffer.
+
+    NOTE (naming clarification): the "Liquid"/"Fluid Dynamics"/"Context Momentum"
+    labels here are descriptive only. This module is NOT a continuous-time
+    liquid/CfC cell. The actual mechanism is a causal depthwise Conv1d over a short
+    history window plus a BitLinear gate (main_proj + fluid_gate). For the real
+    liquid-time / CfC implementation see liquid.py (LiquidCell). The class name and
+    param paths (main_proj/fluid_gate) are kept as-is because they are bound to the
+    sealed checkpoint/state_dict contract.
     """
     def __init__(self, hidden_size: int, num_experts: int):
         super().__init__()

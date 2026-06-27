@@ -1,6 +1,6 @@
 """
 ==============================================================================
-MERTFORMER TITAN (ONYX STORM) - DATA PIPELINE
+MERTFORMER TITAN - DATA PIPELINE
 -------------------------------------------------------------------------------
 Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
@@ -37,7 +37,7 @@ from config.config import cfg
 
 
 # =============================================================================
-# TR: STAGE CONFİGÜRASYONU / EN: STAGE CONFIGURATION
+# TR: STAGE KONFİGÜRASYONU / EN: STAGE CONFIGURATION
 # =============================================================================
 STAGE_DIRS = {
     1: Path("datasets/stage1"),
@@ -304,7 +304,13 @@ def write_token_probe_report(stage_reports: Dict[str, dict]) -> None:
             local_files_only=not bool(hf_token),
         )
         tokenizer_mode = f"teacher_tokenizer:{cfg.teacher_model_id}"
-    except Exception:
+    except Exception as exc:
+        # Fallback to whitespace_proxy korunur; nedeni gizlememek icin uyari basilir.
+        print(
+            f"⚠️  Teacher tokenizer yuklenemedi ({cfg.teacher_model_id}): {exc}; "
+            f"whitespace_proxy'ye dusuluyor.",
+            file=sys.stderr,
+        )
         tokenizer = None
 
     payload = {
@@ -346,7 +352,7 @@ def write_token_probe_report(stage_reports: Dict[str, dict]) -> None:
 
 
 # =============================================================================
-# TR: YARDIMCI FONİKSİYONLAR / EN: HELPER FUNCTIONS
+# TR: YARDIMCI FONKSİYONLAR / EN: HELPER FUNCTIONS
 # =============================================================================
 def create_stage_directories():
     """TR: Tüm stage dizinlerini oluştur. / EN: Create all stage directories."""
@@ -546,7 +552,7 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
     consecutive_failures = 0
     total_ratio = sum(float(sources[i]["ratio"]) for i in active_sources)
     
-    # [V27.6 IO FIX] Write Buffer Initialization
+    # Write Buffer Initialization
     write_buffer = []
     BUFFER_SIZE = 10_000 # Batch 10k writes to save SSD life and time
     
@@ -597,7 +603,7 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
             if deduper is not None and not deduper.accept(text):
                 continue
             
-            # [V27.6 IO FIX] Buffer Write Strategy
+            # Buffer Write Strategy
             write_buffer.append(json.dumps({"text": text}, ensure_ascii=False))
             
             if len(write_buffer) >= BUFFER_SIZE:
@@ -623,7 +629,7 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
                 print(f"\n❌ Too many consecutive failures. Aborting stage.")
                 break
     
-    # [V27.6 IO FIX] Final Flush
+    # Final Flush
     if write_buffer:
         with open(stage_output, "a", encoding="utf-8") as f:
             f.write("\n".join(write_buffer) + "\n")
@@ -657,12 +663,12 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
 # TR: ANA YÜRÜTME / EN: MAIN EXECUTION
 # =============================================================================
 def main(target_samples: int = 12_000_000, login_hf: bool = False) -> None:
-    # [V27.6 FIX] Reproducibility
+    # Reproducibility
     random.seed(42)
 
     """
-    TR: Titan Onyx Storm curriculum öğrenme veri indirme işlemini yürütür.
-    EN: Executes Titan Onyx Storm curriculum learning data download.
+    TR: Titan curriculum öğrenme veri indirme işlemini yürütür.
+    EN: Executes Titan curriculum learning data download.
 
     İşlem / Process:
     - Stage 1: Pure Logic (42%) - Code + Math
@@ -672,7 +678,7 @@ def main(target_samples: int = 12_000_000, login_hf: bool = False) -> None:
     - Stage 5: Tool Use (12%) - Function calling/Tool use
     """
     print("="*60)
-    print("🚀 TITAN ONYX STORM - CURRICULUM LEARNING DATA PIPELINE")
+    print("🚀 TITAN - CURRICULUM LEARNING DATA PIPELINE")
     print("="*60)
     
     # Optional HF login (never at import time)

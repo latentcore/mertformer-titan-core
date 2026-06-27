@@ -1193,11 +1193,13 @@ def train() -> None:
                      if "tau" in n or "liquid" in n:
                          p.requires_grad = True
                  
-                 # Build 30 polish: Rebuild Optimizer to sync groups
-                 # Note: With Accelerate, optimizer rebuilding is tricky. 
-                 # We simply update params requires_grad, Accelerate/AdamW should handle it mostly.
-                 # Full rebuild requires re-wrap with Accelerate. Skipping for safety in DDP.
-                 pass 
+                 # NOTE: This branch ONLY toggles requires_grad=True above; it does NOT
+                 # rebuild the optimizer or re-sync optimizer param groups.
+                 # Optimizer rebuild is intentionally skipped for safety under Accelerate/DDP
+                 # (a full rebuild would require re-wrapping with Accelerate).
+                 # AdamW continues with its existing param groups; newly-unfrozen params
+                 # are picked up because they are already registered in the optimizer.
+                 pass
                          
             # 2. Emergency Cooldown Phase (Refreeze)
             elif liquid_frozen_until > 0:

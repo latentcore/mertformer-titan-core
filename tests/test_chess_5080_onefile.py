@@ -1838,6 +1838,13 @@ def test_import_optional_sdk_module_returns_none_when_unavailable(monkeypatch, t
 
 
 def test_try_lowbit_kernel_uses_dynamic_sdk_loader(monkeypatch) -> None:
+    # HONEST NOTE: this only checks that the dynamic SDK dispatcher is loaded and
+    # consulted. The selected backend (here "mps_optimized") is numerically inert:
+    # `_try_lowbit_kernel` returns plain `F.linear(activation_quant(x), weight_quant(w), bias)`
+    # regardless of which backend the dispatcher reports. There is no real lowbit /
+    # MPS-optimized acceleration path -- the backend selection is decorative. A real
+    # accelerated kernel would have to be wired up in scripts/chess_5080_onefile.py
+    # (_try_lowbit_kernel); this is NOT a performance-pass gate.
     class DispatcherModule:
         @staticmethod
         def select_backend(x: object, w: object) -> str:
@@ -1895,6 +1902,12 @@ def test_unitary_qinn_matches_canonical_when_enabled() -> None:
 
 
 def test_mla_matches_canonical_forward_and_cache() -> None:
+    # NOTE (naming drift): "MLA" here is a misnomer. Both the onefile `onefile.MLA`
+    # and the canonical `CanonicalMLA` (imported as `layers.mla.GQA`) implement
+    # GQA (grouped-query attention), NOT latent multi-head attention -- there is no
+    # low-rank/latent KV compression. The test name and the `MLA` symbol are kept
+    # only to mirror the (frozen) onefile copy; the real rename belongs in
+    # scripts/chess_5080_onefile.py (MLA -> GQA).
     torch.manual_seed(19)
     run_cfg = make_mirror_cfg(
         hidden_size=32,

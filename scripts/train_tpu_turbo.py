@@ -46,9 +46,12 @@ except ImportError:
 
 def train_tpu():
     """
-    TITAN TPU TURBO MODE (v5e-8 Optimized)
-    --------------------------------------
-    - Bfloat16 Native (TPU Sweet Spot)
+    TITAN TPU experimental lane (v5e-8 oriented; perf UNMEASURED)
+    ------------------------------------------------------------
+    NOTE: "turbo", "sweet spot" and "100% efficiency" labels below are aspirational
+    descriptions, NOT measured benchmarks. No throughput/efficiency numbers have been
+    captured for this lane.
+    - Bfloat16 Native (TPU-preferred dtype)
     - No BitsAndBytes (Incompatible with TPU) - Using BF16 Teacher
     - Data Streaming Boost for XLA
 
@@ -83,7 +86,7 @@ def train_tpu():
     set_seed(cfg.seed)
     
     if accelerator.is_main_process:
-        print("🚀 TITAN TPU TURBO INITIALIZED (v5e-8 Detected)")
+        print("🚀 TITAN TPU experimental lane initialized (v5e-8 oriented; perf unmeasured)")
         print("⚠️  NOTICE: BitsAndBytes disabled. Using Native BF16 for Teacher.")
 
     # 1. Mini Data Alchemy for TPU (Kaggle Storage Safe)
@@ -136,7 +139,7 @@ def train_tpu():
     student = MertFormer()
     
     # ⚠️ TPU Memory Guard: 70B BF16 is 140GB. v5e-8 is 128GB.
-    # We MUST use FSDP or a smaller teacher for 100% TPU efficiency.
+    # We MUST use FSDP or a smaller teacher to fit HBM (efficiency UNMEASURED).
     # We will automatically switch to 8B teacher if running on TPU v5e to prevent OOM.
     tpu_teacher_id = "meta-llama/Llama-3.1-8B-Instruct" 
     if accelerator.is_main_process:

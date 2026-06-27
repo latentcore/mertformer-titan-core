@@ -1,7 +1,12 @@
 # Python Baseline (Review-Ready)
 
-This repository is pinned for a **Python 3.11** baseline to minimize ecosystem surprises
-(PyTorch/Transformers compatibility, stable wheels, and the `snake_demo.py` pygame demo).
+This repository targets a **Python 3.11** baseline to minimize ecosystem surprises
+(stable wheels and the `snake_demo.py` pygame demo). The exact, authoritative
+runtime versions are recorded in `repro/pip_freeze.txt` and `repro/env.lock`
+(currently `torch==2.10.0`, `transformers==5.3.0`); treat those lock files as the
+source of truth rather than this prose. The "compatibility" rationale here is
+descriptive intent, not a measured guarantee that 3.11 is the only supported
+interpreter for the pinned versions.
 
 ## Local Setup (macOS/Linux)
 

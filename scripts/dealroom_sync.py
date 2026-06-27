@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -12,7 +13,15 @@ DEALROOM = ROOT / 'mertformer-titan-dealroom-private'
 
 def cmd(cwd: Path, *args: str) -> str:
     p = subprocess.run(args, cwd=cwd, capture_output=True, text=True, check=False)
-    return p.stdout.strip() if p.returncode == 0 else ''
+    if p.returncode != 0:
+        # Komut basarisiz oldu; geriye bos string donuyoruz (rapor o alani 'bos'
+        # gosterir) ama hatanin sessizce yutulmamasi için stderr'e uyari yaziyoruz.
+        sys.stderr.write(
+            f"dealroom_sync: command failed (rc={p.returncode}) in {cwd}: "
+            f"{' '.join(args)}: {p.stderr.strip()}\n"
+        )
+        return ''
+    return p.stdout.strip()
 
 
 def main() -> int:

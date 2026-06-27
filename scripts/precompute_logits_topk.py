@@ -242,13 +242,13 @@ def extract_topk_logits(
 # [PARALLEL] Multi-GPU data-parallel sharding (additive; default path untouched).
 #
 # TR: Cok-GPU paralel precompute. Her worker (GPU) TUM packed stream'i SIFIRDAN
-#     deterministik paketler (boylece her seq_index icin identity AYNI kalir) ama
+#     deterministik paketler (boylece her seq_index için identity AYNI kalır) ama
 #     teacher-forward'u yalniz KENDI bloklarina yapar. Blok atamasi BLOK-DONGUSEL:
 #     block_index = seq_index // chunk_size; worker, (block_index % num_shards ==
 #     shard_id) olan bloklari isler. Her shard TAM bir blok icerir ve ilk
 #     seq_index'iyle adlandirilir (part_{block_index*chunk_size}); reader shard'lari
-#     tam-sayi part-index'ine gore sirali okudugu icin GLOBAL seq sirasi korunur ve
-#     train-side per-sequence identity assert'i AYNEN gecerli kalir. Resume STATELESS:
+#     tam-sayi part-index'ine gore sıralı okudugu için GLOBAL seq sirasi korunur ve
+#     train-side per-sequence identity assert'i AYNEN geçerli kalır. Resume STATELESS:
 #     bir blogun shard dosyasi varsa o blok atlanir (idempotent).
 # EN: Multi-GPU data-parallel precompute. Each worker (GPU) re-packs the WHOLE stream
 #     from line 0 deterministically (so every seq_index keeps the SAME identity) but
@@ -415,7 +415,7 @@ def precompute_stage(
             torch.cuda.empty_cache()
 
     # TR: [tier-2 HIGH] iter_packed_sequences durumsal (greedy buffer carryover) bir
-    #     packer; ortadan baslatmak (lines_consumed'dan) tek-gecis packing'den sapip
+    #     packer; ortadan başlatmak (lines_consumed'dan) tek-geçiş packing'den sapıp
     #     resume seam'inde identity uyusmazligi uretebiliyordu. Cozum: HER ZAMAN satir
     #     0'dan tekrar-paketle (deterministik) ve sadece zaten uretilmis (seq_index <
     #     resume_seq) dizilerin TEACHER-FORWARD'ini atla. Packing ucuz; pahali olan
@@ -460,6 +460,7 @@ def precompute_stage(
 
     batch_seqs: list[dict] = []
     last_consumed = lines_consumed - 1
+    failed_batches = 0
 
     for seq in iter_packed_sequences(_rows(), tokenizer, max_seq, eos_id, pad_id):
         # Skip the teacher forward for sequences already emitted in a prior run.
@@ -471,6 +472,10 @@ def precompute_stage(
                 last_consumed = _process_batch(batch_seqs)
                 sequences_emitted += len(batch_seqs)
             except Exception as exc:
+                # Batch failed: count it so the stage is NOT marked complete below.
+                # Fallback (skip the batch and continue) is preserved; the resume
+                # state will stay partial so this block is retried on the next run.
+                failed_batches += 1
                 logger.warning("Teacher forward failed for %s batch: %s", stage_name, exc)
             batch_seqs = []
             if len(shard_buffer) >= chunk_size:
@@ -481,14 +486,29 @@ def precompute_stage(
             last_consumed = _process_batch(batch_seqs)
             sequences_emitted += len(batch_seqs)
         except Exception as exc:
+            failed_batches += 1
             logger.warning("Teacher forward failed for final %s batch: %s", stage_name, exc)
         batch_seqs = []
 
     if shard_buffer:
         flush_chunk(max(last_consumed, total_lines - 1))
 
-    # Mark fully consumed even if the final partial buffer produced no shard.
-    _save_resume_state(logits_dir, stage_name, lines_consumed=total_lines, sequences_emitted=sequences_emitted)
+    if failed_batches:
+        # Coverage gap: one or more batches failed their teacher forward. Do NOT
+        # claim the stage is fully consumed (that would silently skip the missing
+        # sequences on resume). Persist a PARTIAL resume state instead so the next
+        # run re-packs from line 0 and retries the not-yet-emitted sequences.
+        logger.warning(
+            "%s incomplete: %s batch(es) failed; leaving resume state partial for retry.",
+            stage_name, failed_batches,
+        )
+        _save_resume_state(
+            logits_dir, stage_name,
+            lines_consumed=lines_consumed, sequences_emitted=sequences_emitted,
+        )
+    else:
+        # Mark fully consumed even if the final partial buffer produced no shard.
+        _save_resume_state(logits_dir, stage_name, lines_consumed=total_lines, sequences_emitted=sequences_emitted)
 
     elapsed = time.time() - started
     logger.info(

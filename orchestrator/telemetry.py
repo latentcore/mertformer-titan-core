@@ -1,8 +1,14 @@
 """
 Telemetry helpers for expected-vs-actual tracking and system snapshots.
+
+NOTE (scope): This module lives under orchestrator/ and is inert / out-of-scope
+for the canonical 45K training path -- that path runs with the orchestrator
+disabled (feature-flag off). The helpers below are best-effort observability
+shims; failures degrade gracefully rather than aborting a run.
 """
 from __future__ import annotations
 
+import logging
 import math
 import shutil
 import subprocess
@@ -20,6 +26,8 @@ try:
     import torch
 except Exception:  # pragma: no cover
     torch = None  # type: ignore
+
+logger = logging.getLogger(__name__)
 
 GPU_MEMORY_FIELDS: Tuple[str, ...] = (
     "gpu_device",
@@ -74,6 +82,7 @@ def gpu_memory_gb() -> Optional[Dict[str, float]]:
             "total_gb": float(total_gb),
         }
     except Exception:
+        logger.warning("gpu_memory_gb() failed; returning None", exc_info=True)
         return None
 
 
@@ -130,6 +139,7 @@ def nvidia_smi_snapshot() -> Dict[str, Optional[float]]:
             "gpu_mem_total_gb_smi": (mem_total_mb / 1024.0) if mem_total_mb is not None else None,
         }
     except Exception:
+        logger.warning("nvidia_smi_snapshot() failed; returning empty dict", exc_info=True)
         return {}
 
 
@@ -143,6 +153,7 @@ def disk_usage_gb(path: str | Path | None = None) -> Dict[str, Optional[float]]:
             "disk_total_gb": float(usage.total / (1024 ** 3)),
         }
     except Exception:
+        logger.warning("disk_usage_gb() failed for %s; returning None fields", target, exc_info=True)
         return {
             "disk_used_gb": None,
             "disk_free_gb": None,
@@ -175,7 +186,7 @@ def system_snapshot(path: str | Path | None = None) -> Dict[str, float | str | N
             snapshot["ram_used_gb"] = float(mem.used / (1024 ** 3))
             snapshot["ram_total_gb"] = float(mem.total / (1024 ** 3))
         except Exception:
-            pass
+            logger.warning("system_snapshot() psutil read failed; cpu/ram left as None", exc_info=True)
     gpu = gpu_memory_gb()
     if gpu:
         snapshot.update({f"gpu_{k}": v for k, v in gpu.items()})
@@ -238,6 +249,14 @@ class ExpectedVsActual:
     tolerance: Dict[str, float]
 
     def compare(self, actual: Dict[str, float]) -> Dict[str, Dict[str, float]]:
+        """Compare ``actual`` values against ``expected`` per key.
+
+        For each key the per-key tolerance is looked up in ``self.tolerance``
+        with a default of ``0.0``. A default tolerance of ``0.0`` means the
+        ``ok`` flag requires *exact* equality (``abs(delta) <= 0``); callers
+        that do not supply a tolerance for a key therefore get strict equality.
+        Provide a per-key tolerance to allow a band around the target.
+        """
         report: Dict[str, Dict[str, float]] = {}
         for key, target in self.expected.items():
             if key not in actual:

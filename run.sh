@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==============================================================================
-# 🚀 MERTFORMER TITAN (ONYX STORM) - ULTIMATE LAUNCHPAD
+# 🚀 MERTFORMER TITAN - ULTIMATE LAUNCHPAD
 # ------------------------------------------------------------------------------
 # Copyright (c) 2026 MertFormer AI Team. All Rights Reserved.
 # Version: v1.0 (Build 30) — Pre-Training
@@ -383,7 +383,7 @@ if [[ "$OS_TYPE" == "Linux" ]] && command -v nvidia-smi &> /dev/null; then
         # Debug (sadece sorun varsa aktif et)
         # export NCCL_DEBUG=INFO
         
-        echo "   🚀 NCCL Optimization: ACTIVE (+5-10% speedup on multi-GPU)"
+        echo "   🚀 NCCL Optimization: ACTIVE (multi-GPU)"
     else
         echo "ℹ️  Single GPU detected: NCCL tuning skipped (not needed)"
     fi

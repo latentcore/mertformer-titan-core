@@ -1,6 +1,15 @@
 """Experimental Triton kernel for ternary weight + INT8 activation GEMM.
 
-Note: This kernel is under active development.
+Status: EXPERIMENTAL / NOT CANONICAL. This kernel is under active development
+and is NOT the production path. The canonical / production fused BitLinear path
+lives in ``triton_fused_bitlinear.py``; prefer that for real workloads.
+
+The default ``_matmul_kernel`` here is a naive int32-accumulate loop
+(``acc += tl.sum(a[:, :, None] * b[None, :, :], ...)``) and is intentionally
+NOT tensor-core optimized. ``_matmul_kernel_tc`` (``use_tensorcore=True``) is a
+tensor-core-friendly variant that is also experimental and unverified. There is
+functional overlap with the canonical fused kernel; this module is kept for
+development/benchmarking only and should not be relied on as the sealed path.
 """
 from __future__ import annotations
 

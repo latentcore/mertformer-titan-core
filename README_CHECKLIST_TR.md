@@ -1,5 +1,7 @@
 # ✅ MertFormer Titan README Kalite Kontrol Listesi
 
+> DÜRÜSTLÜK NOTU: Aşağıdaki `[x]` işaretleri, eğitim öncesi taslak aşamasında elle yapılan ÖZ-BEYANDIR; otomatik doğrulamadan geçmiş bir GEÇME-KAPISI (pass-gate) DEĞİLDİR. Üretim metrikleri/karşılaştırmalar henüz kanıtlanmadı.
+
 ## 1️⃣ Proje Yapısı
 - [x] **Klasör Listesi:** Config, layers, scripts, checkpoints, logs dosyalarının tamamı listelendi.
 - [x] **Açıklamalar:** Dosya amaçları net bir şekilde tanımlandı (Örn: `bitlinear.py` → 1.58-bit Kuantizasyon).
@@ -19,7 +21,7 @@
 ## 4️⃣ Metrikler / SSS / Karşılaştırmalar
 - [x] **Adli Veriler:** Örnek PoC hash'i eklendi; üretim metrikleri beklemede.
 - [x] **Öngörüler:** Eğitim öncesi tahmin/ hedef olarak işaretlendi.
-- [x] **Karşılaştırmalar:** Llama-3/Phi-3 tablosu tutarlı.
+- [n/a] **Karşılaştırmalar:** Llama-3/Phi-3 tablosu — 4KB README kesiminde kaldırıldı (README_TR.md'de tablo yok).
 - [x] **SSS (FAQ):** 1.58-bit kalitesi ve Mobil kapasite konuları ele alındı.
 
 ## 5️⃣ Bağlantılar / Rozetler / Yazım Denetimi

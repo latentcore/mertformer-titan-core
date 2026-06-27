@@ -32,14 +32,14 @@ This architecture is an engineering prototype targeting next-generation on-devic
 
 ## 2. Deep Technical Architecture Analysis
 
-The cornerstone of the MertFormer Titan project is its hardware-aware structure that goes beyond standard transformer blocks. The model has **2.64 billion parameters**, yet its inference cost is significantly lower than classical models. (Note: the **measured runtime parameter total is ~3.67B (3,672,982,022)** and is the figure used for factual claims; 2.64B is the architecture design target. README and `ARCHITECTURE.md` state this distinction the same way.)
+The cornerstone of the MertFormer Titan project is its hardware-aware structure that goes beyond standard transformer blocks. The model has a **measured runtime parameter total of ~3.67B (3,672,982,022)** — the figure used for all factual claims — yet its inference cost is significantly lower than classical models. (Note: 2.64B is the architecture *design target*, not the measured total; per `DECISIONS.md`, factual claims use the 3.67B measured figure. README and `ARCHITECTURE.md` state this distinction the same way.)
 
 ### 2.1 BitNet b1.58 and the Ternary Computing Revolution
 While traditional models use 16-bit (BF16), MertFormer Titan reduces weights to values of $\{-1, 0, 1\}$ based on **BitNet b1.58** technology.
 
 *   **Memory Savings (Estimate):** 93.75% theoretical reduction.
-*   **VRAM Requirement (Estimate):** ~0.65 GB (for 2.64B parameters, requires low-bit inference path).
-*   **Energy Efficiency (Target):** Up to 70x energy savings on NPUs if ternary math runs on optimized kernels.
+*   **VRAM Requirement (Estimate):** ~0.65 GB (computed for the **2.64B design-target** parameter count, not the 3.67B measured total; requires low-bit inference path).
+*   **Energy Efficiency (Unmeasured Target):** Up to 70x energy savings on NPUs *if* ternary math runs on optimized kernels. No such optimized kernel exists yet — the current Metal/Vulkan/NPU code paths fall back to a generic `F.linear` (`torch`) passthrough, so this figure is a projected target, not a measurement.
 
 **Mathematical Quantization Formula (`bitlinear.py`):**
 $$w_q = \text{clamp}(\text{round}(\frac{w}{\gamma + \epsilon}), -1, 1)$$
@@ -130,13 +130,13 @@ QINN remains intentionally disabled by default (`use_qinn=false`) to preserve th
 
 ## 4. Hardware Target: Samsung S25 & Snapdragon 8 Elite
 
-MertFormer Titan is not general software; it is an **"NPU-Native"** engine. The following data points are **Architectural Simulation Targets** calculated based on the model's operational complexity (OPs) and memory footprint.
+MertFormer Titan is designed as an **"NPU-Native"** engine. Note: the optimized NPU/Metal/Vulkan kernels are not yet implemented — these backends currently run a generic `torch` (`F.linear`) fallback rather than dedicated low-bit shaders. The following data points are therefore **Architectural Simulation Targets** calculated from the model's operational complexity (OPs) and memory footprint, not measured throughput.
 
 | Platform | Estimated Speed (Target) | Memory | Optimization |
 | :--- | :---: | :---: | :--- |
 | **Samsung S25 (NPU)** | **45 - 107 t/s** | < 2.0 GB | Full (JIT + BitNet) |
 | iPhone 17 Pro | 40 - 80 t/s | < 2.5 GB | High (CoreML) |
-| MacBook Pro (M4) | 110+ t/s | ~3.0 GB | Maximum (Metal) |
+| MacBook Pro (M4) | 110+ t/s | ~3.0 GB | Maximum (Metal, target — no optimized Metal kernel yet) |
 
 > [!NOTE]
 > Real-world performance metrics will be validated through physical device testing following the completion of the training phase.

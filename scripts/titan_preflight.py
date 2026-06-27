@@ -844,7 +844,10 @@ def architectural_audit():
         log(f"GQA Dimensions: Consistent ({cfg.hidden_size} features).", "success")
         
     # 3. BitNet Sanity
-    log("BitNet b1.58 logic: ACTIVE (Locked).", "success")
+    # NOTE: This is a static architectural note, NOT a measured pass-gate.
+    # No BitLinear/ternary-weight check is performed here; the line below only
+    # records the intended config and must not be read as a verified result.
+    log("BitNet b1.58 logic: configured (not measured here).", "info")
     return True
 
 def data_distill_test():
@@ -1086,7 +1089,7 @@ def run_default_profile() -> int:
             return 1
         
         success = True
-        log("OVERALL SYSTEM STATUS: 100% PROTECTED & READY.", "success")
+        log("OVERALL SYSTEM STATUS: all preflight checks passed.", "success")
     except Exception as e:
         log(f"CRITICAL PREFLIGHT FAILURE: {e}", "error")
         import traceback

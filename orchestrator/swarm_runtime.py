@@ -1,8 +1,18 @@
-"""Deterministic 3/15/45-agent swarm runtime."""
+"""Swarm runtime for the 3/15/45-agent profiles (nano/micro/macro).
+
+INERT / OUT-OF-SCOPE: this orchestrator module is feature-flagged off on the
+45K training path and is not exercised there. Agent counts and any
+"deterministic" behavior come from ``agent_registry.get_profile_specs`` and the
+planner; this file makes no determinism guarantee on its own. Treat the profile
+labels as descriptive, not as a measured/proven claim.
+"""
 from __future__ import annotations
 
+import logging
 from dataclasses import asdict, dataclass
 from typing import Callable, Dict, List, Optional
+
+logger = logging.getLogger(__name__)
 
 from .agent_registry import AgentSpec, get_profile_specs
 from .failure_budget import FailureBudget
@@ -45,6 +55,10 @@ class SwarmRuntime:
         try:
             result = self.generate_fn(action_text)
         except Exception as exc:  # pragma: no cover
+            # Do not swallow silently: surface via logging so the failure is
+            # diagnosable. Behavior is preserved (still returns a marker string
+            # the caller can detect via the "generation_error=" prefix).
+            logger.warning("generate_fn failed for agent %s: %s", agent.agent_id, exc)
             return f"[{agent.agent_id}:{agent.role}] generation_error={exc}"
         return f"[{agent.agent_id}:{agent.role}] {result}".strip()
 

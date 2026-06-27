@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import os
 import shutil
 import subprocess
@@ -39,8 +40,10 @@ def unlock_path(path: Path) -> None:
     try:
         current_mode = path.stat().st_mode
         os.chmod(path, current_mode | 0o200)
-    except Exception:
-        pass
+    except Exception as exc:
+        # Best-effort unlock; the actual delete failure (if any) is reported by
+        # delete_path. Log so the suppressed chmod error is still diagnosable.
+        logging.debug("unlock_path chmod failed for %s: %s", path, exc)
 
 
 def delete_path(path: Path) -> str | None:

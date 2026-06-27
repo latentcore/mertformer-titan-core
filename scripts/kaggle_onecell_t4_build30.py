@@ -323,6 +323,10 @@ RUN_CONFIG: Dict[str, Any] = {
     "mert_use_moe": True,
     "mert_use_liquid": True,
     "mert_use_qinn": False,
+    # NOT: Asagidaki mimari varsayilanlar (hidden/layers/band) aktif RUN_PROFILE
+    # tarafindan EZILIR (or. t4_onecell_sweetspot hidden=1024/layers=12, band 160-240M).
+    # Bu degerler yalniz hicbir profil secilmediginde gecerli olur; profil merge ile
+    # gecersiz kalan/yaniltici varsayilanlardir, gercek calisma boyutunu yansitmaz.
     "mert_hidden": 272,
     "mert_layers": 8,
     "mert_heads": 8,
@@ -1702,15 +1706,23 @@ def build_benchmark_winner_matrix(bench: Dict[str, Any]) -> Dict[str, Any]:
             "prefer": "lower",
         },
     }
+    # apples_to_apples=False: mertformer ve vanilla parametre-esitli (param-matched)
+    # olmadigi icin metrik-bazli "winner" adil bir karsilastirma DEGILDIR. Yaniltici
+    # kazanan iddiasi uretmemek icin tum winner alanlari "not_comparable" yapilir.
+    # Ham metrikler ("metrics") yine raporlanir, yorum sahibinindir.
+    apples_to_apples = False
     winners: Dict[str, str] = {}
     for k, row in metrics.items():
+        if not apples_to_apples:
+            winners[k] = "not_comparable"
+            continue
         mv = row["mertformer"]
         vv = row["vanilla"]
         if row["prefer"] == "higher":
             winners[k] = "mertformer" if mv > vv else "vanilla"
         else:
             winners[k] = "mertformer" if mv < vv else "vanilla"
-    return {"metrics": metrics, "winners": winners, "apples_to_apples": False}
+    return {"metrics": metrics, "winners": winners, "apples_to_apples": apples_to_apples}
 
 
 def build_tradeoff_notes(
@@ -3899,6 +3911,16 @@ class MoELayer(nn.Module):
 
 
 class MLA(nn.Module):
+    """GQA (grouped-query attention) — etiket netlestirmesi.
+
+    Sinif adi tarihsel olarak "MLA" (multi-head latent attention) olsa da bu
+    implementasyon gercekte grouped-query attention'dir: ayri q_proj/k_proj/v_proj
+    ve num_kv_heads<num_heads ile _repeat_kv tekrari kullanilir. DeepSeek-tarzi
+    latent-MLA (low-rank/compressed KV bottleneck: kv down/up projeksiyon) BURADA
+    YOKTUR. Kanonik kaynak layers/mla.py de bunu "intentionally NOT implemented"
+    olarak belgeler. Sinif adi frozen-path paritesi nedeniyle korunmustur (rename yok).
+    """
+
     def __init__(
         self,
         hidden: int,
@@ -4271,6 +4293,10 @@ def parity_self_check(model: MertFormerTiny, cfg: Dict[str, Any], device: str) -
         finite = bool(torch.isfinite(loss).item())
         if finite:
             loss.backward()
+        # NOT: all_flags_ok yalnizca extension bayraklarinin "tum-uzantilar-acik"
+        # (mert_enable_all_extensions) ayariyla TUTARLI olup olmadigini olcer; bu bir
+        # guvenlik/davranis paritesi DEGILDIR. Her satir, ilgili model.cfg bayraginin
+        # beklenen enable-all degerine esit olup olmadigini kontrol eder (tutarlilik).
         flags_ok = {
             "hebbian": bool(model.cfg.use_hebbian_plasticity) == bool(cfg.get("mert_enable_all_extensions", True)),
             "neuro_symbolic": bool(model.cfg.use_neuro_symbolic_layer) == bool(cfg.get("mert_enable_all_extensions", True)),
@@ -5446,6 +5472,10 @@ def run_benchmark_suite(
             skip_attention_qkvo=bool(cfg.get("bitnet_skip_attention_qkvo", True)),
         )
 
+    # FAIRNESS UYARISI: Vanilla baseline boyutlari (hidden=384/layers=8/heads=8) SABIT
+    # kodludur; MertFormer ise cfg-driven (mert_hidden/mert_layers/mert_heads). Iki model
+    # parametre-esitli (param-matched) DEGILDIR. Bu nedenle tok/s ve loss karsilastirmasi
+    # apples-to-apples degildir (build_benchmark_winner_matrix apples_to_apples=False).
     vanilla = VanillaTransformerLM(
         vocab_size=int(cfg["vocab_size"]),
         hidden_size=384,
@@ -5908,6 +5938,19 @@ def build_public_summary(payload: Dict[str, Any], verdict: Dict[str, Any]) -> Di
     unknown_or_pending = list(payload.get("pending_long_run_flags", []))
     if payload.get("degraded_conditions"):
         unknown_or_pending.extend([str(x) for x in payload.get("degraded_conditions", [])])
+    # "zero-known-critical-bugs" iddiasini sabit string yerine olculmus kararlilik
+    # sayaclarina bagla: yalniz nan/oom/runtime-error sayaclari sifirsa ileri surulur.
+    _stab = payload.get("stability_index", {})
+    _no_critical = (
+        int(_stab.get("nan_count", 0)) == 0
+        and int(_stab.get("oom_count", 0)) == 0
+        and int(_stab.get("runtime_error_count", 0)) == 0
+    )
+    zero_known_critical_bugs_claim = (
+        "zero-known-critical-bugs this run"
+        if _no_critical
+        else "critical-runtime-events-detected (see stability_index counters)"
+    )
     return {
         "schema": "build30_public_summary_v1",
         "run_utc": str(payload.get("generated_at_utc", _utc_now())),
@@ -5919,7 +5962,7 @@ def build_public_summary(payload: Dict[str, Any], verdict: Dict[str, Any]) -> Di
         "router_max_load_p95": float(payload.get("mini_probe_report", {}).get("router_max_load_p95", 0.0)),
         "collapse_events": int(payload.get("moe_sparse_report", {}).get("collapse_events", 0)),
         "final_verdict": str(verdict.get("final_verdict", "provisional")),
-        "zero_known_critical_bugs_claim": "zero-known-critical-bugs this run",
+        "zero_known_critical_bugs_claim": zero_known_critical_bugs_claim,
         "dataset_access_constraints": {
             "strict_data": bool(payload.get("preflight", {}).get("strict_data", False)),
             "hf_token_present": bool(payload.get("preflight", {}).get("hf_token_present", False)),
@@ -6805,7 +6848,16 @@ def run_all() -> Dict[str, Any]:
         "claim_block": {
             "coding_claim": "blocked" if coding_claim_blocked else "allowed",
             "strict_data_claim": "blocked" if preflight.get("preflight_status") != "pass" else "allowed",
-            "bug_free_claim_text": "zero-known-critical-bugs this run",
+            # Olculmus kararlilik sayaclarina bagli: nan/oom/runtime-error sifirsa iddia edilir.
+            "bug_free_claim_text": (
+                "zero-known-critical-bugs this run"
+                if (
+                    int(stability_index.get("nan_count", 0)) == 0
+                    and int(stability_index.get("oom_count", 0)) == 0
+                    and int(stability_index.get("runtime_error_count", 0)) == 0
+                )
+                else "critical-runtime-events-detected (see stability_index counters)"
+            ),
         },
         "runtime_model_params": int(mert_params_runtime),
         "gpu_meta": gpu_meta,

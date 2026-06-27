@@ -1,18 +1,26 @@
 """
 ==============================================================================
-MERTFORMER TITAN (ONYX STORM) - AGI ORCHESTRATOR CORE
+MERTFORMER TITAN (ONYX STORM) - COGNITIVE ORCHESTRATOR CORE
 -------------------------------------------------------------------------------
 Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
-Project: Mobile-First LLM Architecture for Samsung S25 NPU
+NOTE (scope): This orchestrator module is inert / out-of-scope for the 45K
+training path; it is feature-flagged OFF in that pipeline. The module is a
+heuristic cognitive loop (perceive -> think -> act -> reflect), NOT a measured
+"AGI" system; the "AGI" wording elsewhere is a research label, not a claim.
+
+Project: heuristic cognitive orchestrator (host: desktop, device auto-select
+         cuda/mps/cpu). The "Samsung S25 NPU" line below is an aspirational
+         target platform note only; the actual code path does NOT use any NPU
+         backend (see __init__ device selection: cuda/mps/cpu only).
 Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
 __version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__author__ = "Mert Yünlü"
 
 import sys
 import logging
@@ -99,7 +107,8 @@ class EpisodeResult:
 
 class MertFormerOrchestrator:
     """
-    MertFormer Titan AGI Orchestrator.
+    MertFormer Titan cognitive orchestrator (heuristic cognitive loop, not a
+    measured "AGI" system; "AGI" is a research label only).
     Combines all sense modules, memory and model inference.
     """
     
@@ -157,7 +166,7 @@ class MertFormerOrchestrator:
             self._load_model()
         
         # ================================================================
-        # AGI COGNITIVE ARCHITECTURE
+        # COGNITIVE ARCHITECTURE (heuristic cognitive loop; "AGI" is a label)
         # ================================================================
         from .reasoning_engine import ReasoningEngine
         from .tool_executor import ToolExecutor
@@ -188,11 +197,11 @@ class MertFormerOrchestrator:
             world_model=self.world_model,
         )
         
-        print(f"✅ Orchestrator hazır! (AGI Cognitive Loop aktif)")
+        print(f"✅ Orchestrator hazır! (Cognitive Loop aktif)")
 
     def think(self, task: str, max_iterations: int = 5) -> dict:
         """
-        AGI-style cognitive processing - Perceive -> Think -> Act -> Reflect.
+        Cognitive processing loop - Perceive -> Think -> Act -> Reflect.
         """
         result = self.cognitive_loop.run(task, max_iterations=max_iterations)
         return {
@@ -208,7 +217,12 @@ class MertFormerOrchestrator:
     @staticmethod
     def _default_tool_params(tool_id: str, goal: str, candidate_conclusion: str) -> Dict[str, Any]:
         if tool_id == "tool.calculate":
-            return {"expression": "2 + 2"}
+            # Extract a math expression from the goal (mirrors
+            # CognitiveLoop._infer_tool_params); fall back to the raw goal.
+            import re
+            match = re.search(r'[\d\+\-\*\/\(\)\.\s]+', goal)
+            expression = match.group().strip() if match else goal
+            return {"expression": expression or goal}
         if tool_id == "tool.verify_consistency":
             return {"text": candidate_conclusion, "reference": goal}
         if tool_id == "tool.search_local_docs":
@@ -262,6 +276,7 @@ class MertFormerOrchestrator:
                 focus_action = best.action_plan[0] if best.action_plan else "analyze"
                 world_prediction = self.world_model.predict_next_state(focus_entity, focus_action)
             except Exception as exc:
+                logger.warning(f"world_loop_error: {exc}")
                 notes.append(f"world_loop_error:{exc}")
         loops["world"] = {"prediction": world_prediction}
         if world_prediction:
@@ -316,6 +331,7 @@ class MertFormerOrchestrator:
                 )
                 trace.append({"stage": "memory", "output": "episode_saved"})
             except Exception as exc:
+                logger.warning(f"memory_write_failed: {exc}")
                 notes.append(f"memory_write_failed:{exc}")
                 trace.append({"stage": "memory", "output": "episode_save_failed", "blocked": True})
 

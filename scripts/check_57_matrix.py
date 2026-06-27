@@ -29,6 +29,10 @@ class ItemCheck:
 
     @property
     def green(self) -> bool:
+        # Scaffold-presence heuristic, NOT a capability proof: True when at
+        # least 2 of the 3 (code / integration / test) scaffolding signals
+        # are present. "green" here means "scaffolding in place" and does NOT
+        # mean the capability is proven (see legend in write_reports).
         return int(self.code) + int(self.integration) + int(self.test) >= 2
 
     def to_dict(self) -> dict:
@@ -140,6 +144,9 @@ def build_payload(checks: list[ItemCheck], out_of_scope_pending_ids: set[int]) -
         "generated_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "total_items": total,
         "green_items": green,
+        # NOTE: all_green reflects scaffold-presence coverage (every row has
+        # >=2 of code/integration/test signals), NOT proven capability. It is
+        # a scaffolding-closure signal, not a capability pass-gate.
         "all_green": green == total == 57,
         "no_pending_in_scope": len(in_scope) == 0,
         "in_scope_pending_ids": in_scope,

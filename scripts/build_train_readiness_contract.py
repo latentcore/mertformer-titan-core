@@ -24,8 +24,11 @@ PROFILES = [
             'TITAN_REQUIRE_GATED_TEACHER': '1',
             'TITAN_USE_PRECOMPUTED_LOGITS': '1',
             # [tier-2 BLOCKER] offline_clean is teacher-tokenizer KD; precompute refuses
-            # TR. Forcing TR=1 here makes preflight's logit-alignment check report
-            # TOKENIZER_IDENTITY_DRIFT and turns the healthy lane red.
+            # TR. This lane intentionally does NOT set TITAN_USE_TR_TOKENIZER=1.
+            # Forcing TITAN_USE_TR_TOKENIZER=1 here makes preflight's logit-alignment
+            # check report TOKENIZER_IDENTITY_DRIFT and turns the healthy lane red.
+            # Single source of truth for this policy; build_offline_closure_pack.py
+            # (the feature_flag_governance.md generator) restates the same rule.
             'TITAN_PREFLIGHT_ALLOW_MISSING_STAGE_JSONL': '0',
             'TITAN_PREFLIGHT_REQUIRE_STAGE_JSONL': '1',
         },

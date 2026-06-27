@@ -1,10 +1,10 @@
 """Hard preflight gate: teacher-logit shards must align to the student token stream.
 
-TR: Mevcut preflight kontrolleri yalniz SAYI/VARLIK bakiyordu; per-sample KIMLIK
-    bakmiyordu. Bu betik her stage icin JSONL'i training ile AYNI sekilde yeniden
-    paketleyip, saklanan shard kimligini (identity) ilk-N + rastgele-K dizide HARD
-    dogrular. Hizasizlik = sessiz KD bozulmasi; bu kapi onu gurultulu bir on-ucus
-    hatasina cevirir.
+TR: Mevcut preflight kontrolleri yalnız SAYI/VARLIK bakıyordu; per-sample KİMLİK
+    bakmıyordu. Bu betik her stage için JSONL'i training ile AYNI şekilde yeniden
+    paketleyip, saklanan shard kimliğini (identity) ilk-N + rastgele-K dizide HARD
+    doğrular. Hizasızlık = sessiz KD bozulması; bu kapı onu gürültülü bir ön-uçuş
+    hatasına çevirir.
 EN: Existing preflight checks only counted/existence-checked shards; they never
     verified per-sample IDENTITY. For each stage this script re-packs the JSONL
     exactly as training does and HARD-asserts the stored shard identity for the

@@ -24,6 +24,7 @@ def main() -> int:
     args = parser.parse_args()
 
     errors: list[str] = []
+    canonical_sha: str | None = None
     if not CANONICAL.exists():
         errors.append(f"missing canonical file: {CANONICAL}")
     else:
@@ -44,7 +45,7 @@ def main() -> int:
         if "reports/codex_deep_audit_tr.md" not in lower:
             errors.append(f"canonical path reference missing: {p}")
 
-        if CANONICAL.exists() and sha(p) == canonical_sha:
+        if canonical_sha is not None and sha(p) == canonical_sha:
             errors.append(f"pointer must not be byte-identical to canonical: {p}")
 
     if errors:

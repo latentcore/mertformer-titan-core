@@ -6,12 +6,20 @@ Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
+
+NOTE (audit): inert / out-of-scope. UnitaryQINN is a speculative layer and is
+disabled on the 45K training path via the `use_qinn` feature-flag
+(config.config.cfg.use_qinn = False by default). The version label is sourced
+from the SDK (mertformer_sdk.__version__) instead of a hand-maintained fossil
+("BUILD30-V2") to avoid version drift.
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30-V2"
+try:
+    from mertformer_sdk import __version__  # single source of truth
+except Exception:  # pragma: no cover - SDK optional at import time
+    __version__ = "unknown"
 __author__ = "Mert"
 
 import torch

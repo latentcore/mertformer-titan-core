@@ -129,8 +129,8 @@ def _write_md(path: Path, title: str, items: list[dict[str, Any]], lang: str, li
     lines.append(f"# {title}")
     lines.append("")
     if lang == "tr":
-        lines.append("Bu dosya, kod tabaninda referanslanan dataset kimliklerinin otomatik envanteridir (best-effort).")
-        lines.append("Lisans/provenans dogrulamasi icin `datasets/SOURCES*.md` ve `datasets/LICENSES*.md` dosyalarini referans alin.")
+        lines.append("Bu dosya, kod tabanında referanslanan dataset kimliklerinin otomatik envanteridir (best-effort).")
+        lines.append("Lisans/provenans doğrulaması için `datasets/SOURCES*.md` ve `datasets/LICENSES*.md` dosyalarını referans alın.")
     else:
         lines.append("This file is an auto-generated inventory of dataset identifiers referenced by the codebase (best-effort).")
         lines.append("For license/provenance work, see `datasets/SOURCES*.md` and `datasets/LICENSES*.md`.")

@@ -52,6 +52,11 @@ class TestMertFormer(unittest.TestCase):
         self.assertFalse(torch.isnan(logits_full).any())
 
         # 2. Cached step-by-step (simulate generation)
+        # NOTE: This is a SAFETY/SMOKE test, NOT a cache-correctness gate.
+        # It does not verify token-for-token logit equivalence between the
+        # cached decode path and a full forward pass; it only checks shapes
+        # and finite (non-NaN) outputs. Do not treat a green result here as
+        # proof that the KV cache produces numerically identical logits.
         # Prefill
         past_kv = None
         logits_pre, _, past_kv = self.model(input_ids[:, :-1], use_cache=True)

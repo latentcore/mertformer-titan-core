@@ -13,6 +13,11 @@ except Exception as exc:  # pragma: no cover
     ) from exc
 
 
+# NOT: Asagidaki "V2" etiketleri surum fosili degildir; bu betigin amaci
+# yatirimci sunumuna (PPTX) bilerek "V2" damgasini ISLEMEKtir, yani bunlar
+# betigin fonksiyonel yuku/payload'udur. Surum kimligi tek bir kaynaktan
+# (release_manifest/config) turetilmedigi icin, build numarasi degisirse bu
+# string'ler elle guncellenmelidir (tek-kaynak baglama yapilmadi).
 REPLACEMENTS = [
     ("Build 30", "Build 30 V2"),
     ("Build30", "Build30 V2"),

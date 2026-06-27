@@ -279,6 +279,11 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
     "custom": {},
 }
 
+# Single source for the script version label. Previously this literal was
+# hand-copied into several config/report dicts (version fossil); consolidating
+# here keeps the value identical while removing drift risk.
+SCRIPT_VERSION: str = "build30_colab_math_fastproof_v2"
+
 RUN_CONFIG: Dict[str, Any] = {
     "profile": "colab_math_fastproof",  # quick|deep8h|linkedin_sweetspot|mini300m|colab_math_fastproof|custom
     "interactive": False,
@@ -448,7 +453,7 @@ RUN_CONFIG: Dict[str, Any] = {
     "run_config_fail_fast_required": True,
     "run_config_reject_unknown_keys": True,
     "run_config_allowlist_extras": [],
-    "script_version": "build30_colab_math_fastproof_v2",
+    "script_version": SCRIPT_VERSION,
     "config_override_trace": {"defaults": True, "profile": True, "env": True, "manual": True},
     "runtime_fingerprint_enabled": True,
     "ownership_manifest_enabled": True,
@@ -694,7 +699,7 @@ def build_runtime_fingerprint(cfg: Dict[str, Any]) -> Dict[str, Any]:
     except Exception:
         script_sha = ""
     return {
-        "script_version": str(cfg.get("script_version", "build30_colab_math_fastproof_v2")),
+        "script_version": str(cfg.get("script_version", SCRIPT_VERSION)),
         "script_path": str(script_path),
         "script_sha256": script_sha,
         "python_version": py_ver,
@@ -734,6 +739,11 @@ def build_feature_coverage_matrix() -> Dict[str, Any]:
     done = sum(1 for r in rows if bool(r.get("implemented", False)))
     return {
         "schema": "feature_coverage_matrix_v1",
+        # HONESTY NOTE: this matrix is a *declared catalog of intent*, not a
+        # measured pass-gate. Every row hardcodes implemented=True, so
+        # coverage_completeness_percent is always 100% and does NOT reflect any
+        # runtime existence/behavior probe. Do not treat this record as a gate.
+        "is_declared_catalog_not_measured_gate": True,
         "total_features": int(total),
         "implemented_features": int(done),
         "coverage_completeness_percent": _safe_div(float(done) * 100.0, float(max(1, total)), default=0.0),
@@ -1635,7 +1645,7 @@ def resolve_runtime_config(user_cfg: Dict[str, Any]) -> Dict[str, Any]:
         "run_config_fail_fast_required": True,
         "run_config_reject_unknown_keys": True,
         "run_config_allowlist_extras": [],
-        "script_version": "build30_colab_math_fastproof_v2",
+        "script_version": SCRIPT_VERSION,
         "runtime_fingerprint_enabled": True,
         "ownership_manifest_enabled": True,
         "security_redaction_enabled": True,
@@ -1988,6 +1998,10 @@ def parity_crosscheck_local_repo(cfg: Dict[str, Any]) -> Dict[str, Any]:
         required_layer_files = [
             "mertformer_block.py",
             "moe.py",
+            # NOTE: "mla.py" is a legacy filename only; the class it defines is
+            # canonically named "GQA" (grouped-query attention) and explicitly
+            # does NOT implement latent-MLA KV compression. This check probes
+            # file existence only and makes no MLA-mechanism claim.
             "mla.py",
             "liquid.py",
             "qinn.py",
@@ -2103,10 +2117,20 @@ def build_benchmark_winner_matrix(bench: Dict[str, Any]) -> Dict[str, Any]:
     for k, row in metrics.items():
         mv = row["mertformer"]
         vv = row["vanilla"]
+        # Honesty: missing benchmark fields fall back to sentinel defaults
+        # (inf for "lower"-is-better, 0.0 for "higher"-is-better). If either
+        # side is still a sentinel, the metric was never actually measured, so
+        # report "unmeasured" instead of fabricating a winner.
         if row["prefer"] == "higher":
-            winners[k] = "mertformer" if mv > vv else "vanilla"
+            if mv <= 0.0 or vv <= 0.0:
+                winners[k] = "unmeasured"
+            else:
+                winners[k] = "mertformer" if mv > vv else "vanilla"
         else:
-            winners[k] = "mertformer" if mv < vv else "vanilla"
+            if not (math.isfinite(mv) and math.isfinite(vv)):
+                winners[k] = "unmeasured"
+            else:
+                winners[k] = "mertformer" if mv < vv else "vanilla"
     return {"metrics": metrics, "winners": winners, "apples_to_apples": False}
 
 
@@ -3522,7 +3546,7 @@ def load_stage_texts(
                             "attempt_count": 1,
                             "load_mode": load_mode,
                             "load_info": load_info,
-                            "reason_code": reason_code_from_error(str(load_info)) if str(load_mode) != "streaming" else "ok",
+                            "reason_code": "ok" if kept > 0 else reason_code_from_error(str(load_info)),
                             "kept": kept,
                             "error": "" if kept > 0 else str(load_info),
                             "target_cap": per_candidate_cap,
@@ -4138,6 +4162,15 @@ class NeuromodulatoryGainLayer(nn.Module):
 
 
 class LiquidMixer(nn.Module):
+    """Standalone (non-production) liquid mixer.
+
+    PARITY NOTE: this is a simplified Euler ODE with a FIXED dt and NO learnable
+    tau (see _forward_slow). It is a standalone companion for this onefile demo
+    and intentionally diverges from the production liquid layer, which uses
+    continuous-time decay with a learnable tau. Do not treat this as parity with
+    the production architecture.
+    """
+
     def __init__(self, hidden: int, dt: float = 1.0, fast_path: bool = True) -> None:
         super().__init__()
         self.hidden = int(hidden)
@@ -4419,6 +4452,16 @@ class MoELayer(nn.Module):
 
 
 class MLA(nn.Module):
+    """GQA (grouped-query) attention.
+
+    NAMING NOTE: despite the class name "MLA", this implements grouped-query
+    attention (separate q/k/v projections with num_kv_heads < num_heads and
+    repeat_interleave of K/V), NOT Multi-head Latent Attention. There is no
+    low-rank latent KV compression (no down/up KV projection / kv_lora). The
+    canonical source (layers/mla.py) already names the equivalent class "GQA".
+    The class name is kept here only to avoid renaming in this frozen onefile.
+    """
+
     def __init__(
         self,
         hidden: int,
@@ -4813,6 +4856,13 @@ def parity_self_check(model: MertFormerTiny, cfg: Dict[str, Any], device: str) -
             "ok": bool(finite and all_flags_ok),
             "finite_loss": finite,
             "all_flags_ok": all_flags_ok,
+            # HONESTY NOTE: flags_ok only checks that model.cfg.use_X equals the
+            # same enable-all flag the config was built from (config == config
+            # tautology). It does NOT prove each extension leaves a measurable
+            # trace on the output. The only behavioral evidence here is a finite
+            # forward/backward loss; has_router_entropy is reported but is not
+            # part of "ok".
+            "flags_ok_is_config_tautology": True,
             "flags": flags_ok,
             "has_router_entropy": bool(has_router_entropy),
             "arch_contract": ARCH_PARITY_CONTRACT["name"],
@@ -5845,9 +5895,19 @@ def benchmark_inference_latency(model: nn.Module, device: str, vocab_size: int, 
     if device == "cuda":
         torch.cuda.synchronize()
     dt = max(1e-9, time.time() - t0)
+    # HONESTY NOTE: this is a narrow micro-benchmark (batch=1, fixed seq_len,
+    # 5 warmup iters, `runs` timed iters). tokens_per_sec here must NOT be used
+    # as a general throughput claim; report the measurement conditions alongside.
     return {
         "avg_latency_ms": (dt / runs) * 1000.0,
         "tokens_per_sec": (runs * seq_len) / dt,
+        "measurement_conditions": {
+            "batch_size": 1,
+            "seq_len": int(seq_len),
+            "warmup_iters": 5,
+            "timed_iters": int(runs),
+            "is_narrow_microbenchmark": True,
+        },
     }
 
 
@@ -6446,7 +6506,13 @@ def build_public_summary(payload: Dict[str, Any], verdict: Dict[str, Any]) -> Di
         "router_max_load_p95": float(payload.get("mini_probe_report", {}).get("router_max_load_p95", 0.0)),
         "collapse_events": int(payload.get("moe_sparse_report", {}).get("collapse_events", 0)),
         "final_verdict": str(verdict.get("final_verdict", "provisional")),
-        "zero_known_critical_bugs_claim": "zero-known-critical-bugs this run",
+        # Bind the bug-free claim to the actual verdict instead of asserting it
+        # unconditionally. Only claim it when the strict-green gate passed.
+        "zero_known_critical_bugs_claim": (
+            "zero-known-critical-bugs this run"
+            if str(verdict.get("final_verdict", "provisional")) == "evidence_strict_green"
+            else f"not_assessed (final_verdict={str(verdict.get('final_verdict', 'provisional'))})"
+        ),
         "dataset_access_constraints": {
             "strict_data": bool(payload.get("preflight", {}).get("strict_data", False)),
             "hf_token_present": bool(payload.get("preflight", {}).get("hf_token_present", False)),
@@ -7538,6 +7604,12 @@ def mathfp_build_variant_models(cfg: Dict[str, Any], vocab_size: int) -> Dict[st
             bitnet_mode=str(cfg.get("bitnet_mode", "stable")),
             skip_attention_qkvo=bool(cfg.get("bitnet_skip_attention_qkvo", True)),
         )
+    # LABEL NOTE: "gpt_proxy_dense" and "gemini_proxy_moe" are NOT the real
+    # GPT / Gemini models. They are local, shrunken baselines built here:
+    #   gpt_proxy_dense  = VanillaTransformerLM (small local dense transformer)
+    #   gemini_proxy_moe = MertFormerTiny with extensions disabled (local MoE)
+    # The vendor-flavored names are baseline proxies only; do not read them as
+    # comparisons against the actual GPT/Gemini products.
     return {
         "our_mertformer": our_model,
         "gpt_proxy_dense": gpt_model,
@@ -7886,6 +7958,10 @@ def mathfp_compare_markdown(payload: Dict[str, Any]) -> str:
     lines = [
         "# Build30 Colab Math Fastproof Compare",
         "",
+        "> NOTE: `gpt_proxy_dense` and `gemini_proxy_moe` are local baseline proxies "
+        "(a small dense transformer and an extensions-off local MoE), NOT the real "
+        "GPT / Gemini models.",
+        "",
         f"- generated_at_utc: {payload.get('generated_at_utc', _utc_now())}",
         f"- profile: {payload.get('profile', '')}",
         f"- architecture_mode: {payload.get('architecture_mode', '')}",
@@ -8076,13 +8152,19 @@ def run_math_fastproof(
         speed_checks.append(speedup_vs_gpt >= speed_gate_target)
     if gem:
         speed_checks.append(speedup_vs_gem >= speed_gate_target)
+    # HONESTY: when no proxy model ran, speed_checks is empty and speed_gate_pass
+    # is vacuously True (no real comparison happened). Surface that explicitly via
+    # speed_gate_measured so downstream readers can tell a passing speed gate from
+    # an unmeasured one. (Pass/fail flow is intentionally left unchanged.)
+    speed_gate_measured = bool(speed_checks)
     speed_gate_pass = True if not speed_checks else all(speed_checks)
     gates = {
         "loss_gate_pass": bool(loss_gate_pass),
         "accuracy_gate_pass": bool(accuracy_gate_pass),
         "speed_gate_pass": bool(speed_gate_pass),
+        "speed_gate_measured": bool(speed_gate_measured),
     }
-    final_status = "pass" if all(gates.values()) else "gate_fail"
+    final_status = "pass" if all([loss_gate_pass, accuracy_gate_pass, speed_gate_pass]) else "gate_fail"
 
     compare_payload: Dict[str, Any] = {
         "schema": "build30_colab_math_fastproof_compare_v2",
@@ -8100,6 +8182,7 @@ def run_math_fastproof(
         "loss_gate_pass": bool(loss_gate_pass),
         "accuracy_gate_pass": bool(accuracy_gate_pass),
         "speed_gate_pass": bool(speed_gate_pass),
+        "speed_gate_measured": bool(speed_gate_measured),
         "final_status": final_status,
         "tokenizer_backend": "simple",
         "vocab_size_realized": int(tokenizer.vocab_size_realized),
@@ -8638,7 +8721,13 @@ def run_all() -> Dict[str, Any]:
         "claim_block": {
             "coding_claim": "blocked" if coding_claim_blocked else "allowed",
             "strict_data_claim": "blocked" if preflight.get("preflight_status") != "pass" else "allowed",
-            "bug_free_claim_text": "zero-known-critical-bugs this run",
+            # Bind the bug-free claim to the same gate state as the sibling
+            # claims instead of hardcoding a positive assertion.
+            "bug_free_claim_text": (
+                "zero-known-critical-bugs this run"
+                if (not coding_claim_blocked and preflight.get("preflight_status") == "pass")
+                else "not_assessed"
+            ),
         },
         "runtime_model_params": int(mert_params_runtime),
         "gpu_meta": gpu_meta,

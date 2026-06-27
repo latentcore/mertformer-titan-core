@@ -171,13 +171,13 @@ def render_readme(source_name: str, builder_name: str, bundle_name: str) -> str:
         - writes a machine-readable build report under `internal_build/`
 
         ## Internet Usage (Clean First Build)
-        For a clean Windows build with no existing builder venv and no cached wheels, the dependency payload currently requested by the build is about:
+        For a clean Windows build with no existing builder venv and no cached wheels, the dependency payload currently requested by the build is approximately (figures below are rough, version-dependent estimates - not measured guarantees - and will drift as pinned package versions change):
 
-        - base dependencies: `21.59 MB`
-        - CUDA 12.8 Windows `torch` wheel: `2625.61 MB`
-        - combined dependency payload: `2647.20 MB`
+        - base dependencies: ~22 MB
+        - CUDA 12.8 Windows `torch` wheel: ~2.6 GB
+        - combined dependency payload: ~2.7 GB
 
-        Practical note: small extra overhead beyond this can still happen because of pip metadata traffic and any helper downloads triggered by the compiler toolchain. So treat `2647.20 MB` as the package-download floor for a clean first build, not a universal guaranteed total on every machine.
+        Practical note: small extra overhead beyond this can still happen because of pip metadata traffic and any helper downloads triggered by the compiler toolchain. Treat these numbers as an approximate package-download floor for a clean first build, not a universal guaranteed total on every machine.
 
         ## Security / Trust Model
         - The repo copy stays open and auditable.

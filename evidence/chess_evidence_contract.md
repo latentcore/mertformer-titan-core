@@ -1,7 +1,7 @@
 # Chess Evidence Contract
 
 ## Core measured artifacts
-A serious chess onefile run should preserve:
+A serious chess onefile run should preserve these genuinely measured/produced run outputs:
 - `reports/run_summary.json`
 - `reports/model_card.json`
 - `reports/eval_card.json`
@@ -11,16 +11,34 @@ A serious chess onefile run should preserve:
 - `reports/artifact_truth_matrix.json`
 - `reports/run_contract.json`
 - `reports/release_snapshot.json`
-- `reports/evidence_pack_stub.json`
 - `reports/final_truth_registry.json`
 - `reports/claim_registry.json`
 - `reports/known_limits.json`
 - `reports/support_matrix.json`
 - `reports/release_gate_summary.json`
-- `reports/rc_stub.json`
-- `reports/golden_stub.json`
 - `reports/handoff_pack_manifest.json`
 - `reports/operator_handoff_summary.json`
+- `reports/changelog_snapshot.json`
+- `reports/master_closure_table.json`
+- `reports/remaining_core_blockers.json`
+- `reports/repo_side_completion_summary.json`
+- `reports/readiness_snapshot.json`
+- `reports/aggregated_master_table.json`
+- `reports/real_remaining_core_work.json`
+- `reports/repo_truth_inventory.json`
+- `reports/closure_gap_summary.json`
+- `reports/truth_docs_index.json`
+- `reports/truth_docs_drift_report.json`
+- `reports/generated_truth_consistency_report.json`
+- `reports/generated_truth_crosscheck_matrix.json`
+- `reports/artifact_manifest_with_hashes.json`
+- `logs/run_log.jsonl`
+
+## Governance / template artifacts (NOT measured)
+These are scaffold/governance/template files (`*_stub.json` placeholders and `project_*` planning/tracking reports). They are emitted by the pipeline but do NOT contain measured benchmark/training results; do not treat their presence as evidence of measured performance.
+- `reports/evidence_pack_stub.json`
+- `reports/rc_stub.json`
+- `reports/golden_stub.json`
 - `reports/external_repro_stub.json`
 - `reports/pilot_stub.json`
 - `reports/security_stub.json`
@@ -31,7 +49,6 @@ A serious chess onefile run should preserve:
 - `reports/blind_handoff_stub.json`
 - `reports/release_notes_stub.json`
 - `reports/freeze_manifest_stub.json`
-- `reports/changelog_snapshot.json`
 - `reports/maintenance_policy_stub.json`
 - `reports/export_truth_stub.json`
 - `reports/device_validation_stub.json`
@@ -53,20 +70,9 @@ A serious chess onefile run should preserve:
 - `reports/research_continues_stub.json`
 - `reports/product_maintenance_only_stub.json`
 - `reports/closure_decision_record_stub.json`
-- `reports/master_closure_table.json`
-- `reports/remaining_core_blockers.json`
-- `reports/repo_side_completion_summary.json`
-- `reports/readiness_snapshot.json`
-- `reports/aggregated_master_table.json`
-- `reports/real_remaining_core_work.json`
-- `reports/repo_truth_inventory.json`
-- `reports/closure_gap_summary.json`
 - `reports/project_master_truth_reference.json`
 - `reports/project_remaining_real_blockers.json`
-- `reports/truth_docs_index.json`
-- `reports/truth_docs_drift_report.json`
 - `reports/project_blocker_action_plan.json`
-- `reports/generated_truth_consistency_report.json`
 - `reports/project_blocker_dependency_graph.json`
 - `reports/project_execution_sequence.json`
 - `reports/project_lane_status_board.json`
@@ -108,9 +114,6 @@ A serious chess onefile run should preserve:
 - `reports/project_real_run_execution_queue_report.json`
 - `reports/project_benchmark_evidence_lock_report.json`
 - `reports/project_final_signoff_cutset_report.json`
-- `reports/generated_truth_crosscheck_matrix.json`
-- `reports/artifact_manifest_with_hashes.json`
-- `logs/run_log.jsonl`
 
 ## Internal-only artifacts
 The following are useful and real, but remain internal unless separately validated:

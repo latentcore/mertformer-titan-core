@@ -103,7 +103,7 @@ def main() -> None:
 
     if ckpt_path.exists():
         checkpoint = torch.load(ckpt_path, map_location=device)
-        # TR: Tokenizer'i checkpoint kimliginden yukle; yoksa ACIK hata (sessiz
+        # TR: Tokenizer'ı checkpoint kimliğinden yükle; yoksa AÇIK hata (sessiz
         #     teacher fallback YOK). EN: Load the tokenizer strictly from the
         #     checkpoint identity; missing -> explicit error. Same pattern as
         #     eval/gsm8k.py so this checkpoint-bound evidence path cannot decode

@@ -61,21 +61,23 @@ def check_model(model_path: str | None = None):
         dummy_input = np.random.randint(0, 100277, (1, 1)).astype(np.int64)
         input_name = inputs[0].name
         
-        print("\n🚀 Running benchmark (50 tokens)...")
+        print("\n🚀 Running micro-benchmark (50 single-token forward passes)...")
         import time
         start_time = time.time()
         iterations = 50
         for _ in range(iterations):
             session.run(None, {input_name: dummy_input})
         end_time = time.time()
-        
+
         duration = end_time - start_time
-        tok_per_sec = iterations / duration if duration > 0 else 0
-        
-        print(f"✅ Benchmark Complete!")
-        print(f"⏱️ Local Speed: {tok_per_sec:.2f} tokens/sec")
+        # Single-token (1,1) forward latency, not autoregressive decode throughput.
+        # Report as inferences/sec; this is NOT a real tokens/sec decode-speed claim.
+        inferences_per_sec = iterations / duration if duration > 0 else 0
+
+        print(f"✅ Micro-benchmark Complete!")
+        print(f"⏱️ Local Speed: {inferences_per_sec:.2f} inferences/sec (single-token forward, not decode tokens/sec)")
         print(f"📦 Total Latency: {duration*1000:.2f} ms for 50 inferences")
-        print("\nTITAN IS ALIVE AND FAST! 🦅🦾")
+        print("\nONNX session loaded and ran successfully. (Speed unverified against any threshold.)")
         
     except Exception as e:
         print(f"❌ Verification Failed: {e}")

@@ -1,4 +1,9 @@
-"""Policy-bound recursive self-improvement scaffold with controlled auto-apply."""
+"""Policy-bound recursive self-improvement scaffold with controlled auto-apply.
+
+NOTE (out-of-scope / inert): This orchestrator module is a speculative
+self-improvement scaffold and is disabled (feature-flagged off) on the 45K
+training path. It is not exercised by the frozen training pipeline.
+"""
 from __future__ import annotations
 
 import time
@@ -168,8 +173,10 @@ class SelfImprovementGuard:
         Improvement acceptance rule:
         delta_benchmark > 0 && delta_safety >= 0 && cost_within_budget
         """
+        # Fail-closed: with no evaluation evidence the gate must NOT pass,
+        # otherwise an unmeasured proposal could be auto-applied (fake-green gate).
         if evaluation is None:
-            return True, "gate_not_provided"
+            return False, "gate_evidence_missing"
 
         delta_benchmark = float(evaluation.get("delta_benchmark", 0.0))
         delta_safety = float(evaluation.get("delta_safety", 0.0))

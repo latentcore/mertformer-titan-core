@@ -5,9 +5,11 @@ MERTFORMER TITAN (ONYX STORM)
 Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
-Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v26.5-COMPREHENSIVE-TESTS
+Project: Mobile-First LLM Architecture
 Status : PRE-TRAINING (UNVERIFIED)
+
+NOTE: Hardware deployment targets (e.g. mobile NPU) are NOT exercised by these
+tests; only PyTorch-level / ONNX-export behaviour is checked here.
 ==============================================================================
 """
 
@@ -101,14 +103,20 @@ def tiny_cfg():
 # TEST 1: ONNX EXPORT/IMPORT CYCLE
 # =============================================================================
 class TestONNXCycle:
-    """Test ONNX export and reimport cycle for NPU deployment."""
+    """Test ONNX export and reimport cycle.
+
+    NOTE: This only verifies that an ONNX file is produced; it does NOT
+    measure or validate any on-device (e.g. NPU) deployment.
+    """
     
     @pytest.mark.skipif(not torch.cuda.is_available() and not torch.backends.mps.is_available(),
                         reason="ONNX test requires GPU/MPS for meaningful validation")
     def test_onnx_export_import(self, tiny_cfg, device):
         """
-        Test: Model -> ONNX -> Reload -> Compare outputs
-        Critical for Samsung S25 NPU deployment.
+        Test: Model -> ONNX export -> file sanity check.
+
+        NOTE: This does NOT reload/compare outputs nor validate NPU/on-device
+        deployment; it only asserts that a non-trivial ONNX file is created.
         """
         # Skip if on MPS (ONNX runtime has issues)
         if device.type == "mps":
@@ -210,7 +218,10 @@ class TestCurriculumTransition:
     def test_curriculum_dataset_stage_change(self):
         """
         Test: Stage transitions based on loss signals.
-        Simulates the signal-based curriculum logic from train.py.
+
+        WARNING: This re-implements the stage-transition logic locally and does
+        NOT import/call the real function from train.py. It is a logic sketch,
+        NOT a production regression gate -- it cannot catch drift in train.py.
         """
         # Simulate loss history and stage transitions
         loss_history = []
@@ -254,8 +265,12 @@ class TestMoERouterCollapse:
     
     def test_collapse_detection_triggers(self, tiny_cfg, device):
         """
-        Test: Collapse detection triggers when max_load > 0.85
-        Verifies the V26.5 jitter boost recovery mechanism.
+        Test: presence of the collapse-detection buffer + basic load sanity.
+
+        WARNING: This does NOT actually trigger a collapse or verify the
+        documented max_load > 0.85 threshold. The only meaningful assertion is
+        the trivial max_load < 1.0 (always true for multi-expert selection),
+        so this is NOT a real pass-gate for the jitter-boost recovery path.
         """
         moe = MoE().to(device)
         moe.train()
@@ -285,6 +300,11 @@ class TestMoERouterCollapse:
     def test_jitter_boost_on_collapse(self, tiny_cfg, device):
         """
         Test: Jitter increases when collapse is detected.
+
+        WARNING: This manually assigns router_jitter = router_jitter_boost and
+        then asserts boost >= initial -- a tautology. It does NOT invoke the
+        real collapse-recovery code path, so it is NOT a real pass-gate and
+        cannot catch regressions in the recovery logic.
         """
         moe = MoE().to(device)
         moe.train()

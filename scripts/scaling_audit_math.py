@@ -44,10 +44,13 @@ def estimate_params():
     # 1. Embeddings
     embedding_params = vocab_size * hidden_size
     
-    # 2. Per Layer Attention (MLA estimate)
+    # 2. Per Layer Attention (approx, non-MLA)
+    # NOTE: label-only correction. The real attention is GQA (see layers/mla.py,
+    # config.config L223); there is no latent down/up KV projection. The formula
+    # below is the standard 4-projection (Q/K/V/O) MHA/GQA estimate, NOT true MLA.
     num_heads = cfg.num_heads
     head_dim = getattr(cfg, "head_dim", hidden_size // num_heads)
-    
+
     # 4 Projections * (In * Out)
     attn_per_layer = 4 * (hidden_size * (num_heads * head_dim))
     
@@ -118,28 +121,31 @@ def estimate_params():
     
     print(f"Chinchilla Optimal (20x): {chinchilla_tokens / 1e9:.3f} B tokens")
     
-    # [USER LOGIC VERIFIED] Knowledge Distillation Boost
-    # A 70B Teacher providing logits is worth ~3x-4x raw text (Hinton/DeepSeek findings)
-    teacher_efficiency_factor = 3.0 
+    # Knowledge Distillation Boost
+    # ASSUMPTION (UNMEASURED): a 70B teacher's soft logits are *assumed* worth ~3x
+    # raw text, motivated by Hinton/DeepSeek-style distillation literature. This 3.0
+    # multiplier has NOT been measured in this repo; treat it as a target/assumption,
+    # not a verified result. The verdict below is therefore a target projection.
+    teacher_efficiency_factor = 3.0  # unmeasured assumption (literature-motivated)
     effective_tokens = total_tokens * teacher_efficiency_factor
-    
-    print(f"\n--- DISTILLATION FACTOR ---")
-    print(f"Teacher: Llama-3.3-70B (Soft Labels)")
-    print(f"Efficiency Boost: {teacher_efficiency_factor}x")
-    print(f"Effective Training Tokens: {effective_tokens / 1e9:.3f} B")
 
-    print(f"\n--- VERDICT ---")
+    print(f"\n--- DISTILLATION FACTOR (UNMEASURED ASSUMPTION) ---")
+    print(f"Teacher: Llama-3.3-70B (Soft Labels)")
+    print(f"Assumed Efficiency Boost: {teacher_efficiency_factor}x (unmeasured)")
+    print(f"Effective (Assumed) Training Tokens: {effective_tokens / 1e9:.3f} B")
+
+    print(f"\n--- VERDICT (TARGET PROJECTION, not measured) ---")
     if effective_tokens < chinchilla_tokens:
-        print(f"⚠️  STATUS: UNDER-TRAINED (Even with Teacher).")
-        print(f"   Effective: {effective_tokens/1e9:.2f}B vs Optimal: {chinchilla_tokens/1e9:.2f}B.")
+        print(f"⚠️  TARGET STATUS: UNDER-TRAINED (even under the assumed teacher boost).")
+        print(f"   Assumed effective: {effective_tokens/1e9:.2f}B vs Optimal: {chinchilla_tokens/1e9:.2f}B.")
     else:
         ratio = effective_tokens / total_params
-        print(f"✅ STATUS: CHINCHILLA SATISFIED via Distillation ({ratio:.1f} virtual tok/param).")
-        print(f"   Raw tokens were low, but Teacher Logic fills the gap.")
+        print(f"🎯 TARGET STATUS: Chinchilla budget met *if* the assumed {teacher_efficiency_factor}x holds ({ratio:.1f} virtual tok/param).")
+        print(f"   Raw tokens are low; this projection assumes (unverified) teacher logic fills the gap.")
         if ratio > 100:
-             print("   Mode: Teacher-enhanced target analysis; S25 readiness remains unmeasured.")
+             print("   Mode: Teacher-enhanced target analysis; boost factor and S25 readiness remain unmeasured.")
         else:
-             print("   Status: Healthy pre-training baseline target.")
+             print("   Status: Healthy pre-training baseline target (assumption-dependent).")
 
 if __name__ == "__main__":
     estimate_params()

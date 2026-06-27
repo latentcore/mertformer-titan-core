@@ -8,6 +8,12 @@ project_root = str(Path(__file__).parent.parent)
 sys.path.insert(0, project_root)
 
 from config.config import cfg
+
+# NOTE: The legacy "mla" name (file name, test names, local vars) is a fossil.
+# The real attention class is GQA (grouped-query attention), NOT latent-MLA;
+# latent-MLA (low-rank KV bottleneck) is intentionally NOT implemented. The
+# module/file rename (mla.py -> gqa.py) is a frozen-path policy decision (see
+# DECISIONS.md MLA->GQA rename) and is deliberately left untouched here.
 from layers.mla import GQA, RotaryEmbedding
 
 

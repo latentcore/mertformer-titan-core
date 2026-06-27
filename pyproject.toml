@@ -10,7 +10,7 @@ readme = "README.md"
 # Review-ready baseline: Python 3.11 (ecosystem + pygame wheels + fewer surprises).
 requires-python = ">=3.11,<3.12"
 license = {file = "LICENSE"}
-authors = [{name = "MertFormer AI Team"}]
+authors = [{name = "Mert Yünlü"}]
 dependencies = [
   "torch>=2.0",
   "transformers>=4.30",

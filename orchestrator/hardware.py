@@ -27,8 +27,14 @@ except ImportError:
 
 class HardwareSense:
     """
-    Enables AGI to know its own limitations.
-    System resources, CPU/RAM usage and AI device information.
+    Sistem RAM/CPU ve device bilgisini raporlar.
+
+    NOT (inert / out-of-scope): orchestrator katmani 45K egitim yolunda
+    kapalidir (feature-flag); egitim akisini etkilemez.
+
+    scan() yalnizca psutil (virtual_memory / cpu_percent) ve platform
+    bilgisini okuyan basit bir monitoring yardimcisidir; herhangi bir
+    "kendi sinirlarini bilen AGI" yetenegi olculmemis/yoktur.
     """
     
     def __init__(self):

@@ -5,7 +5,9 @@ MERTFORMER TITAN (ONYX STORM) - BENCHMARK SUITE (EVAL)
 Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
-Project: Mobile-First LLM Architecture for Samsung S25 NPU
+Project: Mobile-First LLM Architecture (planned target: Samsung S25 NPU — UNVERIFIED)
+         NOTE: Bu dosyada NPU/S25 ozel kodu veya olcumu YOKTUR; "Samsung S25 NPU"
+         hedefi planlanmis/dogrulanmamis bir iddiadir, olculmus bir sonuc degildir.
 Version: v1.0 (Build 30) — Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
@@ -15,6 +17,7 @@ __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
 import sys
+import re
 import torch
 import json
 import argparse
@@ -29,6 +32,22 @@ sys.path.insert(0, str(project_root))
 
 from model.transformers import MertFormer
 from config.config import cfg
+
+def _extract_gsm8k_number(text):
+    """GSM8K cevap dizisinden son sayisal degeri cikar.
+
+    GSM8K gold cevaplari '#### <sayi>' ile biter; uretilen metinde ise
+    son gecen sayiyi proxy olarak aliriz. Hicbir sayi yoksa None doner.
+    """
+    if text is None:
+        return None
+    marker = text.rsplit("####", 1)
+    candidate = marker[1] if len(marker) == 2 else text
+    nums = re.findall(r"-?\d[\d,]*(?:\.\d+)?", candidate)
+    if not nums:
+        return None
+    return nums[-1].replace(",", "")
+
 
 def evaluate_gsm8k(model, tokenizer, device, num_samples=100):
     print(f"\n📚 Evaluating GSM8K (Zero-Shot) - {num_samples} samples...")
@@ -65,19 +84,28 @@ def evaluate_gsm8k(model, tokenizer, device, num_samples=100):
             full_output = tokenizer.decode(generated_ids[0], skip_special_tokens=True)
             generated_ans = full_output[len(prompt):].strip()
             
-            # Very basic extraction (looking for the number at the end)
-            # This is a proxy evaluation, rigorous eval requires regex parsing
+            # Gercek dogruluk olcumu: hem gold cevaptan hem de uretilen
+            # metinden son sayiyi cikarip karsilastiriyoruz (proxy exact-match).
+            pred_num = _extract_gsm8k_number(generated_ans)
+            gold_num = _extract_gsm8k_number(answer)
+            is_correct = (pred_num is not None and pred_num == gold_num)
+
             if total < 3: # Print first 3
-                print(f"\nQ: {question}\nTarget: {answer}\nPred: {generated_ans}\n{'-'*20}")
-                
+                print(f"\nQ: {question}\nTarget: {answer}\nPred: {generated_ans}")
+                print(f"(gold={gold_num} | pred={pred_num} | correct={is_correct})\n{'-'*20}")
+
             total += 1
-            # Placeholder "correctness" (manual check needed usually, but we assume perfect fit for now)
-            # In real script, we'd use regex to find the number matches
+            if is_correct:
+                correct += 1
         except StopIteration:
             break
-            
-    print(f"⚠️  GSM8K Eval incomplete (Need Regex/Parser). Running as generation check only.")
+
+    accuracy = (correct / total) if total else 0.0
     print(f"✅ Generated {total} reasoning traces successfully.")
+    print(f"📊 GSM8K accuracy (numeric proxy exact-match): {correct}/{total} = {accuracy:.4f}")
+    print(f"ℹ️  Not: bu metrik son-sayi proxy eslesmesidir; resmi GSM8K calc-annotation"
+          f" degerlendirmesi degildir, gecme-kapisi olarak kullanmayin.")
+    return {"correct": correct, "total": total, "accuracy": accuracy}
 
 def main():
     parser = argparse.ArgumentParser()

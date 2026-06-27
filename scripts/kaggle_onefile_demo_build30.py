@@ -118,7 +118,8 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         "step_log_interval": 10,
         "tokenizer_max_texts": 80000,
         "tokenizer_fit_max_texts": 20000,
-        # ~192M parameter class (Kaggle practicality + meaningful training signal).
+        # Nominal ~192M parametre hedefi (statik not). Gercek param sayisi runtime'da
+        # count_parameters ile olculur ve target_param_band / mini_probe gate'leriyle dogrulanir.
         "mert_hidden": 1024,
         "mert_layers": 12,
         "mert_heads": 16,
@@ -159,7 +160,8 @@ RUN_PROFILES: Dict[str, Dict[str, Any]] = {
         "step_log_interval": 25,
         "tokenizer_max_texts": 240000,
         "tokenizer_fit_max_texts": 60000,
-        # ~300M parameter target (empirically calibrated for this one-file architecture).
+        # Nominal ~300M parametre hedefi (statik not; "empirically calibrated" iddiasi
+        # olculmus degil). Gercek param sayisi runtime'da count_parameters ile hesaplanir.
         "mert_hidden": 1024,
         "mert_layers": 20,
         "mert_heads": 16,
@@ -1310,6 +1312,9 @@ def parity_crosscheck_local_repo(cfg: Dict[str, Any]) -> Dict[str, Any]:
             "checked_roots": [str(x) for x in unique_roots],
         }
     try:
+        # NOT: "mla.py" dosya adi tarihsel (legacy) bir isimdir; icindeki sinif kanonik
+        # repo'da zaten 'GQA' olarak adlandirilmistir ve latent-MLA implemente etmez.
+        # Bu liste diskteki gercek dosya adlarini kontrol eder; isim degistirilmez (frozen-path).
         required_layer_files = [
             "mertformer_block.py",
             "moe.py",
@@ -1428,6 +1433,10 @@ def build_benchmark_winner_matrix(bench: Dict[str, Any]) -> Dict[str, Any]:
     for k, row in metrics.items():
         mv = row["mertformer"]
         vv = row["vanilla"]
+        # NOT: kesin esitlik (mv == vv) durumunda kazanan varsayilan olarak 'vanilla'
+        # atanir (strict > / < karsilastirmasi). Ayri bir 'tie' degeri uretilmez.
+        # Ayrica apples_to_apples=False oldugundan bu kazananlar adil/olculmus
+        # bir gecme-kapisi (pass-gate) DEGILDIR, yalnizca ham karsilastirma ozetidir.
         if row["prefer"] == "higher":
             winners[k] = "mertformer" if mv > vv else "vanilla"
         else:
@@ -3174,6 +3183,10 @@ class BitLinearStrict(nn.Linear):
 
     @staticmethod
     def _get_compiled_linear(device: torch.device):
+        # NOT: "compiled" yolu yalniz CUDA'da gercek torch.compile kullanir.
+        # CPU/MPS'te veya torch.compile yoksa duz F.linear'a (_linear_core) sessizce
+        # geri donulur; bu durumda hicbir hizlandirma yoktur (dekoratif "compiled" etiketi).
+        # compile cagrisi basarisiz olursa bir kez stderr'e uyari yazilir, davranis fallback'tir.
         global _COMPILED_LINEAR_CORE
         if _COMPILED_LINEAR_CORE is not None:
             return _COMPILED_LINEAR_CORE
@@ -3185,7 +3198,8 @@ class BitLinearStrict(nn.Linear):
             return _COMPILED_LINEAR_CORE
         try:
             _COMPILED_LINEAR_CORE = torch.compile(_linear_core, mode="max-autotune", fullgraph=False)
-        except Exception:
+        except Exception as exc:  # pragma: no cover - ortam bagimli
+            print(f"[WARN] torch.compile basarisiz, duz F.linear fallback kullaniliyor: {exc}", file=sys.stderr)
             _COMPILED_LINEAR_CORE = _linear_core
         return _COMPILED_LINEAR_CORE
 
@@ -3413,6 +3427,12 @@ class ContinuousLatentODEStateChannel(nn.Module):
 
 
 class NeuromodulatoryGainLayer(nn.Module):
+    """Tek lineer + (1.0 + 0.1*tanh) kazanc carpani.
+
+    NOT: "Neuromodulatory" adi biyolojik cagrisim yapar; gercek mekanizma basit
+    bir ogrenilebilir kazanc kapisi (gating) heuristigidir, norobilimsel bir model degil.
+    """
+
     def __init__(self, hidden: int) -> None:
         super().__init__()
         self.proj = nn.Linear(hidden, hidden)
@@ -3621,6 +3641,16 @@ class MoELayer(nn.Module):
 
 
 class MLA(nn.Module):
+    """GQA (grouped-query attention).
+
+    NOT: Sinif adi tarihsel nedenle "MLA" olsa da bu implementasyon
+    Multi-head Latent Attention DEGILDIR; klasik GQA'dir (num_kv_heads<num_heads
+    icin _repeat_kv ile KV head tekrari, ayri q/k/v lineerleri, standart RoPE+SDPA).
+    Latent / low-rank KV down-up projeksiyonu (gercek MLA bottleneck) icermez.
+    Kanonik layers/mla.py'de ayni sinif zaten 'GQA' olarak adlandirilmistir.
+    Dosya adi / modul yeniden adlandirilmaz (frozen-path); yalniz etiket netlestirildi.
+    """
+
     def __init__(
         self,
         hidden: int,
@@ -3927,12 +3957,16 @@ class MertFormerTiny(nn.Module):
             layer_stats.append(stats)
 
             if workspace is not None:
+                # "global_workspace_broadcast": gorkemli isme ragmen mekanizma basit bir
+                # sekans-ortalamasi (mean) + dogrusal harman (blend) heuristigidir.
                 token_summary = x.mean(dim=1)
                 blend = float(min(max(self.cfg.workspace_blend, 0.0), 1.0))
                 workspace = workspace * blend + token_summary * (1.0 - blend)
                 x = self.neuromod(x, workspace)
 
             if self.cfg.use_cross_expert_sync_bus:
+                # "cross_expert_sync_bus": gercekte token-ortalamasi uzerinde basit bir EMA
+                # (0.9/0.1) + olcekli residual eklemesidir; uzmanlar-arasi gercek bir veri yolu degil.
                 token_mean = x.mean(dim=1, keepdim=True)
                 if sync_state is None:
                     sync_state = token_mean
@@ -5168,6 +5202,10 @@ def run_benchmark_suite(
             skip_attention_qkvo=bool(cfg.get("bitnet_skip_attention_qkvo", True)),
         )
 
+    # NOT: Vanilla baseline SABIT boyutludur (hidden=384, layers=8, heads=8) ve
+    # MertFormer'in cfg-parametrik boyutuyla param-esitlenmis DEGILDIR. Bu yuzden
+    # benchmark winner matrix'i apples_to_apples=False ile isaretler; sonuclar
+    # adil/olculmus bir gecme-kapisi degil, kaba bir karsilastirmadir.
     vanilla = VanillaTransformerLM(
         vocab_size=int(cfg["vocab_size"]),
         hidden_size=384,
@@ -5641,7 +5679,9 @@ def build_public_summary(payload: Dict[str, Any], verdict: Dict[str, Any]) -> Di
         "router_max_load_p95": float(payload.get("mini_probe_report", {}).get("router_max_load_p95", 0.0)),
         "collapse_events": int(payload.get("moe_sparse_report", {}).get("collapse_events", 0)),
         "final_verdict": str(verdict.get("final_verdict", "provisional")),
-        "zero_known_critical_bugs_claim": "zero-known-critical-bugs this run",
+        # NOT: Bu alan olculmus bir gecme-kapisi (pass-gate) DEGILDIR; herhangi bir
+        # test/bug gate ciktisina baglanmamis bilgilendirici bir nottur.
+        "zero_known_critical_bugs_claim": "not-a-measured-gate: no automated critical-bug assertion this run",
         "dataset_access_constraints": {
             "strict_data": bool(payload.get("preflight", {}).get("strict_data", False)),
             "hf_token_present": bool(payload.get("preflight", {}).get("hf_token_present", False)),
@@ -6235,7 +6275,13 @@ def run_all() -> Dict[str, Any]:
             "coding_claim_blocked": True,
             "degraded_conditions": [f"preflight:{x}" for x in preflight.get("reason_codes", [])],
             "cannot_claim_yet": ["strict_data_preflight_failed"],
-            "claim_block": {"bug_free_claim": "blocked", "coding_claim": "blocked"},
+            # Sema, basari (success) yolundaki claim_block ile ayni anahtarlari kullanir
+            # (bug_free_claim_text); strict_data_claim burada da acikca 'blocked'tir.
+            "claim_block": {
+                "coding_claim": "blocked",
+                "strict_data_claim": "blocked",
+                "bug_free_claim_text": "not-a-measured-gate: no automated critical-bug assertion",
+            },
             "runtime_model_params": 0,
             "gpu_meta": gpu_meta,
             "gpu_tune_report": gpu_tune,
@@ -6512,7 +6558,8 @@ def run_all() -> Dict[str, Any]:
         "claim_block": {
             "coding_claim": "blocked" if coding_claim_blocked else "allowed",
             "strict_data_claim": "blocked" if preflight.get("preflight_status") != "pass" else "allowed",
-            "bug_free_claim_text": "zero-known-critical-bugs this run",
+            # NOT: olculmus bir gate degil; otomatik kritik-bug iddiasi yapilmaz.
+            "bug_free_claim_text": "not-a-measured-gate: no automated critical-bug assertion this run",
         },
         "runtime_model_params": int(mert_params_runtime),
         "gpu_meta": gpu_meta,

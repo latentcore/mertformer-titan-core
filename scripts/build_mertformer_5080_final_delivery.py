@@ -153,7 +153,11 @@ exec(compile(code, "<mertformer_5080_{profile}_exe>", "exec"), ns)
                 if p.is_file():
                     zf.write(p, arcname=str(p.relative_to(staging)))
         _write(zip_path.with_suffix(zip_path.suffix + '.sha256'), sha(zip_path) + '  ' + zip_path.name + '\n')
-        print(json.dumps({'ok': True, 'delivery_zip': str(zip_path), 'sha256': sha(zip_path)}, indent=2))
+        # 'ok' is bound to a real post-write check (zip exists and is non-empty),
+        # not unconditionally True. Defensive: zip write above would normally raise
+        # on failure, but verify the artifact rather than assume success.
+        ok = zip_path.exists() and zip_path.stat().st_size > 0
+        print(json.dumps({'ok': ok, 'delivery_zip': str(zip_path), 'sha256': sha(zip_path)}, indent=2))
     return 0
 
 

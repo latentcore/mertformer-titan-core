@@ -7,6 +7,12 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Reproducibility hash kapsami: asagidaki sabit dosya listesiyle SINIRLIDIR.
+# DIKKAT: Bu liste manuel olarak bakimi yapilir. Repo evrildikce yeni kritik
+# dosyalar eklenmezse hash kapsami sessizce daralir (yeni dosyalardaki
+# degisiklikler "ok" sonucunu etkilemez). Kritik bir dosya eklendiginde bu
+# listeyi elle guncelleyin. (Dinamik manifest/glob kesfi kasitli olarak
+# kullanilmadi: cikti hash sozlesmesini deterministik tutmak icin.)
 TARGETS = [
     "pyproject.toml",
     "requirements.txt",

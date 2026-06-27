@@ -14,9 +14,16 @@ Status : PRE-TRAINING (UNVERIFIED)
 __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
+# NOTE: inert / out-of-scope; 45K egitim yolunda kapali (feature-flag).
+# Bu orchestrator modulu egitim hattinda calistirilmaz; yalnizca opsiyonel
+# vision/semantic yardimci yuzeyidir.
+
+import logging
 from typing import List, Optional
 import torch
 import torch.nn.functional as F
+
+logger = logging.getLogger(__name__)
 
 # Transformers - optional
 try:
@@ -69,12 +76,19 @@ class SenseEngine:
                 self.text_model.eval()
                 print(f"🧠 Text Embedding Modeli: {DEFAULT_EMB_MODEL}")
             except Exception as e:
+                logger.warning("Embedding modeli yüklenemedi: %s", e, exc_info=True)
                 print(f"⚠️ Embedding modeli yüklenemedi: {e}")
         else:
             print("⚠️ transformers yok, metin embedding devre dışı.")
 
     def encode_text(self, text: str) -> List[float]:
-        """Converts text to vector."""
+        """Converts text to vector.
+
+        Degraded fallback: model/tokenizer yoksa veya kodlama basarisiz
+        olursa sifir vektoru ([0.0]*384) doner. Bu GECERLI bir embedding
+        DEGILDIR; benzerlik hesaplarinda anlamli sinyal tasimaz, sadece
+        boyut-uyumlu bir yer tutucudur.
+        """
         if not text or self.tokenizer is None or self.text_model is None:
             return [0.0] * 384
         
@@ -94,6 +108,7 @@ class SenseEngine:
             emb = F.normalize(emb, p=2, dim=1)[0].cpu().tolist()
             return emb
         except Exception as e:
+            logger.warning("encode_text hatası: %s", e, exc_info=True)
             print(f"⚠️ encode_text hatası: {e}")
             return [0.0] * 384
 
@@ -115,6 +130,7 @@ class SenseEngine:
             self.vision_active = True
             print("👁️ CLIP Vision Modeli Yüklendi (lazy).")
         except Exception as e:
+            logger.warning("Vision modeli yüklenemedi (sadece metin): %s", e, exc_info=True)
             print(f"⚠️ Vision modeli yüklenemedi (Sadece metin): {e}")
             self.clip_model = None
             self.clip_proc = None
@@ -152,5 +168,6 @@ class SenseEngine:
             
             return F.normalize(image_features, p=2, dim=1)[0].cpu().tolist()
         except Exception as e:
+            logger.warning("encode_image hatası: %s", e, exc_info=True)
             print(f"⚠️ encode_image hatası: {e}")
             return None

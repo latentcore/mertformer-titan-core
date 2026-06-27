@@ -1,4 +1,4 @@
-"""Vulkan backend interface (verified fallback in this phase)."""
+"""PyTorch fallback (gercek Vulkan backend henuz yok; sadece F.linear re-export)."""
 
 from .engine import vulkan_linear
 

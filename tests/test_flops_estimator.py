@@ -29,8 +29,13 @@ def test_active_params_yields_lower_training_estimate():
     """The MoE-corrected active-params path must give a strictly lower TRAINING
     estimate than the dense params, since fewer params are active per token."""
     tokens = 23.6e9
+    # NOTE: dense/active below are illustrative literals chosen only to exercise
+    # the active < dense FLOPs relationship; they are NOT derived from the model
+    # config (num_experts / num_experts_per_tok) and are not a measured figure.
+    # The separate "measured 3.67B" referenced in test_default_params_is_design_target
+    # is a different quantity; do not treat 3.70e9 here as that measured value.
     dense = 3.70e9
-    active = 1.886e9  # MoE-corrected (8 experts, top-2 + shared)
+    active = 1.886e9  # illustrative MoE-active stand-in (8 experts, top-2 + shared); not config-derived
     assert estimate_training_flops(active, tokens) < estimate_training_flops(dense, tokens)
     # ratio tracks the active/dense param ratio exactly (linear in params)
     ratio = estimate_training_flops(active, tokens) / estimate_training_flops(dense, tokens)

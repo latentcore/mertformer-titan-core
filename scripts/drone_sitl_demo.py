@@ -50,7 +50,13 @@ def _iso_now() -> str:
 class MertFormerSITLPolicy(nn.Module):
     """
     Lightweight controller using MertFormer primitives (BitLinear + LiquidRouter).
-    This keeps the demo AI-driven without requiring a full checkpoint load.
+
+    HONEST DISCLOSURE: this is an UNTRAINED, random-initialized policy
+    (xavier_uniform_ init, no checkpoint load). It exercises the MertFormer
+    component wiring for demonstration only -- it is NOT a trained model and the
+    'all_green'/'pass' outcomes are NOT evidence of model capability. The
+    policy_engine label 'mertformer_liquidrouter' refers to the architecture
+    primitives used, not to a trained checkpoint.
     """
 
     def __init__(
@@ -188,6 +194,10 @@ def write_outputs(out_dir: Path, events: list[SitlEvent], summaries: list[dict],
         "pilot_id": args.pilot_id,
         "runs": summaries,
         "all_green": all_green,
+        "policy_disclaimer": (
+            "untrained/random-initialized policy (illustrative only); "
+            "all_green/pass is NOT evidence of trained-model capability"
+        ),
         "config": {
             "runs": args.runs,
             "steps": args.steps,

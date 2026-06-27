@@ -1,9 +1,22 @@
-"""Bulk Build30 sync for markdown files."""
+"""Bulk Build30 sync for markdown files.
+
+NOTE (durustluk): Su anda REPLACEMENTS icindeki tum girdiler old==new
+(ozdes esleme) oldugu icin bu betik fiilen NO-OP'tur: hicbir .md dosyasi
+degismez, --check her zaman changed=0 ve return 0 verir (gecme-kapisi DEGIL,
+yalniz tarama ozeti). Gercek bir surum gecisi yapmak icin REPLACEMENTS'i
+anlamli (old != new) ciftlerle doldurmak gerekir.
+
+NOTE (version fossili): Asagidaki v1.0-TITAN-BUILD30 / Build 30 / BUILD30 /
+_B30 / OnyxStorm v2.0_B30 string'leri elle gomulu surum/build etiketleridir;
+ideal olarak tek bir release manifest kaynagindan turetilmelidir.
+"""
 from __future__ import annotations
 
 import argparse
 from pathlib import Path
 
+# DIKKAT: Asagidaki tum ciftler old==new (ozdes); replace cagrilari no-op'tur.
+# Gercek bir gecis icin sol (eski) ve sag (yeni) degerler farkli olmalidir.
 REPLACEMENTS = [
     ("v1.0-TITAN-BUILD30", "v1.0-TITAN-BUILD30"),
     ("1.0-BUILD30", "1.0-BUILD30"),

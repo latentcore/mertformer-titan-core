@@ -48,26 +48,33 @@ def log(msg, file_obj=None):
         file_obj.flush()
 
 def check_source(stage_name, source, log_file):
+    # Returns an honest status string instead of a single True/False pass-flag:
+    #   "ok"     -> connected AND the expected content field was actually present
+    #   "empty"  -> connected but the field was empty (NOT a real content check)
+    #   "gated"  -> dataset is gated; reachability unknown until terms accepted
+    #   "error"  -> connection/loading failed
+    # Note: only "ok" represents verified accessibility; "empty"/"gated" are
+    # surfaced separately so the final summary is not a fake-green gate.
     ds_name = source['dataset']
     subset = source.get('subset')
     split = source['split']
     field = source['field']
-    
+
     log(f"   📡 Connecting to {ds_name} ({subset if subset else 'default'})...", log_file)
-    
+
     try:
         revision = get_hf_revision(ds_name)
         if revision:
             log(f"      📌 Revision pinned: {revision}", log_file)
         ds = load_dataset(
-            ds_name, 
-            name=subset, 
-            split=split, 
+            ds_name,
+            name=subset,
+            split=split,
             revision=revision,
         )
         item = next(iter(ds))
         content = item.get(field)
-        
+
         # Fallback check
         if content is None:
              if 'text' in item: content = item['text']
@@ -75,20 +82,20 @@ def check_source(stage_name, source, log_file):
              elif 'output' in item: content = item['output']
              elif 'Input' in item: content = item['Input']
              elif 'Output' in item: content = item['Output']
-        
+
         if content is not None:
             log(f"      ✅ OK! (Sample len: {len(str(content))})", log_file)
-            return True
+            return "ok"
         else:
             log(f"      ⚠️  OK (Connected) but field '{field}' is empty. Keys: {list(item.keys())}", log_file)
-            return True
-            
+            return "empty"
+
     except Exception as e:
         if "gated" in str(e).lower():
              log(f"      🔐 GATED (User needs to accept terms): {ds_name}", log_file)
-             return True
+             return "gated"
         log(f"      ❌ ERROR: {e}", log_file)
-        return False
+        return "error"
 
 def main():
     parser = argparse.ArgumentParser()
@@ -123,7 +130,10 @@ def main():
             ("STAGE 5: Tools", STAGE5_SOURCES),
         ]
 
-        success_count = 0
+        success_count = 0   # only "ok": content actually verified
+        empty_count = 0     # connected but field empty (not a real content check)
+        gated_count = 0     # gated: reachability unknown until terms accepted
+        error_count = 0     # failed to load
         total_count = 0
 
         for stage_name, sources in stages:
@@ -131,14 +141,28 @@ def main():
             log("-" * 40, f)
             for src in sources:
                 total_count += 1
-                if check_source(stage_name, src, f):
+                status = check_source(stage_name, src, f)
+                if status == "ok":
                     success_count += 1
-        
+                elif status == "empty":
+                    empty_count += 1
+                elif status == "gated":
+                    gated_count += 1
+                else:
+                    error_count += 1
+
         log("\n=================================================================", f)
+        # "All accessible" now means every source was content-verified ("ok").
+        # Empty/gated are reported separately so this is not a fake-green gate.
         if success_count == total_count:
-            log(f"✅ RESULT: All {total_count} datasets are accessible!", f)
+            log(f"✅ RESULT: All {total_count} datasets are content-verified accessible!", f)
         else:
-            log(f"⚠️  RESULT: {success_count}/{total_count} datasets accessible.", f)
+            log(f"⚠️  RESULT: {success_count}/{total_count} datasets content-verified.", f)
+        if empty_count or gated_count or error_count:
+            log(
+                f"   (empty field: {empty_count}, gated/pending terms: {gated_count}, errors: {error_count})",
+                f,
+            )
         log("=================================================================", f)
         
     print(f"\n📄 Report saved to: {report_path}")

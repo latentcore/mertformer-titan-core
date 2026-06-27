@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 import re
+import sys
 from pathlib import Path
 
 
@@ -86,8 +87,13 @@ def detect_expected_test_stat() -> str:
                 match = TEST_STAT_RE.search(tail)
                 if match:
                     return match.group(1)
-        except Exception:
-            pass
+        except (json.JSONDecodeError, OSError, KeyError, TypeError) as exc:
+            # Bozuk/okunamayan start_gate_report.json sessizce atlanmasin: uyari bas,
+            # SOP/env fallback'ine ya da satir altindaki RuntimeError'a dusulsun.
+            print(
+                f"warning: START_GATE_REPORT atlandi ({START_GATE_REPORT}): {exc}",
+                file=sys.stderr,
+            )
     raise RuntimeError("Could not detect the expected pytest pass/skipped stat from current closure artifacts.")
 
 

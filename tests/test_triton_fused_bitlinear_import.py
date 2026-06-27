@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pytest
 import torch
 
 from mertformer_sdk.kernels.triton_fused_bitlinear import (
@@ -13,8 +14,10 @@ def test_triton_fused_module_imports_without_cuda() -> None:
     x = torch.randn(2, 4)
     w = torch.randn(3, 4)
     if not torch.cuda.is_available():
-        try:
+        # CPU/Triton-yok yolunda cagrinin GERCEKTEN RuntimeError firlatmasi
+        # zorunlu kilinir. Onceki try/except yapisinda hata firlamazsa hicbir
+        # assert calismadan test sessizce yesil geciyordu (fake-green gate).
+        with pytest.raises(RuntimeError) as exc_info:
             triton_fused_ternary_linear(x, w)
-        except RuntimeError as exc:
-            assert "CUDA" in str(exc) or "Triton" in str(exc)
+        assert "CUDA" in str(exc_info.value) or "Triton" in str(exc_info.value)
 

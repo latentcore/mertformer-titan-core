@@ -359,7 +359,9 @@ def run_benchmark(
                 ms=ref_ms,
                 tokens_per_s=ref_tps,
                 tflops=ref_tflops,
-                max_abs_err=0.0,
+                # self-reference baseline: error is 0 by definition (ref vs itself),
+                # not a measured value. Use None convention like dense row above.
+                max_abs_err=None,
             )
         )
 

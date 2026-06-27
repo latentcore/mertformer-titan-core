@@ -41,15 +41,21 @@ def main() -> int:
         encoding='utf-8',
     )
 
+    # 'ok' artik gercek duruma baglandi: duplicate doc isim grubu yoksa True.
+    # Cikis kodu/akis kasitli olarak BOZULMUYOR (bu adim frozen pipeline'da
+    # run_step ile cagriliyor); 'ok' bayragi yalnizca durust raporlama icin.
+    # NOT: 'ok' burada bir gecme-kapisi DEGIL; downstream'in fail etmesi
+    # gerekiyorsa duplicate_name_group_count alanini kullanmali.
+    ok = len(dedup_groups) == 0
     drift = {
         'generated_utc': datetime.now(timezone.utc).isoformat(),
         'md_file_count': len(md_files),
         'duplicate_name_group_count': len(dedup_groups),
         'duplicate_name_groups': dedup_groups,
-        'ok': True,
+        'ok': ok,
     }
     (ROOT / 'reports' / 'folder_drift_report.json').write_text(json.dumps(drift, ensure_ascii=False, indent=2), encoding='utf-8')
-    print(json.dumps({'ok': True, 'md_files': len(md_files), 'dup_groups': len(dedup_groups)}))
+    print(json.dumps({'ok': ok, 'md_files': len(md_files), 'dup_groups': len(dedup_groups)}))
     return 0
 
 

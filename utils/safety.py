@@ -14,6 +14,12 @@ except Exception:  # pragma: no cover
 
 
 def _is_finite_number(x: Any) -> bool:
+    # bool is a subclass of int in Python, so isinstance(True, (int, float))
+    # is True. Handle it explicitly: a bool is always considered finite
+    # (it carries no NaN/Inf risk). Behavior is unchanged (still returns True
+    # for bools); this branch only makes the intent explicit.
+    if isinstance(x, bool):
+        return True
     if isinstance(x, (int, float)):
         return math.isfinite(x)
     return True

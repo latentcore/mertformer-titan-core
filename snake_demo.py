@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 """
-MERTFORMER TITAN v1.0 [LIVE DEMO] — Snake (Autoplay)
+MERTFORMER TITAN [HEURISTIC DEMO] — Snake (Autoplay)
 
-Cyberpunk/Terminal aesthetic, self-playing AI, auto-restart on death.
+Cyberpunk/Terminal aesthetic, auto-restart on death.
+
+NOTE: This is a self-playing demo driven by a hand-written HEURISTIC bot
+(Manhattan distance + flood-fill anti-trap). It is NOT a trained model and
+has no connection to MertFormer; the "MERTFORMER TITAN" branding is purely
+decorative.
 
 Run:
   python snake_demo.py
@@ -49,9 +54,11 @@ FOOD_DIM = (140, 20, 20)
 TXT = (160, 255, 180)
 TXT_DIM = (70, 160, 90)
 
-HEADER = "MERTFORMER TITAN v1.0 [LIVE DEMO]"
-REASONING = "Reasoning Speed: 30ms"
-TOKENS = "Tokens: 1.58b"
+# NOTE: This is a heuristic (NOT a model) demo. The header below is purely
+# decorative branding; the bot is a hand-written heuristic, not MertFormer.
+HEADER = "MERTFORMER TITAN [HEURISTIC DEMO]"
+# Removed fabricated/unmeasured telemetry constants (e.g. "Reasoning Speed: 30ms",
+# "Tokens: 1.58b"). They were hardcoded literals not tied to any real measurement.
 
 
 DIRS = {
@@ -280,7 +287,7 @@ def main(argv: list[str] | None = None) -> int:
         os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 
     pygame.init()
-    pygame.display.set_caption("MertFormer Titan — LIVE DEMO")
+    pygame.display.set_caption("MertFormer Titan — Heuristic Snake Demo (not a model)")
     screen = pygame.display.set_mode((W, H))
     clock = pygame.time.Clock()
 
@@ -345,13 +352,11 @@ def main(argv: list[str] | None = None) -> int:
             title = font_h.render(HEADER, True, TXT)
             screen.blit(title, (16, 10))
 
-            # Telemetry
+            # Telemetry: only show the real, measured score. Fabricated
+            # "Reasoning Speed"/"Tokens" readouts were removed (they were not
+            # tied to any actual measurement).
             score_txt = f"Score: {state.score}"
-            t1 = font_t.render(REASONING, True, TXT_DIM)
-            t2 = font_t.render(TOKENS, True, TXT_DIM)
             t3 = font_t.render(score_txt, True, TXT)
-            screen.blit(t1, (16, 40))
-            screen.blit(t2, (260, 40))
             screen.blit(t3, (W - t3.get_width() - 16, 40))
 
             _draw_grid(screen)

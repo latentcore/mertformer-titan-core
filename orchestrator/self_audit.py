@@ -11,8 +11,17 @@ Version: v1.0 (Build 30) — Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 
-TR: Çıktı denetimi — hallüsinasyon tespiti, tutarlılık kontrolü, güvenlik doğrulaması.
-EN: Output audit — hallucination detection, consistency check, safety verification.
+INERT / OUT-OF-SCOPE: Bu modul orchestrator katmaninda yer alir ve 45K egitim
+yolunda KAPALIDIR (feature-flag arkasinda, egitimde devrede degildir).
+
+UYARI (olculmemis): Asagidaki skorlar (consistency, grounding, "hallucination
+detection", safety) kalibre edilmis dogruluk metrikleri DEGILDIR. Hepsi lexical
+(kelime-ortusumu / substring / hedging yogunlugu) heuristikleridir; gercek
+hallusinasyon olcumu veya anlamsal dogrulama yapilmaz. "denetim raporu" ciktilari
+proxy sinyallerdir, olculmus garanti olarak kullanilmamalidir.
+
+TR: Cikti denetimi (lexical proxy) — sozcuksel ortusum tabanli tahmini sinyaller.
+EN: Output audit (lexical proxy) — word-overlap heuristics, NOT calibrated metrics.
 """
 
 __version__ = "1.0-BUILD30-V2"
@@ -117,10 +126,14 @@ class SelfAuditor:
     """
     Module that audits its own outputs.
 
-    - Consistency: agreement between response and context
-    - Grounding: verifiability of claims
-    - Safety: harmful content detection
-    - Uncertainty: hedging/speculation detection
+    NOTE (lexical proxy, NOT calibrated): all sub-scores below are word-overlap /
+    word-boundary keyword heuristics, not measured accuracy. They are advisory
+    signals only — no real hallucination measurement is performed.
+
+    - Consistency: word-overlap between response and context (lexical proxy)
+    - Grounding: sentence/fact word overlap (lexical proxy, not verification)
+    - Safety: keyword-based harmful content scan (lexical proxy)
+    - Uncertainty: hedging/speculation keyword density (lexical proxy)
     """
 
     def __init__(self, alignment_contracts: Optional[object] = None) -> None:
@@ -140,6 +153,8 @@ class SelfAuditor:
         uncertainty = self.detect_uncertainty(response)
 
         # Calculate overall score
+        # NOTE: weighted average of lexical-proxy sub-scores; NOT a calibrated
+        # quality/hallucination metric.
         overall = (
             0.30 * consistency.score
             + 0.25 * grounding.score
@@ -205,11 +220,18 @@ class SelfAuditor:
         # Contradiction detection
         contradictions = 0
         contradiction_notes: List[str] = []
+        # Word-boundary match: bare substring over-counts contradictions
+        # ('all' inside 'overall'/'fall', 'increase' inside 'decrease' etc.),
+        # which would inflate the contradictions score and should_retry.
+        # Still a coarse lexical proxy without sentence alignment.
+        def _word_in(token: str, text: str) -> bool:
+            return re.search(r'\b' + re.escape(token) + r'\b', text) is not None
+
         for pos, neg in _CONTRADICTION_PAIRS:
-            if pos in resp_lower and neg in ctx_lower:
+            if _word_in(pos, resp_lower) and _word_in(neg, ctx_lower):
                 contradictions += 1
                 contradiction_notes.append(f"Response says '{pos}', context says '{neg}'")
-            elif neg in resp_lower and pos in ctx_lower:
+            elif _word_in(neg, resp_lower) and _word_in(pos, ctx_lower):
                 contradictions += 1
                 contradiction_notes.append(f"Response says '{neg}', context says '{pos}'")
 
@@ -288,8 +310,11 @@ class SelfAuditor:
         resp_lower = response.lower()
         violations: List[str] = []
 
+        # Word-boundary match: plain substring causes false positives
+        # ('drug' -> 'drugstore', 'bomb' -> 'bombardier', 'all' inside 'overall')
+        # and is still a coarse lexical proxy (trivially bypassable).
         for threat in _SAFETY_THREATS:
-            if threat in resp_lower:
+            if re.search(r'\b' + re.escape(threat) + r'\b', resp_lower):
                 violations.append(f"Safety threat detected: '{threat}'")
 
         # Also check AlignmentContracts if available

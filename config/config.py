@@ -208,9 +208,9 @@ class MertFormerConfig:
     num_layers: int = 18  # <-- train code looks for this
 
     num_attention_heads: int = 16
-    num_heads: int = 16  # <-- mla.py looks for this
+    num_heads: int = 16  # <-- read by layers/mla.py (which implements GQA, not latent-MLA)
 
-    num_kv_heads: int = 8
+    num_kv_heads: int = 8  # GQA: num_kv_heads(8) < num_heads(16). The "mla" naming is legacy; layers/mla.py is grouped-query attention (GQA), not latent-MLA.
     # [MATH FIX] 2048 / 16 = 128.
     head_dim: int = 128
 

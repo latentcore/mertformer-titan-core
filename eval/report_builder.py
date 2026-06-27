@@ -40,11 +40,19 @@ def _metric_entry(
     confidence: float,
     evidence_ref: str,
 ) -> Dict[str, Any]:
+    # HONESTY NOTE: `baseline` is a hardcoded target threshold, NOT a measured
+    # reference run. When evidence_ref == "missing" the `current` value is a
+    # placeholder (0.0) and the resulting `delta` is NOT a measured comparison.
+    # The `baseline_source` and `measured` fields make this explicit for any
+    # downstream consumer so this entry is never read as a real benchmark delta.
+    measured = evidence_ref not in ("", "missing")
     return {
         "metric": metric,
         "baseline": float(baseline),
+        "baseline_source": "hardcoded_target_threshold_not_measured",
         "current": float(current),
         "delta": float(current - baseline),
+        "measured": measured,
         "confidence": float(max(0.0, min(1.0, confidence))),
         "evidence_ref": evidence_ref,
     }
@@ -105,7 +113,12 @@ def main() -> None:
         "status": status,
         "generated_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "counts": counts,
-        "notes": "Outputs are pre-training unless generated after a full training run.",
+        "notes": (
+            "Outputs are pre-training unless generated after a full training run. "
+            "Metric baselines are hardcoded target thresholds, not measured reference "
+            "runs; entries with measured=false (evidence_ref='missing') are placeholders "
+            "and must not be read as measured benchmark deltas."
+        ),
         "gsm8k_summary_path": str(gsm8k_summary) if gsm8k_summary.exists() else None,
         "generalization_report_path": str(generalization_report) if generalization_payload else None,
         "agentic_report_path": str(agentic_report) if agentic_payload else None,

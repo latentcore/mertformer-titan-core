@@ -45,7 +45,7 @@ def run_model(prompts: List[Dict[str, str]], ckpt: str) -> None:
 
     if Path(ckpt).exists():
         checkpoint = torch.load(ckpt, map_location=device)
-        # TR: Tokenizer'i checkpoint kimliginden yukle; yoksa ACIK hata (sessiz
+        # TR: Tokenizer'i checkpoint kimliğinden yükle; yoksa ACIK hata (sessiz
         #     teacher fallback YOK). EN: Tokenizer strictly from checkpoint
         #     identity; missing -> explicit error (same pattern as eval/gsm8k.py).
         tokenizer = load_tokenizer_from_identity(checkpoint.get("tokenizer_id"))
@@ -102,7 +102,12 @@ def main() -> None:
     if args.run_model:
         run_model(prompts, args.ckpt)
 
-    print("Golden sample eval: PASS")
+    # NOTE: This is NOT a correctness pass-gate. This script only validates the
+    # golden-sample manifest (count == 50) and optionally dry-runs generation
+    # for inspection; it does NOT compare model output against expected answers.
+    # Real assertion-based scoring lives in golden_score.py. The line below
+    # reports that the dry-run/manifest check completed, not that the model passed.
+    print("Golden sample eval: dry-run complete (manifest OK; not a correctness gate)")
 
 
 if __name__ == "__main__":

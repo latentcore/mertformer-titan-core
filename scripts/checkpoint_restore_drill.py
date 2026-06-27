@@ -24,6 +24,7 @@ def patched_cfg():
         "intermediate_size": cfg.intermediate_size,
         "num_experts": cfg.num_experts,
         "num_experts_per_tok": cfg.num_experts_per_tok,
+        "active_experts": getattr(cfg, "active_experts", cfg.num_experts_per_tok),
         "num_heads": cfg.num_heads,
         "num_attention_heads": getattr(cfg, "num_attention_heads", cfg.num_heads),
         "num_kv_heads": getattr(cfg, "num_kv_heads", cfg.num_heads),
@@ -94,7 +95,7 @@ def main() -> None:
 
             model2 = MertFormer().to(device)
             optimizer2 = torch.optim.AdamW(model2.parameters(), lr=1e-3)
-            checkpoint = torch.load(ckpt_path, map_location=device)
+            checkpoint = torch.load(ckpt_path, map_location=device, weights_only=True)
             model2.load_state_dict(checkpoint["model"])
             optimizer2.load_state_dict(checkpoint["optimizer"])
 

@@ -11,6 +11,8 @@ Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
+# NOTE: manually-maintained local version label (fossil); not derived from a
+# central release manifest and may drift from the repo's actual version.
 __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
@@ -52,7 +54,8 @@ def stress_test():
     ]
 
     print(f"🔥 TITAN 10-CYCLE STRESS TEST STARTING...")
-    print(f"Model: {model_path} | Size: ~581MB")
+    model_size_mb = os.path.getsize(model_path) / (1024 * 1024)
+    print(f"Model: {model_path} | Size: {model_size_mb:.1f}MB")
     print("-" * 50)
 
     total_start = time.time()
@@ -93,7 +96,10 @@ def stress_test():
     print(f"🏆 STRESS TEST COMPLETE!")
     print(f"⏱️ Total Time for 200 Tokens: {total_end - total_start:.2f}s")
     print(f"🚀 Average Speed: {200/(total_end - total_start):.2f} tokens/sec")
-    print("\nCONCLUSION: Titan is stable and ready for production load. 🦅🦾")
+    # NOTE: This is a smoke run (10 prompts x 15 tokens); it does NOT measure
+    # stability or production load. Report only the measured throughput above.
+    print("\nCONCLUSION: Smoke run completed. Throughput measured above; "
+          "this is NOT a production-readiness or stability assessment.")
 
 if __name__ == "__main__":
     stress_test()

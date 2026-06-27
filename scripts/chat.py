@@ -6,12 +6,16 @@ Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: sourced from mertformer_sdk.__version__ (single source of truth,
+         avoids hand-maintained "BUILD30-V2" fossil / version drift)
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30-V2"
+try:
+    from mertformer_sdk import __version__  # single source of truth
+except Exception:  # pragma: no cover - SDK optional at import time
+    __version__ = "unknown"
 __author__ = "Mert"
 
 import sys

@@ -8,11 +8,15 @@ Proprietary - All Rights Reserved.
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
+
+NOT: Bu modul orchestrator/ altinda yer alir; inert / out-of-scope'tur.
+45K egitim yolunda kapali (feature-flag) -- TTS/STT yardimci arabirimi olup
+egitim/cikarim ana hattini etkilemez.
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__version__ = "1.0-BUILD30"
+__author__ = "Mert Yünlü"
 
 import subprocess
 import logging
@@ -53,7 +57,10 @@ class AudioSense:
         if not text:
             return
         
-        # Cleanup for security
+        # NOT: Shell enjeksiyon korumasi DEGIL. subprocess asagida liste
+        # argumaniyla (shell=False) cagriliyor, bu yeterli korumayi saglar.
+        # Bu temizlik yalniz 'say' ciktisinin okunusunu duzeltmek icin
+        # kozmetiktir (tirnak/noktali virgul ayiklama, & -> ' ve ').
         safe_text = (
             text.replace('"', "")
             .replace("'", "")

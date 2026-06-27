@@ -13,6 +13,13 @@ from orchestrator.swarm_runtime import SwarmRuntime
 from .pilot import build_pilot_report, run_verify_all
 
 
+# Expected selected-agent count for the swarm "omega" profile.
+# Canonical value documented in orchestrator/swarm_runtime (3/15/45-agent
+# modes; omega == 45). Kept as a named constant instead of a bare magic
+# number so the omega readiness gate threshold is explicit and traceable.
+OMEGA_EXPECTED_AGENTS = 45
+
+
 @dataclass
 class KPIItem:
     key: str
@@ -23,10 +30,15 @@ class KPIItem:
     note: str
 
 
-def _status(value: float, target: float, higher_is_better: bool = True) -> str:
+def _status(value: float, target: float, higher_is_better: bool = True, critical: bool = False) -> str:
+    # Non-passing mandatory gates are reported as hard "fail"; only optional
+    # gates soften to "warn". (Previously every miss collapsed to "warn", so no
+    # gate could ever surface a real failure.) pass_count still counts only
+    # "pass", so the readiness score math is unchanged by this distinction.
+    miss = "fail" if critical else "warn"
     if higher_is_better:
-        return "pass" if value >= target else "warn"
-    return "pass" if value <= target else "warn"
+        return "pass" if value >= target else miss
+    return "pass" if value <= target else miss
 
 
 def _load_json(path: Path) -> Dict[str, Any] | None:
@@ -75,10 +87,15 @@ def collect_kpis(
 
     swarm = SwarmRuntime()
     swarm_report = swarm.run("build30 omega readiness verification", mode="omega")
-    omega_ready = 1.0 if len(swarm_report.selected_agents) == 45 and swarm_report.governance.get("allowed") else 0.0
+    omega_ready = 1.0 if len(swarm_report.selected_agents) == OMEGA_EXPECTED_AGENTS and swarm_report.governance.get("allowed") else 0.0
 
-    onnx_ok = 1.0
-    onnx_note = "onnx smoke skipped"
+    # When the ONNX smoke check is not executed it must NOT count as a pass:
+    # a skipped, unmeasured gate is neither green nor red. We mark it value 0.0
+    # with an explicit "skipped" status (see KPIItem construction below) so it
+    # is excluded from pass_count / readiness instead of silently inflating it.
+    onnx_run = run_onnx_check
+    onnx_ok = 0.0
+    onnx_note = "onnx smoke skipped (not run; not counted as pass)"
     if run_onnx_check:
         onnx_ok = 1.0 if _run_onnx_smoke(project_root) else 0.0
         onnx_note = "onnx smoke executed"
@@ -91,27 +108,30 @@ def collect_kpis(
         kaggle_delta = b - a
 
     checks = [
-        KPIItem("kpi01_verify_all", "verify_all PASS", 1.0 if verify_summary.get("status") == "pass" else 0.0, 1.0, _status(1.0 if verify_summary.get("status") == "pass" else 0.0, 1.0), "offline gate"),
-        KPIItem("kpi02_secret_scan", "secret scan", 1.0 if verify_summary.get("secret_scan_pass") else 0.0, 1.0, _status(1.0 if verify_summary.get("secret_scan_pass") else 0.0, 1.0), "tracked files"),
-        KPIItem("kpi03_pytest", "pytest pass", 1.0 if verify_summary.get("pytest_pass") else 0.0, 1.0, _status(1.0 if verify_summary.get("pytest_pass") else 0.0, 1.0), "test gate"),
+        KPIItem("kpi01_verify_all", "verify_all PASS", 1.0 if verify_summary.get("status") == "pass" else 0.0, 1.0, _status(1.0 if verify_summary.get("status") == "pass" else 0.0, 1.0, critical=True), "offline gate"),
+        KPIItem("kpi02_secret_scan", "secret scan", 1.0 if verify_summary.get("secret_scan_pass") else 0.0, 1.0, _status(1.0 if verify_summary.get("secret_scan_pass") else 0.0, 1.0, critical=True), "tracked files"),
+        KPIItem("kpi03_pytest", "pytest pass", 1.0 if verify_summary.get("pytest_pass") else 0.0, 1.0, _status(1.0 if verify_summary.get("pytest_pass") else 0.0, 1.0, critical=True), "test gate"),
         KPIItem("kpi04_preflight", "preflight pass", 1.0 if verify_summary.get("preflight_pass") else 0.0, 1.0, _status(1.0 if verify_summary.get("preflight_pass") else 0.0, 1.0), "system drill"),
         KPIItem("kpi05_operator_gate", "operator gate pass", 1.0 if verify_summary.get("operator_gate_pass") else 0.0, 1.0, _status(1.0 if verify_summary.get("operator_gate_pass") else 0.0, 1.0), "nan/restore/failure-budget"),
         KPIItem("kpi06_pilot_schema", "pilot schema output", 1.0 if pilot.get("schema") == "pilot_report_v1" else 0.0, 1.0, _status(1.0 if pilot.get("schema") == "pilot_report_v1" else 0.0, 1.0), "contract"),
         KPIItem("kpi07_release_artifacts", "release artifacts present", float(sum(1 for p in release_files if p.exists())) / release_total, 1.0, _status(float(sum(1 for p in release_files if p.exists())) / release_total, 1.0), "zip+locked age"),
-        KPIItem("kpi08_swarm_omega", "omega profile ready", omega_ready, 1.0, _status(omega_ready, 1.0), "45 agents"),
-        KPIItem("kpi09_onnx_smoke", "onnx smoke", onnx_ok, 1.0, _status(onnx_ok, 1.0), onnx_note),
+        KPIItem("kpi08_swarm_omega", "omega profile ready", omega_ready, 1.0, _status(omega_ready, 1.0), f"{OMEGA_EXPECTED_AGENTS} agents"),
+        KPIItem("kpi09_onnx_smoke", "onnx smoke", onnx_ok, 1.0, _status(onnx_ok, 1.0) if onnx_run else "skipped", onnx_note),
         KPIItem("kpi10_smoke_metrics", "smoke benchmark availability", 1.0 if smoke_metrics else 0.0, 1.0, _status(1.0 if smoke_metrics else 0.0, 1.0), f"elapsed={smoke_elapsed:.2f}s" if smoke_metrics else "missing"),
         KPIItem("kpi11_kaggle_compare", "kaggle compare availability", 1.0 if kaggle_metrics else 0.0, 1.0, _status(1.0 if kaggle_metrics else 0.0, 1.0), f"loss_delta(vanilla-mertformer)={kaggle_delta:.4f}" if kaggle_metrics else "missing"),
         KPIItem("kpi12_claim_eligibility", "benchmark claim eligibility", 1.0 if pilot.get("benchmark_eligibility", {}).get("eligible_for_claim") else 0.0, 1.0, _status(1.0 if pilot.get("benchmark_eligibility", {}).get("eligible_for_claim") else 0.0, 1.0), "checkpoint + full gates"),
     ]
 
     pass_count = sum(1 for item in checks if item.status == "pass")
-    readiness = pass_count / float(len(checks))
+    # "skipped" gates are unmeasured and excluded from the readiness denominator
+    # so they neither inflate (old skip-as-pass bug) nor unfairly deflate it.
+    scored_count = sum(1 for item in checks if item.status != "skipped")
+    readiness = pass_count / float(scored_count) if scored_count else 0.0
     pilot_quality = {
         "score": readiness,
         "status": "ready" if readiness >= 0.8 else "needs_work",
         "gates_passed": pass_count,
-        "gates_total": len(checks),
+        "gates_total": scored_count,
     }
 
     return {

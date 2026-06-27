@@ -1,6 +1,6 @@
 # Satranç 4060 24 Saat All-On Experimental Checklist
 
-Research-only checklist. Kanonik release taşıyan yol için `chess_4060_24h.md` kullanılmalıdır.
+Research-only checklist. Kanonik release taşıyan yol için TR muadili `chess_4060_24h_TR.md` (İngilizcesi: `chess_4060_24h.md`) kullanılmalıdır.
 
 - [ ] Profil seçildi: `strength_4060_24h_all_on_experimental` veya `strength_4060_24h_omni_max`
 - [ ] Disk alanı kontrol edildi

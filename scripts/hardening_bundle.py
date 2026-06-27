@@ -53,10 +53,17 @@ def run_static_analysis() -> dict:
 def run_sanitizer_smoke() -> dict:
     clang = subprocess.run(["bash", "-lc", "command -v clang || true"], capture_output=True, text=True)
     has_clang = bool(clang.stdout.strip())
+    # DURUSTLUK NOTU: clang yoksa sanitizer hic calismaz; bu durumda "ok" gercek
+    # bir bellek/UB kontrolu GECTI demek DEGILDIR, sadece adimin atlandigi demektir.
+    # "skipped" alani skip durumunu pass'tan ayirt etmek icin eklendi; ok davranisi
+    # (akisi/donus kodunu bozmamak icin) korundu.
+    skipped = not has_clang
     payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "tooling_available": has_clang,
         "status": "skip" if not has_clang else "pass",
+        "skipped": skipped,
+        "sanitizer_actually_ran": has_clang,
         "ok": True,
         "reason": "clang unavailable on runner" if not has_clang else "sanitizer smoke not required for python-only path",
     }
@@ -174,10 +181,27 @@ def run_fallback_policy_report() -> dict:
     x = torch.randn(2, 4)
     w = torch.randn(3, 4)
     backend = select_backend(x, w)
+    # DURUSTLUK NOTU: Bu gate gercek bir gecme-kapisi DEGILDIR. select_backend zaten
+    # yalnizca asagidaki yedi degeri (artop forced override haric) dondurdugu icin bu
+    # uyelik kontrolu pratikte hicbir seyi reddetmez; ok neredeyse her zaman True olur.
+    # Ayrica metal_fallback/vulkan_fallback/npu_fallback/mps_optimized dekoratif fallback
+    # etiketleridir (gercek hizlandirma garantisi yok). Donus kodu/akisi bozmamak icin
+    # kontrol mantigi korundu; sadece beklenen kume durustce dokumante edildi.
+    allowed_backends = {
+        "cpp_cpu",
+        "pytorch_fallback",
+        "metal_fallback",
+        "vulkan_fallback",
+        "npu_fallback",
+        "mps_optimized",
+        "triton_cuda",
+    }
     payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "selected_backend_cpu": backend,
-        "ok": backend in {"cpp_cpu", "pytorch_fallback", "metal_fallback", "vulkan_fallback", "npu_fallback", "mps_optimized", "triton_cuda"},
+        "allowed_backends": sorted(allowed_backends),
+        "is_real_pass_gate": False,
+        "ok": backend in allowed_backends,
     }
     write_report("fallback_policy_report.json", payload)
     return payload

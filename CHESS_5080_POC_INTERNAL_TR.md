@@ -25,6 +25,7 @@ Bu hat private/operator odaklı satranç proof akışıdır.
 - Bu hat tek başına ana 45K repo claim yüzeyini yükseltmez.
 
 ## Share Export
+> Not: Bu TR dosyası `scripts/export_chess_5080_share.py`'nin güncel davranışını (Windows build workspace + EXE delivery) yansıtır. EN kanonik dosya (`CHESS_5080_POC_INTERNAL.md`) bu noktada eskidir ("obfuscated share copy" artık üretilmiyor); çelişki EN tarafının güncellenmesiyle çözülmelidir.
 - Okunabilir kanonik script repo içinde kalır.
 - `scripts/export_chess_5080_share.py` şunları üretir:
   - açık kopya

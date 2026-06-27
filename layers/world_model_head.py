@@ -3,6 +3,10 @@
 MERTFORMER TITAN (ONYX STORM)
 -------------------------------------------------------------------------------
 World model dynamics head (feature-flag driven, non-breaking)
+
+INERT / OUT-OF-SCOPE: This is a speculative diagnostic head. It is OFF by default
+(feature-flagged) and is NOT on the 45K training path. Its outputs are not wired
+to any training loss. Kept for parity/experiments only.
 ==============================================================================
 """
 
@@ -17,12 +21,20 @@ import torch.nn as nn
 
 @dataclass
 class WorldModelOutput:
-    """Compact container for world-model side outputs."""
+    """Compact container for world-model side outputs.
 
-    dynamics_logits: torch.Tensor
+    NOTE on naming: ``dynamics_logits`` and ``counterfactual_logits`` are NOT
+    classification logits. They are tanh-compressed hidden states in [-1, 1]
+    (see ``CausalWorldModelHead.forward``). The ``*_logits`` field names (and the
+    matching ``world_*_logits`` keys in ``to_dict``) are kept for backward
+    compatibility with tests and the mirror-parity surface; they are misnomers
+    and are better read as ``*_states``.
+    """
+
+    dynamics_logits: torch.Tensor  # tanh-compressed states, NOT logits (kept for compat)
     latent_state: torch.Tensor
     uncertainty: torch.Tensor
-    counterfactual_logits: torch.Tensor
+    counterfactual_logits: torch.Tensor  # tanh-compressed states, NOT logits (kept for compat)
     risk_score: torch.Tensor
 
     def to_dict(self) -> Dict[str, torch.Tensor]:

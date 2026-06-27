@@ -13,6 +13,10 @@ Status : PRE-TRAINING (UNVERIFIED)
 
 TR: Zincir Düşünce (CoT) ve Düşünce Ağacı (ToT) tabanlı çok stratejili akıl yürütme motoru.
 EN: Chain-of-Thought (CoT) and Tree-of-Thought (ToT) based multi-strategy reasoning engine.
+
+NOTE (scope): inert / out-of-scope; 45K eğitim yolunda kapalı (feature-flag).
+Bu orchestrator modülü çekirdek eğitim hattının parçası değildir; deneysel/
+spekülatif akıl yürütme katmanıdır.
 """
 
 __version__ = "1.0-BUILD30-V2"
@@ -21,6 +25,9 @@ __author__ = "Mert"
 import time
 import math
 import hashlib
+import logging
+
+logger = logging.getLogger(__name__)
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Tuple
 
@@ -34,7 +41,7 @@ class ThoughtStep:
     """A single reasoning step."""
     step_number: int
     thought: str
-    confidence: float  # 0.0 - 1.0
+    confidence: float  # 0.0 - 1.0; heuristik PROXY (kalibre olasılık DEĞİL)
     action_proposal: Optional[str] = None
     tool_suggestion: Optional[str] = None
     evidence: Optional[str] = None
@@ -170,6 +177,9 @@ def _estimate_complexity(task: str) -> float:
         + 0.1 * question_factor
         - 0.2 * min(1.0, simple_hits * 0.3)
     )
+    # Sabit +0.3 bias: skoru orta-karmaşıklığa çeker; bu kasıtlı/heuristik bir
+    # ayardır ve select_strategy eşiklerini (0.4 -> cot, 0.7 -> tot) doğrudan
+    # etkiler. Eşikler değişirse bu bias yeniden gözden geçirilmelidir.
     return max(0.0, min(1.0, score + 0.3))  # bias toward medium complexity
 
 
@@ -219,6 +229,10 @@ class ReasoningEngine:
             try:
                 return self.generate_fn(prompt)
             except Exception as e:
+                # Hata sessizce yutulmasın: en azından uyarı olarak loglanır.
+                # Davranış korunur (aynı fallback string'i döner) ama hata artık
+                # teşhis edilebilir.
+                logger.warning("generation failed in _generate: %s", e, exc_info=True)
                 return f"[reasoning-fallback] generation error: {e}"
         return f"[no-model] {prompt[:200]}"
 
@@ -617,7 +631,12 @@ class ReasoningEngine:
 
     @staticmethod
     def _estimate_step_confidence(text: str, step_number: int) -> float:
-        """Estimates step confidence."""
+        """Estimates step confidence.
+
+        UYARI: Bu değer kelime-sayımı + sabit bias'a dayalı bir HEURISTIK
+        PROXY'dir; kalibre edilmiş bir olasılık DEĞİLDİR. 0.0-1.0 aralığında
+        sunulması bir kalibrasyon iddiası içermez.
+        """
         confidence = 0.6
 
         # Certainty markers increase confidence

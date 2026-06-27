@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mertformer.local/interfaces/backlog_item_v1.schema.json",
+  "$id": "https://mertformer.ai/schemas/backlog_item_v1.schema.json",
   "title": "Backlog Item v1",
   "type": "object",
   "additionalProperties": false,

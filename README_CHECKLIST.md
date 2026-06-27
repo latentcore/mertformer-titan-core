@@ -19,7 +19,7 @@
 ## 4️⃣ Metrics / FAQ / Benchmarks
 - [x] **Forensic Data:** Sample PoC hash included; production metrics marked as pending.
 - [x] **Projections:** Marked as pre-training estimates or targets where appropriate.
-- [x] **Comparisons:** Llama-3/Phi-3 table is consistent.
+- [n/a] **Comparisons:** Llama-3/Phi-3 table removed in the 178KB→4KB README cut; no such table in the current README.
 - [x] **FAQ:** Addressed 1.58-bit quality and Mobile capability.
 
 ## 5️⃣ Links / Badges / Spelling
@@ -33,6 +33,8 @@
 - [x] **Forensic Seal:** Added secure logging verification section.
 
 ---
+> **Honesty note:** The `[x]` items below are **manual reviewer judgments**, not automated evidence or pass-gate outputs. Items such as Completeness (line 6), Comparisons (line 22), Links (line 26) and Spelling (line 28) are **not backed by a script/report output** — treat them as "evidence pending" rather than verified gates. `[n/a]` items were intentionally dropped in the 4KB README cut.
+
 **Status:** 🟡 **PRE-TRAINING / DRAFT**
 **Verified By:** Antigravity Agent (initial) · refreshed in the Build 30 V2 closure pass
 **Date:** 2026-02-05 (initial) · 2026-06-17 (post-4KB-README-cut refresh)

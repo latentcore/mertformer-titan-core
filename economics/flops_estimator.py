@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 
+# design-target; measured ~3.67B params (config.py: 3,672,982,022). Override via --params for the real count.
 DEFAULT_PARAMS = 2.64e9
 
 

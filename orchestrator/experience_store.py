@@ -13,6 +13,10 @@ Status : PRE-TRAINING (UNVERIFIED)
 
 TR: Deneyim deposu — episodik öğrenme, strateji adaptasyonu, performans izleme.
 EN: Experience store — episodic learning, strategy adaptation, performance tracking.
+
+NOTE (scope): inert / out-of-scope — bu orchestrator modulu 45K egitim yolunda
+kapalidir (feature-flag). Egitim/parite hattini etkilemez; yalnizca agentic
+calisma zamaninda devreye girer.
 """
 
 __version__ = "1.0-BUILD30-V2"
@@ -106,6 +110,7 @@ class ExperienceStore:
         if self.store_path is None or not self.store_path.exists():
             return
 
+        corrupt_lines = 0
         try:
             with self.store_path.open("r", encoding="utf-8") as f:
                 for line in f:
@@ -130,7 +135,15 @@ class ExperienceStore:
                         self.episodes.append(episode)
                         self._update_stats(episode)
                     except Exception:
+                        # Bozuk JSONL satiri: akisi bozmadan atla ama gorunur kil
+                        # (sessizce yutma; veri kaybi izlenebilir olsun).
+                        corrupt_lines += 1
                         continue
+            if corrupt_lines:
+                print(
+                    f"⚠️ Experience Store: {corrupt_lines} bozuk satir atlandi "
+                    f"(corrupt JSONL lines skipped)"
+                )
             print(f"📚 Experience Store: {len(self.episodes)} episodes loaded")
         except Exception as e:
             print(f"⚠️ Experience Store load error: {e}")
@@ -191,7 +204,14 @@ class ExperienceStore:
         return self._keyword_recall(task, top_k)
 
     def _semantic_recall(self, task: str, top_k: int) -> List[Episode]:
-        """Recall by semantic similarity."""
+        """Recall by semantic similarity.
+
+        PERF NOTE: bu surum her sorguda TUM episode'lar icin encode_text
+        cagirir (O(N) encode/sorgu; MAX_EPISODES=10_000 -> worst-case 10k
+        encode). Embedding cache YOK. Optimizasyon (record sirasinda bir kez
+        encode edip saklamak) veri yapisini degistirecegi icin bilinerek
+        ertelendi; bu fonksiyonun davranisi mevcut haliyle dogrudur.
+        """
         try:
             q_vec = torch.tensor(
                 self.sense_engine.encode_text(task), dtype=torch.float32
@@ -212,7 +232,10 @@ class ExperienceStore:
 
             scored.sort(key=lambda x: x[0], reverse=True)
             return [ep for _, ep in scored[:top_k]]
-        except Exception:
+        except Exception as e:
+            # Semantik recall basarisiz: keyword recall'a dus ama sessiz olma.
+            # Bozuk sense_engine/encode_text bu uyari ile gorunur kalir.
+            print(f"⚠️ Experience Store: semantic recall failed, keyword fallback: {e}")
             return self._keyword_recall(task, top_k)
 
     def _keyword_recall(self, task: str, top_k: int) -> List[Episode]:

@@ -61,7 +61,7 @@ SLIDES_EN = [
         "title": "Architecture Highlights",
         "bullets": [
             "BitLinear + Liquid Neural Networks",
-            "MLA attention with long-context readiness",
+            "GQA (grouped-query) attention with long-context readiness",
             "Sparse MoE with temporal routing",
         ],
     },
@@ -162,7 +162,7 @@ SLIDES_TR = [
         "title": "Mimari Öne Çıkanlar",
         "bullets": [
             "BitLinear + Liquid Neural Networks",
-            "MLA dikkat ile uzun bağlam hazırlığı",
+            "GQA (gruplu-sorgu) dikkat ile uzun bağlam hazırlığı",
             "Zaman‑bağımlı yönlendirmeli seyrek MoE",
         ],
     },

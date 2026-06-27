@@ -134,6 +134,7 @@ unicode_ok = False
 duplicate_ok = False
 runtime_clean_ok = False
 zip_ok = False
+in_zip_audit = False
 secret_ok = False
 dashboard_path = ""
 tolerance_line = ""
@@ -142,6 +143,11 @@ release_sha = ""
 locked_sha = ""
 
 for line in clean.splitlines():
+    # Track which run_step we are inside so the zip gate is scoped to the
+    # zip_denylist_audit step's own output instead of matching any '"ok": true'
+    # substring emitted anywhere in the combined log.
+    if line.startswith("[run] step="):
+        in_zip_audit = line.startswith("[run] step=zip_denylist_audit")
     if line.startswith("[run] start_utc="):
         start_utc = line.split("=", 1)[1].strip()
     elif line.startswith("[run] end_utc="):
@@ -171,8 +177,10 @@ for line in clean.splitlines():
         release_sha = line.split("=", 1)[1].strip()
     elif line.startswith("locked_sha256="):
         locked_sha = line.split("=", 1)[1].strip()
-    elif '"ok": true' in line and "zip_path" not in line:
-        # zip denylist emits {"ok": true} in a small JSON block.
+    elif in_zip_audit and '"ok": true' in line and "zip_path" not in line:
+        # zip denylist emits {"ok": true} in a small JSON block; only honor it
+        # while inside the zip_denylist_audit step (guarded by in_zip_audit) so
+        # an unrelated step printing '"ok": true' cannot flip this gate green.
         zip_ok = True
 
 locked_generated = "yes" if locked_sha else "no"

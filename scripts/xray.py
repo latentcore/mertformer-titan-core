@@ -239,7 +239,10 @@ def is_text_file(path: Path) -> bool:
         with path.open("rb") as f:
             chunk = f.read(1024)
         return b"\0" not in chunk  # Null byte yoksa metindir
-    except Exception:
+    except (OSError, UnicodeError) as exc:
+        # Okuma hatasinda dosya guvenli tarafta binary kabul edilir (return False),
+        # ancak hata artik sessizce yutulmuyor; teshis icin stderr'e uyari yazilir.
+        print(f"[UYARI] is_text_file okunamadi: {path} ({exc})", file=sys.stderr)
         return False
 
 def should_skip_content(path: Path) -> bool:

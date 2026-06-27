@@ -14,6 +14,8 @@
 | 0 | *Başlangıç* | 0.0 |
 | 20 | *Final* | 95.1438 |
 
+> **Not (dürüstlük):** Kayıp (Loss) sütunu yer-tutucu (`Başlangıç`/`Final`) içerir; gerçek ölçülen kayıp değerleri kaydedilmemiştir. Bu nedenle yukarıdaki **Durum: GEÇTİ** bir kayıp-eşiği karşılaştırmasına DAYANMAZ; yalnızca akışın hatasız çalıştığını belirtir, bir geçme-kapısı (pass-gate) DEĞİLDİR.
+
 ## 🔮 Üretim Kontrolü
 - **KV Cache Mantığı:** GEÇTİ
 - **Çıktı Şekli (Shape):** torch.Size([1, 15])

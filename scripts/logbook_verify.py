@@ -11,7 +11,17 @@ line's hash (the first line links to the genesis = sha256("")).
 This script re-walks that chain for one run file (or every logs/*.jsonl) and reports the first
 break. Lines without a `_chain` (e.g. a logbook header) are skipped.
 
-Exit 0 = all chains intact; exit 1 = a broken/forged/missing-link line was found.
+Exit 0 = all chain LINKAGE intact; exit 1 = a broken/forged/missing-link line was found.
+
+HONESTY NOTE (this is NOT a full content-tamper gate): the hard check covers only the chain
+LINKAGE (`prev` == previous line's hash), which catches insertion / deletion / reordering /
+truncation. The per-record content-hash recompute is serialization-sensitive across logger
+versions, so a recompute mismatch is reported as an informational WARNING and does NOT fail the
+run. Consequence: a tamper that edits a record's payload while preserving the stored hash/link
+will still print "OK". A green result here means "links intact", not "every payload verified".
+Likewise an empty target list (no logs/*.jsonl) returns 0 = "nothing to verify", which is NOT a
+positive integrity attestation. To make this a true content gate, pin a single canonical
+serialization and turn the recompute mismatch into a hard FAIL.
 """
 from __future__ import annotations
 
@@ -60,6 +70,10 @@ def verify_file(path: Path) -> tuple[bool, str]:
             if stored_prev != prev:
                 return False, f"{path.name}:{lineno} broken chain link (prev {stored_prev[:12]}… != {prev[:12]}…)"
             if _recompute_hash(rec, prev) != stored_hash:
+                # NOT a pass-gate: a content-hash mismatch is only counted as a warning (kept this
+                # way for backward-compat with older logger serializations), so a payload tamper
+                # that preserves the chain link is NOT failed here. This is intentional but means
+                # an "OK" result does not attest per-record content integrity.
                 hash_warnings += 1
             prev = stored_hash
             checked += 1
@@ -74,7 +88,9 @@ def main() -> int:
 
     targets = [Path(p) for p in args.paths] if args.paths else sorted((ROOT / "logs").glob("*.jsonl"))
     if not targets:
-        print("logbook_verify: no JSONL run files found (logs/*.jsonl).")
+        # NOT a green pass: "no files to verify" is reported as success exit code only because
+        # there is nothing to check — it is NOT a positive integrity attestation.
+        print("logbook_verify: no JSONL run files found (logs/*.jsonl) — nothing to verify (not a pass).")
         return 0
 
     ok_all = True

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WORKDIR="${1:-/tmp/nihai_cleanroom_b27}"
+WORKDIR="${1:-/tmp/nihai_cleanroom}"
 PYTHON_BIN="${TITAN_CLEANROOM_PYTHON:-python3.11}"
 
 echo "🧪 Clean-room verify starting..."

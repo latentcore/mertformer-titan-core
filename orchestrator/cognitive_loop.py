@@ -21,14 +21,21 @@ iteratif döngüde birleştirir.
 This module is MertFormer Titan's AGI core. It unifies all cognitive modules
 (reasoning, tool use, memory, self-audit, experience) into a single
 iterative loop.
+
+SCOPE NOTE: This orchestrator is INERT / out-of-scope for the canonical 45K
+training path; it is disabled (feature-flagged off) on that path and is not
+exercised during pre-training. Treat as an experimental cognitive shell.
 """
 
-__version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__version__ = "1.0"
+__author__ = "Mert Yünlü"
 
+import logging
 import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
+
+logger = logging.getLogger(__name__)
 
 from .reasoning_engine import ReasoningEngine, ReasoningResult
 from .tool_executor import ToolExecutor, ToolResult
@@ -285,9 +292,17 @@ class CognitiveLoop:
             try:
                 memory_context = self.memory.build_context_block(task)
             except Exception:
+                logger.warning(
+                    "memory.build_context_block failed; falling back to recall",
+                    exc_info=True,
+                )
                 try:
                     memory_context = self.memory.recall(task, top_k=5)
                 except Exception:
+                    logger.warning(
+                        "memory.recall fallback also failed; using empty context",
+                        exc_info=True,
+                    )
                     memory_context = ""
 
         # World state
@@ -300,7 +315,10 @@ class CognitiveLoop:
                         f"- {f}" for f in relevant_facts
                     )
             except Exception:
-                pass
+                logger.warning(
+                    "world_model.recall_relevant failed; skipping world state",
+                    exc_info=True,
+                )
 
         # Experiences
         past = self.experience.recall_similar(task, top_k=3)
@@ -398,6 +416,10 @@ class CognitiveLoop:
             try:
                 response = self.generate_fn(enriched_prompt)
             except Exception:
+                logger.warning(
+                    "generate_fn failed; falling back to plan.conclusion",
+                    exc_info=True,
+                )
                 response = plan.conclusion
         else:
             response = plan.conclusion
@@ -470,7 +492,11 @@ class CognitiveLoop:
             facts=facts,
         )
 
-        # Calculate outcome score
+        # Heuristik outcome skoru (ölçülmüş bir başarı metriği DEĞİL):
+        # sabit ağırlıklı (0.4/0.4/0.1/0.1) confidence/audit/success/retry
+        # kombinasyonu. 'score' adı yalnızca bu kestirimsel birleşimi ifade eder;
+        # downstream (experience_store, run() durdurma koşulu, to_summary)
+        # bunu kanıtlanmış başarı oranı gibi yorumlamamalıdır.
         outcome_score = (
             0.4 * thought.confidence
             + 0.4 * audit.overall_score

@@ -2,7 +2,12 @@
 # Run the script on training hardware to populate real values.
 # Example:
 #   python scripts/write_cuda_lock.py
+#
+# STATUS: PLACEHOLDER -- this is NOT a real reproduction lock yet.
+# All values below are unpopulated stubs ("unknown"). Do NOT treat this
+# file as a captured environment lock until status=ready below.
 
+status=placeholder
 cuda=unknown
 cudnn=unknown
 nccl=unknown

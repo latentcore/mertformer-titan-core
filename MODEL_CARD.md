@@ -14,7 +14,7 @@ Turkey-serving, offline-first, edge-native, locally integrable intelligence infr
 
 ## Current State
 - Repository state: pre-training / claim-unverified
-- Runtime total: measured in repo artifacts
+- Parameter count: measured (~3.67B) in repo artifacts; runtime/throughput: unverified (no trained checkpoint or runtime measurement yet)
 - Benchmark eligibility: `NOT ELIGIBLE FOR CLAIM` without a trained checkpoint
 - 45K run: first serious architecture validation run, not the final capability ceiling
 - Readiness posture: repo-side start gate is green on `remote_bootstrap` (`TRAIN_ALLOWED` / `READY_REMOTE_BOOTSTRAP`)

@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+# ---------------------------------------------------------------------------
+# zero_touch_start.sh — THIN FORWARDER, NOT the canonical entrypoint.
+#   Canonical launchpad: run.sh
+#   For the known demo/PoC flags below this script exec's run.sh directly;
+#   otherwise it bootstraps the venv, runs optional Phase-0 precompute, and
+#   exec's scripts/final_orchestrator.py. It adds no logic of its own beyond
+#   that dispatch. When in doubt about which entrypoint is authoritative,
+#   use run.sh. (Overlapping entrypoints: run.sh, zero_touch_start.sh,
+#   launch_mertformer_kaggle_closure.command, scripts/launch_8xb300.sh,
+#   scripts/launch_ocean_45k.sh — see START_HERE.md.)
+# ---------------------------------------------------------------------------
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

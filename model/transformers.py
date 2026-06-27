@@ -5,7 +5,7 @@ MERTFORMER TITAN (ONYX STORM)
 Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
-Project: Mobile-First LLM Architecture for Samsung S25 NPU
+Project: Mobile-First LLM Architecture (Samsung S25 NPU + NVIDIA RTX 5080 / T4)
 Version: v1.0 (Build 30 V2) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================

@@ -13,6 +13,11 @@ Notes:
 - This file is designed to be pasted directly into a Kaggle cell or run as a standalone script.
 - It does not import repo modules at runtime.
 - It optimizes for stable evidence and graceful failure, not hype claims.
+- NAMING NOTE: the filename says "5080" (RTX 5080) but the actual target lane is
+  the Kaggle One-Cell T4 build (the "BUILD30" banner, the default profile
+  't4_onecell_sweetspot', and checkpoint/schema names all say build30/t4). The
+  "5080" in the filename and "BUILD30" tags are legacy/fossil labels; trust the
+  in-file profile/schema for the real target, not the filename.
 """
 from __future__ import annotations
 
@@ -1709,6 +1714,10 @@ def summarize_data_source_scorecard(curriculum_trace: Sequence[Dict[str, Any]]) 
             "topup": total_topup,
             "failure_rows": failure_rows,
             "stage_3_code_loaded": int(stage3_code_loaded),
+            # When True, NO code-stage data was loaded, so coding capability is
+            # NOT demonstrated even if the overall run/preflight reports green
+            # (the default profile allows degraded data). Downstream summaries
+            # must surface this and must not imply a coding claim while blocked.
             "coding_claim_blocked": bool(stage3_code_loaded <= 0),
         },
     }
@@ -1752,6 +1761,11 @@ def build_benchmark_winner_matrix(bench: Dict[str, Any]) -> Dict[str, Any]:
             winners[k] = "mertformer" if mv > vv else "vanilla"
         else:
             winners[k] = "mertformer" if mv < vv else "vanilla"
+    # HONESTY NOTE: apples_to_apples is False, so these "winners" (and especially
+    # the speed/throughput/latency ones, which also fall back to 0.0/inf when a
+    # metric was never measured) are NOT a fair head-to-head comparison and must
+    # not be reported as a performance claim. Consumers should gate on the
+    # apples_to_apples flag before trusting any winner here.
     return {"metrics": metrics, "winners": winners, "apples_to_apples": False}
 
 
@@ -3290,7 +3304,18 @@ def load_stage_texts(
         texts = synthetic_stage_samples(stage["name"], fallback_n)
 
     # Last-resort deterministic random text fragments
+    # WARNING: this is meaningless random-character "text" (NOT real corpus). It
+    # exists only so the pipeline does not crash when both HF and synthetic data
+    # are unavailable. Any run that hits this path is data-degraded and must not
+    # be treated as a genuine proof-of-learning. We flag it in meta below.
+    degraded_random_corpus = False
     if not texts:
+        degraded_random_corpus = True
+        print(
+            f"[WARN] stage '{stage['name']}': no real/synthetic data available; "
+            "falling back to RANDOM-CHARACTER corpus (degraded, not a valid proof).",
+            file=sys.stderr,
+        )
         rnd = random.Random(int(cfg["seed"]) + abs(hash(stage["name"])) % 10000)
         for _ in range(min(target, 40000)):
             n = rnd.randint(int(stage["min_len"]), min(int(stage["max_len"]), 180))
@@ -3298,6 +3323,7 @@ def load_stage_texts(
             texts.append("".join(rnd.choice(alphabet) for _ in range(n)))
 
     meta = {
+        "degraded_random_corpus": bool(degraded_random_corpus),
         "stage": stage["name"],
         "target": target,
         "loaded_samples": len(texts),
@@ -3903,6 +3929,9 @@ class MoELayer(nn.Module):
         out_flat = torch.zeros_like(xf)
 
         if self.moe_mode == "dense_debug":
+            # DEBUG-ONLY path: runs EVERY expert on EVERY token (full dense cost),
+            # i.e. this is NOT sparse top-k routing. Do not use for training/perf
+            # claims; the default mode 'true_sparse_topk' uses the sparse else-branch.
             expert_out = torch.stack([e(xf) for e in self.experts], dim=1)
             gather_idx = top_idx.unsqueeze(-1).expand(-1, -1, h)
             chosen = expert_out.gather(1, gather_idx)
@@ -3941,6 +3970,19 @@ class MoELayer(nn.Module):
 
 
 class MLA(nn.Module):
+    """GQA (grouped-query attention) — NOT latent-MLA.
+
+    Despite the historical ``MLA`` name, this module implements standard
+    grouped-query attention: ``q_proj`` produces ``num_heads`` query heads while
+    ``k_proj``/``v_proj`` produce ``num_kv_heads`` (< num_heads) KV heads that are
+    broadcast via ``_repeat_kv``. There is NO low-rank/latent KV compression
+    (no kv_a/kv_b down/up projection, no compressed KV cache), so this is not
+    DeepSeek-style Multi-head Latent Attention. The canonical source
+    (layers/mla.py) already renames the equivalent class to ``GQA``; this onefile
+    copy keeps the legacy ``MLA`` name for parity only. Label/naming note only —
+    numerical behavior (GQA) is correct.
+    """
+
     def __init__(
         self,
         hidden: int,
@@ -5961,7 +6003,9 @@ def build_public_summary(payload: Dict[str, Any], verdict: Dict[str, Any]) -> Di
         "router_max_load_p95": float(payload.get("mini_probe_report", {}).get("router_max_load_p95", 0.0)),
         "collapse_events": int(payload.get("moe_sparse_report", {}).get("collapse_events", 0)),
         "final_verdict": str(verdict.get("final_verdict", "provisional")),
-        "zero_known_critical_bugs_claim": "zero-known-critical-bugs this run",
+        # NOT a measured gate result: this is an unverified, author-asserted note,
+        # not tied to any test/verdict. Treated as informational only.
+        "zero_known_critical_bugs_claim": "no critical bugs known to author (UNVERIFIED; not a gate result)",
         "dataset_access_constraints": {
             "strict_data": bool(payload.get("preflight", {}).get("strict_data", False)),
             "hf_token_present": bool(payload.get("preflight", {}).get("hf_token_present", False)),
@@ -6847,7 +6891,8 @@ def run_all() -> Dict[str, Any]:
         "claim_block": {
             "coding_claim": "blocked" if coding_claim_blocked else "allowed",
             "strict_data_claim": "blocked" if preflight.get("preflight_status") != "pass" else "allowed",
-            "bug_free_claim_text": "zero-known-critical-bugs this run",
+            # NOT a measured gate result: unverified author note, not tied to any test.
+            "bug_free_claim_text": "no critical bugs known to author (UNVERIFIED; not a gate result)",
         },
         "runtime_model_params": int(mert_params_runtime),
         "gpu_meta": gpu_meta,
@@ -7415,6 +7460,14 @@ EXPERIMENTAL_COMPONENT_POLICY = {
 
 
 def convert_model_to_strict_bitnet(model, skip_lm_head=True):
+    """No-op by design (repo-parity mode): performs NO real BitNet conversion.
+
+    This intentionally returns ``enabled=False`` without modifying the model, to
+    preserve the embedded ``layers.bitlinear.BitLinear`` modules. There is no
+    actual ternary/strict-BitNet quantization here; callers must not assume any
+    conversion happened. In practice RUN_CONFIG forces ``strict_bitnet=False`` so
+    this path is not exercised.
+    """
     return {
         "enabled": False,
         "converted_linear": 0,
@@ -7502,6 +7555,11 @@ def parity_self_check(model, *args, **kwargs):
     except Exception as exc:
         err = repr(exc)
         if "Placeholder storage has not been allocated on MPS device" in err:
+            # NOTE: 'ok' stays True only to avoid aborting the run on a known
+            # MPS-specific self-check quirk; the forward shape was NOT actually
+            # verified here. 'forward_check_ok' is the honest signal — consumers
+            # should treat forward_check_ok=False as "self-check inconclusive",
+            # not as a passing forward verification.
             return {
                 "ok": True,
                 "forward_check_ok": False,
@@ -7639,6 +7697,10 @@ def _m5080_write_parity_files(target_dir):
     report = {
         "schema": "mertformer-parity-report-v2",
         "created_at": datetime.now(timezone.utc).isoformat(),
+        # NOT a gate result: 'ok' is hardcoded True and does NOT compare the
+        # architecture_hash/manifest against any expected value. It only records
+        # that this report was written, not that parity was verified. Do not
+        # treat 'ok' here as a passing parity check.
         "ok": True,
         "active_model": "embedded_repo_model.transformers.MertFormer",
         "active_model_class": ACTIVE_MODEL_CLASS_NAME,
@@ -7779,7 +7841,17 @@ def _m5080_encrypt_bytes(password, plaintext, aad=b""):
         nonce = os.urandom(12)
         ct = ChaCha20Poly1305(key).encrypt(nonce, plaintext, aad)
         return b"MFENC1" + salt + nonce + ct
-    except Exception:
+    except Exception as _crypto_exc:
+        # FALLBACK to a HAND-ROLLED stream cipher (HMAC-SHA256 keystream XOR +
+        # encrypt-then-MAC). This is home-grown crypto used only because the
+        # 'cryptography' package is unavailable; it is weaker/less audited than
+        # ChaCha20-Poly1305. Warn loudly instead of silently degrading.
+        print(
+            "[WARN] cryptography/ChaCha20Poly1305 unavailable "
+            f"({_crypto_exc!r}); using hand-rolled MFENC2 XOR+HMAC fallback. "
+            "Install 'cryptography' for vetted AEAD.",
+            file=sys.stderr,
+        )
         nonce = os.urandom(16)
         ct = _m5080_stream_xor(key, nonce, plaintext)
         tag = hmac.new(key, aad + ct, hashlib.sha256).digest()

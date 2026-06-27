@@ -10,7 +10,15 @@ Proprietary - All Rights Reserved.
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: v5.0-FORENSIC (Pre-Training)
 Status : PRE-TRAINING (UNVERIFIED)
-Target : Rigorous Benchmark with Cryptographic Proof
+Target : Proof-of-Concept (PoC) calistirma + hash-zincirli run log
+
+NOT (durustluk): Bu bir POC betigidir, kanonik mimari paritesi DEGILDIR.
+  - Block, RMSNorm yerine nn.LayerNorm ve ozel attention yerine
+    nn.MultiheadAttention kullanir (asagidaki '# ... for PoC' yorumlarina bak).
+  - Uretilen .jsonl yalnizca hash-zincirli (tamper-evident) bir RUN LOG'dur;
+    kriptografik IMZA / bagimsiz dogrulama veya tok/s-enerji benchmark'i DEGILDIR.
+  - 'Cryptographic Proof / Rigorous Benchmark' ifadeleri hedef niyettir,
+    bu betikte olculmus/ispatlanmis bir iddia olarak ele alinmamalidir.
 ==============================================================================
 """
 
@@ -86,7 +94,18 @@ def sha256_file(path: Union[str, Path], chunk_size: int = 1024 * 1024) -> str:
         return "error_reading_file"
 
 def try_git_commit(repo_dir: Union[str, Path]) -> Optional[str]:
-    return None # Simplified for PoC
+    # Gercek git provenance: HEAD commit SHA'sini dondurur; git yoksa/repo degilse None.
+    try:
+        out = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(repo_dir),
+            stderr=subprocess.DEVNULL,
+        )
+        return out.decode("utf-8").strip() or None
+    except Exception as exc:
+        # Hatayi yutmadan uyar; provenance opsiyonel oldugu icin None ile devam.
+        print(f"[try_git_commit] git provenance alinamadi: {exc}", file=sys.stderr)
+        return None
 
 def atomic_write_json(path: Union[str, Path], data: Dict[str, Any]) -> None:
     p = Path(path)
@@ -429,7 +448,8 @@ def main():
         print("\n📊 RESULTS")
         print(f"Full Titan: Loss {l1:.4f} ({t1:.1f}s)")
         print(f"No-Liquid : Loss {l2:.4f} ({t2:.1f}s)")
-        print(f"💾 PROOF SAVED TO: {logger.jsonl_path}")
+        # Hash-zincirli (tamper-evident) run log; kriptografik kanit/benchmark degil.
+        print(f"💾 RUN LOG (hash-chained, not a cryptographic proof) SAVED TO: {logger.jsonl_path}")
 
 if __name__ == "__main__":
     main()

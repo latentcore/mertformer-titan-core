@@ -58,6 +58,10 @@ def default_cases() -> List[GeneralizationCase]:
 def evaluate_with_callable(
     responder: Callable[[str], str],
     cases: List[GeneralizationCase] | None = None,
+    # NOTE: 0.80 is an UNMEASURED placeholder baseline (no evidence file backs
+    # it); it is used both as the reference baseline and as the gate threshold.
+    # Override with a value bound to a real evidence_ref before treating
+    # gate_pass as a measured result.
     baseline_pass_rate: float = 0.80,
 ) -> Dict[str, object]:
     cases = cases or default_cases()
@@ -87,11 +91,15 @@ def evaluate_with_callable(
         _metric_entry(
             metric="generalization.pass_rate",
             baseline=baseline_pass_rate,
+            # confidence=0.85 is a fixed placeholder, NOT derived from measured
+            # evidence; the unmeasured_baseline flag below marks this honestly.
             current=pass_rate,
             confidence=0.85,
             evidence_ref="eval/generalization_suite.py",
         )
     ]
+    # Honest annotation: baseline and confidence above are unmeasured placeholders.
+    metrics[0]["unmeasured_baseline"] = True
     return {
         "schema": "generalization_suite_v1",
         "generated_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -106,6 +114,12 @@ def evaluate_with_callable(
 
 
 def evaluate_static_stub() -> Dict[str, object]:
+    # HONEST LABEL: This is an offline smoke stub, NOT a real model evaluation.
+    # The _stub responder below echoes the expected keywords back verbatim, so
+    # pass_rate is artificially ~1.0 and gate_pass will be True. The returned
+    # report is a deterministic plumbing check ONLY and MUST NOT be treated as a
+    # real pass-gate / measured generalization result. The "status" and
+    # "is_real_measurement" fields below mark this explicitly for downstream.
     def _stub(prompt: str) -> str:
         # Deterministic local fallback output used in CI/offline mode.
         p = prompt.lower()
@@ -119,7 +133,16 @@ def evaluate_static_stub() -> Dict[str, object]:
             return "use tool for arithmetic precision"
         return "penguins cannot fly"
 
-    return evaluate_with_callable(_stub)
+    report = evaluate_with_callable(_stub)
+    # Mark the report so consumers do not mistake the stub's self-fulfilling
+    # gate_pass for a measured result. Flow/return contract preserved.
+    report["status"] = "stub_no_model"
+    report["is_real_measurement"] = False
+    report["note"] = (
+        "offline smoke stub: responder echoes expected keywords; pass_rate and "
+        "gate_pass are NOT a real generalization measurement"
+    )
+    return report
 
 
 def write_report(payload: Dict[str, object], out_path: Path) -> Path:

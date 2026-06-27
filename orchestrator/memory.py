@@ -5,12 +5,22 @@ MERTFORMER TITAN (ONYX STORM) - GOD MEMORY MODULE
 Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
-Project: Mobile-First LLM Architecture for Samsung S25 NPU
+Project: Mobile-First LLM Architecture (target: on-device inference)
 Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
+
+NOTE (scope): This module is part of orchestrator/ and is INERT / OUT-OF-SCOPE
+for the canonical 45K training path; it is gated off (feature-flag) and not
+exercised during training. Kept for the agent/runtime layer only.
+
+NOTE (hardware claim): No NPU-specific code path exists here (pure torch / CPU
+embedding). Any "Samsung S25 NPU" wording is an aspirational deployment target,
+NOT a measured/verified hardware result.
 ==============================================================================
 """
 
+# NOTE: legacy/fossil version tag, hand-maintained and not the single source of
+# truth; prefer the central package version. Kept only for backward compatibility.
 __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 
@@ -68,8 +78,12 @@ class HierarchicalMemoryContract:
 
 class GodMemory:
     """
-    Categorical Vector Memory.
-    RAM-efficient storage with quantized vectors.
+    Vector memory with a keyword-heuristic category filter.
+
+    Storage is RAM-efficient (int8-quantized vectors) and retrieval uses cosine
+    similarity. The "category" is NOT a learned classifier or ANN index: it is a
+    simple keyword/substring heuristic (see recall_raw). Treat "Categorical" as a
+    coarse keyword pre-filter, not real classification.
     """
     
     def __init__(self, path: pathlib.Path, senses: "SenseEngine"):
@@ -146,7 +160,8 @@ class GodMemory:
         if not self.cache:
             return []
 
-        # Category prediction
+        # Category selection via keyword heuristic (NOT a classifier):
+        # plain substring matching on the lowercased query.
         q_low = query.lower()
         if any(w in q_low for w in ["kod", "python", "hata", "traceback"]):
             cat = "CODE"

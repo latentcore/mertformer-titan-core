@@ -3,7 +3,8 @@
 MERTFORMER TITAN - MACBOOK M4 HIGH-FIDELITY SIMULATION
 ==============================================================================
 Purpose: 
-1. Load the EXACT Production Architecture (SeqLen=4096, 2.64B Params).
+1. Load the EXACT Production Architecture (SeqLen and param count are read from
+   config / measured at build time; ~2.64B params is an approximate reference only).
 2. Prove stability on Apple Silicon (MPS).
 3. Benchmark Generation Speed (Tokens/sec) with realistic overhead.
 """
@@ -54,15 +55,17 @@ def run_mac_simulation():
     print(f"   - Device Override: {cfg.device}")
     
     # 2. Initialize Model
-    print(f"\n🏗️  Building 2.64B Model (Compact Mode)...")
+    # NOT: gercek param sayisi build sonrasi olculup yazdirilir (asagi bkz.).
+    print(f"\n🏗️  Building Model (Compact Mode, ~2.64B ref)...")
     start_load = time.time()
     try:
         model = MertFormer().to(cfg.device) # Already BF16 default
         
-        # TACTIC 3: Gradient Checkpointing (Saves ~60% VRAM during train)
-        # Trades speed (re-compute) for RAM. User said "let it take 10 mins but save RAM".
-        # FIX: MertFormer is custom nn.Module, not HF PreTrainedModel.
-        # We manually enable the flag we saw in transformers.py
+        # TACTIC 3: Gradient Checkpointing flag.
+        # NOT: Bu betik yalnizca TEK forward/backward (mikro-step) calistirir; tam bir
+        # egitim dongusu yoktur. Bu nedenle checkpointing + katman freeze kurulumu
+        # burada gercek/surekli RAM kazancini KANITLAMAZ; aciklayici/temsili bir kurulumdur.
+        # MertFormer custom nn.Module oldugu icin flag manuel set ediliyor.
         model.use_gradient_checkpointing = True 
         print(f"   TACTIC 3: Gradient Checkpointing ENABLED (Manual Flag).")
         
@@ -84,7 +87,12 @@ def run_mac_simulation():
                  
         trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
         print(f"   -> Trainable Params: {trainable_params/1e6:.1f}M (others frozen)")
-        
+
+        # FIX (doc_drift): param sayisini config'e gomulu sabit yerine modelden turet.
+        total_params = sum(p.numel() for p in model.parameters())
+        params_str = f"{total_params/1e9:.2f}B"
+        print(f"   -> Total Params (measured): {params_str} ({total_params:,})")
+
         print(f"✅ Model Built in {time.time() - start_load:.2f}s")
         check_ram()
     except Exception as e:
@@ -103,6 +111,7 @@ def run_mac_simulation():
     labels = input_ids.clone()
     
     start_train = time.time()
+    training_ok = False  # FIX (fake_green_gate): egitim adimi gercekten gecti mi izle
     try:
         model.train() # Ensure training mode
         # FIX: MertFormer.forward() does NOT take labels.
@@ -127,9 +136,12 @@ def run_mac_simulation():
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
+        training_ok = True
         print(f"✅ Training Step Success! Loss: {loss.item():.4f}")
-        
+
     except RuntimeError as e:
+        # FIX (fake_green_gate): hata yutulmuyor; training_ok=False kalir ve
+        # nihai verdict'e yansir (inference akisi tani amacli devam eder).
         print(f"❌ Training Step Failed: {e}")
         import traceback
         traceback.print_exc()
@@ -153,7 +165,8 @@ def run_mac_simulation():
     prompt = torch.randint(0, cfg.vocab_size, (1, 128)).to(cfg.device) # Reasonable context
     
     # Warmup
-    print("   WARMING UP (Compiling Metal Kernels)...")
+    # NOT: Ozel Metal kernel derlemesi YOK; bu yalnizca MPS warmup (generate) cagrisidir.
+    print("   WARMING UP (MPS warmup)...")
     with torch.no_grad():
         _ = model.generate(prompt, max_new_tokens=5)
     
@@ -173,14 +186,16 @@ def run_mac_simulation():
     print(f"   ⚡ GENERATION SPEED: {tps:.2f} tokens/sec")
     print(f"   ----------------------------------------")
     
-    print(f"\n🔮 SAMSUNG S25 PROJECTION:")
-    print(f"   Mac M4 runs unoptimized FP32 code via MPS.")
-    print(f"   S25 NPU runs optimized INT8/BitNet code.")
-    print(f"   Expected Speedup Factor: 3x - 5x")
+    print(f"\n🔮 SAMSUNG S25 PROJECTION (SPECULATIVE / NOT MEASURED):")
+    # NOT: Bu betik bir MPS mikro-benchidir; NPU/INT8/BitNet davranisini OLCMEZ.
+    # Asagidaki carpan ve hedefler olculmemis spekulatif tahminlerdir, kanit DEGILDIR.
+    print(f"   Mac M4 bu betikte BFloat16 ile MPS uzerinden calisir (optimize edilmemis).")
+    print(f"   S25 NPU'nun INT8/BitNet ile calismasi VARSAYIMDIR (bu betik olcmuyor).")
+    print(f"   VARSAYILAN (olculmemis) Hizlanma Carpani: 3x - 5x")
     s25_low = tps * 3
     s25_high = tps * 5
-    print(f"   ESTIMATED S25 SPEED: {s25_low:.1f} - {s25_high:.1f} tokens/sec")
-    print(f"   (Target for production is >45 t/s)")
+    print(f"   SPEKULATIF S25 TAHMINI (kanitsiz): {s25_low:.1f} - {s25_high:.1f} tokens/sec")
+    print(f"   (Uretim hedefi >45 t/s -- olculmemis hedef, dogrulanmadi)")
     
     # LOGGING RESULTS WITH OFFICIAL LOGGER
     from utils.logger import RunLogger
@@ -194,7 +209,7 @@ def run_mac_simulation():
             "device": "mps",
             "model": "MertFormer Titan v1.0 (Build 30)",
             "seq_len": cfg.max_seq_len,
-            "params": "2.64B"
+            "params": params_str
         })
         
         # Log Benchmark Data
@@ -202,7 +217,12 @@ def run_mac_simulation():
             "mac_speed_tps": tps,
             "s25_projection_low": s25_low,
             "s25_projection_high": s25_high,
-            "status": "PASS" if tps > 10 else "WARNING"
+            # NOT: tps>10 esigi keyfi/kanitsiz bir referans; status egitim adimi
+            # gercekten gectiyse (training_ok) VE bu esik asildiysa PASS olur.
+            "training_ok": training_ok,
+            "speed_threshold_tps": 10,
+            "speed_threshold_note": "keyfi referans esik, kanit degil",
+            "status": "PASS" if (training_ok and tps > 10) else "WARNING"
         }
         logger.log_event("benchmark_result", benchmark_data)
         
@@ -231,8 +251,12 @@ def run_mac_simulation():
     except Exception as e:
         print(f"❌ Save Failed: {e}")
 
-    if tps > 10:
-        print(f"\n✅ PASS: Architecture is efficient enough.")
+    # FIX (fake_green_gate): verdict hem egitim adimi basarisina hem de hiz esigine bagli.
+    # tps>10 esigi keyfi/kanitsiz bir referanstir, kesin bir kanit kapisi DEGILDIR.
+    if not training_ok:
+        print(f"\n❌ FAIL: Training step did not succeed; benchmark not a pass.")
+    elif tps > 10:
+        print(f"\n✅ PASS: Training stable and speed above (arbitrary) {10} t/s reference.")
     else:
         print(f"\n⚠️  WARNING: Architecture might be heavy. Check Liquid/MoE overhead.")
 

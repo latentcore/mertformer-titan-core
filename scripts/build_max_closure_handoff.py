@@ -37,6 +37,18 @@ def repo_display_path(path: Path) -> str:
         return str(resolved)
 
 
+def evidence_ref(rel_path: str) -> str:
+    """Render a repo-relative evidence path as a markdown backtick token.
+
+    If the referenced file is not present under ROOT, append a ``(missing)``
+    marker so the handoff does not silently advertise an absent evidence file.
+    This only affects the rendered markdown string; no control flow changes.
+    """
+    if (ROOT / rel_path).exists():
+        return f"`{rel_path}`"
+    return f"`{rel_path}` (missing)"
+
+
 def load_json(path: Path) -> dict:
     if not path.exists():
         return {}
@@ -162,7 +174,7 @@ def build_handoff_body(readiness: dict, matrix: dict, freeze: dict, desktop_copy
         f"- train_readiness_status: `{readiness.get('final_status', 'UNKNOWN')}`",
         f"- train_readiness_reason: `{readiness.get('decision_reason_code', 'UNKNOWN')}`",
         f"- recommended_path: `{readiness.get('recommended_path') or 'none'}`",
-        "- latest_partial_external_evidence: `reports/ocean_pre45k_h200_20260514_partial_evidence.md`",
+        f"- latest_partial_external_evidence: {evidence_ref('reports/ocean_pre45k_h200_20260514_partial_evidence.md')}",
         "- outreach_boundary: `private/commercial/outreach_compute_sponsorship_messages.md`",
         f"- desktop_copy_status: `{desktop_copy['status']}`",
         f"- desktop_copy_path: `{desktop_copy['display_path']}`",
@@ -178,15 +190,15 @@ def build_handoff_body(readiness: dict, matrix: dict, freeze: dict, desktop_copy
         '',
         '## Key Evidence Files',
         '',
-        '- `reports/master_closure_matrix.md`',
-        '- `reports/phase2_carryover.md`',
-        '- `reports/train_readiness_decision.md`',
-        '- `reports/start_gate_operator_decision.md`',
-        '- `reports/target_machine_handoff_manifest.md`',
-        '- `reports/final_freeze_manifest.md`',
-        '- `reports/one_command_full_sop_summary.md`',
-        '- `reports/ocean_pre45k_h200_20260514_partial_evidence.md`',
-        '- `artifacts/target_machine_handoff_bundle.zip`',
+        f"- {evidence_ref('reports/master_closure_matrix.md')}",
+        f"- {evidence_ref('reports/phase2_carryover.md')}",
+        f"- {evidence_ref('reports/train_readiness_decision.md')}",
+        f"- {evidence_ref('reports/start_gate_operator_decision.md')}",
+        f"- {evidence_ref('reports/target_machine_handoff_manifest.md')}",
+        f"- {evidence_ref('reports/final_freeze_manifest.md')}",
+        f"- {evidence_ref('reports/one_command_full_sop_summary.md')}",
+        f"- {evidence_ref('reports/ocean_pre45k_h200_20260514_partial_evidence.md')}",
+        f"- {evidence_ref('artifacts/target_machine_handoff_bundle.zip')}",
         '',
         '## Guardrail',
         '',

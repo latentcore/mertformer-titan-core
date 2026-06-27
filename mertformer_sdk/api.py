@@ -58,7 +58,7 @@ def load_model(
             "Use a valid checkpoint path or pass strict_checkpoint=False for random-weight mode."
         )
 
-    # TR: [H4 fix] Tokenizer'i checkpoint kimliginden yukle (train/eval/demo tek
+    # TR: [H4 fix] Tokenizer'i checkpoint kimliğinden yükle (train/eval/demo tek
     #     kaynak), modeli o vocab'a resize et. Sessiz teacher/gpt2 fallback YOK;
     #     yanlis tokenizer'la decode = orijinal "111111" bug'i. eval/gsm8k.py ile
     #     birebir ayni desen.

@@ -739,7 +739,7 @@ CLAIMS = [
             "MODEL_CARD.md",
             "reports/param_accounting_report.md",
         ],
-        "still_missing": "A dedicated parameter accounting report is still missing in this working tree.",
+        "still_missing": "",
     },
     {
         "claim_id": "claim.repo_external_handoff",
@@ -1826,6 +1826,9 @@ REPO_CLOSURE_SCORECARD_ITEMS = [
 
 
 def build_repo_closure_scorecard_payload() -> dict:
+    # NOTE: 'done'/'all_green' are computed from file PRESENCE only
+    # ((ROOT / path).exists()). This is an inventory summary, NOT a
+    # behavioral pass-gate; no content/hash/correctness check is done here.
     items = []
     for entry in REPO_CLOSURE_SCORECARD_ITEMS:
         evidence = [path for path in entry["evidence"] if (ROOT / path).exists()]
@@ -1850,6 +1853,10 @@ def build_repo_closure_scorecard_payload() -> dict:
 def build_repo_closure_scorecard_markdown(payload: dict) -> str:
     lines = [
         "# Repo Closure Scorecard",
+        "",
+        "> NOTE: 'done'/'all_green' reflect file PRESENCE only (path exists on disk).",
+        "> This is an inventory summary, NOT a behavioral pass-gate; no content,",
+        "> hash, or correctness verification is performed on the listed evidence.",
         "",
         f"- completed_count: `{payload['completed_count']}`",
         f"- target_count: `{payload['target_count']}`",
@@ -2114,7 +2121,10 @@ def main() -> int:
         json.dumps(scorecard_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
 
-    print("OK: closure governance pack refreshed")
+    # NOTE: build/generator script. This message reports that artifacts were
+    # WRITTEN, not that any success/verification criterion passed. It is not a
+    # pass-gate; callers must not treat this output as a green signal.
+    print("GENERATED: closure governance pack refreshed (artifacts written; not a pass-gate)")
     print(f" - {rel(REPORTS / 'source_of_truth_map.md')}")
     print(f" - {rel(REPORTS / 'doc_ownership_matrix.md')}")
     print(f" - {rel(REPORTS / 'final_truth_constitution.md')}")

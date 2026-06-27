@@ -5,12 +5,21 @@ MERTFORMER TITAN (ONYX STORM) - ARCHITECTURAL PATHS
 Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
-Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) - Pre-Training
+NOTE: This module lives under orchestrator/ and is INERT / OUT-OF-SCOPE for the
+45K training path (orchestrator is closed/feature-flagged off in that path).
+This file only defines pathlib directory locations; it does not touch any
+hardware backend.
+
+Project: Mobile-First LLM Architecture (general; no measured NPU/accelerator
+         claim — header previously named "Samsung S25 NPU", which is an
+         unverified, context-free hardware claim and unrelated to this file).
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
+# NOTE: legacy/fossil version label hand-copied across orchestrator modules
+# (memory.py/sense_engine.py carry the same string). Not derived from a single
+# source of truth; treat as cosmetic, not an authoritative build version.
 __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert"
 

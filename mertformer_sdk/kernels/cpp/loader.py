@@ -14,6 +14,10 @@ def load_cpp_kernel(build: bool | None = None):
     """
     Returns loaded extension module or None.
 
+    NOTE: the default is OFF (MERTFORMER_CPP_BUILD defaults to "0"), so this
+    returns None unless explicitly opted in. Callers then take the plain
+    torch.matmul fallback; the C++ kernel does not run by default.
+
     build flag precedence:
     1) explicit argument
     2) env: MERTFORMER_CPP_BUILD (1/0)
@@ -44,8 +48,19 @@ def load_cpp_kernel(build: bool | None = None):
 
 
 def bitnet_cpu_linear(x: torch.Tensor, w: torch.Tensor, bias: Optional[torch.Tensor] = None) -> torch.Tensor:
+    """
+    Linear op named "bitnet" only by intent; NOT a real ternary/BitNet kernel.
+
+    Default behavior is a plain dense ``torch.matmul`` fallback. The optional
+    C++ extension is built/loaded ONLY when MERTFORMER_CPP_BUILD=1 (see
+    ``load_cpp_kernel``); since the default is "0", the specialized kernel is
+    normally never used and this function reduces to ordinary float matmul.
+    There is no ternary quantization performed here.
+    """
     ext = load_cpp_kernel()
     if ext is None:
+        # Default path: plain dense torch matmul fallback (no specialized
+        # kernel, no ternary/BitNet arithmetic).
         out = torch.matmul(x, w.t())
         if bias is not None:
             out = out + bias

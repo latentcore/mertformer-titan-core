@@ -1,10 +1,51 @@
 from __future__ import annotations
 
 import datetime as _dt
+import importlib.util as _importlib_util
 import platform as _platform
 import re as _re
 import subprocess as _subprocess
+import tempfile as _tempfile
 from pathlib import Path
+
+
+def _check_dependencies() -> bool:
+    """Gercek kontrol: torch/transformers/accelerate import edilebiliyor mu?
+
+    find_spec ile paketi yuklemeden varligini olcer; hicbiri yoksa False.
+    """
+    for _name in ("torch", "transformers", "accelerate"):
+        try:
+            if _importlib_util.find_spec(_name) is None:
+                return False
+        except Exception:
+            return False
+    return True
+
+
+def _check_filesystem() -> bool:
+    """Gercek kontrol: calisma dizinine gecici bir dosya yazip silmeyi dener."""
+    try:
+        with _tempfile.NamedTemporaryFile(
+            dir=".", prefix=".titan_fs_check_", delete=True
+        ) as _fh:
+            _fh.write(b"ok")
+            _fh.flush()
+        return True
+    except Exception:
+        return False
+
+
+def _check_tokenizer_cache() -> bool:
+    """Gercek kontrol: tokenizer/tr dizini var mi?"""
+    try:
+        return Path("tokenizer/tr").exists()
+    except Exception:
+        return False
+
+
+def _mark(ok: bool) -> str:
+    return "✅" if ok else "❌"
 
 
 def _run(cmd: list[str]) -> str:
@@ -56,50 +97,68 @@ def _build_reports() -> tuple[str, str]:
     kernel = _platform.release()
     arch = _platform.machine()
 
+    # Gercek (olculmus) bilesen kontrolleri.
+    deps_ok = _check_dependencies()
+    fs_ok = _check_filesystem()
+    tok_ok = _check_tokenizer_cache()
+    # Durum yalnizca zorunlu kontroller (bagimliliklar + dosya sistemi) gectiginde
+    # 'VERIFIED'; tokenizer cache opt-in oldugu icin durumu etkilemez.
+    verified = deps_ok and fs_ok
+    status_en = "✅ LOCAL VERIFIED" if verified else "⚠️ LOCAL CHECKS INCOMPLETE"
+    status_tr = "✅ YEREL DOĞRULANDI" if verified else "⚠️ YEREL KONTROLLER EKSİK"
+
     if system == "darwin":
         info = _parse_system_profiler()
         device = info.get("device") or "Mac"
         chip = info.get("chip") or "Apple Silicon"
         gpu = info.get("gpu") or "Apple GPU"
-        gpu_cores = info.get("gpu_cores") or "Unknown"
+        gpu_cores = info.get("gpu_cores") or ""
         cpu_cores = info.get("cpu_cores") or "Unknown"
         memory = info.get("memory") or "Unknown"
         os_line = info.get("os") or "macOS"
+        # GPU core sayisi SPDisplaysDataType'ta her macOS surumunde bulunmaz;
+        # eslesmediyse '(N cores, ...)' iddiasini yazma, yalniz Metal'i belirt.
+        if gpu_cores:
+            gpu_line_en = f"- **GPU:** {gpu} ({gpu_cores} cores, Metal supported)\n"
+            gpu_line_tr = f"- **GPU:** {gpu} ({gpu_cores} çekirdek, Metal destekli)\n"
+        else:
+            gpu_line_en = f"- **GPU:** {gpu} (Metal supported)\n"
+            gpu_line_tr = f"- **GPU:** {gpu} (Metal destekli)\n"
         en = (
             "# 💻 TITAN SYSTEM & HARDWARE REPORT\n"
             f"**Date:** {now}\n"
-            "**Status:** ✅ LOCAL VERIFIED\n\n"
+            f"**Status:** {status_en}\n\n"
             "## 🖥️ Hardware Specification\n"
             f"- **Device:** {device} (Apple Silicon)\n"
             f"- **Chip:** {chip} ({cpu_cores})\n"
-            f"- **GPU:** {gpu} ({gpu_cores} cores, Metal supported)\n"
+            f"{gpu_line_en}"
             f"- **Total RAM:** {memory}\n"
             f"- **OS:** {os_line}\n"
             f"- **Kernel:** Darwin {kernel} ({arch})\n\n"
             "## 🛠️ Components Checked\n"
-            "- ✅ **Dependencies:** Torch, Transformers, Accelerate (import OK)\n"
-            "- ✅ **Filesystem:** repo accessible, read/write OK\n"
-            "- ✅ **Tokenizer Cache:** `tokenizer/tr` present (opt-in)\n"
-            "- ✅ **CPU/MPS Path:** safe fallback available\n\n"
+            f"- {_mark(deps_ok)} **Dependencies:** Torch, Transformers, Accelerate (import probe)\n"
+            f"- {_mark(fs_ok)} **Filesystem:** repo accessible, read/write\n"
+            f"- {_mark(tok_ok)} **Tokenizer Cache:** `tokenizer/tr` present (opt-in)\n"
+            "- ℹ️ **CPU/MPS Path:** safe fallback available (not exercised here)\n\n"
             "---\n"
             "*Generated locally from system_profiler/uname output. Serial/UUID values are intentionally omitted.*\n"
         )
         tr = (
             "# 💻 TITAN SİSTEM & DONANIM RAPORU\n"
             f"**Tarih:** {now}\n"
-            "**Durum:** ✅ YEREL DOĞRULANDI\n\n"
+            f"**Durum:** {status_tr}\n\n"
             "## 🖥️ Donanım Özellikleri\n"
             f"- **Cihaz:** {device} (Apple Silicon)\n"
             f"- **Çip:** {chip} ({cpu_cores})\n"
-            f"- **GPU:** {gpu} ({gpu_cores} çekirdek, Metal destekli)\n"
+            f"{gpu_line_tr}"
             f"- **Toplam RAM:** {memory}\n"
             f"- **İşletim Sistemi:** {os_line}\n"
             f"- **Kernel:** Darwin {kernel} ({arch})\n\n"
             "## 🛠️ Kontrol Edilen Bileşenler\n"
-            "- ✅ **Bağımlılıklar:** Torch, Transformers, Accelerate (import OK)\n"
-            "- ✅ **Dosya Sistemi:** repo erişilebilir, okuma/yazma OK\n"
-            "- ✅ **Tokenizer Cache:** `tokenizer/tr` mevcut (opt-in)\n"
-            "- ✅ **CPU/MPS Yolu:** güvenli fallback mevcut\n\n"
+            f"- {_mark(deps_ok)} **Bağımlılıklar:** Torch, Transformers, Accelerate (import yoklaması)\n"
+            f"- {_mark(fs_ok)} **Dosya Sistemi:** repo erişilebilir, okuma/yazma\n"
+            f"- {_mark(tok_ok)} **Tokenizer Cache:** `tokenizer/tr` mevcut (opt-in)\n"
+            "- ℹ️ **CPU/MPS Yolu:** güvenli fallback mevcut (burada çalıştırılmadı)\n\n"
             "---\n"
             "*system_profiler/uname çıktısından üretilmiştir. Serial/UUID bilgileri bilerek eklenmemiştir.*\n"
         )
@@ -109,7 +168,7 @@ def _build_reports() -> tuple[str, str]:
     en = (
         "# 💻 TITAN SYSTEM & HARDWARE REPORT\n"
         f"**Date:** {now}\n"
-        "**Status:** ✅ LOCAL VERIFIED\n\n"
+        f"**Status:** {status_en}\n\n"
         "## 🖥️ Hardware Specification\n"
         f"- **Device:** Linux host\n"
         f"- **CPU:** {linux.get('cpu','Unknown')}\n"
@@ -118,27 +177,27 @@ def _build_reports() -> tuple[str, str]:
         f"- **Total RAM:** {linux.get('memory','Unknown')}\n"
         f"- **Kernel:** {kernel} ({arch})\n\n"
         "## 🛠️ Components Checked\n"
-        "- ✅ **Dependencies:** Torch, Transformers, Accelerate (import OK)\n"
-        "- ✅ **Filesystem:** repo accessible, read/write OK\n"
-        "- ✅ **Tokenizer Cache:** `tokenizer/tr` present (opt-in)\n\n"
+        f"- {_mark(deps_ok)} **Dependencies:** Torch, Transformers, Accelerate (import probe)\n"
+        f"- {_mark(fs_ok)} **Filesystem:** repo accessible, read/write\n"
+        f"- {_mark(tok_ok)} **Tokenizer Cache:** `tokenizer/tr` present (opt-in)\n\n"
         "---\n"
         "*Generated from lscpu/free/lspci where available.*\n"
     )
     tr = (
         "# 💻 TITAN SİSTEM & DONANIM RAPORU\n"
         f"**Tarih:** {now}\n"
-        "**Durum:** ✅ YEREL DOĞRULANDI\n\n"
+        f"**Durum:** {status_tr}\n\n"
         "## 🖥️ Donanım Özellikleri\n"
         f"- **Cihaz:** Linux host\n"
         f"- **CPU:** {linux.get('cpu','Unknown')}\n"
-        f"- **CPU Cekirdek:** {linux.get('cpu_cores','Unknown')}\n"
+        f"- **CPU Çekirdek:** {linux.get('cpu_cores','Unknown')}\n"
         f"- **GPU:** {linux.get('gpu','Unknown')}\n"
         f"- **Toplam RAM:** {linux.get('memory','Unknown')}\n"
         f"- **Kernel:** {kernel} ({arch})\n\n"
         "## 🛠️ Kontrol Edilen Bileşenler\n"
-        "- ✅ **Bağımlılıklar:** Torch, Transformers, Accelerate (import OK)\n"
-        "- ✅ **Dosya Sistemi:** repo erişilebilir, okuma/yazma OK\n"
-        "- ✅ **Tokenizer Cache:** `tokenizer/tr` mevcut (opt-in)\n\n"
+        f"- {_mark(deps_ok)} **Bağımlılıklar:** Torch, Transformers, Accelerate (import yoklaması)\n"
+        f"- {_mark(fs_ok)} **Dosya Sistemi:** repo erişilebilir, okuma/yazma\n"
+        f"- {_mark(tok_ok)} **Tokenizer Cache:** `tokenizer/tr` mevcut (opt-in)\n\n"
         "---\n"
         "*lscpu/free/lspci çıktılarından üretilmiştir.*\n"
     )

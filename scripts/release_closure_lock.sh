@@ -21,11 +21,23 @@ else
   exists=false
 fi
 
+# closure_lock must reflect a real check, not a hardcoded "true":
+# the tag must exist AND HEAD must point at the tag commit
+# (i.e. no additional commits on the closed release tag, per the rule above).
+closure_lock=false
+if [ "$exists" = "true" ]; then
+  tag_commit="$(git rev-list -n 1 "$TAG" 2>/dev/null || true)"
+  head_commit="$(git rev-parse HEAD 2>/dev/null || true)"
+  if [ -n "$tag_commit" ] && [ "$tag_commit" = "$head_commit" ]; then
+    closure_lock=true
+  fi
+fi
+
 cat > reports/release_closure_lock_report.json <<EOF
 {
   "tag": "$TAG",
   "tag_exists": $exists,
-  "closure_lock": true
+  "closure_lock": $closure_lock
 }
 EOF
 

@@ -8,6 +8,10 @@ Proprietary - All Rights Reserved.
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: v1.0 (Build 30 V2) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
+
+NOTE (scope): This orchestrator module is INERT / out-of-scope for the
+canonical 45K training path and is gated off there (feature-flag). It is an
+offline teacher-distillation helper and is not part of the frozen training run.
 ==============================================================================
 """
 
@@ -30,7 +34,7 @@ TOPK_DENSE_MAX_ELEMENTS = int(os.environ.get("TITAN_TOPK_DENSE_MAX_ELEMENTS", "8
 
 class DistillationManager:
     """
-    Manager that pre-computes teacher model (Llama-3-70B) logits and writes to disk.
+    Manager that pre-computes teacher model (the model named by cfg.teacher_model_id) logits and writes to disk.
     
     Objective:
     - Save VRAM during training by removing the Teacher model from memory.
@@ -93,7 +97,7 @@ class DistillationManager:
 
     def load_teacher(self):
         """
-        Loads the Teacher Model (Llama-3-70B) in 8-bit/4-bit if possible.
+        Loads the Teacher Model (the model named by cfg.teacher_model_id) in 8-bit/4-bit if possible.
         """
         if self.teacher_model is not None:
             return
@@ -241,7 +245,11 @@ class DistillationManager:
                 except StopIteration:
                     break
                 except Exception as e:
-                    logger.error(f"⚠️ Error processing sample: {e}")
+                    # NOTE: broad except — this also swallows fatal errors (e.g. CUDA OOM)
+                    # and skips the offending batch instead of re-raising. Behavior is
+                    # intentionally preserved (skip-and-continue); the warning makes the
+                    # swallowed error visible during long offline runs.
+                    logger.error(f"⚠️ Error processing sample (batch skipped, not re-raised): {e}")
                     continue
         
         # [FIX] Flush remaining buffer inputs

@@ -19,6 +19,11 @@ from layers.bitlinear import BitLinear, activation_quant, weight_quant
 from layers.ffn import MertFormerFFN
 from layers.liquid import LiquidCell, LiquidMixer
 from layers.mertformer_block import MertFormerBlock, RMSNorm
+# NOTE: the module file is named `mla` for legacy/import-path reasons, but the
+# attention class it exports is GQA (grouped-query attention), NOT latent MLA
+# (multi-head latent attention). Low-rank KV bottleneck is intentionally not
+# implemented; see layers/mla.py docstring. Module rename is out of scope (sealed
+# import path) -- only the exported name (GQA) reflects the real mechanism.
 from layers.mla import GQA, RotaryEmbedding, apply_rope_optimized, rotate_half
 from layers.moe import MoE, BitSwiGLU, LiquidRouter
 

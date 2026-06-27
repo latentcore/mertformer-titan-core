@@ -11,6 +11,12 @@ Version: v1.0 (Build 30) — Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 
+SCOPE NOTE (honest): This orchestrator module is inert / out-of-scope for the
+45K training path; it is gated off behind a feature-flag and is NOT exercised by
+the frozen training pipeline. Several tool implementations below are explicitly
+stubs (see metadata={'stub': True}); treat their success flags as "entrypoint
+reached", not as measured/verified work.
+
 TR: Araç çalıştırma motoru — governance-gated, sandboxed, timeout-enforced.
 EN: Tool execution engine — governance-gated, sandboxed, timeout-enforced.
 """
@@ -300,9 +306,12 @@ class ToolExecutor:
         """Generate KPI report."""
         metrics = params.get("metrics", {})
         if not metrics:
+            # No metrics == no measurement; do NOT report success (this is not a
+            # pass-gate). Surface a 'no_data' status honestly instead of green.
             return ToolResult(
-                "tool.kpi_report", True,
+                "tool.kpi_report", False,
                 output="No metrics provided. Run training first to collect KPIs.",
+                metadata={"status": "no_data"},
             )
 
         lines = ["📊 KPI REPORT", "=" * 40]
@@ -315,23 +324,36 @@ class ToolExecutor:
         return ToolResult("tool.kpi_report", True, output="\n".join(lines))
 
     def _exec_swarm_route(self, params: Dict[str, Any]) -> ToolResult:
-        """Swarm route tool stub."""
+        """Swarm route tool — STUB: no real routing; delegates to planner verbally.
+
+        success=True here means "entrypoint reached", not that any routing work
+        was performed. Real swarm routing is NOT implemented.
+        """
         objective = str(params.get("objective", "")).strip()
         output = "Swarm routing delegated to planner."
         if objective:
             output += f" Objective: {objective}"
-        return ToolResult("tool.swarm_route", True, output=output)
+        return ToolResult("tool.swarm_route", True, output=output, metadata={"stub": True})
 
     def _exec_eval_generalization(self, params: Dict[str, Any]) -> ToolResult:
-        """Generalization eval tool stub."""
+        """Generalization eval tool — STUB: echoes provided metrics only.
+
+        success=True means "entrypoint reached"; no real generalization
+        evaluation is computed here.
+        """
         metrics = params.get("metrics", {})
         if isinstance(metrics, dict) and metrics:
             summary = ", ".join(f"{k}={v}" for k, v in metrics.items())
-            return ToolResult("tool.eval_generalization", True, output=f"Eval summary: {summary}")
+            return ToolResult(
+                "tool.eval_generalization", True,
+                output=f"Eval summary: {summary}",
+                metadata={"stub": True},
+            )
         return ToolResult(
             "tool.eval_generalization",
             True,
             output="Generalization evaluation entrypoint reached (no metrics payload).",
+            metadata={"stub": True},
         )
 
     def _exec_web_search(self, params: Dict[str, Any]) -> ToolResult:

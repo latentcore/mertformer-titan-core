@@ -1,4 +1,11 @@
-"""Deterministic swarm planning and role assignment."""
+"""Deterministic swarm planning and role assignment.
+
+NOTE (durustluk): Bu modul orchestrator/ altinda inert / out-of-scope; 45K
+egitim yolunda kapali (feature-flag). Calistirilan tek "politika" izi
+``_select_tool`` icindeki ``tool_denylist_tokens`` substring kontroludur;
+``plan`` ve ``_select_tool`` aksi halde saf keyword skorlamadir, gercek
+politika motoru/zorlamasi yoktur.
+"""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -84,6 +91,9 @@ class SwarmPlanner:
             PlannedAction(
                 agent_id=spec.agent_id,
                 role=spec.role,
+                # "policy-bound" ifadesi burada dekoratif bir cikti metnidir;
+                # gercek politika zorlamasi yok (tek kontrol: _select_tool'daki
+                # tool_denylist_tokens substring filtresi). Davranisi etkilemez.
                 objective=f"{spec.role} executes policy-bound analysis for task: {task}",
                 tool_id=self._select_tool(task, spec.role),
             )

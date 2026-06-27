@@ -57,7 +57,10 @@ def main() -> int:
             continue
         try:
             text = path.read_text(encoding="utf-8")
-        except OSError:
+        except OSError as exc:
+            # Don't let an unreadable md file silently bypass the stale-id gate:
+            # warn loudly so a skipped surface is visible, then keep degrading.
+            print(f"WARN: skip unreadable markdown {rel}: {exc}", file=sys.stderr)
             continue
         for stale in stale_ids:
             if stale in text:

@@ -14,7 +14,7 @@ See also:
 - `bigcode/the-stack-dedup` (train; filtered by language)
   Purpose: large-scale code corpus
   Dataset card: https://huggingface.co/datasets/bigcode/the-stack-dedup
-  Status: referenced in code; revision pinned + manifest fingerprint recorded in `datasets/hashes.json`
+  Status: referenced in code; revision/sha256 to be re-pinned on the training machine (network required) — currently `pending_repin` in `datasets/hashes.json` (revision/sha256 null)
 - `TIGER-Lab/MathInstruct` (train)
   Purpose: math instruction data
   Dataset card: https://huggingface.co/datasets/TIGER-Lab/MathInstruct

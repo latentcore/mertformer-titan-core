@@ -2,10 +2,21 @@ from __future__ import annotations
 
 """
 ==============================================================================
-MERTFORMER TITAN (ONYX STORM) - TEXT UNDERSTANDING POC (BUILD30 V2)
+MERTFORMER TITAN (ONYX STORM) - RULE-BASED EXTRACTION PoC (BUILD30 V2)
 -------------------------------------------------------------------------------
 Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
+
+NOTE (honest scope): Despite the "Mertformer Titan" / LLM framing, this PoC does
+NOT perform any text "understanding" or model inference. The pipeline is a
+deterministic regex/rule-based field extractor (see rule_based_answer below);
+no model is trained or run. Treat the "understanding" wording as a project
+label, not a measured capability.
+
+NOTE (version label): The "BUILD30 V2" tag and __version__ below are
+manually-maintained build labels embedded in this standalone onefile. There is
+no single canonical version source wired into this script, so these strings can
+fossilize relative to the repo's real version; update them by hand when bumping.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: v1.0 (Build 30) — Pre-Training
@@ -147,6 +158,12 @@ def build_synthetic_records(seed: int, count: int) -> List[TextPOCRecord]:
 
 
 def rule_based_answer(context: str, question: str) -> str:
+    """Deterministic rule-based field extractor (NOT model understanding).
+
+    This is the actual mechanism behind the "TEXT UNDERSTANDING" framing: a
+    fixed question->field mapping plus a regex lookup over the context. No model
+    inference or learned comprehension is involved; it is a rule-based baseline.
+    """
     mapping = {
         "Operasyon kodu": "Operasyon Kodu",
         "Komutan": "Komutan",

@@ -9,10 +9,16 @@ Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
+
+NOT (kapsam disi / inert): Bu modul spekulatif "cognitive extensions"
+katmanidir. 45K egitim yolunda KAPALIDIR (feature-flag ile devre disi) ve
+egitim/cikarim davranisini etkilemez. Asagidaki siniflarin bir kismi
+sezgisel (heuristic) stub'tir; gercek ogrenme/cok-ajanli akil yurutme
+icermezler. Ilgili stub'lar docstring'lerinde ayrica isaretlenmistir.
 """
 
-__version__ = "1.0-BUILD30-V2"
-__author__ = "Mert"
+__version__ = "1.0-BUILD30"
+__author__ = "Mert Yünlü"
 
 import time
 import random
@@ -277,6 +283,12 @@ class BayesianAgentCore:
 # 4. META LEARNER (Strategy)
 # -----------------------------------------------------------------------------
 class MetaLearner:
+    """Sezgisel (heuristic) STUB: gercek meta-ogrenme yok.
+
+    select_strategy sabit bir kural sozlugu doner; learn_from_feedback yalniz
+    geri bildirimi history'e biriktirir, secimi etkilemez. Davranis kasitli
+    olarak deterministik tutulmustur.
+    """
     def __init__(self):
         self.strategies = {"code": "detailed", "math": "tot", "general": "fast"}
         self.history = []
@@ -285,12 +297,15 @@ class MetaLearner:
         return self.strategies.get(task, "fast")
 
     def learn_from_feedback(self, task: str, success: bool):
+        # NOT: history yalniz kayit amaclidir; strateji secimine geri beslenmez.
         self.history.append((task, success))
 
 # -----------------------------------------------------------------------------
 # 5. CURIOSITY ENGINE (Curiosity)
 # -----------------------------------------------------------------------------
 class CuriosityEngine:
+    """Sezgisel (heuristic) STUB: anahtar-kelime eslemeli sabit cevaplar;
+    gercek bilgi-bosulgu modellemesi yok."""
     def identify_gaps(self, text: str) -> List[str]:
         if "hata" in text.lower():
             return ["Hatanın tam traceback çıktısı nedir?"]
@@ -303,9 +318,8 @@ class CuriosityEngine:
 # 6. TRANSFER LEARNER (Domain Transfer)
 # -----------------------------------------------------------------------------
 class TransferLearner:
-    """
-    Applies knowledge (Pattern) from one domain to another.
-    """
+    """Sezgisel (heuristic) STUB: tek anahtar-kelimeye dayali sabit analoji
+    doner; gercek alanlar-arasi (domain transfer) ogrenme yoktur."""
     def find_analogy(self, problem: str) -> str:
         if "memory leak" in problem.lower():
             return "Analogy: Like a faucet dripping water. Check reference cycles."
@@ -315,6 +329,12 @@ class TransferLearner:
 # 7. MULTI-AGENT ORCHESTRATOR
 # -----------------------------------------------------------------------------
 class MultiAgentOrchestrator:
+    """STUB: gercek cok-ajanli tartisma YOK.
+
+    debate() sabit, simule edilmis bir metin doner; herhangi bir model
+    cagrisi veya ajanlar-arasi etkilesim icermez (donus dizesi acikca
+    '[Simulated Debate]' ile isaretlidir).
+    """
     def debate(self, topic: str) -> str:
         return f"[Simulated Debate] Experts analyzing '{topic}'..."
 
@@ -322,6 +342,8 @@ class MultiAgentOrchestrator:
 # 8. EMOTIONAL INTELLIGENCE
 # -----------------------------------------------------------------------------
 class EmotionalIntelligence:
+    """Sezgisel (heuristic) STUB: anahtar-kelime eslemeli ruh-hali tespiti ve
+    sabit cevaplar; gercek duygu modellemesi/ogrenme yoktur."""
     def analyze_mood(self, text: str) -> str:
         neg = ["bıktım", "hata", "sinir", "off", "kötü"]
         pos = ["harika", "süper", "teşekkür", "başarılı"]
