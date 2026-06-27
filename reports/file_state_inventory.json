@@ -1,12 +1,15 @@
 {
   "schema": "file_state_inventory_v1",
-  "generated_utc": "2026-06-27T09:10:03Z",
+  "generated_utc": "2026-06-27T22:17:44Z",
   "git_branch": "main",
-  "git_commit_short": "46aac27",
+  "git_commit_short": "12af130",
   "tracked_files": 828,
   "modified_entries": [
     "M DECISIONS.md",
     " M artifacts/mertformer_release.zip.sha256",
+    " M config/config.py",
+    " M layers/bitlinear.py",
+    " M layers/mertformer_block.py",
     " M packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256",
     " M reports/backup_restore_report.json",
     " M reports/bench_cpp_report.json",
@@ -83,7 +86,8 @@
     " M reports/training_readiness_manifest.json",
     " M reports/unicode_path_guard_report.json",
     " M reports/workspace_hygiene_manifest.json",
-    " M reports/xla_smoke_report.json"
+    " M reports/xla_smoke_report.json",
+    " M scripts/runs/preflight/config_snapshot.json"
   ],
   "untracked_entries": [],
   "reports_present": [

@@ -18,7 +18,7 @@
   "rope_theta": 100000.0,
   "rope_base": 100000.0,
   "use_bitnet": true,
-  "weight_quantization": "absmax_per_tensor",
+  "weight_quantization": "rms_per_channel",
   "activation_bits": 8,
   "use_moe": true,
   "num_experts": 8,
