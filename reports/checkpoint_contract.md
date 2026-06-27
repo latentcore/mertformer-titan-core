@@ -1,6 +1,6 @@
 # Checkpoint Contract
 
-- generated_utc: `2026-06-27T22:54:22Z`
+- generated_utc: `2026-06-27T23:17:15Z`
 - save_dir: `checkpoints/mertformer_titan_prod`
 - naming: `<model_name>_step_<n>.pt`, `<model_name>_latest.pt`, `<model_name>_best.pt`
 - retention_policy: keep latest plus bounded recent step checkpoints and the best checkpoint
