@@ -370,3 +370,15 @@ deliberate — a future reviewer/AI should not undo them:
 - **No endless-polish loop.** This is the final cosmetic/hygiene/truth-sync pass. The remaining
   real gate is owned compute → 45K run → checkpoint → checkpoint-bound eval. Further "polish" is
   explicitly out of scope.
+
+### Wave C addendum (2026-06-27) — version-string uniformity (do NOT re-split)
+- **Module `__version__` is uniformly `"1.0-BUILD30-V2"` across all 35 module files** — the
+  canonical project version (matches `CITATION.cff` `v1.0-TITAN-BUILD30-V2`, `registry/`, and the
+  release-zip naming `...B30...`). An earlier wave partially stripped 8 of them to `"1.0"`, creating
+  a 3-way split (`0.1.0` SDK / `1.0` / `1.0-BUILD30-V2`); that was reverted to restore uniformity.
+  These constants are dead/unreferenced (no test/manifest/schema reads them). Do NOT re-strip the
+  `-BUILD30-V2` suffix: it is the current build identity, NOT a stale fossil. (Genuine fossils like
+  `V21.0 FIX` / `V23.0:` in *comments* were removed; the canonical version string stays.)
+- **`__author__` is uniformly `"Mert Yünlü"`** (was split with bare `"Mert"` in a few files).
+- **`sync_manifest.py` mla role-override** explicitly notes the legacy `mla` filename is kept for
+  SHA/manifest continuity while the implementation is GQA (see the mla decision above).

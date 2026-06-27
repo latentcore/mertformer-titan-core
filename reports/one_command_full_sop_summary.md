@@ -1,7 +1,7 @@
 # One-Command Full SOP Summary
 
-- start_utc: 2026-06-27T08:54:47Z
-- end_utc: 2026-06-27T08:56:58Z
+- start_utc: 2026-06-27T09:05:15Z
+- end_utc: 2026-06-27T09:07:30Z
 - pytest: {'status': 'ok', 'test_stat': '370 passed, 4 skipped', 'changed': [], 'missing': []}
 - md_quality_all: md_quality: scope=all files=466 errors=0 warnings=0
 - md_integrity_all: md_integrity_check scanned=447 findings=0
@@ -13,7 +13,7 @@
 - zip_denylist_audit: PASS
 - secret_scan: PASS
 - training_dashboard: not_generated
-- release_zip_sha256: `bf6cd9f5baeff35267a1575715ac9ff1ee161fae7f7443c2f8aa1e49bf2bb3fc`
+- release_zip_sha256: `f57bad97babdfdc8448baf94d2eaf4efa56106187f63d4977cb9aafe14faef61`
 - locked_age_sha256: ``
 - locked_age_generated: no
 
