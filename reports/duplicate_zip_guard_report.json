@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-27T05:10:24.968492+00:00",
+  "generated_utc": "2026-06-27T08:32:08.106360+00:00",
   "zip_count": 89,
   "unique_sha_count": 76,
   "duplicate_group_count": 4,
@@ -12,7 +12,7 @@
       "<DOCUMENTS_PATH>/MertFormer_5080_Final_Onefile_Lab/archive/previous_20260421_201946/local_decrypt_test/raw_evidence/mert5080_20260421_195115_evidence.zip",
       "<DOCUMENTS_PATH>/MertFormer_5080_Final_Onefile_Lab/archive/previous_20260421_201946/local_smoke_outputs/runs/mert5080_20260421_195115/mert5080_20260421_195115_evidence.zip"
     ],
-    "988add03cc4834f1e9cff73f33dfb8075a40e6d8426fa210290a16e274096e14": [
+    "01591e970586b8d678bc415eadb6213ae4bcb4255d71f71e00277662f1d0ecc7": [
       "<DOCUMENTS_PATH>/MertFormer_Final_PreTraining_Closure_2026_06_27/mertformer_release.zip",
       "<DOCUMENTS_PATH>/mertformer-titan-core.zip",
       "artifacts/mertformer_release.zip"

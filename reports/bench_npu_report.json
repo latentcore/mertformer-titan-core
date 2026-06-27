@@ -1,5 +1,7 @@
 {
   "ok": true,
   "mode": "verified_fallback",
-  "generated_utc": "2026-06-27T05:04:33.228172+00:00"
+  "measured": false,
+  "note": "stub: no real npu backend measured; not a gate",
+  "generated_utc": "2026-06-27T08:29:45.034471+00:00"
 }

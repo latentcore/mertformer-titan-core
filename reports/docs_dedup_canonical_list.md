@@ -286,6 +286,7 @@ Generated automatically.
 - `reports/benchmarks/math_fastproof/README_TR.md`
 - `reports/benchmarks/math_fastproof/run_20260315_050133_compare.md`
 - `reports/benchmarks/summary.md`
+- `reports/benchmarks/ternary_kernel_microbench_s25/README.md`
 - `reports/benchmarks/text_understanding/README.md`
 - `reports/benchmarks/text_understanding/README_TR.md`
 - `reports/benchmarks/text_understanding/run_20260315_180151_compare.md`
@@ -554,6 +555,7 @@ Generated automatically.
   - `reports/benchmarks/README.md`
   - `reports/benchmarks/linkedin_sweetspot/README.md`
   - `reports/benchmarks/math_fastproof/README.md`
+  - `reports/benchmarks/ternary_kernel_microbench_s25/README.md`
   - `reports/benchmarks/text_understanding/README.md`
   - `reports/pilots/README.md`
   - `runbooks/README.md`

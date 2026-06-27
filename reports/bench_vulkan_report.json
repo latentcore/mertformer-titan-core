@@ -1,5 +1,7 @@
 {
   "ok": true,
   "mode": "verified_fallback",
-  "generated_utc": "2026-06-27T05:04:33.228017+00:00"
+  "measured": false,
+  "note": "stub: no real vulkan backend measured; not a gate",
+  "generated_utc": "2026-06-27T08:29:45.034245+00:00"
 }

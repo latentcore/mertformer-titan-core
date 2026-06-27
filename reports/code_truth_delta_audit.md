@@ -52,8 +52,8 @@ Required evidence columns:
 | --- | --- | --- | --- | --- | --- | --- |
 | `layers/bitlinear.py` | `bitnet-kernel` | `living` | `tested_fallback` | `fallback` | `true` | BitLinear is correctness-first and dispatch-aware, but production-depth performance claims still depend on backend-specific measurement. |
 | `mertformer_sdk/kernels/dispatcher.py` | `bitnet-kernel` | `maintained` | `tested_fallback` | `fallback` | `true` | Dispatcher routing is deterministic and test-covered; it is a contract surface rather than a speed claim by itself. |
-| `mertformer_sdk/kernels/triton_ternary.py` | `bitnet-performance` | `living` | `tested_fallback` | none | `true` | The Triton kernel is explicitly experimental; correctness is partially covered, but it is not yet a release-grade performance claim surface. |
-| `mertformer_sdk/kernels/cpp/bitnet_cpu.cpp` | `cpu-reference` | `maintained` | `reference_safe` | `scaffold` | `true` | This file is a minimal CPU reference kernel and should remain a parity/debug surface, not a production-depth speed claim. |
+| `mertformer_sdk/kernels/triton_ternary.py` | `bitnet-performance` | `living` | `tested_fallback` | `fallback` | `true` | The Triton kernel is explicitly experimental; correctness is partially covered, but it is not yet a release-grade performance claim surface. |
+| `mertformer_sdk/kernels/cpp/bitnet_cpu.cpp` | `cpu-reference` | `maintained` | `reference_safe` | `scaffold`, `fallback` | `true` | This file is a minimal CPU reference kernel and should remain a parity/debug surface, not a production-depth speed claim. |
 | `mertformer_sdk/kernels/metal/engine.py` | `mps-metal` | `living` | `tested_fallback` | `fallback` | `true` | Metal currently routes through deterministic PyTorch fallback math and must not be narrated as a custom optimized kernel path. |
 | `scripts/chess_5080_onefile.py` | `chess-proof` | `living` | `tested_fallback` | `fallback` | `true` | The chess onefile is a real code path with tests and delivery helpers, but it remains a proof/product baseline rather than a solved final product lane. |
 | `scripts/export_chess_5080_share.py` | `chess-proof` | `maintained` | `tested_fallback` | none | `true` | Delivery/export logic is implemented and tested, but external product-grade distribution still depends on trained outputs and operator validation. |
@@ -88,7 +88,7 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `layers/moe.py` | `fallback` |
 | `layers/qinn.py` | `fallback` |
 | `mertformer_sdk/api.py` | `fallback` |
-| `mertformer_sdk/kernels/cpp/bitnet_cpu.cpp` | `scaffold` |
+| `mertformer_sdk/kernels/cpp/bitnet_cpu.cpp` | `scaffold`, `fallback` |
 | `mertformer_sdk/kernels/cpp/loader.py` | `fallback` |
 | `mertformer_sdk/kernels/dispatcher.py` | `fallback` |
 | `mertformer_sdk/kernels/metal/__init__.py` | `fallback` |
@@ -97,8 +97,10 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `mertformer_sdk/kernels/npu/engine.py` | `fallback` |
 | `mertformer_sdk/kernels/onnx_custom_op.py` | `fallback` |
 | `mertformer_sdk/kernels/triton_fused_bitlinear.py` | `fallback` |
+| `mertformer_sdk/kernels/triton_ternary.py` | `fallback` |
 | `mertformer_sdk/kernels/vulkan/__init__.py` | `fallback` |
 | `mertformer_sdk/kernels/vulkan/engine.py` | `fallback` |
+| `mertformer_sdk/kpi.py` | `fallback` |
 | `mertformer_sdk/pilot.py` | `fallback` |
 | `scripts/README.md` | `fallback` |
 | `scripts/README_TR.md` | `fallback` |
@@ -107,7 +109,9 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `scripts/build_chess_training_readiness_report.py` | `fallback` |
 | `scripts/build_closure_governance_pack.py` | `TODO`, `scaffold`, `fallback` |
 | `scripts/check_57_matrix.py` | `scaffold`, `fallback` |
+| `scripts/check_doc_claim_consistency.py` | `fallback` |
 | `scripts/chess_5080_onefile.py` | `fallback` |
+| `scripts/data_pipeline.py` | `fallback` |
 | `scripts/eval.py` | `fallback` |
 | `scripts/generate_bench_reports.py` | `fallback` |
 | `scripts/golden_eval.py` | `fallback` |
@@ -119,9 +123,11 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` | `fallback` |
 | `scripts/mertformer_5080_final_onefile.py` | `scaffold`, `fallback` |
 | `scripts/mobile_export.py` | `fallback` |
+| `scripts/precompute_logits_topk.py` | `fallback` |
 | `scripts/record_dataset_hashes.py` | `fallback` |
 | `scripts/run_liquid_ablation.py` | `fallback` |
 | `scripts/smart_runner.py` | `fallback` |
+| `scripts/sync_manifest.py` | `fallback` |
 | `scripts/test_onnx_export.py` | `fallback` |
 | `scripts/titan_preflight.py` | `fallback` |
 | `scripts/update_investor_deck.py` | `fallback` |

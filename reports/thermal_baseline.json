@@ -1,4 +1,6 @@
 {
-  "timestamp_utc": "2026-06-27T05:04:30.547236+00:00",
-  "mode": "baseline_proxy"
+  "timestamp_utc": "2026-06-27T08:29:43.285465+00:00",
+  "mode": "baseline_proxy",
+  "thermal_measured": false,
+  "note": "no temperature sensor read; proxy placeholder only"
 }

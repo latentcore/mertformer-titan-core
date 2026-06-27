@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-06-27T05:04:34.747628+00:00",
-  "md_file_count": 467,
+  "generated_utc": "2026-06-27T08:29:45.786004+00:00",
+  "md_file_count": 468,
   "duplicate_name_group_count": 27,
   "duplicate_name_groups": {
     "license.md": [
@@ -33,6 +33,7 @@
       "reports/benchmarks/README.md",
       "reports/benchmarks/linkedin_sweetspot/README.md",
       "reports/benchmarks/math_fastproof/README.md",
+      "reports/benchmarks/ternary_kernel_microbench_s25/README.md",
       "reports/benchmarks/text_understanding/README.md",
       "reports/pilots/README.md",
       "runbooks/README.md",
@@ -164,5 +165,5 @@
       "scripts/reports/model_health_TR.md"
     ]
   },
-  "ok": true
+  "ok": false
 }

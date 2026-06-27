@@ -175,7 +175,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── lifelong_safety.py  # Python module/script (lifelong safety guard layer)
 │   ├── liquid.py  # Python module/script (liquid neural dynamics layers)
 │   ├── mertformer_block.py  # Python module/script (core transformer block composition)
-│   ├── mla.py  # Python module/script (multi-head latent attention implementation)
+│   ├── mla.py  # Python module/script (grouped-query attention (GQA) implementation)
 │   ├── moe.py  # Python module/script (mixture-of-experts routing and expert execution)
 │   ├── qinn.py  # Python module/script (QINN experimental regulation layer (feature-flag))
 │   └── world_model_head.py  # Python module/script (world-model auxiliary head)
@@ -305,6 +305,10 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   │   ├── run_20260315_050133_step_metrics.csv  # CSV data artifact
 │   │   │   ├── run_20260315_050133_summary.json  # JSON data artifact
 │   │   │   └── zip_manifest.json  # JSON data artifact
+│   │   ├── ternary_kernel_microbench_s25/  # directory
+│   │   │   ├── README.md  # primary documentation (EN)
+│   │   │   ├── results.json  # JSON data artifact
+│   │   │   └── ternary_matmul_arm.cpp  # C++ source file
 │   │   ├── text_understanding/  # directory
 │   │   │   ├── README.md  # primary documentation (EN)
 │   │   │   ├── README_TR.md  # Turkish document counterpart

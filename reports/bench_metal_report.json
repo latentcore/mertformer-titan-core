@@ -1,5 +1,7 @@
 {
   "ok": true,
   "mode": "mps",
-  "generated_utc": "2026-06-27T05:04:33.227728+00:00"
+  "measured": false,
+  "note": "stub: mps availability flag only, no metal/mps kernel benchmark run",
+  "generated_utc": "2026-06-27T08:29:45.034106+00:00"
 }

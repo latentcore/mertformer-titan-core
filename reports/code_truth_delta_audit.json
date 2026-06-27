@@ -1,6 +1,6 @@
 {
   "schema": "code_truth_delta_audit_v1",
-  "generated_utc": "2026-06-27T05:09:58Z",
+  "generated_utc": "2026-06-27T08:31:54Z",
   "evidence_contract": {
     "required_columns": [
       "code_path",
@@ -117,7 +117,9 @@
       "lane": "bitnet-performance",
       "surface_class": "living",
       "maturity": "tested_fallback",
-      "markers": [],
+      "markers": [
+        "fallback"
+      ],
       "evidence": {
         "code_path": [
           "mertformer_sdk/kernels/triton_ternary.py"
@@ -146,7 +148,8 @@
       "surface_class": "maintained",
       "maturity": "reference_safe",
       "markers": [
-        "scaffold"
+        "scaffold",
+        "fallback"
       ],
       "evidence": {
         "code_path": [
@@ -438,9 +441,10 @@
     {
       "path": "mertformer_sdk/kernels/cpp/bitnet_cpu.cpp",
       "markers": [
-        "scaffold"
+        "scaffold",
+        "fallback"
       ],
-      "summary": "scaffold"
+      "summary": "scaffold, fallback"
     },
     {
       "path": "mertformer_sdk/kernels/cpp/loader.py",
@@ -499,6 +503,13 @@
       "summary": "fallback"
     },
     {
+      "path": "mertformer_sdk/kernels/triton_ternary.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "mertformer_sdk/kernels/vulkan/__init__.py",
       "markers": [
         "fallback"
@@ -507,6 +518,13 @@
     },
     {
       "path": "mertformer_sdk/kernels/vulkan/engine.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "mertformer_sdk/kpi.py",
       "markers": [
         "fallback"
       ],
@@ -572,7 +590,21 @@
       "summary": "scaffold, fallback"
     },
     {
+      "path": "scripts/check_doc_claim_consistency.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "scripts/chess_5080_onefile.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/data_pipeline.py",
       "markers": [
         "fallback"
       ],
@@ -657,6 +689,13 @@
       "summary": "fallback"
     },
     {
+      "path": "scripts/precompute_logits_topk.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "scripts/record_dataset_hashes.py",
       "markers": [
         "fallback"
@@ -672,6 +711,13 @@
     },
     {
       "path": "scripts/smart_runner.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/sync_manifest.py",
       "markers": [
         "fallback"
       ],
@@ -761,6 +807,6 @@
       "tested_fallback": 6,
       "reference_safe": 1
     },
-    "marker_hit_count": 61
+    "marker_hit_count": 67
   }
 }

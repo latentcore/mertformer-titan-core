@@ -137,7 +137,7 @@
       "MODEL_CARD.md",
       "reports/param_accounting_report.md"
     ],
-    "still_missing": "A dedicated parameter accounting report is still missing in this working tree."
+    "still_missing": ""
   },
   {
     "claim_id": "claim.repo_external_handoff",

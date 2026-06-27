@@ -1,5 +1,9 @@
 # Repo Closure Scorecard
 
+> NOTE: 'done'/'all_green' reflect file PRESENCE only (path exists on disk).
+> This is an inventory summary, NOT a behavioral pass-gate; no content,
+> hash, or correctness verification is performed on the listed evidence.
+
 - completed_count: `23`
 - target_count: `24`
 - all_green: `false`

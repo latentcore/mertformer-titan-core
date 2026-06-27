@@ -1,5 +1,15 @@
 {
-  "generated_utc": "2026-06-27T05:04:31.950993+00:00",
+  "generated_utc": "2026-06-27T08:29:44.140303+00:00",
   "selected_backend_cpu": "cpp_cpu",
+  "allowed_backends": [
+    "cpp_cpu",
+    "metal_fallback",
+    "mps_optimized",
+    "npu_fallback",
+    "pytorch_fallback",
+    "triton_cuda",
+    "vulkan_fallback"
+  ],
+  "is_real_pass_gate": false,
   "ok": true
 }

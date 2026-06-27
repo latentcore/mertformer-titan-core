@@ -1,7 +1,9 @@
 {
-  "generated_utc": "2026-06-27T05:04:31.906526+00:00",
+  "generated_utc": "2026-06-27T08:29:44.114460+00:00",
   "tooling_available": true,
   "status": "pass",
+  "skipped": false,
+  "sanitizer_actually_ran": true,
   "ok": true,
   "reason": "sanitizer smoke not required for python-only path"
 }

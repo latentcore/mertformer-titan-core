@@ -1,12 +1,12 @@
 # Feature Flag Governance
 
-- generated_utc: `2026-06-27T05:06:27Z`
+- generated_utc: `2026-06-27T08:30:45Z`
 
 ## Canonical Main Path
 
 - `zero_touch_start.sh` -> `scripts/final_orchestrator.py`
 - Recommended training lane for this pass: `remote_bootstrap`
-- `TITAN_REQUIRE_GATED_TEACHER=1`, `TITAN_USE_PRECOMPUTED_LOGITS=1`, and `TITAN_USE_TR_TOKENIZER=1` define the strict offline-clean lane.
+- `TITAN_OFFLINE=1`, `TITAN_REQUIRE_GATED_TEACHER=1`, and `TITAN_USE_PRECOMPUTED_LOGITS=1` define the strict offline-clean lane. This lane is teacher-tokenizer KD and does NOT set `TITAN_USE_TR_TOKENIZER=1` (forcing TR there causes tokenizer-identity drift; see scripts/build_train_readiness_contract.py).
 - `remote_bootstrap` keeps `TITAN_OFFLINE=0` and assumes runtime credential injection plus target-machine dataset/bootstrap execution.
 
 ## Non-Canonical / Deferred

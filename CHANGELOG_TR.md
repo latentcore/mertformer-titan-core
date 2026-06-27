@@ -97,3 +97,11 @@ Bu dosya projedeki önemli değişiklikleri takip eder.
 - `python3 -m pytest -q` geçti.
 - `ruff check .` geçti.
 - `bash scripts/verify_all.sh` geçti.
+
+## Pass 7 (2026-06-13) — Mac'te yapılabilir backlog sıfırlandı + $0 Kaggle pilotu
+- `scripts/run_liquid_ablation.py` + `docs/KAGGLE_PILOT.md` eklendi: ücretsiz LiquidRouter ON-vs-OFF
+  ablasyon pilotu (~80–100M, saf CE, teacher yok) — GPU'ya kapılı işi açan tek domino.
+- Eğitim sırasında LatentODE per-batch reset (batch'ler arası state sızıntısı yok); MoE collapse flag DDP
+  all-reduce (guarded, DDP dışında no-op); liquid-impl benchmark scripti; coverage config'i.
+- Dokümanlar: ARCHITECTURE.md Projections + stage-3 notu; CPU quickstart. Backlog dispozisyonları DECISIONS.md'de.
+- İnvaryantlar korundu: parametre sayısı kilitli; pytest yeşil; ruff + scoped mypy + verify_all yeşil.
