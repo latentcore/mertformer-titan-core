@@ -1,6 +1,6 @@
 # Feature Flag Yönetişimi
 
-- generated_utc: `manual-update-2026-05-24`
+- generated_utc: `2026-06-27T22:17:44Z`
 - kapsam: 45K mimari doğrulama koşusu için closure-mode operasyon yönetişimi
 - iddia sınırı: flag'ler kontrol edilebilir kod yollarını tanımlar; koşu kanıtı olmadan benchmark, gecikme, enerji, deployment veya eğitilmiş model iddiası oluşturmaz
 
@@ -8,7 +8,7 @@
 
 - `zero_touch_start.sh` -> `scripts/final_orchestrator.py`
 - Bu geçiş için önerilen eğitim hattı: `remote_bootstrap`
-- `TITAN_REQUIRE_GATED_TEACHER=1`, `TITAN_USE_PRECOMPUTED_LOGITS=1` ve `TITAN_USE_TR_TOKENIZER=1`, katı offline-clean hattını tanımlar.
+- `TITAN_OFFLINE=1`, `TITAN_REQUIRE_GATED_TEACHER=1` ve `TITAN_USE_PRECOMPUTED_LOGITS=1`, katı offline-clean hattını tanımlar. Bu hat teacher-tokenizer KD'dir ve `TITAN_USE_TR_TOKENIZER=1` AYARLAMAZ (burada TR'yi zorlamak tokenizer-identity drift'ine yol açar; bkz. scripts/build_train_readiness_contract.py).
 - `remote_bootstrap`, `TITAN_OFFLINE=0` kullanır ve runtime credential injection ile hedef makinede dataset/bootstrap çalıştırmasını varsayar.
 
 ## Closure-Safe Hız Kontrolleri

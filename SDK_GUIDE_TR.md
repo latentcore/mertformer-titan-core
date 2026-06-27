@@ -81,12 +81,13 @@ CPU-only ortamlarda low-bit kernel otomatik kapanır ve standart float yol çal�
 
 ## SSS
 **S: QAT nedir?**
-C: Quantization-Aware Training. Eğitim sırasında quantization simülasyonu yaparak low-bit inference kalitesini artırır. Genelde stabil bir temel modelden sonra uygulanır.
+C: Quantization-Aware Training. Eğitim sırasında quantization simülasyonu yaparak low-bit inference kalitesini artırır. **Opsiyoneldir** ve genelde stabil bir temel modelden **sonra** uygulanır.
 
 **S: Türkçe tokenizer var mı?**
 C: Evet, opt-in. Varsayılan olarak kapalıdır.
 - `scripts/download_tr_tokenizer.py` ile indir
 - `config/config.py` içinde `use_tr_tokenizer=true` ayarla
+- Distilasyon kararlılığını korumak için risk-kontrollü bir POC olarak önerilir.
 
 **S: Kernel production-ready mi?**
 C: Doğruluk öncelikli deneysel referans kernel vardır. Performans iddiaları için gerçek profil ölçümü gerekir.

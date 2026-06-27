@@ -1,7 +1,12 @@
 # Python Baseline (Review-Ready)
 
-Bu repo, ekosistem sürprizlerini azaltmak için **Python 3.11** baseline’ına pinlenmiştir
-(PyTorch/Transformers uyumu, stabil wheel’ler, `snake_demo.py` pygame demosu).
+Bu repo, ekosistem sürprizlerini azaltmak için **Python 3.11** baseline’ını hedefler
+(stabil wheel’ler ve `snake_demo.py` pygame demosu). Kesin ve otoriter runtime
+sürümleri `repro/pip_freeze.txt` ve `repro/env.lock` dosyalarında kayıtlıdır
+(şu an `torch==2.10.0`, `transformers==5.3.0`); bu lock dosyalarını bu metin yerine
+tek doğru kaynak (source of truth) olarak kabul edin. Buradaki "uyumluluk" gerekçesi
+yalnızca açıklayıcı niyettir; 3.11'in pinli sürümler için tek desteklenen yorumlayıcı
+olduğuna dair ölçülmüş bir garanti değildir.
 
 ## Lokal Kurulum (macOS/Linux)
 

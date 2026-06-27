@@ -1,6 +1,6 @@
 # ✅ MertFormer Titan README Kalite Kontrol Listesi
 
-> DÜRÜSTLÜK NOTU: Aşağıdaki `[x]` işaretleri, eğitim öncesi taslak aşamasında elle yapılan ÖZ-BEYANDIR; otomatik doğrulamadan geçmiş bir GEÇME-KAPISI (pass-gate) DEĞİLDİR. Üretim metrikleri/karşılaştırmalar henüz kanıtlanmadı.
+> DÜRÜSTLÜK NOTU: Aşağıdaki `[x]` işaretleri, eğitim öncesi taslak aşamasında elle yapılan ÖZ-BEYANDIR; otomatik doğrulamadan geçmiş bir GEÇME-KAPISI (pass-gate) DEĞİLDİR. Üretim metrikleri/karşılaştırmalar henüz kanıtlanmadı. Tamlık (satır 8), Karşılaştırmalar (satır 24), Bağlantılar (satır 28) ve Yazım Denetimi (satır 30) gibi maddeler bir betik/rapor çıktısıyla DESTEKLENMEMEKTEDİR — bunları doğrulanmış kapılar değil, "kanıt beklemede" olarak değerlendirin. `[n/a]` maddeleri 4KB README kesiminde bilinçli olarak düşürülmüştür.
 
 ## 1️⃣ Proje Yapısı
 - [x] **Klasör Listesi:** Config, layers, scripts, checkpoints, logs dosyalarının tamamı listelendi.

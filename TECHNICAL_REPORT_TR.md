@@ -32,14 +32,14 @@ Bu mimari, Samsung Galaxy S25 ve Snapdragon 8 Elite gibi yeni nesil cihaz-içi d
 
 ## 2. Derin Teknik Mimari Analizi
 
-MertFormer Titan projesinin temel taşı, standart transformatör bloklarının ötesine geçerek donanım farkındalıklı (hardware-aware) bir yapı sunmasıdır. Model **2.64 milyar parametreye** sahiptir ancak çalışma anındaki yükü (inference cost) klasik modellerden çok daha düşüktür. (Not: **ölçülen runtime parametre toplamı ~3.67B'dir (3.672.982.022)** ve olgusal iddialarda bu rakam esas alınır; 2.64B mimari tasarım hedefidir. README ve `ARCHITECTURE.md` bu ayrımı aynı şekilde belirtir.)
+MertFormer Titan projesinin temel taşı, standart transformatör bloklarının ötesine geçerek donanım farkındalıklı (hardware-aware) bir yapı sunmasıdır. Modelin **ölçülen runtime parametre toplamı ~3.67B'dir (3.672.982.022)** — tüm olgusal iddialarda kullanılan rakam budur — ancak çalışma anındaki yükü (inference cost) klasik modellerden çok daha düşüktür. (Not: 2.64B, mimarinin *tasarım hedefidir*, ölçülen toplam değil; `DECISIONS.md`'ye göre olgusal iddialarda 3.67B ölçülen rakam esas alınır. README ve `ARCHITECTURE.md` bu ayrımı aynı şekilde belirtir.)
 
 ### 2.1 BitNet b1.58 ve Ternary Hesaplama Devrimi
 Geleneksel modeller 16-bit (BF16) kullanırken, MertFormer Titan **BitNet b1.58** teknolojisini temel alarak ağırlıkları $\{-1, 0, 1\}$ değerlerine indirger.
 
 *   **Bellek Tasarrufu (Tahmini):** %93.75 teorik azalma.
-*   **VRAM İhtiyacı (Tahmini):** ~0.65 GB (2.64B parametre için; low-bit inference yolu gerektirir).
-*   **Enerji Verimliliği (Hedef):** Ternary matematik optimize kernel ile çalışırsa NPU üzerinde 70 kat enerji tasarrufu hedefi.
+*   **VRAM İhtiyacı (Tahmini):** ~0.65 GB (**2.64B tasarım hedefi** parametre sayısı için hesaplandı, 3.67B ölçülen toplam değil; low-bit inference yolu gerektirir).
+*   **Enerji Verimliliği (Ölçülmemiş Hedef):** Ternary matematik optimize kernel'lerde çalışırsa NPU üzerinde 70 kata kadar enerji tasarrufu. Henüz böyle bir optimize kernel yok — mevcut Metal/Vulkan/NPU kod yolları generic bir `F.linear` (`torch`) passthrough'a düşüyor, dolayısıyla bu rakam bir ölçüm değil, yansıtılan bir hedeftir.
 
 $$w_q = \text{clamp}(\text{round}(\frac{w}{\gamma + \epsilon}), -1, 1)$$
 
@@ -129,13 +129,13 @@ QINN, ana eğitim hattında throughput ve yakınsama stabilitesini korumak için
 
 ## 4. Donanım Hedefi: Samsung S25 & Snapdragon 8 Elite
 
-MertFormer Titan, genel bir yazılım değil, **"NPU-Native"** bir motordur. Aşağıdaki veriler, mimarinin operasyonel karmaşıklığı (OPs) ve bellek ayak izi üzerinden hesaplanmış **Mimari Simülasyon Hedefleridir.**
+MertFormer Titan, genel bir yazılım değil, **"NPU-Native"** bir motordur. Not: optimize NPU/Metal/Vulkan kernel'leri henüz uygulanmadı — bu backend'ler şu anda özel low-bit shader'lar yerine generic bir `torch` (`F.linear`) fallback çalıştırıyor. Bu nedenle aşağıdaki veriler, ölçülmüş throughput değil, mimarinin operasyonel karmaşıklığı (OPs) ve bellek ayak izi üzerinden hesaplanmış **Mimari Simülasyon Hedefleridir.**
 
 | Platform | Tahmini Hız (Hedef) | Bellek | Optimizasyon |
 | :--- | :---: | :---: | :--- |
 | **Samsung S25 (NPU)** | **45 - 107 t/s** | < 2.0 GB | Tam (JIT + BitNet) |
 | iPhone 17 Pro | 40 - 80 t/s | < 2.5 GB | Yüksek (CoreML) |
-| MacBook Pro (M4) | 110+ t/s | ~3.0 GB | Maksimum (Metal) |
+| MacBook Pro (M4) | 110+ t/s | ~3.0 GB | Maksimum (Metal, hedef — henüz optimize Metal kernel yok) |
 
 > [!NOTE]
 > Gerçek dünya performans verileri, eğitim tamamlandıktan sonra fiziksel cihaz testleriyle doğrulanacaktır.

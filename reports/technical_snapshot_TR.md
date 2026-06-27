@@ -7,6 +7,18 @@
 - Kuantizasyon: BitNet 1.58‑bit.
 - Yönlendirme: LiquidRouter MoE (zamansal dinamik).
 - Dikkat: GQA attention (grouped-query, mevcut implementasyon) ile uzun bağlam hazırlığı.
+- QINN: deneysel bir yol olarak mevcut, mevcut baseline yapılandırmasında varsayılan olarak devre dışı.
+
+## Aktif Runtime Bileşenleri
+- Çekirdek tokenizer yolu: mevcut LM baseline'ı için Llama ailesi tokenizer kurulumu.
+- Çekirdek token embedding'leri: eğitim sırasında model içinde öğrenilir.
+- Orchestrator metin embedding'leri: `sentence-transformers/all-MiniLM-L6-v2`.
+- Orchestrator görüntü embedding'leri: `openai/clip-vit-base-patch32`.
+
+## Aktivasyonlar
+- MoE uzmanları: `BitSwiGLU`.
+- Router akışkan yolu: `SiLU`.
+- Liquid / CfC dinamikleri: `softplus` ve `tanh`.
 
 ## Eğitim Pipeline
 - Offline logits destekli distillation.

@@ -14,7 +14,7 @@ Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre ed
 
 ## Mevcut Durum
 - Repo durumu: pre-training / claim-unverified
-- Runtime toplamı: henüz ölçülmemiş; somut benchmark/log artefaktı yok (`claim-unverified`, bkz. aşağıdaki Benchmark uygunluğu)
+- Parametre sayısı: repo artefaktlarında `measured` (~3.67B); runtime/throughput: henüz doğrulanmamış (eğitimli checkpoint veya runtime ölçümü yok)
 - Benchmark uygunluğu: eğitimli checkpoint olmadan `NOT ELIGIBLE FOR CLAIM`
 - 45K koşusu: ilk ciddi mimari doğrulama koşusu, nihai kapasite tavanı değil
 - Readiness duruşu: repo-side start gate `remote_bootstrap` lane üzerinde yeşildir (`TRAIN_ALLOWED` / `READY_REMOTE_BOOTSTRAP`)
