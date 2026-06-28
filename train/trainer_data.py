@@ -67,6 +67,7 @@ class ValidationJsonlDataset(IterableDataset):
         self.eos_id = tokenizer.eos_token_id
 
     def __iter__(self):
+        skipped = 0
         with open(self.path, "r", encoding="utf-8") as f:
             for line in f:
                 try:
@@ -79,7 +80,13 @@ class ValidationJsonlDataset(IterableDataset):
                     )
                     yield input_ids, labels
                 except Exception:
+                    skipped += 1
                     continue
+        if skipped:
+            # Surface silent corruption: a fully-broken validation file would
+            # otherwise be skipped without any signal.
+            print(f"⚠️ DİKKAT: validation reader {skipped} bozuk/parse-edilemeyen "
+                  f"satırı atladı: {self.path}")
 
 
 class CurriculumDataset(IterableDataset):
@@ -234,11 +241,12 @@ class PrecomputedCurriculumDataset(IterableDataset):
         return self.stage_info[idx]
 
     def _align_logits(self, logits: Any, target_len: int) -> Any:
-        # Align logits length to token length
+        # Align logits length to token length. `logits` is either a sparse
+        # Top-K payload dict (handled first) or a dense Tensor [seq, vocab].
         if _is_sparse_topk_payload(logits):
             return _align_sparse_topk_payload(logits, target_len)
 
-        # logits: [seq, vocab]
+        # dense Tensor: [seq, vocab]
         if logits.dim() == 3 and logits.size(0) == 1:
             logits = logits.squeeze(0)
         if logits.dim() != 2:
@@ -301,6 +309,7 @@ class PrecomputedCurriculumDataset(IterableDataset):
             return
 
         # Legacy non-packed path (escape hatch only).
+        skipped = 0
         with open(path, "r", encoding="utf-8") as f:
             for line in f:
                 try:
@@ -327,7 +336,13 @@ class PrecomputedCurriculumDataset(IterableDataset):
                 except LogitAlignmentError:
                     raise
                 except Exception:
+                    skipped += 1
                     continue
+        if skipped:
+            # Surface silent skips: a malformed/untokenizable line dropped here
+            # shifts the legacy teacher-student logit alignment without any signal.
+            print(f"⚠️ DİKKAT: legacy logit-realign yolu {skipped} satırı atladı "
+                  f"(JSON/tokenize hatası) — teacher-student hizalaması kayabilir: {path}")
 
     def __iter__(self):
         # Disable worker parallelism for offline logits alignment

@@ -449,18 +449,14 @@ def main():
 Examples:
   python scripts/plot_training_log.py logs/training.jsonl
   python scripts/plot_training_log.py logs/training.jsonl --out dashboard.png
-  python scripts/plot_training_log.py logs/training.jsonl --dark --summary
+  python scripts/plot_training_log.py logs/training.jsonl --light --no-summary
         """,
     )
     parser.add_argument("log_file", help="Path to JSONL log file")
     parser.add_argument("--out", "-o", default=None,
                         help="Output PNG path (default: <log_dir>/training_dashboard.png)")
-    parser.add_argument("--dark", action="store_true", default=True,
-                        help="Use dark theme (default)")
     parser.add_argument("--light", action="store_true",
                         help="Use light theme")
-    parser.add_argument("--summary", "-s", action="store_true", default=True,
-                        help="Print summary stats (default)")
     parser.add_argument("--no-summary", action="store_true",
                         help="Skip summary stats")
 

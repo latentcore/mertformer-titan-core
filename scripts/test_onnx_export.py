@@ -11,6 +11,8 @@ Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
+# NOTE: manually-maintained local version label (fossil); not derived from a
+# central release manifest and may drift from the repo's actual version.
 __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert Yünlü"
 

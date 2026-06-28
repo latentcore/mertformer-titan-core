@@ -240,8 +240,8 @@ def _terminate_children() -> None:
         if proc.poll() is None:
             try:
                 proc.terminate()
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.warning("failed to terminate worker pid=%s: %s", proc.pid, exc)
 
 
 def _run_stage(

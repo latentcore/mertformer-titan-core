@@ -470,12 +470,10 @@ class TeacherBundle:
 
         print(f"👨‍🏫 Teacher Hazırlanıyor: {cfg.teacher_model_id}")
         try:
-            prefer_local_tokenizer = (
-                bool(getattr(cfg, "use_tr_tokenizer", False))
-                or not self.require_gated_teacher
-                or os.environ.get("TITAN_OFFLINE", "1") == "1"
-            )
-            self.tokenizer = load_teacher_tokenizer(prefer_local=prefer_local_tokenizer)
+            # Tokenizer family is governed solely by cfg.use_tr_tokenizer inside
+            # load_teacher_tokenizer/resolve_tokenizer; the legacy prefer_local arg
+            # is ignored, so it is no longer computed here.
+            self.tokenizer = load_teacher_tokenizer()
 
             if cfg.distill_alpha > 0.0:
                 print(f"🔄 Teacher ({cfg.teacher_model_id}) Loading...")
@@ -985,8 +983,7 @@ def train() -> None:
     if accelerator.is_main_process:
         print("✅ Accelerate Preparation Complete")
 
-    # Mixed Precision handled by Accelerate (no manual scaler needed)
-    scaler = None
+    # Mixed Precision handled by Accelerate (no manual GradScaler needed).
 
     # Early Stopping & Monitoring
     best_val_loss = float('inf')

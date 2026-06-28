@@ -190,8 +190,8 @@ def main() -> int:
     try:
         args.json_report.parent.mkdir(parents=True, exist_ok=True)
         args.json_report.write_text(json.dumps(result, indent=2, default=str), encoding="utf-8")
-    except Exception:
-        pass
+    except Exception as exc:
+        print(f"[warn] json rapor yazilamadi: {exc!r}", file=sys.stderr)
 
     statuses = {c["status"] for c in result["checks"].values()}
     if "FAIL" in statuses:

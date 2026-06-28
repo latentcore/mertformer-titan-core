@@ -54,16 +54,16 @@ def run_mac_simulation():
     print(f"   - Device Override: {cfg.device}")
     
     # 2. Initialize Model
-    # NOT: gercek param sayisi build sonrasi olculup yazdirilir (asagi bkz.).
+    # NOT: gerçek param sayısı build sonrasi olculup yazdirilir (asagi bkz.).
     print(f"\n🏗️  Building Model (Compact Mode, ~2.64B ref)...")
     start_load = time.time()
     try:
         model = MertFormer().to(cfg.device) # Already BF16 default
         
         # TACTIC 3: Gradient Checkpointing flag.
-        # NOT: Bu betik yalnizca TEK forward/backward (mikro-step) calistirir; tam bir
+        # NOT: Bu betik yalnizca TEK forward/backward (mikro-step) çalıştırır; tam bir
         # egitim dongusu yoktur. Bu nedenle checkpointing + katman freeze kurulumu
-        # burada gercek/surekli RAM kazancini KANITLAMAZ; aciklayici/temsili bir kurulumdur.
+        # burada gerçek/surekli RAM kazancini KANITLAMAZ; aciklayici/temsili bir kurulumdur.
         # MertFormer custom nn.Module oldugu icin flag manuel set ediliyor.
         model.use_gradient_checkpointing = True 
         print(f"   TACTIC 3: Gradient Checkpointing ENABLED (Manual Flag).")
@@ -87,7 +87,7 @@ def run_mac_simulation():
         trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
         print(f"   -> Trainable Params: {trainable_params/1e6:.1f}M (others frozen)")
 
-        # FIX (doc_drift): param sayisini config'e gomulu sabit yerine modelden turet.
+        # FIX (doc_drift): param sayisini config'e gömülü sabit yerine modelden türet.
         total_params = sum(p.numel() for p in model.parameters())
         params_str = f"{total_params/1e9:.2f}B"
         print(f"   -> Total Params (measured): {params_str} ({total_params:,})")
@@ -95,7 +95,7 @@ def run_mac_simulation():
         print(f"✅ Model Built in {time.time() - start_load:.2f}s")
         check_ram()
     except Exception as e:
-        # FIX (sessiz_except): build basarisizliginda sessizce return etmek process
+        # FIX (sessiz_except): build başarısızlığında sessizce return etmek process
         # exit kodunu 0 birakip betigi 'basarili' gosteriyordu. Tani amacli traceback
         # bas ve non-zero exit ile cik ki CI/cagiran katman hatayi gorsun.
         print(f"❌ Model Build Failed: {e}")
@@ -193,13 +193,13 @@ def run_mac_simulation():
     print(f"\n🔮 SAMSUNG S25 PROJECTION (SPECULATIVE / NOT MEASURED):")
     # NOT: Bu betik bir MPS mikro-benchidir; NPU/INT8/BitNet davranisini OLCMEZ.
     # Asagidaki carpan ve hedefler olculmemis spekulatif tahminlerdir, kanit DEGILDIR.
-    print(f"   Mac M4 bu betikte BFloat16 ile MPS uzerinden calisir (optimize edilmemis).")
-    print(f"   S25 NPU'nun INT8/BitNet ile calismasi VARSAYIMDIR (bu betik olcmuyor).")
-    print(f"   VARSAYILAN (olculmemis) Hizlanma Carpani: 3x - 5x")
+    print(f"   Mac M4 bu betikte BFloat16 ile MPS üzerinden çalışır (optimize edilmemiş).")
+    print(f"   S25 NPU'nun INT8/BitNet ile çalışması VARSAYIMDIR (bu betik olcmuyor).")
+    print(f"   VARSAYILAN (olculmemis) Hızlanma Çarpanı: 3x - 5x")
     s25_low = tps * 3
     s25_high = tps * 5
-    print(f"   SPEKULATIF S25 TAHMINI (kanitsiz): {s25_low:.1f} - {s25_high:.1f} tokens/sec")
-    print(f"   (Uretim hedefi >45 t/s -- olculmemis hedef, dogrulanmadi)")
+    print(f"   SPEKULATIF S25 TAHMİNİ (kanıtsız): {s25_low:.1f} - {s25_high:.1f} tokens/sec")
+    print(f"   (Üretim hedefi >45 t/s -- ölçülmemiş hedef, doğrulanmadı)")
     
     # LOGGING RESULTS WITH OFFICIAL LOGGER
     from utils.logger import RunLogger

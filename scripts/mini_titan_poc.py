@@ -22,7 +22,7 @@ NOT (durustluk): Bu bir POC betigidir, kanonik mimari paritesi DEGILDIR.
 ==============================================================================
 """
 
-__version__ = "5.0-FORENSIC"
+__version__ = "5.0-FORENSIC"  # NOT: statik surum fosili; otomatik turetilmez
 __author__ = "Mert Yünlü"
 
 import os
@@ -417,7 +417,7 @@ def train_phase(name, use_liquid, dataset, steps, logger):
     
     for i in range(steps):
         try: x, y = next(iter_data)
-        except: iter_data = iter(loader); x, y = next(iter_data)
+        except StopIteration: iter_data = iter(loader); x, y = next(iter_data)
         
         x, y = x.to(cfg.device), y.to(cfg.device)
         optim.zero_grad()

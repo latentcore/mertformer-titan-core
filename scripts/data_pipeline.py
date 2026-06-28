@@ -11,6 +11,8 @@ Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
+# NOTE: manually-maintained local version label (fossil); not derived from a
+# central release manifest and may drift from the repo's actual version.
 __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert Yünlü"
 
@@ -56,7 +58,7 @@ STAGE1_SOURCES = [
         "dataset": "bigcode/the-stack-dedup",
         "split": "train",
         "field": "content",
-        "ratio": 0.28,  # 28% of total
+        "ratio": 0.28,  # 28% stage-içi ağırlık (normalize edilir)
         "filters": ["python", "cpp", "asm"],  # Filter by language
         "min_length": 100,
         "max_length": 50000
@@ -65,7 +67,7 @@ STAGE1_SOURCES = [
         "dataset": "TIGER-Lab/MathInstruct", # [FIX] Nvidia repo removed, switched to TIGER-Lab
         "split": "train",
         "field": {"join": ["instruction", "output"]}, # [P2] include the answer (output), not just the prompt
-        "ratio": 0.015,  # 1.5% of total
+        "ratio": 0.015,  # 1.5% stage-içi ağırlık (normalize edilir)
         "filters": None,
         "min_length": 10,
         "max_length": 20000
@@ -91,7 +93,7 @@ STAGE2_SOURCES = [
         "dataset": "HuggingFaceFW/fineweb-edu",
         "split": "train",
         "field": "text",
-        "ratio": 0.35,  # 35% of total
+        "ratio": 0.35,  # 35% stage-içi ağırlık (normalize edilir)
         "filters": None,
         "min_length": 500,
         "max_length": 30000

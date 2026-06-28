@@ -11,7 +11,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30-V2"
+__version__ = "1.0-BUILD30-V2"  # fosil, otorite degil (elle bakimli)
 __author__ = "Mert Yünlü"
 
 import platform
@@ -29,12 +29,12 @@ class HardwareSense:
     """
     Sistem RAM/CPU ve device bilgisini raporlar.
 
-    NOT (inert / out-of-scope): orchestrator katmani 45K egitim yolunda
-    kapalidir (feature-flag); egitim akisini etkilemez.
+    NOT (inert / out-of-scope): orchestrator katmanı 45K egitim yolunda
+    kapalıdır (feature-flag); egitim akışını etkilemez.
 
-    scan() yalnizca psutil (virtual_memory / cpu_percent) ve platform
+    scan() yalnızca psutil (virtual_memory / cpu_percent) ve platform
     bilgisini okuyan basit bir monitoring yardimcisidir; herhangi bir
-    "kendi sinirlarini bilen AGI" yetenegi olculmemis/yoktur.
+    "kendi sınırlarını bilen AGI" yetenegi olculmemis/yoktur.
     """
     
     def __init__(self):

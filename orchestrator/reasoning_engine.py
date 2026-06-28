@@ -19,6 +19,8 @@ Bu orchestrator modülü çekirdek eğitim hattının parçası değildir; deney
 spekülatif akıl yürütme katmanıdır.
 """
 
+# NOTE: legacy/fossil version tag, hand-maintained and not the single source of
+# truth; prefer the central package version. Kept only for backward compatibility.
 __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert Yünlü"
 

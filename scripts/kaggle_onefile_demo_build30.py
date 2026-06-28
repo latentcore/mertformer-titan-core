@@ -3197,7 +3197,7 @@ class BitLinearStrict(nn.Linear):
         try:
             _COMPILED_LINEAR_CORE = torch.compile(_linear_core, mode="max-autotune", fullgraph=False)
         except Exception as exc:  # pragma: no cover - ortam bagimli
-            print(f"[WARN] torch.compile basarisiz, duz F.linear fallback kullaniliyor: {exc}", file=sys.stderr)
+            print(f"[WARN] torch.compile başarısız, düz F.linear fallback kullanılıyor: {exc}", file=sys.stderr)
             _COMPILED_LINEAR_CORE = _linear_core
         return _COMPILED_LINEAR_CORE
 

@@ -6,7 +6,7 @@ Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) — Pre-Training  (build no. statik/doğrulanmamış fosil)
 Status : PRE-TRAINING (CLOUD MODE)
 ==============================================================================
 
@@ -20,7 +20,7 @@ FEATURES:
 3. Numerical Verification (PyTorch vs ONNX output comparison)
 4. BitNet Weight Analysis
 
-NOTE: Requires ~32GB RAM for 3B parameter models during optimization.
+NOTE: ~32GB RAM (tahmini, hedef ~3B param) during optimization (doğrulanmamış tahmin).
 """
 
 __version__ = "1.0-BUILD30"

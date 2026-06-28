@@ -63,12 +63,6 @@ def _extract_pytest_summary(output: str) -> dict[str, int]:
                 key = "warnings"
             elif key == "error":
                 key = "errors"
-            elif key == "passed":
-                key = "passed"
-            elif key == "failed":
-                key = "failed"
-            elif key == "skipped":
-                key = "skipped"
             result[key] = count
     return result
 

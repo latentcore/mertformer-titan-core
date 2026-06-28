@@ -7,19 +7,19 @@ Proprietary - All Rights Reserved.
 
 Module: orchestrator/web_sense.py - DuckDuckGo web search & URL reading helper.
 
-NOTE (scope): Bu modul orchestrator/ altinda yer alir ve 45K egitim yolunda
-KAPALIDIR (inert / out-of-scope; feature-flag ile devre disi). Asagidaki
+NOTE (scope): Bu modül orchestrator/ altinda yer alır ve 45K eğitim yolunda
+KAPALIDIR (inert / out-of-scope; feature-flag ile devre disi). Aşağıdaki
 "Project / Version / Status" satirlari tum orchestrator dosyalarinda tekrar
-eden ortak boilerplate banner'in fosilidir; bu modulun (DuckDuckGo arama)
-gercek islevini tanimlamaz ve egitim build surumunu temsil ETMEZ.
+eden ortak boilerplate banner'in fosilidir; bu modülun (DuckDuckGo arama)
+gerçek işlevini tanimlamaz ve eğitim build surumunu temsil ETMEZ.
 
-Project: (boilerplate banner - modul ile dogrudan ilgisiz)
-Version: bkz. __version__ (legacy build etiketi, kanonik surum kaynagi degil)
+Project: (boilerplate banner - modül ile dogrudan ilgisiz)
+Version: bkz. __version__ (legacy build etiketi, kanonik surum kaynagi değil)
 Status : orchestrator yardimci modulu
 ==============================================================================
 """
 
-# Legacy build etiketi (fosil); kanonik surum kaynagi degildir, yalniz geriye
+# Legacy build etiketi (fosil); kanonik surum kaynagi değildir, yalniz geriye
 # donuk uyumluluk icin korunuyor.
 __version__ = "1.0-BUILD30-V2"
 __author__ = "Mert Yünlü"

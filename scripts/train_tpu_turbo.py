@@ -168,8 +168,9 @@ def train_tpu():
         if step >= test_max_steps: break
         
         with accelerator.accumulate(student):
-            # Forward
-            logits, _, moe_loss = student(input_ids)
+            # Forward — canonical return order is (logits, aux/MoE loss, KV-cache);
+            # the 2nd value is the MoE aux loss, the 3rd is the KV-cache.
+            logits, moe_loss, _ = student(input_ids)
             
             # Teacher Output (BF16)
             with torch.no_grad():

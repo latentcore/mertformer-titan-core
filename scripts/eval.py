@@ -13,7 +13,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30-V2"
+__version__ = "1.0-BUILD30-V2"  # fosil: elle bakımlı sürüm etiketi; merkezi manifestten türetilmez, sapabilir
 __author__ = "Mert Yünlü"
 
 import sys
@@ -34,10 +34,10 @@ from model.transformers import MertFormer
 from config.config import cfg
 
 def _extract_gsm8k_number(text):
-    """GSM8K cevap dizisinden son sayisal degeri cikar.
+    """GSM8K cevap dizisinden son sayısal değeri çıkar.
 
-    GSM8K gold cevaplari '#### <sayi>' ile biter; uretilen metinde ise
-    son gecen sayiyi proxy olarak aliriz. Hicbir sayi yoksa None doner.
+    GSM8K gold cevapları '#### <sayı>' ile biter; üretilen metinde ise
+    son geçen sayıyı proxy olarak alırız. Hiçbir sayı yoksa None döner.
     """
     if text is None:
         return None
@@ -81,11 +81,16 @@ def evaluate_gsm8k(model, tokenizer, device, num_samples=100):
                     eos_token_id=tokenizer.eos_token_id
                 )
             
-            full_output = tokenizer.decode(generated_ids[0], skip_special_tokens=True)
-            generated_ans = full_output[len(prompt):].strip()
+            # Slice by TOKEN count (prompt length), not decoded char length:
+            # the tokenizer round-trip may not reproduce the prompt verbatim, so a
+            # character-based slice on the decoded string can mis-cut the answer.
+            prompt_len = input_ids.shape[1]
+            generated_ans = tokenizer.decode(
+                generated_ids[0][prompt_len:], skip_special_tokens=True
+            ).strip()
             
-            # Gercek dogruluk olcumu: hem gold cevaptan hem de uretilen
-            # metinden son sayiyi cikarip karsilastiriyoruz (proxy exact-match).
+            # Gerçek doğruluk ölçümü: hem gold cevaptan hem de üretilen
+            # metinden son sayıyı çıkarıp karşılaştırıyoruz (proxy exact-match).
             pred_num = _extract_gsm8k_number(generated_ans)
             gold_num = _extract_gsm8k_number(answer)
             is_correct = (pred_num is not None and pred_num == gold_num)
@@ -103,8 +108,8 @@ def evaluate_gsm8k(model, tokenizer, device, num_samples=100):
     accuracy = (correct / total) if total else 0.0
     print(f"✅ Generated {total} reasoning traces successfully.")
     print(f"📊 GSM8K accuracy (numeric proxy exact-match): {correct}/{total} = {accuracy:.4f}")
-    print(f"ℹ️  Not: bu metrik son-sayi proxy eslesmesidir; resmi GSM8K calc-annotation"
-          f" degerlendirmesi degildir, gecme-kapisi olarak kullanmayin.")
+    print(f"ℹ️  Not: bu metrik son-sayı proxy eşleşmesidir; resmi GSM8K calc-annotation"
+          f" değerlendirmesi değildir, geçme-kapısı olarak kullanmayın.")
     return {"correct": correct, "total": total, "accuracy": accuracy}
 
 def main():

@@ -94,8 +94,9 @@ def stress_test():
     total_end = time.time()
     print("-" * 50)
     print(f"🏆 STRESS TEST COMPLETE!")
-    print(f"⏱️ Total Time for 200 Tokens: {total_end - total_start:.2f}s")
-    print(f"🚀 Average Speed: {200/(total_end - total_start):.2f} tokens/sec")
+    total_tokens = len(prompts) * 15  # tokens actually generated (15 per prompt)
+    print(f"⏱️ Total Time for {total_tokens} Tokens: {total_end - total_start:.2f}s")
+    print(f"🚀 Average Speed: {total_tokens/(total_end - total_start):.2f} tokens/sec")
     # NOTE: This is a smoke run (10 prompts x 15 tokens); it does NOT measure
     # stability or production load. Report only the measured throughput above.
     print("\nCONCLUSION: Smoke run completed. Throughput measured above; "

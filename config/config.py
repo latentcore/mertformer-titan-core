@@ -78,7 +78,7 @@ def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None) 
         # Method A: PyTorch Properties
         try:
             gpu_memory_gb = torch.cuda.get_device_properties(0).total_memory / (1024**3)
-        except:
+        except Exception:
             pass
             
     # Method B: Nvidia-SMI (Cross-verification)
@@ -88,7 +88,7 @@ def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None) 
             result = subprocess.check_output(cmd.split(), encoding="utf-8")
             gpu_memory_gb = float(result.strip().split('\n')[0]) / 1024
             if num_gpus == 0: num_gpus = 1 # Assume 1 if SMI works
-        except:
+        except Exception:
             pass
 
     # Critical Decision fallback
@@ -132,7 +132,7 @@ def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None) 
     # Formula: Layers * SeqLen * Hidden * Batch * Buffer
     # Estimate: ~2MB per token for 2B model activations without checkpointing
     # With FlashAttn + Checkpointing: ~0.2MB per token
-    token_mem_bytes = 0.35 * 1024 * 1024 # 0.35 MB per token (Empirical for 2.6B + GC)
+    token_mem_bytes = 0.35 * 1024 * 1024 # 0.35 MB per token (Empirical for 3.67B + GC)
     mem_per_sample_gb = (max_seq_len * token_mem_bytes) / (1024**3)
 
     # -------------------------------------------------------------------------
@@ -251,7 +251,7 @@ class MertFormerConfig:
     moe_intermediate: int = 8192
     router_aux_loss_coef: float = 0.02
     aux_loss_coef: float = 0.02  # Alias for router_aux_loss_coef (backward compatibility)
-    moe_every_n_layers: int = 3  # MoE on layers: 3, 6, 9, 12, 15, 18, 21 (0-indexed: 2, 5, 8, 11, 14, 17, 20)
+    moe_every_n_layers: int = 3  # MoE on layers: 3, 6, 9, 12, 15, 18 (0-indexed: 2, 5, 8, 11, 14, 17)
     # Inference-only expert paging (keeps model math intact; optimizes residency)
     use_expert_paging: bool = False
     expert_paging_inference_only: bool = True
@@ -444,7 +444,7 @@ class MertFormerConfig:
             import os
             cpu_count = os.cpu_count() or 4
             self.dataloader_num_workers = min(self.dataloader_num_workers, cpu_count)
-        except:
+        except Exception:
             pass
 
 

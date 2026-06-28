@@ -257,7 +257,6 @@ class BayesianAgentCore:
             posterior = prior
         self.beliefs[hypothesis] = min(max(posterior, 0.01), 0.99)
         self._update_count[hypothesis] = self._update_count.get(hypothesis, 0) + 1
-        # print(f"[Bayes] Updated '{hypothesis}': {prior:.2f} -> {posterior:.2f}")
 
     def get_confidence(self, hypothesis: str) -> float:
         return self.beliefs.get(hypothesis, 0.5)

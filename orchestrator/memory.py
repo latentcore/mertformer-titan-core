@@ -239,7 +239,7 @@ class GodMemory:
         return "\n".join(lines)
 
     def build_context_block(self, query: str, top_k: int = MAX_MEMORY_HITS) -> str:
-        """Produces V15.5 style [MEMORY_CONTEXT_START] block."""
+        """Produces [MEMORY_CONTEXT_START] block."""
         hits = self.recall_raw(query, top_k=top_k)
         if not hits:
             return ""

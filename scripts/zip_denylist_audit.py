@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 import zipfile
 from pathlib import Path
 from typing import Dict, List
@@ -42,8 +43,8 @@ def load_policy(policy_path: Path) -> tuple[List[re.Pattern[str]], Dict[str, re.
             data = yaml.safe_load(policy_path.read_text(encoding="utf-8")) or {}
             deny_regex = list((data.get("deny", {}) or {}).get("path_regex", deny_regex))
             secret = dict((data.get("deny", {}) or {}).get("secret_regex", secret))
-        except Exception:
-            pass
+        except Exception as exc:
+            print(f"WARN: policy load failed: {exc}", file=sys.stderr)
 
     return [re.compile(x) for x in deny_regex], {k: re.compile(v) for k, v in secret.items()}
 

@@ -158,7 +158,7 @@ Ticari değerleme, fonlama ve kariyer çerçevesi bu teknik rapordan **çıkarı
 
 ---
 
-## 7. Adli Doğrulama ve Güvenlik (Forensic Verification)
+## 6. Adli Doğrulama ve Güvenlik (Forensic Verification)
 
 Modelin güvenilirliği, açık doğrulama ve loglama mekanizmalarıyla desteklenmektedir:
 *   **SHA256 Chaining (tasarım):** eğitim, her adımı bir önceki adımın özetiyle mühürleyecek şekilde *tasarlanmıştır* (`TITAN_POC_PROOF.jsonl`); zincir gerçek bir koşuyla üretilir — henüz tamamlanmış bir 45K zinciri yok.
@@ -167,13 +167,13 @@ Modelin güvenilirliği, açık doğrulama ve loglama mekanizmalarıyla destekle
 
 ---
 
-## 8. Sonuç
+## 7. Sonuç
 
 MertFormer Titan, disiplinli bir kanıt sınırıyla kurulmuş cihaz-içi odaklı bir mimaridir (BitNet + MoE + Liquid/CfC + GQA). Mimari kendi içinde tutarlı ve donanım hedefi somut; ama bileşen değeri ve model kalitesi hâlâ hipotez: henüz eğitilmiş checkpoint yok. Değerlendirilecek şey mühendislik disiplini (low-bit runtime, eğitim güvenilirliği, claim disiplini) — bitmiş bir model değil. Başarı artık operasyonel yürütme ve checkpoint-bound kanıtla belirlenecek.
 
 ---
 
-## 9. Doğrulama Yol Haritası (claim-boundary)
+## 8. Doğrulama Yol Haritası (claim-boundary)
 
 Herhangi bir üretim ya da yetenek iddiasından ÖNCE gereken adımlar — aşağıdakilerin hiçbiri henüz tamamlanmadı:
 1. **Whitepaper**: `LiquidRouter + GQA + BitNet` tasarımını ve ölçülen ablation sonuçlarını (sonuçsuz çıkan Liquid ablation'ı dahil) belgeleyen teknik makale.
@@ -182,7 +182,7 @@ Herhangi bir üretim ya da yetenek iddiasından ÖNCE gereken adımlar — aşa�
 
 ---
 
-## 10. Spekülatif Araştırma Ufukları (kapsam-dışı; uygulanmadı)
+## 9. Spekülatif Araştırma Ufukları (kapsam-dışı; uygulanmadı)
 
 Aşağıdakiler **yalnızca uzun-vadeli araştırma yönleridir**. Hiçbiri kanonik eğitim yolunda uygulanmadı, hiçbiri 45K koşusunun ya da eğitilen modelin parçası değil ve hiçbiri yetenek olarak iddia edilmiyor — şeffaflık için listeleniyor, özellik olarak değil:
 *   **Kalıcı bağlamsal hafıza** — oturumlar arası kullanıcı/proje bağlamı için vektör tabanlı episodik önbellek (araştırma fikri; inşa edilmedi).
@@ -191,14 +191,14 @@ Aşağıdakiler **yalnızca uzun-vadeli araştırma yönleridir**. Hiçbiri kano
 
 ---
 
-## 11. Yasal Güvenlik Sınırları
+## 10. Yasal Güvenlik Sınırları
 
 - Dağıtım, policy-bound ve denetlenebilir olmalıdır.
 - Operasyonel aksiyonlarda insan onayı zorunludur.
 - İzinsiz gözetim/takip ve yetkisiz müdahale açıkça kapsam dışıdır.
 - Build kapanışı `Code+Test Green` kriteri ile yapılır; ağır eğitim kanıtları `Evidence Pending` olarak ayrı raporlanır.
 
-## 12. Closure-57 Kapısı
+## 11. Closure-57 Kapısı
 
 ```bash
 python3 scripts/check_57_matrix.py

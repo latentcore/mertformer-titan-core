@@ -11,7 +11,7 @@ Bu doküman, bu repo tarafından üretilen veya referanslanan **dahili** dataset
 ## İçerik Kuralları (Zorunlu)
 - Secret/token/credential/private key/internal URL bulunamaz.
 - Kişi verisi (PII) veya hassas veri (sağlık, biyometrik vb.) bulunamaz.
-- Telifli / kısıtlı 3. parti içerik ancak şu sartlarla kullanılabilir:
+- Telifli / kısıtlı 3. parti içerik ancak şu şartlarla kullanılabilir:
   - kaynak lisansı eğitim/yeniden dağıtım için açık izin veriyorsa ve
   - `datasets/SOURCES*.md` + `datasets/LICENSES*.md` içinde dokümante edilmişse.
 

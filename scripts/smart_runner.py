@@ -51,7 +51,7 @@ def distillation_monitor():
                 continue
                 
             # Check for signal file
-            # Path structure: datasets/stageX/stageX_done.signal
+            # Path structure: datasets/stageX/stageX_started.signal
             # Note: Directory names in data_pipeline are "stage1", "stage2", "stage3", "stage4_soul", "stage5_tools"
             # We need to map stage number to directory name exactly as in data_pipeline.py
             

@@ -162,7 +162,8 @@ def _count_jsonl(path: Path) -> int:
     try:
         with path.open("r", encoding="utf-8") as handle:
             return sum(1 for line in handle if line.strip())
-    except Exception:
+    except Exception as exc:
+        logger.warning("failed to count jsonl lines for %s: %s; returning 0", path, exc)
         return 0
 
 

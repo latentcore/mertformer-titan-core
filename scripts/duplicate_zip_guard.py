@@ -15,12 +15,12 @@ def sanitize_path(path: Path, repo_root: Path, documents_root: Path) -> str:
     try:
         text = text.replace(str(repo_root.resolve()), "<REPO_ROOT>")
     except OSError as exc:
-        # Sanitizasyon basarisiz olursa ham yol sizmasin diye gorunur iz birak.
+        # Sanitizasyon başarısız olursa ham yol sızmasın diye görünür iz bırak.
         logging.debug("repo_root sanitize basarisiz (%s): %s", path, exc)
     try:
         text = text.replace(str(documents_root.resolve()), "<DOCUMENTS_PATH>")
     except OSError as exc:
-        # Sanitizasyon basarisiz olursa ham yol sizmasin diye gorunur iz birak.
+        # Sanitizasyon başarısız olursa ham yol sızmasın diye görünür iz bırak.
         logging.debug("documents_root sanitize basarisiz (%s): %s", path, exc)
     return text
 

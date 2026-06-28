@@ -6,12 +6,12 @@ Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) — Pre-Training  (fosil: elle güncellenir, otomatik değil)
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30-V2"
+__version__ = "1.0-BUILD30-V2"  # fosil: manuel string, tek doğruluk kaynağı değil
 __author__ = "Mert Yünlü"
 
 import os
@@ -47,7 +47,7 @@ def log(msg, file_obj=None):
         file_obj.write(msg + "\n")
         file_obj.flush()
 
-def check_source(stage_name, source, log_file):
+def check_source(source, log_file):
     # Returns an honest status string instead of a single True/False pass-flag:
     #   "ok"     -> connected AND the expected content field was actually present
     #   "empty"  -> connected but the field was empty (NOT a real content check)
@@ -141,7 +141,7 @@ def main():
             log("-" * 40, f)
             for src in sources:
                 total_count += 1
-                status = check_source(stage_name, src, f)
+                status = check_source(src, f)
                 if status == "ok":
                     success_count += 1
                 elif status == "empty":

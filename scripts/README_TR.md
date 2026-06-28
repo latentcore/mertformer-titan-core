@@ -11,7 +11,9 @@ Konvansiyonlar:
 Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verify_all.sh`.
 
 ## Kanonik One-File Path
-- Resmi/kanonik one-file script: `scripts/kaggle_onefile_demo_build30.py`
+- Resmi/kanonik Kaggle closure scripti (terminal-first): `scripts/kaggle_onefile_closure_build30.py`
+- Resmi/kanonik Kaggle one-cell scripti (tek-T4 copy/paste yolu): `scripts/kaggle_onecell_t4_build30.py`
+- Legacy/reference one-file trainer: `scripts/kaggle_onefile_demo_build30.py`
 - Colab fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
 - Text-understanding PoC one-file script: `scripts/kaggle_onefile_demo_build30_text_understanding.py`
 - Windows RTX 5080 satranç PoC one-file script: `scripts/chess_5080_onefile.py`

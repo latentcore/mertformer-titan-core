@@ -63,10 +63,10 @@ def _sha256_file(path: Path) -> str:
                 hh.update(b)
         return hh.hexdigest()
     except Exception as e:
-        # Hash hesaplanamadi: sapmayi sessizce yutmamak icin stderr'e uyari yaz;
-        # geriye donus degeri olarak "error" korunuyor (cikti dogrulamasi bunu gate olarak isleyebilir).
+        # Hash hesaplanamadı: sapmayı sessizce yutmamak için stderr'e uyari yaz;
+        # geriye donus degeri olarak "error" korunuyor (cikti dogrulamasi bunu gate olarak işleyebilir).
         import sys
-        print(f"[warn] _sha256_file basarisiz ({path}): {type(e).__name__}: {e}", file=sys.stderr)
+        print(f"[warn] _sha256_file başarısız ({path}): {type(e).__name__}: {e}", file=sys.stderr)
         return "error"
 
 

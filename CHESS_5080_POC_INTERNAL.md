@@ -24,7 +24,7 @@ This lane is a private operator-facing chess proof flow.
 - The canonical readable script stays in repo.
 - `scripts/export_chess_5080_share.py` generates:
   - open copy
-  - obfuscated share copy
+  - Windows build workspace
   - delivery zip
   - SHA256 file
 - The share wrapper may self-delete only after a successful packaged run.

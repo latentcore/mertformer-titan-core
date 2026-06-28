@@ -1,11 +1,11 @@
-from __future__ import annotations
-
 """
 Liquid safeguard helpers.
 
 Pure-Python utilities to keep liquid spike tracking testable without importing
 the full training stack.
 """
+
+from __future__ import annotations
 
 from typing import Tuple
 

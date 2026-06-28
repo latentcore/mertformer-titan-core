@@ -45,7 +45,7 @@ def _extract_pred(text: str | None) -> str | None:
     if not text:
         return None
     # TR: [H6 fix] Önce GSM8K '#### <sayı>' işaretini ara; yoksa son sayıya düş.
-    #     (Decode artik yalniz uretilen token'lari icerir, sorudaki sayilar degil.)
+    #     (Decode artık yalnız üretilen token'ları içerir, sorudaki sayılar değil.)
     # EN: [H6 fix] Prefer the GSM8K '#### <num>' marker; else fall back to the last
     #     number. (Decode now contains only generated tokens, not question digits.)
     marked = ANSWER_RE.search(text)
@@ -119,7 +119,7 @@ def _load_model_and_tokenizer(
 
     if ckpt_path.exists():
         checkpoint = torch.load(ckpt_path, map_location=device)
-        # TR: Tokenizer'i checkpoint kimliginden yukle; yoksa ACIK hata (sessiz
+        # TR: Tokenizer'ı checkpoint kimliğinden yükle; yoksa AÇIK hata (sessiz
         #     teacher fallback YOK). EN: Load the tokenizer from the checkpoint
         #     identity; missing -> explicit error (no silent teacher fallback).
         tokenizer = load_tokenizer_from_identity(checkpoint.get("tokenizer_id"))

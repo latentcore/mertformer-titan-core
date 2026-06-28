@@ -38,7 +38,7 @@ def run_generation(dataset, tokenizer, model, device, out_path: Path, max_new_to
             input_ids = tokenizer(prompt, return_tensors="pt").input_ids.to(device)
             import torch
             with torch.no_grad():
-                # [H6 fix] stop on EOS; decode only the generated tokens.
+                # stop on EOS; decode only the generated tokens.
                 output = model.generate(
                     input_ids,
                     max_new_tokens=max_new_tokens,

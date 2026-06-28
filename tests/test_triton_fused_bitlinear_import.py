@@ -14,9 +14,9 @@ def test_triton_fused_module_imports_without_cuda() -> None:
     x = torch.randn(2, 4)
     w = torch.randn(3, 4)
     if not torch.cuda.is_available():
-        # CPU/Triton-yok yolunda cagrinin GERCEKTEN RuntimeError firlatmasi
-        # zorunlu kilinir. Onceki try/except yapisinda hata firlamazsa hicbir
-        # assert calismadan test sessizce yesil geciyordu (fake-green gate).
+        # CPU/Triton-yok yolunda çağrının GERÇEKTEN RuntimeError fırlatması
+        # zorunlu kılınır. Önceki try/except yapısında hata fırlamazsa hiçbir
+        # assert çalışmadan test sessizce yeşil geçiyordu (fake-green gate).
         with pytest.raises(RuntimeError) as exc_info:
             triton_fused_ternary_linear(x, w)
         assert "CUDA" in str(exc_info.value) or "Triton" in str(exc_info.value)

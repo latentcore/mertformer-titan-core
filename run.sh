@@ -205,7 +205,7 @@ fi
 
 # Fast path: clean-room reproducibility gate on a fresh local clone.
 if [ "$RUN_CLEANROOM" = true ]; then
-    CLEANROOM_WORKDIR="${CLEANROOM_WORKDIR:-/tmp/nihai_cleanroom_b27}"
+    CLEANROOM_WORKDIR="${CLEANROOM_WORKDIR:-/tmp/nihai_cleanroom_b30}"
     TITAN_CLEANROOM_PYTHON="${TITAN_CLEANROOM_PYTHON:-python3.11}" \
         bash scripts/cleanroom_verify.sh "$CLEANROOM_WORKDIR"
     exit $?

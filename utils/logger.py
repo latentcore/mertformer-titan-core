@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 """
 ==============================================================================
 MERTFORMER TITAN (ONYX STORM) - RUN LOGGER
@@ -12,6 +10,8 @@ Version: v1.0
 Status : Pre-Training
 ==============================================================================
 """
+
+from __future__ import annotations
 
 __version__ = "1.0.0"
 __author__ = "Mert Yünlü"

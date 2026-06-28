@@ -264,7 +264,8 @@ class MertFormer(nn.Module):
 
     def reset_router_state(self, batch_size: int = 1) -> None:
         """
-        Resets LiquidRouter state (for deterministic KV cache).
+        Resets the latent-ODE channel state and the LiquidRouter (MoE) state
+        (for deterministic KV cache).
         """
         if self.latent_ode_channel is not None:
             self.latent_ode_channel.reset_state(

@@ -15,7 +15,8 @@ fi
 
 LOG_PATH="$ROOT_DIR/reports/one_command_full_sop.log"
 SUMMARY_PATH="$ROOT_DIR/reports/one_command_full_sop_summary.md"
-rm -f "$ROOT_DIR/reports/.one_command_full_sop_raw.XXXXXX.log" 2>/dev/null || true
+# Clean any stale raw logs from older runs (glob, not a literal mktemp template).
+rm -f "$ROOT_DIR"/reports/.one_command_full_sop_raw.*.log 2>/dev/null || true
 RAW_LOG="$(mktemp -t one_command_full_sop_raw)"
 
 mkdir -p "$ROOT_DIR/reports" "$ROOT_DIR/packages" "$ROOT_DIR/artifacts"

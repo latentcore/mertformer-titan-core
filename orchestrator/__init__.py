@@ -77,6 +77,7 @@ __all__ = [
     "MertFormerOrchestrator",
     "EpisodeBudget",
     "EpisodeResult",
+    "main",
     # AGI Cognitive Modules
     "ReasoningEngine",
     "ReasoningResult",

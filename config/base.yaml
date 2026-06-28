@@ -4,7 +4,7 @@
 # - Any key not present here falls back to config/config.py defaults.
 
 model_name: MertFormer_Titan_S25_Prod
-version: v1.0-TITAN-BUILD30
+version: v1.0-TITAN-BUILD30-V2
 seed: 1453
 
 # Dimensions
@@ -25,7 +25,7 @@ rope_base: 100000.0
 
 # BitNet
 use_bitnet: true
-weight_quantization: absmax_per_tensor
+weight_quantization: rms_per_channel  # per-row RMS scale + ternary {-1,0,+1} (layers/bitlinear.py); matches config.py default
 activation_bits: 8
 
 # MoE

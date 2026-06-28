@@ -6,12 +6,12 @@ Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
 Proprietary - All Rights Reserved.
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
-Version: v1.0 (Build 30) — Pre-Training
+Version: v1.0 (Build 30) — Pre-Training  (not: 'Build 30' surum fosili; guncel build ile uyumsuz olabilir)
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30-V2"
+__version__ = "1.0-BUILD30-V2"  # fosil: 'BUILD30' eski build etiketi; canli build degerini yansitmayabilir
 __author__ = "Mert Yünlü"
 
 import os
@@ -240,9 +240,9 @@ def is_text_file(path: Path) -> bool:
             chunk = f.read(1024)
         return b"\0" not in chunk  # Null byte yoksa metindir
     except (OSError, UnicodeError) as exc:
-        # Okuma hatasinda dosya guvenli tarafta binary kabul edilir (return False),
-        # ancak hata artik sessizce yutulmuyor; teshis icin stderr'e uyari yazilir.
-        print(f"[UYARI] is_text_file okunamadi: {path} ({exc})", file=sys.stderr)
+        # Okuma hatasında dosya güvenli tarafta binary kabul edilir (return False),
+        # ancak hata artık sessizce yutulmuyor; teşhis için stderr'e uyarı yazılır.
+        print(f"[UYARI] is_text_file okunamadı: {path} ({exc})", file=sys.stderr)
         return False
 
 def should_skip_content(path: Path) -> bool:
