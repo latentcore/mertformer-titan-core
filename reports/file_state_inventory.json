@@ -1,12 +1,11 @@
 {
   "schema": "file_state_inventory_v1",
-  "generated_utc": "2026-06-27T23:17:15Z",
+  "generated_utc": "2026-06-28T00:47:03Z",
   "git_branch": "main",
-  "git_commit_short": "ce89c71",
-  "tracked_files": 828,
+  "git_commit_short": "6c4c35c",
+  "tracked_files": 829,
   "modified_entries": [
-    "M TASK_TR.md",
-    " M artifacts/mertformer_release.zip.sha256",
+    "M artifacts/mertformer_release.zip.sha256",
     " M packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256",
     " M reports/backup_restore_report.json",
     " M reports/bench_cpp_report.json",
