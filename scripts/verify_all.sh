@@ -36,6 +36,9 @@ echo "[verify] TITAN_OFFLINE=$TITAN_OFFLINE"
 echo "[verify] Secret scan ..."
 "$PY" scripts/secret_scan.py
 
+echo "[verify] Repo hygiene guard (bare-except / stale build fossils) ..."
+"$PY" scripts/repo_hygiene_guard.py
+
 echo "[verify] Pytest ..."
 pytest_output="$("$PY" -m pytest -q 2>&1)" || {
   printf '%s\n' "$pytest_output"

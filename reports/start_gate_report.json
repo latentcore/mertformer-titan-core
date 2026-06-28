@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-28T00:32:06.169748+00:00",
+  "generated_utc": "2026-06-28T00:39:15.062918+00:00",
   "ok": true,
   "start_allowed": true,
   "train_allowed": true,
@@ -16,7 +16,7 @@
     "secret_scan": {
       "cmd": "<REPO_ROOT>/.titan-venv/bin/python scripts/secret_scan.py",
       "return_code": 0,
-      "stdout_tail": "OK: no secret patterns detected in git_tracked files. scanned=813\n",
+      "stdout_tail": "OK: no secret patterns detected in git_tracked files. scanned=814\n",
       "stderr_tail": "",
       "ok": true
     },
@@ -37,7 +37,7 @@
     "git_status": {
       "cmd": "git status --short --branch",
       "return_code": 0,
-      "stdout_tail": "## main...origin/main\n M CHESS_5080_POC_INTERNAL.md\n M TECHNICAL_REPORT_TR.md\n M apps/chess_gui/play_mertformer_chess_web.py\n M config/base.yaml\n M config/config.py\n M datasets/INTERNAL_POLICY_TR.md\n M eval/gsm8k.py\n M mertformer_sdk/__init__.py\n M mertformer_sdk/kernels/vulkan/__init__.py\n M mertformer_sdk/kernels/vulkan/engine.py\n M mertformer_sdk/pilot.py\n M model/transformers.py\n M orchestrator/__init__.py\n M orchestrator/cognitive.py\n M orchestrator/core.py\n M orchestrator/hardware.py\n M orchestrator/memory.py\n M orchestrator/planner.py\n M orchestrator/reasoning_engine.py\n M orchestrator/sense_engine.py\n M orchestrator/web_sense.py\n M reports/chess_gui_onefile_sync_report.json\n M reports/chess_onefile_extension_report.json\n M reports/chess_teaching_contract_report.json\n M reports/chess_teaching_contract_report.md\n M reports/chess_training_readiness_report.json\n M reports/closure_57_matrix.json\n M reports/code_truth_delta_audit.json\n M reports/final_orchestrator_status.json\n M reports/final_orchestrator_status.md\n M reports/immutable_evidence_register.json\n M reports/immutable_evidence_register.md\n M reports/post_train_autorun_status.json\n M reports/post_train_autorun_status.md\n M reports/scoped_external_intake_matrix.json\n M reports/scoped_external_intake_matrix.md\n M reports/train_readiness_decision.json\n M reports/training_readiness_manifest.json\n M reports/workspace_hygiene_manifest.json\n M run.sh\n M scripts/README_TR.md\n M scripts/benchmarks_internal.py\n M scripts/build_scoped_external_intake_matrix.py\n M scripts/data_pipeline.py\n M scripts/duplicate_zip_guard.py\n M scripts/eval.py\n M scripts/kaggle_onefile_demo_build30.py\n M scripts/kaggle_onefile_demo_build30_text_understanding.py\n M scripts/mac_simulation.py\n M scripts/mertformer_5080_final_onefile.py\n M scripts/mini_titan_poc.py\n M scripts/mobile_export.py\n M scripts/one_command_full_sop.sh\n M scripts/plot_training_log.py\n M scripts/precompute_logits_parallel.py\n M scripts/precompute_logits_topk.py\n M scripts/smart_runner.py\n M scripts/test_onnx_export.py\n M scripts/titan_onnx_stress_test.py\n M scripts/train_tpu_turbo.py\n M scripts/validate_logit_alignment.py\n M scripts/verify_datasets.py\n M scripts/verify_onnx_local.py\n M scripts/xray.py\n M scripts/zip_denylist_audit.py\n M tests/test_kaggle_onefile_feature_coverage.py\n M tests/test_triton_fused_bitlinear_import.py\n M train/train.py\n M train/trainer_data.py\n M utils/liquid_safeguard.py\n M utils/logger.py\n",
+      "stdout_tail": "## main...origin/main\n M reports/chess_gui_onefile_sync_report.json\n M reports/chess_onefile_extension_report.json\n M reports/chess_teaching_contract_report.json\n M reports/chess_teaching_contract_report.md\n M reports/chess_training_readiness_report.json\n M reports/closure_57_matrix.json\n M reports/code_truth_delta_audit.json\n M reports/final_orchestrator_status.json\n M reports/final_orchestrator_status.md\n M reports/immutable_evidence_register.json\n M reports/immutable_evidence_register.md\n M reports/post_train_autorun_status.json\n M reports/post_train_autorun_status.md\n M reports/scoped_external_intake_matrix.json\n M reports/scoped_external_intake_matrix.md\n M reports/workspace_hygiene_manifest.json\nA  scripts/repo_hygiene_guard.py\n M scripts/verify_all.sh\n",
       "stderr_tail": "",
       "ok": true
     },

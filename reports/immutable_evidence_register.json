@@ -1,6 +1,6 @@
 {
-  "generated_local": "2026-06-28T03:31:58",
-  "entry_count": 1201,
+  "generated_local": "2026-06-28T03:39:07",
+  "entry_count": 1203,
   "entries": [
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260404_232149.zip",
@@ -5434,6 +5434,18 @@
     },
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260628_033101.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260628_033811.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260628_033811.zip.sha256",
       "kind": "file",
       "immutable_reason": "result_",
       "disposition": "preserve_immutable_evidence"

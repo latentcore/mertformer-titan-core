@@ -684,6 +684,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── record_dataset_hashes.py  # Python module/script (automation script for record dataset hashes)
 │   ├── release_build30.sh  # shell automation script
 │   ├── release_closure_lock.sh  # shell automation script
+│   ├── repo_hygiene_guard.py  # Python module/script (automation script for repo hygiene guard)
 │   ├── repro_build_check.py  # Python module/script (automation script for repro build check)
 │   ├── resume_compat_check.py  # Python module/script (automation script for resume compat check)
 │   ├── run_and_clean_pycache.py  # Python module/script (run command + guaranteed post-run cache sweep; add --include-venv-caches for venv cache cleanup)
