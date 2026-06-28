@@ -130,6 +130,7 @@ def run_overfit(
     max_steps: int,
     target_loss: float,
     min_improvement: float,
+    min_learn_margin: float = 0.2,
 ) -> None:
     random.seed(42)
     torch.manual_seed(42)
@@ -182,14 +183,30 @@ def run_overfit(
     if start_loss is None or final_loss is None:
         raise RuntimeError("Overfit gate failed: loss not computed")
 
-    improvement = (start_loss - final_loss) / max(start_loss, 1e-6)
-    if final_loss > target_loss and improvement < min_improvement:
+    # Init-robust criterion: measure learning against the init-INDEPENDENT uniform
+    # baseline ln(vocab) (the loss of an untrained/uniform predictor), NOT against
+    # the init-dependent start loss. The old start-relative %-drop was a loophole:
+    # an over-confident weight init inflates start_loss so a 75% drop is trivial
+    # while the model is nowhere near learning (observed: start ~= 121 -> final ~= 28
+    # "passed" yet perplexity stayed astronomical / no real memorization). Honest
+    # pass = the pipeline drives loss meaningfully BELOW the uniform baseline (real
+    # learning) or fully memorizes (final <= target_loss).
+    uniform = math.log(max(2, cfg.vocab_size))
+    learn_margin = (uniform - final_loss) / uniform
+    improvement = (start_loss - final_loss) / max(start_loss, 1e-6)  # reported only
+    memorized = final_loss <= target_loss
+    learned = (final_loss < uniform) and (learn_margin >= min_learn_margin)
+    if not (memorized or learned):
         raise RuntimeError(
             f"Overfit gate failed: start={start_loss:.4f}, final={final_loss:.4f}, "
-            f"improvement={improvement:.2%}, required={min_improvement:.2%}"
+            f"uniform(lnV)={uniform:.4f}, learn_margin={learn_margin:.2%}, "
+            f"required_margin={min_learn_margin:.2%} (start-rel improvement={improvement:.2%})"
         )
 
-    print("Overfit gate: PASS")
+    print(
+        f"Overfit gate: PASS (final={final_loss:.4f}, uniform={uniform:.4f}, "
+        f"learn_margin={learn_margin:.2%}, start-rel={improvement:.2%})"
+    )
 
 
 def main() -> None:
@@ -200,6 +217,8 @@ def main() -> None:
     parser.add_argument("--max-steps", type=int, default=200)
     parser.add_argument("--target-loss", type=float, default=1.0)
     parser.add_argument("--min-improvement", type=float, default=0.8)
+    parser.add_argument("--min-learn-margin", type=float, default=0.2,
+                        help="Required fraction below the uniform ln(vocab) baseline (init-robust).")
     args = parser.parse_args()
 
     dataset_path = Path(args.dataset)
@@ -209,13 +228,15 @@ def main() -> None:
     byte_budget = args.bytes
     max_steps = args.max_steps
     min_improvement = args.min_improvement
+    min_learn_margin = args.min_learn_margin
     if args.fast:
         byte_budget = min(byte_budget, 200_000)
         max_steps = min(max_steps, 60)
         min_improvement = min(min_improvement, 0.75)
+        min_learn_margin = min(min_learn_margin, 0.15)
 
     with patched_cfg():
-        run_overfit(dataset_path, byte_budget, max_steps, args.target_loss, min_improvement)
+        run_overfit(dataset_path, byte_budget, max_steps, args.target_loss, min_improvement, min_learn_margin)
 
 
 if __name__ == "__main__":

@@ -96,6 +96,18 @@ class MertFormer(nn.Module):
         self._last_world_model_outputs: Optional[dict] = None
         self.latent_ode_dt = float(getattr(cfg, "latent_ode_dt", 1.0))
 
+        # Weight init (embedding / output projection only): keep PyTorch-default
+        # (fan-in-scaled) init for the BitLinear bodies so the ternary RMS-scale
+        # stays large enough to propagate signal, but initialize the tied embedding
+        # == output projection small so initial logits are near-uniform
+        # (start loss ~= ln(vocab)). nn.Embedding's default N(0,1), amplified by the
+        # x sqrt(hidden) embedding scaling and shared with lm_head, otherwise made
+        # the untrained model wildly overconfident (start loss ~= 121 vs ln(V)).
+        _init_std = float(getattr(cfg, "initializer_range", 0.02))
+        nn.init.normal_(self.tok_embeddings.weight, mean=0.0, std=_init_std)
+        if not tie_weights:
+            nn.init.normal_(self.lm_head.weight, mean=0.0, std=_init_std)
+
     @property
     def vocab_size(self) -> int:
         """Current embedding vocab size."""

@@ -218,6 +218,12 @@ class MertFormerConfig:
     rms_norm_eps: float = 1e-6
     dropout: float = 0.1
 
+    # Weight init std for the (tied) token embedding == output projection.
+    # Keeps initial logits near-uniform (start loss ~= ln(vocab)) instead of the
+    # ~19x-too-high start that nn.Embedding's default N(0,1) x sqrt(hidden) scaling
+    # produced. BitLinear bodies keep PyTorch-default (fan-in-scaled) init.
+    initializer_range: float = 0.02
+
     # [NEW] RoPE Theta: Frequency base for long context.
     # Standard is 10,000. Making it 100,000 eases "stretching" to 8K/16K later.
     # NOTE: `rope_theta` is informational only — GQA attention (`layers/mla.py`)
