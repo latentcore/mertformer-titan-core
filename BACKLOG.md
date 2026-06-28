@@ -13,6 +13,12 @@ Each is documented with its mechanism in [DECISIONS.md](DECISIONS.md):
 - **`liquid_warmup_steps`** has no env override (hardcoded 10000) — add for parity with other tunables.
 - **`mark_weights_updated()`** uncalled cache-invalidation hook — confirm whether the eval cache needs it (do NOT delete blindly).
 
+## Post-45K — holistic-read (EK-4) additions
+- **Evidence-gated banner WRITER (design post-run):** build the actual `PRE-TRAINING (UNVERIFIED)` → measured-status writer once a *real* 45K checkpoint + a *real* (non-zero) eval exist, so the gate can be designed/tested against genuine artifacts. A pre-built auto-writer is unsafe (a stray demo checkpoint + a stub `summary.json` "status: ready" with zero counts satisfies a naive gate and stamps a false "TRAINED" claim across ~50 files). The shipped `scripts/flip_status_banner.py` is therefore **report-only** for now; the writer (with explicit human confirm + non-zero-metric gate + frozen-path banners) is this deferred item.
+- **Unit-test re-baseline pass (separate):** add `decoupled_rope` / top-p / MoE-capacity / quant-parity tests. Deferred because it re-baselines the `370/4` count and cascades through every "370 passed" claim surface — do it as its own pass.
+- **Liquid training loop perf:** the `for t in range(T)` recurrence (seq=4096, 3 layers) is a real throughput cost; measurable/optimizable only on real GPU (profile-then-optimize, post-run).
+- **`ffn_dropout` intent:** not in `config.py` → silently `0.0` in `layers/ffn.py` while `attention_dropout`/`dropout` are `0.1`. Confirm whether FFN-dropout-off is intended before any tuning.
+
 ## Cosmetic / housekeeping (safe, non-behavioral)
 - `mark_weights_updated` dead-method review; `_compute_weight_version` relies on private torch `._version` (guard across versions); RoPE cache lazy-grow comment clarity; `iter_packed_sequences` greedy-buffer note.
 - See `V2_BACKLOG_SEED.md` Track A–F for the full list (compile policy, distributed contract, optimizer matrix, etc.).

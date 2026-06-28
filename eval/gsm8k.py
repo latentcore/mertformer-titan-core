@@ -112,13 +112,19 @@ def _load_model_and_tokenizer(
     _require_checkpoint_or_allow_random(ckpt_path, allow_random_weights)
 
     from model.transformers import MertFormer
+    from train.trainer_core import _normalize_state_dict_keys_for_model
     from utils.tokenizer_resolver import (
         load_tokenizer_from_identity,
         resolve_tokenizer,
     )
 
     if ckpt_path.exists():
-        checkpoint = torch.load(ckpt_path, map_location=device)
+        # weights_only=False: this is our OWN trusted training checkpoint; its
+        # optimizer state (GaLoreAdamW8bit / bnb AdamW8bit) carries non-tensor
+        # objects that torch>=2.6's weights_only=True default refuses to unpickle
+        # — which would crash the post-45K GSM8K eval on the freshly trained
+        # checkpoint. Mirrors the documented train.py resume load.
+        checkpoint = torch.load(ckpt_path, map_location=device, weights_only=False)
         # TR: Tokenizer'ı checkpoint kimliğinden yükle; yoksa AÇIK hata (sessiz
         #     teacher fallback YOK). EN: Load the tokenizer from the checkpoint
         #     identity; missing -> explicit error (no silent teacher fallback).
@@ -126,7 +132,13 @@ def _load_model_and_tokenizer(
         cfg.vocab_size = len(tokenizer)
         model = MertFormer().to(device)
         model.resize_token_embeddings(len(tokenizer))
-        model.load_state_dict(checkpoint.get("model", checkpoint))
+        # Normalize a possible `_orig_mod.` prefix (compile-trained checkpoint)
+        # and load non-strict so non-persistent runtime buffers (telemetry/cache)
+        # never trip a strict load. Mirrors train.py resume key handling.
+        model_state = _normalize_state_dict_keys_for_model(
+            checkpoint.get("model", checkpoint), model
+        )
+        model.load_state_dict(model_state, strict=False)
     else:
         # Random-weights smoke only: no checkpoint exists, so there is no
         # recorded tokenizer identity. Use the configured single resolver.

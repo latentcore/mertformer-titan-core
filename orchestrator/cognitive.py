@@ -17,7 +17,7 @@ sezgisel (heuristic) stub'tir; gercek ogrenme/cok-ajanli akil yurutme
 icermezler. Ilgili stub'lar docstring'lerinde ayrica isaretlenmistir.
 """
 
-__version__ = "1.0-BUILD30"
+__version__ = "1.0-BUILD30-V2"
 __author__ = "Mert Yünlü"
 
 import time

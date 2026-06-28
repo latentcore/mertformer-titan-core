@@ -19,7 +19,7 @@ kapalidir (feature-flag). Egitim/parite hattini etkilemez; yalnizca agentic
 calisma zamaninda devreye girer.
 """
 
-__version__ = "1.0-BUILD30"
+__version__ = "1.0-BUILD30-V2"
 __author__ = "Mert Yünlü"
 
 import json

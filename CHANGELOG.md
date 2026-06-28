@@ -2,6 +2,21 @@
 
 All notable changes to this project are tracked in this file.
 
+## Unreleased - 2026-06-28
+
+### Added
+- `scripts/flip_status_banner.py`: **report-only** status-banner auditor — lists tracked files carrying the pre-training banner and reports post-flip eligibility (a real, non-zero eval metric). It has **no write path**: the actual evidence-gated flip is a deliberate post-run task (a naive "checkpoint+summary exists" gate is satisfied by a stray demo checkpoint + stub summary, so a pre-built auto-writer is unsafe). See BACKLOG.
+- `ENV_VARS.md`: single index of the canonical training/precompute/orchestration environment variables with defaults.
+
+### Fixed
+- `eval/gsm8k.py`: checkpoint load now uses `weights_only=False` (+ `_orig_mod.` key normalization, non-strict load), mirroring the documented `train.py` resume path — prevents a torch≥2.6 `UnpicklingError` when evaluating a real training checkpoint (optimizer/GaLore state) in the post-45K GSM8K benchmark.
+
+### Changed
+- Banner/version hygiene: normalized non-frozen `Status` / `Version` / `__version__` banners to the canonical Build-30-V2 form (`utils/logger.py`, `orchestrator/*`, `scripts/*`). Comment/metadata only, zero runtime change. Frozen-path banners (`model/`, `train/`, `layers/`) are deliberately left for the post-45K evidence-gated flip.
+
+### Validation
+- `370 passed, 4 skipped` (offline-first pytest, unchanged); readiness `TRAIN_ALLOWED / READY_REMOTE_BOOTSTRAP`. No trained/benchmark claim — the one remaining gap is a real 45K GPU run.
+
 ## Unreleased - 2026-06-17
 
 ### Added
