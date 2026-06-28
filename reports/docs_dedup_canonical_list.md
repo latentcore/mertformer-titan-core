@@ -22,6 +22,7 @@ Generated automatically.
 - `CONTRIBUTING_TR.md`
 - `DECISIONS.md`
 - `DECISIONS_TR.md`
+- `ENV_VARS.md`
 - `GOVERNANCE.md`
 - `GOVERNANCE_TR.md`
 - `IMPLEMENTATION_PLAN.md`
