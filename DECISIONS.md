@@ -395,3 +395,6 @@ deliberate — a future reviewer/AI should not undo them:
 - **Quant parity note** added in `bitlinear.py weight_quant`: it must stay in lockstep with
   `liquid.py jit_quant` (both per-row RMS); switching one to absmean without the other would
   desync train(weight_quant)/eval(jit_quant).
+
+### Laptop preflight run-feedback (2026-07-02) — pre-45K stabilization signal (documented, NOT applied to frozen path)
+A single-laptop pre-flight (`scripts/preflight_run.py`, RTX 5070, commit `5fc5068`; evidence under `evidence/2026-07-02-laptop-preflight/`) **diverged** at `LR=1.5e-3` (grad_norm → inf; loss climbed above random). Decision: this is real run-feedback and unlocks the pre-45K stabilization items in [BACKLOG.md](BACKLOG.md), but the **frozen training path stays unchanged on `main`** — each fix (LR regime, relative Liquid threshold, `generate()` Liquid-state parity, held-out ppl harness) is applied and re-verified on its own compute-run before landing, so the canonical 45K is never confounded by an unverified training-math edit. The diverging-run checkpoints are infrastructure evidence only (SHA-referenced; weights excluded, `.pt` gitignored).

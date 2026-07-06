@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-06-28T11:44:50.895873+00:00",
-  "md_file_count": 469,
+  "generated_utc": "2026-07-06T18:06:38.148351+00:00",
+  "md_file_count": 470,
   "duplicate_name_group_count": 27,
   "duplicate_name_groups": {
     "license.md": [
@@ -22,6 +22,7 @@
       "configs/README.md",
       "datasets/README.md",
       "datasets/offline_demo/README.md",
+      "evidence/2026-07-02-laptop-preflight/README.md",
       "evidence/README.md",
       "knowledge/README.md",
       "logs/README.md",

@@ -146,6 +146,7 @@ Generated automatically.
 - `docs/QUICKSTART_CPU.md`
 - `economics/cost_model_TR.md`
 - `economics/efficiency_report_TR.md`
+- `evidence/2026-07-02-laptop-preflight/README.md`
 - `evidence/README.md`
 - `evidence/build30_t4_onecell/EVIDENCE_POINTER.md`
 - `evidence/build30_t4_onecell/smoke_test_result.md`
@@ -545,6 +546,7 @@ Generated automatically.
   - `configs/README.md`
   - `datasets/README.md`
   - `datasets/offline_demo/README.md`
+  - `evidence/2026-07-02-laptop-preflight/README.md`
   - `evidence/README.md`
   - `knowledge/README.md`
   - `logs/README.md`

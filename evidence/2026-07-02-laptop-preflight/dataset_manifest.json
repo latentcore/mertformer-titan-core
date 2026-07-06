@@ -1,0 +1,40 @@
+{
+  "schema": "preflight_dataset_manifest_v1",
+  "generated_utc": "2026-07-02T14:52:04Z",
+  "source": {
+    "dataset_id": "HuggingFaceH4/ultrachat_200k",
+    "split": "train_sft",
+    "revision": "8049631c405ae6576f93f445c6b8166f76f5505a",
+    "revision_pinned": true,
+    "streaming_order": "upstream order at the pinned revision, no shuffle",
+    "reproduce_load": "load_dataset(\"HuggingFaceH4/ultrachat_200k\", split=\"train_sft\", streaming=True, revision=\"8049631c405ae6576f93f445c6b8166f76f5505a\")"
+  },
+  "rendering": "messages flattened to 'User:'/'Assistant:'/'System:' lines, joined by newlines",
+  "selection_rule": "train: accumulate rows until sum(min(len(tokens), 511)+1) >= 29982720; validation: next 2000 rows",
+  "tokenizer": {
+    "id": "hf-internal-testing/llama-tokenizer",
+    "vocab_size": 32000
+  },
+  "planned_training_token_positions": 29982720,
+  "epoch_semantics": "trainer samples the file uniformly with replacement; the run is token-equivalent to ~1 epoch, not an ordered pass",
+  "files": {
+    "train": {
+      "repo_path": "datasets/training_data.jsonl",
+      "bytes": 345376059,
+      "sha256": "43bddc87e9aa56a130a98e9ff5a1161af5e6146c45b9c3158c34671b7d6467b5",
+      "rows": 59401,
+      "raw_tokens": 82512079,
+      "trainable_tokens": 29983092,
+      "truncated_rows": 55804
+    },
+    "validation": {
+      "repo_path": "datasets/validation.jsonl",
+      "bytes": 11581868,
+      "sha256": "42e1101ad96750a1c019c04fe7fe32ada12ce0c5d70ea1d8958eb695caf6ab96",
+      "rows": 2000,
+      "raw_tokens": 2761421,
+      "trainable_tokens": 1011122,
+      "truncated_rows": 1898
+    }
+  }
+}

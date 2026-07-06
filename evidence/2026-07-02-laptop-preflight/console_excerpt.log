@@ -1,0 +1,86 @@
+👨‍🏫 Teacher Hazırlanıyor: C:\Users\user\Desktop\mertformer-titan-core\preflight_work\tokenizer
+🔤 Tokenizer (teacher): C:\Users\user\Desktop\mertformer-titan-core\preflight_work\tokenizer
+ℹ️ Distill Alpha 0, Teacher Model yüklenmedi (Sadece Tokenizer).
+ℹ️ Offline mode: using local fallback dataset (datasets/training_data.jsonl).
+🧪 Validation records: 2000
+🔍 Validation Dataset Found: C:\Users\user\Desktop\mertformer-titan-core\datasets\validation.jsonl
+ℹ️  Epoch Mode Skipped. Using provided max_steps: 1830
+🔤 Runtime tokenizer locked: C:\Users\user\Desktop\mertformer-titan-core\preflight_work\tokenizer (vocab=32000, use_tr_tokenizer=False)
+✅ Config Schema Verified (post).
+ℹ️  Auto-resume enabled, no checkpoint found. Starting fresh.
+ℹ️  torch.compile disabled in config
+🧠 Model Parametreleri: 36.20 Milyon
+📚 Trainable: 36.20 Milyon
+🧠 Grokking Setup: 11 Router Params | 120 Body Params
+🚀 OPTIMIZER ACTIVE: AdamW (use_galore=False, use_8bit_adam=False, galore_available=False)
+✅ Accelerate Preparation Complete
+🚀 TITAN ONYX STORM TRAINING STARTING...
+📊 Max Steps (nominal): 1830
+🧮 Token Budget: mode=fixed_steps | min_tokens=23600000000
+📚 Curriculum Stages:
+   - Stage 1 (stage1): Steps 0-768 (42.0%)
+   - Stage 2 (stage2): Steps 768-1317 (30.0%)
+   - Stage 3 (stage3): Steps 1317-1463 (8.0%)
+   - Stage 4 (stage4): Steps 1463-1610 (8.0%)
+   - Stage 5 (stage5): Steps 1610-1830 (12.0%)
+📊 Early Stopping: Patience=5 | Val Check: Every 500 steps
+Step 10 | Stage 1 | Loss: 10.4331 | Tok/s: 10732 | LR: 8.20e-05 | GradNorm: 0.426
+   🧠 MoE Health: MaxLoad=0.16 | Balance(std)=0.019 | Entropy=0.995 | Overflow=0.006
+Step 20 | Stage 1 | Loss: 10.3717 | Tok/s: 13224 | LR: 1.64e-04 | GradNorm: 0.458
+   🧠 MoE Health: MaxLoad=0.16 | Balance(std)=0.019 | Entropy=0.995 | Overflow=0.004
+Step 30 | Stage 1 | Loss: 10.2259 | Tok/s: 11436 | LR: 2.46e-04 | GradNorm: 0.838
+   🧠 MoE Health: MaxLoad=0.16 | Balance(std)=0.022 | Entropy=0.993 | Overflow=0.004
+⚠️  WARNING: Gradient norm 13.92 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 22.74 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 39.59 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 74.24 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 137.55 exceeds soft threshold (transient; clip held at 2.0).
+Step 40 | Stage 1 | Loss: 9.8376 | Tok/s: 11355 | LR: 3.28e-04 | GradNorm: 31.217
+   🧠 MoE Health: MaxLoad=0.19 | Balance(std)=0.044 | Entropy=0.971 | Overflow=0.103
+⚠️  WARNING: Gradient norm 271.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 560.35 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1202.30 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 2668.42 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 5964.91 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 13261.85 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 38793.83 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 67524.62 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 192250.06 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 427586.75 exceeds soft threshold (transient; clip held at 2.0).
+Step 50 | Stage 1 | Loss: 8.9053 | Tok/s: 11522 | LR: 4.10e-04 | GradNorm: 75008.498
+   🧠 MoE Health: MaxLoad=0.27 | Balance(std)=0.072 | Entropy=0.901 | Overflow=0.217
+⚠️  WARNING: Gradient norm 2982942.25 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 4654098.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1989399.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 15560450.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 6738297.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 65703452.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 649860.69 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 55865.52 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 50732.68 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 16276.64 exceeds soft threshold (transient; clip held at 2.0).
+
+... [grad-norm keeps exploding to 1e15+; clip held at 2.0 every step; MoE entropy degrades 0.99 -> 0.73] ...
+
+⚠️  WARNING: Gradient norm 9509501952.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 42604392448.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 16775441408.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 38008676352.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 22550536192.00 exceeds soft threshold (transient; clip held at 2.0).
+Step 500 | Stage 1 | Loss: 9.6673 | Tok/s: 12255 | LR: 1.50e-03 | GradNorm: 13212775002.125
+   🧠 MoE Health: MaxLoad=0.36 | Balance(std)=0.087 | Entropy=0.888 | Overflow=0.258
+📊 Validation Loss: 9.7734 (Best: inf)
+✅ New best validation loss! Saving checkpoint...
+💾 Checkpoint Kaydediliyor: infra_preflight_step_500.pt
+🏆 NEW BEST! Val Loss: 9.7734 (Previous: inf)
+💾 Checkpoint Kaydediliyor: infra_preflight_step_500.pt
+⚠️  WARNING: Gradient norm 9908699136.00 exceeds soft threshold (transient; clip held at 2.0).
+
+... [loss diverges above random: 10.2 -> 12 -> 14 -> 15.0; grad_norm -> inf by step ~970] ...
+
+⚠️  WARNING: Gradient norm inf exceeds soft threshold (transient; clip held at 2.0).
+
+🛑 Durduruldu. Kaydediliyor...
+💾 Checkpoint Kaydediliyor: infra_preflight_step_981.pt
+[preflight 18:20:26] Trainer returned (interrupted) after 28m 20s.
+[preflight 18:20:26] Interrupted. Everything kept in place; rerun this script to resume from the latest checkpoint.

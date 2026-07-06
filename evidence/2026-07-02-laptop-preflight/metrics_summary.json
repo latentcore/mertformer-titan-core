@@ -1,0 +1,48 @@
+{
+  "schema": "preflight_divergence_summary_v1",
+  "generated_from": "2026-07-02 laptop preflight console + step CSV",
+  "device": "NVIDIA GeForce RTX 5070 Laptop GPU (8 GB)",
+  "repo_commit": "5fc5068c93529b29ab345fe04b33ecb0ef555bef",
+  "status": "INTERRUPTED_DIVERGED",
+  "claim_boundary": "infrastructure evidence + negative finding only; NOT trained / benchmark / capability",
+  "steps_run": 981,
+  "wall_clock": "28m20s",
+  "params_millions": 36.2,
+  "optimizer": "AdamW",
+  "hyperparams": {
+    "learning_rate": 0.0015,
+    "grad_clip": 2.0,
+    "liquid_spike_threshold": "absolute loss>5.0 (scale-blind at this loss range)",
+    "warmup_steps": 3000,
+    "seq_len": 512,
+    "global_batch": 32
+  },
+  "infra_validated": {
+    "end_to_end_pipeline": true,
+    "atomic_checkpoint_at_step_500": true,
+    "grad_clip_held_2p0_every_step": true,
+    "moe_health_telemetry_live": true,
+    "graceful_interrupt_save_step_981": true
+  },
+  "loss_curve_sampled": [
+    {"step": 10, "loss": 10.43}, {"step": 40, "loss": 9.84}, {"step": 80, "loss": 8.45},
+    {"step": 120, "loss": 8.38}, {"step": 200, "loss": 8.75}, {"step": 280, "loss": 9.57},
+    {"step": 400, "loss": 9.98}, {"step": 480, "loss": 9.45}, {"step": 500, "loss": 9.67},
+    {"step": 520, "loss": 10.23}, {"step": 540, "loss": 11.78}, {"step": 560, "loss": 13.20},
+    {"step": 580, "loss": 14.70}, {"step": 980, "loss": 15.01}
+  ],
+  "grad_norm": {
+    "exploded_from_step": 80,
+    "sustained_range": "1e11 - 1e16",
+    "reached_inf_by_step": 970,
+    "run_survived_only_via_clip": true
+  },
+  "moe": {"entropy_start": 0.995, "entropy_min": 0.735, "max_load_peak": 0.61, "early_imbalance_alert": true},
+  "liquid": {"spike_threshold_absolute": 5.0, "effectively_trained": false, "reason": "absolute loss>5.0 never releases at this loss scale"},
+  "checkpoint_sha256": {
+    "infra_preflight_step_500.pt": "c9e5df833b6279c59b6a79b15fc9fd38309eea1b89455a3aa22744cdff435355",
+    "infra_preflight_latest.pt": "c9e5df833b6279c59b6a79b15fc9fd38309eea1b89455a3aa22744cdff435355",
+    "infra_preflight_best.pt": "f16414d350261084887fe2ff6659207e472ec6fb1921e147100d370690d6cd43"
+  },
+  "conclusion": "LR 1.5e-3 empirically fatal for this arch at this scale; pre-45K stabilization required before the real 45K run"
+}

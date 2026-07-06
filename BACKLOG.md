@@ -26,3 +26,11 @@ Each is documented with its mechanism in [DECISIONS.md](DECISIONS.md):
 ## Out of scope (documented, not pursued in repo)
 - AGI/ASI capability rows in `reports/closure_57_matrix.md` are **out-of-scope pending** (require benchmark / long-horizon evidence) — see [INTERNAL_AGI_GAP.md](INTERNAL_AGI_GAP.md).
 - The `orchestrator/` cognitive runtime + flag-off layers (`cognitive_extensions.py`, `world_model_head.py`, `lifelong_safety.py`, `qinn.py`) are **inert on the canonical 45K path** — out-of-scope, not part of the trained model. Documented (not deleted); see [ARCHITECTURE.md](ARCHITECTURE.md) "out-of-scope surfaces".
+
+## Pre-45K — laptop preflight run-feedback (2026-07-02, real run signal)
+Source: `evidence/2026-07-02-laptop-preflight/` (RTX 5070, 8 GB, commit `5fc5068`). The pre-flight validated the infrastructure (atomic checkpoint at step 500; guards live; graceful interrupt-save at step 981) AND produced a decisive negative training-dynamics finding: the run **diverged** (loss ~10.4 → ~15.0; grad_norm → `inf`, sustained `1e11`–`1e16`, survived only via `clip=2.0`; MoE load entropy 0.99 → 0.74). These are the pre-45K stabilization items — **documented as run-feedback; the frozen training path is NOT changed until each is applied and re-verified on a real run:**
+- **LR regime:** `1.5e-3` is empirically fatal for this arch at this scale → sweep from `3e-4`, drop the router ×1.5 LR multiplier, lengthen warmup; target clip-hit rate `< 5%` (not "survive despite clip").
+- **Liquid spike threshold:** absolute `loss>5.0` is scale-blind (never releases at this loss range → the Liquid layer is effectively untrained). Make it **relative** (`EMA×1.5`) + cooldown.
+- **`generate()` Liquid state:** thread the Liquid hidden state through decode (as router state already is) + add a full-forward↔incremental-decode **parity test**.
+- **Held-out perplexity harness:** fixed corpus + fixed seed + fixed script (today's eval cannot tell whether a run learned anything beyond its own loss curve).
+- **100–300M pilot** before the real 45K (gate: clip-hit `<5%`, no persistent Liquid freeze, no MoE collapse, monotone held-out ppl).

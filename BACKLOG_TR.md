@@ -20,3 +20,11 @@ Her biri mekanizmasıyla [DECISIONS_TR.md](DECISIONS_TR.md)'de belgeli:
 ## Kapsam dışı (belgeli, repo'da takip edilmiyor)
 - `reports/closure_57_matrix.md`'deki AGI/ASI yetenek satırları **kapsam-dışı pending**'dir (benchmark / uzun-vadeli kanıt gerektirir) — bkz. [INTERNAL_AGI_GAP.md](INTERNAL_AGI_GAP.md).
 - `orchestrator/` cognitive runtime + flag-off katmanlar (`cognitive_extensions.py`, `world_model_head.py`, `lifelong_safety.py`, `qinn.py`) kanonik 45K yolunda **inert** — kapsam-dışı, eğitilen modele dahil değil. Belgeli (silinmedi); bkz. [ARCHITECTURE.md](ARCHITECTURE.md) "out-of-scope surfaces".
+
+## 45K öncesi — laptop preflight koşu geri-bildirimi (2026-07-02, gerçek koşu sinyali)
+Kaynak: `evidence/2026-07-02-laptop-preflight/` (RTX 5070, 8 GB, commit `5fc5068`). Preflight altyapıyı doğruladı (step 500'de atomik checkpoint; guard'lar canlı; step 981'de graceful kesme-kaydı) VE kesin bir negatif eğitim-dinamiği bulgusu üretti: koşu **ıraksadı** (loss ~10.4 → ~15.0; grad_norm → `inf`, `1e11`–`1e16` bandında, yalnız `clip=2.0` yaşattı; MoE entropi 0.99 → 0.74). Bunlar 45K öncesi kararlılık kalemleridir — **koşu-geri-bildirimi olarak belgelenir; her biri gerçek bir koşuda uygulanıp yeniden doğrulanana kadar frozen eğitim yolu DEĞİŞMEZ:**
+- **LR rejimi:** `1.5e-3` bu mimaride bu ölçekte ampirik olarak ölümcül → `3e-4`'ten tara, router ×1.5 LR çarpanını kaldır, warmup uzat; hedef clip-hit `< %5` ("clip'e rağmen yaşamak" değil).
+- **Liquid spike eşiği:** mutlak `loss>5.0` ölçek-körü (bu loss aralığında hiç serbest bırakmaz → Liquid katmanı fiilen eğitilmez). **Göreli** yap (`EMA×1.5`) + cooldown.
+- **`generate()` Liquid state:** Liquid gizli durumunu decode boyunca taşı (router state gibi) + full-forward↔incremental-decode **parite testi** ekle.
+- **Held-out perplexity harness:** sabit korpus + sabit seed + sabit script (bugünkü eval bir koşunun kendi loss eğrisi dışında bir şey öğrenip öğrenmediğini söyleyemiyor).
+- Gerçek 45K'dan önce **100–300M pilot** (kapı: clip-hit `<%5`, kalıcı Liquid freeze yok, MoE collapse yok, held-out ppl monoton).

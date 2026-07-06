@@ -642,6 +642,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── failure_budget_drill.py  # Python module/script (automation script for failure budget drill)
 │   ├── final_one_shot.sh  # shell automation script
 │   ├── final_orchestrator.py  # Python module/script (automation script for final orchestrator)
+│   ├── flip_status_banner.py  # Python module/script (automation script for flip status banner)
 │   ├── generate_bench_reports.py  # Python module/script (automation script for generate bench reports)
 │   ├── generate_energy_baselines.py  # Python module/script (automation script for generate energy baselines)
 │   ├── generate_sbom.py  # Python module/script (automation script for generate sbom)
@@ -854,6 +855,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── DECISIONS.md  # documentation/report file
 ├── DECISIONS_TR.md  # Turkish document counterpart
 ├── Dockerfile  # container build baseline
+├── ENV_VARS.md  # documentation/report file
 ├── GOVERNANCE.md  # documentation/report file
 ├── GOVERNANCE_TR.md  # Turkish document counterpart
 ├── IMPLEMENTATION_PLAN.md  # documentation/report file
