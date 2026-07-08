@@ -23,6 +23,8 @@ from typing import Any, Dict, Iterable
 LOG_DIR = Path("logs")
 LOGBOOK_PATH = LOG_DIR / "ALL_LOGS.jsonl"
 
+# KEEP IN SYNC with utils/logger.py SECRET_PATTERNS.
+# (Same cross-file-sync convention as the bitlinear.py <-> liquid.py "quant parity note".)
 REDACT_PATTERNS = [
     re.compile(r"\bhf_[A-Za-z0-9_\-]{8,}\b"),
     re.compile(r"\bwandb_[A-Za-z0-9_\-]{8,}\b"),

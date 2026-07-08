@@ -9,7 +9,7 @@ from pathlib import Path
 
 from .api import load_model, generate, benchmark, enable_lowbit_kernels
 from .export import export_onnx
-from .pilot import run_verify_all, build_pilot_report, write_pilot_report
+from .pilot import PROJECT_ROOT, run_verify_all, build_pilot_report, write_pilot_report
 from .kpi import collect_kpis, write_kpi_report
 
 
@@ -94,8 +94,14 @@ def _cmd_pilot_report(args: argparse.Namespace) -> None:
 
 
 def _cmd_kpi_report(args: argparse.Namespace) -> None:
+    # [2026-07-08] Was `Path(".")` (the caller's CWD). Every other command resolves against
+    # the repo root derived from __file__ (pilot.PROJECT_ROOT). Run `mertformer kpi-report`
+    # from anywhere but the repo root and `run_verify_all(project_root=<cwd>)` invoked
+    # `bash scripts/verify_all.sh` in a directory that has no such script: bash exits 127,
+    # which parse_verify_output maps to status="fail". The command then exited 0 and wrote a
+    # fully-populated kpi_report_v1 claiming every gate had failed. Silently wrong, no error.
     payload = collect_kpis(
-        project_root=Path("."),
+        project_root=PROJECT_ROOT,
         run_verify=not args.skip_verify,
         run_onnx_check=args.onnx_check,
     )

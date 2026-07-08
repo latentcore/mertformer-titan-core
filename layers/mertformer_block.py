@@ -186,7 +186,13 @@ class MertFormerBlock(nn.Module):
         past_key_value: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
         use_cache: bool = False,
         workspace: Optional[torch.Tensor] = None,
-    ) -> Tuple[torch.Tensor, torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]:
+        liquid_state: Optional[torch.Tensor] = None,
+    ) -> Tuple[
+        torch.Tensor,
+        torch.Tensor,
+        Optional[Tuple[torch.Tensor, torch.Tensor]],
+        Optional[torch.Tensor],
+    ]:
         """
         Forward propagation - Manages Liquid state and MoE routing.
 
@@ -194,9 +200,19 @@ class MertFormerBlock(nn.Module):
             x (torch.Tensor): Input tensor [Batch, Seq, Hidden]
             past_key_value (Optional[Tuple]): Previous KV cache
             use_cache (bool): Return cache?
+            workspace (Optional[torch.Tensor]): Global-workspace broadcast state
+            liquid_state (Optional[torch.Tensor]): Previous LiquidMixer hidden state
+                [Batch, Hidden]. `None` starts the recurrence from zeros.
         Returns:
-            Tuple[torch.Tensor, torch.Tensor, Optional[Tuple]]:
-                (Output, Aux loss, KV Cache)
+            Tuple[torch.Tensor, torch.Tensor, Optional[Tuple], Optional[torch.Tensor]]:
+                (Output, Aux loss, KV Cache, final LiquidMixer hidden state)
+
+        [2026-07-08] The 4th element is new. Previously this method called
+        `self.liquid(x)` with no `h_init` and discarded the mixer's final state, so every
+        incremental decode step in `MertFormer.generate()` silently restarted the CfC
+        recurrence from h=0: the Liquid layers still applied their per-token transform but
+        carried NO temporal context across the sequence — precisely the thing they exist
+        to provide. Teacher-forced training (whole sequence in one forward) was unaffected.
         """
         # 1. Attention (with KV Cache)
         h = self.norm1(x)
@@ -207,9 +223,13 @@ class MertFormerBlock(nn.Module):
         # 2. [ARCH UPDATE] LiquidMixer (Liquid-Guided Flow)
         # Liquid layer runs before MoE, giving tokens "time perception".
         # This way Router decides with tokens that know the past.
+        present_liquid_state: Optional[torch.Tensor] = None
         if self.liquid is not None:
-            # LiquidMixer contains Residual + Norm internally
-            x = self.liquid(x)
+            # LiquidMixer contains Residual + Norm internally.
+            # Thread the recurrent hidden state in and back out (see docstring).
+            x, present_liquid_state = self.liquid(
+                x, h_init=liquid_state, return_state=True
+            )
         if self.workspace_layer is not None:
             x = self.workspace_layer(x, workspace)
 
@@ -241,4 +261,4 @@ class MertFormerBlock(nn.Module):
         if aux_loss.ndim > 0:
             aux_loss = aux_loss.sum()
 
-        return x, aux_loss, present_key_value
+        return x, aux_loss, present_key_value, present_liquid_state

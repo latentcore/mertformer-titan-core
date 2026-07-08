@@ -140,6 +140,13 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── humaneval.py  # Python module/script (evaluation routine for humaneval)
 │   └── report_builder.py  # Python module/script (evaluation routine for report builder)
 ├── evidence/  # directory
+│   ├── 2026-07-02-laptop-preflight/  # directory
+│   │   ├── README.md  # primary documentation (EN)
+│   │   ├── console_excerpt.log  # text/log artifact
+│   │   ├── dataset_manifest.json  # JSON data artifact
+│   │   ├── metrics_summary.json  # JSON data artifact
+│   │   ├── run_config.json  # JSON data artifact
+│   │   └── step_metrics.csv  # CSV data artifact
 │   ├── build30_t4_onecell/  # directory
 │   │   ├── EVIDENCE_POINTER.md  # documentation/report file
 │   │   ├── run_summary.json  # JSON data artifact
@@ -681,6 +688,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── post_train_autorun.py  # Python module/script (automation script for post train autorun)
 │   ├── precompute_logits_parallel.py  # Python module/script (automation script for precompute logits parallel)
 │   ├── precompute_logits_topk.py  # Python module/script (automation script for precompute logits topk)
+│   ├── preflight_run.py  # Python module/script (automation script for preflight run)
 │   ├── ram_guard.py  # Python module/script (automation script for ram guard)
 │   ├── record_dataset_hashes.py  # Python module/script (automation script for record dataset hashes)
 │   ├── release_build30.sh  # shell automation script

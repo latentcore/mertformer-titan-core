@@ -117,7 +117,12 @@ def build_sequences(tokens: List[int], seq_len: int) -> List[List[int]]:
 
     sequences = []
     step = max(1, seq_len // 2)
-    for i in range(0, max(0, len(tokens) - seq_len - 1), step):
+    # [2026-07-08] Off-by-one. A window needs tokens[i : i+seq_len+1], so the LAST valid
+    # start is i = len(tokens) - seq_len - 1. `range(stop)` excludes `stop`, so the old
+    # `range(0, len(tokens) - seq_len - 1, step)` always dropped that final window — and at
+    # exactly len(tokens) == seq_len + 1 it became range(0, 0) => ZERO sequences, making
+    # run_overfit() raise "no sequences built" for a dataset holding one perfectly valid window.
+    for i in range(0, max(0, len(tokens) - seq_len), step):
         seq = tokens[i : i + seq_len + 1]
         if len(seq) == seq_len + 1:
             sequences.append(seq)

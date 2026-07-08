@@ -9,6 +9,24 @@ NOTE: Bu paket (orchestrator/) inert / out-of-scope; 45K egitim yolunda
 kapalidir. Burada tutulan surum etiketi legacy bir etikettir, kanonik
 surum kaynagi degildir.
 
+EAGER-IMPORT NOTE (2026-07-08, documentation-only):
+This package imports ALL 24 of its submodules at package level (below). Therefore
+train/train.py's single real orchestrator import
+    from orchestrator.distillation_manager import DistillationManager
+makes Python execute the module-level code of EVERY file in this package, even though
+only that one class is ever used and the package is otherwise inert on the 45K path.
+
+As of this pass, every dependency those submodules touch was checked and is either
+properly declared (e.g. networkx in requirements.txt) or guarded by a module-level
+try/except ImportError (e.g. sense_engine.py, audio_sense.py, web_sense.py) -- so there
+is NO live bug today. The coupling is nonetheless real: any new file added to this
+package that imports an undeclared/unguarded dependency will silently break train.py's
+ability to even start. Any new file here MUST keep its imports declared-or-guarded,
+precisely because this package loads unconditionally the moment anything imports from it.
+
+Making these imports lazy/guarded would be a real behavior change to inert code and is
+deliberately out of scope; this note is the correct minimal action.
+
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================

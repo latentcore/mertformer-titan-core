@@ -1,0 +1,103 @@
+# Model override: PILOT — STABILIZATION ONLY (2026-07-08)
+#
+# ===========================================================================
+# WHAT THIS IS — AND, EMPHATICALLY, WHAT IT IS NOT
+# ===========================================================================
+# This is a short LR/divergence SAFETY check. It carries NO capability claim and is
+# NOT a scaling proxy for the canonical 3.67B run.
+#
+# STATUS.md's sealed decision stands unchanged: "No intermediate-scale run (250M/500M)
+# before or after ... a smaller model has its own dynamics and does not predict 45K."
+# That decision is about NOT using a mid-scale run to predict 45K *capability*. This
+# pilot predicts nothing. It answers exactly one question, cheaply:
+#
+#     "Does the candidate LR regime (config/config.py: learning_rate, warmup_ratio,
+#      router_lr_multiplier) keep grad_norm finite and the loss descending on THIS
+#      architecture — BitNet ternary + sparse MoE + Liquid/CfC + GQA — before we spend
+#      $150-570 and multiple days on the real 45K?"
+#
+# The 2026-07-02 laptop pre-flight diverged (LR 1.5e-3; grad_norm -> inf; loss 10.4 ->
+# 15.0) on a 36.2M infra-validation model. 36.2M was too small to be architecturally
+# representative (its MoE barely has experts to balance). This config keeps every
+# architectural element ON at a size that still fits one consumer GPU.
+#
+# Go/No-Go gate (from BACKLOG.md): clip-hit rate < 5%, grad_norm never reaches inf,
+# no persistent Liquid freeze, no MoE collapse, ppl monotonically descending,
+# kill+resume drill clean. NONE of those are capability statements.
+#
+# Usage:
+#     MERTFORMER_MODEL_CONFIG=mertformer_pilot_stabilization.yaml \
+#     MERTFORMER_TRAIN_CONFIG=... python -m train.train
+#
+# ===========================================================================
+# MEASURED SIZE (not guessed — see the "verified" line at the bottom)
+# ===========================================================================
+# vocab_size=128256 with tied embeddings dominates any small model: the embedding alone
+# is 128256 x hidden. That is why the transformer body below is deliberately shallow and
+# narrow — the body, not the embedding, is what the LR regime has to keep stable.
+
+# --- dimensions -------------------------------------------------------------
+hidden_size: 512
+intermediate_size: 1408          # dense SwiGLU FFN (~2.75x hidden, mirrors 5632/2048)
+num_layers: 9
+num_hidden_layers: 9
+num_heads: 8
+num_attention_heads: 8
+num_kv_heads: 2                  # GQA 8q/2kv (canonical is 16q/8kv)
+head_dim: 64                     # 8 * 64 = 512 = hidden_size
+
+# --- sparse MoE (every 3rd layer -> 0-indexed layers 2, 5, 8) ---------------
+use_moe: true
+num_experts: 8                   # 8e2, identical topology to the canonical run
+num_experts_per_tok: 2
+active_experts: 2
+moe_every_n_layers: 3
+moe_intermediate: 2048           # per-expert FFN width = 4x hidden (canonical: 8192 = 4x 2048)
+
+# --- Liquid / CfC recurrent mixer -------------------------------------------
+use_liquid: true
+liquid_layers_idx: [2, 5]        # same "middle of the stack" placement as [4,10,16]/18
+liquid_every_n_layers: 0
+liquid_fast_path: false          # no torch.compile on a short pilot
+liquid_train_impl: baseline
+
+# Liquid warmup, scaled to THIS run's step budget.
+# Do NOT inherit the canonical default (10000 — larger than the whole pilot, so Liquid
+# would never train), and do NOT copy preflight_run.py's ad-hoc 200 (scaled for a
+# different, smaller step count).
+# Arithmetic: canonical fraction = 10000 / 45000 = 2/9 = 0.2222...
+#             pilot              = 3000 * 2/9    = 666.67 -> 667
+# Ordering property preserved: LR warmup ends at max_steps * warmup_ratio = 3000 * 0.15
+# = 450, so Liquid unfreezes at 667, i.e. AFTER the LR warmup completes — exactly as in
+# the canonical config (6750 < 10000).
+liquid_warmup_steps: 667
+max_steps: 3000
+
+# --- optimizer parity with the real 45K run (do not "simplify" these) -------
+# The 45K run uses GaLoreAdamW8bit. Its low-rank projection (rank / scale /
+# update_proj_gap) changes the effective step size in ways that do not map 1:1 to plain
+# AdamW, so an LR verified under plain AdamW is NOT verified for 45K. These are the
+# canonical config defaults; they are restated here explicitly because the whole point of
+# this pilot is optimizer-faithful LR verification.
+use_galore: true
+use_8bit_adam: true
+
+# --- unchanged from canonical (stated for reviewer clarity) ------------------
+use_qinn: false
+use_gradient_checkpointing: true
+
+# ===========================================================================
+# MEASURED 2026-07-08 via train/trainer_core.preflight_param_report() on an actual
+# MertFormer() instantiated from this exact file (NOT estimated, NOT rounded from a guess):
+#
+#     total parameters ....... 171,617,923  (~171.62M)   <- inside the 150-250M target band
+#     tied embedding ......... 65,667,072   (38.3% of total)
+#     transformer body ....... 105,950,851
+#     MoE layers ............. [2, 5, 8]    (3 layers, 8 experts, top-2)
+#     Liquid layers .......... [2, 5]
+#
+# The BODY (105.95M) is what actually exercises the LR regime; the tied 128256-row
+# embedding is unavoidable dead weight at this scale. Every architectural element of the
+# canonical run — BitNet b1.58 ternary, sparse 8e2 MoE, Liquid/CfC + LiquidRouter, GQA —
+# is present and trained here.
+# ===========================================================================

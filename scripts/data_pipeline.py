@@ -471,16 +471,18 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
     print(f"📦 STAGE {stage_num}: Downloading data...")
     print(f"{'='*60}")
     
-    # 1. Initialize File (Overwrite to prevent duplication)
-    with open(stage_output, "w", encoding="utf-8") as f:
-        pass  # Just clear the file
-    # Create Start Signal for Streaming Tailing
-    start_signal = stage_dir / f"stage{stage_num}_started.signal"
-    with open(start_signal, "w") as f:
-        f.write("STARTED")
-    print(f"✅ Start Signal created: {start_signal}")
+    # [2026-07-08] DESTRUCTIVE ORDERING BUG — fixed by moving the truncation below the
+    # "no active sources" guard.
+    # This used to `open(stage_output, "w")` (truncate) BEFORE attempting a single
+    # connection. With the network down, or every HF source gated/403, every load_dataset()
+    # raised, `active_sources` stayed empty, and the function returned early WITHOUT
+    # restoring or removing the file — leaving a previously-populated
+    # datasets/stageN/stageN_data.jsonl as a 0-byte file, plus a stageN_started.signal.
+    # Worse, mertformer_sdk/pilot.py collect_risk_flags() only tests `.exists()`, so it
+    # then reported `missing_stage_datasets: false` for a stage whose data had just been
+    # destroyed. Connect first; only then clear the file we are about to rewrite.
 
-    # 2. Initialize Persistent Iterators (Crucial for Speed)
+    # 1. Initialize Persistent Iterators (Crucial for Speed)
     # loading dataset once and iterating is O(1), vs reloading every sample O(N)
     iterators: Dict[int, object] = {}
     active_sources: List[int] = []
@@ -527,7 +529,9 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
             iterators[i] = None
 
     if not active_sources:
+        # Nothing connected -> touch nothing on disk. Any pre-existing stage data survives.
         print("❌ No active data sources available for this stage.")
+        print(f"   ↳ {stage_output} left untouched (not truncated).")
         return {
             "stage_num": stage_num,
             "stage_output": str(stage_output),
@@ -536,6 +540,16 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
             "samples_per_source": {},
             "sources": list(source_status.values()),
         }
+
+    # 2. Initialize File (Overwrite to prevent duplication) — ONLY now that at least one
+    #    source is live and we are actually going to rewrite it.
+    with open(stage_output, "w", encoding="utf-8") as f:
+        pass  # Just clear the file
+    # Create Start Signal for Streaming Tailing
+    start_signal = stage_dir / f"stage{stage_num}_started.signal"
+    with open(start_signal, "w") as f:
+        f.write("STARTED")
+    print(f"✅ Start Signal created: {start_signal}")
 
     collected = 0
     source_collected = {i: 0 for i in range(len(sources))}

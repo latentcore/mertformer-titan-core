@@ -232,7 +232,9 @@ def test_full_block_mps_stress(device, patched_cfg):
         x = torch.randn(4, 128, patched_cfg.hidden_size).to(device) # B, T, H
         
         # Test 1: Memory Spike Check (Implicit via successful run)
-        out, aux, _ = block(x)
+        # [2026-07-08] MertFormerBlock.forward now returns a 4th element (the final
+        # LiquidMixer hidden state) so generate() can thread the CfC recurrence.
+        out, aux, _, _ = block(x)
         
         # Test 2: Backward Pass (Complex autograd graph)
         loss = out.mean() + aux

@@ -1,5 +1,16 @@
 """
 Failure budget monitoring for long-running training runs.
+
+NOTE: This module lives under orchestrator/ and is INERT / OUT-OF-SCOPE for the
+45K training path (orchestrator is closed/feature-flagged off in that path). Nothing
+imports FailureBudget; it is retained as a design reference, not wired into any run.
+
+[2026-07-08] The 45K path DOES now have a loss-divergence circuit breaker, but it is a
+separate, deliberately lighter implementation in `utils/divergence_guard.py`, ported from
+this file's slope-tracking idea rather than promoted from it: `FailureBudget` keys off
+wall-clock slope-per-hour (`time.time()`), which is neither reproducible nor testable
+without freezing the clock. This file stays exactly where it is, unused — consistent with
+the sealed repo rule that inert code gets real bugs fixed and honest labels, never promotion.
 """
 from __future__ import annotations
 

@@ -94,6 +94,13 @@ class MertFormer(nn.Module):
             else None
         )
         self._last_world_model_outputs: Optional[dict] = None
+        # [2026-07-08] Per-layer LiquidMixer hidden states produced by the most recent
+        # forward(). Published as an attribute (same pattern as _last_world_model_outputs)
+        # rather than appended to forward()'s return tuple: ~15 call sites across
+        # train/, eval/, tests/, mertformer_sdk/ AND the ONNX export wrapper in
+        # train/trainer_core.py unpack forward() as a strict 3-tuple, so widening the
+        # arity would change the traced export contract. Read via get_last_liquid_states().
+        self._present_liquid_states: Optional[List[Optional[torch.Tensor]]] = None
         self.latent_ode_dt = float(getattr(cfg, "latent_ode_dt", 1.0))
 
         # Weight init (embedding / output projection only): keep PyTorch-default
@@ -148,6 +155,7 @@ class MertFormer(nn.Module):
         input_ids: torch.Tensor,
         past_key_values: Optional[List[Tuple[torch.Tensor, torch.Tensor]]] = None,
         use_cache: bool = False,
+        liquid_states: Optional[List[Optional[torch.Tensor]]] = None,
     ) -> Tuple[torch.Tensor, torch.Tensor, Optional[List[Tuple[torch.Tensor, torch.Tensor]]]]:
         """
         Forward pass - Converts tokens to logits.
@@ -156,11 +164,17 @@ class MertFormer(nn.Module):
             input_ids (torch.Tensor): Token IDs [Batch, Seq]
             past_key_values (Optional[List]): Previous layer caches
             use_cache (bool): Return cache?
+            liquid_states (Optional[List]): Previous per-layer LiquidMixer hidden states,
+                parallel to `past_key_values`. `None` starts each recurrence from zeros.
         Returns:
             Tuple[torch.Tensor, torch.Tensor, Optional[List]]:
                 - logits: Token probabilities [Batch, Seq, Vocab]
                 - aux_loss: Total aux loss from all MoE layers
                 - present_key_values: New caches (if use_cache=True)
+
+        The updated per-layer Liquid states are published on `self._present_liquid_states`
+        and read via `get_last_liquid_states()` — the return arity is intentionally kept at
+        3 because the ONNX export wrapper and ~15 other call sites unpack exactly 3 values.
         """
         # Reset router state at new sequence start (KV cache determinism)
         if use_cache and past_key_values is None and not self.training:
@@ -190,10 +204,15 @@ class MertFormer(nn.Module):
             [] if use_cache else None
         )
 
+        # [2026-07-08] Per-layer Liquid recurrent states, threaded exactly like the KV cache.
+        present_liquid_states: List[Optional[torch.Tensor]] = []
+
         # Apply blocks sequentially
         for i, block in enumerate(self.layers):
             # Safe KV retrieval
             past_kv = past_key_values[i] if (past_key_values is not None and i < len(past_key_values)) else None
+            # Safe Liquid-state retrieval (parallel to past_kv)
+            past_liquid = liquid_states[i] if (liquid_states is not None and i < len(liquid_states)) else None
             if self.latent_ode_channel is not None:
                 x = self.latent_ode_channel(x, dt=self.latent_ode_dt)
             
@@ -211,15 +230,17 @@ class MertFormer(nn.Module):
                     x_tensor: torch.Tensor,
                     _past_kv: Optional[Tuple[torch.Tensor, torch.Tensor]] = past_kv,
                     _workspace: Optional[torch.Tensor] = workspace_state,
+                    _liquid_state: Optional[torch.Tensor] = past_liquid,
                 ) -> Tuple[torch.Tensor, torch.Tensor]:
-                    x_out, aux_out, _ = block(
+                    x_out, aux_out, _, _ = block(
                         x_tensor,
                         past_key_value=_past_kv,
                         use_cache=False,
                         workspace=_workspace,
+                        liquid_state=_liquid_state,
                     )
                     return x_out, aux_out
-                
+
                 # [ADR-0004] In-place MoE telemetry buffer writes during forward
                 #     break use_reentrant=False's recompute metadata-equality check
                 #     (CheckpointError on first backward). Reentrant mode skips that
@@ -229,14 +250,19 @@ class MertFormer(nn.Module):
                     run_checkpointed, x, use_reentrant=True
                 )
                 present_kv = None
+                # Gradient checkpointing is training-only (use_cache=False); the Liquid
+                # state is not carried out of the recomputed closure.
+                present_liquid = None
             else:
-                x, aux, present_kv = block(
+                x, aux, present_kv, present_liquid = block(
                     x,
                     past_key_value=past_kv,
                     use_cache=use_cache,
                     workspace=workspace_state,
+                    liquid_state=past_liquid,
                 )
-            
+
+            present_liquid_states.append(present_liquid)
             aux_total = aux_total + aux
             if workspace_state is not None:
                 token_summary = x.mean(dim=1)
@@ -256,17 +282,36 @@ class MertFormer(nn.Module):
         else:
             self._last_world_model_outputs = None
 
+        self._present_liquid_states = present_liquid_states
+
         return logits, aux_total, present_key_values
 
     def get_last_world_model_outputs(self) -> Optional[dict]:
         """Return optional world-model side outputs from the latest forward pass."""
         return self._last_world_model_outputs
 
+    def get_last_liquid_states(self) -> Optional[List[Optional[torch.Tensor]]]:
+        """
+        Per-layer LiquidMixer final hidden states from the latest forward pass.
+
+        Entries are `None` for layers without a LiquidMixer (and for every layer when
+        gradient checkpointing recomputed the block). Feed the list straight back into
+        `forward(..., liquid_states=...)` to continue the recurrence, exactly as
+        `past_key_values` is fed back for the attention KV cache.
+        """
+        return self._present_liquid_states
+
     def reset_router_state(self, batch_size: int = 1) -> None:
         """
-        Resets the latent-ODE channel state and the LiquidRouter (MoE) state
-        (for deterministic KV cache).
+        Resets the latent-ODE channel state, the LiquidRouter (MoE) state and the
+        per-layer LiquidMixer recurrent states (for deterministic KV cache).
+
+        [2026-07-08] Extended (deliberately NOT renamed — the repo's sealed `mla.py`
+        precedent: a misleading name bound to state-dict/manifest continuity gets a
+        corrected docstring, not a new identifier) to also drop the Liquid hidden states,
+        so a fresh generation never inherits the previous sequence's recurrence.
         """
+        self._present_liquid_states = None
         if self.latent_ode_channel is not None:
             self.latent_ode_channel.reset_state(
                 batch_size=batch_size,
@@ -311,10 +356,14 @@ class MertFormer(nn.Module):
         Returns:
             torch.Tensor: Generated token sequence
         """
-        # Reset router state for fresh generation
+        # Reset router state for fresh generation (also clears Liquid recurrent states)
         self.reset_router_state(batch_size=input_ids.size(0))
         generated = input_ids
         past_key_values = None
+        # [2026-07-08] Liquid/CfC recurrent state, carried across decode steps exactly
+        # like past_key_values. Without this every step restarted the recurrence at h=0
+        # and the Liquid layers were stateless no-ops during generation.
+        liquid_states = None
 
         for _ in range(max_new_tokens):
             # Process only last token (thanks to KV Cache)
@@ -325,8 +374,12 @@ class MertFormer(nn.Module):
 
             # Forward pass with cache
             logits, _, past_key_values = self.forward(
-                curr_input, past_key_values=past_key_values, use_cache=True
+                curr_input,
+                past_key_values=past_key_values,
+                use_cache=True,
+                liquid_states=liquid_states,
             )
+            liquid_states = self._present_liquid_states
 
             # Get logits of last position
             # Guard temperature=0 (greedy) against div-by-zero/inf -> NaN.

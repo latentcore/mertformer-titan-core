@@ -72,7 +72,12 @@ try:
     from model.transformers import MertFormer
     from orchestrator.telemetry import system_snapshot
     from utils.logger import RunLogger
-    from utils.liquid_safeguard import update_liquid_spike_state
+    from utils.liquid_safeguard import (
+        effective_liquid_spike_threshold,
+        update_liquid_spike_state,
+        update_loss_ema,
+    )
+    from utils.divergence_guard import update_divergence_guard_state
     from utils.tokenizer_resolver import resolve_tokenizer, tokenizer_identity
 except ImportError as e:
     print(f"❌ KRİTİK IMPORT HATASI: {e}")
@@ -622,7 +627,13 @@ def build_optimizer(body_params: List[Any], router_params: List[Any], cfg: Any) 
     only be chosen here). Logs the ACTIVE class so config==reality (kills the
     phantom-GaLore mismatch)."""
     body_group = {"params": body_params, "lr": cfg.learning_rate, "weight_decay": cfg.weight_decay}
-    router_group = {"params": router_params, "lr": cfg.learning_rate * 1.5, "weight_decay": 1e-4}
+    # "Grokking Setup" differential LR: the router/tau group historically ran at
+    # learning_rate * 1.5 so the routing logic would resolve fast. BACKLOG 2026-07-02
+    # run-feedback asks to drop that differential (the 36.2M pre-flight showed MoE
+    # imbalance + grad explosion under it), so the multiplier is now a config field
+    # defaulting to 1.0. Set TITAN_ROUTER_LR_MULT=1.5 to restore the old behavior.
+    router_lr_mult = float(getattr(cfg, "router_lr_multiplier", 1.0))
+    router_group = {"params": router_params, "lr": cfg.learning_rate * router_lr_mult, "weight_decay": 1e-4}
     opt = None
     if getattr(cfg, "use_galore", False) and galore_torch is not None:
         try:
@@ -942,11 +953,25 @@ def train() -> None:
 
     # WSD Scheduler (Warmup-Stable-Decay) moved to global scope
 
+    # Warmup is now config-driven (was: hardcoded int(max_steps * 0.1) with cfg.warmup_steps
+    # and cfg.min_lr_ratio both dead). Explicit cfg.warmup_steps > 0 wins; otherwise it is
+    # derived from cfg.warmup_ratio (0.15 per BACKLOG 2026-07-02 "lengthen warmup").
+    warmup_ratio = float(getattr(cfg, "warmup_ratio", 0.1))
+    explicit_warmup = int(getattr(cfg, "warmup_steps", 0) or 0)
+    num_warmup_steps = explicit_warmup if explicit_warmup > 0 else int(cfg.max_steps * warmup_ratio)
+    if accelerator.is_main_process:
+        print(
+            f"📐 LR schedule: peak={cfg.learning_rate:.3g} "
+            f"router_mult={float(getattr(cfg, 'router_lr_multiplier', 1.0)):.3g} "
+            f"warmup={num_warmup_steps} (ratio={warmup_ratio:.3g}, explicit={explicit_warmup}) "
+            f"min_lr_ratio={float(getattr(cfg, 'min_lr_ratio', 0.01)):.3g}"
+        )
+
     scheduler = get_wsd_schedule(
         opt,
-        num_warmup_steps=int(cfg.max_steps * 0.1), # 10% Warmup
+        num_warmup_steps=num_warmup_steps,
         num_training_steps=cfg.max_steps,
-        min_lr_ratio=0.01
+        min_lr_ratio=float(getattr(cfg, "min_lr_ratio", 0.01)),
     )
 
     if resume_payload is not None:
@@ -1028,6 +1053,26 @@ def train() -> None:
     liquid_spike_threshold = float(getattr(cfg, "liquid_spike_threshold", 5.0))
     liquid_spike_patience = int(getattr(cfg, "liquid_spike_patience", 3))
     liquid_spike_cooldown_steps = int(getattr(cfg, "liquid_spike_cooldown_steps", 200))
+
+    # [2026-07-08] Cold-start-safe loss EMA. ONE EMA with TWO consumers:
+    #   (a) the Liquid spike guard  -> scale-relative threshold (loss_ema * multiplier)
+    #   (b) the loss-divergence circuit breaker below
+    # `ema_trust_observations` is how many losses must be folded in before the EMA is
+    # treated as meaningful; until then the Liquid guard falls back to the historical
+    # absolute threshold and the divergence guard stays disarmed.
+    liquid_spike_relative_multiplier = float(getattr(cfg, "liquid_spike_relative_multiplier", 1.5))
+    ema_trust_observations = int(getattr(cfg, "liquid_spike_ema_warmup_steps", 100))
+    loss_ema_decay = float(getattr(cfg, "liquid_spike_ema_decay", 0.98))
+    loss_ema = 0.0
+    loss_ema_observations = 0
+
+    # [2026-07-08] General loss-divergence circuit breaker state (utils/divergence_guard.py).
+    # NOT a BACKLOG item — added by this pass; disable with TITAN_DIVERGENCE_GUARD=0.
+    use_divergence_guard = bool(getattr(cfg, "use_divergence_guard", True))
+    divergence_guard_multiplier = float(getattr(cfg, "divergence_guard_multiplier", 1.5))
+    divergence_guard_patience = int(getattr(cfg, "divergence_guard_patience", 50))
+    divergence_breaches = 0
+    warmup_end_loss_ema = None  # reference EMA snapshot; None => guard disarmed
 
     # Curriculum Stage Tracking (single source from config ratios)
     stage_boundaries = build_stage_boundaries(cfg.max_steps, curriculum_stage_ratios)
@@ -1338,10 +1383,48 @@ def train() -> None:
                                 sample=replay_sample,
                             )
 
-                        # SAFEGUARD: Liquid spike tracking (3-strike rule)
+                        # [2026-07-08] Update the shared cold-start-safe loss EMA first;
+                        # both guards below read it.
+                        step_loss = float(total_loss.item())
+                        loss_ema = update_loss_ema(
+                            loss_value=step_loss,
+                            loss_ema=loss_ema,
+                            observations=loss_ema_observations,
+                            decay=loss_ema_decay,
+                        )
+                        loss_ema_observations += 1
+
+                        # Snapshot the EMA once warmup is over AND the EMA is trustworthy.
+                        # (On resume, global_step may already be past warmup while the EMA is
+                        # cold, so we also require `ema_trust_observations` fresh samples —
+                        # otherwise the reference would be a single noisy micro-batch.)
+                        if (
+                            warmup_end_loss_ema is None
+                            and global_step >= num_warmup_steps
+                            and loss_ema_observations >= ema_trust_observations
+                        ):
+                            warmup_end_loss_ema = loss_ema
+                            if accelerator.is_main_process:
+                                print(
+                                    f"📌 Divergence-guard armed @ step {global_step}: "
+                                    f"reference loss_ema={warmup_end_loss_ema:.4f}"
+                                )
+
+                        # SAFEGUARD: Liquid spike tracking (3-strike rule).
+                        # The threshold is now SCALE-RELATIVE once the EMA is warm; the old
+                        # absolute 5.0 survives only as the cold-start fallback floor. With
+                        # the absolute threshold a run starting at loss ~10 froze Liquid on
+                        # every step and never trained it (2026-07-02 pre-flight).
+                        effective_spike_threshold = effective_liquid_spike_threshold(
+                            loss_ema=loss_ema,
+                            observations=loss_ema_observations,
+                            absolute_threshold=liquid_spike_threshold,
+                            relative_multiplier=liquid_spike_relative_multiplier,
+                            ema_warmup_steps=ema_trust_observations,
+                        )
                         liquid_spike_counter, liquid_frozen_until, spike_triggered = update_liquid_spike_state(
-                            loss_value=float(total_loss.item()),
-                            threshold=liquid_spike_threshold,
+                            loss_value=step_loss,
+                            threshold=effective_spike_threshold,
                             counter=liquid_spike_counter,
                             patience=liquid_spike_patience,
                             frozen_until=liquid_frozen_until,
@@ -1351,9 +1434,47 @@ def train() -> None:
                         )
                         if spike_triggered and accelerator.is_main_process:
                             print(
-                                f"🧊 LIQUID SPIKE: loss>{liquid_spike_threshold:.2f} "
-                                f"({liquid_spike_patience} strikes). Freezing until step {liquid_frozen_until}."
+                                f"🧊 LIQUID SPIKE: loss>{effective_spike_threshold:.2f} "
+                                f"(ema={loss_ema:.2f}, {liquid_spike_patience} strikes). "
+                                f"Freezing until step {liquid_frozen_until}."
                             )
+
+                        # [2026-07-08] General loss-divergence circuit breaker.
+                        # Catches "finite but steadily climbing" — the exact 2026-07-02 failure
+                        # mode, which neither the NaN brake (loss stayed finite) nor the Liquid
+                        # guard (only freezes Liquid params) can stop.
+                        divergence_breaches, divergence_local = update_divergence_guard_state(
+                            loss_ema=loss_ema,
+                            reference_ema=warmup_end_loss_ema,
+                            multiplier=divergence_guard_multiplier,
+                            breach_counter=divergence_breaches,
+                            patience=divergence_guard_patience,
+                            enabled=use_divergence_guard,
+                        )
+                        if use_divergence_guard:
+                            # [H1 pattern] `loss_ema` is rank-local, so the brake decision must be
+                            # all-reduced or ranks would break at different steps and desync DDP
+                            # (peers hang at the next collective -> NCCL timeout). Mirrors the
+                            # NaN-brake collective above.
+                            div_flag = torch.tensor(
+                                [1.0 if divergence_local else 0.0],
+                                device=total_loss.device,
+                                dtype=torch.float32,
+                            )
+                            if accelerator.num_processes > 1:
+                                div_flag = accelerator.reduce(div_flag, reduction="sum")
+                            if div_flag.item() > 0:
+                                safety_brake_triggered = True
+                                safety_brake_reason = "loss_divergence_relative"
+                                if accelerator.is_main_process:
+                                    print(
+                                        "🛑 SAFETY BRAKE: relative loss divergence — "
+                                        f"loss_ema={loss_ema:.4f} exceeded "
+                                        f"{divergence_guard_multiplier:.2f}x the warmup-end reference "
+                                        f"({warmup_end_loss_ema}) for {divergence_guard_patience} "
+                                        "consecutive optimizer steps."
+                                    )
+                                break
                     else:
                         continue
 

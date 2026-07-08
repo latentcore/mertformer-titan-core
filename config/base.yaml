@@ -1,4 +1,14 @@
 # Base configuration (Build 30)
+#
+# !! INERT BY DEFAULT — EDITING THIS FILE CHANGES NOTHING ON ANY NORMAL RUN !!
+# config/config.py `_load_config_overlays()` reads this file ONLY when the
+# MERTFORMER_CONFIG environment variable is explicitly set, and nothing in the repo's
+# own tooling (verify_all.sh / one_command_full_sop.sh / final_one_shot.sh /
+# zero_touch_start.sh / scripts/preflight_run.py) ever sets it. To change the canonical
+# training config, edit config/config.py or use the TITAN_* env overrides.
+# Documented 2026-07-08. Deliberately NOT wired to load by default — that would be a
+# real behavior change requiring its own review.
+#
 # Notes:
 # - This file provides a stable baseline.
 # - Any key not present here falls back to config/config.py defaults.

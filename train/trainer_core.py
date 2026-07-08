@@ -324,6 +324,14 @@ def get_wsd_schedule(
         # Decay Phase (Cosine from 1.0 to min_lr_ratio)
         decay_steps = num_training_steps - stable_steps
         progress = float(current_step - stable_steps) / float(max(1, decay_steps))
+        # [2026-07-08] Clamp progress to [0, 1] before the cosine. In a normal single
+        # run current_step never exceeds num_training_steps, but if TITAN_MAX_STEPS
+        # changes between a checkpoint-saving run and a later resume, the restored
+        # `last_epoch` is reinterpreted against a different num_training_steps closure
+        # and progress can exceed 1 — at which point cos() turns back upward and the LR
+        # RISES again instead of staying floored at min_lr_ratio. Behavior-preserving
+        # in the normal case.
+        progress = min(1.0, max(0.0, progress))
         return max(min_lr_ratio, 0.5 * (1.0 + math.cos(math.pi * progress)))
 
     return LambdaLR(optimizer, lr_lambda)

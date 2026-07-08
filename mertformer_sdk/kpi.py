@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import logging
 import subprocess
+import sys
 import time
 from dataclasses import dataclass, asdict
 from pathlib import Path
@@ -57,14 +58,25 @@ def _load_json(path: Path) -> Dict[str, Any] | None:
 
 
 def _run_onnx_smoke(project_root: Path) -> bool:
+    # [2026-07-08] cmd[0] used to be the hardcoded relative path ".titan-venv/bin/python".
+    # Python does NOT resolve a relative program path against `cwd=` (documented behavior), so
+    # on any clone/CI image without that venv beside the caller's CWD, subprocess.run raised
+    # FileNotFoundError — which `check=False` does NOT suppress. collect_kpis() propagated it,
+    # cli.main()'s blanket `except FileNotFoundError` exited 2 with a message that reads like a
+    # missing checkpoint, and no KPI report was written at all. Use the running interpreter, and
+    # degrade to False (this function's declared bool contract) on any OS-level launch failure.
     cmd = [
-        ".titan-venv/bin/python",
+        sys.executable,
         "-m",
         "pytest",
         "-q",
         "scripts/test_onnx_export.py::test_export",
     ]
-    result = subprocess.run(cmd, cwd=str(project_root), capture_output=True, text=True, check=False)
+    try:
+        result = subprocess.run(cmd, cwd=str(project_root), capture_output=True, text=True, check=False)
+    except OSError as exc:
+        logging.warning("kpi _run_onnx_smoke: could not launch %s: %s", cmd[0], exc)
+        return False
     return result.returncode == 0
 
 

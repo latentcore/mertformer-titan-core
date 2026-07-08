@@ -108,9 +108,17 @@ def atomic_write_json(path: Union[str, Path], data: Dict[str, Any]) -> None:
     tmp.replace(p)
 
 
+# KEEP IN SYNC with scripts/logbook_build.py REDACT_PATTERNS.
+# (Same cross-file-sync convention as the bitlinear.py <-> liquid.py "quant parity note".)
+# These two lists are maintained independently and had drifted: logbook_build.py carried a
+# 40-hex catch-all that this list did not, so a WandB API key written through the live
+# logger was NOT redacted while the same key was redacted on the logbook rebuild path.
 SECRET_PATTERNS = [
     re.compile(r"\bhf_[A-Za-z0-9_\-]{8,}\b"),
     re.compile(r"\bwandb_[A-Za-z0-9_\-]{8,}\b"),
+    # WandB API keys are often 40 hex chars; also catches accidental full git SHAs in logs
+    # (deliberate false-positive tolerance — same trade-off as logbook_build.py).
+    re.compile(r"\b[0-9a-fA-F]{40}\b"),
     re.compile(r"\bsk-[A-Za-z0-9_\-]{10,}\b"),
     re.compile(r"\bghp_[A-Za-z0-9_\-]{20,}\b"),
     re.compile(r"\bAIza[0-9A-Za-z\-_]{20,}\b"),
@@ -359,8 +367,16 @@ class RunLogger:
                 "run_id": self.run_id,
                 "source_kind": source_kind,
                 "source_file": str(self.jsonl_path),
+                # [2026-07-08] Truth-in-labeling fix. This used to say
+                # `"source_sha256_status": "pending"`, which implied something would later
+                # resolve it. Nothing ever does, and nothing CAN: scripts/logbook_build.py
+                # only fills source_sha256 for its own log_import_start/log_import_end
+                # records. A live-appending JSONL cannot embed its own final SHA256 in lines
+                # that are themselves part of the hash chain being appended to — hashing it
+                # would change it. "pending" was a permanent lie; this is the honest label.
+                # Zero behavior change.
                 "source_sha256": None,
-                "source_sha256_status": "pending",
+                "source_sha256_status": "not_applicable_live_stream",
                 "payload": _redact_obj(payload),
             }
             with self.logbook_path.open("a", encoding="utf-8") as f:

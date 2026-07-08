@@ -51,6 +51,12 @@ class AGIPaths:
     VECTOR_DIR = ROOT / "agi_vector_index"
     VECTOR_FILE = VECTOR_DIR / "vector_index.json"
 
+    # Experience/data store. orchestrator/core.py L~186 already reads AGIPaths.DATA_DIR
+    # ("experiences.jsonl"), but the attribute was never defined -> instantiating
+    # MertFormerOrchestrator() raised AttributeError immediately. Real bug inside inert
+    # code: fixed, NOT promoted (orchestrator stays out-of-scope on the 45K path).
+    DATA_DIR = ROOT / "agi_data"
+
     # Checkpoint
     CHECKPOINT_DIR = ROOT / getattr(cfg, "save_dir", "checkpoints")
     CHECKPOINT_FILE = CHECKPOINT_DIR / f"{getattr(cfg, 'model_name', 'mertformer')}_latest.pt"

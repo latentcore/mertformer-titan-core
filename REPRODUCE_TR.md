@@ -10,7 +10,7 @@ bash scripts/bootstrap_venv.sh        # pinli bağımlılıklarla .titan-venv ol
 
 ## 1. Repo'yu doğrula (ağ yok, GPU yok) — CI `verify` gate'i
 ```bash
-bash scripts/verify_all.sh            # secret-scan + pytest (370 passed, 4 skipped) +
+bash scripts/verify_all.sh            # secret-scan + pytest (388 passed, 4 skipped) +
                                       # preflight + operator-mode overfit smoke + gate'ler + manifestler
 ```
 Bu, K4 drill'lerini (checkpoint save→restore→resume) ve CfC/MoE tolerans paritesini toy ölçekte koşar. Hiçbiri kanonik modeli eğitmez.

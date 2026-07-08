@@ -284,7 +284,16 @@ class MertFormerConfig:
     # SAFEGUARD: Liquid Warmup Steps (Freeze for first N steps)
     liquid_warmup_steps: int = 10000
     # SAFEGUARD: Liquid spike tracking (3-strike rule)
+    # [2026-07-08] `liquid_spike_threshold` is now only the COLD-START fallback floor:
+    # it is used while the loss EMA is still warming up (fewer than
+    # `liquid_spike_ema_warmup_steps` observed optimizer steps). After that the guard
+    # switches to the scale-relative test `loss > loss_ema * relative_multiplier`
+    # (BACKLOG 2026-07-02 run-feedback: an absolute 5.0 is scale-blind — at a start
+    # loss of ~10 it fires every single step, so the Liquid layers never train).
     liquid_spike_threshold: float = 5.0
+    liquid_spike_relative_multiplier: float = 1.5
+    liquid_spike_ema_warmup_steps: int = 100
+    liquid_spike_ema_decay: float = 0.98
     liquid_spike_patience: int = 3
     liquid_spike_cooldown_steps: int = 200
 
@@ -448,9 +457,28 @@ class MertFormerConfig:
             pass
 
 
-    learning_rate: float = 1.5e-3
+    # [2026-07-08 pre-45K stabilization] 1.5e-3 -> 3e-4.
+    # Sweep STARTING POINT per BACKLOG.md 2026-07-02 run-feedback; NOT independently
+    # verified safe. In that pre-flight the grad-norm explosion began at step ~80 of a
+    # ~183-step warmup, i.e. at an effective LR of only ~6.6e-4 — the run diverged
+    # DURING warmup, at a fraction of the 1.5e-3 peak. So 3e-4 is "next candidate to
+    # test", not "known-good". Sweep without a commit via TITAN_LEARNING_RATE.
+    learning_rate: float = float(os.environ.get("TITAN_LEARNING_RATE", "3e-4"))
     weight_decay: float = 0.1
-    warmup_steps: int = 3000  # informational only — scheduler uses int(max_steps*0.1) (=4500 @45k), not this field
+
+    # Router/tau param group LR = learning_rate * router_lr_multiplier.
+    # Was hardcoded x1.5 in train/train.py build_optimizer() ("Grokking Setup":
+    # resolve the routing logic fast). BACKLOG 2026-07-02 explicitly asks to drop the
+    # differential -> new default 1.0. TITAN_ROUTER_LR_MULT=1.5 re-tests the old path.
+    router_lr_multiplier: float = float(os.environ.get("TITAN_ROUTER_LR_MULT", "1.0"))
+
+    # Warmup. The scheduler used to hardcode int(max_steps * 0.1) and ignore
+    # `warmup_steps` entirely. Both fields are now actually read:
+    #   warmup_steps  > 0  -> explicit step count wins
+    #   warmup_steps == 0  -> derived as int(max_steps * warmup_ratio)
+    # warmup_ratio 0.10 -> 0.15 per BACKLOG 2026-07-02 ("lengthen warmup").
+    warmup_ratio: float = float(os.environ.get("TITAN_WARMUP_RATIO", "0.15"))
+    warmup_steps: int = int(os.environ.get("TITAN_WARMUP_STEPS", "0"))
 
     # Runtime fast paths (V2)
     liquid_fast_path: bool = os.environ.get("TITAN_LIQUID_FAST_PATH", "1") == "1"
@@ -463,7 +491,11 @@ class MertFormerConfig:
     # Explicitly disable Epoch Mode to respect max_steps
     epoch_mode: bool = False
 
-    min_lr_ratio: float = 0.1  # informational only — scheduler is called with min_lr_ratio=0.01, not this field
+    # Floor of the WSD cosine decay phase. Was a dead field (dataclass said 0.1 while
+    # the scheduler was called with a hardcoded 0.01). Now actually read; the default
+    # is set to 0.01 so RUNTIME BEHAVIOR IS UNCHANGED — only the mechanism moved from
+    # hardcoded-literal to config-read.
+    min_lr_ratio: float = 0.01
     # Reproducibility metadata strictness
     write_run_manifest: bool = True
 
@@ -484,6 +516,18 @@ class MertFormerConfig:
     gsm8k_improve_min_abs: float = 0.002
     max_consecutive_nan: int = 3
     max_consecutive_oom_backoff_fail: int = 5
+
+    # [2026-07-08] General loss-divergence circuit breaker.
+    # NOT a BACKLOG item — added by the 2026-07-08 pre-45K pass and flagged as such.
+    # Rationale: the NaN brake only catches non-finite loss, and the Liquid guard only
+    # freezes Liquid params. Nothing caught "loss is finite but climbing steadily" —
+    # exactly what the 2026-07-02 run did (10.4 -> 15.0, never NaN). This compares the
+    # live loss EMA against the EMA snapshotted at the end of warmup and brakes after
+    # `patience` consecutive breaches. Default ON (unattended 45K safety);
+    # TITAN_DIVERGENCE_GUARD=0 disables it.
+    use_divergence_guard: bool = os.environ.get("TITAN_DIVERGENCE_GUARD", "1") == "1"
+    divergence_guard_multiplier: float = 1.5
+    divergence_guard_patience: int = 50
 
     # -------------------------------------------------------------------------
     # 9. OUTPUT FORMAT
@@ -512,6 +556,13 @@ class MertFormerConfig:
     use_accelerate: bool = True
 
     # FIX: DataLoader Optimization
+    # NOTE (honesty, same pattern as warmup_steps/min_lr_ratio before they were wired):
+    # train/train.py FORCES num_workers=0 on BOTH real training paths — online
+    # curriculum (stage changes live on the dataset object; worker copies never see
+    # them) and offline precomputed logits (deterministic sample<->logit alignment).
+    # So this value does not reach the canonical 45K run; it is only the pre-override
+    # ceiling (further capped to os.cpu_count() in _finalize_config). Deliberate and
+    # correct — do NOT "fix" train.py to honor it. See train/train.py ~L805-813.
     dataloader_num_workers: int = 8 # [TITAN SPEED BOOST] Optimized for 8x A100
     dataloader_prefetch_factor: int = 2
     dataloader_pin_memory: bool = os.environ.get("TITAN_DATALOADER_PIN", "1") == "1"

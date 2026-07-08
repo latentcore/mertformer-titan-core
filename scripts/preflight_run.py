@@ -1214,8 +1214,15 @@ def phase_config(device_info: dict, staged_env: dict) -> None:
     cfg.liquid_train_impl = "packed_pair"
     # --- disabled optional subsystems -----------------------------------
     cfg.use_qinn = False
-    cfg.use_galore = False       # plain fp32 AdamW is well within budget here
-    cfg.use_8bit_adam = False
+    # [2026-07-08] OPTIMIZER PARITY (behavior change to this script, deliberate).
+    # This used to force `use_galore=False, use_8bit_adam=False` ("plain fp32 AdamW is well
+    # within budget here"). But the real 45K run uses GaLoreAdamW8bit, whose low-rank
+    # projection (rank / scale / update_proj_gap) changes the effective step size in ways
+    # that do NOT map 1:1 to plain AdamW. Sweeping an LR under plain AdamW and then running
+    # 45K under GaLore verifies the wrong optimizer's dynamics. The pre-flight now inherits
+    # whatever the canonical config selects, so a "stable" LR is stable under the optimizer
+    # 45K will actually use. Falls back gracefully: build_optimizer() already degrades to
+    # torch AdamW when galore_torch / bitsandbytes are unavailable, and logs the ACTIVE class.
     cfg.use_torch_compile = False
     # --- schedule / batching (must fit 8 GB, no CPU offload) ------------
     cfg.max_steps = TOTAL_STEPS
@@ -1709,6 +1716,26 @@ def evaluate_verdict(
     note(console.get("imbalance_alerts", 0), f"{console.get('imbalance_alerts')} early expert-imbalance alert(s)")
     note(console.get("grad_norm_collapse_warnings", 0), f"{console.get('grad_norm_collapse_warnings')} gradient-norm collapse warning(s)")
     note(console.get("data_skip_alarms", 0), f"{console.get('data_skip_alarms')} high data-skip-rate alarm(s) from the loader")
+
+    # [2026-07-08] Loss-quality observation (NON-BLOCKING; the PASS/FAIL verdict above stays
+    # infrastructure-only by design — see this script's own stated purpose).
+    # Why: on 2026-07-02 this script returned a clean infra PASS while the run had actually
+    # diverged (10.4 -> 15.0). A human had to eyeball the loss curve to notice. The data was
+    # already in csv_summary; it just was never surfaced. Now it lands in REPORT.md automatically.
+    first_loss = csv_summary.get("first_loss")
+    last_loss = csv_summary.get("last_loss")
+    if (
+        first_loss is not None
+        and last_loss is not None
+        and math.isfinite(first_loss)
+        and math.isfinite(last_loss)
+        and last_loss > first_loss
+    ):
+        warnings.append(
+            f"training loss ended HIGHER than it started ({first_loss:.4f} -> {last_loss:.4f}) "
+            "— check for divergence; infra PASS does not mean the run learned anything"
+        )
+
     if console.get("onnx_export_failed", 0) and not console.get("onnx_export_ok", 0):
         warnings.append("final graph export failed (known-brittle path; checkpoints unaffected)")
     if status == "early_stopped":
