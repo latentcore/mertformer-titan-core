@@ -1,1 +1,111 @@
-{}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "run_manifest_v1.schema.json",
+  "title": "Run Manifest V1",
+  "type": "object",
+  "required": [
+    "schema",
+    "run_id",
+    "generated_utc",
+    "mode",
+    "status",
+    "steps"
+  ],
+  "properties": {
+    "schema": {
+      "const": "run_manifest_v1"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "generated_utc": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "decision_reason_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "train_readiness_status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "training_lane": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "resume_policy": {
+      "type": "string"
+    },
+    "train_command": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "post_mode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "lock_file": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "reports_dir": {
+      "type": "string"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "status"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "return_code": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cmd": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}
