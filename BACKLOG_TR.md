@@ -47,3 +47,10 @@ Kaynak: `CLAUDE CODE — AUTONOMOUS EXECUTION BRIEF · Pre-45K Stabilization + R
 - **Test sayısı:** `370 passed, 4 skipped` → **`388 passed, 4 skipped`** (+18: 4 Liquid-decode paritesi, 11 guard/EMA, 3 WSD clamp). Güncel-gerçek iddia yüzeyleri güncellendi; tarihli kayıtlar (CHANGELOG, DECISIONS ekleri) bilinçli olarak kendi tarihlerindeki sayılarda bırakıldı.
 
 **Tek gerçek kapı hâlâ aynı: sahip olunan compute → 45K koşusu → checkpoint → checkpoint-bağlı eval.** Sıradaki dokümantasyon-dışı eylem: `TITAN_LEARNING_RATE=3e-4 TITAN_WARMUP_RATIO=0.15 TITAN_ROUTER_LR_MULT=1.0` ile RTX-5070 yeniden-koşusu.
+
+
+## 45K öncesi güvenli pass — TAMAMLANDI (2026-07-09)
+GPU'suz takip (testler + operasyonel sağlamlaştırma; eğitim-matematiği değişmedi). Tam kayıt: [DECISIONS.md](DECISIONS.md).
+- **Yapıldı:** 6 test dosyası (`decoupled_rope`, `top_p`, `moe_capacity`, `quant_parity`, `held_out_ppl`, `repo_hygiene_guard`); `check_disk_space` fail-open→fail-closed; `train()`'de SIGTERM→nazik-checkpoint; `TITAN_OCEAN_45K_LAUNCH` no-op kaldırıldı; `datasets/validation_provenance.json` (+ `scripts/gen_validation_provenance.py`). Boşaltılmış `interfaces/run_manifest_v1.schema.json` sealed `bdee57a`'ya döndürüldü.
+- **Test sayısı:** `388 → 412 passed, 4 skipped` (+24).
+- **Ertelenen (gerekçeli):** ADR-0005 isimlendirme-mod assert'i; `p100_safe max_steps` (demo-profil yargısı); D5/D7 (frozen-path → önce RTX-5070 re-run `bdee57a`'yı doğrulasın); `report_builder` baseline (zaten dürüstçe etiketli).

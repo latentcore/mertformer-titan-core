@@ -88,6 +88,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── model/  # directory
 │   │   ├── mertformer_max_arch.yaml  # YAML configuration file
 │   │   ├── mertformer_moe.yaml  # YAML configuration file
+│   │   ├── mertformer_pilot_stabilization.yaml  # YAML configuration file
 │   │   └── mertformer_small.yaml  # YAML configuration file
 │   ├── train/  # directory
 │   │   ├── finetune.yaml  # YAML configuration file
@@ -136,7 +137,9 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── agentic_suite.py  # Python module/script (evaluation routine for agentic suite)
 │   ├── generalization_suite.py  # Python module/script (evaluation routine for generalization suite)
 │   ├── golden.py  # Python module/script (evaluation routine for golden)
+│   ├── golden_score.py  # Python module/script (evaluation routine for golden score)
 │   ├── gsm8k.py  # Python module/script (evaluation routine for gsm8k)
+│   ├── held_out_ppl.py  # Python module/script (evaluation routine for held out ppl)
 │   ├── humaneval.py  # Python module/script (evaluation routine for humaneval)
 │   └── report_builder.py  # Python module/script (evaluation routine for report builder)
 ├── evidence/  # directory
@@ -753,6 +756,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_cpp_kernel_loader.py  # Python module/script (automated test module for cpp kernel loader)
 │   ├── test_dispatcher_extended.py  # Python module/script (automated test module for dispatcher extended)
 │   ├── test_distillation_topk.py  # Python module/script (automated test module for distillation topk)
+│   ├── test_divergence_guard.py  # Python module/script (automated test module for divergence guard)
 │   ├── test_drone_sitl_demo.py  # Python module/script (automated test module for drone sitl demo)
 │   ├── test_duplicate_zip_guard.py  # Python module/script (automated test module for duplicate zip guard)
 │   ├── test_eval_generation_eos.py  # Python module/script (automated test module for eval generation eos)
@@ -777,6 +781,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_kill_if_non_finite.py  # Python module/script (automated test module for kill if non finite)
 │   ├── test_kpi_report_cli.py  # Python module/script (automated test module for kpi report cli)
 │   ├── test_lifelong_safety.py  # Python module/script (automated test module for lifelong safety)
+│   ├── test_liquid_generate_parity.py  # Python module/script (automated test module for liquid generate parity)
 │   ├── test_liquid_safeguard.py  # Python module/script (automated test module for liquid safeguard)
 │   ├── test_mertformer_5080_final_onefile.py  # Python module/script (automated test module for mertformer 5080 final onefile)
 │   ├── test_mla_regressions.py  # Python module/script (automated test module for mla regressions)
@@ -810,7 +815,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_triton_fused_bitlinear_cuda.py  # Python module/script (automated test module for triton fused bitlinear cuda)
 │   ├── test_triton_fused_bitlinear_import.py  # Python module/script (automated test module for triton fused bitlinear import)
 │   ├── test_validate_logit_alignment.py  # Python module/script (automated test module for validate logit alignment)
-│   └── test_world_model_head.py  # Python module/script (automated test module for world model head)
+│   ├── test_world_model_head.py  # Python module/script (automated test module for world model head)
+│   └── test_wsd_schedule_clamp.py  # Python module/script (automated test module for wsd schedule clamp)
 ├── tokenizer/  # directory
 │   ├── tr/  # directory
 │   │   ├── README.md  # primary documentation (EN)
@@ -841,6 +847,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── utils/  # directory
 │   ├── __init__.py  # Python module/script (utils package initializer and exports)
 │   ├── dataset_registry.py  # Python module/script (module for dataset registry)
+│   ├── divergence_guard.py  # Python module/script (module for divergence guard)
 │   ├── liquid_safeguard.py  # Python module/script (module for liquid safeguard)
 │   ├── logger.py  # Python module/script (module for logger)
 │   ├── safety.py  # Python module/script (module for safety)

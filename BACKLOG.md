@@ -15,7 +15,7 @@ Each is documented with its mechanism in [DECISIONS.md](DECISIONS.md):
 
 ## Post-45K — holistic-read (EK-4) additions
 - **Evidence-gated banner WRITER (design post-run):** build the actual `PRE-TRAINING (UNVERIFIED)` → measured-status writer once a *real* 45K checkpoint + a *real* (non-zero) eval exist, so the gate can be designed/tested against genuine artifacts. A pre-built auto-writer is unsafe (a stray demo checkpoint + a stub `summary.json` "status: ready" with zero counts satisfies a naive gate and stamps a false "TRAINED" claim across ~50 files). The shipped `scripts/flip_status_banner.py` is therefore **report-only** for now; the writer (with explicit human confirm + non-zero-metric gate + frozen-path banners) is this deferred item.
-- **Unit-test re-baseline pass (separate):** add `decoupled_rope` / top-p / MoE-capacity / quant-parity tests. Deferred because it re-baselines the `388/4` count and cascades through every "388 passed" claim surface — do it as its own pass.
+- **Unit-test re-baseline pass — DONE (2026-07-09):** added `decoupled_rope`, top-p, MoE-capacity, quant-parity tests (+ held-out-ppl, repo-hygiene-guard). Count re-baselined `388 → 412 passed, 4 skipped`; every "388 passed" current-truth surface propagated.
 - **Liquid training loop perf:** the `for t in range(T)` recurrence (seq=4096, 3 layers) is a real throughput cost; measurable/optimizable only on real GPU (profile-then-optimize, post-run).
 - **`ffn_dropout` intent:** not in `config.py` → silently `0.0` in `layers/ffn.py` while `attention_dropout`/`dropout` are `0.1`. Confirm whether FFN-dropout-off is intended before any tuning.
 
@@ -53,3 +53,10 @@ Source: `CLAUDE CODE — AUTONOMOUS EXECUTION BRIEF · Pre-45K Stabilization + R
 - **Test count:** `370 passed, 4 skipped` → **`388 passed, 4 skipped`** (+18: 4 Liquid-decode parity, 11 guard/EMA, 3 WSD clamp). Current-truth claim surfaces propagated; dated historical records (CHANGELOG, DECISIONS addenda) intentionally left at their as-of counts.
 
 **Still the only real gate: owned compute → 45K run → checkpoint → checkpoint-bound eval.** Next non-documentary action is the RTX-5070 re-run with `TITAN_LEARNING_RATE=3e-4 TITAN_WARMUP_RATIO=0.15 TITAN_ROUTER_LR_MULT=1.0`.
+
+
+## Pre-45K safe pass — DONE (2026-07-09)
+GPU-free follow-up (tests + operational hardening; no training-math change). Full record in [DECISIONS.md](DECISIONS.md).
+- **Done:** 6 test files (`decoupled_rope`, `top_p`, `moe_capacity`, `quant_parity`, `held_out_ppl`, `repo_hygiene_guard`); `check_disk_space` fail-open→fail-closed; SIGTERM→graceful-checkpoint in `train()`; removed the `TITAN_OCEAN_45K_LAUNCH` no-op; `datasets/validation_provenance.json` (+ `scripts/gen_validation_provenance.py`). Restored a gutted `interfaces/run_manifest_v1.schema.json` to sealed `bdee57a`.
+- **Test count:** `388 → 412 passed, 4 skipped` (+24).
+- **Deferred (with reason):** ADR-0005 naming-mode assert (needs a careful precompute-path detector; a wrong assert is riskier than the gap); `p100_safe max_steps` (demo-profile judgment call, low value); D5 auto-batch / D7 resume-order (frozen-path → wait for the RTX-5070 re-run to verify `bdee57a` first); `report_builder` baseline (already honestly labelled `hardcoded_target_threshold_not_measured`, not a bug).

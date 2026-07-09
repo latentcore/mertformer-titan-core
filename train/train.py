@@ -167,8 +167,12 @@ def check_disk_space(min_gb: float = 10.0, path: Optional[Path] = None) -> bool:
         total, used, free = shutil.disk_usage(str(target))
         free_gb = free / (1024 ** 3)
         return free_gb >= float(min_gb)
-    except Exception:
-        return True  # Fail-open to avoid breaking training
+    except Exception as e:
+        # [2026-07-09] Fail-closed: if the free-space probe itself errors we cannot
+        # confirm there is room, so surface it (the caller only prints a soft warning —
+        # it never aborts training or deletes anything) instead of silently claiming OK.
+        print(f"   ⚠️  check_disk_space could not verify free space ({e}); treating as insufficient.")
+        return False
 
 
 def write_energy_telemetry_baseline(project_root: Path, stage: str = "bootstrap") -> None:
@@ -667,6 +671,20 @@ def build_optimizer(body_params: List[Any], router_params: List[Any], cfg: Any) 
 # 7. MAIN TRAIN LOOP
 # -----------------------------------------------------------------------------
 def train() -> None:
+    # [2026-07-09] SIGTERM -> graceful checkpoint. Cloud/Kaggle preemption sends SIGTERM
+    # (not SIGINT); translate it to KeyboardInterrupt so it lands in the existing
+    # "🛑 Durduruldu. Kaydediliyor..." handler (checkpoint flush + clean finalize) below.
+    # signal.signal only works from the main thread, so guard it — worker threads skip.
+    import signal as _signal
+
+    def _sigterm_to_keyboardinterrupt(signum, frame):  # pragma: no cover (signal path)
+        raise KeyboardInterrupt()
+
+    try:
+        _signal.signal(_signal.SIGTERM, _sigterm_to_keyboardinterrupt)
+    except (ValueError, OSError, RuntimeError):
+        pass  # not main thread / no SIGTERM on this platform: non-fatal
+
     # Accelerate Init
     accelerator_project_config = ProjectConfiguration(project_dir=str(project_root), logging_dir=str(project_root / "logs"))
     # TF32 for Ampere (A100) speedup
