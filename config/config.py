@@ -609,20 +609,46 @@ class MertFormerConfig:
     benchmark_profile: str = "safe"  # safe|full
 
 
-def _load_yaml(path: Path) -> Dict[str, Any]:
-    """Best-effort YAML loader. Returns empty dict if missing or unavailable."""
+def _load_yaml(path: Path, *, required: bool = False) -> Dict[str, Any]:
+    """Load a YAML overlay into a flat dict.
+
+    Returns {} when the file is absent and not ``required``. When an overlay was
+    EXPLICITLY requested (an env var pointed at it), callers pass ``required=True``
+    so a missing file, an unavailable YAML parser, malformed YAML, or a non-mapping
+    top level RAISES instead of silently yielding {}. [2026-07-09] Hardened from the
+    old fail-open behavior: a silently-ignored overlay must never let a run start on
+    the wrong (canonical-default) config. Non-required calls keep the old tolerant
+    behavior byte-for-byte. See BACKLOG "config overlay silent no-op".
+    """
     if not path.exists():
+        if required:
+            raise FileNotFoundError(
+                f"config overlay requested but not found: {path}. "
+                "Fix the env var / filename or unset it."
+            )
         return {}
     try:
         import yaml  # type: ignore
-    except Exception:
+    except Exception as exc:  # pragma: no cover - yaml is a hard dep in practice
+        if required:
+            raise RuntimeError(
+                f"config overlay {path} requested but PyYAML is unavailable: {exc}"
+            ) from exc
         return {}
     try:
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
-        if isinstance(data, dict):
-            return data
-    except Exception:
+    except Exception as exc:
+        if required:
+            raise ValueError(f"config overlay {path} is not valid YAML: {exc}") from exc
         return {}
+    if data is None:
+        return {}
+    if isinstance(data, dict):
+        return data
+    if required:
+        raise ValueError(
+            f"config overlay {path} must be a top-level mapping, got {type(data).__name__}."
+        )
     return {}
 
 
@@ -637,31 +663,47 @@ def _load_config_overlays() -> Dict[str, Any]:
     config_dir = Path(__file__).resolve().parent
     merged: Dict[str, Any] = {}
 
+    # An env var being SET is an explicit request for that overlay, so pass
+    # required=True: a typo'd path / filename now RAISES instead of silently
+    # falling back to canonical defaults. [2026-07-09] See BACKLOG "config overlay
+    # silent no-op".
     base_override = os.environ.get("MERTFORMER_CONFIG")
     if base_override:
         base_path = _resolve_config_path(config_dir, base_override)
-        merged.update(_load_yaml(base_path))
+        merged.update(_load_yaml(base_path, required=True))
 
     model_override = os.environ.get("MERTFORMER_MODEL_CONFIG")
     if model_override:
-        merged.update(_load_yaml(_resolve_config_path(config_dir, f"model/{model_override}")))
+        merged.update(_load_yaml(_resolve_config_path(config_dir, f"model/{model_override}"), required=True))
 
     train_override = os.environ.get("MERTFORMER_TRAIN_CONFIG")
     if train_override:
-        merged.update(_load_yaml(_resolve_config_path(config_dir, f"train/{train_override}")))
+        merged.update(_load_yaml(_resolve_config_path(config_dir, f"train/{train_override}"), required=True))
 
     export_override = os.environ.get("MERTFORMER_EXPORT_CONFIG")
     if export_override:
-        merged.update(_load_yaml(_resolve_config_path(config_dir, f"export/{export_override}")))
+        merged.update(_load_yaml(_resolve_config_path(config_dir, f"export/{export_override}"), required=True))
 
     return merged
 
 
 def _apply_overrides(cfg: MertFormerConfig, overrides: Dict[str, Any]) -> None:
-    """Apply flat key overrides to config instance."""
+    """Apply flat key overrides to the config instance.
+
+    [2026-07-09] Hardened: an unknown key now RAISES instead of being silently
+    dropped. Every key in every shipped overlay was verified to be a real
+    MertFormerConfig attribute (see tests/test_config_overlay_strict.py), so this
+    only fires on a genuine typo/misconfig — a mistyped key must fail loudly, not
+    vanish and let the run use the default. See BACKLOG "config overlay silent no-op".
+    """
+    unknown = sorted(k for k in overrides if not hasattr(cfg, k))
+    if unknown:
+        raise AttributeError(
+            f"unknown config overlay key(s): {unknown} — not attributes of "
+            "MertFormerConfig. Fix the overlay YAML (typo?) or remove the key(s)."
+        )
     for key, value in overrides.items():
-        if hasattr(cfg, key):
-            setattr(cfg, key, value)
+        setattr(cfg, key, value)
 
 
 def _finalize_config(cfg: MertFormerConfig) -> None:

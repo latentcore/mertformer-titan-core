@@ -16,5 +16,5 @@
   "moe_intermediate": 8192,
   "vocab_size": 128256,
   "teacher_model": "meta-llama/Llama-3.3-70B-Instruct",
-  "test_stat": "412 passed, 4 skipped"
+  "test_stat": "421 passed, 4 skipped"
 }
