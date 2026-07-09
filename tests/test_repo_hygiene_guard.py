@@ -1,8 +1,8 @@
 """Tests for scripts/repo_hygiene_guard.py (the bare-except + build-fossil regression gate).
 
 NOTE: the fossil string literals below are assembled with ``+`` (e.g. "BUILD" + "27")
-on purpose — a literal ``BUILD27`` / ``V27.0`` written directly here would make this very
-test file trip the guard's own scan of the tree.
+on purpose — writing any old build/version fossil as one contiguous token directly
+here would make this very test file trip the guard's own scan of the tree.
 """
 import importlib.util
 from pathlib import Path
