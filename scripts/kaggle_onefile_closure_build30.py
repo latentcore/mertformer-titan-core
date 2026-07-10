@@ -891,9 +891,9 @@ def maybe_refresh_repo_posttrain(checkpoint: Optional[Path]) -> dict[str, Any]:
     if checkpoint is None:
         return {
             "cmd": "<skipped>",
-            "return_code": 2,
-            "ok": False,
-            "stdout_tail": "",
+            "learning_rate": 2.5e-4,
+            "max_steps": 100,
+            "warmup_ratio": 0.05,
             "stderr_tail": "checkpoint missing",
             "elapsed_sec": 0.0,
         }

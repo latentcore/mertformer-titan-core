@@ -17,7 +17,7 @@ Bu matris, repoda tamamen biten işleri ve dış/operasyonel olarak kalan işler
 | A8 | ✅ | Claim policy + pilot checklist net: `README.md`. |
 | A9 | ✅ | README config örneği kodla uyumlu (`use_torch_compile = False`): `config/config.py`. |
 | A10 | ✅ | Pilot doküman seti hazır: `reports/pilot_readiness_kit.md`, `reports/pilot_offer_packages.md`, `reports/sales_funnel_90d.md`. |
-| A11 | ✅ | Test kapısı geçti: `421 passed, 4 skipped`. |
+| A11 | ✅ | Test kapısı geçti: `428 passed, 4 skipped`. |
 | A12 | ✅ | Lint kapısı geçti: `ruff check` yeşil. |
 | A13 | ✅ | Full gate geçti: `bash scripts/verify_all.sh` -> `[verify] OK`. |
 | A14 | ✅ | SDK EN/TR senkron: `SDK_GUIDE.md`, `SDK_GUIDE_TR.md`. |

@@ -28,7 +28,9 @@ def _clean_text(text: str) -> str:
 
 
 def _fingerprint(text: str) -> str:
-    return hashlib.sha1(text.lower().encode("utf-8")).hexdigest()
+    # Content fingerprint for near-duplicate detection only — NOT a security digest
+    # (usedforsecurity=False keeps this off the bandit high-severity gate).
+    return hashlib.sha1(text.lower().encode("utf-8"), usedforsecurity=False).hexdigest()
 
 
 def _extract_gsm8k(ex: dict[str, Any]) -> str:

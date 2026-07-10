@@ -638,14 +638,22 @@ def build_optimizer(body_params: List[Any], router_params: List[Any], cfg: Any) 
     # defaulting to 1.0. Set TITAN_ROUTER_LR_MULT=1.5 to restore the old behavior.
     router_lr_mult = float(getattr(cfg, "router_lr_multiplier", 1.0))
     router_group = {"params": router_params, "lr": cfg.learning_rate * router_lr_mult, "weight_decay": 1e-4}
+    # GaLore 3-Bug Fix (dim==2 filter for 1D and 3D tensor crashes, plus proj_type='std')
+    body_galore = [p for p in body_params if p.dim() == 2]
+    body_non_galore = [p for p in body_params if p.dim() != 2]
+    router_galore = [p for p in router_params if p.dim() == 2]
+    router_non_galore = [p for p in router_params if p.dim() != 2]
+
+    body_galore_group = {"params": body_galore, "lr": cfg.learning_rate, "weight_decay": cfg.weight_decay, "rank": 128, "update_proj_gap": 200, "scale": 0.25, "proj_type": "std"}
+    router_galore_group = {"params": router_galore, "lr": cfg.learning_rate * router_lr_mult, "weight_decay": 1e-4, "rank": 64, "update_proj_gap": 200, "scale": 0.25, "proj_type": "std"}
+    body_non_galore_group = {"params": body_non_galore, "lr": cfg.learning_rate, "weight_decay": cfg.weight_decay}
+    router_non_galore_group = {"params": router_non_galore, "lr": cfg.learning_rate * router_lr_mult, "weight_decay": 1e-4}
+
     opt = None
     if getattr(cfg, "use_galore", False) and galore_torch is not None:
         try:
             optim_cls = galore_torch.GaLoreAdamW8bit if cfg.use_8bit_adam else galore_torch.GaLoreAdamW
-            opt = optim_cls([
-                {**body_group, "rank": 128, "update_proj_gap": 200, "scale": 0.25},
-                {**router_group, "rank": 64, "update_proj_gap": 200, "scale": 0.25},
-            ])
+            opt = optim_cls([body_galore_group, router_galore_group, body_non_galore_group, router_non_galore_group])
         except Exception as exc:
             print(f"⚠️ GaLore optimizer unavailable ({exc}); falling back.")
             opt = None

@@ -42,6 +42,14 @@ jobs:
         run: |
           python -m mypy --ignore-missing-imports
 
+      - name: Bandit security scan (high severity + high confidence)
+        run: |
+          bandit -r . -lll -iii -q -x ./.titan-venv,./.lint-venv,./build,./tests
+
+      - name: Docstring coverage floor (interrogate)
+        run: |
+          interrogate -c pyproject.toml .
+
       - name: Verify all
         env:
           TITAN_OFFLINE: "1"

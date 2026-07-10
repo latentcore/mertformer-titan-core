@@ -44,6 +44,9 @@ from train.packing import (  # noqa: E402
 )
 from utils.tokenizer_resolver import resolve_tokenizer, tokenizer_identity  # noqa: E402
 
+# [ADR-0005] Start-gate assertion for single-naming mode
+assert getattr(cfg, "adr_0005_single_naming_mode", True) == True, "ADR-0005 single-naming mode assertion failed."
+
 DEFAULT_FIRST_N = 64
 DEFAULT_RANDOM_K = 64
 DEFAULT_SEED = 1453

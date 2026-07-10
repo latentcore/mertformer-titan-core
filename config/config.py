@@ -107,10 +107,10 @@ def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None) 
         use_8bit_adam = getattr(conf, "use_8bit_adam", True) if conf is not None else True
         max_seq_len = getattr(conf, "max_seq_len", 4096) if conf is not None else 4096
 
-        # [P7] Measured dense total (~3.67B) for VRAM math; was the 2.64e9 design-target.
+        # [P7] Dynamically read param count if available in config, else fallback to Titan 3.67B
         # CUDA-only path (gated above); never runs on Mac/MPS. Does not change the published
         # design-target DEFAULT_PARAMS=2.64e9 in economics/flops_estimator.py.
-        total_params = 3.673 * 10**9
+        total_params = getattr(conf, "dynamic_param_count", 3.673 * 10**9) if conf is not None else 3.673 * 10**9
 
         # A. Static Memory (Fixed Cost)
         # Weights (BF16=2 bytes) + Grads (BF16=2 bytes) = 4 bytes per param

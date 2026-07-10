@@ -43,6 +43,9 @@ dev = [
   "pytest-cov>=4.1",
   "ruff>=0.6.0",
   "mypy>=1.10,<2",
+  "hypothesis>=6.100",
+  "bandit>=1.7",
+  "interrogate>=1.7",
 ]
 demo = ["pygame==2.6.1"]
 
@@ -65,6 +68,16 @@ packages = [
   "train",
   "orchestrator",
 ]
+
+[tool.interrogate]
+# Docstring-coverage REGRESSION floor (not an aspiration). The tree currently sits
+# around 15.5%; this pins a conservative baseline so coverage cannot silently regress,
+# and can be raised as docstrings are added. Wired into CI (interrogate -c pyproject).
+fail-under = 15
+exclude = [".titan-venv", ".lint-venv", "build", "setup.py"]
+ignore-init-method = true
+ignore-magic = true
+ignore-nested-functions = true
 
 [tool.ruff]
 target-version = "py311"
