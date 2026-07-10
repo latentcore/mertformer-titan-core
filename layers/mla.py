@@ -463,7 +463,7 @@ class GQA(nn.Module):
             # Prefer SDPA path to avoid explicit full masks in common cases.
             # Keep ONNX export on matmul path (opset12 cannot export SDPA op).
             if hasattr(F, "scaled_dot_product_attention") and not _is_onnx_export():
-                dropout_p = self.attn_dropout.p if self.training else 0.0
+                dropout_p = self.attn_dropout.p if self.training and q.device.type != "mps" else 0.0
                 if past_key_value is None:
                     # Mask-free causal path.
                     out = F.scaled_dot_product_attention(

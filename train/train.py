@@ -1261,6 +1261,13 @@ def train() -> None:
                      if "tau" in n or "liquid" in n:
                          p.requires_grad = True
                  
+                 # [Gate 3] DDP-unfreeze 60s check: assert rank equality to prevent gradient divergence
+                 if accelerator.num_processes > 1:
+                     dummy = torch.tensor([1.0], device=accelerator.device)
+                     gathered = accelerator.gather(dummy)
+                     if gathered.sum().item() != accelerator.num_processes:
+                         raise RuntimeError("DDP divergence detected at unfreeze step")
+                 
                  # NOTE: This branch ONLY toggles requires_grad=True above; it does NOT
                  # rebuild the optimizer or re-sync optimizer param groups.
                  # Optimizer rebuild is intentionally skipped for safety under Accelerate/DDP

@@ -132,8 +132,8 @@ class CurriculumDataset(IterableDataset):
         # 1. WORKER SEED SYNC (prevent multi-worker collisions)
         worker_info = get_worker_info()
         if worker_info is not None:
-            # Each worker gets a different seed
-            random.seed(cfg.seed + worker_info.id)
+            # [D7] Epoch Sampling Fix: Use worker_info.seed which PyTorch manages per-epoch
+            random.seed((worker_info.seed + getattr(cfg, "seed", 42)) % (2**32))
 
         skipped_count = 0
         total_attempts = 0
