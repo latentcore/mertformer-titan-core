@@ -1,6 +1,6 @@
 {
   "schema": "code_truth_delta_audit_v1",
-  "generated_utc": "2026-07-10T19:30:10Z",
+  "generated_utc": "2026-07-11T20:35:17Z",
   "evidence_contract": {
     "required_columns": [
       "code_path",
@@ -780,6 +780,13 @@
       "summary": "fallback"
     },
     {
+      "path": "tests/test_config_dynamic_param_count.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "tests/test_distillation_topk.py",
       "markers": [
         "fallback"
@@ -801,6 +808,13 @@
       "summary": "fallback"
     },
     {
+      "path": "tests/test_sweep_dead_getattr_fixes.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
       "path": "tests/test_tokenizer_parity.py",
       "markers": [
         "fallback"
@@ -814,6 +828,6 @@
       "tested_fallback": 6,
       "reference_safe": 1
     },
-    "marker_hit_count": 68
+    "marker_hit_count": 70
   }
 }

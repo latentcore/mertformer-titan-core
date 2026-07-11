@@ -68,3 +68,60 @@ def test_router_identical_rows_stay_identical():
             tok = torch.randn(1, 1, hidden)
             out = router(torch.cat([tok, tok], dim=0))
             assert torch.allclose(out[0], out[1], atol=1e-6)
+
+
+def test_router_state_genuinely_persists_across_steps():
+    """Discriminating test: proves the rolling buffer actually carries real history
+    (not just that batch rows are isolated from each other).
+
+    A prior regression forced ``inference_state.zero_()`` unconditionally at the top of
+    ``LiquidRouter.forward()``. Under that regression,
+    ``test_router_row_is_independent_of_other_rows`` STILL PASSES — both compared paths
+    (batched vs. alone) are equally degraded (both compute with zeroed history every
+    step), so they stay equal to each other and the isolation test is blind to the bug.
+    This test compares REAL persisted history against a forced-zero-every-step history
+    and requires them to diverge once the rolling window has filled — the only way to
+    positively confirm ``inference_state`` is doing anything at all.
+
+    ``fluid_gate.weight`` is ``nn.init.zeros_``-initialized by design (III.9: "start with
+    no fluid influence, let it learn"), so a freshly constructed router's output is
+    history-independent regardless of this bug. Both routers below get identical
+    non-zero ``fluid_gate`` weights injected (same seed on both) so the fluid path
+    actually contributes and the comparison is meaningful.
+    """
+    hidden, experts = 16, 8
+    window_needed = 3  # history_window - 1
+
+    def _router_with_live_gate(seed: int) -> LiquidRouter:
+        router = _fresh_router(hidden, experts, seed=seed)
+        torch.manual_seed(1234)
+        with torch.no_grad():
+            router.fluid_gate.weight.copy_(torch.randn_like(router.fluid_gate.weight))
+        return router
+
+    router_real = _router_with_live_gate(seed=7)
+    router_real.set_state(torch.zeros(1, hidden, window_needed))
+    torch.manual_seed(99)
+    stream = [torch.randn(1, 1, hidden) for _ in range(6)]
+    with torch.no_grad():
+        out_real_history = [router_real(t).clone() for t in stream]
+
+    router_forced_zero = _router_with_live_gate(seed=7)
+    with torch.no_grad():
+        out_forced_zero = []
+        for t in stream:
+            router_forced_zero.set_state(torch.zeros(1, hidden, window_needed))  # simulate the regression
+            out_forced_zero.append(router_forced_zero(t).clone())
+
+    # Once the window has filled (step >= history_window), real history and
+    # forced-zero history must DIFFER. If they're identical, inference_state is not
+    # actually being used.
+    diverged = any(
+        not torch.allclose(a, b, atol=1e-6)
+        for a, b in zip(out_real_history[3:], out_forced_zero[3:])
+    )
+    assert diverged, (
+        "router output is IDENTICAL between real history and forced-zero history — "
+        "inference_state is not actually being used. Check for an unconditional "
+        ".zero_() at the top of forward()."
+    )

@@ -55,6 +55,55 @@ def get_auto_dtype() -> Any:
         return torch.float32
 
 
+def _estimate_total_params(conf: Any) -> float:
+    """
+    Analytical parameter-count estimate from a config object's own fields
+    (embeddings + per-layer GQA attention + dense/MoE FFN + norms). Used only for the
+    VRAM-budgeting heuristic below, not a claim-grade measured count (that lives in
+    ``trainer_core.preflight_param_report()`` / ``FACTS.json``). Reads only ``conf``
+    (never the global ``cfg``) to avoid recursive instantiation. Falls back to the
+    canonical measured ~3.67B when a field is absent, so a bare ``conf=None`` (or a
+    minimal stub) reproduces the previous constant's ballpark.
+    """
+    vocab_size = getattr(conf, "vocab_size", 128256)
+    hidden_size = getattr(conf, "hidden_size", 2048)
+    num_layers = getattr(conf, "num_layers", 18)
+    num_heads = getattr(conf, "num_heads", 16)
+    num_kv_heads = getattr(conf, "num_kv_heads", 8)
+    head_dim = getattr(conf, "head_dim", hidden_size // max(num_heads, 1))
+    intermediate_size = getattr(conf, "intermediate_size", hidden_size * 4)
+    moe_intermediate = getattr(conf, "moe_intermediate", intermediate_size)
+    use_moe = getattr(conf, "use_moe", True)
+    num_experts = getattr(conf, "num_experts", 8)
+    moe_every_n_layers = getattr(conf, "moe_every_n_layers", 3)
+
+    embedding_params = vocab_size * hidden_size
+
+    q_proj = hidden_size * (num_heads * head_dim)
+    kv_proj = hidden_size * (num_kv_heads * head_dim)
+    o_proj = (num_heads * head_dim) * hidden_size
+    attn_per_layer = q_proj + 2 * kv_proj + o_proj
+
+    dense_ffn_per_layer = 3 * hidden_size * intermediate_size
+    moe_ffn_per_layer = 3 * hidden_size * moe_intermediate
+    router_params = hidden_size * num_experts
+    moe_layer_params = moe_ffn_per_layer * num_experts + router_params
+
+    if use_moe and moe_every_n_layers > 0:
+        moe_count = num_layers // moe_every_n_layers
+    else:
+        moe_count = 0
+    dense_count = num_layers - moe_count
+
+    total_params = embedding_params
+    total_params += num_layers * attn_per_layer
+    total_params += dense_count * dense_ffn_per_layer
+    total_params += moe_count * moe_layer_params
+    total_params += num_layers * (2 * hidden_size)  # norms
+    total_params += hidden_size  # final norm
+    return float(total_params)
+
+
 def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None) -> tuple[int, int]:
     """
     GRANDMASTER AUTO-PILOT - Physics-based VRAM calculation & optimization.
@@ -107,10 +156,11 @@ def auto_configure_batch_size(target_global_batch: int = 128, conf: Any = None) 
         use_8bit_adam = getattr(conf, "use_8bit_adam", True) if conf is not None else True
         max_seq_len = getattr(conf, "max_seq_len", 4096) if conf is not None else 4096
 
-        # [P7] Dynamically read param count if available in config, else fallback to Titan 3.67B
-        # CUDA-only path (gated above); never runs on Mac/MPS. Does not change the published
-        # design-target DEFAULT_PARAMS=2.64e9 in economics/flops_estimator.py.
-        total_params = getattr(conf, "dynamic_param_count", 3.673 * 10**9) if conf is not None else 3.673 * 10**9
+        # [P7] Analytically derive param count from conf's own architecture fields
+        # (see _estimate_total_params). CUDA-only path (gated above); never runs on
+        # Mac/MPS. Does not change the published design-target DEFAULT_PARAMS=2.64e9
+        # in economics/flops_estimator.py.
+        total_params = _estimate_total_params(conf) if conf is not None else 3.673 * 10**9
 
         # A. Static Memory (Fixed Cost)
         # Weights (BF16=2 bytes) + Grads (BF16=2 bytes) = 4 bytes per param
@@ -301,6 +351,12 @@ class MertFormerConfig:
     # 6. SAFETY FUSE (QINN)
     # -------------------------------------------------------------------------
     use_qinn: bool = False # [AUDIT FIX] Disabled for NPU compatibility & Speed
+    # [2026-07-11] Was read only via getattr(cfg, "qinn_every_n_layers", 1) in
+    # layers/mertformer_block.py with no backing field anywhere -- so a QINN
+    # experiment could never actually configure the placement cadence, it was
+    # permanently pinned to 1 (every layer) regardless of intent. Same default,
+    # now a real, settable field.
+    qinn_every_n_layers: int = 1
 
     # -------------------------------------------------------------------------
     # 6.1 ADVANCED COGNITIVE EXTENSIONS (feature-flag, non-breaking defaults)
@@ -528,6 +584,13 @@ class MertFormerConfig:
     use_divergence_guard: bool = os.environ.get("TITAN_DIVERGENCE_GUARD", "1") == "1"
     divergence_guard_multiplier: float = 1.5
     divergence_guard_patience: int = 50
+
+    # [2026-07-11] Was read only via getattr(cfg, "deterministic", False) in
+    # train/trainer_core.py:seed_all() with no backing field anywhere -- so
+    # cudnn-deterministic / use_deterministic_algorithms mode could never actually be
+    # turned on, it silently always fell through to False. Same default (off, matches
+    # prior always-off behavior); TITAN_DETERMINISTIC=1 now genuinely enables it.
+    deterministic: bool = os.environ.get("TITAN_DETERMINISTIC", "0") == "1"
 
     # -------------------------------------------------------------------------
     # 9. OUTPUT FORMAT

@@ -8,19 +8,43 @@
   "items": [
     {
       "dataset": "HuggingFaceFW/fineweb-edu",
-      "ref_count": 1,
+      "ref_count": 2,
       "refs": [
         {
           "dataset": "HuggingFaceFW/fineweb-edu",
           "file": "scripts/data_pipeline.py",
-          "line": 91,
+          "line": 93,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"HuggingFaceFW/fineweb-edu\","
+        },
+        {
+          "dataset": "HuggingFaceFW/fineweb-edu",
+          "file": "scripts/mertformer_5080_final_onefile.py",
+          "line": 7616,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"HuggingFaceFW/fineweb-edu\", \"split\": \"train\", \"field\": \"text\"},"
         }
       ],
       "metadata": {
         "license": null,
         "hf_url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu"
+      }
+    },
+    {
+      "dataset": "HuggingFaceH4/ultrachat_200k",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "HuggingFaceH4/ultrachat_200k",
+          "file": "scripts/mertformer_5080_final_onefile.py",
+          "line": 7641,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"HuggingFaceH4/ultrachat_200k\", \"subset\": \"train_sft\", \"split\": \"train\", \"field\": \"messages\"},"
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k"
       }
     },
     {
@@ -30,7 +54,7 @@
         {
           "dataset": "HuggingFaceTB/cosmopedia",
           "file": "scripts/data_pipeline.py",
-          "line": 129,
+          "line": 131,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"HuggingFaceTB/cosmopedia\","
         }
@@ -41,13 +65,30 @@
       }
     },
     {
+      "dataset": "HuggingFaceTB/smoltalk",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "HuggingFaceTB/smoltalk",
+          "file": "scripts/mertformer_5080_final_onefile.py",
+          "line": 7640,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"HuggingFaceTB/smoltalk\", \"split\": \"train\", \"field\": \"messages\"},"
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk"
+      }
+    },
+    {
       "dataset": "NousResearch/FC-1k",
       "ref_count": 1,
       "refs": [
         {
           "dataset": "NousResearch/FC-1k",
           "file": "scripts/data_pipeline.py",
-          "line": 209,
+          "line": 211,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"NousResearch/FC-1k\","
         }
@@ -58,27 +99,51 @@
       }
     },
     {
+      "dataset": "OpenAssistant/oasst1",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "OpenAssistant/oasst1",
+          "file": "scripts/mertformer_5080_final_onefile.py",
+          "line": 7642,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"OpenAssistant/oasst1\", \"split\": \"train\", \"field\": \"text\"},"
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/OpenAssistant/oasst1"
+      }
+    },
+    {
       "dataset": "OpenAssistant/oasst_top1_2023-08-25",
-      "ref_count": 3,
+      "ref_count": 4,
       "refs": [
         {
           "dataset": "OpenAssistant/oasst_top1_2023-08-25",
           "file": "scripts/data_pipeline.py",
-          "line": 146,
+          "line": 148,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"OpenAssistant/oasst_top1_2023-08-25\","
         },
         {
           "dataset": "OpenAssistant/oasst_top1_2023-08-25",
+          "file": "scripts/kaggle_onecell_t4_build30.py",
+          "line": 2732,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"OpenAssistant/oasst_top1_2023-08-25\", \"split\": \"train[:2%]\", \"field\": \"text\"},"
+        },
+        {
+          "dataset": "OpenAssistant/oasst_top1_2023-08-25",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2404,
+          "line": 2440,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"OpenAssistant/oasst_top1_2023-08-25\", \"split\": \"train[:2%]\", \"field\": \"text\"},"
         },
         {
           "dataset": "OpenAssistant/oasst_top1_2023-08-25",
           "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
-          "line": 2948,
+          "line": 3137,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"OpenAssistant/oasst_top1_2023-08-25\", \"split\": \"train[:2%]\", \"field\": \"text\"},"
         }
@@ -95,7 +160,7 @@
         {
           "dataset": "TFLai/Turkish-Alpaca",
           "file": "scripts/data_pipeline.py",
-          "line": 155,
+          "line": 157,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"TFLai/Turkish-Alpaca\", # [FIX] Replaced broken link with active repo"
         }
@@ -107,26 +172,33 @@
     },
     {
       "dataset": "TIGER-Lab/MathInstruct",
-      "ref_count": 3,
+      "ref_count": 4,
       "refs": [
         {
           "dataset": "TIGER-Lab/MathInstruct",
           "file": "scripts/data_pipeline.py",
-          "line": 65,
+          "line": 67,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"TIGER-Lab/MathInstruct\", # [FIX] Nvidia repo removed, switched to TIGER-Lab"
         },
         {
           "dataset": "TIGER-Lab/MathInstruct",
+          "file": "scripts/kaggle_onecell_t4_build30.py",
+          "line": 2702,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"TIGER-Lab/MathInstruct\", \"split\": \"train[:1%]\", \"field\": \"instruction\"},"
+        },
+        {
+          "dataset": "TIGER-Lab/MathInstruct",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2374,
+          "line": 2410,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"TIGER-Lab/MathInstruct\", \"split\": \"train[:1%]\", \"field\": \"instruction\"},"
         },
         {
           "dataset": "TIGER-Lab/MathInstruct",
           "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
-          "line": 2918,
+          "line": 3107,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"TIGER-Lab/MathInstruct\", \"split\": \"train[:1%]\", \"field\": \"instruction\"},"
         }
@@ -138,26 +210,33 @@
     },
     {
       "dataset": "bigcode/the-stack-dedup",
-      "ref_count": 3,
+      "ref_count": 4,
       "refs": [
         {
           "dataset": "bigcode/the-stack-dedup",
           "file": "scripts/data_pipeline.py",
-          "line": 56,
+          "line": 58,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"bigcode/the-stack-dedup\","
         },
         {
           "dataset": "bigcode/the-stack-dedup",
+          "file": "scripts/kaggle_onecell_t4_build30.py",
+          "line": 2720,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"bigcode/the-stack-dedup\", \"split\": \"train[:0.02%]\", \"field\": \"content\"},"
+        },
+        {
+          "dataset": "bigcode/the-stack-dedup",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2392,
+          "line": 2428,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"bigcode/the-stack-dedup\", \"split\": \"train[:0.02%]\", \"field\": \"content\"},"
         },
         {
           "dataset": "bigcode/the-stack-dedup",
           "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
-          "line": 2936,
+          "line": 3125,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"bigcode/the-stack-dedup\", \"split\": \"train[:0.02%]\", \"field\": \"content\"},"
         }
@@ -169,19 +248,26 @@
     },
     {
       "dataset": "codeparrot/github-code",
-      "ref_count": 2,
+      "ref_count": 3,
       "refs": [
         {
           "dataset": "codeparrot/github-code",
+          "file": "scripts/kaggle_onecell_t4_build30.py",
+          "line": 2715,
+          "kind": "pipeline_source",
+          "snippet": "\"dataset\": \"codeparrot/github-code\","
+        },
+        {
+          "dataset": "codeparrot/github-code",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2387,
+          "line": 2423,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"codeparrot/github-code\","
         },
         {
           "dataset": "codeparrot/github-code",
           "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
-          "line": 2931,
+          "line": 3120,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"codeparrot/github-code\","
         }
@@ -198,7 +284,7 @@
         {
           "dataset": "glaiveai/glaive-function-calling-v2",
           "file": "scripts/data_pipeline.py",
-          "line": 190,
+          "line": 192,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"glaiveai/glaive-function-calling-v2\","
         }
@@ -215,7 +301,7 @@
         {
           "dataset": "gorilla-llm/gorilla-openfunctions-v2",
           "file": "scripts/data_pipeline.py",
-          "line": 199,
+          "line": 201,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"gorilla-llm/gorilla-openfunctions-v2\","
         }
@@ -232,7 +318,7 @@
         {
           "dataset": "mbpp",
           "file": "scripts/benchmarks_internal.py",
-          "line": 127,
+          "line": 151,
           "kind": "load_dataset_safe",
           "snippet": "mbpp = load_dataset_safe(\"mbpp\", \"sanitized\")"
         }
@@ -244,47 +330,61 @@
     },
     {
       "dataset": "openai/gsm8k",
-      "ref_count": 6,
+      "ref_count": 8,
       "refs": [
         {
           "dataset": "openai/gsm8k",
           "file": "scripts/data_pipeline.py",
-          "line": 74,
+          "line": 76,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"openai/gsm8k\","
         },
         {
           "dataset": "openai/gsm8k",
           "file": "scripts/eval.py",
-          "line": 40,
+          "line": 58,
           "kind": "load_dataset",
           "snippet": "ds = load_dataset(\"openai/gsm8k\", \"main\", split=\"test\", streaming=True, revision=revision)"
         },
         {
           "dataset": "openai/gsm8k",
+          "file": "scripts/kaggle_onecell_t4_build30.py",
+          "line": 2701,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"openai/gsm8k\", \"subset\": \"main\", \"split\": \"train\", \"field\": \"question\"},"
+        },
+        {
+          "dataset": "openai/gsm8k",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2373,
+          "line": 2409,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"openai/gsm8k\", \"subset\": \"main\", \"split\": \"train\", \"field\": \"question\"},"
         },
         {
           "dataset": "openai/gsm8k",
           "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
-          "line": 2917,
+          "line": 3106,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"openai/gsm8k\", \"subset\": \"main\", \"split\": \"train\", \"field\": \"question\"},"
+        },
+        {
+          "dataset": "openai/gsm8k",
+          "file": "scripts/mertformer_5080_final_onefile.py",
+          "line": 7654,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"openai/gsm8k\", \"subset\": \"main\", \"split\": \"train\", \"field\": \"question\"},"
         },
         {
           "dataset": "openai/gsm8k",
           "file": "eval/gsm8k.py",
-          "line": 66,
+          "line": 74,
           "kind": "load_dataset",
           "snippet": "return load_dataset(\"openai/gsm8k\", \"main\", split=\"test\", revision=revision)"
         },
         {
           "dataset": "openai/gsm8k",
           "file": "eval/gsm8k.py",
-          "line": 68,
+          "line": 81,
           "kind": "load_dataset",
           "snippet": "return load_dataset(\"openai/gsm8k\", split=\"test\", revision=revision)"
         }
@@ -301,7 +401,7 @@
         {
           "dataset": "openai_humaneval",
           "file": "scripts/benchmarks_internal.py",
-          "line": 126,
+          "line": 150,
           "kind": "load_dataset_safe",
           "snippet": "humaneval = load_dataset_safe(\"openai_humaneval\", \"openai_humaneval\")"
         }
@@ -318,7 +418,7 @@
         {
           "dataset": "teknium/OpenHermes-2.5",
           "file": "scripts/data_pipeline.py",
-          "line": 173,
+          "line": 175,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"teknium/OpenHermes-2.5\",  # Optional general instruction set"
         }
@@ -330,26 +430,33 @@
     },
     {
       "dataset": "turkish-nlp-suite/InstrucTurca",
-      "ref_count": 3,
+      "ref_count": 4,
       "refs": [
         {
           "dataset": "turkish-nlp-suite/InstrucTurca",
           "file": "scripts/data_pipeline.py",
-          "line": 164,
+          "line": 166,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"turkish-nlp-suite/InstrucTurca\","
         },
         {
           "dataset": "turkish-nlp-suite/InstrucTurca",
+          "file": "scripts/kaggle_onecell_t4_build30.py",
+          "line": 2733,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"turkish-nlp-suite/InstrucTurca\", \"split\": \"train[:5%]\", \"field\": \"Output\"},"
+        },
+        {
+          "dataset": "turkish-nlp-suite/InstrucTurca",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2405,
+          "line": 2441,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"turkish-nlp-suite/InstrucTurca\", \"split\": \"train[:5%]\", \"field\": \"Output\"},"
         },
         {
           "dataset": "turkish-nlp-suite/InstrucTurca",
           "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
-          "line": 2949,
+          "line": 3138,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"turkish-nlp-suite/InstrucTurca\", \"split\": \"train[:5%]\", \"field\": \"Output\"},"
         }
@@ -361,33 +468,40 @@
     },
     {
       "dataset": "uonlp/CulturaX",
-      "ref_count": 4,
+      "ref_count": 5,
       "refs": [
         {
           "dataset": "uonlp/CulturaX",
           "file": "scripts/data_pipeline.py",
-          "line": 119,
+          "line": 121,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"uonlp/CulturaX\", # [NEW] Massive Web Scale Turkish"
         },
         {
           "dataset": "uonlp/CulturaX",
+          "file": "scripts/kaggle_onecell_t4_build30.py",
+          "line": 2689,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"uonlp/CulturaX\", \"subset\": \"tr\", \"split\": \"train[:0.2%]\", \"field\": \"text\"},"
+        },
+        {
+          "dataset": "uonlp/CulturaX",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2361,
+          "line": 2397,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"uonlp/CulturaX\", \"subset\": \"tr\", \"split\": \"train[:0.2%]\", \"field\": \"text\"},"
         },
         {
           "dataset": "uonlp/CulturaX",
           "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
-          "line": 2905,
+          "line": 3094,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"uonlp/CulturaX\", \"subset\": \"tr\", \"split\": \"train[:0.2%]\", \"field\": \"text\"},"
         },
         {
           "dataset": "uonlp/CulturaX",
           "file": "scripts/titan_preflight.py",
-          "line": 444,
+          "line": 896,
           "kind": "dataset_info",
           "snippet": "api.dataset_info(\"uonlp/CulturaX\", token=hf_token)"
         }
@@ -399,28 +513,42 @@
     },
     {
       "dataset": "wikimedia/wikipedia",
-      "ref_count": 3,
+      "ref_count": 5,
       "refs": [
         {
           "dataset": "wikimedia/wikipedia",
           "file": "scripts/data_pipeline.py",
-          "line": 109,
+          "line": 111,
           "kind": "pipeline_source",
           "snippet": "\"dataset\": \"wikimedia/wikipedia\","
         },
         {
           "dataset": "wikimedia/wikipedia",
+          "file": "scripts/kaggle_onecell_t4_build30.py",
+          "line": 2688,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"wikimedia/wikipedia\", \"subset\": \"20231101.tr\", \"split\": \"train[:2%]\", \"field\": \"text\"},"
+        },
+        {
+          "dataset": "wikimedia/wikipedia",
           "file": "scripts/kaggle_onefile_demo_build30.py",
-          "line": 2360,
+          "line": 2396,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"wikimedia/wikipedia\", \"subset\": \"20231101.tr\", \"split\": \"train[:2%]\", \"field\": \"text\"},"
         },
         {
           "dataset": "wikimedia/wikipedia",
           "file": "scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py",
-          "line": 2904,
+          "line": 3093,
           "kind": "pipeline_source",
           "snippet": "{\"dataset\": \"wikimedia/wikipedia\", \"subset\": \"20231101.tr\", \"split\": \"train[:2%]\", \"field\": \"text\"},"
+        },
+        {
+          "dataset": "wikimedia/wikipedia",
+          "file": "scripts/mertformer_5080_final_onefile.py",
+          "line": 7628,
+          "kind": "pipeline_source",
+          "snippet": "{\"dataset\": \"wikimedia/wikipedia\", \"subset\": \"20231101.tr\", \"split\": \"train\", \"field\": \"text\"},"
         }
       ],
       "metadata": {
@@ -435,7 +563,7 @@
         {
           "dataset": "wikitext",
           "file": "scripts/mini_titan_poc.py",
-          "line": 367,
+          "line": 388,
           "kind": "load_dataset",
           "snippet": "ds = load_dataset(\"wikitext\", \"wikitext-2-raw-v1\", split=\"train\", revision=revision)"
         }
@@ -443,6 +571,23 @@
       "metadata": {
         "license": null,
         "hf_url": "https://huggingface.co/datasets/wikitext"
+      }
+    },
+    {
+      "dataset": "{DATASET_ID}",
+      "ref_count": 1,
+      "refs": [
+        {
+          "dataset": "{DATASET_ID}",
+          "file": "scripts/preflight_run.py",
+          "line": 1117,
+          "kind": "load_dataset",
+          "snippet": "f'load_dataset(\"{DATASET_ID}\", split=\"{DATASET_SPLIT}\", '"
+        }
+      ],
+      "metadata": {
+        "license": null,
+        "hf_url": "https://huggingface.co/datasets/{DATASET_ID}"
       }
     }
   ]

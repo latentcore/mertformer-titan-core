@@ -85,6 +85,47 @@ def _stage_shards(logits_dir: Path, stage_name: str) -> list[Path]:
     return sorted(logits_dir.glob(_stage_pattern(stage_name)), key=_shard_part_index)
 
 
+def detect_shard_naming_mode(part_indices: list[int]) -> str:
+    """Classify a stage's shard part-indices as ``chunk_index``, ``first_seq_index``,
+    or ``mixed`` (ADR-0005 §"One-mode-per-logits_dir").
+
+    Single-process shards (``precompute_stage``) are named by a plain shard COUNTER:
+    consecutive integers 0, 1, 2, ... (step 1). Parallel-worker shards
+    (``precompute_logits_parallel.py``) are named by each block's first global
+    SEQ_INDEX: consecutive multiples of the run's ``chunk_size`` (step > 1, and every
+    value divisible by that step). ADR-0005 requires exactly one mode per
+    ``logits_dir`` per stage — the two schemes are both integer-part-sortable, so a
+    mixed set silently interleaves under the shared sort both the train reader and
+    the alignment validator rely on, instead of raising anything on its own.
+    """
+    ordered = sorted({i for i in part_indices if i >= 0})
+    if len(ordered) < 2:
+        return "chunk_index"  # 0 or 1 shard: nothing to mix
+    steps = {b - a for a, b in zip(ordered, ordered[1:])}
+    if steps == {1}:
+        return "chunk_index"
+    if len(steps) == 1:
+        (step,) = steps
+        if step > 1 and ordered[0] % step == 0:
+            return "first_seq_index"
+    return "mixed"
+
+
+def assert_single_naming_mode(logits_dir: Path, stage_name: str) -> None:
+    """[ADR-0005] Raise if ``stage_name``'s shards in ``logits_dir`` mix chunk-index
+    and first-seq-index naming. See ``detect_shard_naming_mode``."""
+    part_indices = [_shard_part_index(p) for p in _stage_shards(logits_dir, stage_name)]
+    mode = detect_shard_naming_mode(part_indices)
+    if mode == "mixed":
+        raise ValueError(
+            f"ADR-0005 violation: {stage_name} shards in {logits_dir} mix chunk-index "
+            f"and first-seq-index naming (part indices={sorted({i for i in part_indices if i >= 0})}). "
+            "A logits_dir must use exactly one naming mode per stage — do not combine "
+            "single-process (precompute_logits_topk.py) and parallel-worker "
+            "(precompute_logits_parallel.py) shards for the same stage in one directory."
+        )
+
+
 def _unwrap_payload_for_count(payload) -> int:
     if isinstance(payload, dict) and "logits" in payload:
         payload = payload["logits"]

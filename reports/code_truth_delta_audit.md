@@ -136,7 +136,9 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `scripts/verify_datasets.py` | `fallback` |
 | `tests/test_architecture_integrity.py` | `fallback` |
 | `tests/test_benchmark_tokenizer_id.py` | `fallback` |
+| `tests/test_config_dynamic_param_count.py` | `fallback` |
 | `tests/test_distillation_topk.py` | `fallback` |
 | `tests/test_onnx_custom_op_contract.py` | `fallback` |
 | `tests/test_sdk_api.py` | `fallback` |
+| `tests/test_sweep_dead_getattr_fixes.py` | `fallback` |
 | `tests/test_tokenizer_parity.py` | `fallback` |

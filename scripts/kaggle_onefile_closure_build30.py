@@ -63,7 +63,13 @@ PROFILE_SPECS: dict[str, dict[str, Any]] = {
     "p100_safe": {
         "legacy_lane": "build30",
         "legacy_profile": "linkedin_sweetspot",
-        "description": "Conservative single-GPU profile tuned for Tesla P100-class Kaggle notebooks.",
+        "description": (
+            "Conservative single-GPU profile tuned for Tesla P100-class Kaggle notebooks. "
+            "max_steps is a safety cap, not the canonical 45K run: at batch_size=4/seq_len=256 "
+            "this profile processes ~1024 tokens/step vs the canonical 128x4096=524288 "
+            "tokens/step, so reaching this step count is NOT equivalent to, and must never be "
+            "reported as, the real 45K training run."
+        ),
         "overrides": {
             "batch_size": 4,
             "seq_len": 256,
@@ -76,7 +82,11 @@ PROFILE_SPECS: dict[str, dict[str, Any]] = {
             "interactive_menu": False,
             "step_log_interval": 10,
             "max_wall_hours": 10.8,
-            "max_steps": 45000,
+            # [2026-07-11] Was 45000 -- an exact numeric collision with the canonical 45K
+            # training run that could make a P100 probe look like the real 45K in reports.
+            # This profile is wall-clock-bounded (max_wall_hours above); this is a safety
+            # cap, not a target step count. Kept well clear of 45000.
+            "max_steps": 20000,
         },
     },
     "t4x2_dist": {
@@ -889,13 +899,18 @@ def package_existing_run(
 
 def maybe_refresh_repo_posttrain(checkpoint: Optional[Path]) -> dict[str, Any]:
     if checkpoint is None:
+        # [2026-07-11] This used to return learning_rate/max_steps/warmup_ratio here --
+        # hyperparameter fields that don't belong on a skipped-run status report and
+        # silently dropped the real status fields (return_code/ok/stdout_tail) that
+        # run_command() below actually produces. Restored to the same status schema
+        # run_command() returns so callers can rely on one consistent shape.
         return {
             "cmd": "<skipped>",
-            "learning_rate": 2.5e-4,
-            "max_steps": 100,
-            "warmup_ratio": 0.05,
-            "stderr_tail": "checkpoint missing",
+            "return_code": 2,
+            "ok": False,
             "elapsed_sec": 0.0,
+            "stdout_tail": "",
+            "stderr_tail": "checkpoint missing",
         }
     cmd = [
         sys.executable,

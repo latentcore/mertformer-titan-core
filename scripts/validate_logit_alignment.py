@@ -34,7 +34,11 @@ sys.path.insert(0, str(PROJECT_ROOT))
 import torch  # noqa: E402
 
 from config.config import cfg  # noqa: E402
-from scripts.precompute_logits_topk import STAGE_FILES, _stage_shards  # noqa: E402
+from scripts.precompute_logits_topk import (  # noqa: E402
+    STAGE_FILES,
+    _stage_shards,
+    assert_single_naming_mode,
+)
 from train.packing import (  # noqa: E402
     TOPK_PACKED_FORMAT,
     LogitAlignmentError,
@@ -43,9 +47,6 @@ from train.packing import (  # noqa: E402
     iter_packed_sequences,
 )
 from utils.tokenizer_resolver import resolve_tokenizer, tokenizer_identity  # noqa: E402
-
-# [ADR-0005] Start-gate assertion for single-naming mode
-assert getattr(cfg, "adr_0005_single_naming_mode", True) == True, "ADR-0005 single-naming mode assertion failed."
 
 DEFAULT_FIRST_N = 64
 DEFAULT_RANDOM_K = 64
@@ -99,6 +100,12 @@ def validate_stage(
 
     if not jsonl_path.exists() or not shards:
         return {"stage": stage_name, "status": "MISSING", "reason_code": "SHARDS_OR_DATASET_MISSING"}
+
+    try:
+        assert_single_naming_mode(logits_dir, stage_name)
+    except ValueError as exc:
+        return {"stage": stage_name, "status": "FAIL", "reason_code": "MIXED_SHARD_NAMING_MODE",
+                "detail": str(exc)}
 
     meta, stored = _load_stored_identities(shards)
     if not meta or meta.get("format") != TOPK_PACKED_FORMAT:

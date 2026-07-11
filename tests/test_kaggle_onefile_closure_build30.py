@@ -58,6 +58,31 @@ def test_choose_profile_auto_p100_prefers_safe_path():
     assert module.choose_profile("auto", runtime) == "p100_safe"
 
 
+def test_p100_safe_max_steps_does_not_collide_with_canonical_45k():
+    """[2026-07-11] p100_safe.overrides.max_steps was literally 45000 -- an exact
+    numeric collision with the canonical 45K training run, despite this profile
+    running a completely different (much smaller) batch_size/seq_len. A report that
+    only surfaces the step count could misread a P100 probe as the real 45K run."""
+    module = _load_module()
+    assert module.PROFILE_SPECS["p100_safe"]["overrides"]["max_steps"] != 45000
+
+
+def test_maybe_refresh_repo_posttrain_returns_status_schema_when_checkpoint_missing():
+    """[2026-07-11] The checkpoint-None branch used to return learning_rate/max_steps/
+    warmup_ratio hyperparameter fields instead of the ok/return_code/stdout_tail status
+    fields every other run_command()-shaped result carries. Pin the real schema."""
+    module = _load_module()
+    result = module.maybe_refresh_repo_posttrain(None)
+    assert result["cmd"] == "<skipped>"
+    assert result["ok"] is False
+    assert result["return_code"] != 0
+    assert "stdout_tail" in result
+    assert "stderr_tail" in result
+    assert "learning_rate" not in result
+    assert "max_steps" not in result
+    assert "warmup_ratio" not in result
+
+
 def test_choose_profile_auto_unknown_falls_back_to_sweetspot():
     module = _load_module()
     runtime = module.RuntimeMeta(

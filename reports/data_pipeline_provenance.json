@@ -1,6 +1,6 @@
 {
   "schema": "data_pipeline_provenance_v1",
-  "generated_utc": "2026-07-09T01:09:37Z",
+  "generated_utc": "2026-07-10T20:28:07Z",
   "stages": {
     "stage1": {
       "path": "datasets/stage1/stage1_data.jsonl",

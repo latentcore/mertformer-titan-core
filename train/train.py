@@ -675,6 +675,18 @@ def build_optimizer(body_params: List[Any], router_params: List[Any], cfg: Any) 
     return opt
 
 
+def _gate3_ranks_synced(gathered: torch.Tensor) -> bool:
+    """[Gate 3] True iff every rank's gathered probe value matches rank 0's.
+
+    Pure comparison extracted from the DDP-unfreeze check in ``train()`` so it can be
+    unit-tested without a real multi-GPU/Accelerate environment: the surrounding code
+    only supplies ``gathered`` (one real tau/liquid parameter value per rank,
+    concatenated by ``accelerator.gather``); this function just says whether they
+    agree.
+    """
+    return bool(torch.allclose(gathered, gathered[0].expand_as(gathered), atol=1e-6))
+
+
 # -----------------------------------------------------------------------------
 # 7. MAIN TRAIN LOOP
 # -----------------------------------------------------------------------------
@@ -1261,12 +1273,31 @@ def train() -> None:
                      if "tau" in n or "liquid" in n:
                          p.requires_grad = True
                  
-                 # [Gate 3] DDP-unfreeze 60s check: assert rank equality to prevent gradient divergence
+                 # [Gate 3] DDP-unfreeze 60s check: assert rank equality of a real
+                 # unfrozen tau/liquid parameter to catch gradient divergence at the
+                 # unfreeze transition.
+                 # [2026-07-11] This used to gather a hardcoded dummy =
+                 # torch.tensor([1.0]) -- every rank always contributes exactly 1.0,
+                 # so gathered.sum() always equals num_processes regardless of any
+                 # real cross-rank divergence; the check was mathematically incapable
+                 # of ever firing. Replaced with the actual value of a real
+                 # newly-unfrozen tau/liquid parameter, which must be bit-identical
+                 # across ranks immediately after unfreeze (it was synced at DDP init
+                 # and never updated while frozen).
                  if accelerator.num_processes > 1:
-                     dummy = torch.tensor([1.0], device=accelerator.device)
-                     gathered = accelerator.gather(dummy)
-                     if gathered.sum().item() != accelerator.num_processes:
-                         raise RuntimeError("DDP divergence detected at unfreeze step")
+                     unwrapped_for_probe = accelerator.unwrap_model(student)
+                     probe_param = next(
+                         (p for n, p in unwrapped_for_probe.named_parameters() if "tau" in n or "liquid" in n),
+                         None,
+                     )
+                     if probe_param is not None:
+                         local_val = probe_param.detach().reshape(-1)[:1].to(accelerator.device).clone()
+                         gathered = accelerator.gather(local_val)
+                         if not _gate3_ranks_synced(gathered):
+                             raise RuntimeError(
+                                 "DDP divergence detected at unfreeze step: "
+                                 "tau/liquid param mismatch across ranks"
+                             )
                  
                  # NOTE: This branch ONLY toggles requires_grad=True above; it does NOT
                  # rebuild the optimizer or re-sync optimizer param groups.

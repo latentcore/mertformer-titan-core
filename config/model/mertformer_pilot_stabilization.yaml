@@ -55,8 +55,13 @@ moe_every_n_layers: 3
 moe_intermediate: 2048           # per-expert FFN width = 4x hidden (canonical: 8192 = 4x 2048)
 
 # --- Liquid / CfC recurrent mixer -------------------------------------------
+# [2026-07-11] liquid_layers_idx was [2, 5] — same residue class as the MoE layers
+# above (0-indexed 2, 5, 8), so validate_layer_config() raised "Liquid and MoE layers
+# overlap" on load and this config could never actually be run. [1, 4, 7] keeps the
+# same every-3rd-layer, spread-through-the-stack placement (mirrors canonical's
+# [4, 10, 16] being offset from its MoE layers [2, 5, 8, 11, 14, 17]) without colliding.
 use_liquid: true
-liquid_layers_idx: [2, 5]        # same "middle of the stack" placement as [4,10,16]/18
+liquid_layers_idx: [1, 4, 7]     # offset from MoE layers [2, 5, 8] — no overlap
 liquid_every_n_layers: 0
 liquid_fast_path: false          # no torch.compile on a short pilot
 liquid_train_impl: baseline

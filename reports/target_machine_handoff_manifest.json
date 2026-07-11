@@ -1,6 +1,6 @@
 {
   "schema": "target_machine_handoff_manifest_v1",
-  "generated_utc": "2026-07-10T19:30:42Z",
+  "generated_utc": "2026-07-11T20:35:40Z",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "train_allowed": true,
   "decision_reason_code": "READY_REMOTE_BOOTSTRAP",
@@ -35,18 +35,18 @@
     },
     {
       "path": "scripts/precompute_logits_topk.py",
-      "size_bytes": 36445,
-      "sha256": "2957e6a177dd07439644ba034df4e4890d8895394d589e6b7b25cbdbc6e09319"
+      "size_bytes": 38586,
+      "sha256": "c5b1f66a92e3d205b30c5901badad3d5117ed6e90c4a56f2e29291a9a091f97b"
     },
     {
       "path": "scripts/precompute_logits_parallel.py",
-      "size_bytes": 19957,
-      "sha256": "a393ecfee171627a188421b8fe951d127eac82e1246f7de46863aaad09661b06"
+      "size_bytes": 20496,
+      "sha256": "1a926b590ba57ec5f7f65037e520d04d27bad516ab9cc2e5da0d8a6f43286cc8"
     },
     {
       "path": "scripts/validate_logit_alignment.py",
-      "size_bytes": 8833,
-      "sha256": "b16c223b26a3cfbb91fd2ab2ec30c4502345ad684921b4dd11fc62c9f29ee82e"
+      "size_bytes": 8936,
+      "sha256": "226d34efc4fb537d4e1ef6eac466c4f43128e20ab2e45489838eee0ece5852c3"
     },
     {
       "path": "train/packing.py",
@@ -55,8 +55,8 @@
     },
     {
       "path": "scripts/kaggle_onefile_closure_build30.py",
-      "size_bytes": 42585,
-      "sha256": "c64d8d47cf15000a098a6b3aa0fb08b56567214867af15b03ae776a72ee901f5"
+      "size_bytes": 43690,
+      "sha256": "a23eedee31b165b73d91cbb313605dff2c79b9cafe0632867f3ce77f4d1f050b"
     },
     {
       "path": "scripts/kaggle_onecell_t4_build30.py",
@@ -85,8 +85,8 @@
     },
     {
       "path": "reports/train_readiness_decision.json",
-      "size_bytes": 8223,
-      "sha256": "42d437ac58f526923fa962c531cbbb712d5114d38bbfce9dbb369a41d9b0e99d"
+      "size_bytes": 8224,
+      "sha256": "a3f82fbd1c796cc5aa15d8a91f5e0606da2f6966afc6b6209ba31f7b6456d85d"
     },
     {
       "path": "reports/train_readiness_decision.md",
@@ -95,13 +95,13 @@
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 5361,
-      "sha256": "b2e683b9d272aa342434bc72263579fb706d6fc13384ddb8ff70acf4818b7071"
+      "size_bytes": 6099,
+      "sha256": "8a9e28f3b82b90f27e39ede91d073d78f75ef3d6c148d4f6269fbf6f1321d55a"
     },
     {
       "path": "reports/start_gate_operator_decision.json",
       "size_bytes": 1691,
-      "sha256": "15435288bb7c67612bfdcb1b88f4d2ad4da3de8c4ea09481a82d3302f25fb9df"
+      "sha256": "40effc4b16d37613c00bb3d10f575f429431df655344c13666164823df46f431"
     },
     {
       "path": "reports/start_gate_operator_decision.md",
@@ -111,7 +111,7 @@
     {
       "path": "reports/repo_external_handoff.md",
       "size_bytes": 1709,
-      "sha256": "3ddb30ed486ddee06d499322a7aab8ca7fea7c7742e5576f7baf346ce72b10f4"
+      "sha256": "37bd53b668683d1bb5bbe229353071d6446b8431718b0bb20f2f283f19c942dc"
     }
   ],
   "operator_steps": [

@@ -24,6 +24,27 @@ from layers.world_model_head import CausalWorldModelHead as CanonicalWorldModelH
 import scripts.chess_5080_onefile as onefile
 
 
+@pytest.fixture(autouse=True)
+def _restore_global_determinism_state():
+    """[2026-07-11] Several tests in this file (test_deterministic_seed_sets_strict_flags
+    directly, and any test that drives ``run_pipeline`` -- which internally calls
+    ``deterministic_seed(seed, strict=cfg.get("determinism_strict", True))``, defaulting
+    to strict=True) flip process-global torch state
+    (``torch.backends.cudnn.deterministic`` / ``.benchmark`` /
+    ``torch.use_deterministic_algorithms``) and never reset it. That leaked
+    deterministic-algorithm warnings into unrelated later tests in the same pytest
+    process (observed in tests/test_comprehensive.py's MoE scatter/index_add ops).
+    One autouse fixture here fixes it at the source for every test in this file,
+    instead of patching each call site."""
+    prior_det = torch.backends.cudnn.deterministic
+    prior_bench = torch.backends.cudnn.benchmark
+    prior_algos = torch.are_deterministic_algorithms_enabled()
+    yield
+    torch.backends.cudnn.deterministic = prior_det
+    torch.backends.cudnn.benchmark = prior_bench
+    torch.use_deterministic_algorithms(prior_algos, warn_only=True)
+
+
 def make_args(**overrides: object) -> argparse.Namespace:
     defaults = {
         'mode': onefile.RUN_CONFIG['mode'],

@@ -8,7 +8,7 @@ Evidence classes: **measured** (ran, reproducible) · **target** (design intent,
 | Architecture: 18L / 2048 / GQA(16:8) / MoE 8-top2 / Liquid[4,10,16] / BitNet b1.58 | measured | code: `config/config.py`, `model/transformers.py`, `layers/` |
 | Measured runtime params = 3,672,982,022 (~3.67B) | measured | `reports/param_accounting_report.md`, `reports/FACTS.json` |
 | Design-target params = 2.64B | target | `economics/flops_estimator.py` `DEFAULT_PARAMS` |
-| Test suite: 428 passed, 4 skipped (offline) | measured | `pytest` — see [REPRODUCE.md](REPRODUCE.md) |
+| Test suite: 452 passed, 5 skipped (offline) | measured | `pytest` — see [REPRODUCE.md](REPRODUCE.md) |
 | Checkpoint save→restore→resume integrity (K4) | measured (local, toy scale) | `scripts/checkpoint_restore_drill.py`, `resume_compat_check.py`; **not yet proven at 45K scale** |
 | CfC/MoE fast-path numerical parity (≤1%) | measured (toy scale) | `scripts/cfc_moe_tolerance_check.py` + report |
 | Liquid layers improve accuracy | **NOT supported** | [ABLATION.md](ABLATION.md): OFF 96.32% / ON 94.69%, Δ−1.63pp, p=0.305, d=−0.43 — inconclusive; cost (~30% slower) is certain |

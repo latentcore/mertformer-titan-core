@@ -165,10 +165,6 @@ class LiquidRouter(nn.Module):
             self.inference_state.copy_(target)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # [ROUTER FIX] Strict batch-level zeroing to prevent cross-batch state leak
-        if hasattr(self, "inference_state") and self.inference_state is not None:
-            self.inference_state.zero_()
-            
         # x: [Batch, Seq, Hidden] or [Batch*Seq, Hidden] (must be made 3D if flattened)
 
         # Dimension Handling

@@ -197,6 +197,15 @@ def finalize_stage(
             "missing_count": len(missing),
         }
 
+    # [ADR-0005] The orchestrator owns a clean run: refuse to finalize a stage whose
+    # logits_dir mixes chunk-index (single-process) and first-seq-index (parallel)
+    # shard naming — that combination can silently mis-order under the shared
+    # integer-part-index sort the train reader and the alignment validator rely on.
+    try:
+        P.assert_single_naming_mode(logits_dir, stage_name)
+    except ValueError as exc:
+        return {"stage": stage_name, "status": "NAMING_MODE_FAIL", "detail": str(exc)}
+
     # Canonical resume state so _stage_complete / has_precomputed_logits /
     # titan_preflight all see this stage as complete (raw-line keyed).
     total_lines = P._count_jsonl(jsonl_path)
@@ -333,7 +342,7 @@ def _run_stage(
 def _status_to_exit(results: list[dict]) -> int:
     if any(r["status"] == "WORKER_FAIL" for r in results):
         return EXIT_WORKER_FAIL
-    if any(r["status"] in ("COVERAGE_FAIL", "ALIGN_FAIL") for r in results):
+    if any(r["status"] in ("COVERAGE_FAIL", "ALIGN_FAIL", "NAMING_MODE_FAIL") for r in results):
         return EXIT_COVERAGE_FAIL
     if results and all(r["status"] == "MISSING" for r in results):
         return EXIT_DATA_MISSING
