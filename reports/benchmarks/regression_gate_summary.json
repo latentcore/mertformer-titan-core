@@ -1,0 +1,6 @@
+{
+  "schema": "benchmark_regression_gate_v1",
+  "status": "SKIPPED",
+  "reason_code": "NO_CHECKPOINT",
+  "message": "No checkpoint found; regression gate not run. Expected pre-45K."
+}

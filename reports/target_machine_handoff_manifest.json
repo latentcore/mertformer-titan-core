@@ -1,6 +1,6 @@
 {
   "schema": "target_machine_handoff_manifest_v1",
-  "generated_utc": "2026-07-11T20:35:40Z",
+  "generated_utc": "2026-07-12T12:28:28Z",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "train_allowed": true,
   "decision_reason_code": "READY_REMOTE_BOOTSTRAP",
@@ -25,13 +25,13 @@
     },
     {
       "path": "scripts/data_pipeline.py",
-      "size_bytes": 30548,
-      "sha256": "c3ff2e6e428c59685c968a3f8c1899b21abee91bc8a64bde22d0b33fecf3635a"
+      "size_bytes": 30575,
+      "sha256": "faa59873e87edb609ca5bbffb1cdf481c34561e773f1d70e789757f093020a0a"
     },
     {
       "path": "scripts/smart_runner.py",
-      "size_bytes": 5291,
-      "sha256": "301dda82b0fcb5557c52169c775e0032ec2f5cde4b45aaa511fa52cc57c43218"
+      "size_bytes": 5318,
+      "sha256": "5fadc80a36222075707e2687b5e9c4e6ef7f5a7c10f7d1e0e3614c0d02faa58d"
     },
     {
       "path": "scripts/precompute_logits_topk.py",
@@ -86,7 +86,7 @@
     {
       "path": "reports/train_readiness_decision.json",
       "size_bytes": 8224,
-      "sha256": "a3f82fbd1c796cc5aa15d8a91f5e0606da2f6966afc6b6209ba31f7b6456d85d"
+      "sha256": "8719b86fcc4abca78d25a3cdd76ed4ef61007ad0df716f602b0114fb786c9813"
     },
     {
       "path": "reports/train_readiness_decision.md",
@@ -95,13 +95,13 @@
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 6099,
-      "sha256": "8a9e28f3b82b90f27e39ede91d073d78f75ef3d6c148d4f6269fbf6f1321d55a"
+      "size_bytes": 6103,
+      "sha256": "f362f4524f01837c465eae4505579a624e079d5a0e873e245a133610ddb272a2"
     },
     {
       "path": "reports/start_gate_operator_decision.json",
       "size_bytes": 1691,
-      "sha256": "40effc4b16d37613c00bb3d10f575f429431df655344c13666164823df46f431"
+      "sha256": "9a0f8d573a88d6dbe8bd9b51b9ae078da27bef3a6ba940dede21963fd6bf49a9"
     },
     {
       "path": "reports/start_gate_operator_decision.md",
@@ -111,7 +111,7 @@
     {
       "path": "reports/repo_external_handoff.md",
       "size_bytes": 1709,
-      "sha256": "37bd53b668683d1bb5bbe229353071d6446b8431718b0bb20f2f283f19c942dc"
+      "sha256": "9cbcb84d7df6da64a59e8808252da8a000ccc88a7129ec73261ce48345b01de0"
     }
   ],
   "operator_steps": [

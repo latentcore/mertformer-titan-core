@@ -20,7 +20,7 @@ bash scripts/verify_all.sh
 
 Beklenen:
 - Secret scan: PASS
-- Pytest: PASS (`452 passed, 5 skipped`)
+- Pytest: PASS (`503 passed, 5 skipped`)
 - Preflight (offline): PASS
 - Operator gate (safe, offline): PASS
 

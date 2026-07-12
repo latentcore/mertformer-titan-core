@@ -2,7 +2,7 @@
 
 - start_utc: 2026-07-10T20:14:45Z
 - end_utc: 2026-07-10T20:23:02Z
-- pytest: {'status': 'ok', 'test_stat': '452 passed, 5 skipped', 'changed': [], 'missing': []}
+- pytest: {'status': 'ok', 'test_stat': '503 passed, 5 skipped', 'changed': [], 'missing': []}
 - md_quality_all: md_quality: scope=all files=468 errors=0 warnings=1
 - md_integrity_all: md_integrity_check scanned=449 findings=0
 - linkcheck_all: linkcheck: scope=all files=468 missing=940

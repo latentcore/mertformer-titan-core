@@ -109,6 +109,7 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `scripts/build_chess_training_readiness_report.py` | `fallback` |
 | `scripts/build_closure_governance_pack.py` | `TODO`, `scaffold`, `fallback` |
 | `scripts/check_57_matrix.py` | `scaffold`, `fallback` |
+| `scripts/check_dead_attribute_disease.py` | `fallback` |
 | `scripts/check_doc_claim_consistency.py` | `fallback` |
 | `scripts/chess_5080_onefile.py` | `fallback` |
 | `scripts/data_pipeline.py` | `fallback` |
@@ -125,6 +126,7 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `scripts/mobile_export.py` | `fallback` |
 | `scripts/precompute_logits_topk.py` | `fallback` |
 | `scripts/preflight_run.py` | `fallback` |
+| `scripts/preflight_run_pilot171m.py` | `fallback` |
 | `scripts/record_dataset_hashes.py` | `fallback` |
 | `scripts/run_liquid_ablation.py` | `fallback` |
 | `scripts/smart_runner.py` | `fallback` |
