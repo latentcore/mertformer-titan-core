@@ -23,6 +23,31 @@ def test_collect_entries_can_run_with_temp_scope(monkeypatch, tmp_path: Path) ->
     assert all(entry["disposition"] == "delete_as_stale_generated" for entry in entries)
 
 
+def test_collect_entries_tolerates_unreadable_external_file(monkeypatch, tmp_path: Path, capsys) -> None:
+    unreadable = tmp_path / "mertformer-locked.zip"
+    unreadable.write_bytes(b"locked")
+    readable = tmp_path / "mertformer-readable.zip"
+    readable.write_bytes(b"readable")
+    monkeypatch.setattr(intake, "SCOPED_PATTERNS", [unreadable, readable])
+    monkeypatch.setattr(intake, "SCAN_ROOTS", [])
+
+    real_sha256_file = intake.sha256_file
+
+    def flaky_sha256_file(path: Path) -> str:
+        if path == unreadable:
+            raise PermissionError(1, "Operation not permitted", str(path))
+        return real_sha256_file(path)
+
+    monkeypatch.setattr(intake, "sha256_file", flaky_sha256_file)
+
+    entries = intake.collect_entries()
+    assert len(entries) == 2
+    by_name = {Path(entry["path"]).name: entry for entry in entries}
+    assert by_name["mertformer-locked.zip"]["sha256"] is None
+    assert by_name["mertformer-readable.zip"]["sha256"] is not None
+    assert "WARN: skip unreadable scoped-intake file" in capsys.readouterr().err
+
+
 def test_collect_entries_marks_immutable_and_canonical_sources(monkeypatch, tmp_path: Path) -> None:
     immutable_zip = tmp_path / "mertformer_outputs_history.zip"
     immutable_zip.write_bytes(b"immutable")

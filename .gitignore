@@ -141,3 +141,4 @@ reports/tokenizer_sync_final_report.md
 reports/kaggle_onefile_closure_verify.json
 reports/cleanup_scoped_closure_junk_report.json
 reports/release_closure_lock_report.json
+reports/bandit_security_scan.json

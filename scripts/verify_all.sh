@@ -36,6 +36,9 @@ echo "[verify] TITAN_OFFLINE=$TITAN_OFFLINE"
 echo "[verify] Secret scan ..."
 "$PY" scripts/secret_scan.py
 
+echo "[verify] bandit security scan (HIGH-severity hard-fail) ..."
+"$PY" scripts/check_bandit_security_scan.py
+
 echo "[verify] Repo hygiene guard (bare-except / stale build fossils) ..."
 "$PY" scripts/repo_hygiene_guard.py
 
@@ -78,6 +81,21 @@ echo "[verify] FACTS single-source consistency gate ..."
 
 echo "[verify] Markdown integrity gate ..."
 "$PY" scripts/md_integrity_check.py --root .
+
+echo "[verify] Dead-attribute (getattr/hasattr cosmetic-fix disease) scan ..."
+"$PY" scripts/check_dead_attribute_disease.py
+
+echo "[verify] Circular-import scan (package-level, soft-fail) ..."
+"$PY" scripts/check_circular_imports.py
+
+echo "[verify] Config overlay validity gate ..."
+"$PY" scripts/check_overlay_validity.py
+
+echo "[verify] FACTS live-drift gate ..."
+"$PY" scripts/check_facts_drift.py
+
+echo "[verify] Benchmark regression gate (checkpoint-bound; SKIPPED pre-45K) ..."
+"$PY" scripts/check_benchmark_regression_gate.py --checkpoint "${TITAN_CANONICAL_CHECKPOINT:-checkpoints/mertformer_titan_prod_final_latest.pt}"
 
 echo "[verify] Master closure matrix refresh ..."
 "$PY" scripts/build_master_closure_matrix.py

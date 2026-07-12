@@ -7,10 +7,11 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Iterable, List
+from typing import Any, Dict, Iterable, List, Optional
 
 HOME = Path.home()
 ROOT = Path(__file__).resolve().parent.parent
@@ -95,6 +96,18 @@ def sha256_file(path: Path) -> str:
                 break
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def safe_sha256_file(path: Path) -> Optional[str]:
+    """sha256_file guarded against unreadable external files (e.g. Downloads-folder
+    entries this process lacks OS permission to open). This scanner walks
+    scoped-but-external locations it does not own; one unreadable file must not
+    abort the entire scoped-intake audit (and, transitively, verify_all.sh)."""
+    try:
+        return sha256_file(path)
+    except OSError as exc:
+        print(f"WARN: skip unreadable scoped-intake file {path}: {exc}", file=sys.stderr)
+        return None
 
 
 def sanitize_path(path: Path) -> str:
@@ -229,7 +242,9 @@ def collect_entries() -> List[Dict[str, Any]]:
     zip_hash_groups: Dict[str, List[Path]] = defaultdict(list)
     for path in present:
         if path.is_file() and path.suffix == ".zip":
-            zip_hash_groups[sha256_file(path)].append(path)
+            zip_sha = safe_sha256_file(path)
+            if zip_sha is not None:
+                zip_hash_groups[zip_sha].append(path)
 
     entries: List[Dict[str, Any]] = []
     for path in present:
@@ -240,8 +255,8 @@ def collect_entries() -> List[Dict[str, Any]]:
         canonical_source = canonical_source_for(path)
         if path.is_file():
             size = path.stat().st_size
-            sha = sha256_file(path)
-            if path.suffix == ".zip" and canonical_source is None and not immutable:
+            sha = safe_sha256_file(path)
+            if sha is not None and path.suffix == ".zip" and canonical_source is None and not immutable:
                 duplicate_rank = len(zip_hash_groups[sha])
         disposition, mutation_policy = classify(path, duplicate_rank, immutable, canonical_source)
         entries.append(

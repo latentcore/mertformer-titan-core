@@ -89,6 +89,10 @@ export TITAN_BATCH_SIZE="${TITAN_BATCH_SIZE:-128}"
 export TITAN_MAX_STEPS="${TITAN_MAX_STEPS:-45000}"
 export TITAN_TARGET_TOKENS_MIN="${TITAN_TARGET_TOKENS_MIN:-23600000000}"
 export TITAN_TOKEN_BUDGET_MODE=fixed_steps    # 45000 * 128 * 4096 = 23.59B tokens ≈ target
+# [2026-07-12] BACKLOG #32: opt-in guard, off by default (config/config.py), hard-fails a
+# >5% planned-token overshoot instead of silently proceeding -- catches e.g. an inflated
+# TITAN_BATCH_SIZE_FALLBACKS or a doubled TITAN_MAX_STEPS before it burns real GPU-hours.
+export TITAN_STRICT_TOKEN_BUDGET=1
 export TITAN_PRECOMPUTE_GPUS="${TITAN_PRECOMPUTE_GPUS:-8}"
 export TITAN_WANDB="${TITAN_WANDB:-0}"
 
