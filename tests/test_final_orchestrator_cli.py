@@ -27,6 +27,10 @@ def test_final_orchestrator_plan_only_writes_contracts(tmp_path: Path):
             "python3",
             "scripts/final_orchestrator.py",
             "--plan-only",
+            "--project-root",
+            str(tmp_path),
+            "--python",
+            sys.executable,
             "--reports-dir",
             str(tmp_path),
             "--report-out",
@@ -46,7 +50,7 @@ def test_final_orchestrator_plan_only_writes_contracts(tmp_path: Path):
     assert (tmp_path / "exit_code_standard.md").exists()
     assert (tmp_path / "post_train_automation_contract.md").exists()
     assert (tmp_path / "post_train_state_machine.md").exists()
-    assert (ROOT / "interfaces" / "run_manifest_v1.schema.json").exists()
+    assert (tmp_path / "interfaces" / "run_manifest_v1.schema.json").exists()
 
 
 def test_final_orchestrator_lock_helpers(tmp_path: Path):
@@ -249,6 +253,8 @@ def test_final_orchestrator_check_only_releases_lock_and_stays_fast(tmp_path: Pa
         [
             "final_orchestrator.py",
             "--check-only",
+            "--project-root",
+            str(tmp_path),
             "--reports-dir",
             str(tmp_path),
             "--report-out",

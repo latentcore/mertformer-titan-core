@@ -71,8 +71,12 @@ _SKIP_DIR_PARTS = {".git", ".titan-venv", ".lint-venv", "__pycache__"}
 
 
 def tracked_files() -> list[str]:
+    # --cached (committed/staged) + --others --exclude-standard (untracked but
+    # not gitignored) so a brand-new source file created earlier in the same
+    # pass is scanned even before it has been `git add`ed — otherwise it slips
+    # past this guard and gets committed unchecked the moment it is staged.
     proc = subprocess.run(
-        ["git", "-C", str(PROJECT_ROOT), "ls-files"],
+        ["git", "-C", str(PROJECT_ROOT), "ls-files", "--cached", "--others", "--exclude-standard"],
         check=True, capture_output=True, text=True,
     )
     return [p for p in proc.stdout.splitlines() if p]

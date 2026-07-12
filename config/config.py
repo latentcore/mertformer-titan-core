@@ -332,7 +332,9 @@ class MertFormerConfig:
     moe_capacity_factor: float = 1.25
 
     # SAFEGUARD: Liquid Warmup Steps (Freeze for first N steps)
-    liquid_warmup_steps: int = 10000
+    # env-overridable for parity with the other pre-45K-swept tunables
+    # (TITAN_ROUTER_LR_MULT, TITAN_WARMUP_RATIO); default unchanged at 10000.
+    liquid_warmup_steps: int = int(os.environ.get("TITAN_LIQUID_WARMUP_STEPS", "10000"))
     # SAFEGUARD: Liquid spike tracking (3-strike rule)
     # [2026-07-08] `liquid_spike_threshold` is now only the COLD-START fallback floor:
     # it is used while the loss EMA is still warming up (fewer than

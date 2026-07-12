@@ -287,6 +287,17 @@ class LiquidMixer(nn.Module):
         """
         TR: Ağırlık güncellemesi sonrası cache invalidation işareti.
         EN: Marks cache invalidation after weight updates.
+
+        [2026-07-12 investigated, not wired — see BACKLOG] Currently uncalled.
+        `_ensure_qcache()` already auto-detects in-place weight mutations every
+        forward via `_compute_weight_version()` reading each param's PyTorch
+        `._version` counter, so normal optimizer steps (`.add_()`/`.copy_()`
+        style in-place updates) invalidate the cache without this method being
+        called. The one case this manual hook WOULD still matter is a full
+        `.data = new_tensor` rebind (not an in-place op) — that resets the
+        underlying tensor's `._version` to 0, which could coincidentally match
+        a stale cached version. Left uncalled + undeleted pending a GaLore/
+        checkpoint-load-path check for that specific rebind pattern.
         """
         self._weight_version += 1
         self._cache_ready = False

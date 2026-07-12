@@ -480,9 +480,11 @@ def run_post_plan(root: Path, py: str, reports_dir: Path) -> dict:
         root,
         [
             py,
-            "scripts/post_train_autorun.py",
+            str(ROOT / "scripts" / "post_train_autorun.py"),
             "--plan-only",
             "--allow-missing-checkpoint",
+            "--project-root",
+            str(root),
             "--reports-dir",
             str(reports_dir),
             "--report-out",

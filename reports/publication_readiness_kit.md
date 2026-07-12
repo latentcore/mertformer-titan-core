@@ -6,7 +6,7 @@
 
 ```markdown
 ---
-license: [PENDING — confirm final license before upload, see README.md's proprietary-vs-Apache truth-sync]
+license: other  # Proprietary & Confidential (decided 2026-06-17, see LICENSE) — HF's "other" tag + this note; not Apache-2.0
 tags: [bitnet, moe, mixture-of-experts, liquid-neural-network, gqa]
 ---
 
