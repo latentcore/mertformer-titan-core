@@ -92,16 +92,22 @@ use_qinn: false
 use_gradient_checkpointing: true
 
 # ===========================================================================
-# MEASURED 2026-07-08 via train/trainer_core.preflight_param_report() on an actual
-# MertFormer() instantiated from this exact file (NOT estimated, NOT rounded from a guess):
+# MEASURED 2026-07-12 via train/trainer_core.preflight_param_report() on an actual
+# MertFormer() instantiated from this exact file (NOT estimated, NOT rounded from a guess).
+# [2026-07-12] Re-measured after the liquid_layers_idx fix below (was [2, 5] -- collided
+# with the MoE layers, so this config could never load at all; see that fix's own comment.
+# [1, 4, 7] is the only non-colliding residue class of the same size a 9-layer/mod-3
+# stack offers, which is 3 layers, not 2 -- so the Liquid-layer count went 2 -> 3 and the
+# total grew by ~1.05M params versus the original (never-actually-loadable) 171,617,923
+# figure. Still inside the 150-250M target band the header above describes.
 #
-#     total parameters ....... 171,617,923  (~171.62M)   <- inside the 150-250M target band
-#     tied embedding ......... 65,667,072   (38.3% of total)
-#     transformer body ....... 105,950,851
+#     total parameters ....... 172,668,035  (~172.67M)   <- inside the 150-250M target band
+#     tied embedding ......... 65,667,072   (38.0% of total)
+#     transformer body ....... 107,000,963
 #     MoE layers ............. [2, 5, 8]    (3 layers, 8 experts, top-2)
-#     Liquid layers .......... [2, 5]
+#     Liquid layers .......... [1, 4, 7]    (3 layers)
 #
-# The BODY (105.95M) is what actually exercises the LR regime; the tied 128256-row
+# The BODY (107.00M) is what actually exercises the LR regime; the tied 128256-row
 # embedding is unavoidable dead weight at this scale. Every architectural element of the
 # canonical run — BitNet b1.58 ternary, sparse 8e2 MoE, Liquid/CfC + LiquidRouter, GQA —
 # is present and trained here.

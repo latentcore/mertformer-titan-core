@@ -29,6 +29,25 @@ The 70B teacher is loaded only when `distill_alpha > 0` (`train.py`). `train_smo
 bash zero_touch_start.sh --check-only   # prints train_allowed + reason code + blockers
 ```
 
+## 2b. Laptop-scale pre-flight probes (before spending cloud GPU-hours)
+
+Two self-contained, zero-argument orchestrator scripts let you sanity-check a candidate LR regime on a local CUDA laptop GPU **before** paying for cloud H100/H200 hours. Neither trains the canonical 3.67B model or makes a capability/scaling claim — both are LR-safety ("does grad_norm stay finite and does loss descend") gates only. Both bootstrap their own dependencies (never `torch`/`torchvision`/`torchaudio`/`triton`/`bitsandbytes` — those must already match your local CUDA build) and package a `REPORT.md` + output ZIP on completion.
+
+```bash
+python3 scripts/preflight_run.py             # 36M param toy probe, no config overlay needed
+python3 scripts/preflight_run_pilot171m.py    # 172.67M param Go/No-Go pilot (BACKLOG.md T1.5)
+```
+
+| | `preflight_run.py` | `preflight_run_pilot171m.py` |
+|---|---|---|
+| Params | ~36M (hardcoded toy architecture) | 172.67M (measured; `config/model/mertformer_pilot_stabilization.yaml`) |
+| Config source | hardcoded constants in the script | `MERTFORMER_MODEL_CONFIG` overlay, asserted against a live `cfg` before training starts |
+| Optimizer | plain AdamW | GaLore + 8-bit Adam (same as the real 45K; falls back to plain AdamW with a printed warning if `bitsandbytes` is missing) |
+| Purpose | cheapest possible smoke of the LR regime | the documented Go/No-Go stabilization gate before committing to 45K |
+| Output | `preflight_run_output.zip` | `pilot171m_run_output.zip` |
+
+Both resume automatically on rerun (`TITAN_AUTO_RESUME=1` semantics); delete the output zip and work directory to start over. Self-contained, portable versions of both (repo snapshot + script, no local clone needed) are prepared as needed for target-machine handoff — see each script's own module docstring for the exact bundle contents.
+
 ## 3. Launch the real run (target hardware: H100/H200)
 ```bash
 bash zero_touch_start.sh                # canonical 45K owned lane: readiness verdict,

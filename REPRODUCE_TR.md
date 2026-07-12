@@ -29,6 +29,25 @@ Bu, K4 drill'lerini (checkpoint save→restore→resume) ve CfC/MoE tolerans par
 bash zero_touch_start.sh --check-only   # train_allowed + reason code + engelleri basar
 ```
 
+## 2b. Laptop-ölçekli pre-flight probe'ları (bulut GPU-saati harcamadan önce)
+
+İki self-contained, sıfır-argümanlı orkestratör script'i, aday bir LR rejimini bulut H100/H200 saatlerine para harcamadan önce lokal CUDA'lı laptop GPU'sunda sağlık kontrolüne sokmayı sağlar. İkisi de kanonik 3.67B modeli eğitmez, kabiliyet/ölçekleme iddiası taşımaz — ikisi de yalnız LR-güvenliği ("grad_norm sonlu kalıyor mu, loss iniyor mu") kapısıdır. İkisi de kendi bağımlılıklarını bootstrap eder (asla `torch`/`torchvision`/`torchaudio`/`triton`/`bitsandbytes` — bunlar lokal CUDA build'inizle zaten eşleşmeli) ve tamamlanınca bir `REPORT.md` + çıktı ZIP'i paketler.
+
+```bash
+python3 scripts/preflight_run.py             # 36M parametrelik toy probe, config overlay gerekmez
+python3 scripts/preflight_run_pilot171m.py    # 172.67M parametrelik Go/No-Go pilotu (BACKLOG.md T1.5)
+```
+
+| | `preflight_run.py` | `preflight_run_pilot171m.py` |
+|---|---|---|
+| Parametre | ~36M (script içinde hardcoded toy mimari) | 172.67M (ölçülen; `config/model/mertformer_pilot_stabilization.yaml`) |
+| Config kaynağı | script içindeki hardcoded sabitler | `MERTFORMER_MODEL_CONFIG` overlay'i, eğitim başlamadan önce canlı `cfg`'ye karşı doğrulanır |
+| Optimizer | düz AdamW | GaLore + 8-bit Adam (gerçek 45K ile aynı; `bitsandbytes` yoksa basılı bir uyarıyla düz AdamW'ye düşer) |
+| Amaç | LR rejiminin en ucuz mümkün smoke'u | 45K'ya commit etmeden önceki belgeli Go/No-Go kararlılık kapısı |
+| Çıktı | `preflight_run_output.zip` | `pilot171m_run_output.zip` |
+
+İkisi de yeniden çalıştırıldığında otomatik resume eder (`TITAN_AUTO_RESUME=1` semantiği); baştan başlamak için çıktı zip'ini ve çalışma dizinini silin. İkisinin de self-contained, taşınabilir versiyonları (repo snapshot + script, lokal clone gerekmez) hedef-makine handoff'u için gerektiğinde hazırlanır — tam bundle içeriği için her script'in kendi modül docstring'ine bakın.
+
 ## 3. Gerçek koşuyu başlat (hedef donanım: H100/H200)
 ```bash
 bash zero_touch_start.sh                # kanonik 45K sahipli lane: readiness verdict,
