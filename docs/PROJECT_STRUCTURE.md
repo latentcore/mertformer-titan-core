@@ -95,6 +95,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   └── pretrain.yaml  # YAML configuration file
 │   ├── __init__.py  # Python module/script (config package initializer and exports)
 │   ├── base.yaml  # YAML configuration file
+│   ├── build_label.py  # Python module/script (module for build label)
 │   └── config.py  # Python module/script (runtime configuration model and validation helpers)
 ├── configs/  # directory
 │   ├── README.md  # primary documentation (EN)
@@ -134,14 +135,22 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── efficiency_report_TR.md  # Turkish document counterpart
 │   └── flops_estimator.py  # Python module/script (module for flops estimator)
 ├── eval/  # directory
+│   ├── __init__.py  # Python module/script (eval package initializer and exports)
+│   ├── _probe_common.py  # Python module/script (evaluation routine for probe common)
+│   ├── adversarial_prompt_robustness.py  # Python module/script (evaluation routine for adversarial prompt robustness)
 │   ├── agentic_suite.py  # Python module/script (evaluation routine for agentic suite)
+│   ├── bias_fairness_probe.py  # Python module/script (evaluation routine for bias fairness probe)
+│   ├── calibration_ece.py  # Python module/script (evaluation routine for calibration ece)
 │   ├── generalization_suite.py  # Python module/script (evaluation routine for generalization suite)
 │   ├── golden.py  # Python module/script (evaluation routine for golden)
 │   ├── golden_score.py  # Python module/script (evaluation routine for golden score)
 │   ├── gsm8k.py  # Python module/script (evaluation routine for gsm8k)
+│   ├── hallucination_rate_probe.py  # Python module/script (evaluation routine for hallucination rate probe)
 │   ├── held_out_ppl.py  # Python module/script (evaluation routine for held out ppl)
 │   ├── humaneval.py  # Python module/script (evaluation routine for humaneval)
-│   └── report_builder.py  # Python module/script (evaluation routine for report builder)
+│   ├── membership_inference_probe.py  # Python module/script (evaluation routine for membership inference probe)
+│   ├── report_builder.py  # Python module/script (evaluation routine for report builder)
+│   └── toxicity_probe.py  # Python module/script (evaluation routine for toxicity probe)
 ├── evidence/  # directory
 │   ├── 2026-07-02-laptop-preflight/  # directory
 │   │   ├── README.md  # primary documentation (EN)
@@ -337,6 +346,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   ├── kaggle_compare_build30.csv  # CSV data artifact
 │   │   ├── kaggle_compare_build30.json  # JSON data artifact
 │   │   ├── kaggle_compare_build30.md  # documentation/report file
+│   │   ├── regression_gate_summary.json  # JSON data artifact
 │   │   ├── smoke_train_metrics.json  # JSON data artifact
 │   │   ├── summary.json  # JSON data artifact
 │   │   └── summary.md  # documentation/report file
@@ -354,6 +364,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │       └── web_validation_sources_2026-02-24.md  # documentation/report file
 │   ├── FACTS.json  # JSON data artifact
 │   ├── adr_index.md  # documentation/report file
+│   ├── anthropic_fellows_application_checklist.md  # documentation/report file
 │   ├── architecture_honesty_audit.md  # documentation/report file
 │   ├── artifacts_zip_denylist_audit.json  # JSON data artifact
 │   ├── asset_stack.md  # documentation/report file
@@ -369,6 +380,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── benchmark_compare_report.json  # JSON data artifact
 │   ├── benchmark_compare_report.md  # documentation/report file
 │   ├── benchmark_contract.md  # documentation/report file
+│   ├── blog_liquid_ablation_draft.md  # documentation/report file
 │   ├── canonical_entrypoint.md  # documentation/report file
 │   ├── cfc_moe_tolerance_report.json  # JSON data artifact
 │   ├── change_control_sop.md  # documentation/report file
@@ -408,6 +420,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── data_pipeline_contract.md  # documentation/report file
 │   ├── data_pipeline_provenance.json  # JSON data artifact
 │   ├── data_pipeline_token_probe.json  # JSON data artifact
+│   ├── data_poisoning_risk_analysis.md  # documentation/report file
+│   ├── data_provenance_audit_template.md  # documentation/report file
 │   ├── dataset_health.md  # documentation/report file
 │   ├── dataset_health_TR.md  # Turkish document counterpart
 │   ├── dealroom_reference.json  # JSON data artifact
@@ -416,6 +430,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── deprecated_surface_report.md  # documentation/report file
 │   ├── determinism_report.json  # JSON data artifact
 │   ├── differential_backend_report.json  # JSON data artifact
+│   ├── divergence_guard_decision_brief.md  # documentation/report file
 │   ├── doc_alignment_report.json  # JSON data artifact
 │   ├── doc_alignment_report.md  # documentation/report file
 │   ├── doc_ownership_matrix.md  # documentation/report file
@@ -458,16 +473,20 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── hardening_bundle_summary.json  # JSON data artifact
 │   ├── immutable_evidence_register.json  # JSON data artifact
 │   ├── immutable_evidence_register.md  # documentation/report file
+│   ├── independent_signoff_template.md  # documentation/report file
 │   ├── kernel_fuzz_report.json  # JSON data artifact
 │   ├── known_limits_v1.md  # documentation/report file
 │   ├── kpi_contract_build30.md  # documentation/report file
 │   ├── kpi_pack_v1.md  # documentation/report file
 │   ├── kpi_pack_v1_TR.md  # Turkish document counterpart
 │   ├── kpi_report_v1.json  # JSON data artifact
+│   ├── lane_cost_tradeoff_brief.md  # documentation/report file
 │   ├── latency_baseline.json  # JSON data artifact
+│   ├── launch_time_decisions_checklist.md  # documentation/report file
 │   ├── legal_cleanroom_signoff_internal.md  # documentation/report file
 │   ├── license_gate_report.json  # JSON data artifact
 │   ├── linkcheck_report.json  # JSON data artifact
+│   ├── liquid_keep_or_drop_brief.md  # documentation/report file
 │   ├── local_50step_proof_report.json  # JSON data artifact
 │   ├── logger_contract.md  # documentation/report file
 │   ├── logits_integrity_report.md  # documentation/report file
@@ -490,6 +509,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── ownership_proof_bundle.json  # JSON data artifact
 │   ├── package_smoke_report.json  # JSON data artifact
 │   ├── package_validation_report.md  # documentation/report file
+│   ├── paper_outline_draft.md  # documentation/report file
 │   ├── param_accounting_report.md  # documentation/report file
 │   ├── phase2_carryover.md  # documentation/report file
 │   ├── pilot_acceptance_signoff.md  # documentation/report file
@@ -500,12 +520,14 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── poc_protocol.md  # documentation/report file
 │   ├── poc_protocol_TR.md  # Turkish document counterpart
 │   ├── post_45k_decision_tree.md  # documentation/report file
+│   ├── post_45k_research_agenda.md  # documentation/report file
 │   ├── post_train_automation_contract.md  # documentation/report file
 │   ├── post_train_autorun_status.json  # JSON data artifact
 │   ├── post_train_autorun_status.md  # documentation/report file
 │   ├── post_train_state_machine.md  # documentation/report file
 │   ├── proje_zip_rebuild_manifest_v2.json  # JSON data artifact
 │   ├── proje_zip_rebuild_manifest_v2.md  # documentation/report file
+│   ├── publication_readiness_kit.md  # documentation/report file
 │   ├── quality_gate_matrix.md  # documentation/report file
 │   ├── ram_guard_report.json  # JSON data artifact
 │   ├── release_snapshot.md  # documentation/report file
@@ -518,6 +540,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── report_accuracy_audit.md  # documentation/report file
 │   ├── report_accuracy_audit_TR.md  # Turkish document counterpart
 │   ├── repro_build_report.json  # JSON data artifact
+│   ├── responsible_ai_checklist.md  # documentation/report file
 │   ├── resume_compat_report.json  # JSON data artifact
 │   ├── review_checklist.md  # documentation/report file
 │   ├── review_checklist_TR.md  # Turkish document counterpart
@@ -533,6 +556,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── snapshot_manifest_dealroom.json  # JSON data artifact
 │   ├── snapshot_manifest_main.json  # JSON data artifact
 │   ├── source_of_truth_map.md  # documentation/report file
+│   ├── stage3_mixture_freeze_proposal.md  # documentation/report file
 │   ├── stale_script_report.md  # documentation/report file
 │   ├── start_gate_operator_decision.json  # JSON data artifact
 │   ├── start_gate_operator_decision.md  # documentation/report file
@@ -629,8 +653,14 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── cfc_moe_tolerance_check.py  # Python module/script (automation script for cfc moe tolerance check)
 │   ├── chat.py  # Python module/script (automation script for chat)
 │   ├── check_57_matrix.py  # Python module/script (automation script for check 57 matrix)
+│   ├── check_bandit_security_scan.py  # Python module/script (automation script for check bandit security scan)
+│   ├── check_benchmark_regression_gate.py  # Python module/script (automation script for check benchmark regression gate)
+│   ├── check_circular_imports.py  # Python module/script (automation script for check circular imports)
+│   ├── check_dead_attribute_disease.py  # Python module/script (automation script for check dead attribute disease)
 │   ├── check_doc_claim_consistency.py  # Python module/script (automation script for check doc claim consistency)
 │   ├── check_facts_consistency.py  # Python module/script (automation script for check facts consistency)
+│   ├── check_facts_drift.py  # Python module/script (automation script for check facts drift)
+│   ├── check_overlay_validity.py  # Python module/script (automation script for check overlay validity)
 │   ├── check_tokenizer_sync.py  # Python module/script (automation script for check tokenizer sync)
 │   ├── check_translation_pointer_policy.py  # Python module/script (automation script for check translation pointer policy)
 │   ├── checkpoint_restore_drill.py  # Python module/script (automation script for checkpoint restore drill)
@@ -646,6 +676,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── download_tr_tokenizer.py  # Python module/script (automation script for download tr tokenizer)
 │   ├── drone_sitl_demo.py  # Python module/script (automation script for drone sitl demo)
 │   ├── duplicate_zip_guard.py  # Python module/script (automation script for duplicate zip guard)
+│   ├── estimate_carbon_footprint.py  # Python module/script (automation script for estimate carbon footprint)
+│   ├── estimate_shard_disk.py  # Python module/script (automation script for estimate shard disk)
 │   ├── eval.py  # Python module/script (automation script for eval)
 │   ├── export_chess_5080_share.py  # Python module/script (automation script for export chess 5080 share)
 │   ├── extract_dataset_refs.py  # Python module/script (automation script for extract dataset refs)
@@ -670,6 +702,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── launch_8xb300.sh  # shell automation script
 │   ├── launch_ocean_45k.sh  # shell automation script
 │   ├── linkcheck_gate.py  # Python module/script (automation script for linkcheck gate)
+│   ├── linkify_doc_paths.py  # Python module/script (automation script for linkify doc paths)
 │   ├── liquid_train_impl_benchmark.py  # Python module/script (automation script for liquid train impl benchmark)
 │   ├── logbook_build.py  # Python module/script (automation script for logbook build)
 │   ├── logbook_verify.py  # Python module/script (automation script for logbook verify)
@@ -679,6 +712,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── md_build30_sweep.py  # Python module/script (automation script for md build30 sweep)
 │   ├── md_integrity_check.py  # Python module/script (automation script for md integrity check)
 │   ├── md_quality_gate.py  # Python module/script (automation script for md quality gate)
+│   ├── measure_random_init_baseline.py  # Python module/script (automation script for measure random init baseline)
 │   ├── mertformer_5080_final_onefile.py  # Python module/script (automation script for mertformer 5080 final onefile)
 │   ├── mini_titan_poc.py  # Python module/script (automation script for mini titan poc)
 │   ├── mobile_export.py  # Python module/script (automation script for mobile export)
@@ -693,6 +727,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── precompute_logits_parallel.py  # Python module/script (automation script for precompute logits parallel)
 │   ├── precompute_logits_topk.py  # Python module/script (automation script for precompute logits topk)
 │   ├── preflight_run.py  # Python module/script (automation script for preflight run)
+│   ├── preflight_run_pilot171m.py  # Python module/script (automation script for preflight run pilot171m)
 │   ├── ram_guard.py  # Python module/script (automation script for ram guard)
 │   ├── record_dataset_hashes.py  # Python module/script (automation script for record dataset hashes)
 │   ├── release_build30.sh  # shell automation script
@@ -746,7 +781,13 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_build_training_outputs_bundle.py  # Python module/script (automated test module for build training outputs bundle)
 │   ├── test_build_validation_set.py  # Python module/script (automated test module for build validation set)
 │   ├── test_build_workspace_hygiene_manifest.py  # Python module/script (automated test module for build workspace hygiene manifest)
+│   ├── test_check_bandit_security_scan.py  # Python module/script (automated test module for check bandit security scan)
+│   ├── test_check_benchmark_regression_gate.py  # Python module/script (automated test module for check benchmark regression gate)
+│   ├── test_check_circular_imports.py  # Python module/script (automated test module for check circular imports)
+│   ├── test_check_dead_attribute_disease.py  # Python module/script (automated test module for check dead attribute disease)
 │   ├── test_check_doc_claim_consistency.py  # Python module/script (automated test module for check doc claim consistency)
+│   ├── test_check_facts_drift.py  # Python module/script (automated test module for check facts drift)
+│   ├── test_check_overlay_validity.py  # Python module/script (automated test module for check overlay validity)
 │   ├── test_checkpoint_tokenizer_id.py  # Python module/script (automated test module for checkpoint tokenizer id)
 │   ├── test_chess_5080_onefile.py  # Python module/script (automated test module for chess 5080 onefile)
 │   ├── test_chess_gui_contract.py  # Python module/script (automated test module for chess gui contract)
@@ -765,6 +806,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_drone_sitl_demo.py  # Python module/script (automated test module for drone sitl demo)
 │   ├── test_duplicate_zip_guard.py  # Python module/script (automated test module for duplicate zip guard)
 │   ├── test_eval_generation_eos.py  # Python module/script (automated test module for eval generation eos)
+│   ├── test_eval_package_shadow_regression.py  # Python module/script (automated test module for eval package shadow regression)
+│   ├── test_eval_probes.py  # Python module/script (automated test module for eval probes)
 │   ├── test_eval_suites.py  # Python module/script (automated test module for eval suites)
 │   ├── test_export_chess_5080_share.py  # Python module/script (automated test module for export chess 5080 share)
 │   ├── test_export_metadata.py  # Python module/script (automated test module for export metadata)
@@ -788,6 +831,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_kill_if_non_finite.py  # Python module/script (automated test module for kill if non finite)
 │   ├── test_kpi_report_cli.py  # Python module/script (automated test module for kpi report cli)
 │   ├── test_lifelong_safety.py  # Python module/script (automated test module for lifelong safety)
+│   ├── test_linkify_doc_paths.py  # Python module/script (automated test module for linkify doc paths)
 │   ├── test_liquid_generate_parity.py  # Python module/script (automated test module for liquid generate parity)
 │   ├── test_liquid_safeguard.py  # Python module/script (automated test module for liquid safeguard)
 │   ├── test_mertformer_5080_final_onefile.py  # Python module/script (automated test module for mertformer 5080 final onefile)
