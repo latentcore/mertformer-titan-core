@@ -1,0 +1,62 @@
+{
+  "prepared": "2026-07-12",
+  "claim_boundary": "Both runs are laptop-scale LR/stability diagnostic runs, NOT capability runs. Neither produced a usable checkpoint (36M was superseded by the 171M pilot; 171M was manually interrupted mid-divergence). This is infrastructure + negative-training-dynamics evidence only.",
+  "runs": {
+    "36M_preflight": {
+      "script": "scripts/preflight_run.py",
+      "repo_snapshot": "commit 8e8978f + local liquid_layers_idx fix (see MertFormer_5070_Preflight_Run_8e8978f_2026-07-11/README_FIRST.txt)",
+      "hardware": "NVIDIA GeForce RTX 5070 Laptop GPU (sm_120, 8.0 GB VRAM), Windows 11, Python 3.14.6, torch cu128",
+      "measured_params": 36200000,
+      "architecture": "6L x 384h, GQA 6q/3kv, MoE 8x2 at layers [2,5], 1 Liquid mixer at layer 3, seq 512, global batch 32, max_steps 1830",
+      "optimizer": "AdamW8bit (use_galore=True, use_8bit_adam=True, galore_available=False -> GaLore fell back to plain AdamW8bit)",
+      "lr_schedule": "peak=3e-4, warmup=274 steps (ratio 0.15), router_lr_mult=1.0",
+      "liquid_warmup_steps": 200,
+      "outcome": "DIVERGED, twice, correlated with Liquid unfreeze events",
+      "timeline": {
+        "step_10_190": "healthy: loss 10.44 -> 10.11, GradNorm 0.4-3.5, MoE Overflow ~0",
+        "step_200": "Liquid unfreezes (liquid_warmup_steps=200, before LR-warmup-end at 274 and before divergence-guard-arm at 274)",
+        "step_200_270": "first explosion: GradNorm 30 -> 2.35e13 (step 230 peak), loss climbs to 30.33 (step 270)",
+        "step_220_liquid_spike_guard": "Liquid EMA-relative spike guard trips ('loss>15.06, 3 strikes'), freezes Liquid until step 414 -- this safety mechanism worked as designed",
+        "step_270_320": "partial recovery: loss returns to ~10.3, GradNorm drops to ~10K",
+        "step_414": "Liquid cooldown ends, unfreezes again",
+        "step_420_500": "second explosion: loss climbs to 19.93 (step 500), GradNorm again into the trillions",
+        "final_step_manually_interrupted": 505,
+        "divergence_guard_armed_at": "step 274, reference loss_ema=19.7880 (already elevated by the first explosion's tail -- the guard's own reference was contaminated at arm-time)"
+      },
+      "root_cause_assessment": "liquid_warmup_steps=200 (an ad-hoc value in preflight_run.py, distinct from the pilot yaml's carefully-derived 667) unfreezes Liquid BEFORE the LR warmup completes (274) and before the divergence guard arms (also 274) -- a real ordering bug specific to this script. The pilot yaml's own comment already documented not copying this ad-hoc value."
+    },
+    "171M_pilot": {
+      "script": "scripts/preflight_run_pilot171m.py",
+      "repo_snapshot": "commit 8e8978f + local liquid_layers_idx collision fix (see MertFormer_171M_Pilot_Run_2026-07-12/README_FIRST.txt)",
+      "hardware": "NVIDIA GeForce RTX 5070 Laptop GPU (sm_120, 8.0 GB VRAM), Windows 11, Python 3.14.6, torch cu128",
+      "measured_params_this_run": 123380000,
+      "canonical_measured_params": 172668035,
+      "vocab_size_this_run": 32000,
+      "canonical_vocab_size": 128256,
+      "param_count_delta_explanation": "This run used an offline test tokenizer (hf-internal-testing/llama-tokenizer, vocab=32000) instead of the canonical 128256-vocab tokenizer, purely for offline/no-auth compatibility. The overlay-verified transformer body (9L, 512h, GQA 8q/2kv, MoE 8x2 at [2,5,8], Liquid at [1,4,7]) matches the canonical pilot spec exactly -- the embedding-table-driven param delta (172,668,035 - 123,380,000 = 49,288,035, closely matching (128256-32000)*512=49,283,072) does not affect the LR/stability question this pilot is designed to answer.",
+      "optimizer": "AdamW8bit (use_galore=True, use_8bit_adam=True, galore_available=True)",
+      "lr_schedule": "peak=3e-4, warmup=450 steps (ratio 0.15), router_lr_mult=1.0",
+      "liquid_warmup_steps": 667,
+      "z_loss_coef_this_run": 0.0001,
+      "router_aux_loss_coef_this_run": 0.02,
+      "effective_z_loss_weight_this_run": 0.000002,
+      "outcome": "DIVERGED, once, NOT correlated with Liquid (Liquid never unfroze -- run stopped before step 667)",
+      "timeline": {
+        "step_10_370": "healthy: loss 10.58 -> 9.99, GradNorm 0.5-134926 (climbing but loss still descending), MoE Overflow low",
+        "step_380": "loss starts climbing (10.50), GradNorm 2.9e6",
+        "step_400_560": "sustained explosion: GradNorm 2.09e9 (step 400) -> 1.31e12 (step 560); loss peaks at 14.30 (step 540)",
+        "step_450_divergence_guard_armed": "reference loss_ema=11.9316 (already slightly elevated above the true ~10.5 baseline by the early-onset instability)",
+        "divergence_guard_never_tripped": "loss never exceeded 1.5x the (already-elevated) 11.9316 reference (would need >17.9); the guard is loss-only and does not track grad_norm, so it stayed silent through the entire GradNorm-into-the-trillions episode",
+        "final_step_manually_interrupted": 563,
+        "checkpoint_saved": "pilot171m_stabilization_step_563.pt (graceful interrupt-save; NOT committed to the repo, per the repo's own checkpoint-retention policy for small validation runs -- see evidence/2026-07-02-laptop-preflight/README.md precedent)"
+      },
+      "root_cause_assessment": "Liquid-unfreeze-timing does NOT explain this run (Liquid never activated). Divergence onset correlates instead with LR crossing roughly 2.0e-4-2.5e-4 during warmup, in lockstep with MoE Overflow/Balance(std) degrading (0.03->0.15-0.19 across the explosion window). The z-loss effective weight (2e-6, confirmed in this run's own config) is the leading candidate root cause: z-loss's sole purpose is bounding router-logit growth, and its ~50x-under-strength value is consistent with the observed MoE routing instability driving the gradient explosion."
+    }
+  },
+  "cross_run_finding": "Two divergences at two different scales, two different proximate triggers (Liquid-unfreeze-timing vs mid-warmup LR level), both showing the same signature: GradNorm explosion correlated with MoE routing degradation, loss partially protected by clip=2.0, divergence guard (loss-only) never tripping despite catastrophic GradNorm. This points at a shared underlying cause (MoE router regularization, i.e. z-loss) rather than two unrelated bugs.",
+  "actions_taken": [
+    "z_loss_coef changed 1e-4 -> 0.05 in config/config.py (compensates the existing double-multiply so the effective weight lands at 1e-3, the Switch-Transformer/ST-MoE convention) -- CANDIDATE, not verified on real hardware",
+    "divergence guard's loss-only blind spot documented in BACKLOG.md/_TR as a new, unfixed finding",
+    "no further preflight/pilot re-run planned before the real 45K launch, per explicit user decision"
+  ]
+}

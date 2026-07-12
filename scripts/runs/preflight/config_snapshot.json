@@ -47,7 +47,7 @@
     16
   ],
   "liquid_every_n_layers": 0,
-  "z_loss_coef": 0.0001,
+  "z_loss_coef": 0.05,
   "moe_capacity_enforce": true,
   "moe_capacity_factor": 1.25,
   "liquid_warmup_steps": 10000,

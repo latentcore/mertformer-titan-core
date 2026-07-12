@@ -325,8 +325,26 @@ class MertFormerConfig:
     liquid_layers_idx: list = field(default_factory=lambda: [4, 10, 16])  # [FIX] Adjusted for 18 layers (No OOB)
     liquid_every_n_layers: int = 0  # Disabled (using explicit indices instead)
 
-    # Router Z-Loss for stability
-    z_loss_coef: float = 1e-4
+    # Router Z-Loss for stability.
+    # [2026-07-12 CANDIDATE, unverified by a dedicated GPU re-run — see BACKLOG]
+    # z_loss gets folded into aux_loss inside layers/moe.py, then aux_loss is
+    # scaled AGAIN by router_aux_loss_coef (0.02) in train/train.py — a
+    # double-multiply that left the effective z-loss weight at
+    # 1e-4 * 0.02 = 2e-6, ~50x below the ~1e-3 Switch-Transformer/ST-MoE
+    # convention (a plain scalar applied once, not double-scaled). Two
+    # independent RTX-5070 divergence runs (36M 2026-07-12, 171M 2026-07-12)
+    # both showed GradNorm exploding into the trillions in lockstep with MoE
+    # Overflow/Balance degrading, while loss stayed clip-protected enough that
+    # the loss-based divergence guard never tripped — consistent with a
+    # too-weak router-logit regularizer. Value below is chosen so that, AFTER
+    # the existing double-multiply, the effective weight lands at 1e-3
+    # (0.05 * 0.02 = 1e-3): a single-file, single-line compensating change
+    # that does NOT alter the moe.py/train.py double-multiply structure
+    # itself (a structural fix is a separate, larger change). This
+    # deliberately reopens a 2026-07-08 pre-45K freeze decision on this exact
+    # item; NOT verified on real hardware — the next RTX-5070/45K run is the
+    # verification event, same discipline as F1/F3.
+    z_loss_coef: float = 0.05
     # MoE capacity control (Switch-style overflow guard)
     moe_capacity_enforce: bool = True
     moe_capacity_factor: float = 1.25
