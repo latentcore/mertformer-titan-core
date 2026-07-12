@@ -16,7 +16,7 @@ is consumed by the self-contained onefile demo (scripts/mertformer_5080_final_on
 is available for ad-hoc conversion of an existing fp checkpoint.
 """
 
-__version__ = "1.0-BUILD30-V2"
+from config.build_label import BUILD_LABEL as __version__
 __author__ = "Mert Yünlü"
 
 import torch

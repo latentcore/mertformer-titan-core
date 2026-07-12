@@ -27,7 +27,7 @@ training path; it is disabled (feature-flagged off) on that path and is not
 exercised during pre-training. Treat as an experimental cognitive shell.
 """
 
-__version__ = "1.0-BUILD30-V2"
+from config.build_label import BUILD_LABEL as __version__
 __author__ = "Mert Yünlü"
 
 import logging

@@ -115,4 +115,4 @@ __all__ = [
 ]
 
 # Legacy build etiketi; kanonik surum kaynagi degil (inert orchestrator paketi).
-__version__ = "1.0-BUILD30-V2"
+from config.build_label import BUILD_LABEL as __version__

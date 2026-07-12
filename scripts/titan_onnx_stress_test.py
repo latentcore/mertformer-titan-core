@@ -13,7 +13,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 
 # NOTE: manually-maintained local version label (fossil); not derived from a
 # central release manifest and may drift from the repo's actual version.
-__version__ = "1.0-BUILD30-V2"
+from config.build_label import BUILD_LABEL as __version__
 __author__ = "Mert Yünlü"
 
 try:

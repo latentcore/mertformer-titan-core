@@ -20,7 +20,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 # NOTE: legacy/fossil version label hand-copied across orchestrator modules
 # (memory.py/sense_engine.py carry the same string). Not derived from a single
 # source of truth; treat as cosmetic, not an authoritative build version.
-__version__ = "1.0-BUILD30-V2"
+from config.build_label import BUILD_LABEL as __version__
 __author__ = "Mert Yünlü"
 
 import pathlib

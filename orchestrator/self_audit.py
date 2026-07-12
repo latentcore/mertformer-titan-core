@@ -24,7 +24,7 @@ TR: Cikti denetimi (lexical proxy) — sozcuksel ortusum tabanli tahmini sinyall
 EN: Output audit (lexical proxy) — word-overlap heuristics, NOT calibrated metrics.
 """
 
-__version__ = "1.0-BUILD30-V2"
+from config.build_label import BUILD_LABEL as __version__
 __author__ = "Mert Yünlü"
 
 import logging

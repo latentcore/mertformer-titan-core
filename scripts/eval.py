@@ -13,7 +13,7 @@ Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 """
 
-__version__ = "1.0-BUILD30-V2"  # fosil: elle bakımlı sürüm etiketi; merkezi manifestten türetilmez, sapabilir
+from config.build_label import BUILD_LABEL as __version__
 __author__ = "Mert Yünlü"
 
 import sys
