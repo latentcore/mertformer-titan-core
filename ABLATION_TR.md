@@ -56,3 +56,11 @@ Liquid AÇIK daha yavaştı — üretim iddiası değildir.
 ## Diğer ablasyonlar (beklemede — eğitim donanımı gerekir)
 `ablations/`, `no_moe`, `dense_only`, `bitlinear_off` için iskeletler tutar. Bunlar gerçek GPU
 eğitimi ister ve koşulmadı. Bileşen değeri, ölçekte ölçülene kadar hipotezdir.
+
+`layers/moe.py` içinde varsayılan kapalı iki bileşen daha var (`use_structural_plasticity`,
+`use_cross_expert_sync_bus`) ve yukarıdakiler gibi hiç ablasyona girmedi: `structural_plasticity`
+(kullanım EMA'sına göre periyodik uzman budama/büyütme) ve `cross_expert_sync_bus` (opsiyonel,
+attention'dan bağımsız çapraz-uzman koordinasyon sinyali). İkisinin de `ablations/` altında henüz
+iskeleti yok, ikisi de kanonik eğitim yolunda çalışmıyor. Liquid'in 12-seed ablasyonundan önceki
+disiplinle aynı: kodda var olması değer kanıtı değildir. 2026-07-13'te işaretlendi; iskelet/koşu
+planlı değil — eğitim donanımı bu soruya harcanabilir hale gelince eklenir.

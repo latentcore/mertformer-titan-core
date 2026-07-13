@@ -159,6 +159,13 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   ├── metrics_summary.json  # JSON data artifact
 │   │   ├── run_config.json  # JSON data artifact
 │   │   └── step_metrics.csv  # CSV data artifact
+│   ├── 2026-07-12-laptop-preflight-v2/  # directory
+│   │   ├── README.md  # primary documentation (EN)
+│   │   ├── console_171m_full_scrubbed.log  # text/log artifact
+│   │   ├── console_36m_full_scrubbed.log  # text/log artifact
+│   │   ├── metrics_summary.json  # JSON data artifact
+│   │   ├── run_config_171m.json  # JSON data artifact
+│   │   └── run_config_36m.json  # JSON data artifact
 │   ├── build30_t4_onecell/  # directory
 │   │   ├── EVIDENCE_POINTER.md  # documentation/report file
 │   │   ├── run_summary.json  # JSON data artifact
@@ -875,7 +882,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_triton_fused_bitlinear_import.py  # Python module/script (automated test module for triton fused bitlinear import)
 │   ├── test_validate_logit_alignment.py  # Python module/script (automated test module for validate logit alignment)
 │   ├── test_world_model_head.py  # Python module/script (automated test module for world model head)
-│   └── test_wsd_schedule_clamp.py  # Python module/script (automated test module for wsd schedule clamp)
+│   ├── test_wsd_schedule_clamp.py  # Python module/script (automated test module for wsd schedule clamp)
+│   └── test_z_loss_effective_weight.py  # Python module/script (automated test module for z loss effective weight)
 ├── tokenizer/  # directory
 │   ├── tr/  # directory
 │   │   ├── README.md  # primary documentation (EN)

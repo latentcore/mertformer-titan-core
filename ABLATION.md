@@ -58,3 +58,11 @@ T4, iso-wall-time, Liquid ON was slower — not a production claim.
 ## Other ablations (pending — require training hardware)
 `ablations/` holds scaffolds for `no_moe`, `dense_only`, `bitlinear_off`. These require real GPU
 training and have not been run. Component value remains a hypothesis until measured at scale.
+
+Two additional `layers/moe.py` components are flag-gated off by default (`use_structural_plasticity`,
+`use_cross_expert_sync_bus`) and, like the components above, have never been ablated: `structural_plasticity`
+(periodic prune/grow of active experts by usage EMA) and `cross_expert_sync_bus` (optional
+attention-independent cross-expert coordination signal). Neither has a scaffold under `ablations/`
+yet and neither is exercised on the canonical training path. Same discipline as Liquid before its
+12-seed ablation: presence in code is not evidence of value. Flagged 2026-07-13; no scaffold or
+run scheduled — add one when training hardware is available to spend on this specific question.

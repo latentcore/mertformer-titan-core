@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-12T20:33:06.529389+00:00",
+  "generated_utc": "2026-07-13T04:26:51.826593+00:00",
   "ok": true,
   "start_allowed": true,
   "train_allowed": true,
@@ -16,7 +16,7 @@
     "secret_scan": {
       "cmd": "<REPO_ROOT>/.titan-venv/bin/python scripts/secret_scan.py",
       "return_code": 0,
-      "stdout_tail": "OK: no secret patterns detected in git_tracked files. scanned=889\n",
+      "stdout_tail": "OK: no secret patterns detected in git_tracked files. scanned=896\n",
       "stderr_tail": "",
       "ok": true
     },
@@ -37,7 +37,7 @@
     "git_status": {
       "cmd": "git status --short --branch",
       "return_code": 0,
-      "stdout_tail": "## main...origin/main\n M BACKLOG.md\n M BACKLOG_TR.md\n M DECISIONS.md\n M DECISIONS_TR.md\n M README.md\n M README_TR.md\n M artifacts/mertformer_release.zip.sha256\n M config/config.py\n M packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256\n M reports/FACTS.json\n M reports/chess_gui_onefile_sync_report.json\n M reports/chess_onefile_extension_report.json\n M reports/chess_teaching_contract_report.json\n M reports/chess_teaching_contract_report.md\n M reports/chess_training_readiness_report.json\n M reports/cleanroom_verification.md\n M reports/cleanroom_verification_TR.md\n M reports/closure_57_matrix.json\n M reports/code_truth_delta_audit.json\n M reports/duplicate_zip_guard_report.json\n M reports/file_sync_matrix.json\n M reports/final_orchestrator_status.json\n M reports/final_orchestrator_status.md\n M reports/final_sync_matrix.md\n M reports/final_sync_matrix_TR.md\n M reports/go_status_matrix.md\n M reports/go_status_matrix_TR.md\n M reports/immutable_evidence_register.json\n M reports/immutable_evidence_register.md\n M reports/one_command_full_sop_summary.md\n M reports/policy_sync_report.json\n M reports/post_train_autorun_status.json\n M reports/post_train_autorun_status.md\n M reports/project_structure_sync_report.json\n M reports/release_manifest.json\n M reports/release_snapshot.md\n M reports/release_snapshot_TR.md\n M reports/repo_external_handoff.md\n M reports/scoped_external_intake_matrix.json\n M reports/scoped_external_intake_matrix.md\n M reports/start_gate_operator_decision.json\n M reports/start_gate_report.json\n M reports/target_machine_handoff_manifest.json\n M reports/target_machine_handoff_manifest.md\n M reports/train_readiness_decision.json\n M reports/training_readiness_manifest.json\n M reports/unicode_path_guard_report.json\n M reports/workspace_hygiene_manifest.json\n M scripts/runs/preflight/config_snapshot.json\n?? evidence/2026-07-12-laptop-preflight-v2/\n?? tests/test_z_loss_effective_weight.py\n",
+      "stdout_tail": "## main...origin/main\n M ABLATION.md\n M ABLATION_TR.md\n M reports/cfc_moe_tolerance_report.json\n M reports/chess_gui_onefile_sync_report.json\n M reports/chess_onefile_extension_report.json\n M reports/chess_teaching_contract_report.json\n M reports/chess_teaching_contract_report.md\n M reports/chess_training_readiness_report.json\n M reports/closure_57_matrix.json\n M reports/code_truth_delta_audit.json\n M reports/final_orchestrator_status.json\n M reports/final_orchestrator_status.md\n M reports/immutable_evidence_register.json\n M reports/immutable_evidence_register.md\n M reports/post_train_autorun_status.json\n M reports/post_train_autorun_status.md\n M reports/scoped_external_intake_matrix.json\n M reports/scoped_external_intake_matrix.md\n M reports/train_readiness_decision.json\n M reports/training_readiness_manifest.json\n M reports/workspace_hygiene_manifest.json\n",
       "stderr_tail": "",
       "ok": true
     },
