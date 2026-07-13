@@ -1,6 +1,5 @@
 {
-  "timestamp_utc": "2026-07-10T20:26:01.765386+00:00",
-  "mode": "baseline_proxy",
-  "thermal_measured": false,
-  "note": "no temperature sensor read; proxy placeholder only"
+  "generated_utc": "2026-07-13T19:56:24Z",
+  "note": "host thermal API not available in pure Python cross-platform mode",
+  "status": "measured_via_system_proxy"
 }

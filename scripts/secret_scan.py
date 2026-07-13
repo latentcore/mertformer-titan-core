@@ -77,6 +77,50 @@ SKIP_DIR_NAMES = {
 
 DEFAULT_MAX_SCAN_BYTES = 2_000_000
 
+# --------------------------------------------------------------------------
+# Optional home-directory scan (opt-in via --include-home-dirs; NOT part of
+# the default git_tracked/package_walk scan verify_all.sh runs on every pass).
+# Personal secret exports (WhatsApp/AI-chat exports, downloaded credential
+# files) tend to live in ~/Documents and ~/Downloads, outside any git tree
+# this scanner otherwise ever sees. Path.home() resolves correctly on
+# macOS/Linux/Windows, so no OS-specific branching is needed here.
+# --------------------------------------------------------------------------
+HOME_SCAN_DIR_NAMES = ("Documents", "Downloads")
+
+
+def _home_scan_roots(home: Path | None = None) -> list[Path]:
+    base = home if home is not None else Path.home()
+    roots: list[Path] = []
+    for name in HOME_SCAN_DIR_NAMES:
+        candidate = base / name
+        if candidate.is_dir():
+            roots.append(candidate)
+    return roots
+
+
+def _walk_files_safe(root: Path) -> list[Path]:
+    """os.walk-based (not Path.rglob): a single permission-denied subdirectory
+    under an arbitrary home folder must not abort the whole scan -- the same
+    failure class scripts/build_scoped_external_intake_matrix.py's
+    safe_sha256_file() wrapper was built to survive. onerror=no-op means one
+    unreadable directory is skipped, not fatal."""
+    paths: list[Path] = []
+    for dirpath, dirnames, filenames in os.walk(str(root), onerror=lambda _exc: None):
+        dirnames[:] = [d for d in dirnames if d not in SKIP_DIR_NAMES and not d.startswith(".")]
+        for fname in filenames:
+            p = Path(dirpath) / fname
+            if _should_skip_path(p, root):
+                continue
+            paths.append(p)
+    return paths
+
+
+def discover_home_directory_files(home: Path | None = None) -> list[Path]:
+    paths: list[Path] = []
+    for root in _home_scan_roots(home):
+        paths.extend(_walk_files_safe(root))
+    return sorted(paths)
+
 
 def _max_scan_bytes() -> int:
     raw = os.environ.get("MERTFORMER_SECRET_SCAN_MAX_BYTES", str(DEFAULT_MAX_SCAN_BYTES))
@@ -167,6 +211,13 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Scan repository or package files for secret-like patterns.")
     parser.add_argument("--root", default=str(ROOT), help="Repository/package root to scan.")
     parser.add_argument("--package-mode", action="store_true", help="Force package file-walk mode instead of git ls-files.")
+    parser.add_argument(
+        "--include-home-dirs",
+        action="store_true",
+        help="Also scan ~/Documents and ~/Downloads for secret-like patterns (opt-in; "
+        "NOT run by verify_all.sh -- for manual personal-export secret sweeps, e.g. "
+        "leaked tokens in AI-chat/WhatsApp exports saved outside the repo).",
+    )
     args = parser.parse_args(argv)
 
     root = Path(args.root).resolve()
@@ -175,15 +226,31 @@ def main(argv: list[str] | None = None) -> int:
 
     if not hits:
         print(f"OK: no secret patterns detected in {mode} files. scanned={len(paths)}")
-        return 0
+    else:
+        print(f"ERROR: potential secrets detected in {mode} files:")
+        # Do not print raw matches.
+        for name, path, idx, safe in hits[:200]:
+            print(f"- {name}: {path}:{idx} :: {safe}")
+        if len(hits) > 200:
+            print(f"... and {len(hits) - 200} more")
 
-    print(f"ERROR: potential secrets detected in {mode} files:")
-    # Do not print raw matches.
-    for name, path, idx, safe in hits[:200]:
-        print(f"- {name}: {path}:{idx} :: {safe}")
-    if len(hits) > 200:
-        print(f"... and {len(hits) - 200} more")
-    return 1
+    home_hits: list[tuple[str, Path, int, str]] = []
+    if args.include_home_dirs:
+        home_paths = discover_home_directory_files()
+        home_hits = scan_paths(home_paths, root)
+        if not home_hits:
+            print(
+                "OK: no secret patterns detected in home-directory files "
+                f"(~/Documents, ~/Downloads). scanned={len(home_paths)}"
+            )
+        else:
+            print("ERROR: potential secrets detected in home-directory files (~/Documents, ~/Downloads):")
+            for name, path, idx, safe in home_hits[:200]:
+                print(f"- {name}: {path}:{idx} :: {safe}")
+            if len(home_hits) > 200:
+                print(f"... and {len(home_hits) - 200} more")
+
+    return 1 if (hits or home_hits) else 0
 
 
 if __name__ == "__main__":
