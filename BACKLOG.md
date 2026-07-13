@@ -27,6 +27,7 @@ Each is documented with its mechanism in [DECISIONS.md](DECISIONS.md):
 - **`ffn_dropout` intent:** not in `config.py` → silently `0.0` in `layers/ffn.py` while `attention_dropout`/`dropout` are `0.1`. Confirm whether FFN-dropout-off is intended before any tuning.
 
 ## Cosmetic / housekeeping (safe, non-behavioral)
+- **`train/train.py` structural review (2026-07-13):** `train()` bundles setup (signal/accelerator/data/model/optimizer/resume) and the entire main loop in one large function. The "true freeze" idiom (clear `requires_grad` + null out `.grad` for Liquid/tau params) is duplicated ~3x (warmup freeze, cooldown re-freeze-keep, cooldown-over unfreeze) instead of one shared helper — same risk class as the already-fixed decoupled-weight-decay bug, since a future edit to one copy could silently miss the others. Curriculum-stage/validation/saturation-gate logic is deeply nested inline rather than named helpers; `build_optimizer`'s GaLore parameter-group dicts are constructed unconditionally even when GaLore is off. None change behavior — deferred until the 45K run is stable; if only one gets done, extract `_true_freeze_liquid()` first.
 - `mark_weights_updated` dead-method review: **done, see above** (investigated, left uncalled with reasoning documented). `_compute_weight_version` relies on private torch `._version` (guard across versions); RoPE cache lazy-grow comment clarity; `iter_packed_sequences` greedy-buffer note.
 - See `V2_BACKLOG_SEED.md` Track A–F for the full list (compile policy, distributed contract, optimizer matrix, etc.).
 

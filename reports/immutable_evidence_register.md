@@ -1,7 +1,7 @@
 # Immutable Evidence Register
 
-- generated_local: `2026-07-13T07:26:32`
-- entry_count: `1360`
+- generated_local: `2026-07-13T22:04:23`
+- entry_count: `1366`
 
 | Path | Kind | Reason | Disposition |
 | --- | --- | --- | --- |
@@ -1069,6 +1069,12 @@
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260713_072056.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260713_072425.zip` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260713_072425.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260713_175234.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260713_175234.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260713_175704.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260713_175704.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260713_220106.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260713_220106.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113659.json` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113738.json` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormerStream/.gradle/buildOutputCleanup` | `dir` | `output` | `preserve_immutable_evidence` |
