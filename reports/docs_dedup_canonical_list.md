@@ -147,6 +147,7 @@ Generated automatically.
 - `economics/cost_model_TR.md`
 - `economics/efficiency_report_TR.md`
 - `evidence/2026-07-02-laptop-preflight/README.md`
+- `evidence/2026-07-12-laptop-preflight-v2/README.md`
 - `evidence/README.md`
 - `evidence/build30_t4_onecell/EVIDENCE_POINTER.md`
 - `evidence/build30_t4_onecell/smoke_test_result.md`
@@ -271,6 +272,7 @@ Generated automatically.
 - `releases/chess_release_contract.md`
 - `reports/ablations/README.md`
 - `reports/adr_index.md`
+- `reports/anthropic_fellows_application_checklist.md`
 - `reports/architecture_honesty_audit.md`
 - `reports/asset_stack.md`
 - `reports/asset_stack_TR.md`
@@ -292,6 +294,7 @@ Generated automatically.
 - `reports/benchmarks/text_understanding/README.md`
 - `reports/benchmarks/text_understanding/README_TR.md`
 - `reports/benchmarks/text_understanding/run_20260315_180151_compare.md`
+- `reports/blog_liquid_ablation_draft.md`
 - `reports/canonical_entrypoint.md`
 - `reports/change_control_sop.md`
 - `reports/checkpoint_contract.md`
@@ -320,11 +323,14 @@ Generated automatically.
 - `reports/current_delta_addendum_2026_05_15.md`
 - `reports/customer_ready_definition.md`
 - `reports/data_pipeline_contract.md`
+- `reports/data_poisoning_risk_analysis.md`
+- `reports/data_provenance_audit_template.md`
 - `reports/dataset_health.md`
 - `reports/dataset_health_TR.md`
 - `reports/dataset_health_final.md`
 - `reports/demo_bundle.md`
 - `reports/deprecated_surface_report.md`
+- `reports/divergence_guard_decision_brief.md`
 - `reports/doc_alignment_report.md`
 - `reports/doc_ownership_matrix.md`
 - `reports/docs_dedup_canonical_list.md`
@@ -361,13 +367,17 @@ Generated automatically.
 - `reports/go_status_matrix_TR.md`
 - `reports/gtm_master_plan.md`
 - `reports/immutable_evidence_register.md`
+- `reports/independent_signoff_template.md`
 - `reports/investable_definition.md`
 - `reports/known_limits_v1.md`
 - `reports/kpi_contract_build30.md`
 - `reports/kpi_pack_v1.md`
 - `reports/kpi_pack_v1_TR.md`
+- `reports/lane_cost_tradeoff_brief.md`
+- `reports/launch_time_decisions_checklist.md`
 - `reports/legal_cleanroom_signoff_internal.md`
 - `reports/legal_ip_pack.md`
+- `reports/liquid_keep_or_drop_brief.md`
 - `reports/logger_contract.md`
 - `reports/logits_integrity_report.md`
 - `reports/master_closure_matrix.md`
@@ -384,6 +394,7 @@ Generated automatically.
 - `reports/one_pager_TR.md`
 - `reports/owner_matrix.md`
 - `reports/package_validation_report.md`
+- `reports/paper_outline_draft.md`
 - `reports/param_accounting_report.md`
 - `reports/phase2_carryover.md`
 - `reports/pilot_acceptance_signoff.md`
@@ -398,10 +409,12 @@ Generated automatically.
 - `reports/poc_protocol.md`
 - `reports/poc_protocol_TR.md`
 - `reports/post_45k_decision_tree.md`
+- `reports/post_45k_research_agenda.md`
 - `reports/post_train_automation_contract.md`
 - `reports/post_train_autorun_status.md`
 - `reports/post_train_state_machine.md`
 - `reports/proje_zip_rebuild_manifest_v2.md`
+- `reports/publication_readiness_kit.md`
 - `reports/quality_gate_matrix.md`
 - `reports/release_closure_note.md`
 - `reports/release_snapshot.md`
@@ -412,6 +425,7 @@ Generated automatically.
 - `reports/repo_external_handoff.md`
 - `reports/report_accuracy_audit.md`
 - `reports/report_accuracy_audit_TR.md`
+- `reports/responsible_ai_checklist.md`
 - `reports/review_checklist.md`
 - `reports/review_checklist_TR.md`
 - `reports/run_contract.md`
@@ -421,6 +435,7 @@ Generated automatically.
 - `reports/snapshots/2026-02-24/mertformer_master_decision_report_TR_2026-02-24.md`
 - `reports/snapshots/2026-02-24/web_validation_sources_2026-02-24.md`
 - `reports/source_of_truth_map.md`
+- `reports/stage3_mixture_freeze_proposal.md`
 - `reports/stale_script_report.md`
 - `reports/start_gate_operator_decision.md`
 - `reports/support_maintenance_policy.md`
@@ -547,6 +562,7 @@ Generated automatically.
   - `datasets/README.md`
   - `datasets/offline_demo/README.md`
   - `evidence/2026-07-02-laptop-preflight/README.md`
+  - `evidence/2026-07-12-laptop-preflight-v2/README.md`
   - `evidence/README.md`
   - `knowledge/README.md`
   - `logs/README.md`

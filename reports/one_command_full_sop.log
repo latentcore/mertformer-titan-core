@@ -1,50 +1,41 @@
-[run] start_utc=2026-07-10T20:14:45Z
+[run] start_utc=2026-07-14T14:43:26Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
 [verify] Secret scan ...
-OK: no secret patterns detected in git_tracked files. scanned=841
+OK: no secret patterns detected in git_tracked files. scanned=896
+[verify] bandit security scan (HIGH-severity hard-fail) ...
+bandit scan: 499 total findings -- {'LOW': 394, 'MEDIUM': 105, 'HIGH': 0}
+Full report: reports/bandit_security_scan.json
+
+OK: no findings at or above severity>=high, confidence>=high (currently: HIGH=0).
 [verify] Repo hygiene guard (bare-except / stale build fossils) ...
 OK: repo hygiene guard; bare_except=0, build_fossils=0 (scanned tracked source).
 [verify] Pytest ...
-........................................................................ [ 16%]
-................................................s....................... [ 33%]
-........................................................................ [ 50%]
-............................s........................................... [ 66%]
+........................................................................ [ 13%]
+........................................................................ [ 27%]
+...............s........................................................ [ 41%]
+........................................................................ [ 55%]
+....................s................................................... [ 69%]
 ........................................................................ [ 83%]
-.............................................................s.........  [100%]
+......................s................................................s [ 97%]
+...........                                                              [100%]
 =============================== warnings summary ===============================
-tests/test_comprehensive.py::TestCheckpointConsistency::test_checkpoint_roundtrip
-tests/test_comprehensive.py::TestMoERouterCollapse::test_collapse_detection_triggers
-tests/test_comprehensive.py::TestTrainingDryRun::test_5_step_training
-  <REPO_ROOT>/layers/moe.py:736: UserWarning: scatter_reduce_mps does not have a deterministic implementation, but you set 'torch.use_deterministic_algorithms(True, warn_only=True)'. You can file an issue at https://github.com/pytorch/pytorch/issues to help us prioritize adding deterministic support for this operation. (Triggered internally at /Users/runner/work/pytorch/pytorch/aten/src/ATen/Context.cpp:190.)
-    counts.scatter_add_(0, flat_idx, torch.ones_like(flat_idx, dtype=torch.float32))
-
-tests/test_comprehensive.py::TestCheckpointConsistency::test_checkpoint_roundtrip
-tests/test_comprehensive.py::TestMoERouterCollapse::test_collapse_detection_triggers
-tests/test_comprehensive.py::TestTrainingDryRun::test_5_step_training
-  <REPO_ROOT>/layers/moe.py:902: UserWarning: index_put_with_accumulate_mps does not have a deterministic implementation, but you set 'torch.use_deterministic_algorithms(True, warn_only=True)'. You can file an issue at https://github.com/pytorch/pytorch/issues to help us prioritize adding deterministic support for this operation. (Triggered internally at /Users/runner/work/pytorch/pytorch/aten/src/ATen/Context.cpp:190.)
-    out_flat.index_add_(0, idx, expert_out * w)
-
-tests/test_comprehensive.py::TestTrainingDryRun::test_5_step_training
-  <REPO_ROOT>/.titan-venv/lib/python3.11/site-packages/torch/autograd/graph.py:979: UserWarning: index_put_with_accumulate_mps does not have a deterministic implementation, but you set 'torch.use_deterministic_algorithms(True, warn_only=True)'. You can file an issue at https://github.com/pytorch/pytorch/issues to help us prioritize adding deterministic support for this operation. (Triggered internally at /Users/runner/work/pytorch/pytorch/aten/src/ATen/Context.cpp:190.)
-    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
-
 tests/test_gradient_checkpoint_moe.py: 14 warnings
-  <REPO_ROOT>/.titan-venv/lib/python3.11/site-packages/torch/jit/_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  <HOME_PATH> DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
     warnings.warn(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-428 passed, 4 skipped, 21 warnings in 57.95s
+511 passed, 5 skipped, 14 warnings in 98.26s (0:01:38)
 sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
 [verify] Test-stat claim sync ...
-{'status': 'ok', 'test_stat': '428 passed, 4 skipped', 'changed': [], 'missing': []}
+{'status': 'ok', 'test_stat': '511 passed, 5 skipped', 'changed': [], 'missing': []}
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
 ✈️ ============================================================
 ⚠️ .env file not found, skipping local load.
-✈️ Config snapshot written: <REPO_ROOT>/scripts/runs/preflight/config_snapshot.json
+✈️ Config snapshot written: <HOME_PATH>
 ✈️ STEP 1: SECRET SCAN...
 ⚠️ HF_TOKEN missing (offline mode): OK (online checks will be skipped).
 ⚠️ WANDB_API_KEY missing (offline mode): OK (WandB checks disabled).
@@ -61,7 +52,7 @@ sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
 ⚙️  Pre-computing logits for preflight...
 🔄 Resuming from Chunk 0
 
-Distilling preflight (Chunk 0): 0it [00:00, ?it/s]✅ Saved Final Chunk 0: <REPO_ROOT>/temp_preflight_logits/preflight_test_part_0.pt
+Distilling preflight (Chunk 0): 0it [00:00, ?it/s]✅ Saved Final Chunk 0: <HOME_PATH>
 
 Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✅ Distillation pipeline: PROVEN (Logits generated/saved).
@@ -74,23 +65,23 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✅ MertFormer forward/backward pass verified.
 ✅ OVERALL SYSTEM STATUS: all preflight checks passed.
 ✈️ CLEANUP: Removing temporary files...
-✈️ Removed <REPO_ROOT>/temp_preflight_data
-✈️ Removed <REPO_ROOT>/temp_preflight_logits
+✈️ Removed <HOME_PATH>
+✈️ Removed <HOME_PATH>
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 51.23s
+✈️ Preflight Duration: 6.01s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
-✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log
+✈️ Full Report: <HOME_PATH>
 ✈️ ============================================================
 [verify] Operator mode gate (safe, offline) ...
 Checkpoint restore drill: PASS
 Failure budget drill: PASS
 Overfit step 0: loss=5.6022
 Overfit step 12: loss=4.0985
-Overfit step 24: loss=3.3960
+Overfit step 24: loss=3.3959
 Overfit step 36: loss=3.4486
-Overfit step 48: loss=3.7246
-Overfit gate: PASS (final=3.6508, uniform=5.5452, learn_margin=34.16%, start-rel=34.83%)
+Overfit step 48: loss=3.7236
+Overfit gate: PASS (final=3.6493, uniform=5.5452, learn_margin=34.19%, start-rel=34.86%)
 Golden samples: 50
 - algorithms: 13
 - cli: 1
@@ -122,7 +113,7 @@ Golden sample eval: dry-run complete (manifest OK; not a correctness gate)
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 15.558286905288696,
+  "elapsed_sec": 15.049346685409546,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -148,9 +139,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-07-10T20:16:58Z",
-        "cpu_percent": 16.1,
-        "ram_used_gb": 6.7419281005859375,
+        "timestamp_utc": "2026-07-14T14:45:43Z",
+        "cpu_percent": 12.5,
+        "ram_used_gb": 6.2452392578125,
         "ram_total_gb": 16.0,
         "gpu_device": null,
         "gpu_allocated_gb": null,
@@ -162,8 +153,8 @@ Benchmark runner configured. Use --run to execute.
         "gpu_power_limit_w": null,
         "gpu_mem_used_gb_smi": null,
         "gpu_mem_total_gb_smi": null,
-        "disk_used_gb": 226.43837356567383,
-        "disk_free_gb": 1.8354911804199219,
+        "disk_used_gb": 226.57494735717773,
+        "disk_free_gb": 1.6989173889160156,
         "disk_total_gb": 228.27386474609375
       }
     },
@@ -188,7 +179,42 @@ OK: documentation claim consistency checks passed
 [verify] FACTS single-source consistency gate ...
 FACTS consistency: OK (canonical measured-param id '3,672,982,022'; no stale ids in current-truth md)
 [verify] Markdown integrity gate ...
-md_integrity_check scanned=449 findings=0
+md_integrity_check scanned=464 findings=0
+[verify] Dead-attribute (getattr/hasattr cosmetic-fix disease) scan ...
+OK: dead_attribute_disease scan clean (0 findings).
+[verify] Circular-import scan (package-level, soft-fail) ...
+WARN: 10 package-level import cycle(s) found:
+  - layers -> mertformer_sdk -> layers
+  - model -> layers -> mertformer_sdk -> model
+  - model -> layers -> mertformer_sdk -> orchestrator -> model
+  - eval -> model -> layers -> mertformer_sdk -> orchestrator -> scripts -> eval
+  - layers -> mertformer_sdk -> orchestrator -> scripts -> layers
+  - mertformer_sdk -> orchestrator -> scripts -> mertformer_sdk
+  - model -> layers -> mertformer_sdk -> orchestrator -> scripts -> model
+  - orchestrator -> scripts -> orchestrator
+  - model -> layers -> mertformer_sdk -> orchestrator -> scripts -> train -> model
+  - orchestrator -> scripts -> train -> orchestrator
+
+These are package-level (not module-level) edges -- a cycle here does not necessarily mean an actual circular ImportError. Verify manually (e.g. `python3 -c 'import <pkg>'` for each involved package) before treating as a real bug.
+[verify] Config overlay validity gate ...
+[OK] mertformer_max_arch.yaml
+[OK] mertformer_moe.yaml
+[OK] mertformer_pilot_stabilization.yaml
+[OK] mertformer_small.yaml
+
+OK: all 4 config/model/*.yaml overlays load and pass validate_layer_config().
+[verify] FACTS live-drift gate ...
+OK: mertformer_pilot_stabilization.yaml docstring (172,668,035) matches live measurement
+canonical: FACTS.json measured=3,672,982,022  analytical_estimate=3,509,233,664  delta=4.5% (tolerance 15%)
+
+OK: no FACTS drift detected (small-overlay docstrings match live measurement; canonical estimate within tolerance).
+[verify] Benchmark regression gate (checkpoint-bound; SKIPPED pre-45K) ...
+{
+  "schema": "benchmark_regression_gate_v1",
+  "status": "SKIPPED",
+  "reason_code": "NO_CHECKPOINT",
+  "message": "No checkpoint found; regression gate not run. Expected pre-45K."
+}
 [verify] Master closure matrix refresh ...
 {"total_items": 14, "this_pass": 12, "phase_2": 0, "external": 1, "rejected_with_reason": 1}
 [verify] Train readiness contract refresh ...
@@ -207,13 +233,13 @@ OK: workspace hygiene manifest refreshed
 {
   "json": "<REPO_ROOT>/reports/scoped_external_intake_matrix.json",
   "md": "<REPO_ROOT>/reports/scoped_external_intake_matrix.md",
-  "entries": 5427,
+  "entries": 5547,
   "sync_mode": "audit",
-  "handoff_dir": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_07_10",
+  "handoff_dir": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_07_14",
   "apply_errors": 0
 }
 [verify] Chess GUI onefile sync check ...
-{"schema": "chess_gui_onefile_sync_report_v1", "generated_utc": "2026-07-10T20:17:29Z", "canonical_onefile": "<REPO_ROOT>/scripts/chess_5080_onefile.py", "gui_dir": "<REPO_ROOT>/apps/chess_gui", "gui_onefile": "<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py", "status": "canonical_fallback_ready", "reason": "local_copy_missing_repo_canonical_fallback_available", "copied": false, "local_copy_present": false, "canonical_sha256": "308293c95e315eb75ae3a0acef0a9db534d2fc51c4dbbd14f808019614f6a714", "gui_sha256": "", "hashes_match": false}
+{"schema": "chess_gui_onefile_sync_report_v1", "generated_utc": "2026-07-14T14:46:24Z", "canonical_onefile": "<REPO_ROOT>/scripts/chess_5080_onefile.py", "gui_dir": "<REPO_ROOT>/apps/chess_gui", "gui_onefile": "<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py", "status": "canonical_fallback_ready", "reason": "local_copy_missing_repo_canonical_fallback_available", "copied": false, "local_copy_present": false, "canonical_sha256": "308293c95e315eb75ae3a0acef0a9db534d2fc51c4dbbd14f808019614f6a714", "gui_sha256": "", "hashes_match": false}
 [verify] Chess teaching contract smoke report ...
 [warn] pyzipper import basarisiz (opsiyonel): ModuleNotFoundError("No module named 'pyzipper'")
 {"case_total": 5, "case_pass": 5, "mode_total": 5, "mode_pass": 5, "level_monotonic_non_decreasing": true, "all_green": true}
@@ -262,7 +288,7 @@ OK: unicode path guard; hits=0
 [verify] Duplicate zip guard gate ...
 OK: duplicate zip guard; groups=3
 [verify] Manifest sync gate ...
-{"manifest_entries": 850, "ok": true}
+{"manifest_entries": 905, "ok": true}
 [verify] OK
 [run] step=kaggle_onecell_py_compile
 [run] step=kaggle_closure_verify
@@ -270,15 +296,15 @@ OK: duplicate zip guard; groups=3
 [run] step=cfc_moe_tolerance_check
 [tolerance] PASS (max_diff_moe=0.000000 max_diff_cfc=0.000010)
 [run] step=md_quality_all
-md_quality: scope=all files=468 errors=0 warnings=1
+md_quality: scope=all files=483 errors=0 warnings=1
 [run] step=md_integrity_all
-md_integrity_check scanned=449 findings=0
+md_integrity_check scanned=464 findings=0
 [run] step=linkcheck_all
-linkcheck: scope=all files=468 missing=940
+linkcheck: scope=all files=483 missing=940
 [run] step=docs_inventory
-{"ok": false, "md_files": 470, "dup_groups": 27}
+{"ok": false, "md_files": 485, "dup_groups": 27}
 [run] step=sync_manifest
-{"manifest_entries": 850, "ok": true}
+{"manifest_entries": 905, "ok": true}
 [run] step=dealroom_sync
 {"ok": true}
 [run] step=unicode_path_guard
@@ -289,28 +315,28 @@ OK: duplicate zip guard; groups=3
 {
   "json": "<REPO_ROOT>/reports/scoped_external_intake_matrix.json",
   "md": "<REPO_ROOT>/reports/scoped_external_intake_matrix.md",
-  "entries": 5427,
+  "entries": 5547,
   "sync_mode": "audit",
-  "handoff_dir": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_07_10",
+  "handoff_dir": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_07_14",
   "apply_errors": 0
 }
 [run] step=scoped_cleanup_apply
 {
   "report": "<REPO_ROOT>/reports/cleanup_scoped_closure_junk_report.json",
-  "found": 1762,
-  "removed": 1762,
+  "found": 587,
+  "removed": 587,
   "errors": 0
 }
 [run] step=intermediate_cache_cleanup
 [runner] cmd=bash -lc true
-[runner] cleanup_root=<REPO_ROOT>
+[runner] cleanup_root=<HOME_PATH>
 [runner] include_tool_caches=True full_clean=True include_venv_caches=True dry_run=False
 [cleanup] dirs_found=3 files_found=0 dirs_removed=3 files_removed=0
 [run] step=clean_runtime_artifacts_check
 OK: runtime artifacts and caches are clean
 [run] step=pre_zip_cache_cleanup
 [runner] cmd=bash -lc true
-[runner] cleanup_root=<REPO_ROOT>
+[runner] cleanup_root=<HOME_PATH>
 [runner] include_tool_caches=True full_clean=True include_venv_caches=True dry_run=False
 [cleanup] dirs_found=2 files_found=0 dirs_removed=2 files_removed=0
 [run] step=pre_zip_runtime_clean_check
@@ -331,13 +357,13 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip
-release_sha256=7cd6cf774525e1350842b83c52a998e795c1e4eb3858999978340d5c13747e35
+release_sha256=b40f75eabf2be16cd68eea2c0080d006f31ee6e46e00f75640c90290d3a833e6
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=unlock_artifacts
 [run] step=artifact_release_zip
 [run] step=training_outputs_bundle
-{"bundle_zip": "artifacts/mertformer_training_outputs_bundle.zip", "included_files": 1306}
+{"bundle_zip": "artifacts/mertformer_training_outputs_bundle.zip", "included_files": 1376}
 [run] step=zip_denylist_audit zip=packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip
 {
   "zip_path": "packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip",
@@ -348,5 +374,5 @@ locked_sha256=
   "secret_count": 0
 }
 [run] step=secret_scan
-OK: no secret patterns detected in git_tracked files. scanned=841
-[run] end_utc=2026-07-10T20:23:02Z
+OK: no secret patterns detected in git_tracked files. scanned=896
+[run] end_utc=2026-07-14T14:48:29Z

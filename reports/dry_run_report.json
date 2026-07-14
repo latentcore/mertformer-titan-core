@@ -1,7 +1,7 @@
 {
   "schema": "run_manifest_v1",
-  "run_id": "zero_touch_20260710T202751Z",
-  "generated_utc": "2026-07-10T20:27:51.898787+00:00",
+  "run_id": "zero_touch_20260714T145354Z",
+  "generated_utc": "2026-07-14T14:53:54.150752+00:00",
   "mode": "dry-run",
   "status": "dry-run",
   "reports_dir": "<REPO_ROOT>/reports",
@@ -24,7 +24,7 @@
       "status": "completed",
       "return_code": 0,
       "note": "{\"status\": \"planned\", \"mode\": \"plan-only\", \"checkpoint\": \"<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt\"}\n",
-      "cmd": "<REPO_ROOT>/.titan-venv/bin/python scripts/post_train_autorun.py --plan-only --allow-missing-checkpoint --reports-dir <REPO_ROOT>/reports --report-out <REPO_ROOT>/reports/post_train_autorun_status.json"
+      "cmd": "<REPO_ROOT>/.titan-venv/bin/python <REPO_ROOT>/scripts/post_train_autorun.py --plan-only --allow-missing-checkpoint --project-root <REPO_ROOT> --reports-dir <REPO_ROOT>/reports --report-out <REPO_ROOT>/reports/post_train_autorun_status.json"
     },
     {
       "name": "start_gate",

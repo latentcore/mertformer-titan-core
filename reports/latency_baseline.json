@@ -1,5 +1,4 @@
 {
-  "generated_utc": "2026-07-13T19:56:24Z",
-  "step": "pretrain_bootstrap",
-  "note": "latency baseline placeholder; full device benchmarks in reports/bench_*.json"
+  "timestamp_utc": "2026-07-14T14:52:13.195223+00:00",
+  "mode": "baseline"
 }
