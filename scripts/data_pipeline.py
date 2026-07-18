@@ -198,20 +198,17 @@ STAGE5_SOURCES = [
         "max_length": 15000
     },
     {
-        "dataset": "gorilla-llm/gorilla-openfunctions-v2",
+        # Replaces gorilla-llm/gorilla-openfunctions-v2 (0.25) + NousResearch/FC-1k (0.15),
+        # both confirmed live-401/unreachable on the HF Hub as of 2026-07-13/18. Verified
+        # live+ungated+apache-2.0 via the HF Hub API on 2026-07-19 (see BACKLOG.md). Ratio
+        # sums the two removed sources' combined share so Stage-5's total ratio still sums
+        # to 1.0 and the overall 23.59B-token target (a function of TITAN_MAX_STEPS x batch
+        # x seq_len, independent of this list) is unaffected either way.
+        "dataset": "NousResearch/hermes-function-calling-v1",
+        "subset": "func_calling",  # multi-config dataset; verified via datasets-server API 2026-07-19
         "split": "train",
-        "field": ["text", "prompt", "response", "conversation"],
-        "ratio": 0.25,
-        "filters": None,
-        "min_length": 100,
-        "max_length": 15000,
-        "optional": True,
-    },
-    {
-        "dataset": "NousResearch/FC-1k",
-        "split": "train",
-        "field": ["text", "instruction", "output"],
-        "ratio": 0.15,
+        "field": ["text", "conversations", "prompt", "response"],
+        "ratio": 0.40,
         "filters": None,
         "min_length": 100,
         "max_length": 15000,

@@ -11,12 +11,12 @@ This profile does not change teacher, tokenizer, dataset policy, loss, canonical
 ## Runtime Profile
 
 ```bash
-TITAN_OCEAN_45K_LAUNCH=1
 TITAN_OFFLINE=0
 TITAN_INSTALL=1
 TITAN_PROFILE=stable
 TITAN_BATCH_SIZE=1024
 TITAN_BATCH_SIZE_FALLBACKS=1024,512,256
+TITAN_STRICT_TOKEN_BUDGET=1
 TITAN_DATALOADER_PIN=1
 TITAN_DATALOADER_NONBLOCKING=1
 TITAN_FFN_PACK=1
@@ -27,6 +27,8 @@ TITAN_LIQUID_TRAIN_IMPL=packed_pair
 MERTFORMER_LOWBIT_KERNEL=0
 MERTFORMER_FUSED_BACKWARD=0
 ```
+
+`TITAN_OCEAN_45K_LAUNCH` was removed from this profile (2026-07-19) — it was a confirmed no-op (no Python code ever read it; fixed in `launch_ocean_45k.sh` on 2026-07-09, but this doc's copy-pasteable block still had it). `TITAN_STRICT_TOKEN_BUDGET=1` was added (2026-07-19) — this doc's own "Guard" section below already recommended it, but the copy-pasteable block above didn't include it, so copying the block verbatim skipped the guard it was arguing for.
 
 `packed_pair_compile` is intentionally not part of the first long run. `ACCELERATE_CONFIG_FILE` stays optional and should point only to a target-matching profile under `repro/`.
 

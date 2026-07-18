@@ -37,8 +37,8 @@ MertFormer Titan projesinin temel taşı, standart transformatör bloklarının 
 ### 2.1 BitNet b1.58 ve Ternary Hesaplama Devrimi
 Geleneksel modeller 16-bit (BF16) kullanırken, MertFormer Titan **BitNet b1.58** teknolojisini temel alarak ağırlıkları $\{-1, 0, 1\}$ değerlerine indirger.
 
-*   **Bellek Tasarrufu (Tahmini):** %93.75 teorik azalma.
-*   **VRAM İhtiyacı (Tahmini):** ~0.65 GB (**2.64B tasarım hedefi** parametre sayısı için hesaplandı, 3.67B ölçülen toplam değil; low-bit inference yolu gerektirir).
+*   **Bellek Tasarrufu (Teorik, yalnızca fp-simülasyonu — 2026-07-19'da relabel edildi, bkz. `DECISIONS.md`):** %93.75, ağırlıkları BF16 yerine {-1,0,1}'e paketlemenin *aritmetik* azalması — **mevcut runtime bunu sağlamıyor**, çünkü forward pass düz bir fp-simülasyonundan geçiyor (`layers/bitlinear.py`'nin BitNet forward'ı, straight-through estimator), gerçek bir ternary-matematik kernel'inden değil. Bu repoda henüz böyle bir kernel yok (aşağıdaki Enerji Verimliliği notuna ve `bitnet_cpu.cpp`'nin kendi yorumlarına bkz.). Gerçek/ölçülmüş tek low-bit sayı **disk paketleme**: kaydedilmiş bir checkpoint için 17.99MB→1.06MB (~17.0x), 6.19e-05'lik eşleşen bir CE farkıyla doğrulandı — bu bir depolama-formatı sonucu, bir eğitim/çıkarım-hızı sonucu değil.
+*   **VRAM İhtiyacı (Tahmini):** ~0.65 GB (**2.64B tasarım hedefi** parametre sayısı için hesaplandı, 3.67B ölçülen toplam değil; henüz var olmayan gerçek bir low-bit inference kernel'i gerektirir — yukarıya bkz.).
 *   **Enerji Verimliliği (Ölçülmemiş Hedef):** Ternary matematik optimize kernel'lerde çalışırsa NPU üzerinde 70 kata kadar enerji tasarrufu. Henüz böyle bir optimize kernel yok — mevcut Metal/Vulkan/NPU kod yolları generic bir `F.linear` (`torch`) passthrough'a düşüyor, dolayısıyla bu rakam bir ölçüm değil, yansıtılan bir hedeftir.
 
 $$w_q = \text{clamp}(\text{round}(\frac{w}{\gamma + \epsilon}), -1, 1)$$

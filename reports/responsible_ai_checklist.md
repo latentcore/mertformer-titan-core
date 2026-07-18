@@ -12,11 +12,11 @@
 | Calibration/abstention | ⚠ Probe-ready, not run | `eval/calibration_ece.py` (this pass) — SKIPPED pending checkpoint |
 | Adversarial robustness | ⚠ Probe-ready, not run | `eval/adversarial_prompt_robustness.py` (this pass) — SKIPPED pending checkpoint |
 | Membership inference / privacy | ⚠ Probe-ready, methodology-only | `eval/membership_inference_probe.py` (this pass) — synthetic-split sanity check only, no real train-set access |
-| Prompt-injection / input sanitization | ✅ Audited this pass | see BACKLOG #82 disposition — `scripts/chat.py`/`mertformer_sdk/api.py` reviewed |
+| Prompt-injection / input sanitization | ⚠ CLI-injection audited + SDK bounds-checking added; LLM-level prompt injection is a separate, unresolved research item | CLI/shell-injection surfaces reviewed and safe (BACKLOG #82). `mertformer_sdk/api.py::_validate_generate_inputs()` (2026-07-19) rejects malformed/out-of-bounds `generate()` calls (type/length/control-chars/param-range) — this is resource-exhaustion and malformed-input hardening, **not** a defense against adversarial prompt *content* (jailbreaks, semantic injection), which remains a model-alignment concern for post-45K eval (`eval/adversarial_prompt_robustness.py`) |
 | Carbon footprint | ✅ Calculator ready | `scripts/estimate_carbon_footprint.py` (this pass) — needs real GPU-hours once run completes |
 | Claim-boundary discipline | ✅ Established, enforced by CI | `scripts/check_doc_claim_consistency.py`, `scripts/check_facts_drift.py` (this pass), forbidden-language regime |
 | Independent external review | ❌ Not started | `reports/independent_signoff_template.md` (this pass) — blank template, real pentest is human/external |
-| Watermarking | ❌ Not decided | see `reports/post_45k_research_agenda.md` #80 |
+| Watermarking | ⚠ Scheme chosen in principle (Kirchenbauer-style green-list logit-bias), implementation deferred to post-checkpoint | no model retraining needed, only a generation-time wrapper; detection-accuracy/false-positive-rate tuning is unverifiable without a real checkpoint to generate from — see `DECISIONS.md` (2026-07-19) and `reports/post_45k_research_agenda.md` #80 |
 | Model-inversion risk | ⚠ Probe-ready | shares methodology with membership-inference probe above |
 | SDK rate limiting | N/A | see BACKLOG #82/#83 disposition — local-inference SDK, no server surface, rate-limiting does not apply |
 

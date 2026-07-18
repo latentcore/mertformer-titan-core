@@ -5,9 +5,6 @@ Generated automatically.
 - `.github/ISSUE_TEMPLATE/bug_report.md`
 - `.github/ISSUE_TEMPLATE/feature_request.md`
 - `.github/PULL_REQUEST_TEMPLATE.md`
-- `.lint-venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md`
-- `.lint-venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md`
-- `.pytest_cache/README.md`
 - `ABLATION.md`
 - `ABLATION_TR.md`
 - `AGENTS.md`
@@ -469,6 +466,8 @@ Generated automatically.
 - `repro/seed_policy.md`
 - `repro/seed_policy_TR.md`
 - `runbooks/README.md`
+- `runbooks/checkpoint_offsite_backup.md`
+- `runbooks/checkpoint_offsite_backup_TR.md`
 - `runbooks/chess_4060_24h.md`
 - `runbooks/chess_4060_24h_TR.md`
 - `runbooks/chess_4060_24h_all_on_experimental.md`
@@ -522,9 +521,6 @@ Generated automatically.
 - `legal_cleanroom_signoff_internal.md`
   - `mertformer-titan-dealroom-private/04_SECURITY_LEGAL/legal_cleanroom_signoff_internal.md`
   - `reports/legal_cleanroom_signoff_internal.md`
-- `license.md`
-  - `.lint-venv/lib/python3.14/site-packages/pip/_vendor/idna/LICENSE.md`
-  - `.lint-venv/lib/python3.14/site-packages/pip-25.3.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md`
 - `model_card_tr.md`
   - `MODEL_CARD_TR.md`
   - `mertformer-titan-dealroom-private/09_APPENDIX/model_card_TR.md`
@@ -550,7 +546,6 @@ Generated automatically.
   - `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/poc_protocol_TR.md`
   - `reports/poc_protocol_TR.md`
 - `readme.md`
-  - `.pytest_cache/README.md`
   - `README.md`
   - `ablations/bitlinear_off/README.md`
   - `ablations/dense_only/README.md`

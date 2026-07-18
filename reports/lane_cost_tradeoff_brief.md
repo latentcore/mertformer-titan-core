@@ -1,5 +1,7 @@
 # Lane Cost Tradeoff Brief — `online_teacher` vs `offline_clean`
 
+**DECIDED (2026-07-19): `online_teacher`.** Mert chose the higher-GPU-hour lane over `offline_clean` via an explicit multiple-choice decision — matches `scripts/launch_ocean_45k.sh`'s existing default, no script change needed. Reasoning accepted: corpus materialization is the larger current blocker regardless of lane, so not adding a second sequential precompute dependency on top of it is coherent. See `DECISIONS.md` "Eight launch-time decisions locked...". Both lanes still fail readiness today for unrelated reasons (`offline_clean`: `PRECOMPUTED_LOGITS_MISSING`; `online_teacher`: `MISSING_HF_TOKEN`) — this decision picked the lane, it did not clear its blockers. The analysis below is preserved as the reasoning that informed the decision, not superseded by it.
+
 **Purpose:** BACKLOG I.1 #3 — "online_teacher mi offline_clean mi? GPU-saatini 3-6x'e katlayan tek karar" (the single decision that multiplies GPU-hours 3-6x). This brief lays out the real tradeoff so the decision is made deliberately, not by default.
 
 ## The two lanes (as implemented today)

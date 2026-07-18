@@ -51,7 +51,9 @@ STAGE_FILES = {
     5: _ROOT / "datasets" / "stage5_tools" / "stage5_data.jsonl",
 }
 
-DEFAULT_TOP_K = 256
+# Decided 2026-07-19 (BACKLOG "top_k/disk-budget kararı", DECISIONS.md): 32, not 256 --
+# ~4.5TB teacher-logit disk instead of ~36TB, standard range in distillation literature.
+DEFAULT_TOP_K = 32
 DEFAULT_CHUNK_SIZE = 2000
 DEFAULT_BATCH_SIZE = 4
 DEFAULT_MAX_SEQ = int(getattr(cfg, "max_seq_len", 512))

@@ -23,10 +23,20 @@ PATTERNS: dict[str, re.Pattern[str]] = {
     "hf_token": re.compile(r"\bhf_[A-Za-z0-9]{24,}\b"),
     "wandb_token": re.compile(r"\bwandb_[A-Za-z0-9]{10,}\b"),
     "openai_key": re.compile(r"\bsk-[A-Za-z0-9]{10,}\b"),
+    # Anthropic keys: `sk-ant-...` / service-account `sk-svcac-...`. The generic openai_key
+    # pattern above does NOT catch these — its tail class `[A-Za-z0-9]` excludes the hyphen
+    # inside "ant-"/"svcac-", so the match breaks before accumulating 10 chars. Confirmed gap
+    # (2026-07-13 home-dir secret scan); fixed here with a tail class that allows `-`/`_`.
+    "anthropic_key": re.compile(r"\bsk-ant-[A-Za-z0-9_-]{20,}\b"),
+    "anthropic_service_key": re.compile(r"\bsk-svcac-[A-Za-z0-9_-]{20,}\b"),
     # Covers PAT (ghp_), OAuth (gho_), user-to-server (ghu_), server-to-server (ghs_), refresh (ghr_).
     "github_token": re.compile(r"\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{20,}\b"),
     "github_fine_grained_pat": re.compile(r"\bgithub_pat_[A-Za-z0-9_]{60,}\b"),
     "aws_access_key": re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+    # Google API key (e.g. Maps/Cloud): fixed `AIza` prefix + 35 alnum/`_`/`-` chars.
+    "google_api_key": re.compile(r"\bAIza[0-9A-Za-z_-]{35}\b"),
+    # Google OAuth 2.0 client secret: fixed `GOCSPX-` prefix.
+    "google_oauth_client_secret": re.compile(r"\bGOCSPX-[A-Za-z0-9_-]{20,}\b"),
     # Common 40-hex API keys (heuristic) but only when the line contains key-like context.
     # Avoid false positives from git SHAs or checksums.
     "hex40_context": re.compile(r"(?i)\b(?:api[_-]?key|secret|token|password)\b\s*[:=]\s*['\"]?[0-9a-f]{40}['\"]?\b"),

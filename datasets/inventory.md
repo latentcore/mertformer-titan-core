@@ -11,7 +11,7 @@ For license/provenance work, see `datasets/SOURCES*.md` and `datasets/LICENSES*.
 | `HuggingFaceH4/ultrachat_200k` | mit | https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k | 1 |
 | `HuggingFaceTB/cosmopedia` | Apache-2.0 | https://huggingface.co/datasets/HuggingFaceTB/cosmopedia | 1 |
 | `HuggingFaceTB/smoltalk` | Unknown | https://huggingface.co/datasets/HuggingFaceTB/smoltalk | 1 |
-| `NousResearch/FC-1k` | TBD | https://huggingface.co/datasets/NousResearch/FC-1k | 1 |
+| `NousResearch/hermes-function-calling-v1` | Apache-2.0 | https://huggingface.co/datasets/NousResearch/hermes-function-calling-v1 | 1 |
 | `OpenAssistant/oasst1` | apache-2.0 | https://huggingface.co/datasets/OpenAssistant/oasst1 | 1 |
 | `OpenAssistant/oasst_top1_2023-08-25` | Apache-2.0 | https://huggingface.co/datasets/OpenAssistant/oasst_top1_2023-08-25 | 4 |
 | `TFLai/Turkish-Alpaca` | Apache-2.0 | https://huggingface.co/datasets/TFLai/Turkish-Alpaca | 1 |
@@ -19,7 +19,6 @@ For license/provenance work, see `datasets/SOURCES*.md` and `datasets/LICENSES*.
 | `bigcode/the-stack-dedup` | Other (mixed upstream licenses; gated Terms of Use) | https://huggingface.co/datasets/bigcode/the-stack-dedup | 4 |
 | `codeparrot/github-code` | TBD | https://huggingface.co/datasets/codeparrot/github-code | 3 |
 | `glaiveai/glaive-function-calling-v2` | Apache-2.0 | https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2 | 1 |
-| `gorilla-llm/gorilla-openfunctions-v2` | TBD | https://huggingface.co/datasets/gorilla-llm/gorilla-openfunctions-v2 | 1 |
 | `mbpp` | CC-BY-4.0 | https://huggingface.co/datasets/mbpp | 1 |
 | `openai/gsm8k` | MIT | https://huggingface.co/datasets/openai/gsm8k | 8 |
 | `openai_humaneval` | MIT | https://huggingface.co/datasets/openai_humaneval | 1 |
@@ -45,8 +44,8 @@ For license/provenance work, see `datasets/SOURCES*.md` and `datasets/LICENSES*.
 ### `HuggingFaceTB/smoltalk`
 - scripts/mertformer_5080_final_onefile.py:7640 (pipeline_source)
 
-### `NousResearch/FC-1k`
-- scripts/data_pipeline.py:211 (pipeline_source)
+### `NousResearch/hermes-function-calling-v1`
+- scripts/data_pipeline.py:207 (pipeline_source)
 
 ### `OpenAssistant/oasst1`
 - scripts/mertformer_5080_final_onefile.py:7642 (pipeline_source)
@@ -79,9 +78,6 @@ For license/provenance work, see `datasets/SOURCES*.md` and `datasets/LICENSES*.
 
 ### `glaiveai/glaive-function-calling-v2`
 - scripts/data_pipeline.py:192 (pipeline_source)
-
-### `gorilla-llm/gorilla-openfunctions-v2`
-- scripts/data_pipeline.py:201 (pipeline_source)
 
 ### `mbpp`
 - scripts/benchmarks_internal.py:151 (load_dataset_safe)

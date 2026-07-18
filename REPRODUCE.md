@@ -10,7 +10,7 @@ bash scripts/bootstrap_venv.sh        # creates .titan-venv with pinned deps (Py
 
 ## 1. Verify the repo (no network, no GPU) — the CI `verify` gate
 ```bash
-bash scripts/verify_all.sh            # secret-scan + pytest (511 passed, 5 skipped) +
+bash scripts/verify_all.sh            # secret-scan + pytest (532 passed, 5 skipped) +
                                       # preflight + operator-mode overfit smoke + gates + manifests
 ```
 This runs the K4 drills (checkpoint save→restore→resume) and the CfC/MoE tolerance parity at toy scale. None of this trains the canonical model.

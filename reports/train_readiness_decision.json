@@ -127,7 +127,7 @@
         "runtime_credentials": {
           "status": "PASS",
           "hf_token_present_locally": false,
-          "wandb_enabled": true,
+          "wandb_enabled": false,
           "wandb_api_key_present_locally": false,
           "policy": "missing local credentials are allowed because this lane assumes runtime injection on the target machine"
         },

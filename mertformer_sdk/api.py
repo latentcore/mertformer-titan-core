@@ -100,6 +100,54 @@ def load_model(
     return model, tokenizer, device
 
 
+class InvalidGenerateInputError(ValueError):
+    """Raised by `_validate_generate_inputs` for out-of-bounds or malformed SDK inputs."""
+
+
+def _validate_generate_inputs(
+    prompt: str,
+    max_new_tokens: int,
+    temperature: float,
+    top_p: float,
+) -> None:
+    """Basic inference-layer input sanitization (BACKLOG I.7.3, added 2026-07-19).
+
+    Scope is deliberately narrow: reject malformed/out-of-bounds SDK call
+    arguments before they reach the model or tokenizer (resource exhaustion,
+    tokenizer crashes on binary/control-character input, silently-nonsensical
+    sampling params). This is NOT a defense against adversarial prompt content
+    (jailbreaks, semantic prompt injection) -- that is a model-alignment
+    concern for post-45K eval (see `eval/adversarial_prompt_robustness.py`),
+    not something a regex/length check at the SDK boundary can solve.
+    """
+    if not isinstance(prompt, str):
+        raise InvalidGenerateInputError(f"prompt must be a str, got {type(prompt).__name__}")
+    if not prompt.strip():
+        raise InvalidGenerateInputError("prompt must not be empty/whitespace-only")
+    # Generous character cap well above cfg.max_seq_len (4096) in token terms; guards
+    # against accidental multi-megabyte inputs (resource exhaustion), not legitimate long
+    # prompts -- the tokenizer/model themselves still enforce the real token-length limit.
+    max_prompt_chars = 100_000
+    if len(prompt) > max_prompt_chars:
+        raise InvalidGenerateInputError(
+            f"prompt too long: {len(prompt)} chars (max {max_prompt_chars})"
+        )
+    # Reject embedded NUL and other C0 control chars (except \n\t\r, which are legitimate
+    # in real text). These have no legitimate purpose in a text prompt and have historically
+    # been used to smuggle payloads past naive string handling in downstream tooling/logs.
+    disallowed_control = {chr(c) for c in range(0, 32) if chr(c) not in "\n\t\r"}
+    if any(ch in disallowed_control for ch in prompt):
+        raise InvalidGenerateInputError("prompt contains disallowed control characters")
+    if not isinstance(max_new_tokens, int) or not (0 < max_new_tokens <= 8192):
+        raise InvalidGenerateInputError(
+            f"max_new_tokens must be an int in (0, 8192], got {max_new_tokens!r}"
+        )
+    if not (0.0 < temperature <= 5.0):
+        raise InvalidGenerateInputError(f"temperature must be in (0.0, 5.0], got {temperature!r}")
+    if not (0.0 < top_p <= 1.0):
+        raise InvalidGenerateInputError(f"top_p must be in (0.0, 1.0], got {top_p!r}")
+
+
 def generate(
     model: MertFormer,
     tokenizer: AutoTokenizer,
@@ -109,6 +157,7 @@ def generate(
     top_p: float = 0.9,
 ) -> str:
     """Generate text with sampling (cache-aware)."""
+    _validate_generate_inputs(prompt, max_new_tokens, temperature, top_p)
     device = next(model.parameters()).device
     input_ids = tokenizer(prompt, return_tensors="pt").input_ids.to(device)
 

@@ -10,13 +10,13 @@ Fill in each row at actual launch time (not now — these are genuinely launch-t
 | Gradient clipping | `max_grad_norm` — confirmed for canonical scale, not just pilot scale? | `config/config.py`'s dataclass default | _pending_ |
 | Early stopping | Is there an early-stop criterion for the 45K run, or does it always run to `TITAN_MAX_STEPS`? | none configured — runs to completion or divergence-guard trip | _pending_ |
 | Divergence guard | ON or OFF for this specific run (see [divergence_guard_decision_brief.md](divergence_guard_decision_brief.md)) | ON (`use_divergence_guard=True`) | _pending_ |
-| Liquid/CfC inclusion | Keep or drop per [liquid_keep_or_drop_brief.md](liquid_keep_or_drop_brief.md) | included (canonical architecture) | _pending_ |
-| Lane choice | `offline_clean` or `online_teacher` per [lane_cost_tradeoff_brief.md](lane_cost_tradeoff_brief.md) | neither pre-selected | _pending_ |
+| Liquid/CfC inclusion | Keep or drop per [liquid_keep_or_drop_brief.md](liquid_keep_or_drop_brief.md) | included (canonical architecture) | **2026-07-19: Keep** (see DECISIONS.md) |
+| Lane choice | `offline_clean` or `online_teacher` per [lane_cost_tradeoff_brief.md](lane_cost_tradeoff_brief.md) | neither pre-selected | **2026-07-19: online_teacher** (see DECISIONS.md) |
 | `TITAN_STRICT_TOKEN_BUDGET` | Confirmed ON for the real run (now defaulted ON in both launch scripts as of 2026-07-12 — verify it wasn't overridden back to 0) | `1` (both launch scripts) | _pending_ |
 | Checkpoint off-site backup | Off-site copy destination decided and reachable BEFORE the run starts (see BACKLOG #36 — the 14-May H200 checkpoint loss) | none configured | _pending_ |
 | Resume policy | `TITAN_AUTO_RESUME` / `TITAN_RESUME_ALLOW_PARTIAL` confirmed for this specific launch | lane-script defaults | _pending_ |
-| Model size (2.64B vs 3.67B) | Which size actually trains — `DEFAULT_PARAMS=2.64e9` is a separate design target from the 3.67B measured/canonical config (see [DECISIONS.md](../DECISIONS.md) "2.64B design target vs 3.67B measured params"). BACKLOG.md's Hard Gate section states 3.67B as canonical; DECISIONS.md still calls resolving this "a real pre-45K task" — this row exists so that tension is closed explicitly, not silently, at launch. | 3.67B (BACKLOG.md Hard Gate wording) | _pending_ |
-| `top_k` / disk-budget | `top_k=256` (current `scripts/launch_8xb300.sh` default) implies ~36TB of precomputed logits; `top_k=32` implies ~4.5TB. Must be decided and disk provisioned before Phase-0 starts (see [BACKLOG.md](../BACKLOG.md) "Pre-45K — data/corpus/launch-gate readiness"). | `256` (`scripts/launch_8xb300.sh` default) | _pending_ |
+| Model size (2.64B vs 3.67B) | Which size actually trains — `DEFAULT_PARAMS=2.64e9` is a separate design target from the 3.67B measured/canonical config (see [DECISIONS.md](../DECISIONS.md) "2.64B design target vs 3.67B measured params"). | 3.67B (BACKLOG.md Hard Gate wording) | **2026-07-19: 3.67B measured, confirmed** (see DECISIONS.md; no config change — already the default) |
+| `top_k` / disk-budget | `top_k=32` (current `scripts/precompute_logits_topk.py` default as of 2026-07-19) implies ~4.5TB of precomputed logits; `top_k=256` would have implied ~36TB. Disk still needs provisioning before Phase-0 starts. | `32` (`scripts/precompute_logits_topk.py` `DEFAULT_TOP_K`, changed from `256` on 2026-07-19) | **2026-07-19: 32** (see DECISIONS.md) — disk provisioning itself still pending |
 
 ## Why this exists as a checklist, not a script
 

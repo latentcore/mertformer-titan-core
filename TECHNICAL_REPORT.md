@@ -37,8 +37,8 @@ The cornerstone of the MertFormer Titan project is its hardware-aware structure 
 ### 2.1 BitNet b1.58 and the Ternary Computing Revolution
 While traditional models use 16-bit (BF16), MertFormer Titan reduces weights to values of $\{-1, 0, 1\}$ based on **BitNet b1.58** technology.
 
-*   **Memory Savings (Estimate):** 93.75% theoretical reduction.
-*   **VRAM Requirement (Estimate):** ~0.65 GB (computed for the **2.64B design-target** parameter count, not the 3.67B measured total; requires low-bit inference path).
+*   **Memory Savings (Theoretical, fp-simulation only — relabeled 2026-07-19, see `DECISIONS.md`):** 93.75% is the *arithmetic* reduction of packing weights to {-1,0,1} instead of BF16 — it is **not delivered by the current runtime**, which forward-passes through a plain fp simulation (`layers/bitlinear.py`'s BitNet forward, straight-through estimator), not a real ternary-math kernel. No such kernel exists yet in this repo (see the Energy Efficiency note below and `bitnet_cpu.cpp`'s own comments). The one *measured* low-bit number that IS real is **disk packing**: 17.99MB→1.06MB (~17.0x) for a saved checkpoint, verified with a matching CE difference of 6.19e-05 — a storage-format result, not a training/inference-speed result.
+*   **VRAM Requirement (Estimate):** ~0.65 GB (computed for the **2.64B design-target** parameter count, not the 3.67B measured total; requires a real low-bit inference kernel, which does not exist yet — see above).
 *   **Energy Efficiency (Unmeasured Target):** Up to 70x energy savings on NPUs *if* ternary math runs on optimized kernels. No such optimized kernel exists yet — the current Metal/Vulkan/NPU code paths fall back to a generic `F.linear` (`torch`) passthrough, so this figure is a projected target, not a measurement.
 
 **Mathematical Quantization Formula (`bitlinear.py`):**

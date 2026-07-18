@@ -73,8 +73,10 @@ if [ -z "${HF_TOKEN:-}" ]; then
 fi
 
 # (3) DISK REALITY — Top-K teacher logits over the full budget are enormous.
-echo "[b300] NOTE: Top-K=${TITAN_TOP_K:-256} teacher logits over ~23.6B tokens is TENS OF TB"
-echo "[b300]       (≈36 TB @ top_k=256 … ≈4.5 TB @ top_k=32). Lower TITAN_TOP_K or pre-stage shards;"
+# Decided 2026-07-19 (DECISIONS.md): top_k=32 is canonical (~4.5TB), not 256 (~36TB) --
+# scripts/precompute_logits_topk.py's own DEFAULT_TOP_K was updated to match.
+echo "[b300] NOTE: Top-K=${TITAN_TOP_K:-32} teacher logits over ~23.6B tokens still needs real disk"
+echo "[b300]       (≈4.5 TB @ top_k=32, the canonical decision … ≈36 TB @ top_k=256, not used)."
 echo "[b300]       the disk pre-flight gate in scripts/precompute_logits_topk.py enforces this."
 
 # (4) CANONICAL 8xB300 / 45K ENVIRONMENT (config defaults, set explicitly to be self-documenting).

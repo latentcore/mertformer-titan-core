@@ -1,5 +1,7 @@
 # Liquid/CfC Keep-or-Drop Decision Brief
 
+**DECIDED (2026-07-19): Keep.** Mert chose Keep over Drop via an explicit multiple-choice decision, accepting the ~30% wall-clock cost as a research bet the 45K run itself will settle, rather than discarding the `bdee57a` Liquid investment (EMA-relative threshold, `generate()` state threading, parity) on an inconclusive-not-disproven result. No code change (already the current default). See `DECISIONS.md` "Eight launch-time decisions locked...". The analysis below is preserved as the reasoning that informed the decision, not superseded by it.
+
 **Purpose:** BACKLOG I.2 #15 — "Liquid/CfC 45K koşusunda kalacak mı — açık PRE-45K kararı" (will Liquid/CfC stay in the 45K run — an open pre-45K decision).
 
 ## The measured evidence (already in the repo, not new)

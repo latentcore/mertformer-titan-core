@@ -67,14 +67,13 @@ See also:
   Purpose: function calling / tool use
   Dataset card: https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2
   Status: referenced in code; revision pinned + manifest fingerprint recorded in `datasets/hashes.json`
-- `gorilla-llm/gorilla-openfunctions-v2` (train; optional)
-  Purpose: tool-use diversity (optional/gated)
-  Dataset card: https://huggingface.co/datasets/gorilla-llm/gorilla-openfunctions-v2
-  Status: referenced in code; verify license in `datasets/LICENSES.md`
-- `NousResearch/FC-1k` (train; optional)
-  Purpose: lightweight function-calling expansion
-  Dataset card: https://huggingface.co/datasets/NousResearch/FC-1k
-  Status: referenced in code; verify license in `datasets/LICENSES.md`
+- `NousResearch/hermes-function-calling-v1` (train, config `func_calling`; optional)
+  Purpose: tool-use diversity (replaces `gorilla-llm/gorilla-openfunctions-v2` + `NousResearch/FC-1k`,
+  both confirmed dead — live HTTP 401 on the HF Hub as of 2026-07-13/18. This replacement was
+  verified live + ungated + apache-2.0-licensed via the HF Hub API on 2026-07-19; see
+  `datasets/LICENSES.md` and `BACKLOG.md`.
+  Dataset card: https://huggingface.co/datasets/NousResearch/hermes-function-calling-v1
+  Status: referenced in code; revision pinning + manifest fingerprint pending (not yet materialized)
 
 ## Evaluation / Benchmarks (from `scripts/benchmarks_internal.py`, `eval/gsm8k.py`)
 - `openai_humaneval` (test)

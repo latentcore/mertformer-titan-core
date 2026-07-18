@@ -100,3 +100,58 @@ def test_load_model_uses_checkpoint_tokenizer_identity(monkeypatch, tmp_path):
     assert isinstance(tokenizer, _StubTok)
     assert captured.get("resized") == 123  # model resized to checkpoint tokenizer vocab
     assert captured.get("loaded") is True
+
+
+def test_validate_generate_inputs_accepts_sane_call():
+    api = importlib.import_module("mertformer_sdk.api")
+    api._validate_generate_inputs("hello world", max_new_tokens=64, temperature=0.7, top_p=0.9)
+
+
+def test_validate_generate_inputs_rejects_non_str_prompt():
+    api = importlib.import_module("mertformer_sdk.api")
+    with pytest.raises(api.InvalidGenerateInputError):
+        api._validate_generate_inputs(123, max_new_tokens=64, temperature=0.7, top_p=0.9)
+
+
+def test_validate_generate_inputs_rejects_empty_prompt():
+    api = importlib.import_module("mertformer_sdk.api")
+    with pytest.raises(api.InvalidGenerateInputError):
+        api._validate_generate_inputs("   ", max_new_tokens=64, temperature=0.7, top_p=0.9)
+
+
+def test_validate_generate_inputs_rejects_oversized_prompt():
+    api = importlib.import_module("mertformer_sdk.api")
+    with pytest.raises(api.InvalidGenerateInputError):
+        api._validate_generate_inputs("a" * 100_001, max_new_tokens=64, temperature=0.7, top_p=0.9)
+
+
+def test_validate_generate_inputs_rejects_control_characters():
+    api = importlib.import_module("mertformer_sdk.api")
+    with pytest.raises(api.InvalidGenerateInputError):
+        api._validate_generate_inputs("hi\x00there", max_new_tokens=64, temperature=0.7, top_p=0.9)
+
+
+def test_validate_generate_inputs_allows_newline_tab_cr():
+    api = importlib.import_module("mertformer_sdk.api")
+    api._validate_generate_inputs("line1\nline2\ttabbed\r\n", max_new_tokens=64, temperature=0.7, top_p=0.9)
+
+
+@pytest.mark.parametrize("bad_max_new_tokens", [0, -1, 8193, 1.5, "64"])
+def test_validate_generate_inputs_rejects_bad_max_new_tokens(bad_max_new_tokens):
+    api = importlib.import_module("mertformer_sdk.api")
+    with pytest.raises(api.InvalidGenerateInputError):
+        api._validate_generate_inputs("hi", max_new_tokens=bad_max_new_tokens, temperature=0.7, top_p=0.9)
+
+
+@pytest.mark.parametrize("bad_temperature", [0.0, -1.0, 5.1])
+def test_validate_generate_inputs_rejects_bad_temperature(bad_temperature):
+    api = importlib.import_module("mertformer_sdk.api")
+    with pytest.raises(api.InvalidGenerateInputError):
+        api._validate_generate_inputs("hi", max_new_tokens=64, temperature=bad_temperature, top_p=0.9)
+
+
+@pytest.mark.parametrize("bad_top_p", [0.0, -0.1, 1.1])
+def test_validate_generate_inputs_rejects_bad_top_p(bad_top_p):
+    api = importlib.import_module("mertformer_sdk.api")
+    with pytest.raises(api.InvalidGenerateInputError):
+        api._validate_generate_inputs("hi", max_new_tokens=64, temperature=0.7, top_p=bad_top_p)

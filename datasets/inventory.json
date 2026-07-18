@@ -98,24 +98,24 @@
       }
     },
     {
-      "dataset": "NousResearch/FC-1k",
+      "dataset": "NousResearch/hermes-function-calling-v1",
       "ref_count": 1,
       "refs": [
         {
-          "dataset": "NousResearch/FC-1k",
+          "dataset": "NousResearch/hermes-function-calling-v1",
           "file": "scripts/data_pipeline.py",
-          "line": 211,
+          "line": 207,
           "kind": "pipeline_source",
-          "snippet": "\"dataset\": \"NousResearch/FC-1k\","
+          "snippet": "\"dataset\": \"NousResearch/hermes-function-calling-v1\","
         }
       ],
       "metadata": {
-        "license": null,
+        "license": "apache-2.0",
         "homepage": null,
-        "gated": null,
-        "sha": null,
-        "private": null,
-        "hf_url": "https://huggingface.co/datasets/NousResearch/FC-1k"
+        "gated": false,
+        "sha": "dae3e1d28cfbcf4b915c04ea1e072030529b4bda",
+        "private": false,
+        "hf_url": "https://huggingface.co/datasets/NousResearch/hermes-function-calling-v1"
       }
     },
     {
@@ -344,27 +344,6 @@
         "sha": "e7f4b6456019f5d8bcb991ef0dd67d8ff23221ac",
         "private": false,
         "hf_url": "https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2"
-      }
-    },
-    {
-      "dataset": "gorilla-llm/gorilla-openfunctions-v2",
-      "ref_count": 1,
-      "refs": [
-        {
-          "dataset": "gorilla-llm/gorilla-openfunctions-v2",
-          "file": "scripts/data_pipeline.py",
-          "line": 201,
-          "kind": "pipeline_source",
-          "snippet": "\"dataset\": \"gorilla-llm/gorilla-openfunctions-v2\","
-        }
-      ],
-      "metadata": {
-        "license": null,
-        "homepage": null,
-        "gated": null,
-        "sha": null,
-        "private": null,
-        "hf_url": "https://huggingface.co/datasets/gorilla-llm/gorilla-openfunctions-v2"
       }
     },
     {

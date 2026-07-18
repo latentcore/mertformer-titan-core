@@ -67,14 +67,13 @@ Bkz:
   Amaç: function calling / tool use
   Dataset card: https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2
   Durum: kodda referansli; revision pin + manifest fingerprint `datasets/hashes.json` içinde kayıtlı
-- `gorilla-llm/gorilla-openfunctions-v2` (train; opsiyonel)
-  Amaç: tool-use çeşitliliği (opsiyonel/gated)
-  Dataset card: https://huggingface.co/datasets/gorilla-llm/gorilla-openfunctions-v2
-  Durum: kodda referansli; lisans `datasets/LICENSES_TR.md` içinde doğrulanmalı
-- `NousResearch/FC-1k` (train; opsiyonel)
-  Amaç: hafif function-calling genişletmesi
-  Dataset card: https://huggingface.co/datasets/NousResearch/FC-1k
-  Durum: kodda referansli; lisans `datasets/LICENSES_TR.md` içinde doğrulanmalı
+- `NousResearch/hermes-function-calling-v1` (train, config `func_calling`; opsiyonel)
+  Amaç: tool-use çeşitliliği (`gorilla-llm/gorilla-openfunctions-v2` + `NousResearch/FC-1k`'nin yerine —
+  ikisi de 2026-07-13/18 itibarıyla canlı HTTP 401 döndüğü doğrulanmış ölü kaynaklardı). Bu
+  değiştirme 2026-07-19'da HF Hub API üzerinden canlı + ungated + apache-2.0-lisanslı olarak
+  doğrulandı; bkz. `datasets/LICENSES_TR.md` ve `BACKLOG_TR.md`.
+  Dataset card: https://huggingface.co/datasets/NousResearch/hermes-function-calling-v1
+  Durum: kodda referansli; revision pin + manifest fingerprint henüz yok (materyalize edilmedi)
 
 ## Değerlendirme / Benchmark (`scripts/benchmarks_internal.py`, `eval/gsm8k.py`)
 - `openai_humaneval` (test)

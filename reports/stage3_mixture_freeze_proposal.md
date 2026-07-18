@@ -1,5 +1,7 @@
 # Stage-3 Source Mixture Freeze Proposal
 
+**DECIDED (2026-07-19): ratified, not reinvented.** When asked to decide now, investigation found `scripts/data_pipeline.py`'s `STAGE3_SOURCES` already encoded a concrete split: `wikimedia/wikipedia` (`20231101.tr`, ratio 0.015) + `uonlp/CulturaX` (`tr`, ratio 0.040) = 0.055 raw Turkish share, vs. `HuggingFaceTB/cosmopedia` (`stories`, English-synthetic, ratio 0.015) — runtime-normalized against their own sum, this is **~78.6% Turkish / ~21.4% synthetic** within Stage 3. This was a real, already-made choice sitting undocumented in code, not an open blank; rather than overwrite a working ratio with an invented number, this pass formally ratified the existing split as the frozen decision. No code changed. See `DECISIONS.md` "Eight launch-time decisions locked...". The proposal below is preserved as-is; its "what Stage-3 refers to" framing remains accurate.
+
 **Purpose:** BACKLOG I.3 #28 — "Stage-3 kaynak karışımını precompute'tan ÖNCE bilinçle dondur" (consciously freeze the Stage-3 source mixture BEFORE precompute). Teacher-logit precompute (Phase-0, BACKLOG #25) is expensive and effectively one-shot — if the underlying corpus source mixture changes AFTER precompute runs, the precomputed logits no longer correspond to the actual training corpus, silently invalidating the whole precompute pass. This proposal exists so the mixture is deliberately locked before that cost is spent, not discovered to have drifted after.
 
 ## What "Stage-3" refers to

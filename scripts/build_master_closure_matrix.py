@@ -265,6 +265,21 @@ def write_phase2(path: Path, items: list[Item]) -> None:
     path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
 
+# item_id -> resolution note. `items` is re-derived every run from a Desktop TXT export
+# (see discover_txt/extract_txt_items) plus repo_items(), so a hand-edit to the generated
+# .md gets silently overwritten on the next verify_all.sh run -- this dict is the actual,
+# persistent place to record that a flagged item is resolved. Added 2026-07-19 after that
+# exact silent-overwrite was observed firsthand for repo:012.
+RESOLVED_HIGH_RISK_ITEMS: dict[str, str] = {
+    'repo:012': (
+        "Verified resolved (2026-07-19): explicitly stated in MISSION.md line 13 "
+        '("Harmful autonomy, covert surveillance framing, and unsupported capability '
+        'inflation are out of scope."), USE_POLICY.md line 14, and SECURITY.md line 8. '
+        "See DECISIONS.md."
+    ),
+}
+
+
 def write_risk_register(path: Path, items: list[Item]) -> None:
     high = [x for x in items if x.risk == 'high']
     medium = [x for x in items if x.risk == 'medium']
@@ -272,6 +287,9 @@ def write_risk_register(path: Path, items: list[Item]) -> None:
     if high:
         for item in high:
             lines.append(f'- `{item.item_id}` {item.text} -> {item.reason}')
+            resolution = RESOLVED_HIGH_RISK_ITEMS.get(item.item_id)
+            if resolution:
+                lines.append(f'  **{resolution}**')
     else:
         lines.append('- none')
     lines.extend(['', '## Medium', ''])

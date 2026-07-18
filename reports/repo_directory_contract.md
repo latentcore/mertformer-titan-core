@@ -1,5 +1,11 @@
 # Repo Directory Contract
 
+> Cross-reference (added 2026-07-19): `reports/folder_structure_policy.md` states a terser,
+> overlapping version of the same generated-vs-source layout rule below. This file is the
+> canonical, enforced version (see Enforcement); that one is a short-form summary. If they
+> ever appear to disagree, this file wins — update the other to match rather than resolving
+> the conflict by editing here first.
+
 ## Canonical Durable Areas
 - `docs/`: official structural or explanatory documentation
 - `reports/`: generated or curated closure, benchmark, readiness, and truth artifacts

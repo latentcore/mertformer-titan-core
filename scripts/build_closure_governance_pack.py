@@ -1460,6 +1460,12 @@ def build_repo_directory_contract() -> str:
         """
         # Repo Directory Contract
 
+        > Cross-reference (added 2026-07-19): `reports/folder_structure_policy.md` states a terser,
+        > overlapping version of the same generated-vs-source layout rule below. This file is the
+        > canonical, enforced version (see Enforcement); that one is a short-form summary. If they
+        > ever appear to disagree, this file wins — update the other to match rather than resolving
+        > the conflict by editing here first.
+
         ## Canonical Durable Areas
         - `docs/`: official structural or explanatory documentation
         - `reports/`: generated or curated closure, benchmark, readiness, and truth artifacts
@@ -1534,6 +1540,18 @@ def build_change_control_sop() -> str:
         ## Exceptions
         - Hotfixes may shrink scope, but they do not skip verification or truth-sync.
         - Freeze-breach changes require an ADR or an explicit governance note.
+
+        ## Commit/Push Authorization (added 2026-07-19 -- closes a documentation gap)
+
+        Steps 11-12 above (commit, push) are gated on **explicit, per-request authorization from the
+        repo owner** -- not implied by an earlier approval, not inferred from task momentum, and not
+        granted by completing steps 1-10. Concretely:
+        - An agent/operator must have a clear, current-turn instruction to commit and/or push before
+          doing so. A prior turn's authorization does not carry forward to a new turn's changes.
+        - If authorization is ambiguous or was given for a different, narrower change, stop and ask
+          rather than assuming it extends to the current change.
+        - This authority rule lives here (repo-internal) so it is visible to anyone with only repo
+          access; it does not depend on any external, non-tracked document.
         """
     ).strip()
 

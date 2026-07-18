@@ -507,7 +507,7 @@ def strict_training_readiness_profile() -> int:
             "wikimedia/wikipedia",
             "OpenAssistant/oasst_top1_2023-08-25",
             "glaiveai/glaive-function-calling-v2",
-            "gorilla-llm/gorilla-openfunctions-v2",
+            "NousResearch/hermes-function-calling-v1",
             "openai/gsm8k",
             "uonlp/CulturaX",
             "TIGER-Lab/MathInstruct",

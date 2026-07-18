@@ -9,8 +9,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 
+# Directories whose .md files are vendored/cache noise, not real repo content -- including
+# them in the "duplicate markdown" scan produces false-positive groups (e.g. .lint-venv's
+# vendored pip LICENSE.md, .pytest_cache's auto-generated README.md). Added 2026-07-19 after
+# an audit found these accounted for 2 of the ~27 flagged "duplicate" groups.
+_EXCLUDED_DIR_PARTS = {'.git', '.titan-venv', '.lint-venv', '.pytest_cache', '.mypy_cache', '.ruff_cache'}
+
+
 def main() -> int:
-    md_files = sorted([p for p in ROOT.rglob('*.md') if '.git' not in p.parts and '.titan-venv' not in p.parts])
+    md_files = sorted([p for p in ROOT.rglob('*.md') if not (_EXCLUDED_DIR_PARTS & set(p.parts))])
 
     by_name = defaultdict(list)
     for p in md_files:
@@ -34,6 +41,9 @@ def main() -> int:
     policy_md = ROOT / 'reports' / 'folder_structure_policy.md'
     policy_md.write_text(
         '# Folder Structure Policy\n\n'
+        '> Cross-reference (added 2026-07-19): this is a short-form summary of the same rule\n'
+        '> `reports/repo_directory_contract.md` states in full, including its enforcement command. That\n'
+        '> file is canonical; this one exists for a quick-glance summary only.\n\n'
         '- Keep generated artifacts under `artifacts/` and `reports/`.\n'
         '- Keep source code under `config/`, `layers/`, `model/`, `train/`, `scripts/`, `mertformer_sdk/`.\n'
         '- Keep policy files under `policy/`.\n'

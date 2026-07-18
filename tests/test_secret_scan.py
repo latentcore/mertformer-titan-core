@@ -73,6 +73,60 @@ def test_secret_scan_detects_contextual_40hex_token(tmp_path: Path):
     assert fake_key not in hits[0][3]
 
 
+def test_secret_scan_detects_anthropic_key(tmp_path: Path):
+    module = _load_secret_scan_module()
+    # The pre-existing openai_key pattern's tail class excludes `-`, so it cannot match this
+    # (regression coverage for the 2026-07-13 home-dir-scan-confirmed gap).
+    fake_key = "sk-ant-api03-" + "ABCDEFGHIJ1234567890" * 2
+    (tmp_path / "anthropic.env").write_text(f"ANTHROPIC_API_KEY={fake_key}\n", encoding="utf-8")
+
+    mode, paths = module.discover_scan_files(tmp_path, package_mode=True)
+    hits = module.scan_paths(paths, tmp_path)
+
+    assert mode == "package_walk"
+    assert any(h[0] == "anthropic_key" for h in hits)
+    assert all(fake_key not in h[3] for h in hits)
+
+
+def test_secret_scan_detects_anthropic_service_key(tmp_path: Path):
+    module = _load_secret_scan_module()
+    fake_key = "sk-svcac-" + "ABCDEFGHIJ1234567890" * 2
+    (tmp_path / "anthropic_service.env").write_text(f"key={fake_key}\n", encoding="utf-8")
+
+    mode, paths = module.discover_scan_files(tmp_path, package_mode=True)
+    hits = module.scan_paths(paths, tmp_path)
+
+    assert mode == "package_walk"
+    assert any(h[0] == "anthropic_service_key" for h in hits)
+    assert all(fake_key not in h[3] for h in hits)
+
+
+def test_secret_scan_detects_google_api_key(tmp_path: Path):
+    module = _load_secret_scan_module()
+    fake_key = "AIza" + "A" * 35
+    (tmp_path / "google.env").write_text(f"GOOGLE_API_KEY={fake_key}\n", encoding="utf-8")
+
+    mode, paths = module.discover_scan_files(tmp_path, package_mode=True)
+    hits = module.scan_paths(paths, tmp_path)
+
+    assert mode == "package_walk"
+    assert any(h[0] == "google_api_key" for h in hits)
+    assert all(fake_key not in h[3] for h in hits)
+
+
+def test_secret_scan_detects_google_oauth_client_secret(tmp_path: Path):
+    module = _load_secret_scan_module()
+    fake_secret = "GOCSPX-" + "abcdefghijklmnopqrstuvwx"
+    (tmp_path / "google_oauth.env").write_text(f"client_secret={fake_secret}\n", encoding="utf-8")
+
+    mode, paths = module.discover_scan_files(tmp_path, package_mode=True)
+    hits = module.scan_paths(paths, tmp_path)
+
+    assert mode == "package_walk"
+    assert any(h[0] == "google_oauth_client_secret" for h in hits)
+    assert all(fake_secret not in h[3] for h in hits)
+
+
 def test_discover_home_directory_files_scans_documents_and_downloads(tmp_path: Path):
     module = _load_secret_scan_module()
     docs = tmp_path / "Documents"
