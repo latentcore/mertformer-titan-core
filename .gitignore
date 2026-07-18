@@ -91,6 +91,13 @@ scripts/reports/pilots/**
 temp_preflight_data/
 temp_preflight_logits/
 
+# Nutrition5k side-experiment local working directory (checkpoints/*.pt already
+# caught by the blanket *.pt rule above; this covers the rest -- console.log,
+# state.json, REPORT.md, metrics.json, train_log.csv, dataset_manifest.json --
+# which were NOT previously ignored, found 2026-07-18). nutrition5k_output.zip
+# is already covered by the blanket *.zip rule above.
+/nutrition5k_work/
+
 # Separate dealroom repository (kept outside main repo tracking)
 mertformer-titan-dealroom-private/
 
