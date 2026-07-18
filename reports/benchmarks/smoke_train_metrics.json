@@ -1,25 +1,25 @@
 {
-  "elapsed_sec": 2.965,
+  "elapsed_sec": 1.463,
   "env": {
     "device": "mps",
     "python": "3.11.14",
     "torch": "2.13.0"
   },
-  "forensic_sha256": "d2865b0475564463cc5bba6ba645010019b545211d649dbc84d37174d0ea1744",
-  "generated_at_utc": "2026-07-18T18:00:24Z",
+  "forensic_sha256": "a945ced89c09f32cdd2e1dc69b77f1c5bc6dd30a2f7d7b7b7ae55d69b9d21232",
+  "generated_at_utc": "2026-07-18T18:28:03Z",
   "liquid": {
-    "avg_loss": 6.280240511894226,
-    "avg_tau": 0.9740471243858337,
+    "avg_loss": 6.2802705526351925,
+    "avg_tau": 0.9740446209907532,
     "final_aux_loss": 0.0,
-    "final_loss": 6.326354503631592,
+    "final_loss": 6.326475143432617,
     "steps": 20,
     "use_liquid": true
   },
   "no_liquid": {
-    "avg_loss": 6.2769965648651125,
+    "avg_loss": 6.2769958734512326,
     "avg_tau": null,
     "final_aux_loss": 0.0,
-    "final_loss": 6.279877662658691,
+    "final_loss": 6.279850959777832,
     "steps": 20,
     "use_liquid": false
   },

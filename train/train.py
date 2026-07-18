@@ -129,6 +129,7 @@ from train.trainer_core import (
     get_gpu_memory_usage,
     get_student_device,
     get_teacher_device,
+    get_rewarmup_schedule,
     get_wsd_schedule,
     preflight_param_report,
     seed_all,
@@ -1005,12 +1006,29 @@ def train() -> None:
             f"min_lr_ratio={float(getattr(cfg, 'min_lr_ratio', 0.01)):.3g}"
         )
 
-    scheduler = get_wsd_schedule(
-        opt,
-        num_warmup_steps=num_warmup_steps,
-        num_training_steps=cfg.max_steps,
-        min_lr_ratio=float(getattr(cfg, "min_lr_ratio", 0.01)),
-    )
+    if bool(getattr(cfg, "use_rewarmup_schedule", False)):
+        rewarmup_steps = int(getattr(cfg, "rewarmup_steps", 1000))
+        rewarmup_start_ratio = float(getattr(cfg, "rewarmup_start_lr_ratio", 0.01))
+        if accelerator.is_main_process:
+            print(
+                f"📐 LR schedule: RE-WARMUP mode (post-45K continuation training) "
+                f"start_ratio={rewarmup_start_ratio:.3g} rewarmup_steps={rewarmup_steps} "
+                f"min_lr_ratio={float(getattr(cfg, 'min_lr_ratio', 0.01)):.3g}"
+            )
+        scheduler = get_rewarmup_schedule(
+            opt,
+            num_rewarmup_steps=rewarmup_steps,
+            num_training_steps=cfg.max_steps,
+            start_lr_ratio=rewarmup_start_ratio,
+            min_lr_ratio=float(getattr(cfg, "min_lr_ratio", 0.01)),
+        )
+    else:
+        scheduler = get_wsd_schedule(
+            opt,
+            num_warmup_steps=num_warmup_steps,
+            num_training_steps=cfg.max_steps,
+            min_lr_ratio=float(getattr(cfg, "min_lr_ratio", 0.01)),
+        )
 
     if resume_payload is not None:
         resume_state = resume_payload.get("state", {})

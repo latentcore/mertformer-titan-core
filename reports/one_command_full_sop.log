@@ -1,35 +1,35 @@
-[run] start_utc=2026-07-18T17:50:07Z
+[run] start_utc=2026-07-18T18:22:52Z
 [run] step=verify_all
 [verify] Python: Python 3.11.14
 [verify] TITAN_OFFLINE=1
 [verify] Secret scan ...
 OK: no secret patterns detected in git_tracked files. scanned=910
 [verify] bandit security scan (HIGH-severity hard-fail) ...
-bandit scan: 512 total findings -- {'LOW': 402, 'MEDIUM': 110, 'HIGH': 0}
+bandit scan: 513 total findings -- {'LOW': 403, 'MEDIUM': 110, 'HIGH': 0}
 Full report: reports/bandit_security_scan.json
 
 OK: no findings at or above severity>=high, confidence>=high (currently: HIGH=0).
 [verify] Repo hygiene guard (bare-except / stale build fossils) ...
 OK: repo hygiene guard; bare_except=0, build_fossils=0 (scanned tracked source).
 [verify] Pytest ...
-........................................................................ [ 13%]
-........................................................................ [ 26%]
-...............s........................................................ [ 40%]
-........................................................................ [ 53%]
-....................s................................................... [ 67%]
-........................................................................ [ 80%]
-...........................................s............................ [ 94%]
-....................s...........                                         [100%]
+........................................................................ [ 12%]
+........................................................................ [ 25%]
+...............s........................................................ [ 38%]
+........................................................................ [ 51%]
+....................s................................................... [ 64%]
+........................................................................ [ 77%]
+................................................................s....... [ 90%]
+.........................................s...........                    [100%]
 =============================== warnings summary ===============================
 tests/test_gradient_checkpoint_moe.py: 14 warnings
   <HOME_PATH> DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
     warnings.warn(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-532 passed, 5 skipped, 14 warnings in 97.94s (0:01:37)
+553 passed, 5 skipped, 14 warnings in 48.53s
 sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
 [verify] Test-stat claim sync ...
-{'status': 'ok', 'test_stat': '532 passed, 5 skipped', 'changed': [], 'missing': []}
+{'status': 'ok', 'test_stat': '553 passed, 5 skipped', 'changed': ['reports/FACTS.json', 'README.md', 'README_TR.md', 'reports/release_snapshot.md', 'reports/release_snapshot_TR.md', 'reports/one_command_full_sop_summary.md', 'reports/go_status_matrix.md', 'reports/go_status_matrix_TR.md', 'reports/final_sync_matrix.md', 'reports/final_sync_matrix_TR.md', 'reports/cleanroom_verification.md', 'STATUS.md', 'STATUS_TR.md', 'TRUTH_MATRIX.md', 'TRUTH_MATRIX_TR.md', 'REPRODUCE.md', 'REPRODUCE_TR.md', 'reports/cleanroom_verification_TR.md', 'docs/QUICKSTART_CPU.md'], 'missing': []}
 [verify] Preflight (offline) ...
 ✈️ ============================================================
 ✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀
@@ -68,7 +68,7 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 ✈️ Removed <HOME_PATH>
 ✈️ Removed <HOME_PATH>
 ✅ CLEANUP: Done.
-✈️ Preflight Duration: 6.41s
+✈️ Preflight Duration: 2.93s
 ✈️ ============================================================
 ✈️ RESULT: 🏆 ALL GREEN
 ✈️ Full Report: <HOME_PATH>
@@ -77,11 +77,11 @@ Distilling preflight (Chunk 0): 0it [00:00, ?it/s]
 Checkpoint restore drill: PASS
 Failure budget drill: PASS
 Overfit step 0: loss=5.6022
-Overfit step 12: loss=4.0986
+Overfit step 12: loss=4.0984
 Overfit step 24: loss=3.3960
-Overfit step 36: loss=3.4487
-Overfit step 48: loss=3.7249
-Overfit gate: PASS (final=3.6503, uniform=5.5452, learn_margin=34.17%, start-rel=34.84%)
+Overfit step 36: loss=3.4489
+Overfit step 48: loss=3.7228
+Overfit gate: PASS (final=3.6492, uniform=5.5452, learn_margin=34.19%, start-rel=34.86%)
 Golden samples: 50
 - algorithms: 13
 - cli: 1
@@ -113,7 +113,7 @@ Golden sample eval: dry-run complete (manifest OK; not a correctness gate)
 Benchmark runner configured. Use --run to execute.
 {
   "status": "completed",
-  "elapsed_sec": 16.055734872817993,
+  "elapsed_sec": 8.258410692214966,
   "results": [
     {
       "step": "nan_kill_switch",
@@ -139,9 +139,9 @@ Benchmark runner configured. Use --run to execute.
       "step": "telemetry_snapshot",
       "status": "pass",
       "snapshot": {
-        "timestamp_utc": "2026-07-18T17:52:27Z",
-        "cpu_percent": 23.4,
-        "ram_used_gb": 6.921905517578125,
+        "timestamp_utc": "2026-07-18T18:24:02Z",
+        "cpu_percent": 28.1,
+        "ram_used_gb": 6.8761138916015625,
         "ram_total_gb": 16.0,
         "gpu_device": null,
         "gpu_allocated_gb": null,
@@ -153,8 +153,8 @@ Benchmark runner configured. Use --run to execute.
         "gpu_power_limit_w": null,
         "gpu_mem_used_gb_smi": null,
         "gpu_mem_total_gb_smi": null,
-        "disk_used_gb": 225.23939514160156,
-        "disk_free_gb": 3.0344696044921875,
+        "disk_used_gb": 225.2315444946289,
+        "disk_free_gb": 3.0423202514648438,
         "disk_total_gb": 228.27386474609375
       }
     },
@@ -233,13 +233,13 @@ OK: workspace hygiene manifest refreshed
 {
   "json": "<REPO_ROOT>/reports/scoped_external_intake_matrix.json",
   "md": "<REPO_ROOT>/reports/scoped_external_intake_matrix.md",
-  "entries": 5726,
+  "entries": 5741,
   "sync_mode": "audit",
   "handoff_dir": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_07_18",
   "apply_errors": 0
 }
 [verify] Chess GUI onefile sync check ...
-{"schema": "chess_gui_onefile_sync_report_v1", "generated_utc": "2026-07-18T17:53:09Z", "canonical_onefile": "<REPO_ROOT>/scripts/chess_5080_onefile.py", "gui_dir": "<REPO_ROOT>/apps/chess_gui", "gui_onefile": "<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py", "status": "canonical_fallback_ready", "reason": "local_copy_missing_repo_canonical_fallback_available", "copied": false, "local_copy_present": false, "canonical_sha256": "308293c95e315eb75ae3a0acef0a9db534d2fc51c4dbbd14f808019614f6a714", "gui_sha256": "", "hashes_match": false}
+{"schema": "chess_gui_onefile_sync_report_v1", "generated_utc": "2026-07-18T18:24:23Z", "canonical_onefile": "<REPO_ROOT>/scripts/chess_5080_onefile.py", "gui_dir": "<REPO_ROOT>/apps/chess_gui", "gui_onefile": "<REPO_ROOT>/apps/chess_gui/chess_5080_onefile.py", "status": "canonical_fallback_ready", "reason": "local_copy_missing_repo_canonical_fallback_available", "copied": false, "local_copy_present": false, "canonical_sha256": "308293c95e315eb75ae3a0acef0a9db534d2fc51c4dbbd14f808019614f6a714", "gui_sha256": "", "hashes_match": false}
 [verify] Chess teaching contract smoke report ...
 [warn] pyzipper import basarisiz (opsiyonel): ModuleNotFoundError("No module named 'pyzipper'")
 {"case_total": 5, "case_pass": 5, "mode_total": 5, "mode_pass": 5, "level_monotonic_non_decreasing": true, "all_green": true}
@@ -315,7 +315,7 @@ OK: duplicate zip guard; groups=4
 {
   "json": "<REPO_ROOT>/reports/scoped_external_intake_matrix.json",
   "md": "<REPO_ROOT>/reports/scoped_external_intake_matrix.md",
-  "entries": 5726,
+  "entries": 5741,
   "sync_mode": "audit",
   "handoff_dir": "<HOME>/Documents/MertFormer_Final_PreTraining_Closure_2026_07_18",
   "apply_errors": 0
@@ -357,13 +357,13 @@ OK: tokenizer spec files are byte-identical
 }
 WARN: AGE_RECIPIENT_FILE missing; skipping locked secure .age artifact.
 release_zip=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip
-release_sha256=3fec50cdffa8e2b7d858e02e753c25e605fa288a17cce323d7163098fa8edb8b
+release_sha256=b7dea0c7ed26139d6337378e32ef0d752473ad86c495abef6251e5dba66ef3e9
 locked_age=<REPO_ROOT>/packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age
 locked_sha256=
 [run] step=unlock_artifacts
 [run] step=artifact_release_zip
 [run] step=training_outputs_bundle
-{"bundle_zip": "artifacts/mertformer_training_outputs_bundle.zip", "included_files": 1432}
+{"bundle_zip": "artifacts/mertformer_training_outputs_bundle.zip", "included_files": 1436}
 [run] step=zip_denylist_audit zip=packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip
 {
   "zip_path": "packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip",
@@ -375,4 +375,4 @@ locked_sha256=
 }
 [run] step=secret_scan
 OK: no secret patterns detected in git_tracked files. scanned=910
-[run] end_utc=2026-07-18T17:54:55Z
+[run] end_utc=2026-07-18T18:25:17Z

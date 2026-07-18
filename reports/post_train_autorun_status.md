@@ -3,7 +3,7 @@
 - schema: `post_train_autorun_status_v1`
 - mode: `demo-only`
 - status: `completed`
-- generated_utc: `2026-07-18T18:00:28.828217+00:00`
+- generated_utc: `2026-07-18T18:28:05.923524+00:00`
 - checkpoint: `<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt`
 
 ## Steps

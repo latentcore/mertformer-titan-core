@@ -556,6 +556,21 @@ class MertFormerConfig:
     warmup_ratio: float = float(os.environ.get("TITAN_WARMUP_RATIO", "0.15"))
     warmup_steps: int = int(os.environ.get("TITAN_WARMUP_STEPS", "0"))
 
+    # Post-45K continuation-training (SFT / DMSR ablation / additional pre-training)
+    # re-warmup (BACKLOG "LR re-warmup" item -- previously zero code). The canonical
+    # 45K run's WSD schedule decays learning_rate down to min_lr_ratio by design;
+    # resuming a NEW training run from that checkpoint with the same scheduler state
+    # would keep the LR pinned at the floor, so continuation training effectively
+    # never learns. Default OFF -- the canonical 45K path is byte-for-byte unaffected;
+    # only set TITAN_USE_REWARMUP=1 for a deliberate post-45K continuation run. See
+    # train/trainer_core.py::get_rewarmup_schedule().
+    use_rewarmup_schedule: bool = os.environ.get("TITAN_USE_REWARMUP", "0") == "1"
+    rewarmup_steps: int = int(os.environ.get("TITAN_REWARMUP_STEPS", "1000"))
+    # Where the base run's LR floor was -- matches min_lr_ratio's default so the
+    # continuation run's cold start lines up with wherever the base run actually
+    # landed, not an arbitrary guess.
+    rewarmup_start_lr_ratio: float = float(os.environ.get("TITAN_REWARMUP_START_RATIO", "0.01"))
+
     # Runtime fast paths (V2)
     liquid_fast_path: bool = os.environ.get("TITAN_LIQUID_FAST_PATH", "1") == "1"
     liquid_train_impl: str = os.environ.get("TITAN_LIQUID_TRAIN_IMPL", "baseline")

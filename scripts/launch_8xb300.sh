@@ -114,6 +114,23 @@ case "$MODE" in
     ;;
   go)
     echo "[b300] LAUNCHING the real 45K run on 8xB300 ..."
+    # [2026-07-19] BACKLOG "off-site checkpoint backup -- auto-wiring": optional,
+    # off by default. No-ops immediately if TITAN_OFFSITE_BACKUP_DEST is unset (see
+    # runbooks/checkpoint_offsite_backup.md). This case execs zero_touch_start.sh
+    # below, so this watcher is started in the background BEFORE that exec and
+    # keeps running detached from this script's own process afterward -- it is not
+    # auto-stopped when training ends on this launcher (unlike launch_ocean_45k.sh's
+    # nvidia-smi-dmon pattern, which can trap-kill it because it never execs). Stop
+    # it manually (or let it idle -- each cycle is a cheap stability check when
+    # there's nothing new to sync) once the run finishes and the final manual sync
+    # from the runbook's step 4 has been confirmed.
+    if [ -n "${TITAN_OFFSITE_BACKUP_DEST:-}" ]; then
+      mkdir -p logs
+      nohup python3 scripts/offsite_backup_watcher.py >> "logs/offsite_backup_watcher.log" 2>&1 &
+      echo "[b300] off-site backup watcher started (PID $!) -> ${TITAN_OFFSITE_BACKUP_DEST}"
+    else
+      echo "[b300] TITAN_OFFSITE_BACKUP_DEST not set -- off-site backup watcher NOT started (see runbooks/checkpoint_offsite_backup.md)"
+    fi
     exec bash zero_touch_start.sh ${PASSTHRU[@]+"${PASSTHRU[@]}"}
     ;;
 esac

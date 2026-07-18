@@ -173,13 +173,30 @@ fi
 echo "[ocean] LAUNCHING the real 45K run (remote_bootstrap lane) on 8xB300 ..."
 nvidia-smi dmon -s pucvmet -d 10 -o TD > "logs/launch/nvidia_smi_dmon_${RUN_ID}.log" 2>&1 &
 DMON_PID=$!
-trap 'kill "$DMON_PID" 2>/dev/null || true' EXIT
+
+# [2026-07-19] BACKLOG "off-site checkpoint backup -- auto-wiring": optional, off by
+# default. No-ops immediately if TITAN_OFFSITE_BACKUP_DEST is unset (see
+# runbooks/checkpoint_offsite_backup.md). Unlike launch_8xb300.sh (which execs and
+# so cannot clean up after itself), this script never execs -- the watcher is
+# started the same way as nvidia-smi dmon above and is trap-killed the same way once
+# the run finishes below.
+BACKUP_PID=""
+if [ -n "${TITAN_OFFSITE_BACKUP_DEST:-}" ]; then
+  python3 scripts/offsite_backup_watcher.py > "logs/launch/offsite_backup_watcher_${RUN_ID}.log" 2>&1 &
+  BACKUP_PID=$!
+  echo "[ocean] off-site backup watcher started (PID ${BACKUP_PID}) -> ${TITAN_OFFSITE_BACKUP_DEST}"
+else
+  echo "[ocean] TITAN_OFFSITE_BACKUP_DEST not set -- off-site backup watcher NOT started (see runbooks/checkpoint_offsite_backup.md)"
+fi
+
+trap 'kill "$DMON_PID" 2>/dev/null || true; [ -n "$BACKUP_PID" ] && kill "$BACKUP_PID" 2>/dev/null || true' EXIT
 
 TRAIN_RC=0
 bash zero_touch_start.sh ${PASSTHRU[@]+"${PASSTHRU[@]}"} \
   2>&1 | tee "logs/launch/zero_touch_${RUN_ID}.log" || TRAIN_RC=$?
 
 kill "$DMON_PID" 2>/dev/null || true
+[ -n "$BACKUP_PID" ] && kill "$BACKUP_PID" 2>/dev/null || true
 trap - EXIT
 
 # --- post-run: bundle outputs + presence check. ---

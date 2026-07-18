@@ -337,6 +337,53 @@ def get_wsd_schedule(
     return LambdaLR(optimizer, lr_lambda)
 
 
+def get_rewarmup_schedule(
+    optimizer: torch.optim.Optimizer,
+    num_rewarmup_steps: int,
+    num_training_steps: int,
+    start_lr_ratio: float = 0.01,
+    peak_lr_ratio: float = 1.0,
+    min_lr_ratio: float = 0.1,
+    stable_ratio: float = 0.8,
+) -> LambdaLR:
+    """Re-warmup schedule for POST-45K continuation training (SFT / DMSR ablation /
+    additional pre-training) resuming from a checkpoint whose base-run LR had already
+    decayed to its floor via get_wsd_schedule's min_lr_ratio. NOT used by the
+    canonical/frozen 45K run itself -- see config.use_rewarmup_schedule (default off,
+    BACKLOG "LR re-warmup" item).
+
+    Resuming the base scheduler's own state at that point keeps the LR pinned at the
+    floor for the entire continuation run, since current_step never re-enters the
+    warmup or stable phase. This schedule re-anchors to step 0 for the continuation
+    run: ramps linearly from start_lr_ratio (the base run's landing floor) up to
+    peak_lr_ratio over num_rewarmup_steps, holds stable for stable_ratio of the
+    remaining steps, then cosine-decays back down to min_lr_ratio -- the same WSD
+    shape as get_wsd_schedule, just re-anchored and with a non-zero cold-start floor.
+    """
+    from torch.optim.lr_scheduler import LambdaLR
+
+    def lr_lambda(current_step):
+        if current_step < num_rewarmup_steps:
+            progress = float(current_step) / float(max(1, num_rewarmup_steps))
+            return start_lr_ratio + (peak_lr_ratio - start_lr_ratio) * progress
+
+        remaining_steps = max(1, num_training_steps - num_rewarmup_steps)
+        stable_steps = num_rewarmup_steps + int(remaining_steps * stable_ratio)
+        if current_step < stable_steps:
+            return peak_lr_ratio
+
+        # Decay phase (cosine from peak_lr_ratio down to min_lr_ratio). Same
+        # progress-clamp discipline as get_wsd_schedule's [2026-07-08] fix, so a
+        # changed num_training_steps between save and resume can't send the LR back up.
+        decay_steps = num_training_steps - stable_steps
+        progress = float(current_step - stable_steps) / float(max(1, decay_steps))
+        progress = min(1.0, max(0.0, progress))
+        cosine_val = 0.5 * (1.0 + math.cos(math.pi * progress))
+        return max(min_lr_ratio, min_lr_ratio + (peak_lr_ratio - min_lr_ratio) * cosine_val)
+
+    return LambdaLR(optimizer, lr_lambda)
+
+
 # -----------------------------------------------------------------------------
 # FREEZE SUPPORT
 # -----------------------------------------------------------------------------

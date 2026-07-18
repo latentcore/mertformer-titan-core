@@ -5,7 +5,7 @@ Canonical, hand-maintained status entry point. Generated detail lives under `rep
 
 ## One glance
 - **Stage:** pre-training **closure-complete** — the canonical model has **NOT been trained yet**.
-- **Build:** `532 passed, 5 skipped` (offline-first `pytest`). See [REPRODUCE.md](REPRODUCE.md).
+- **Build:** `553 passed, 5 skipped` (offline-first `pytest`). See [REPRODUCE.md](REPRODUCE.md).
 - **Readiness:** `train_allowed = true` · `decision_reason_code = READY_REMOTE_BOOTSTRAP` · `start_gate = START_ALLOWED`.
 - **Crash-class bugs:** none (canonical model + orchestrator import cleanly).
 
