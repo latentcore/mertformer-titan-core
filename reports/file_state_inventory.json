@@ -1,11 +1,11 @@
 {
   "schema": "file_state_inventory_v1",
-  "generated_utc": "2026-07-18T09:42:35Z",
+  "generated_utc": "2026-07-18T11:12:25Z",
   "git_branch": "main",
-  "git_commit_short": "20eb14c",
+  "git_commit_short": "484ec86",
   "tracked_files": 923,
   "modified_entries": [
-    "M .gitignore",
+    "M AGENTS.md",
     " M artifacts/mertformer_release.zip.sha256",
     " M packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256",
     " M reports/backup_restore_report.json",
@@ -77,8 +77,10 @@
     " M reports/target_machine_handoff_manifest.json",
     " M reports/target_machine_handoff_manifest.md",
     " M reports/thermal_baseline.json",
+    " M reports/train_readiness_decision.json",
     " M reports/training_outputs_bundle_manifest.json",
     " M reports/training_outputs_bundle_manifest.md",
+    " M reports/training_readiness_manifest.json",
     " M reports/unicode_path_guard_report.json",
     " M reports/workspace_hygiene_manifest.json",
     " M reports/xla_smoke_report.json"

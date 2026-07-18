@@ -47,6 +47,7 @@ Historical snapshots, archived reports, and legacy audits are supporting context
 - Tests or verification gates cover the changed behavior where practical.
 - Machine-readable and human-readable artifacts exist for critical closure surfaces.
 - Documentation points to the same canonical command and same current truth.
+- If a bilingual pair (`*.md` / `*_TR.md`, either direction) is edited, its twin is updated in the same change — content parity, not just structural parity (both must state the same current truth, not merely the same links/headings). No tooling currently checks this automatically; it is a manual discipline until one exists.
 - No desktop absolute paths leak into tracked artifacts.
 - Final readiness output keeps exact blocker reason codes.
 
