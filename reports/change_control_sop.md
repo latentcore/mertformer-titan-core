@@ -29,3 +29,20 @@ granted by completing steps 1-10. Concretely:
   rather than assuming it extends to the current change.
 - This authority rule lives here (repo-internal) so it is visible to anyone with only repo
   access; it does not depend on any external, non-tracked document.
+
+## Step 6 Invocation Mechanics (added 2026-07-19 -- closes a redundant-invocation gap)
+
+The three verification scripts are **nested, not parallel**: `scripts/final_one_shot.sh` calls
+`scripts/one_command_full_sop.sh` internally, which itself calls `scripts/verify_all.sh`
+internally (confirmed by direct grep of both files, 2026-07-19). Chaining all three as
+separate top-level commands (`verify_all.sh && one_command_full_sop.sh && final_one_shot.sh`)
+therefore re-runs `verify_all.sh` up to 3x and `one_command_full_sop.sh`'s full step list up
+to 2x for no benefit -- the outer script already fails fast at the same point, since its first
+internal step is the inner script.
+- For full closure (Class D/E changes, or any change touching the training path/readiness
+  contract), run **`bash scripts/final_one_shot.sh` alone** -- it already is the full chain.
+- For a cheap correctness check on a small change (Class A doc/truth-sync), running
+  `scripts/verify_all.sh` alone is still correct and much faster; do not escalate to the full
+  chain unless the change's risk class calls for it.
+- Do not manually chain multiple tiers together -- pick the single tier matching the change's
+  risk class and run only that one.

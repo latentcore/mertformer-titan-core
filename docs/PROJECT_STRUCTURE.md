@@ -625,6 +625,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── seed_policy_TR.md  # Turkish document counterpart
 ├── runbooks/  # directory
 │   ├── README.md  # primary documentation (EN)
+│   ├── checkpoint_offsite_backup.md  # documentation/report file
+│   ├── checkpoint_offsite_backup_TR.md  # Turkish document counterpart
 │   ├── chess_4060_24h.md  # documentation/report file
 │   ├── chess_4060_24h_TR.md  # Turkish document counterpart
 │   ├── chess_4060_24h_all_on_experimental.md  # documentation/report file

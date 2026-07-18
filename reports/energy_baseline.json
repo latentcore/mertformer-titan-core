@@ -1,11 +1,11 @@
 {
-  "timestamp_utc": "2026-07-18T12:28:09.136116+00:00",
+  "timestamp_utc": "2026-07-18T17:58:38.004231+00:00",
   "stage": "baseline",
   "measurement_kind": "resource_usage_proxy",
   "energy_measured": false,
   "thermal_measured": false,
   "note": "CPU/RAM snapshot only; no real power or temperature sensor read",
-  "cpu_percent": 0.0,
+  "cpu_percent": 7.9,
   "ram_total_gb": 16.0,
-  "ram_used_gb": 8.516220092773438
+  "ram_used_gb": 8.953536987304688
 }

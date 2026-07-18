@@ -35,7 +35,8 @@
 ## #80 — Watermarking
 **Question:** should MertFormer Titan ship with statistical text watermarking (e.g. a Kirchenbauer-style green/red-list logit bias), and if so, what's the quality/detectability tradeoff?
 **Acceptance criterion:** a design decision recorded in DECISIONS.md, informed by a measured quality-cost tradeoff on a real checkpoint if the decision is "yes."
-**Blocked on:** real checkpoint for the quality-cost measurement; the design QUESTION itself (yes/no, and which scheme) could be decided pre-45K as a policy matter, independent of having a checkpoint.
+**Status (2026-07-19):** the policy question is decided — DECISIONS.md records "yes, in principle," scheme = Kirchenbauer-style green-list logit-bias, implementation deferred to post-checkpoint (a generation-time wrapper, no retraining needed). See `reports/responsible_ai_checklist.md`.
+**Blocked on:** real checkpoint, for the quality/detectability tradeoff measurement only — the scheme choice itself is no longer open.
 
 ## Why these seven are grouped here instead of getting individual probe scripts
 
