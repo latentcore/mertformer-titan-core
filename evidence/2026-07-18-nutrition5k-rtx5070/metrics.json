@@ -1,0 +1,44 @@
+{
+  "schema": "nutrition5k_metrics_v1",
+  "generated_utc": "2026-07-18T08:04:32Z",
+  "train_result": {
+    "epochs_run": 58,
+    "stopped_early": true,
+    "global_step": 4988,
+    "n_params": 14074631,
+    "n_trainable": 14074631,
+    "device": "cuda",
+    "amp": true,
+    "val_metrics": {
+      "calories": {
+        "mae": 75.53956643129007,
+        "mae_pct": 29.569201344179852
+      },
+      "mass": {
+        "mae": 49.5068108974359,
+        "mae_pct": 24.939343751242003
+      },
+      "fat": {
+        "mae": 5.746527030388044,
+        "mae_pct": 44.78745644877185
+      },
+      "carb": {
+        "mae": 8.882207746336446,
+        "mae_pct": 45.124926177552105
+      },
+      "protein": {
+        "mae": 7.428490633089867,
+        "mae_pct": 42.50035641294278
+      }
+    },
+    "best_val_calorie_mae": 75.53956643129007,
+    "best_checkpoint": "C:\\Users\\<WIN_HOME>\\Desktop\\Nutrition5k_Training_Package\\nutrition5k_work\\checkpoints\\nutrition5k_best.pt",
+    "latest_checkpoint": "C:\\Users\\<WIN_HOME>\\Desktop\\Nutrition5k_Training_Package\\nutrition5k_work\\checkpoints\\nutrition5k_latest.pt"
+  },
+  "outcome": {
+    "status": "returned",
+    "exception": null,
+    "traceback": null,
+    "wall_seconds": 4057.264530658722
+  }
+}

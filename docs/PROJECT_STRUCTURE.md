@@ -166,6 +166,14 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   ├── metrics_summary.json  # JSON data artifact
 │   │   ├── run_config_171m.json  # JSON data artifact
 │   │   └── run_config_36m.json  # JSON data artifact
+│   ├── 2026-07-18-nutrition5k-rtx5070/  # directory
+│   │   ├── README.md  # primary documentation (EN)
+│   │   ├── REPORT.md  # documentation/report file
+│   │   ├── console.log  # text/log artifact
+│   │   ├── dataset_manifest.json  # JSON data artifact
+│   │   ├── evaluation_independent.md  # documentation/report file
+│   │   ├── metrics.json  # JSON data artifact
+│   │   └── train_log.csv  # CSV data artifact
 │   ├── build30_t4_onecell/  # directory
 │   │   ├── EVIDENCE_POINTER.md  # documentation/report file
 │   │   ├── run_summary.json  # JSON data artifact
@@ -243,6 +251,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   └── pilot.py  # Python module/script (SDK component for pilot)
 ├── model/  # directory
 │   ├── __init__.py  # Python module/script (model package initializer and exports)
+│   ├── nutrition_vision.py  # Python module/script (module for nutrition vision)
 │   └── transformers.py  # Python module/script (MertFormer model assembly and forward graph)
 ├── orchestrator/  # directory
 │   ├── README.md  # primary documentation (EN)
@@ -632,6 +641,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   └── denylist_scan_zip.py  # Python module/script (automation script for denylist scan zip)
 │   ├── README.md  # primary documentation (EN)
 │   ├── README_TR.md  # Turkish document counterpart
+│   ├── RUN_NUTRITION5K.bat  # artifact
 │   ├── __init__.py  # Python module/script (scripts package initializer and exports)
 │   ├── apply_github_policy.sh  # shell automation script
 │   ├── benchmark_liquid_impls.py  # Python module/script (automation script for benchmark liquid impls)
@@ -686,6 +696,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── estimate_carbon_footprint.py  # Python module/script (automation script for estimate carbon footprint)
 │   ├── estimate_shard_disk.py  # Python module/script (automation script for estimate shard disk)
 │   ├── eval.py  # Python module/script (automation script for eval)
+│   ├── evaluate_nutrition5k.py  # Python module/script (automation script for evaluate nutrition5k)
 │   ├── export_chess_5080_share.py  # Python module/script (automation script for export chess 5080 share)
 │   ├── extract_dataset_refs.py  # Python module/script (automation script for extract dataset refs)
 │   ├── failure_budget_drill.py  # Python module/script (automation script for failure budget drill)
@@ -733,6 +744,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── post_train_autorun.py  # Python module/script (automation script for post train autorun)
 │   ├── precompute_logits_parallel.py  # Python module/script (automation script for precompute logits parallel)
 │   ├── precompute_logits_topk.py  # Python module/script (automation script for precompute logits topk)
+│   ├── predict_nutrition5k.py  # Python module/script (automation script for predict nutrition5k)
 │   ├── preflight_run.py  # Python module/script (automation script for preflight run)
 │   ├── preflight_run_pilot171m.py  # Python module/script (automation script for preflight run pilot171m)
 │   ├── ram_guard.py  # Python module/script (automation script for ram guard)
@@ -755,6 +767,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_onnx_export.py  # Python module/script (automation script for test onnx export)
 │   ├── titan_onnx_stress_test.py  # Python module/script (automation script for titan onnx stress test)
 │   ├── titan_preflight.py  # Python module/script (automation script for titan preflight)
+│   ├── train_nutrition5k.py  # Python module/script (automation script for train nutrition5k)
 │   ├── train_smoke.py  # Python module/script (automation script for train smoke)
 │   ├── train_tpu_turbo.py  # Python module/script (automation script for train tpu turbo)
 │   ├── unicode_path_guard.py  # Python module/script (automation script for unicode path guard)

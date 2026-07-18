@@ -26,7 +26,11 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": "odc-by",
+        "homepage": null,
+        "gated": false,
+        "sha": "87f09149ef4734204d70ed1d046ddc9ca3f2b8f9",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu"
       }
     },
@@ -43,7 +47,11 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": "mit",
+        "homepage": null,
+        "gated": false,
+        "sha": "8049631c405ae6576f93f445c6b8166f76f5505a",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k"
       }
     },
@@ -60,7 +68,11 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": "apache-2.0",
+        "homepage": null,
+        "gated": false,
+        "sha": "0ae6ec63f91742bd2d1eaef4f02232c55d719385",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/HuggingFaceTB/cosmopedia"
       }
     },
@@ -78,6 +90,10 @@
       ],
       "metadata": {
         "license": null,
+        "homepage": null,
+        "gated": false,
+        "sha": "5feaf2fd3ffca7c237fc38d1861bc30365d48ffa",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk"
       }
     },
@@ -95,6 +111,10 @@
       ],
       "metadata": {
         "license": null,
+        "homepage": null,
+        "gated": null,
+        "sha": null,
+        "private": null,
         "hf_url": "https://huggingface.co/datasets/NousResearch/FC-1k"
       }
     },
@@ -111,7 +131,11 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": "apache-2.0",
+        "homepage": null,
+        "gated": false,
+        "sha": "fdf72ae0827c1cda404aff25b6603abec9e3399b",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/OpenAssistant/oasst1"
       }
     },
@@ -149,7 +173,11 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": "apache-2.0",
+        "homepage": null,
+        "gated": false,
+        "sha": "745b4a3d123f65ab0cac34a84a0528f6d2b67d1e",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/OpenAssistant/oasst_top1_2023-08-25"
       }
     },
@@ -166,7 +194,11 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": "apache-2.0",
+        "homepage": null,
+        "gated": false,
+        "sha": "90f95895618a12d28ba99e9bff0c211920d488ec",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/TFLai/Turkish-Alpaca"
       }
     },
@@ -204,7 +236,11 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": "mit",
+        "homepage": null,
+        "gated": false,
+        "sha": "b4fdc323a7be1379c9c7c0b67b1de72dfee2111a",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/TIGER-Lab/MathInstruct"
       }
     },
@@ -242,7 +278,13 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": [
+          "other"
+        ],
+        "homepage": null,
+        "gated": true,
+        "sha": "17cad72c886a2858e08d4c349a00d6466f54df63",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/bigcode/the-stack-dedup"
       }
     },
@@ -273,7 +315,13 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": [
+          "other"
+        ],
+        "homepage": null,
+        "gated": false,
+        "sha": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/codeparrot/github-code"
       }
     },
@@ -290,7 +338,11 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": "apache-2.0",
+        "homepage": null,
+        "gated": false,
+        "sha": "e7f4b6456019f5d8bcb991ef0dd67d8ff23221ac",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/glaiveai/glaive-function-calling-v2"
       }
     },
@@ -308,6 +360,10 @@
       ],
       "metadata": {
         "license": null,
+        "homepage": null,
+        "gated": null,
+        "sha": null,
+        "private": null,
         "hf_url": "https://huggingface.co/datasets/gorilla-llm/gorilla-openfunctions-v2"
       }
     },
@@ -324,7 +380,13 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": [
+          "cc-by-4.0"
+        ],
+        "homepage": null,
+        "gated": false,
+        "sha": "4bb6404fdc6cacfda99d4ac4205087b89d32030c",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/mbpp"
       }
     },
@@ -390,7 +452,13 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": [
+          "mit"
+        ],
+        "homepage": null,
+        "gated": false,
+        "sha": "740312add88f781978c0658806c59bc2815b9866",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/openai/gsm8k"
       }
     },
@@ -407,7 +475,13 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": [
+          "mit"
+        ],
+        "homepage": null,
+        "gated": false,
+        "sha": "7dce6050a7d6d172f3cc5c32aa97f52fa1a2e544",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/openai_humaneval"
       }
     },
@@ -425,6 +499,10 @@
       ],
       "metadata": {
         "license": null,
+        "homepage": null,
+        "gated": false,
+        "sha": "b82037821055c377bed0d495e72e46de3bc72e84",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/teknium/OpenHermes-2.5"
       }
     },
@@ -462,7 +540,11 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": "cc-by-sa-4.0",
+        "homepage": null,
+        "gated": false,
+        "sha": "55a946a3626473f3a8ec33a11979ef3dd473ffe5",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/turkish-nlp-suite/InstrucTurca"
       }
     },
@@ -508,6 +590,10 @@
       ],
       "metadata": {
         "license": null,
+        "homepage": null,
+        "gated": true,
+        "sha": "6a8734bc69fefcbb7735f4f9250f43e4cd7a442e",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/uonlp/CulturaX"
       }
     },
@@ -552,7 +638,14 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": [
+          "cc-by-sa-3.0",
+          "gfdl"
+        ],
+        "homepage": null,
+        "gated": false,
+        "sha": "b04c8d1ceb2f5cd4588862100d08de323dccfbaa",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/wikimedia/wikipedia"
       }
     },
@@ -569,13 +662,20 @@
         }
       ],
       "metadata": {
-        "license": null,
+        "license": [
+          "cc-by-sa-3.0",
+          "gfdl"
+        ],
+        "homepage": null,
+        "gated": false,
+        "sha": "b08601e04326c79dfdd32d625aee71d232d685c3",
+        "private": false,
         "hf_url": "https://huggingface.co/datasets/wikitext"
       }
     },
     {
       "dataset": "{DATASET_ID}",
-      "ref_count": 1,
+      "ref_count": 2,
       "refs": [
         {
           "dataset": "{DATASET_ID}",
@@ -583,10 +683,21 @@
           "line": 1117,
           "kind": "load_dataset",
           "snippet": "f'load_dataset(\"{DATASET_ID}\", split=\"{DATASET_SPLIT}\", '"
+        },
+        {
+          "dataset": "{DATASET_ID}",
+          "file": "scripts/preflight_run_pilot171m.py",
+          "line": 1166,
+          "kind": "load_dataset",
+          "snippet": "f'load_dataset(\"{DATASET_ID}\", split=\"{DATASET_SPLIT}\", '"
         }
       ],
       "metadata": {
         "license": null,
+        "homepage": null,
+        "gated": null,
+        "sha": null,
+        "private": null,
         "hf_url": "https://huggingface.co/datasets/{DATASET_ID}"
       }
     }

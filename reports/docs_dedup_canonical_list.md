@@ -148,6 +148,9 @@ Generated automatically.
 - `economics/efficiency_report_TR.md`
 - `evidence/2026-07-02-laptop-preflight/README.md`
 - `evidence/2026-07-12-laptop-preflight-v2/README.md`
+- `evidence/2026-07-18-nutrition5k-rtx5070/README.md`
+- `evidence/2026-07-18-nutrition5k-rtx5070/REPORT.md`
+- `evidence/2026-07-18-nutrition5k-rtx5070/evaluation_independent.md`
 - `evidence/README.md`
 - `evidence/build30_t4_onecell/EVIDENCE_POINTER.md`
 - `evidence/build30_t4_onecell/smoke_test_result.md`
@@ -563,6 +566,7 @@ Generated automatically.
   - `datasets/offline_demo/README.md`
   - `evidence/2026-07-02-laptop-preflight/README.md`
   - `evidence/2026-07-12-laptop-preflight-v2/README.md`
+  - `evidence/2026-07-18-nutrition5k-rtx5070/README.md`
   - `evidence/README.md`
   - `knowledge/README.md`
   - `logs/README.md`

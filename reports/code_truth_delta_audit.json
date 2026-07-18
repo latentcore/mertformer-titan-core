@@ -1,6 +1,6 @@
 {
   "schema": "code_truth_delta_audit_v1",
-  "generated_utc": "2026-07-14T14:51:38Z",
+  "generated_utc": "2026-07-18T09:04:32Z",
   "evidence_contract": {
     "required_columns": [
       "code_path",
@@ -745,6 +745,13 @@
       "summary": "fallback"
     },
     {
+      "path": "scripts/sync_test_stat_claims.py",
+      "markers": [
+        "scaffold"
+      ],
+      "summary": "scaffold"
+    },
+    {
       "path": "scripts/test_onnx_export.py",
       "markers": [
         "fallback"
@@ -753,6 +760,13 @@
     },
     {
       "path": "scripts/titan_preflight.py",
+      "markers": [
+        "fallback"
+      ],
+      "summary": "fallback"
+    },
+    {
+      "path": "scripts/train_nutrition5k.py",
       "markers": [
         "fallback"
       ],
@@ -842,6 +856,6 @@
       "tested_fallback": 6,
       "reference_safe": 1
     },
-    "marker_hit_count": 72
+    "marker_hit_count": 74
   }
 }

@@ -131,8 +131,10 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `scripts/run_liquid_ablation.py` | `fallback` |
 | `scripts/smart_runner.py` | `fallback` |
 | `scripts/sync_manifest.py` | `fallback` |
+| `scripts/sync_test_stat_claims.py` | `scaffold` |
 | `scripts/test_onnx_export.py` | `fallback` |
 | `scripts/titan_preflight.py` | `fallback` |
+| `scripts/train_nutrition5k.py` | `fallback` |
 | `scripts/update_investor_deck.py` | `fallback` |
 | `scripts/update_system_hardware.py` | `fallback` |
 | `scripts/verify_datasets.py` | `fallback` |

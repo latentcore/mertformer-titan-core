@@ -30,6 +30,16 @@ TARGETS = [
     ROOT / "reports" / "final_sync_matrix.md",
     ROOT / "reports" / "final_sync_matrix_TR.md",
     ROOT / "reports" / "cleanroom_verification.md",
+    # Root closure scaffold (STATUS.md is the "reviewer's first-read canonical status
+    # surface" per the Master Protocol's own §6.1) -- found missing here 2026-07-18,
+    # which let it silently drift to a stale count (503) while README/FACTS tracked
+    # the live one (511). These self-bill as current-truth, never a dated snapshot.
+    ROOT / "STATUS.md",
+    ROOT / "STATUS_TR.md",
+    ROOT / "TRUTH_MATRIX.md",
+    ROOT / "TRUTH_MATRIX_TR.md",
+    ROOT / "REPRODUCE.md",
+    ROOT / "REPRODUCE_TR.md",
     ROOT / "reports" / "cleanroom_verification_TR.md",
 ]
 

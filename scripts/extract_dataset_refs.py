@@ -132,9 +132,13 @@ def _write_md(path: Path, title: str, items: list[dict[str, Any]], lang: str, li
     lines.append(f"# {title}")
     lines.append("")
     if lang == "tr":
+        lines.append("> ⚙️ **OTOMATİK ÜRETİLİR — ELLE DÜZENLEMEYİN.** Bu dosyanın tamamı `python3 scripts/extract_dataset_refs.py --fetch-metadata` komutuyla yeniden üretilir; bir sonraki çalıştırmada elle yapılan her değişiklik sessizce ezilir. Veriyi düzeltmek için kod tabanındaki referansı veya `datasets/LICENSES*.md`'yi düzeltip komutu tekrar çalıştırın.")
+        lines.append("")
         lines.append("Bu dosya, kod tabanında referanslanan dataset kimliklerinin otomatik envanteridir (best-effort).")
         lines.append("Lisans/provenans doğrulaması için `datasets/SOURCES*.md` ve `datasets/LICENSES*.md` dosyalarını referans alın.")
     else:
+        lines.append("> ⚙️ **AUTO-GENERATED — DO NOT HAND-EDIT.** This entire file is rebuilt by `python3 scripts/extract_dataset_refs.py --fetch-metadata`; any manual edit is silently overwritten on the next run. To correct the data, fix the underlying codebase reference or `datasets/LICENSES*.md`, then re-run the command.")
+        lines.append("")
         lines.append("This file is an auto-generated inventory of dataset identifiers referenced by the codebase (best-effort).")
         lines.append("For license/provenance work, see `datasets/SOURCES*.md` and `datasets/LICENSES*.md`.")
     lines.append("")

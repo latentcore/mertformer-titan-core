@@ -1,7 +1,7 @@
 # Immutable Evidence Register
 
-- generated_local: `2026-07-14T17:54:16`
-- entry_count: `1382`
+- generated_local: `2026-07-18T12:05:56`
+- entry_count: `1395`
 
 | Path | Kind | Reason | Disposition |
 | --- | --- | --- | --- |
@@ -1091,6 +1091,16 @@
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260714_174425.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260714_174940.zip` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260714_174940.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260718_105747.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260718_105747.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260718_114800.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260718_114800.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260718_115255.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260718_115255.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260718_120035.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260718_120035.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260718_120330.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260718_120330.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113659.json` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113738.json` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormerStream/.gradle/buildOutputCleanup` | `dir` | `output` | `preserve_immutable_evidence` |
@@ -1385,5 +1395,8 @@
 | `<HOME>/Downloads/MertOS_Core/model_output` | `dir` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Downloads/MertOS_Core/model_output/gguf` | `dir` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Downloads/MertOS_Core/model_output/hf_merged` | `dir` | `output` | `preserve_immutable_evidence` |
+| `<HOME>/Downloads/MertOS_Core/output` | `dir` | `output` | `preserve_immutable_evidence` |
+| `<HOME>/Downloads/MertOS_Core/output/transkript.docx` | `file` | `output` | `preserve_immutable_evidence` |
+| `<HOME>/Downloads/MertOS_Core/output/video.tr.json3` | `file` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Downloads/MertOS_Core/wandb/run-20260124_204813-k9ilwvmw/files/output.log` | `file` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Downloads/MertOS_Core/wandb/run-20260124_205231-xdjw5gp1/files/output.log` | `file` | `output` | `preserve_immutable_evidence` |
