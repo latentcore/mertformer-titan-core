@@ -41,6 +41,10 @@ TARGETS = [
     ROOT / "REPRODUCE.md",
     ROOT / "REPRODUCE_TR.md",
     ROOT / "reports" / "cleanroom_verification_TR.md",
+    # Live "how to run this" guide -- states the expected live count as a fact for a new
+    # reader, not a dated snapshot. Found stale at 503 while FACTS.json/README were at 511
+    # (2026-07-18); it isn't a bilingual pair (no QUICKSTART_CPU_TR.md exists).
+    ROOT / "docs" / "QUICKSTART_CPU.md",
 ]
 
 

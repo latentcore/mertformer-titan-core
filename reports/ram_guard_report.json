@@ -1,19 +1,13 @@
 {
-  "generated_utc": "2026-07-18T11:11:28.535883+00:00",
+  "generated_utc": "2026-07-18T11:39:55.615788+00:00",
   "command": ".titan-venv/bin/python scripts/hardening_bundle.py",
   "warn_threshold_gb": 10.5,
   "slow_threshold_gb": 12.0,
   "hard_threshold_gb": 13.0,
-  "peak_used_gb": 10.656,
+  "peak_used_gb": 8.395,
   "terminated_by_guard": false,
-  "events": [
-    {
-      "event": "warn",
-      "used_gb": 10.655654907226562,
-      "ts": 1784373088.030715
-    }
-  ],
+  "events": [],
   "return_code": 0,
-  "duration_sec": 1.007,
+  "duration_sec": 1.011,
   "ok": true
 }
