@@ -26,6 +26,20 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
+def _atomic_write_json(out: Path, payload: dict) -> None:
+    """Temp-file + os.replace() write. titan_preflight.py's offline-readiness gate
+    treats this file's mere .exists() as PASS (no JSON parse/validation), so an
+    interrupted write here would otherwise be silently accepted as a complete,
+    valid hashes.json."""
+    out.parent.mkdir(parents=True, exist_ok=True)
+    tmp_out = out.with_suffix(out.suffix + ".tmp")
+    tmp_out.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    os.replace(tmp_out, out)
+
+
 def _sha256_hexdigest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -166,20 +180,14 @@ def main() -> int:
         }
 
     out = Path(args.out)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(
-            {
-                "schema_version": 1,
-                "generated_at_utc": generated_at,
-                "note": "For HF datasets, `sha256` is a fingerprint of the pinned repository file manifest (includes filenames + sizes + LFS sha256 when available). For local files, `sha256` is the file content hash.",
-                "sources": sources,
-            },
-            indent=2,
-            sort_keys=True,
-        )
-        + "\n",
-        encoding="utf-8",
+    _atomic_write_json(
+        out,
+        {
+            "schema_version": 1,
+            "generated_at_utc": generated_at,
+            "note": "For HF datasets, `sha256` is a fingerprint of the pinned repository file manifest (includes filenames + sizes + LFS sha256 when available). For local files, `sha256` is the file content hash.",
+            "sources": sources,
+        },
     )
     print(f"Wrote: {out} ({len(sources)} entries)")
     return 0

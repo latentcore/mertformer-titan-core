@@ -5114,6 +5114,16 @@ def restore_rng_state(state: Dict[str, Any]) -> None:
             logging.warning("RNG restore (cuda) failed: %s", exc)
 
 
+def atomic_torch_save(path: Path, payload: Dict[str, Any]) -> None:
+    """Matches the sibling onefile scripts' (kaggle_onefile_demo_build30.py etc.)
+    temp-file + os.replace() pattern, so a crash mid-`torch.save` can never leave a
+    corrupt checkpoint that a bare `.exists()` resume check would treat as valid."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    torch.save(payload, tmp)
+    os.replace(tmp, path)
+
+
 def save_checkpoint(
     model: ChessPolicyValueNet,
     optimizer: torch.optim.Optimizer,
@@ -5123,7 +5133,6 @@ def save_checkpoint(
     metrics: Dict[str, Any],
     best_val_loss: float,
 ) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "script_version": SCRIPT_VERSION,
         "step": step,
@@ -5136,7 +5145,7 @@ def save_checkpoint(
         "move_vocab_size": len(MOVE_VOCAB),
         "rng_state": get_rng_state(),
     }
-    torch.save(payload, path)
+    atomic_torch_save(path, payload)
 
 
 def load_checkpoint(

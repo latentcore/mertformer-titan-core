@@ -538,10 +538,16 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
             "sources": list(source_status.values()),
         }
 
-    # 2. Initialize File (Overwrite to prevent duplication) — ONLY now that at least one
-    #    source is live and we are actually going to rewrite it.
-    with open(stage_output, "w", encoding="utf-8") as f:
-        pass  # Just clear the file
+    # 2. Initialize a TEMP file (Overwrite to prevent duplication) — ONLY now that at
+    #    least one source is live and we are actually going to rewrite it. All writes
+    #    below target this temp path; `stage_output` itself is only ever replaced
+    #    atomically at the very end of a successful run (os.replace()), so a crash or
+    #    interruption mid-download can never leave `stage_output` truncated/corrupt —
+    #    the previous complete file (if any) survives untouched, matching the
+    #    no-active-sources guard's "leave old data untouched on failure" philosophy.
+    tmp_output = stage_output.with_suffix(stage_output.suffix + ".tmp")
+    with open(tmp_output, "w", encoding="utf-8") as f:
+        pass  # Just clear/create the temp file
     # Create Start Signal for Streaming Tailing
     start_signal = stage_dir / f"stage{stage_num}_started.signal"
     with open(start_signal, "w") as f:
@@ -620,7 +626,7 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
             write_buffer.append(json.dumps({"text": text}, ensure_ascii=False))
             
             if len(write_buffer) >= BUFFER_SIZE:
-                with open(stage_output, "a", encoding="utf-8") as f:
+                with open(tmp_output, "a", encoding="utf-8") as f:
                     f.write("\n".join(write_buffer) + "\n")
                 write_buffer = [] # Flush
             
@@ -644,8 +650,13 @@ def download_stage(stage_num, sources, target_samples_per_source, deduper: Optio
     
     # Final Flush
     if write_buffer:
-        with open(stage_output, "a", encoding="utf-8") as f:
+        with open(tmp_output, "a", encoding="utf-8") as f:
             f.write("\n".join(write_buffer) + "\n")
+
+    # Atomic commit: only now does the real stage_output path change, in one
+    # filesystem-level replace. If the process is killed at any point above,
+    # tmp_output is discarded on next run and stage_output is never disturbed.
+    os.replace(tmp_output, stage_output)
 
     pbar.close()
     print(f"✅ Stage {stage_num} complete: {collected} samples collected")

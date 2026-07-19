@@ -8,7 +8,7 @@ no capability/benchmark claim is made until a real run produces checkpoints.
 Türkçe: [README_TR.md](README_TR.md).
 
 ## Status (canonical: [STATUS.md](STATUS.md))
-- **Build:** `553 passed, 5 skipped` (offline-first `pytest`).
+- **Build:** `560 passed, 5 skipped` (offline-first `pytest`).
 - **Readiness:** `decision_reason_code = READY_REMOTE_BOOTSTRAP` · `recommended_path = remote_bootstrap` · `train_allowed = true`.
 - **Run blockers:** `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
 - **The one real gap:** a real 45K GPU run (H100/H200). Crash-class bugs: none.
@@ -32,7 +32,7 @@ This repo is a **pre-training**, **proof-of-system** PoC; it is explicitly inten
 ## Quickstart
 ```bash
 bash scripts/bootstrap_venv.sh        # .titan-venv with pinned deps (Python 3.11)
-bash scripts/verify_all.sh            # offline: 553 passed, 5 skipped + gates (no GPU, no network)
+bash scripts/verify_all.sh            # offline: 560 passed, 5 skipped + gates (no GPU, no network)
 bash zero_touch_start.sh --check-only # readiness verdict + blockers (no training)
 ```
 Full verify/launch flow: [REPRODUCE.md](REPRODUCE.md).

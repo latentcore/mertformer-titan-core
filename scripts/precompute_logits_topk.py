@@ -60,6 +60,17 @@ DEFAULT_MAX_SEQ = int(getattr(cfg, "max_seq_len", 512))
 SUBSET = "train"
 
 
+def _atomic_torch_save(payload, path: Path) -> None:
+    """Write a shard via temp-file + os.replace() so a crash mid-`torch.save` never
+    leaves a corrupt `.pt` at `path`. Downstream resume/coverage checks (this file's
+    own stateless skip-if-exists, precompute_logits_parallel.py's verify_stage_coverage,
+    titan_preflight.py's shard-count gate) all test `.exists()` only, not content, so an
+    unfinished write here would otherwise be silently treated as a completed shard."""
+    tmp_path = path.with_suffix(path.suffix + ".tmp")
+    torch.save(payload, tmp_path)
+    os.replace(tmp_path, path)
+
+
 def _state_path(logits_dir: Path, stage_name: str) -> Path:
     return logits_dir / f"{stage_name}_{SUBSET}_topk_state.json"
 
@@ -442,7 +453,7 @@ def precompute_stage(
             "packer_version": "packed_v1",
             "logits": list(shard_buffer),
         }
-        torch.save(payload, shard_path)
+        _atomic_torch_save(payload, shard_path)
         _save_resume_state(
             logits_dir, stage_name,
             lines_consumed=int(consumed_through) + 1,
@@ -675,7 +686,7 @@ def _precompute_stage_sharded(
             "block_index": int(block_index),
             "logits": list(buf),
         }
-        torch.save(payload, shard_path)
+        _atomic_torch_save(payload, shard_path)
         blocks_done += 1
         elapsed = max(time.time() - started, 1e-6)
         logger.info(

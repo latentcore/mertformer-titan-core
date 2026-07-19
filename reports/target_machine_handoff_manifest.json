@@ -1,6 +1,6 @@
 {
   "schema": "target_machine_handoff_manifest_v1",
-  "generated_utc": "2026-07-18T18:27:05Z",
+  "generated_utc": "2026-07-19T13:02:58Z",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "train_allowed": true,
   "decision_reason_code": "READY_REMOTE_BOOTSTRAP",
@@ -25,8 +25,8 @@
     },
     {
       "path": "scripts/data_pipeline.py",
-      "size_bytes": 30949,
-      "sha256": "71f8418e5dd18b85bdfc957715febb76ae9902c5e695be3845db8afd449bc632"
+      "size_bytes": 31739,
+      "sha256": "34b7d19ecbc1b551458a36476cc2497ac82a1b1d6d0b3b26f9592966a49bee3b"
     },
     {
       "path": "scripts/smart_runner.py",
@@ -35,8 +35,8 @@
     },
     {
       "path": "scripts/precompute_logits_topk.py",
-      "size_bytes": 38763,
-      "sha256": "d4cc8bb8e5e5f7a859a2fdff77b41bc97a6bdac6890965403dc01f93de72ad19"
+      "size_bytes": 39387,
+      "sha256": "32a17764c6da93054e893fd8f31837b28dd4987495975374fda982d25a2d1afd"
     },
     {
       "path": "scripts/precompute_logits_parallel.py",
@@ -95,13 +95,13 @@
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 4658,
-      "sha256": "4ee2a86c4d7278d1281dc53043eb6dd2eb0a44babe1619082db6635c6203debf"
+      "size_bytes": 4628,
+      "sha256": "f620c1959c483f75a53333d8881d72c287cf5223d805dd36ff7d9d04779bb769"
     },
     {
       "path": "reports/start_gate_operator_decision.json",
       "size_bytes": 1691,
-      "sha256": "68de58a997acbff7fb47c71efbc862e0e0c74f2eeafa8cb2aa06055b2c975b7c"
+      "sha256": "95b99dbee7248b761ec39be76b46e95b60196fe003f58b7bad1fc9b09b52bb1a"
     },
     {
       "path": "reports/start_gate_operator_decision.md",
@@ -111,7 +111,7 @@
     {
       "path": "reports/repo_external_handoff.md",
       "size_bytes": 1709,
-      "sha256": "b129ac1764169ca4088ba49c9b46cf77e3dabd90b20a454bceff2cc52f28a866"
+      "sha256": "f11da063bc080e2bee1c44d9a7ce478a8dfcc137f73d67b1bf996ea1730c63ce"
     }
   ],
   "operator_steps": [

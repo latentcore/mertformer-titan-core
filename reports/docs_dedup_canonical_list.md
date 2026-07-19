@@ -163,6 +163,7 @@ Generated automatically.
 - `logs/README_TR.md`
 - `logs/verify/closure_57_matrix.verify.md`
 - `logs/verify/closure_57_matrix.verify_TR.md`
+- `matrix_new.md`
 - `mertformer-titan-dealroom-private/01_START_HERE/README_TR_EN.md`
 - `mertformer-titan-dealroom-private/02_EXECUTIVE/one_pager_EN.md`
 - `mertformer-titan-dealroom-private/02_EXECUTIVE/one_pager_TR.md`

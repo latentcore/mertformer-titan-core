@@ -1,9 +1,9 @@
 {
   "schema": "file_state_inventory_v1",
-  "generated_utc": "2026-07-18T18:28:06Z",
+  "generated_utc": "2026-07-19T13:03:58Z",
   "git_branch": "main",
-  "git_commit_short": "b49a111",
-  "tracked_files": 925,
+  "git_commit_short": "fc0a607",
+  "tracked_files": 928,
   "modified_entries": [
     "M BACKLOG.md",
     " M BACKLOG_TR.md",
@@ -16,7 +16,7 @@
     " M TRUTH_MATRIX.md",
     " M TRUTH_MATRIX_TR.md",
     " M artifacts/mertformer_release.zip.sha256",
-    " M config/config.py",
+    " M docs/PROJECT_STRUCTURE.md",
     " M docs/QUICKSTART_CPU.md",
     " M packages/MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip.sha256",
     " M reports/FACTS.json",
@@ -30,6 +30,7 @@
     " M reports/cfc_moe_tolerance_report.json",
     " M reports/checkpoint_restore_report.json",
     " M reports/chess_gui_onefile_sync_report.json",
+    " M reports/chess_gui_onefile_sync_report.md",
     " M reports/chess_onefile_extension_report.json",
     " M reports/chess_teaching_contract_report.json",
     " M reports/chess_teaching_contract_report.md",
@@ -43,6 +44,7 @@
     " M reports/demo_bundle_manifest.json",
     " M reports/determinism_report.json",
     " M reports/differential_backend_report.json",
+    " M reports/docs_dedup_canonical_list.md",
     " M reports/docs_packages_hash_manifest.json",
     " M reports/dry_run_report.json",
     " M reports/dry_run_report.md",
@@ -102,18 +104,15 @@
     " M reports/unicode_path_guard_report.json",
     " M reports/workspace_hygiene_manifest.json",
     " M reports/xla_smoke_report.json",
-    " M runbooks/checkpoint_offsite_backup.md",
-    " M runbooks/checkpoint_offsite_backup_TR.md",
-    " M scripts/launch_8xb300.sh",
-    " M scripts/launch_ocean_45k.sh",
-    " M scripts/runs/preflight/config_snapshot.json",
-    " M train/train.py",
-    " M train/trainer_core.py"
+    " M scripts/build_validation_set.py",
+    " M scripts/chess_5080_onefile.py",
+    " M scripts/data_pipeline.py",
+    " M scripts/precompute_logits_topk.py",
+    " M scripts/record_dataset_hashes.py"
   ],
   "untracked_entries": [
-    "?? scripts/offsite_backup_watcher.py",
-    "?? tests/test_offsite_backup_watcher.py",
-    "?? tests/test_rewarmup_schedule.py"
+    "?? matrix_new.md",
+    "?? tests/test_atomic_write_hygiene.py"
   ],
   "reports_present": [
     "reports/FACTS.json",

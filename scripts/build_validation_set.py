@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import json
 import hashlib
+import os
 import random
 import sys
 from dataclasses import dataclass
@@ -217,6 +218,19 @@ def _load_training_fingerprints(stage_paths):
     return seen, used
 
 
+def _atomic_write_jsonl(out: Path, rows: list[dict[str, Any]]) -> None:
+    """Temp-file + os.replace() write. titan_preflight.py's offline-readiness gate only
+    counts non-empty lines (no json.loads validation), so an interrupted write here —
+    possibly leaving a truncated trailing line — would otherwise be silently accepted
+    as a valid, complete validation set."""
+    out.parent.mkdir(parents=True, exist_ok=True)
+    tmp_out = out.with_suffix(out.suffix + ".tmp")
+    with tmp_out.open("w", encoding="utf-8") as f:
+        for row in rows:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    os.replace(tmp_out, out)
+
+
 def build_validation_set(
     *,
     target_size: int,
@@ -413,10 +427,7 @@ def main() -> int:
         strict_offline=args.strict_offline,
         current_val_path=out,
     )
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with out.open("w", encoding="utf-8") as f:
-        for row in rows:
-            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    _atomic_write_jsonl(out, rows)
 
     # [H5] Provenance artifact proving the val set is leakage-excluded.
     prov_path = ROOT / "datasets" / "validation_provenance.json"
