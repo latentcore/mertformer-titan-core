@@ -25,7 +25,7 @@ Kural: uygun olan her tracked `X.md` dosyasının `X_TR.md` karşılığı olmal
 
 | Komut | Durum |
 | --- | --- |
-| `.titan-venv/bin/python -m pytest -q` | PASS (`560 passed, 5 skipped`) |
+| `.titan-venv/bin/python -m pytest -q` | PASS (`564 passed, 5 skipped`) |
 | `bash scripts/verify_all.sh` | PASS |
 | `TITAN_OFFLINE=1 bash run.sh --test` | PASS |
 | `.titan-venv/bin/python scripts/operator_mode_gate.py --no-pytest --overfit-dataset datasets/validation.jsonl` | PASS |

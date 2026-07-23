@@ -876,7 +876,12 @@ class MoE(nn.Module):
         token_sorted = token_idx[order]
         weight_sorted = weights[order]
 
-        counts = torch.bincount(expert_sorted, minlength=self.num_experts)
+        # MPS Safe Bincount: scatter_add_ instead of bincount, matching the same
+        # portability fix already applied to the telemetry counts above (line ~730).
+        # torch.bincount is not guaranteed on MPS across all torch>=2.0 (requirements.txt
+        # sets no upper bound); this keeps both count paths in this file consistent.
+        counts = torch.zeros(self.num_experts, device=expert_sorted.device, dtype=torch.long)
+        counts.scatter_add_(0, expert_sorted, torch.ones_like(expert_sorted))
         if counts.numel() == 0:
             return out_flat
 
