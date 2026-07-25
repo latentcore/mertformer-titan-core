@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-02-22T02:23:10Z",
+  "generated_at_utc": "2026-07-25T12:18:49Z",
   "note": "For HF datasets, `sha256` is a fingerprint of the pinned repository file manifest (includes filenames + sizes + LFS sha256 when available). For local files, `sha256` is the file content hash.",
   "schema_version": 1,
   "sources": {
@@ -12,7 +12,19 @@
       "revision": "87f09149ef4734204d70ed1d046ddc9ca3f2b8f9",
       "sha256": "8dc95120fcfc7c6da788bbce48aa24217e4b2c7c54a886aaea7e60c54567bb6b",
       "snapshot": "hf://HuggingFaceFW/fineweb-edu@87f09149ef4734204d70ed1d046ddc9ca3f2b8f9",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
+      "status": "verified"
+    },
+    "HuggingFaceH4/ultrachat_200k": {
+      "files_count": 10,
+      "files_lfs_sha256_count": 8,
+      "gated": false,
+      "kind": "hf_repo_manifest",
+      "ref_url": "https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k",
+      "revision": "8049631c405ae6576f93f445c6b8166f76f5505a",
+      "sha256": "66e03f9e20ada720f0a2e212cfaae1d28500ffed26a0e4ff1f510be2e39c1047",
+      "snapshot": "hf://HuggingFaceH4/ultrachat_200k@8049631c405ae6576f93f445c6b8166f76f5505a",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "HuggingFaceTB/cosmopedia": {
@@ -24,7 +36,43 @@
       "revision": "0ae6ec63f91742bd2d1eaef4f02232c55d719385",
       "sha256": "74e6252dbcc9afa4559387bd2ec3f101268627afa5c08787203f8d892f2b0bfc",
       "snapshot": "hf://HuggingFaceTB/cosmopedia@0ae6ec63f91742bd2d1eaef4f02232c55d719385",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
+      "status": "verified"
+    },
+    "HuggingFaceTB/smoltalk": {
+      "files_count": 57,
+      "files_lfs_sha256_count": 41,
+      "gated": false,
+      "kind": "hf_repo_manifest",
+      "ref_url": "https://huggingface.co/datasets/HuggingFaceTB/smoltalk",
+      "revision": "5feaf2fd3ffca7c237fc38d1861bc30365d48ffa",
+      "sha256": "b6355577df6af3d4478d6393f0c4e4996fee1f687af09be6d1c58c6f128a7c22",
+      "snapshot": "hf://HuggingFaceTB/smoltalk@5feaf2fd3ffca7c237fc38d1861bc30365d48ffa",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
+      "status": "verified"
+    },
+    "NousResearch/hermes-function-calling-v1": {
+      "files_count": 7,
+      "files_lfs_sha256_count": 3,
+      "gated": false,
+      "kind": "hf_repo_manifest",
+      "ref_url": "https://huggingface.co/datasets/NousResearch/hermes-function-calling-v1",
+      "revision": "dae3e1d28cfbcf4b915c04ea1e072030529b4bda",
+      "sha256": "17eb7fa314d8ef458e70cf368c9fc77f0f40cd376ad5024874f7d1a2c9c5a7cf",
+      "snapshot": "hf://NousResearch/hermes-function-calling-v1@dae3e1d28cfbcf4b915c04ea1e072030529b4bda",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
+      "status": "verified"
+    },
+    "OpenAssistant/oasst1": {
+      "files_count": 11,
+      "files_lfs_sha256_count": 8,
+      "gated": false,
+      "kind": "hf_repo_manifest",
+      "ref_url": "https://huggingface.co/datasets/OpenAssistant/oasst1",
+      "revision": "fdf72ae0827c1cda404aff25b6603abec9e3399b",
+      "sha256": "f7e797f0ae4a60652608c8571284e0e2554502ffefd5fdadb50af60a8abadc0e",
+      "snapshot": "hf://OpenAssistant/oasst1@fdf72ae0827c1cda404aff25b6603abec9e3399b",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "OpenAssistant/oasst_top1_2023-08-25": {
@@ -36,7 +84,7 @@
       "revision": "745b4a3d123f65ab0cac34a84a0528f6d2b67d1e",
       "sha256": "0d8d26e8cb3a79b5fe82ea3087c4e8b344d92ecdcc7ea8005f4745deecff3e61",
       "snapshot": "hf://OpenAssistant/oasst_top1_2023-08-25@745b4a3d123f65ab0cac34a84a0528f6d2b67d1e",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "TFLai/Turkish-Alpaca": {
@@ -48,7 +96,7 @@
       "revision": "90f95895618a12d28ba99e9bff0c211920d488ec",
       "sha256": "ad90db0f7caddf930d346c8cfce03a92155d3f8d3b3f646fa54ad349f269183d",
       "snapshot": "hf://TFLai/Turkish-Alpaca@90f95895618a12d28ba99e9bff0c211920d488ec",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "TIGER-Lab/MathInstruct": {
@@ -60,18 +108,20 @@
       "revision": "b4fdc323a7be1379c9c7c0b67b1de72dfee2111a",
       "sha256": "5eab178442ccfe5b04d0041fb2cd491a6a9347e7331825f08267392b0cefd609",
       "snapshot": "hf://TIGER-Lab/MathInstruct@b4fdc323a7be1379c9c7c0b67b1de72dfee2111a",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "bigcode/the-stack-dedup": {
+      "files_count": 5144,
+      "files_lfs_sha256_count": 5140,
       "gated": "auto",
       "kind": "hf_repo_manifest",
       "ref_url": "https://huggingface.co/datasets/bigcode/the-stack-dedup",
-      "revision": null,
-      "sha256": null,
-      "snapshot": null,
-      "status": "pending_repin",
-      "note": "Switched from bigcode/the-stack-v2: v2 rows carry blob_id/src_encoding (the 'content' field is empty and needs Software-Heritage S3 resolution), which silently starved Stage-1's code corpus. the-stack-dedup exposes a real 'content' field. Re-pin revision/sha256 on the training machine (network required); production scripts/data_pipeline.py consumes this id with field='content'. See DECISIONS.md (D3)."
+      "revision": "17cad72c886a2858e08d4c349a00d6466f54df63",
+      "sha256": "743d1d1149db7a58446faee013f9a8db05e360ae9d729c512d0e6c8d529fe5a6",
+      "snapshot": "hf://bigcode/the-stack-dedup@17cad72c886a2858e08d4c349a00d6466f54df63",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
+      "status": "verified"
     },
     "codeparrot/github-code": {
       "files_count": 1132,
@@ -82,7 +132,7 @@
       "revision": "b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
       "sha256": "fb73cf6f205a347b2f92051aa7dcaf27d65ab0dd41fbc6bc6bf5624adc461afb",
       "snapshot": "hf://codeparrot/github-code@b5661e6b17396364b2bcf8e68977b0d28e1ebd19",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "glaiveai/glaive-function-calling-v2": {
@@ -94,7 +144,7 @@
       "revision": "e7f4b6456019f5d8bcb991ef0dd67d8ff23221ac",
       "sha256": "16bfdb6c02be357a118c8f1ea95bd7685f5db60a2cb0d1d1d767a367dcb6230d",
       "snapshot": "hf://glaiveai/glaive-function-calling-v2@e7f4b6456019f5d8bcb991ef0dd67d8ff23221ac",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "internal:datasets/golden_samples.jsonl": {
@@ -104,7 +154,57 @@
       "revision": null,
       "sha256": "ec09cd23ef28db7c118ca0b972b31db1150a2c0a5f09abc020835eb011b9fbfa",
       "snapshot": "datasets/golden_samples.jsonl",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
+      "status": "verified"
+    },
+    "internal:datasets/stage1/stage1_data.jsonl": {
+      "bytes": 10693,
+      "kind": "local_file",
+      "ref_url": null,
+      "revision": null,
+      "sha256": "79ced38d0f61338a7f6f64e2b848a731373c0868bb5927c3ad78f9e75f8f5c93",
+      "snapshot": "datasets/stage1/stage1_data.jsonl",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
+      "status": "verified"
+    },
+    "internal:datasets/stage2/stage2_data.jsonl": {
+      "bytes": 110957,
+      "kind": "local_file",
+      "ref_url": null,
+      "revision": null,
+      "sha256": "ecf9bcf032862f9a13d24f4c08be2cc314f38f696b9eb7c89d074df00a91ca56",
+      "snapshot": "datasets/stage2/stage2_data.jsonl",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
+      "status": "verified"
+    },
+    "internal:datasets/stage3/stage3_data.jsonl": {
+      "bytes": 13987,
+      "kind": "local_file",
+      "ref_url": null,
+      "revision": null,
+      "sha256": "f7e1b3731c1dd799041b39f03799dab2b4e5f09cc8f40a22ac48272effc98a78",
+      "snapshot": "datasets/stage3/stage3_data.jsonl",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
+      "status": "verified"
+    },
+    "internal:datasets/stage4_soul/stage4_data.jsonl": {
+      "bytes": 5036,
+      "kind": "local_file",
+      "ref_url": null,
+      "revision": null,
+      "sha256": "db98409b4dbbee290844fbf00f0e982502be3d5879af3c9fbddfe5967d961f5c",
+      "snapshot": "datasets/stage4_soul/stage4_data.jsonl",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
+      "status": "verified"
+    },
+    "internal:datasets/stage5_tools/stage5_data.jsonl": {
+      "bytes": 2083,
+      "kind": "local_file",
+      "ref_url": null,
+      "revision": null,
+      "sha256": "48c9117ed80a749679de8bb63779b812367cbb3fccdc811053a0441fa2222e9e",
+      "snapshot": "datasets/stage5_tools/stage5_data.jsonl",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "internal:datasets/validation.jsonl": {
@@ -114,7 +214,7 @@
       "revision": null,
       "sha256": "9cc71ac3be7708cd93f0646bd9ce21873f63b3fda973ab33098a226ecb1345ef",
       "snapshot": "datasets/validation.jsonl",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "mbpp": {
@@ -126,19 +226,7 @@
       "revision": "4bb6404fdc6cacfda99d4ac4205087b89d32030c",
       "sha256": "2486d42917c79f049ffa14c8b3b80d2bc58e8ffe77a33778a32635968906d3f9",
       "snapshot": "hf://mbpp@4bb6404fdc6cacfda99d4ac4205087b89d32030c",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
-      "status": "verified"
-    },
-    "mlabonne/guanaco-llama2-1k": {
-      "files_count": 3,
-      "files_lfs_sha256_count": 1,
-      "gated": false,
-      "kind": "hf_repo_manifest",
-      "ref_url": "https://huggingface.co/datasets/mlabonne/guanaco-llama2-1k",
-      "revision": "27db19ecdc5fa7cd983280d1019ac2f1f96c96c1",
-      "sha256": "a89537ac6654e0912edd5aacce06269b65ca9ae5d1fbcdf54d9af67315a5cb58",
-      "snapshot": "hf://mlabonne/guanaco-llama2-1k@27db19ecdc5fa7cd983280d1019ac2f1f96c96c1",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "openai/gsm8k": {
@@ -147,10 +235,10 @@
       "gated": false,
       "kind": "hf_repo_manifest",
       "ref_url": "https://huggingface.co/datasets/openai/gsm8k",
-      "revision": "cc7b047b6e5bb11b4f1af84efc572db110a51b3c",
-      "sha256": "183eb0350c20226b960ec07c50f00a3ff997dc1773c812531aeaf6049da8d193",
-      "snapshot": "hf://openai/gsm8k@cc7b047b6e5bb11b4f1af84efc572db110a51b3c",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "revision": "740312add88f781978c0658806c59bc2815b9866",
+      "sha256": "0f29be9cbbd68190c692116f6a5f490f96c2384b8fbc8f294f5b06345495ba54",
+      "snapshot": "hf://openai/gsm8k@740312add88f781978c0658806c59bc2815b9866",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "openai_humaneval": {
@@ -162,7 +250,19 @@
       "revision": "7dce6050a7d6d172f3cc5c32aa97f52fa1a2e544",
       "sha256": "9e49c7368f11e70fe8d5fba835daa8dbd2af9914f2d2ce87702785373e949a54",
       "snapshot": "hf://openai_humaneval@7dce6050a7d6d172f3cc5c32aa97f52fa1a2e544",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
+      "status": "verified"
+    },
+    "teknium/OpenHermes-2.5": {
+      "files_count": 3,
+      "files_lfs_sha256_count": 1,
+      "gated": false,
+      "kind": "hf_repo_manifest",
+      "ref_url": "https://huggingface.co/datasets/teknium/OpenHermes-2.5",
+      "revision": "b82037821055c377bed0d495e72e46de3bc72e84",
+      "sha256": "6800d2300d16b37dfd261350b64489333a86aadcca5879154dc5fd258d576b25",
+      "snapshot": "hf://teknium/OpenHermes-2.5@b82037821055c377bed0d495e72e46de3bc72e84",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "turkish-nlp-suite/InstrucTurca": {
@@ -174,7 +274,7 @@
       "revision": "55a946a3626473f3a8ec33a11979ef3dd473ffe5",
       "sha256": "77dd0ca4f372566afd00c9128975ad67a90d6354e5073573fe45e5450f307f10",
       "snapshot": "hf://turkish-nlp-suite/InstrucTurca@55a946a3626473f3a8ec33a11979ef3dd473ffe5",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "uonlp/CulturaX": {
@@ -186,7 +286,7 @@
       "revision": "6a8734bc69fefcbb7735f4f9250f43e4cd7a442e",
       "sha256": "73ebcc98af2ce7d53fa9af2289c5bf69c4504b22404f304fcf9279fb527e639e",
       "snapshot": "hf://uonlp/CulturaX@6a8734bc69fefcbb7735f4f9250f43e4cd7a442e",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "wikimedia/wikipedia": {
@@ -198,7 +298,7 @@
       "revision": "b04c8d1ceb2f5cd4588862100d08de323dccfbaa",
       "sha256": "1541419dc4fccf9e3f10f60cca4c364c328e123cf76bacaa568f30fdafcfce90",
       "snapshot": "hf://wikimedia/wikipedia@b04c8d1ceb2f5cd4588862100d08de323dccfbaa",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     },
     "wikitext": {
@@ -210,7 +310,7 @@
       "revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
       "sha256": "df6c704fb2fa13a08a81192ba61959e8d7cbb08cc4151917f1c60664c0aca864",
       "snapshot": "hf://wikitext@b08601e04326c79dfdd32d625aee71d232d685c3",
-      "snapshot_date_utc": "2026-02-22T02:23:10Z",
+      "snapshot_date_utc": "2026-07-25T12:18:49Z",
       "status": "verified"
     }
   }

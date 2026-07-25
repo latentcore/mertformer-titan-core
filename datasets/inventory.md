@@ -8,11 +8,11 @@ For license/provenance work, see `datasets/SOURCES*.md` and `datasets/LICENSES*.
 | Dataset | License (best-effort) | HF URL | Refs |
 | --- | --- | --- | --- |
 | `HuggingFaceFW/fineweb-edu` | ODC-By 1.0 | https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu | 2 |
-| `HuggingFaceH4/ultrachat_200k` | mit | https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k | 1 |
+| `HuggingFaceH4/ultrachat_200k` | Unknown | https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k | 1 |
 | `HuggingFaceTB/cosmopedia` | Apache-2.0 | https://huggingface.co/datasets/HuggingFaceTB/cosmopedia | 1 |
 | `HuggingFaceTB/smoltalk` | Unknown | https://huggingface.co/datasets/HuggingFaceTB/smoltalk | 1 |
 | `NousResearch/hermes-function-calling-v1` | Apache-2.0 | https://huggingface.co/datasets/NousResearch/hermes-function-calling-v1 | 1 |
-| `OpenAssistant/oasst1` | apache-2.0 | https://huggingface.co/datasets/OpenAssistant/oasst1 | 1 |
+| `OpenAssistant/oasst1` | Unknown | https://huggingface.co/datasets/OpenAssistant/oasst1 | 1 |
 | `OpenAssistant/oasst_top1_2023-08-25` | Apache-2.0 | https://huggingface.co/datasets/OpenAssistant/oasst_top1_2023-08-25 | 4 |
 | `TFLai/Turkish-Alpaca` | Apache-2.0 | https://huggingface.co/datasets/TFLai/Turkish-Alpaca | 1 |
 | `TIGER-Lab/MathInstruct` | MIT | https://huggingface.co/datasets/TIGER-Lab/MathInstruct | 4 |
@@ -27,7 +27,6 @@ For license/provenance work, see `datasets/SOURCES*.md` and `datasets/LICENSES*.
 | `uonlp/CulturaX` | ODC-By 1.0 + CC0-1.0 (inherits mC4 + OSCAR) | https://huggingface.co/datasets/uonlp/CulturaX | 5 |
 | `wikimedia/wikipedia` | CC BY-SA 4.0 + GFDL (dual) | https://huggingface.co/datasets/wikimedia/wikipedia | 5 |
 | `wikitext` | CC BY-SA 4.0 | https://huggingface.co/datasets/wikitext | 1 |
-| `{DATASET_ID}` | Unknown | https://huggingface.co/datasets/{DATASET_ID} | 2 |
 
 ## Reference Details
 
@@ -120,8 +119,4 @@ For license/provenance work, see `datasets/SOURCES*.md` and `datasets/LICENSES*.
 
 ### `wikitext`
 - scripts/mini_titan_poc.py:388 (load_dataset)
-
-### `{DATASET_ID}`
-- scripts/preflight_run.py:1117 (load_dataset)
-- scripts/preflight_run_pilot171m.py:1166 (load_dataset)
 

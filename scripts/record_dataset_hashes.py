@@ -106,24 +106,27 @@ def _manifest_from_dataset_info(repo_id: str, info: Any) -> dict[str, Any]:
     }
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--out", default=str(PROJECT_ROOT / "datasets" / "hashes.json"))
-    parser.add_argument("--token", default=None, help="Optional HF token (or set HF_TOKEN env).")
-    args = parser.parse_args()
+def _pin_datasets(ds_ids: list[str], api: Any, token: str | None, generated_at: str) -> dict[str, Any]:
+    """Pin each dataset id via `api.dataset_info`, isolating per-dataset failures.
 
-    token = args.token or os.environ.get("HF_TOKEN")
-
-    from huggingface_hub import HfApi  # type: ignore
-
-    api = HfApi()
-    ds_ids = _load_inventory(PROJECT_ROOT)
-
-    generated_at = _utc_now_iso()
+    One bad/unreachable dataset id must not take down pinning for every other
+    dataset in the same pass -- found live: an inventory.json entry from a
+    regex-scanner false positive (a literal "{DATASET_ID}") crashed this whole
+    loop via HfApi's repo-id validator before any dataset got pinned. Record
+    the failure and keep going instead.
+    """
     sources: dict[str, Any] = {}
-
     for ds in ds_ids:
-        info = api.dataset_info(ds, token=token, files_metadata=True)
+        try:
+            info = api.dataset_info(ds, token=token, files_metadata=True)
+        except Exception as exc:  # noqa: BLE001
+            sources[ds] = {
+                "kind": "hf_repo_manifest",
+                "status": "error",
+                "error": f"{type(exc).__name__}: {exc}",
+                "ref_url": f"https://huggingface.co/datasets/{ds}",
+            }
+            continue
         manifest = _manifest_from_dataset_info(ds, info)
         manifest_json = json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode("utf-8")
         sources[ds] = {
@@ -138,6 +141,24 @@ def main() -> int:
             "files_lfs_sha256_count": manifest["files_lfs_sha256_count"],
             "gated": manifest["gated"],
         }
+    return sources
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", default=str(PROJECT_ROOT / "datasets" / "hashes.json"))
+    parser.add_argument("--token", default=None, help="Optional HF token (or set HF_TOKEN env).")
+    args = parser.parse_args()
+
+    token = args.token or os.environ.get("HF_TOKEN")
+
+    from huggingface_hub import HfApi  # type: ignore
+
+    api = HfApi()
+    ds_ids = _load_inventory(PROJECT_ROOT)
+
+    generated_at = _utc_now_iso()
+    sources = _pin_datasets(ds_ids, api, token, generated_at)
 
     # Internal, tracked tiny files (these are safe to hash directly).
     for rel in ["datasets/validation.jsonl", "datasets/golden_samples.jsonl"]:

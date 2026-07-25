@@ -66,6 +66,16 @@ def _scan_file(path: Path, root: Path) -> list[Ref]:
             if not m:
                 continue
             ds = m.group(1).strip()
+            if "{" in ds or "}" in ds:
+                # False-positive guard: a genuine HF dataset id never contains
+                # curly braces. This regex-based scanner works on raw source
+                # text, so it cannot tell a real call apart from an f-string
+                # that is merely building a *log message* out of the same
+                # literal characters -- e.g. in preflight_run.py and its
+                # 171m sibling. Found live when that placeholder text flowed
+                # into datasets/inventory.json and crashed the HF API lookup
+                # in record_dataset_hashes.py downstream.
+                continue
             refs.append(
                 Ref(
                     dataset=ds,
