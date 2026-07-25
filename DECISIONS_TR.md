@@ -34,6 +34,7 @@ GPU'suz takip pass'i; açık "yapabildiğin her şeyi yap, commit/push, protokol
 - **`TITAN_OCEAN_45K_LAUNCH` no-op kaldırıldı** (`scripts/launch_ocean_45k.sh`; hiçbir `.py` okumuyordu).
 - **`datasets/validation_provenance.json` + `scripts/gen_validation_provenance.py`:** fingerprint-dışlama kanıtı (dosya SHA256, satır sayısı, 1500 satır-fingerprint).
 - **Bilinçle ERTELENEN:** ADR-0005 tek-isimlendirme assert'i; `p100_safe max_steps` (demo-profil yargısı); D5/D7 (frozen-path → önce RTX-5070 re-run `bdee57a`'yı doğrulasın); `report_builder` baseline (zaten dürüstçe etiketli, bug değil).
+  > ⚠ **YERİNİ ALDI (2026-07-25):** `BACKLOG.md`'nin "Pre-45K safe pass — DONE (2026-07-09)" bölümündeki eşleşen düzeltmeye bakın — bu 4 maddeden 3'ü (ADR-0005, `p100_safe max_steps`, D5) commit `8e8978f`'te (2026-07-11) gerçekten düzeltildi, D7 ise aynı pass'te bağımsız olarak denetlendi ve zaten doğru olduğu teyit edildi. Bu madde, düzeltme girdikten iki hafta sonra bile düzenlenmemiş kaldı; 2026-07-25'teki canlı yeniden-kontrole kadar fark edilmedi.
 - **Test sayısı:** `388 → 412 passed, 4 skipped` (+24). Güncel-gerçek yüzeyler güncellendi; tarihli kayıtlar bırakıldı. **Kalan tek kapı aynı: sahip olunan compute → 45K → checkpoint → checkpoint-bağlı eval.** Tam ayrıntı: `DECISIONS.md`.
 
 
