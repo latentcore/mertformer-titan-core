@@ -237,10 +237,11 @@ def save_checkpoint_smart(
     val_loss: Optional[float] = None,
     best_val_loss: Optional[float] = None,
     write_final: bool = False,
+    guard_state: Optional[dict] = None,
 ) -> Optional[float]:
     """
     Smart checkpoint saver - keeps only last N checkpoints + best checkpoint.
-    
+
     Args:
         model: Model to save
         optimizer: Optimizer state
@@ -251,7 +252,11 @@ def save_checkpoint_smart(
         val_loss: Current validation loss (optional)
         best_val_loss: Best validation loss seen so far (optional)
         write_final: Also write the canonical final checkpoint alias
-    
+        guard_state: [F3, 2026-07-25] Optional dict of divergence-guard/Liquid-spike
+            locals (loss_ema, ce_ema, divergence_breaches, liquid_spike_counter, ...).
+            Additive: omitted entirely when None, so old checkpoint readers/writers
+            that don't pass it see byte-identical state dicts to before this change.
+
     Returns:
         float: Updated best_val_loss (if val_loss provided)
     """
@@ -295,7 +300,13 @@ def save_checkpoint_smart(
             else None
         ),
     }
-    
+
+    # [F3, 2026-07-25] Persist guard/spike state so a crash+resume doesn't cold-start
+    # the safety machinery (TITAN_AUTO_RESUME defaults ON). Additive: only written
+    # when the caller passes it.
+    if guard_state is not None:
+        state['guard_state'] = dict(guard_state)
+
     # Add validation loss to state if provided
     if val_loss is not None:
         state['val_loss'] = val_loss
@@ -1122,13 +1133,67 @@ def train() -> None:
     loss_ema = 0.0
     loss_ema_observations = 0
 
+    # [F1, 2026-07-25] Separate CE-only EMA, tracked in parallel with the blended
+    # loss_ema above. loss_ema is shared with the Liquid spike guard and stays exactly
+    # as-is (BACKLOG F1: "do NOT repoint loss_ema"). The divergence guard below now
+    # keys off this CE-only pair instead: the blended total_loss's composition shifts
+    # as distill alpha decays 0.8->0.15 across training (train.py dyn_alpha), so a
+    # guard watching the BLEND can drift upward from curriculum re-weighting alone,
+    # with zero actual instability. CE floors at the data's own entropy and is not
+    # perturbed by that schedule.
+    ce_ema = 0.0
+    ce_ema_observations = 0
+
     # [2026-07-08] General loss-divergence circuit breaker state (utils/divergence_guard.py).
     # NOT a BACKLOG item — added by this pass; disable with TITAN_DIVERGENCE_GUARD=0.
     use_divergence_guard = bool(getattr(cfg, "use_divergence_guard", True))
     divergence_guard_multiplier = float(getattr(cfg, "divergence_guard_multiplier", 1.5))
     divergence_guard_patience = int(getattr(cfg, "divergence_guard_patience", 50))
     divergence_breaches = 0
-    warmup_end_loss_ema = None  # reference EMA snapshot; None => guard disarmed
+    warmup_end_loss_ema = None  # blended-loss reference snapshot; informational only as of F1
+    warmup_end_ce_ema = None  # [F1] CE-only reference snapshot; None => guard disarmed
+
+    # [F3, 2026-07-25] Restore guard/spike state across resume. Additive + backward
+    # compatible: checkpoints saved before this fix lack "guard_state", so
+    # resume_state.get("guard_state", {}) is {} and every .get(name, <default>) below
+    # falls through to the same fresh-start defaults set above -- identical behavior
+    # to today for old checkpoints. For new checkpoints, this prevents a crash+resume
+    # WHILE diverging (TITAN_AUTO_RESUME defaults ON) from re-baselining the
+    # divergence guard's reference to the already-broken loss level.
+    if resume_payload is not None:
+        _resume_guard_state = resume_payload.get("state", {}).get("guard_state") or {}
+        loss_ema = float(_resume_guard_state.get("loss_ema", loss_ema))
+        loss_ema_observations = int(_resume_guard_state.get("loss_ema_observations", loss_ema_observations))
+        warmup_end_loss_ema = _resume_guard_state.get("warmup_end_loss_ema", warmup_end_loss_ema)
+        ce_ema = float(_resume_guard_state.get("ce_ema", ce_ema))
+        ce_ema_observations = int(_resume_guard_state.get("ce_ema_observations", ce_ema_observations))
+        warmup_end_ce_ema = _resume_guard_state.get("warmup_end_ce_ema", warmup_end_ce_ema)
+        divergence_breaches = int(_resume_guard_state.get("divergence_breaches", divergence_breaches))
+        liquid_spike_counter = int(_resume_guard_state.get("liquid_spike_counter", liquid_spike_counter))
+        liquid_frozen_until = int(_resume_guard_state.get("liquid_frozen_until", liquid_frozen_until))
+        if _resume_guard_state and accelerator.is_main_process:
+            print(
+                f"♻️  Guard state restored from checkpoint: loss_ema={loss_ema:.4f} "
+                f"ce_ema={ce_ema:.4f} divergence_breaches={divergence_breaches} "
+                f"liquid_spike_counter={liquid_spike_counter} "
+                f"liquid_frozen_until={liquid_frozen_until}"
+            )
+
+    def _current_guard_state() -> dict:
+        """[F3] Snapshot for save_checkpoint_smart(guard_state=...). A closure (not a
+        one-off dict literal) so every call site stays in sync automatically as these
+        locals are reassigned through the training loop."""
+        return {
+            "loss_ema": loss_ema,
+            "loss_ema_observations": loss_ema_observations,
+            "warmup_end_loss_ema": warmup_end_loss_ema,
+            "ce_ema": ce_ema,
+            "ce_ema_observations": ce_ema_observations,
+            "warmup_end_ce_ema": warmup_end_ce_ema,
+            "divergence_breaches": divergence_breaches,
+            "liquid_spike_counter": liquid_spike_counter,
+            "liquid_frozen_until": liquid_frozen_until,
+        }
 
     # Curriculum Stage Tracking (single source from config ratios)
     stage_boundaries = build_stage_boundaries(cfg.max_steps, curriculum_stage_ratios)
@@ -1466,7 +1531,7 @@ def train() -> None:
                             )
 
                         # [2026-07-08] Update the shared cold-start-safe loss EMA first;
-                        # both guards below read it.
+                        # the Liquid spike guard below reads it.
                         step_loss = float(total_loss.item())
                         loss_ema = update_loss_ema(
                             loss_value=step_loss,
@@ -1476,10 +1541,24 @@ def train() -> None:
                         )
                         loss_ema_observations += 1
 
-                        # Snapshot the EMA once warmup is over AND the EMA is trustworthy.
-                        # (On resume, global_step may already be past warmup while the EMA is
-                        # cold, so we also require `ema_trust_observations` fresh samples —
-                        # otherwise the reference would be a single noisy micro-batch.)
+                        # [F1, 2026-07-25] Separate CE-only EMA for the divergence guard
+                        # (see the ce_ema init comment above for why). loss_ce is still in
+                        # scope from this micro-batch's forward pass.
+                        step_ce = float(loss_ce.item())
+                        ce_ema = update_loss_ema(
+                            loss_value=step_ce,
+                            loss_ema=ce_ema,
+                            observations=ce_ema_observations,
+                            decay=loss_ema_decay,
+                        )
+                        ce_ema_observations += 1
+
+                        # Snapshot the blended-loss EMA once warmup is over AND the EMA is
+                        # trustworthy. (On resume, global_step may already be past warmup
+                        # while the EMA is cold, so we also require `ema_trust_observations`
+                        # fresh samples — otherwise the reference would be a single noisy
+                        # micro-batch.) Informational only as of F1 — no guard reads this
+                        # value anymore, kept for log visibility into the raw blended loss.
                         if (
                             warmup_end_loss_ema is None
                             and global_step >= num_warmup_steps
@@ -1488,8 +1567,22 @@ def train() -> None:
                             warmup_end_loss_ema = loss_ema
                             if accelerator.is_main_process:
                                 print(
+                                    f"📌 Blended-loss reference EMA captured @ step {global_step}: "
+                                    f"loss_ema={warmup_end_loss_ema:.4f}"
+                                )
+
+                        # [F1] Same snapshot, CE-only — this is what actually arms the
+                        # divergence guard below.
+                        if (
+                            warmup_end_ce_ema is None
+                            and global_step >= num_warmup_steps
+                            and ce_ema_observations >= ema_trust_observations
+                        ):
+                            warmup_end_ce_ema = ce_ema
+                            if accelerator.is_main_process:
+                                print(
                                     f"📌 Divergence-guard armed @ step {global_step}: "
-                                    f"reference loss_ema={warmup_end_loss_ema:.4f}"
+                                    f"reference ce_ema={warmup_end_ce_ema:.4f}"
                                 )
 
                         # SAFEGUARD: Liquid spike tracking (3-strike rule).
@@ -1525,9 +1618,11 @@ def train() -> None:
                         # Catches "finite but steadily climbing" — the exact 2026-07-02 failure
                         # mode, which neither the NaN brake (loss stayed finite) nor the Liquid
                         # guard (only freezes Liquid params) can stop.
+                        # [F1, 2026-07-25] Keyed off ce_ema/warmup_end_ce_ema, NOT the blended
+                        # loss_ema/warmup_end_loss_ema — see the ce_ema init comment above.
                         divergence_breaches, divergence_local = update_divergence_guard_state(
-                            loss_ema=loss_ema,
-                            reference_ema=warmup_end_loss_ema,
+                            loss_ema=ce_ema,
+                            reference_ema=warmup_end_ce_ema,
                             multiplier=divergence_guard_multiplier,
                             breach_counter=divergence_breaches,
                             patience=divergence_guard_patience,
@@ -1551,10 +1646,11 @@ def train() -> None:
                                 if accelerator.is_main_process:
                                     print(
                                         "🛑 SAFETY BRAKE: relative loss divergence — "
-                                        f"loss_ema={loss_ema:.4f} exceeded "
+                                        f"ce_ema={ce_ema:.4f} exceeded "
                                         f"{divergence_guard_multiplier:.2f}x the warmup-end reference "
-                                        f"({warmup_end_loss_ema}) for {divergence_guard_patience} "
-                                        "consecutive optimizer steps."
+                                        f"({warmup_end_ce_ema}) for {divergence_guard_patience} "
+                                        "consecutive optimizer steps. (blended loss_ema="
+                                        f"{loss_ema:.4f} for reference)"
                                     )
                                 break
                     else:
@@ -1826,6 +1922,7 @@ def train() -> None:
                                         keep_last_n=3,
                                         val_loss=val_loss,
                                         best_val_loss=previous_best_val_loss,
+                                        guard_state=_current_guard_state(),
                                     )
                                 else:
                                     patience_counter += 1
@@ -1854,7 +1951,7 @@ def train() -> None:
 
                     if global_step % cfg.save_interval == 0 and accelerator.is_main_process:
                         unwrapped_model = accelerator.unwrap_model(student)
-                        best_val_loss = save_checkpoint_smart(unwrapped_model, opt, scheduler, global_step, cfg, keep_last_n=3, val_loss=None, best_val_loss=best_val_loss)
+                        best_val_loss = save_checkpoint_smart(unwrapped_model, opt, scheduler, global_step, cfg, keep_last_n=3, val_loss=None, best_val_loss=best_val_loss, guard_state=_current_guard_state())
 
                     # Open-ended saturation stop gate (active only after target token floor).
                     if open_ended_mode and global_step % saturation_eval_interval_steps == 0 and global_step > 0:
@@ -2000,6 +2097,7 @@ def train() -> None:
                     val_loss=None,
                     best_val_loss=best_val_loss,
                     write_final=True,
+                    guard_state=_current_guard_state(),
                 )
                 if logger:
                     logger.finalize(
@@ -2022,6 +2120,7 @@ def train() -> None:
                     val_loss=None,
                     best_val_loss=best_val_loss,
                     write_final=True,
+                    guard_state=_current_guard_state(),
                 )
                 if logger:
                     logger.finalize(
@@ -2040,6 +2139,7 @@ def train() -> None:
                     val_loss=None,
                     best_val_loss=best_val_loss,
                     write_final=True,
+                    guard_state=_current_guard_state(),
                 )
                 if logger:
                     logger.finalize(
@@ -2052,7 +2152,7 @@ def train() -> None:
         print("\n🛑 Durduruldu. Kaydediliyor...")
         if accelerator.is_main_process:
             unwrapped_model = accelerator.unwrap_model(student)
-            best_val_loss = save_checkpoint_smart(unwrapped_model, opt, scheduler, global_step, cfg, keep_last_n=3, val_loss=None, best_val_loss=best_val_loss)
+            best_val_loss = save_checkpoint_smart(unwrapped_model, opt, scheduler, global_step, cfg, keep_last_n=3, val_loss=None, best_val_loss=best_val_loss, guard_state=_current_guard_state())
             if 'logger' in locals() and logger: logger.finalize("aborted")
 
     except Exception as e:

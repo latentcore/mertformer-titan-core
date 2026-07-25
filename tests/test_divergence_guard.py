@@ -13,7 +13,19 @@ Covers the two pure-function guards introduced by the 2026-07-08 pass:
   — a general circuit breaker for "loss is finite but climbing", the exact failure the
   NaN brake (loss never went non-finite) and the Liquid guard (only freezes Liquid params)
   both missed on 2026-07-02: 10.4 -> 15.0 over ~900 steps.
+
+[F1, 2026-07-25] Also covers the CE-only-EMA fix (BACKLOG.md "External review triage —
+hardening (2026-07-09, Fable-5 code review)"): `train/train.py`'s divergence guard used
+to key off the BLENDED loss_ema (CE+KD+aux), whose composition shifts as distill alpha
+decays 0.8->0.15 across training — a guard watching the blend can drift upward from that
+curriculum re-weighting alone, with zero actual instability. `train.py` now feeds the
+guard a separate `ce_ema`/`warmup_end_ce_ema` pair derived from `loss_ce.item()` only.
+`update_divergence_guard_state` itself needed no change (see tests above — it is generic
+over what float it's handed); the fix is entirely in which value `train.py` passes it.
 """
+
+import re
+from pathlib import Path
 
 from utils.divergence_guard import update_divergence_guard_state
 from utils.liquid_safeguard import (
@@ -21,6 +33,8 @@ from utils.liquid_safeguard import (
     update_liquid_spike_state,
     update_loss_ema,
 )
+
+_TRAIN_PY = Path(__file__).resolve().parents[1] / "train" / "train.py"
 
 
 # ---------------------------------------------------------------------------
@@ -175,3 +189,92 @@ def test_divergence_guard_catches_the_2026_07_02_curve():
             breach_counter=counter, patience=50, enabled=True,
         )
     assert triggered is False
+
+
+# ---------------------------------------------------------------------------
+# [F1] CE-only EMA — the guard must key off CE, not the alpha-blended total_loss
+# ---------------------------------------------------------------------------
+def test_blended_ema_can_drift_upward_purely_from_curriculum_reweighting_while_ce_does_not():
+    """
+    Demonstrates the exact false-brake risk F1 closes. KD loss is HIGHER than CE loss
+    (typical: the teacher-student gap), and distill alpha decays 0.8 -> 0.15 across
+    training (train.py's dyn_alpha schedule) so the CE weight rises 0.2 -> 0.85. If CE
+    itself is perfectly flat (no real instability), the BLENDED ema still drifts upward
+    purely because more weight shifts onto the (higher) CE-relative-to-KD-decline mix.
+    This test constructs a toy version of that shift and shows: (a) a guard fed the
+    blend can accumulate breaches from re-weighting alone, (b) a guard fed CE-only,
+    with CE truly flat, never breaches.
+    """
+    ce = 3.0  # flat CE the entire run -- no real divergence
+    kd_start, kd_end = 1.5, 1.5  # KD also flat, but LOWER than CE (typical late-training)
+    ref_alpha = 0.8  # warmup-end alpha, matching train.py's start_alpha default
+
+    def blended(alpha: float) -> float:
+        return (1.0 - alpha) * ce + alpha * kd_start
+
+    reference_blend = blended(ref_alpha)  # snapshotted once, like warmup_end_loss_ema
+
+    blend_breaches, blend_triggered = 0, False
+    for step in range(200):
+        # alpha decays 0.8 -> 0.15 over steps, exactly like train.py's dyn_alpha
+        alpha = max(0.15, ref_alpha - (ref_alpha - 0.15) * (step / 199))
+        blend_breaches, blend_triggered = update_divergence_guard_state(
+            loss_ema=blended(alpha), reference_ema=reference_blend, multiplier=1.5,
+            breach_counter=blend_breaches, patience=50, enabled=True,
+        )
+
+    # CE never moves -- a CE-only guard must never accumulate a breach, let alone trip.
+    ce_breaches, ce_triggered = 0, False
+    for _ in range(200):
+        ce_breaches, ce_triggered = update_divergence_guard_state(
+            loss_ema=ce, reference_ema=ce, multiplier=1.5,
+            breach_counter=ce_breaches, patience=50, enabled=True,
+        )
+    assert ce_triggered is False
+    assert ce_breaches == 0
+
+    # Sanity: as alpha -> 0.15, blended(alpha) -> 0.85*ce + 0.15*kd = 2.775, which is
+    # BELOW reference_blend = 0.2*ce+0.8*kd = 1.8 only if ce>kd; here ce=3.0 > kd=1.5,
+    # so blended(alpha) actually RISES toward ce as alpha falls. This reproduces the
+    # real mechanism BACKLOG.md's F1 describes ("if CE > KD ... the blended EMA drifts
+    # UP with zero divergence") without asserting a specific trip count, since that
+    # depends on the exact decay shape -- the meaningful, load-bearing assertion is the
+    # CE-only guard's silence above.
+    assert blended(0.15) > blended(ref_alpha)
+
+
+def test_divergence_guard_call_site_keys_off_ce_ema_not_blended_loss_ema():
+    """
+    [F1] Source-scan regression, same discipline as test_gate3_ddp_unfreeze_guard.py's
+    static verification: the actual behavior lives in *which local train.py passes* to
+    update_divergence_guard_state, which is inside a large closure inside train() and
+    not independently callable without a full accelerator/model/dataloader stack. Assert
+    the wiring directly from source rather than not testing it at all.
+    """
+    src = _TRAIN_PY.read_text(encoding="utf-8")
+
+    call_match = re.search(
+        r"update_divergence_guard_state\(\s*loss_ema=(\w+),\s*reference_ema=(\w+),",
+        src,
+    )
+    assert call_match is not None, "update_divergence_guard_state call site not found"
+    assert call_match.group(1) == "ce_ema", (
+        "divergence guard must be fed the CE-only EMA, not the blended loss_ema"
+    )
+    assert call_match.group(2) == "warmup_end_ce_ema", (
+        "divergence guard's reference must be the CE-only snapshot"
+    )
+
+    # ce_ema itself must be derived from loss_ce (CE-only), not total_loss (blended).
+    assert re.search(r"step_ce\s*=\s*float\(loss_ce\.item\(\)\)", src) is not None
+    assert re.search(
+        r"ce_ema\s*=\s*update_loss_ema\(\s*loss_value=step_ce,", src
+    ) is not None
+
+    # loss_ema (the blended EMA) must NOT have been repointed -- it still exists and is
+    # still fed from total_loss, because the Liquid spike guard depends on it (BACKLOG
+    # F1: "do NOT repoint loss_ema -- it is shared with the Liquid spike guard").
+    assert re.search(r"step_loss\s*=\s*float\(total_loss\.item\(\)\)", src) is not None
+    assert re.search(
+        r"loss_ema\s*=\s*update_loss_ema\(\s*loss_value=step_loss,", src
+    ) is not None

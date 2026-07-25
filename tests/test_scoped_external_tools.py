@@ -48,6 +48,53 @@ def test_collect_entries_tolerates_unreadable_external_file(monkeypatch, tmp_pat
     assert "WARN: skip unreadable scoped-intake file" in capsys.readouterr().err
 
 
+def test_sync_external_artifacts_tolerates_unreadable_target(monkeypatch, tmp_path: Path, capsys) -> None:
+    """
+    [2026-07-25] Regression for a live crash: verify_all.sh's scoped-intake step calls
+    sync_external_artifacts(), which reads each sync rule's `target` (always an
+    external, OS-permission-gated location -- Documents/Applications/Desktop) via
+    sha256_file(). On a machine where this process lacks read access to a target that
+    still passes .exists()/.is_file() (a real macOS TCC permission state, not
+    hypothetical -- this crashed a live verify_all.sh run against
+    ~/Documents/mertformer-titan-core.zip), the uncaught PermissionError aborted the
+    entire verify_all.sh ladder. Fixed by using safe_sha256_file() for every `target`
+    read in this function (the `source` reads stay sha256_file() -- source is always
+    repo-internal and controlled, not external).
+    """
+    fake_home = tmp_path / "home"
+    fake_home.mkdir()
+    (fake_home / "Documents").mkdir()
+    fake_artifacts = tmp_path / "artifacts"
+    fake_artifacts.mkdir()
+    release_zip = fake_artifacts / "mertformer_release.zip"
+    release_zip.write_bytes(b"release-payload")
+    locked_target = fake_home / "Documents" / "mertformer-titan-core.zip"
+    locked_target.write_bytes(b"stale-copy")
+
+    monkeypatch.setattr(intake, "HOME", fake_home)
+    monkeypatch.setattr(intake, "ARTIFACTS", fake_artifacts)
+    monkeypatch.setattr(intake, "REPORTS", tmp_path / "reports")
+    monkeypatch.setattr(intake, "ROOT", tmp_path)
+
+    real_sha256_file = intake.sha256_file
+
+    def flaky_sha256_file(path: Path) -> str:
+        if path == locked_target:
+            raise PermissionError(1, "Operation not permitted", str(path))
+        return real_sha256_file(path)
+
+    monkeypatch.setattr(intake, "sha256_file", flaky_sha256_file)
+
+    result = intake.sync_external_artifacts(entries=[], sync_mode="audit")
+
+    documents_row = next(
+        row for row in result["audit_rows"] if row["id"] == "documents_release_zip"
+    )
+    assert documents_row["target_sha256"] is None
+    assert documents_row["status"] == "mismatch"  # target unreadable -> can't match source
+    assert "WARN: skip unreadable scoped-intake file" in capsys.readouterr().err
+
+
 def test_collect_entries_marks_immutable_and_canonical_sources(monkeypatch, tmp_path: Path) -> None:
     immutable_zip = tmp_path / "mertformer_outputs_history.zip"
     immutable_zip.write_bytes(b"immutable")

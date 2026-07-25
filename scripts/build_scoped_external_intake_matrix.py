@@ -436,8 +436,15 @@ def sync_external_artifacts(entries: list[dict], sync_mode: str) -> dict:
                 apply_errors.append(f"missing source for sync rule {rule['id']}: {source}")
             continue
 
+        # [2026-07-25] `source` is always repo-internal (ARTIFACTS/ROOT-relative) and
+        # stays sha256_file(); `target` is always an external, OS-permission-gated
+        # location (Documents/Applications/Desktop) -- the exact class of path
+        # safe_sha256_file() exists for. An unreadable target (macOS TCC denying this
+        # process read access, e.g. the Documents-folder crash seen 2026-07-25) must
+        # not abort the entire verify_all.sh ladder, same discipline as the sibling
+        # scoped-intake scan a few functions up.
         source_sha = sha256_file(source)
-        target_sha = sha256_file(target) if target.exists() and target.is_file() else None
+        target_sha = safe_sha256_file(target) if target.exists() and target.is_file() else None
         needs_copy = target_sha != source_sha
         status = "match" if not needs_copy else "mismatch"
 
@@ -447,7 +454,7 @@ def sync_external_artifacts(entries: list[dict], sync_mode: str) -> dict:
                 if rule["kind"] == "zip":
                     write_sidecar(target)
                 status = "copied"
-                target_sha = sha256_file(target)
+                target_sha = safe_sha256_file(target)
             else:
                 status = "copy_failed"
                 apply_errors.append(f"sync rule {rule['id']} failed for {sanitize_path(target)}: {error}")
@@ -497,7 +504,9 @@ def sync_external_artifacts(entries: list[dict], sync_mode: str) -> dict:
                 {
                     "source": sanitize_path(source),
                     "target": sanitize_path(target),
-                    "sha256": sha256_file(target),
+                    # [2026-07-25] Same target-is-external-and-permission-gated reasoning
+                    # as sync_external_artifacts() above -- safe_sha256_file, not sha256_file.
+                    "sha256": safe_sha256_file(target),
                 }
             )
         (handoff_dir / "FINAL_TRUTH_SUMMARY.md").write_text(render_final_truth_summary(readiness), encoding="utf-8")

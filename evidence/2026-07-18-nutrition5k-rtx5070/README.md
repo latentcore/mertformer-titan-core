@@ -38,6 +38,14 @@ The official Nutrition5k split is 4,059 train / 709 test dishes. This run's loca
 - `nutrition5k_best.pt` (epoch 47 / 0-indexed, val calorie MAE 75.5 kcal) → `df8576923d0ad41a518bfa949605b81e86cc1f9e54c633b848fc10fc70c727e7`
 - `nutrition5k_latest.pt` (epoch 57 / 0-indexed, final epoch before early stop) → `cfe488d4beb5af37dd8c4f8882c8d3581b0a7553e60ea2facdd2743cb8cc2fab`
 
+## 🔵 Correction & follow-up notes (added 2026-07-25)
+
+Additions only — nothing above this section was rewritten; the original 2026-07-18 measurements and text stand as-is.
+
+- **Correction to the "much larger" backbone framing used above.** The measured-result and boundary sections describe the paper's InceptionV2 baseline as "much larger" / "a much larger pretrained (JFT-300M InceptionV2) backbone" without ever citing a parameter count. Checked via web search (2026-07-25): commonly-cited parameter counts for the InceptionV2/BN-Inception family run **~17.2M–23.2M** depending on exact variant (naming is inconsistent across sources between BN-Inception/Inception-v2 and Inception-v3) — the same order of magnitude as this model's measured 14,074,631 params, not dramatically larger by raw parameter count. The real, defensible gap this experiment is up against is **JFT-300M pretraining and full floating-point precision**, not size.
+- **Interpretive note on the per-target results.** Calorie/mass MAE% (29.6%/24.9%) land closer to the paper's own pretrained baseline than fat/carb/protein MAE% (42.5-45.1%) do. Plausible reading: calorie/mass correlate with visible volume/size, a signal a from-scratch trunk can pick up on its own; the macros require ingredient-level recognition, closer to what JFT-300M pretraining specifically provides and this trunk lacks.
+- **Diagnostic value beyond this experiment's own scope.** The same BitLinear/MoE/LiquidMixer layers used here trained stably for 58/60 epochs (plain AdamW, no GaLore, no 8-bit Adam, no distillation, no curriculum — and this task carries no MoE z-loss term at all, so it predates that fix entirely) with zero divergence. That narrows where the two RTX-5070 LM-side divergences (2026-07-02, 2026-07-12) trace to: the *training regime* (LR/optimizer/z-loss/curriculum interaction), not a defect in these shared layers themselves.
+
 ## Boundary (does NOT prove)
 
 Not a claim about the canonical 3.67B / 45K model. Not benchmark-verified against the paper's own pretrained backbone (a much larger, JFT-300M-pretrained, full-precision model — not a fair comparison target). Not production-ready, not mobile-ready. Does not change 45K readiness (`TRAIN_ALLOWED / READY_REMOTE_BOOTSTRAP / START_ALLOWED`, unaffected) or any 45K training-math/architecture/claim surface — this experiment's code is fully isolated (new `model/nutrition_vision.py`, new `scripts/train_nutrition5k.py` orchestrator; zero existing tracked file was modified to build it).
