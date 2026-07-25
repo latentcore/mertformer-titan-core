@@ -103,7 +103,7 @@
           }
         }
       },
-      "elapsed_s": 0.004,
+      "elapsed_s": 0.008,
       "path_name": "offline_clean",
       "exit_code": 1,
       "stdout_tail": "TRAIN_READY:FAIL reason_code=PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE\n",
@@ -127,7 +127,7 @@
         "runtime_credentials": {
           "status": "PASS",
           "hf_token_present_locally": false,
-          "wandb_enabled": false,
+          "wandb_enabled": true,
           "wandb_api_key_present_locally": false,
           "policy": "missing local credentials are allowed because this lane assumes runtime injection on the target machine"
         },
@@ -179,7 +179,7 @@
           "launcher": "HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh"
         }
       },
-      "elapsed_s": 0.001,
+      "elapsed_s": 0.002,
       "path_name": "remote_bootstrap",
       "exit_code": 0,
       "stdout_tail": "TRAIN_READY:PASS reason_code=READY_RUNTIME_INJECTED_BOOTSTRAP\n",

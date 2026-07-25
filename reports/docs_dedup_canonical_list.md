@@ -148,6 +148,12 @@ Generated automatically.
 - `evidence/2026-07-18-nutrition5k-rtx5070/README.md`
 - `evidence/2026-07-18-nutrition5k-rtx5070/REPORT.md`
 - `evidence/2026-07-18-nutrition5k-rtx5070/evaluation_independent.md`
+- `evidence/2026-07-25-lm-171m-reverify/README.md`
+- `evidence/2026-07-25-lm-36m-reverify/README.md`
+- `evidence/2026-07-25-nutrition5k-liquid-off/README.md`
+- `evidence/2026-07-25-nutrition5k-liquid-off/REPORT.md`
+- `evidence/2026-07-25-nutrition5k-moe-off/README.md`
+- `evidence/2026-07-25-nutrition5k-moe-off/REPORT.md`
 - `evidence/README.md`
 - `evidence/build30_t4_onecell/EVIDENCE_POINTER.md`
 - `evidence/build30_t4_onecell/smoke_test_result.md`
@@ -163,7 +169,6 @@ Generated automatically.
 - `logs/README_TR.md`
 - `logs/verify/closure_57_matrix.verify.md`
 - `logs/verify/closure_57_matrix.verify_TR.md`
-- `matrix_new.md`
 - `mertformer-titan-dealroom-private/01_START_HERE/README_TR_EN.md`
 - `mertformer-titan-dealroom-private/02_EXECUTIVE/one_pager_EN.md`
 - `mertformer-titan-dealroom-private/02_EXECUTIVE/one_pager_TR.md`
@@ -414,6 +419,7 @@ Generated automatically.
 - `reports/post_train_automation_contract.md`
 - `reports/post_train_autorun_status.md`
 - `reports/post_train_state_machine.md`
+- `reports/pre45k_gate_report.md`
 - `reports/proje_zip_rebuild_manifest_v2.md`
 - `reports/publication_readiness_kit.md`
 - `reports/quality_gate_matrix.md`
@@ -563,6 +569,10 @@ Generated automatically.
   - `evidence/2026-07-02-laptop-preflight/README.md`
   - `evidence/2026-07-12-laptop-preflight-v2/README.md`
   - `evidence/2026-07-18-nutrition5k-rtx5070/README.md`
+  - `evidence/2026-07-25-lm-171m-reverify/README.md`
+  - `evidence/2026-07-25-lm-36m-reverify/README.md`
+  - `evidence/2026-07-25-nutrition5k-liquid-off/README.md`
+  - `evidence/2026-07-25-nutrition5k-moe-off/README.md`
   - `evidence/README.md`
   - `knowledge/README.md`
   - `logs/README.md`
@@ -603,6 +613,10 @@ Generated automatically.
   - `tokenizer/tr/README_TR.md`
   - `tools/contracts/README_TR.md`
   - `tools/sandbox/README_TR.md`
+- `report.md`
+  - `evidence/2026-07-18-nutrition5k-rtx5070/REPORT.md`
+  - `evidence/2026-07-25-nutrition5k-liquid-off/REPORT.md`
+  - `evidence/2026-07-25-nutrition5k-moe-off/REPORT.md`
 - `report_accuracy_audit_tr.md`
   - `mertformer-titan-dealroom-private/03_TECH_EVIDENCE/report_accuracy_audit_TR.md`
   - `reports/report_accuracy_audit_TR.md`

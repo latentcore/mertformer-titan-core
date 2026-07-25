@@ -2,6 +2,45 @@
 
 Bu dosya projedeki önemli değişiklikleri takip eder.
 
+## Unreleased - 2026-07-25
+
+### Eklenenler
+- `scripts/pre45k_gate.py`/`.sh` + `scripts/ddp_smoke.py`: offline preflight, dry-run önizlemesi ve gerçek bir 2-GPU DDP smoke testini tek, harcamadan-önce bir launch-hazırlık kapısında zincirliyor; `reports/pre45k_gate_report.{json,md}` yazıyor.
+- `scripts/kaggle_batch_runner.py`: gözetimsiz çoklu-iş Kaggle orkestratörü; `evidence/2026-07-25-*` altında 4 gerçek kanıt seti üretti (Nutrition5k Liquid-OFF/MoE-OFF ablasyonları, 36M/171M LM yeniden-doğrulaması).
+- `utils/divergence_guard.py`'ye mevcut loss-tabanlı frenin yanına bağımsız bir grad-norm EMA eş-tetikleyicisi ("C1") eklendi — gerçek 36M/171M donanımında doğru tetiklendiği doğrulandı.
+- `scripts/offsite_backup_watcher.py`, `runbooks/checkpoint_offsite_backup.md`, `train/trainer_core.py::get_rewarmup_schedule()` (post-45K LR re-warmup).
+- `tests/test_atomic_write_hygiene.py`: daha önce salt `.exists()` kontrolüyle güvenilen 5 pipeline dosyası için atomik (temp+`os.replace`) yazımlar.
+- `model/nutrition_vision.py` + `scripts/{train,predict,evaluate}_nutrition5k.py`: gerçek BitLinear/MoE/Liquid gövdesini değiştirmeden yeniden kullanan sınırlı bir görsel yan-deney; gerçek eğitilmiş + bağımsız-yeniden-doğrulanmış checkpoint, sonra gerçek bir karşılaştırmalı ablasyon (bkz. Değişenler).
+
+### Düzeltilenler
+- z-loss efektif ağırlığı: kazara bir çift-çarpım onu Switch-Transformer/ST-MoE konvansiyonunun ~500x altına düşürmüştü; `z_loss_coef` `1e-4 → 0.05` olarak düzeltildi.
+- `generate()` Liquid/CfC gizli durumunu decode adımları arasında hiç taşımıyordu — üretimde sessiz bir no-op; düzeltildi, tam-forward↔artımlı-decode parite testiyle birlikte.
+- `bigcode/the-stack-dedup` revision/sha256 sonunda pinlendi (bir dataset-ref tarayıcı yanlış-pozitifi aylardır bunu engelliyordu).
+- `scripts/kaggle_batch_runner.py::run_chess()` invocation bug'ı (yanlış `sys.path`) gerçek bir Kaggle koşusu sırasında canlı bulunup düzeltildi.
+- `layers/moe.py` MoE dispatch-parallel `torch.bincount` → `scatter_add_` (MPS/eski-torch taşınabilirliği).
+
+### Değişenler
+- LR rejimi (`1.5e-3 → 3e-4`, sweep başlangıcı, doğrulanmış-güvenli değil), Liquid spike guard'ı (mutlak → EMA-göreli), WSD scheduler clamp'i — hepsi aday düzeltmeler, gerçek RTX-5070/Kaggle donanımında uygulanıp yeniden test edildi ama henüz yeterli kanıtlanmadı (bkz. Doğrulama).
+- Sekiz launch-anı kararı kilitlendi (`DECISIONS.md`): lane = `online_teacher`, Liquid = Keep, model boyutu = 3.67B kanonik, `top_k` = 32 (256 değil), 2 ölü Stage-5 dataset'i doğrulanmış canlı biriyle değiştirildi, 3 lisans-TBD dataset tutuldu-ve-belgelendi, Stage-3 TR/sentetik oranı ratifiye edildi, INT-KERNEL iddiası dürüstçe relabel edildi (fp-simülasyon, henüz gerçek ternary kernel yok).
+- Public gist yeniden düzenlendi: Nutrition5k öne alındı, gerçek bir z-loss aritmetik hatası düzeltildi (`~50x` → `~500x`), one-pager'ın pitch/yatırımcı çerçevesi araştırma çerçevesiyle değiştirildi.
+
+### Doğrulama
+- `622 passed, 5 skipped` (son kayıtta `370 passed, 4 skipped` idi). 2026-07-02/07-12/07-25 tarihlerinde üçüncü gerçek-donanım teyidi: bu mimari küçük ölçekte, daha fazla LR/optimizer çalışması olmadan hâlâ diverge ediyor — yeni grad-norm güvenlik freni (C1) artık iki ölçekte, kontrolsüz patlama yerine, temiz şekilde yakaladığı doğrulandı. Readiness değişmedi: `TRAIN_ALLOWED / READY_REMOTE_BOOTSTRAP`. Trained/benchmark iddiası yok — kalan tek boşluk gerçek 45K GPU koşusu. Tam pass-pass detay: `BACKLOG.md`, `DECISIONS.md`.
+
+## Unreleased - 2026-06-28
+
+### Eklenenler
+- `scripts/flip_status_banner.py`: **yalnızca-rapor** durum-banner denetleyicisi — pre-training banner'ı taşıyan tracked dosyaları listeler ve flip-sonrası uygunluğu (gerçek, sıfır-olmayan bir eval metriği) raporlar. **Yazma yolu yok**: gerçek kanıt-kapılı flip bilinçli bir post-run görevdir (naif bir "checkpoint+summary var" kapısı, başıboş bir demo checkpoint + stub summary ile tatmin olur, bu yüzden ön-inşa edilmiş bir auto-writer güvensizdir). Bkz. BACKLOG.
+- `ENV_VARS.md`: kanonik training/precompute/orchestration environment değişkenlerinin varsayılanlarıyla birlikte tek indeksi.
+
+### Düzeltilenler
+- `eval/gsm8k.py`: checkpoint yükleme artık `weights_only=False` kullanıyor (+ `_orig_mod.` key normalizasyonu, non-strict load), belgelenmiş `train.py` resume yolunu yansıtıyor — post-45K GSM8K benchmark'ında gerçek bir training checkpoint'ini (optimizer/GaLore state) değerlendirirken torch≥2.6 `UnpicklingError`'ı önler.
+
+### Değişenler
+- Banner/sürüm hijyeni: frozen-olmayan `Status` / `Version` / `__version__` banner'ları kanonik Build-30-V2 formuna normalize edildi (`utils/logger.py`, `orchestrator/*`, `scripts/*`). Yalnız yorum/metadata, sıfır runtime değişikliği. Frozen-path banner'ları (`model/`, `train/`, `layers/`) bilinçli olarak post-45K kanıt-kapılı flip'e bırakıldı.
+
+### Doğrulama
+- `370 passed, 4 skipped` (offline-first pytest, değişmedi); readiness `TRAIN_ALLOWED / READY_REMOTE_BOOTSTRAP`. Trained/benchmark iddiası yok — kalan tek boşluk gerçek 45K GPU koşusu.
 
 ## Unreleased - 2026-06-17
 

@@ -2,6 +2,31 @@
 
 All notable changes to this project are tracked in this file.
 
+## Unreleased - 2026-07-25
+
+### Added
+- `scripts/pre45k_gate.py`/`.sh` + `scripts/ddp_smoke.py`: chains the offline preflight, a dry-run preview, and a real 2-GPU DDP smoke test into one pre-spend launch-readiness gate; writes `reports/pre45k_gate_report.{json,md}`.
+- `scripts/kaggle_batch_runner.py`: unattended multi-job Kaggle orchestrator; produced 4 real evidence sets under `evidence/2026-07-25-*` (Nutrition5k Liquid-OFF/MoE-OFF ablations, 36M/171M LM re-verification).
+- `utils/divergence_guard.py` gained an independent grad-norm EMA co-trigger ("C1") alongside the existing loss-based brake — confirmed firing correctly on real 36M/171M hardware.
+- `scripts/offsite_backup_watcher.py`, `runbooks/checkpoint_offsite_backup.md`, `train/trainer_core.py::get_rewarmup_schedule()` (post-45K LR re-warmup).
+- `tests/test_atomic_write_hygiene.py`: atomic (temp+`os.replace`) writes for 5 pipeline files previously trusted via a bare `.exists()` check.
+- `model/nutrition_vision.py` + `scripts/{train,predict,evaluate}_nutrition5k.py`: a bounded vision side-experiment reusing the real BitLinear/MoE/Liquid trunk unmodified; a real trained + independently-re-verified checkpoint, then a real comparative ablation (see Changed).
+
+### Fixed
+- z-loss effective weight: an accidental double-multiply left it ~500x below the Switch-Transformer/ST-MoE convention; `z_loss_coef` corrected `1e-4 → 0.05`.
+- `generate()` never threaded the Liquid/CfC hidden state across decode steps — a silent no-op during generation; fixed, with a full-forward↔incremental-decode parity test.
+- `bigcode/the-stack-dedup` revision/sha256 finally pinned (a dataset-ref scanner false-positive had blocked it for months).
+- `scripts/kaggle_batch_runner.py::run_chess()` invocation bug (wrong `sys.path`) found live during a real Kaggle run and fixed.
+- `layers/moe.py` MoE dispatch-parallel `torch.bincount` → `scatter_add_` (MPS/older-torch portability).
+
+### Changed
+- LR regime (`1.5e-3 → 3e-4`, sweep start not verified-safe), Liquid spike guard (absolute → EMA-relative), WSD scheduler clamp — all candidate fixes, applied and re-tested on real RTX-5070/Kaggle hardware but not yet proven sufficient (see Validation).
+- Eight launch-time decisions locked (`DECISIONS.md`): lane = `online_teacher`, Liquid = Keep, model size = 3.67B canonical, `top_k` = 32 (not 256), 2 dead Stage-5 datasets replaced with a verified live one, 3 license-TBD datasets kept-and-documented, Stage-3 TR/synthetic ratio ratified, INT-KERNEL claim relabeled honest (fp-simulation, no real ternary kernel yet).
+- Public gist reorganized: Nutrition5k promoted to the front, a real z-loss arithmetic error corrected (`~50x` → `~500x`), the one-pager's pitch/investor framing replaced with research framing.
+
+### Validation
+- `622 passed, 5 skipped` (was `370 passed, 4 skipped` at the last entry). Third real-hardware confirmation (2026-07-02 / 07-12 / 07-25) that this architecture still diverges at small scale without further LR/optimizer work — the new grad-norm safety brake (C1) is now confirmed catching it cleanly at two scales instead of an uncontrolled explosion. Readiness unchanged: `TRAIN_ALLOWED / READY_REMOTE_BOOTSTRAP`. No trained/benchmark claim — the one remaining gap is a real 45K GPU run. Full pass-by-pass detail: `BACKLOG.md`, `DECISIONS.md`.
+
 ## Unreleased - 2026-06-28
 
 ### Added

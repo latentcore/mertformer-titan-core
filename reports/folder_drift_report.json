@@ -1,7 +1,7 @@
 {
-  "generated_utc": "2026-07-19T13:03:04.818200+00:00",
-  "md_file_count": 488,
-  "duplicate_name_group_count": 26,
+  "generated_utc": "2026-07-25T16:35:24.733569+00:00",
+  "md_file_count": 494,
+  "duplicate_name_group_count": 27,
   "duplicate_name_groups": {
     "changelog.md": [
       "CHANGELOG.md",
@@ -32,6 +32,10 @@
       "evidence/2026-07-02-laptop-preflight/README.md",
       "evidence/2026-07-12-laptop-preflight-v2/README.md",
       "evidence/2026-07-18-nutrition5k-rtx5070/README.md",
+      "evidence/2026-07-25-lm-171m-reverify/README.md",
+      "evidence/2026-07-25-lm-36m-reverify/README.md",
+      "evidence/2026-07-25-nutrition5k-liquid-off/README.md",
+      "evidence/2026-07-25-nutrition5k-moe-off/README.md",
       "evidence/README.md",
       "knowledge/README.md",
       "logs/README.md",
@@ -101,6 +105,11 @@
     "chess_4060_24h_all_on_experimental_tr.md": [
       "checklists/chess_4060_24h_all_on_experimental_TR.md",
       "runbooks/chess_4060_24h_all_on_experimental_TR.md"
+    ],
+    "report.md": [
+      "evidence/2026-07-18-nutrition5k-rtx5070/REPORT.md",
+      "evidence/2026-07-25-nutrition5k-liquid-off/REPORT.md",
+      "evidence/2026-07-25-nutrition5k-moe-off/REPORT.md"
     ],
     "one_pager_tr.md": [
       "mertformer-titan-dealroom-private/02_EXECUTIVE/one_pager_TR.md",
