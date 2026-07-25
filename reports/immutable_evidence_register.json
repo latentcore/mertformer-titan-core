@@ -1,6 +1,6 @@
 {
-  "generated_local": "2026-07-25T16:01:22",
-  "entry_count": 1511,
+  "generated_local": "2026-07-25T16:19:26",
+  "entry_count": 1516,
   "entries": [
     {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260404_232149.zip",
@@ -7275,6 +7275,30 @@
       "disposition": "preserve_immutable_evidence"
     },
     {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260725_161604.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260725_161604.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260725_161821.zip",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_20260725_161821.zip.sha256",
+      "kind": "file",
+      "immutable_reason": "result_",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
       "path": "<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113659.json",
       "kind": "file",
       "immutable_reason": "result_",
@@ -8620,6 +8644,12 @@
     },
     {
       "path": "<HOME>/Documents/MertFormer_Smart_Dump.txt",
+      "kind": "file",
+      "immutable_reason": "smart_dump",
+      "disposition": "preserve_immutable_evidence"
+    },
+    {
+      "path": "<HOME>/Documents/MertFormer_Smart_Dump_BacklogQueue_2026-07-25.txt",
       "kind": "file",
       "immutable_reason": "smart_dump",
       "disposition": "preserve_immutable_evidence"

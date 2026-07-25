@@ -1,7 +1,7 @@
 # Immutable Evidence Register
 
-- generated_local: `2026-07-25T16:01:22`
-- entry_count: `1511`
+- generated_local: `2026-07-25T16:19:26`
+- entry_count: `1516`
 
 | Path | Kind | Reason | Disposition |
 | --- | --- | --- | --- |
@@ -1217,6 +1217,10 @@
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260725_155713.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260725_155917.zip` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260725_155917.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260725_161604.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260725_161604.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260725_161821.zip` | `file` | `result_` | `preserve_immutable_evidence` |
+| `<HOME>/Desktop/MertFormer_Chess_5080_Result_20260725_161821.zip.sha256` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113659.json` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormer_Chess_5080_Result_FAILED_20260405_113738.json` | `file` | `result_` | `preserve_immutable_evidence` |
 | `<HOME>/Desktop/MertFormerStream/.gradle/buildOutputCleanup` | `dir` | `output` | `preserve_immutable_evidence` |
@@ -1442,6 +1446,7 @@
 | `<HOME>/Documents/mertformer_outputs_LINKEDIN_run_20260220_175540.zip.sha256` | `file` | `output` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/MertFormer_RunCompute_TruthSync_Ready_2026-05-12/code_modules/evidence_module.py` | `file` | `evidence` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/MertFormer_Smart_Dump.txt` | `file` | `smart_dump` | `preserve_immutable_evidence` |
+| `<HOME>/Documents/MertFormer_Smart_Dump_BacklogQueue_2026-07-25.txt` | `file` | `smart_dump` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/MertFormer_Strategy_Vault_2026_04_27` | `dir` | `vault` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/MertFormer_Strategy_Vault_2026_04_27/Gemini-Allah'a Sığınmanın Önemi.txt` | `file` | `vault` | `preserve_immutable_evidence` |
 | `<HOME>/Documents/MertFormer_Strategy_Vault_2026_04_27/Gemini-Cevap Vermeme Sözü.txt` | `file` | `vault` | `preserve_immutable_evidence` |

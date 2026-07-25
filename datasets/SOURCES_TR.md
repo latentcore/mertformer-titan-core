@@ -14,7 +14,7 @@ Bkz:
 - `bigcode/the-stack-dedup` (train; dil filtreli)
   Amaç: büyük ölçekli kod korpusu
   Dataset card: https://huggingface.co/datasets/bigcode/the-stack-dedup
-  Durum: kodda referansli; `datasets/hashes.json` içinde `pending_repin` (revision/sha256 null) — eğitim makinesinde re-pin edilecek
+  Durum: kodda referansli; revision/sha256 pinlendi (2026-07-25) — `datasets/hashes.json` içinde `status: "verified"`, `revision: "17cad72c886a2858e08d4c349a00d6466f54df63"`
 - `TIGER-Lab/MathInstruct` (train)
   Amaç: matematik talimat/veri
   Dataset card: https://huggingface.co/datasets/TIGER-Lab/MathInstruct
