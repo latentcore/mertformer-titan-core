@@ -249,6 +249,18 @@ For a direct Kaggle notebook cell paste on a single T4 runtime, use:
 # interaction: none, just press Run
 ```
 
+## Kaggle Batch Runner (unattended multi-job lane)
+
+`kaggle_batch_runner.py` — sequential, unattended runner for 5 side-experiments/re-verification
+jobs (Nutrition5k N3/N4 ablations, 36M/171M LM re-verify, chess PoC) inside one Kaggle "Save & Run
+All (Commit)" session. Ships as a standalone Kaggle Dataset (repo `git archive` snapshot +
+`orchestrator/kaggle_batch_runner.py`), not invoked as part of any canonical 45K launch path. Real
+run on 2026-07-25 (Kaggle T4×2) produced the N3/N4/36M/171M results recorded in `BACKLOG.md` and
+`evidence/2026-07-25-*/`. Time-boxed per job (SIGTERM→grace→SIGKILL), exclusive-lock guarded
+against duplicate concurrent invocation, and includes a real 2-GPU DDP smoke test (polls actual
+GPU utilization while the subprocess is alive) before attempting DDP on the two LM jobs. See
+`tests/test_kaggle_batch_runner.py` for the safety-critical behaviors verified in isolation.
+
 ## Build30 Colab Math Fastproof V2 (V1 Closure)
 
 `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` now includes guarded full-spectrum hooks for closure-grade PoC packaging.

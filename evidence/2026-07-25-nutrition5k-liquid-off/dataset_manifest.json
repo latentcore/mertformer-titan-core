@@ -1,0 +1,33 @@
+{
+  "schema": "nutrition5k_dataset_manifest_v1",
+  "generated_utc": "2026-07-25T09:35:28Z",
+  "source": {
+    "bucket_base": "https://storage.googleapis.com/nutrition5k_dataset/nutrition5k_dataset",
+    "access": "anonymous HTTPS GET, no auth/gsutil required (verified 2026-07-17)",
+    "modalities_downloaded": [
+      "realsense_overhead/rgb.png"
+    ],
+    "modalities_skipped": [
+      "realsense_overhead/depth_raw.png",
+      "realsense_overhead/depth_color.png",
+      "side_angles/camera_{A,B,C,D}.h264"
+    ],
+    "skip_reason": "see module docstring 'DEPTH: SKIPPED ON PURPOSE'"
+  },
+  "splits": {
+    "train": {
+      "requested": 4059,
+      "written": 2755,
+      "missing_label": 0,
+      "missing_image": 1304,
+      "index_path": "/kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/01_nutrition5k_liquid_off/repo/scripts/datasets/nutrition5k/train_index.csv"
+    },
+    "test": {
+      "requested": 709,
+      "written": 507,
+      "missing_label": 0,
+      "missing_image": 202,
+      "index_path": "/kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/01_nutrition5k_liquid_off/repo/scripts/datasets/nutrition5k/test_index.csv"
+    }
+  }
+}

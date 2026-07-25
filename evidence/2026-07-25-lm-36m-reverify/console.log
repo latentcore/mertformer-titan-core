@@ -1,0 +1,543 @@
+# cmd: python3 scripts/preflight_run.py
+# cwd: mertformer_batch_output/03_lm_36m_reverify/repo
+# budget_seconds: 7200.0
+
+[preflight 11:13:08] ========================================================================
+[preflight 11:13:08] PRE-FLIGHT INFRASTRUCTURE VALIDATION  (single run, zero arguments)
+[preflight 11:13:08] Goal: prove the pipeline runs end-to-end and writes verifiable artifacts.
+[preflight 11:13:08] Not the goal: model quality. Expect incoherent text from this checkpoint.
+[preflight 11:13:08] ========================================================================
+[preflight 11:13:10] Dependencies OK: all required libraries already installed.
+[preflight 11:13:10] Preflight requirement report:
+[preflight]   [PASS] python: 3.12.13 (need >= 3.10)
+[preflight]   [PASS] torch: importable
+[preflight]   [PASS] cuda: torch.cuda.is_available() == True
+[preflight]   [PASS] gpu: Tesla T4 (sm_75, 14.6 GB VRAM; need >= 7.0)
+[preflight]   [PASS] cuda_smoke: 64x64 matmul on device OK
+[preflight]   [PASS] bf16: supported
+[preflight]   [PASS] repository: found at /kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/03_lm_36m_reverify/repo (key modules present: train/train.py, config/config.py)
+[preflight]   [PASS] disk: 18.5 GB free (need >= 12 for dataset slice + checkpoints + output ZIP)
+[preflight]   [PASS] ram: 31.3 GB system RAM
+[preflight]   [INFO] dataset_slice: pre-existing file(s) occupy the trainer's data paths; they will be set aside automatically and restored verbatim at cleanup
+[preflight 11:13:10] Preflight report: all hard requirements PASS.
+[preflight 11:13:15] Using repository at /kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/03_lm_36m_reverify/repo.
+[preflight 11:13:15] Repository validated at /kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/03_lm_36m_reverify/repo and added to sys.path.
+[preflight 11:13:17] Downloading tokenizer 'hf-internal-testing/llama-tokenizer' (one-time) ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[preflight 11:13:19] Tokenizer snapshot written to /kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/03_lm_36m_reverify/repo/scripts/preflight_work/tokenizer
+[preflight 11:13:19] Tokenizer ready (vocab=32000).
+[preflight 11:13:19] Pre-existing file set aside for this run (restored at cleanup): validation.jsonl
+[preflight 11:13:19] Dataset revision pinned: 8049631c405ae6576f93f445c6b8166f76f5505a
+[preflight 11:13:19] Streaming 'HuggingFaceH4/ultrachat_200k' [train_sft] at revision 8049631c405a until 29,982,720 trainable tokens + 2000 validation rows ...
+Token indices sequence length is longer than the specified maximum sequence length for this model (3598 > 2048). Running this sequence through the model will result in indexing errors
+[preflight 11:13:34]   ... 4,928 train rows, 2,491,652/29,982,720 trainable tokens
+[preflight 11:13:50]   ... 10,496 train rows, 5,298,415/29,982,720 trainable tokens
+[preflight 11:14:05]   ... 16,128 train rows, 8,139,626/29,982,720 trainable tokens
+[preflight 11:14:20]   ... 21,824 train rows, 11,015,852/29,982,720 trainable tokens
+[preflight 11:14:35]   ... 27,648 train rows, 13,951,946/29,982,720 trainable tokens
+[preflight 11:14:50]   ... 33,344 train rows, 16,829,018/29,982,720 trainable tokens
+[preflight 11:15:05]   ... 38,976 train rows, 19,675,909/29,982,720 trainable tokens
+[preflight 11:15:20]   ... 44,672 train rows, 22,551,994/29,982,720 trainable tokens
+[preflight 11:15:35]   ... 50,304 train rows, 25,395,452/29,982,720 trainable tokens
+[preflight 11:15:50]   ... 55,872 train rows, 28,202,658/29,982,720 trainable tokens
+[preflight 11:16:06] Dataset staged: train 59,401 rows (329.3 MiB, 29,983,092 trainable tokens, 55,804 rows will be truncated at 512); val 2,000 rows.
+[preflight 11:16:06] Offline lock engaged: no network access from this point on.
+[preflight 11:16:06] Config shaped: 6L x 384h | attn 6q/3kv | experts 8x2 at layers 2,5 | mixer at layer 3 | seq 512 | 16x2 -> global 32 | steps 1830
+[preflight 11:16:06] Plan: 1,830 steps x 16,384 = 29,982,720 token positions (~1 epoch of the slice, sampled with replacement); checkpoint every 500, validate every 500.
+📍 PROJE ANA MERKEZİ: /kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/03_lm_36m_reverify/repo
+[preflight 11:16:07] Handing control to the repository trainer (train.train.train) ...
+⚡ TensorFloat-32 (TF32) activated for A100.
+✅ Config Schema Verified (pre).
+👨‍🏫 Teacher Hazırlanıyor: /kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/03_lm_36m_reverify/repo/scripts/preflight_work/tokenizer
+🔤 Tokenizer (teacher): /kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/03_lm_36m_reverify/repo/scripts/preflight_work/tokenizer
+ℹ️ Distill Alpha 0, Teacher Model yüklenmedi (Sadece Tokenizer).
+ℹ️ Offline mode: using local fallback dataset (datasets/training_data.jsonl).
+🧪 Validation records: 2000
+🔍 Validation Dataset Found: /kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/03_lm_36m_reverify/repo/datasets/validation.jsonl
+ℹ️  Epoch Mode Skipped. Using provided max_steps: 1830
+🔤 Runtime tokenizer locked: /kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/03_lm_36m_reverify/repo/scripts/preflight_work/tokenizer (vocab=32000, use_tr_tokenizer=False)
+✅ Config Schema Verified (post).
+ℹ️  Auto-resume enabled, no checkpoint found. Starting fresh.
+ℹ️  torch.compile disabled in config
+🧠 Model Parametreleri: 36.20 Milyon
+📚 Trainable: 36.20 Milyon
+🧠 Grokking Setup: 11 Router Params | 120 Body Params
+⚠️ 8-bit AdamW unavailable (No module named 'bitsandbytes'); falling back to torch AdamW.
+🚀 OPTIMIZER ACTIVE: AdamW (use_galore=True, use_8bit_adam=True, galore_available=False)
+📐 LR schedule: peak=0.0003 router_mult=1 warmup=274 (ratio=0.15, explicit=0) min_lr_ratio=0.01
+✅ Accelerate Preparation Complete
+🚀 TITAN ONYX STORM TRAINING STARTING...
+📊 Max Steps (nominal): 1830
+🧮 Token Budget: mode=fixed_steps | min_tokens=23600000000
+📚 Curriculum Stages:
+   - Stage 1 (stage1): Steps 0-768 (42.0%)
+   - Stage 2 (stage2): Steps 768-1317 (30.0%)
+   - Stage 3 (stage3): Steps 1317-1463 (8.0%)
+   - Stage 4 (stage4): Steps 1463-1610 (8.0%)
+   - Stage 5 (stage5): Steps 1610-1830 (12.0%)
+📊 Early Stopping: Patience=5 | Val Check: Every 500 steps
+Step 10 | Stage 1 | Loss: 10.4493 | Tok/s: 4987 | LR: 1.09e-05 | GradNorm: 0.425
+   🧠 MoE Health: MaxLoad=0.16 | Balance(std)=0.021 | Entropy=0.994 | Overflow=0.007
+Step 20 | Stage 1 | Loss: 10.4404 | Tok/s: 5011 | LR: 2.19e-05 | GradNorm: 0.431
+   🧠 MoE Health: MaxLoad=0.16 | Balance(std)=0.023 | Entropy=0.993 | Overflow=0.003
+Step 30 | Stage 1 | Loss: 10.4250 | Tok/s: 5074 | LR: 3.28e-05 | GradNorm: 0.433
+   🧠 MoE Health: MaxLoad=0.16 | Balance(std)=0.020 | Entropy=0.995 | Overflow=0.006
+Step 40 | Stage 1 | Loss: 10.3925 | Tok/s: 5031 | LR: 4.38e-05 | GradNorm: 0.462
+   🧠 MoE Health: MaxLoad=0.16 | Balance(std)=0.021 | Entropy=0.994 | Overflow=0.005
+Step 50 | Stage 1 | Loss: 10.3634 | Tok/s: 5081 | LR: 5.47e-05 | GradNorm: 0.477
+   🧠 MoE Health: MaxLoad=0.16 | Balance(std)=0.021 | Entropy=0.994 | Overflow=0.005
+Step 60 | Stage 1 | Loss: 10.3152 | Tok/s: 5046 | LR: 6.57e-05 | GradNorm: 0.567
+   🧠 MoE Health: MaxLoad=0.16 | Balance(std)=0.019 | Entropy=0.995 | Overflow=0.001
+Step 70 | Stage 1 | Loss: 10.2427 | Tok/s: 5050 | LR: 7.66e-05 | GradNorm: 0.958
+   🧠 MoE Health: MaxLoad=0.16 | Balance(std)=0.021 | Entropy=0.994 | Overflow=0.002
+Step 80 | Stage 1 | Loss: 10.1226 | Tok/s: 5088 | LR: 8.76e-05 | GradNorm: 3.546
+   🧠 MoE Health: MaxLoad=0.16 | Balance(std)=0.027 | Entropy=0.990 | Overflow=0.018
+⚠️  WARNING: Gradient norm 10.52 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 13.62 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 17.29 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 22.63 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 27.48 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 35.84 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 44.69 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 62.08 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 82.64 exceeds soft threshold (transient; clip held at 2.0).
+Step 90 | Stage 1 | Loss: 9.9251 | Tok/s: 5067 | LR: 9.85e-05 | GradNorm: 32.556
+   🧠 MoE Health: MaxLoad=0.19 | Balance(std)=0.040 | Entropy=0.977 | Overflow=0.081
+⚠️  WARNING: Gradient norm 110.11 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 148.76 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 199.95 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 276.46 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 393.27 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 536.14 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 773.40 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1087.13 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1530.30 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 2354.81 exceeds soft threshold (transient; clip held at 2.0).
+Step 100 | Stage 1 | Loss: 9.6313 | Tok/s: 5135 | LR: 1.09e-04 | GradNorm: 741.033
+   🧠 MoE Health: MaxLoad=0.22 | Balance(std)=0.057 | Entropy=0.948 | Overflow=0.143
+⚠️  WARNING: Gradient norm 3418.21 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 5020.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 7589.56 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 12144.80 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 18147.13 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 26916.25 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 40790.23 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 63007.74 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 92124.74 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 148801.91 exceeds soft threshold (transient; clip held at 2.0).
+Step 110 | Stage 1 | Loss: 9.1890 | Tok/s: 5248 | LR: 1.20e-04 | GradNorm: 41796.146
+   🧠 MoE Health: MaxLoad=0.54 | Balance(std)=0.114 | Entropy=0.789 | Overflow=0.303
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.54 (alarm>0.40)
+⚠️  WARNING: Gradient norm 243563.98 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 278314.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 389178.78 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 528464.75 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 818708.44 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1283145.62 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1377437.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1944121.62 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 2210185.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 3487988.75 exceeds soft threshold (transient; clip held at 2.0).
+Step 120 | Stage 1 | Loss: 8.7083 | Tok/s: 5275 | LR: 1.31e-04 | GradNorm: 1256110.933
+   🧠 MoE Health: MaxLoad=0.72 | Balance(std)=0.148 | Entropy=0.674 | Overflow=0.360
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.72 (alarm>0.40)
+⚠️  WARNING: Gradient norm 3006760.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 6115617.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 4438980.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 3171496.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 5681057.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 8460876.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1435439.62 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1122060.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 692543.31 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 15054557.00 exceeds soft threshold (transient; clip held at 2.0).
+Step 130 | Stage 1 | Loss: 8.4891 | Tok/s: 5274 | LR: 1.42e-04 | GradNorm: 4917938.744
+   🧠 MoE Health: MaxLoad=0.70 | Balance(std)=0.146 | Entropy=0.686 | Overflow=0.362
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.70 (alarm>0.40)
+⚠️  WARNING: Gradient norm 513313.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 481895.38 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 2473177.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 233783.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 2226612.25 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 629810.69 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 283904.44 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 262856.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 505902.22 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 580294.12 exceeds soft threshold (transient; clip held at 2.0).
+Step 140 | Stage 1 | Loss: 8.4267 | Tok/s: 5318 | LR: 1.53e-04 | GradNorm: 819154.997
+   🧠 MoE Health: MaxLoad=0.63 | Balance(std)=0.134 | Entropy=0.714 | Overflow=0.342
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.63 (alarm>0.40)
+⚠️  WARNING: Gradient norm 448080.97 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 375458.38 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 672578.69 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 490888.44 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 860167.19 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 521952.81 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 896678.56 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 269907.19 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 112217.53 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 281890.81 exceeds soft threshold (transient; clip held at 2.0).
+Step 150 | Stage 1 | Loss: 8.4258 | Tok/s: 5352 | LR: 1.64e-04 | GradNorm: 492982.056
+   🧠 MoE Health: MaxLoad=0.72 | Balance(std)=0.149 | Entropy=0.656 | Overflow=0.368
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.72 (alarm>0.40)
+⚠️  WARNING: Gradient norm 157177.12 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 117735.24 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 107996.81 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 114742.19 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 36407.91 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 25765.71 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 61476.45 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 30948.29 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 134840.47 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 80938.04 exceeds soft threshold (transient; clip held at 2.0).
+Step 160 | Stage 1 | Loss: 8.4265 | Tok/s: 5403 | LR: 1.75e-04 | GradNorm: 86802.823
+   🧠 MoE Health: MaxLoad=0.63 | Balance(std)=0.140 | Entropy=0.673 | Overflow=0.373
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.63 (alarm>0.40)
+⚠️  WARNING: Gradient norm 170450.11 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 129789.73 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 53125.75 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 27367.23 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 72566.38 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 42510.24 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 98559.86 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 35881.94 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 113354.40 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 82035.91 exceeds soft threshold (transient; clip held at 2.0).
+Step 170 | Stage 1 | Loss: 8.4183 | Tok/s: 5433 | LR: 1.86e-04 | GradNorm: 82564.155
+   🧠 MoE Health: MaxLoad=0.52 | Balance(std)=0.120 | Entropy=0.731 | Overflow=0.308
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.52 (alarm>0.40)
+⚠️  WARNING: Gradient norm 124147.18 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 198150.12 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 4592723.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 199789.06 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 133649.97 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 149511.66 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 85604.12 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 32351.46 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 85237.53 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 36438.58 exceeds soft threshold (transient; clip held at 2.0).
+Step 180 | Stage 1 | Loss: 8.4100 | Tok/s: 5451 | LR: 1.97e-04 | GradNorm: 563760.318
+   🧠 MoE Health: MaxLoad=0.75 | Balance(std)=0.156 | Entropy=0.623 | Overflow=0.381
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.75 (alarm>0.40)
+⚠️  WARNING: Gradient norm 16963.98 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 439428.72 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 6158.69 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 78566.26 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 112990.25 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 19029.96 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 42123.48 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 17240.55 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 15860.09 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 18853.11 exceeds soft threshold (transient; clip held at 2.0).
+Step 190 | Stage 1 | Loss: 8.4509 | Tok/s: 5436 | LR: 2.08e-04 | GradNorm: 76721.509
+   🧠 MoE Health: MaxLoad=0.76 | Balance(std)=0.158 | Entropy=0.616 | Overflow=0.393
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.76 (alarm>0.40)
+⚠️  WARNING: Gradient norm 22277.38 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 226112.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 18868.85 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 8758.67 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 3920.32 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 12084.01 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 6957.10 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 7009.82 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 8691.44 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 8327.44 exceeds soft threshold (transient; clip held at 2.0).
+Step 200 | Stage 1 | Loss: 8.4764 | Tok/s: 5477 | LR: 2.19e-04 | GradNorm: 32300.752
+   🧠 MoE Health: MaxLoad=0.76 | Balance(std)=0.158 | Entropy=0.616 | Overflow=0.388
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.76 (alarm>0.40)
+🔓 UNFREEZING LIQUID LAYERS at Step 200!
+🔓 UNFREEZING LIQUID LAYERS at Step 200!
+⚠️  WARNING: Gradient norm 20587.11 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 5470.04 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 112834.40 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 447167.59 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 13124.30 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 748072768.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 16170113.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 267284080.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 44245.23 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 453034.84 exceeds soft threshold (transient; clip held at 2.0).
+Step 210 | Stage 1 | Loss: 8.5215 | Tok/s: 5428 | LR: 2.30e-04 | GradNorm: 103262342.451
+   🧠 MoE Health: MaxLoad=0.76 | Balance(std)=0.158 | Entropy=0.617 | Overflow=0.387
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.76 (alarm>0.40)
+⚠️  WARNING: Gradient norm 157664.58 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 54340144.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 12938589.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 610423.19 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 13164380.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1213286.12 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 122547.91 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1125441.75 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 160932.52 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 316881.44 exceeds soft threshold (transient; clip held at 2.0).
+Step 220 | Stage 1 | Loss: 8.5222 | Tok/s: 5418 | LR: 2.41e-04 | GradNorm: 8415029.050
+   🧠 MoE Health: MaxLoad=0.76 | Balance(std)=0.159 | Entropy=0.616 | Overflow=0.393
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.76 (alarm>0.40)
+⚠️  WARNING: Gradient norm 942753.94 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 4126286.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 997920.44 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 10001072.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1419767.25 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 26628428.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 405777.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 640351.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 26430300.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 2053310.25 exceeds soft threshold (transient; clip held at 2.0).
+Step 230 | Stage 1 | Loss: 8.5243 | Tok/s: 5415 | LR: 2.52e-04 | GradNorm: 7364596.812
+   🧠 MoE Health: MaxLoad=0.76 | Balance(std)=0.157 | Entropy=0.618 | Overflow=0.379
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.76 (alarm>0.40)
+⚠️  WARNING: Gradient norm 257506.95 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 3615498.25 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 494659.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 280260.66 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1169598.25 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 678535.62 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 295839.66 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 115092.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 542643.56 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 2661982.25 exceeds soft threshold (transient; clip held at 2.0).
+Step 240 | Stage 1 | Loss: 8.5293 | Tok/s: 5428 | LR: 2.63e-04 | GradNorm: 1011161.708
+   🧠 MoE Health: MaxLoad=0.76 | Balance(std)=0.158 | Entropy=0.617 | Overflow=0.383
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.76 (alarm>0.40)
+⚠️  WARNING: Gradient norm 348097.41 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1057609.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 389602.19 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1847695.12 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 414774.69 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1031287.25 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 342387.44 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 26188.58 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 108240.20 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 184755.53 exceeds soft threshold (transient; clip held at 2.0).
+Step 250 | Stage 1 | Loss: 8.5535 | Tok/s: 5307 | LR: 2.74e-04 | GradNorm: 575063.790
+   🧠 MoE Health: MaxLoad=0.66 | Balance(std)=0.145 | Entropy=0.642 | Overflow=0.386
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.66 (alarm>0.40)
+⚠️  WARNING: Gradient norm 40599.38 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 100231.99 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 482641.03 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 952511.19 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 46599.96 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 185809.08 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 47481.67 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 105782.70 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1360587.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 46039.06 exceeds soft threshold (transient; clip held at 2.0).
+Step 260 | Stage 1 | Loss: 8.5739 | Tok/s: 5392 | LR: 2.85e-04 | GradNorm: 336828.306
+   🧠 MoE Health: MaxLoad=0.59 | Balance(std)=0.140 | Entropy=0.649 | Overflow=0.384
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.59 (alarm>0.40)
+⚠️  WARNING: Gradient norm 24280.92 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 39550.45 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 104275.34 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 169814.31 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 45037.96 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 243217.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1163374.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 68650.55 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 540282.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 489866.31 exceeds soft threshold (transient; clip held at 2.0).
+Step 270 | Stage 1 | Loss: 8.5866 | Tok/s: 5353 | LR: 2.96e-04 | GradNorm: 288835.023
+   🧠 MoE Health: MaxLoad=0.66 | Balance(std)=0.147 | Entropy=0.641 | Overflow=0.391
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.66 (alarm>0.40)
+⚠️  WARNING: Gradient norm 14283.27 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 44084.47 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 109959.05 exceeds soft threshold (transient; clip held at 2.0).
+📌 Blended-loss reference EMA captured @ step 274: loss_ema=8.5925
+📌 Divergence-guard armed @ step 274: reference ce_ema=8.5008
+📌 Grad-norm guard armed @ step 274: reference grad_norm_ema=6701995.2062
+⚠️  WARNING: Gradient norm 237422.83 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 600221.12 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 169012.08 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 947042.62 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 79156.03 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 137364.94 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 996114.81 exceeds soft threshold (transient; clip held at 2.0).
+Step 280 | Stage 1 | Loss: 8.6189 | Tok/s: 5374 | LR: 3.00e-04 | GradNorm: 333466.123
+   🧠 MoE Health: MaxLoad=0.76 | Balance(std)=0.157 | Entropy=0.622 | Overflow=0.384
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.76 (alarm>0.40)
+⚠️  WARNING: Gradient norm 928382.56 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 39473.11 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 75780.34 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 248659.05 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 378227.41 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 430470.81 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 57830.94 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 144180.69 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 579515.81 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 59853.27 exceeds soft threshold (transient; clip held at 2.0).
+Step 290 | Stage 1 | Loss: 8.6117 | Tok/s: 5348 | LR: 3.00e-04 | GradNorm: 294237.398
+   🧠 MoE Health: MaxLoad=0.73 | Balance(std)=0.155 | Entropy=0.627 | Overflow=0.392
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.73 (alarm>0.40)
+⚠️  WARNING: Gradient norm 62695.73 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 31574.10 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 45969.20 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 364157.78 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 44192.32 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 251020.64 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 261550.86 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 196731.34 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 47365.94 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 68807.13 exceeds soft threshold (transient; clip held at 2.0).
+Step 300 | Stage 1 | Loss: 8.6311 | Tok/s: 5323 | LR: 3.00e-04 | GradNorm: 137406.504
+   🧠 MoE Health: MaxLoad=0.66 | Balance(std)=0.146 | Entropy=0.642 | Overflow=0.383
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.66 (alarm>0.40)
+⚠️  WARNING: Gradient norm 107044.23 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 631114.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 66011.21 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 439645.19 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 3378627.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 3656119.75 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1980845.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 212963.92 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 657405.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 53114.80 exceeds soft threshold (transient; clip held at 2.0).
+Step 310 | Stage 1 | Loss: 8.6320 | Tok/s: 5322 | LR: 3.00e-04 | GradNorm: 1118289.198
+   🧠 MoE Health: MaxLoad=0.73 | Balance(std)=0.153 | Entropy=0.629 | Overflow=0.390
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.73 (alarm>0.40)
+⚠️  WARNING: Gradient norm 1959229.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 94443.59 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 957748.06 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 315708.12 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 64351.19 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 914252.62 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 21061426.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 800706.19 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 461321.34 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 353634.19 exceeds soft threshold (transient; clip held at 2.0).
+Step 320 | Stage 1 | Loss: 8.6372 | Tok/s: 5368 | LR: 3.00e-04 | GradNorm: 2698282.080
+   🧠 MoE Health: MaxLoad=0.76 | Balance(std)=0.157 | Entropy=0.622 | Overflow=0.384
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.76 (alarm>0.40)
+⚠️  WARNING: Gradient norm 34016.84 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1971301.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 63693.35 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1052982.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 62950.09 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 650859.25 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 184908.53 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1412429.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 194785.20 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 31046.74 exceeds soft threshold (transient; clip held at 2.0).
+Step 330 | Stage 1 | Loss: 8.6761 | Tok/s: 5395 | LR: 3.00e-04 | GradNorm: 565897.287
+   🧠 MoE Health: MaxLoad=0.76 | Balance(std)=0.156 | Entropy=0.619 | Overflow=0.379
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.76 (alarm>0.40)
+⚠️  WARNING: Gradient norm 53298.49 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 84777.35 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 32627.03 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 7381628.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 90332.23 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1725178.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 562170.38 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 25650.36 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 8534.54 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 4230.86 exceeds soft threshold (transient; clip held at 2.0).
+Step 340 | Stage 1 | Loss: 8.6977 | Tok/s: 5368 | LR: 3.00e-04 | GradNorm: 996842.774
+   🧠 MoE Health: MaxLoad=0.76 | Balance(std)=0.156 | Entropy=0.625 | Overflow=0.381
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.76 (alarm>0.40)
+⚠️  WARNING: Gradient norm 6234.33 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 2935.44 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 168958.97 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 5906.20 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 3111.40 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 94708.37 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 16699.36 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 19352.42 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 9060.93 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 14947.78 exceeds soft threshold (transient; clip held at 2.0).
+Step 350 | Stage 1 | Loss: 8.7020 | Tok/s: 5309 | LR: 3.00e-04 | GradNorm: 34191.519
+   🧠 MoE Health: MaxLoad=0.76 | Balance(std)=0.155 | Entropy=0.627 | Overflow=0.377
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.76 (alarm>0.40)
+⚠️  WARNING: Gradient norm 239142.39 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 11135.33 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 936505.25 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 4087.51 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 17455.22 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 344789.31 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 115211.03 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 9531.94 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 66736.13 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 116213.84 exceeds soft threshold (transient; clip held at 2.0).
+Step 360 | Stage 1 | Loss: 8.7170 | Tok/s: 5324 | LR: 3.00e-04 | GradNorm: 186080.796
+   🧠 MoE Health: MaxLoad=0.76 | Balance(std)=0.156 | Entropy=0.626 | Overflow=0.375
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.76 (alarm>0.40)
+⚠️  WARNING: Gradient norm 342248.78 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 82283.78 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 19071.64 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 31483.57 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1759638.75 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 37737.64 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 446526.28 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 4303.28 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 4403320.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 8676.64 exceeds soft threshold (transient; clip held at 2.0).
+Step 370 | Stage 1 | Loss: 8.7603 | Tok/s: 5352 | LR: 3.00e-04 | GradNorm: 713529.087
+   🧠 MoE Health: MaxLoad=0.75 | Balance(std)=0.153 | Entropy=0.640 | Overflow=0.375
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.75 (alarm>0.40)
+⚠️  WARNING: Gradient norm 66199.12 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 29607.27 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 88367.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 15711.73 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 72507.61 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 108601.60 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 22787.41 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 32237.33 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 239381.84 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 40814.82 exceeds soft threshold (transient; clip held at 2.0).
+Step 380 | Stage 1 | Loss: 8.7322 | Tok/s: 5313 | LR: 3.00e-04 | GradNorm: 71621.624
+   🧠 MoE Health: MaxLoad=0.75 | Balance(std)=0.155 | Entropy=0.629 | Overflow=0.383
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.75 (alarm>0.40)
+⚠️  WARNING: Gradient norm 253736.59 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 5204104.50 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1153265.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 77104.67 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 203205.44 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 116362.17 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 199959.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 197477.91 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 93683.44 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1880566.88 exceeds soft threshold (transient; clip held at 2.0).
+Step 390 | Stage 1 | Loss: 8.7544 | Tok/s: 5277 | LR: 3.00e-04 | GradNorm: 937946.734
+   🧠 MoE Health: MaxLoad=0.76 | Balance(std)=0.156 | Entropy=0.626 | Overflow=0.377
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.76 (alarm>0.40)
+⚠️  WARNING: Gradient norm 1063624.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 223336.14 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 7061699.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 56236516.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 526473.88 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 523660.84 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 51988804.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 10819086.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 10522193.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1376721024.00 exceeds soft threshold (transient; clip held at 2.0).
+Step 400 | Stage 1 | Loss: 8.7486 | Tok/s: 5316 | LR: 3.00e-04 | GradNorm: 151568641.773
+   🧠 MoE Health: MaxLoad=0.59 | Balance(std)=0.122 | Entropy=0.793 | Overflow=0.317
+   ⚠️  EARLY IMBALANCE ALERT: Max Load 0.59 (alarm>0.40)
+⚠️  WARNING: Gradient norm 76221712.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 381928544.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 303116128.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 1652111360.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 3989867520.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 4767038976.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 52965634048.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 15258334208.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 43886399488.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 20485150720.00 exceeds soft threshold (transient; clip held at 2.0).
+Step 410 | Stage 1 | Loss: 8.9644 | Tok/s: 5240 | LR: 3.00e-04 | GradNorm: 14376580270.400
+   🧠 MoE Health: MaxLoad=0.31 | Balance(std)=0.065 | Entropy=0.943 | Overflow=0.174
+⚠️  WARNING: Gradient norm 61302132736.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 17986394112.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 36170665984.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 24254613504.00 exceeds soft threshold (transient; clip held at 2.0).
+⚠️  WARNING: Gradient norm 38755962880.00 exceeds soft threshold (transient; clip held at 2.0).
+🛑 SAFETY BRAKE: relative grad-norm divergence — grad_norm_ema=5.9568e+09 exceeded 100.00x the warmup-end reference (6701995.206205855) for 10 consecutive optimizer steps. (This is the co-trigger that closes the CE guard's documented blind spot -- clip can keep loss/CE protected while gradients are actually exploding.)
+🛑 Safety brake stop finalized. reason=grad_norm_divergence_relative
+💾 Checkpoint Kaydediliyor: infra_preflight_step_416.pt
+🏁 Final Checkpoint Kaydedildi: infra_preflight_final.pt
+[preflight 11:37:23] Trainer returned (returned) after 21m 15s.
+[preflight 11:37:27] REPORT.md written (7.1 KiB).
+[preflight 11:37:27] Packaging output archive -> preflight_run_output.zip
+[preflight 11:38:19] Archive verified: preflight_run_output.zip (828.8 MiB, 18 members).
+
+[preflight] VERDICT: FAIL  (3/9 infrastructure checks passed)
+[preflight] steps 410/1830 | token positions 6,717,440 | wall 21m 15s | peak VRAM 5.385 GB
+[preflight] output: /kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/03_lm_36m_reverify/repo/scripts/preflight_run_output.zip (828.8 MiB) - REPORT.md is inside.
+[preflight] cleanup: 5 staged file(s) removed from the repository tree; 1 pre-existing file(s) restored.
+[preflight] observations: 30 early expert-imbalance alert(s)

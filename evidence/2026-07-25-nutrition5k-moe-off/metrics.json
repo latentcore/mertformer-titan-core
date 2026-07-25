@@ -1,0 +1,44 @@
+{
+  "schema": "nutrition5k_metrics_v1",
+  "generated_utc": "2026-07-25T11:12:21Z",
+  "train_result": {
+    "epochs_run": 47,
+    "stopped_early": true,
+    "global_step": 4042,
+    "n_params": 8559365,
+    "n_trainable": 8559365,
+    "device": "cuda",
+    "amp": true,
+    "val_metrics": {
+      "calories": {
+        "mae": 79.02506390031743,
+        "mae_pct": 30.933564171706067
+      },
+      "mass": {
+        "mae": 53.5658592209073,
+        "mae_pct": 26.98411293768133
+      },
+      "fat": {
+        "mae": 6.130238625189727,
+        "mae_pct": 47.778039500098544
+      },
+      "carb": {
+        "mae": 9.306833722417407,
+        "mae_pct": 47.28218441457404
+      },
+      "protein": {
+        "mae": 7.828607382388745,
+        "mae_pct": 44.789529986944736
+      }
+    },
+    "best_val_calorie_mae": 79.02506390031743,
+    "best_checkpoint": "/kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/02_nutrition5k_moe_off/repo/scripts/nutrition5k_work/checkpoints/nutrition5k_best.pt",
+    "latest_checkpoint": "/kaggle/working/mertformer_batch/orchestrator/mertformer_batch_output/02_nutrition5k_moe_off/repo/scripts/nutrition5k_work/checkpoints/nutrition5k_latest.pt"
+  },
+  "outcome": {
+    "status": "returned",
+    "exception": null,
+    "traceback": null,
+    "wall_seconds": 3945.0141656398773
+  }
+}
