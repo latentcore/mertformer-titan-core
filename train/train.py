@@ -1153,6 +1153,46 @@ def train() -> None:
     warmup_end_loss_ema = None  # blended-loss reference snapshot; informational only as of F1
     warmup_end_ce_ema = None  # [F1] CE-only reference snapshot; None => guard disarmed
 
+    # [C1, 2026-07-25] Grad-norm co-trigger — closes the divergence guard's documented
+    # blind spot (BACKLOG.md "NEW finding, NOT fixed"): in the 171M run, `clip=2.0` kept
+    # the loss/CE signal from ever crossing the CE guard's 1.5x threshold even while
+    # GradNorm reached >1e12 -- the guard armed at step 450 and never tripped for the
+    # rest of a run in unambiguous catastrophic instability, because it only ever looked
+    # at loss. This is an INDEPENDENT co-trigger on the same safety brake, not a
+    # replacement for the CE guard: either one tripping is sufficient (they catch
+    # different failure signatures -- CE catches "loss is climbing", this catches
+    # "gradients are exploding even though clip is protecting the loss").
+    #
+    # Design (mirrors the CE guard's cold-start-safe-EMA + relative-threshold +
+    # patience shape exactly, reusing update_loss_ema/update_divergence_guard_state
+    # unchanged -- no new pure-function code, only new wiring):
+    #   - grad_norm_ema: EMA of the PRE-CLIP grad norm (accelerator.clip_grad_norm_'s
+    #     return value, same tensor already computed for logging below).
+    #   - Armed the same way as the CE guard (global_step >= num_warmup_steps AND
+    #     ema_trust_observations fresh samples).
+    #   - Multiplier default 100x (grad_norm_guard_multiplier) -- deliberately far
+    #     below the real explosions this is meant to catch (36M: ~30 -> ~2.3e13, a
+    #     ~7.7e11x ratio; 171M: ~10K -> >1e12, a ~1e8x ratio -- see BACKLOG.md
+    #     "RTX-5070 36M + 171M divergence, second confirmation") so both cases trip
+    #     with enormous margin, while staying clearly above any plausible healthy-run
+    #     fluctuation (clip=2.0 already absorbs ordinary multi-x transient spikes --
+    #     that is what clipping is FOR; 100x is not a healthy-run number).
+    #   - Patience default 10 (grad_norm_guard_patience), shorter than the CE guard's
+    #     50: both observed explosions were both fast-developing AND many orders of
+    #     magnitude past the 100x threshold almost immediately, so less patience is
+    #     needed to avoid a false positive while still reacting quickly to a real one.
+    # This is a DEFAULT, not a claim of calibration against real training dynamics --
+    # same "candidate, unverified" discipline as every other guard change in this repo;
+    # the 45K/RTX-5070 re-run is the verification event.
+    use_grad_norm_guard = bool(getattr(cfg, "use_grad_norm_guard", True))
+    grad_norm_guard_multiplier = float(getattr(cfg, "grad_norm_guard_multiplier", 100.0))
+    grad_norm_guard_patience = int(getattr(cfg, "grad_norm_guard_patience", 10))
+    grad_norm_ema_decay = float(getattr(cfg, "grad_norm_guard_ema_decay", loss_ema_decay))
+    grad_norm_ema = 0.0
+    grad_norm_ema_observations = 0
+    grad_norm_breaches = 0
+    warmup_end_grad_norm_ema = None  # [C1] reference snapshot; None => guard disarmed
+
     # [F3, 2026-07-25] Restore guard/spike state across resume. Additive + backward
     # compatible: checkpoints saved before this fix lack "guard_state", so
     # resume_state.get("guard_state", {}) is {} and every .get(name, <default>) below
@@ -1171,10 +1211,19 @@ def train() -> None:
         divergence_breaches = int(_resume_guard_state.get("divergence_breaches", divergence_breaches))
         liquid_spike_counter = int(_resume_guard_state.get("liquid_spike_counter", liquid_spike_counter))
         liquid_frozen_until = int(_resume_guard_state.get("liquid_frozen_until", liquid_frozen_until))
+        # [C1] Same additive/backward-compatible pattern: absent on pre-C1 checkpoints,
+        # falls through to the fresh-start defaults set above.
+        grad_norm_ema = float(_resume_guard_state.get("grad_norm_ema", grad_norm_ema))
+        grad_norm_ema_observations = int(
+            _resume_guard_state.get("grad_norm_ema_observations", grad_norm_ema_observations)
+        )
+        warmup_end_grad_norm_ema = _resume_guard_state.get("warmup_end_grad_norm_ema", warmup_end_grad_norm_ema)
+        grad_norm_breaches = int(_resume_guard_state.get("grad_norm_breaches", grad_norm_breaches))
         if _resume_guard_state and accelerator.is_main_process:
             print(
                 f"♻️  Guard state restored from checkpoint: loss_ema={loss_ema:.4f} "
-                f"ce_ema={ce_ema:.4f} divergence_breaches={divergence_breaches} "
+                f"ce_ema={ce_ema:.4f} grad_norm_ema={grad_norm_ema:.4f} "
+                f"divergence_breaches={divergence_breaches} grad_norm_breaches={grad_norm_breaches} "
                 f"liquid_spike_counter={liquid_spike_counter} "
                 f"liquid_frozen_until={liquid_frozen_until}"
             )
@@ -1193,6 +1242,11 @@ def train() -> None:
             "divergence_breaches": divergence_breaches,
             "liquid_spike_counter": liquid_spike_counter,
             "liquid_frozen_until": liquid_frozen_until,
+            # [C1]
+            "grad_norm_ema": grad_norm_ema,
+            "grad_norm_ema_observations": grad_norm_ema_observations,
+            "warmup_end_grad_norm_ema": warmup_end_grad_norm_ema,
+            "grad_norm_breaches": grad_norm_breaches,
         }
 
     # Curriculum Stage Tracking (single source from config ratios)
@@ -1666,6 +1720,63 @@ def train() -> None:
                         grad_norm_history.pop(0)
                     if len(loss_history) > 100:
                         loss_history.pop(0)
+
+                    # [C1, 2026-07-25] Grad-norm co-trigger — see the init-block comment
+                    # above ("Design (mirrors the CE guard's...") for the full rationale.
+                    # Independent of the CE-based divergence guard; either tripping alone
+                    # is sufficient to brake.
+                    if math.isfinite(grad_norm_val):
+                        grad_norm_ema = update_loss_ema(
+                            loss_value=grad_norm_val,
+                            loss_ema=grad_norm_ema,
+                            observations=grad_norm_ema_observations,
+                            decay=grad_norm_ema_decay,
+                        )
+                        grad_norm_ema_observations += 1
+                        if (
+                            warmup_end_grad_norm_ema is None
+                            and global_step >= num_warmup_steps
+                            and grad_norm_ema_observations >= ema_trust_observations
+                        ):
+                            warmup_end_grad_norm_ema = grad_norm_ema
+                            if accelerator.is_main_process:
+                                print(
+                                    f"📌 Grad-norm guard armed @ step {global_step}: "
+                                    f"reference grad_norm_ema={warmup_end_grad_norm_ema:.4f}"
+                                )
+                        grad_norm_breaches, grad_norm_local = update_divergence_guard_state(
+                            loss_ema=grad_norm_ema,
+                            reference_ema=warmup_end_grad_norm_ema,
+                            multiplier=grad_norm_guard_multiplier,
+                            breach_counter=grad_norm_breaches,
+                            patience=grad_norm_guard_patience,
+                            enabled=use_grad_norm_guard,
+                        )
+                        if use_grad_norm_guard and grad_norm_local:
+                            # [H1 pattern] Same all-reduce discipline as the CE-based brake:
+                            # this is rank-local, so the decision must be collective or ranks
+                            # could break at different steps and desync DDP.
+                            gn_flag = torch.tensor(
+                                [1.0],
+                                device=total_loss.device,
+                                dtype=torch.float32,
+                            )
+                            if accelerator.num_processes > 1:
+                                gn_flag = accelerator.reduce(gn_flag, reduction="sum")
+                            if gn_flag.item() > 0:
+                                safety_brake_triggered = True
+                                safety_brake_reason = "grad_norm_divergence_relative"
+                                if accelerator.is_main_process:
+                                    print(
+                                        "🛑 SAFETY BRAKE: relative grad-norm divergence — "
+                                        f"grad_norm_ema={grad_norm_ema:.4e} exceeded "
+                                        f"{grad_norm_guard_multiplier:.2f}x the warmup-end reference "
+                                        f"({warmup_end_grad_norm_ema}) for {grad_norm_guard_patience} "
+                                        "consecutive optimizer steps. (This is the co-trigger that "
+                                        "closes the CE guard's documented blind spot -- clip can keep "
+                                        "loss/CE protected while gradients are actually exploding.)"
+                                    )
+                                break
 
                     # GRADIENT NORM COLLAPSE DETECTION
                     if len(grad_norm_history) >= 10:

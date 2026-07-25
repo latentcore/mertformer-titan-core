@@ -128,6 +128,11 @@ _SAMPLE_GUARD_STATE = {
     "divergence_breaches": 4,
     "liquid_spike_counter": 0,
     "liquid_frozen_until": 0,
+    # [C1, 2026-07-25] Grad-norm co-trigger state.
+    "grad_norm_ema": 6.203,
+    "grad_norm_ema_observations": 512,
+    "warmup_end_grad_norm_ema": 5.812,
+    "grad_norm_breaches": 0,
 }
 
 
@@ -229,6 +234,9 @@ def test_train_py_init_block_restores_guard_state_from_resume_payload() -> None:
         "loss_ema", "loss_ema_observations", "warmup_end_loss_ema",
         "ce_ema", "ce_ema_observations", "warmup_end_ce_ema",
         "divergence_breaches", "liquid_spike_counter", "liquid_frozen_until",
+        # [C1, 2026-07-25] Grad-norm co-trigger state.
+        "grad_norm_ema", "grad_norm_ema_observations",
+        "warmup_end_grad_norm_ema", "grad_norm_breaches",
     ):
         assert f'_resume_guard_state.get("{name}"' in text, f"missing restore for {name}"
 

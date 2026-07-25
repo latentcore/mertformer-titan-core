@@ -278,3 +278,105 @@ def test_divergence_guard_call_site_keys_off_ce_ema_not_blended_loss_ema():
     assert re.search(
         r"loss_ema\s*=\s*update_loss_ema\(\s*loss_value=step_loss,", src
     ) is not None
+
+
+# ---------------------------------------------------------------------------
+# [C1, 2026-07-25] Grad-norm co-trigger — closes the divergence guard's documented
+# blind spot (BACKLOG.md "NEW finding, NOT fixed", 2026-07-12): the CE/loss-based guard
+# never looks at grad_norm, so a run where clip=2.0 keeps the loss signal protected
+# while gradients are actually exploding (exactly the 171M run's failure mode) sails
+# past it undetected. This co-trigger reuses the same pure functions already tested
+# above (update_loss_ema, update_divergence_guard_state) with grad_norm as the tracked
+# signal instead of loss/CE -- no new pure-function code, only new train.py wiring
+# (verified via source-scan below, same discipline as the F1 test above).
+# ---------------------------------------------------------------------------
+def test_grad_norm_guard_catches_the_36m_explosion():
+    """Replay the recorded 36M run shape (BACKLOG.md "RTX-5070 36M + 171M divergence,
+    second confirmation"): GradNorm ~30 (step 90) -> ~2.3e13 (step 230). A guard armed
+    at the pre-explosion baseline (~30) with the default 100x multiplier / 10-step
+    patience must trip once the explosion is sustained."""
+    reference = 30.0
+    breaches, triggered = 0, False
+    for _ in range(15):
+        breaches, triggered = update_divergence_guard_state(
+            loss_ema=2.3e13, reference_ema=reference, multiplier=100.0,
+            breach_counter=breaches, patience=10, enabled=True,
+        )
+        if triggered:
+            break
+    assert triggered is True
+
+
+def test_grad_norm_guard_catches_the_171m_explosion():
+    """Replay the recorded 171M run shape: GradNorm ~10K (step 340) -> >1e12 (step 560),
+    reached WITHOUT Liquid ever unfreezing -- the case that specifically motivated this
+    co-trigger, since the CE guard armed at step 450 and never tripped despite this."""
+    reference = 10_000.0
+    breaches, triggered = 0, False
+    for _ in range(15):
+        breaches, triggered = update_divergence_guard_state(
+            loss_ema=1e12, reference_ema=reference, multiplier=100.0,
+            breach_counter=breaches, patience=10, enabled=True,
+        )
+        if triggered:
+            break
+    assert triggered is True
+
+
+def test_grad_norm_guard_does_not_trip_on_healthy_transient_spikes():
+    """clip=2.0 already absorbs ordinary multi-x gradient spikes -- that is what
+    clipping is for. A guard that fires on a 3-5x transient would be a nuisance
+    false-positive machine; the 100x default must clearly NOT trip on this."""
+    reference = 8.0
+    breaches, triggered = 0, False
+    for spike in (8.0, 12.0, 35.0, 9.0, 8.5, 40.0, 10.0):  # noisy but bounded
+        breaches, triggered = update_divergence_guard_state(
+            loss_ema=spike, reference_ema=reference, multiplier=100.0,
+            breach_counter=breaches, patience=10, enabled=True,
+        )
+        assert triggered is False
+
+
+def test_grad_norm_guard_wiring_exists_and_is_independent_of_ce_guard():
+    """
+    [C1] Source-scan regression, same discipline as the F1/F3 source-scan tests above:
+    the actual wiring lives inline in train()'s closure, not in an independently
+    callable helper. Assert (a) the co-trigger call site exists and is fed grad_norm_ema
+    (not loss_ema/ce_ema -- it must be a genuinely independent signal), (b) it can set
+    safety_brake_triggered/reason and break the loop on its own (an OR, not requiring
+    the CE guard to also agree), (c) its state is included in F3's persistence set (the
+    same regression this repo already hit once for the CE guard -- new guard state that
+    isn't persisted silently desensitizes on crash+resume).
+    """
+    src = _TRAIN_PY.read_text(encoding="utf-8")
+
+    call_match = re.search(
+        r"grad_norm_breaches,\s*grad_norm_local\s*=\s*update_divergence_guard_state\(\s*"
+        r"loss_ema=(\w+),\s*reference_ema=(\w+),",
+        src,
+    )
+    assert call_match is not None, "grad-norm co-trigger call site not found"
+    assert call_match.group(1) == "grad_norm_ema"
+    assert call_match.group(2) == "warmup_end_grad_norm_ema"
+
+    # Independent signal: fed from the pre-clip grad norm, not from loss_ce/total_loss.
+    assert re.search(
+        r"grad_norm_ema\s*=\s*update_loss_ema\(\s*loss_value=grad_norm_val,", src
+    ) is not None
+
+    # Sets the SAME safety-brake fields the CE guard uses, with its own distinct reason
+    # code -- either guard tripping alone brakes the run (logical OR, not AND).
+    assert 'safety_brake_reason = "grad_norm_divergence_relative"' in src
+    assert 'safety_brake_reason = "loss_divergence_relative"' in src  # CE guard, unchanged
+
+    # F3 persistence: new state threaded through save/restore, not silently dropped.
+    for name in (
+        "grad_norm_ema", "grad_norm_ema_observations",
+        "warmup_end_grad_norm_ema", "grad_norm_breaches",
+    ):
+        assert f'"{name}": {name},' in src, f"{name} missing from _current_guard_state()"
+        assert f'_resume_guard_state.get("{name}"' in src, f"{name} missing from resume restoration"
+
+    # Config-overridable, matching every other guard knob in this file.
+    for knob in ("use_grad_norm_guard", "grad_norm_guard_multiplier", "grad_norm_guard_patience"):
+        assert f'getattr(cfg, "{knob}"' in src, f"{knob} not config-overridable"
