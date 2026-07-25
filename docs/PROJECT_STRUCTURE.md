@@ -174,6 +174,26 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   ├── evaluation_independent.md  # documentation/report file
 │   │   ├── metrics.json  # JSON data artifact
 │   │   └── train_log.csv  # CSV data artifact
+│   ├── 2026-07-25-lm-171m-reverify/  # directory
+│   │   ├── README.md  # primary documentation (EN)
+│   │   └── console.log  # text/log artifact
+│   ├── 2026-07-25-lm-36m-reverify/  # directory
+│   │   ├── README.md  # primary documentation (EN)
+│   │   └── console.log  # text/log artifact
+│   ├── 2026-07-25-nutrition5k-liquid-off/  # directory
+│   │   ├── README.md  # primary documentation (EN)
+│   │   ├── REPORT.md  # documentation/report file
+│   │   ├── console.log  # text/log artifact
+│   │   ├── dataset_manifest.json  # JSON data artifact
+│   │   ├── metrics.json  # JSON data artifact
+│   │   └── train_log.csv  # CSV data artifact
+│   ├── 2026-07-25-nutrition5k-moe-off/  # directory
+│   │   ├── README.md  # primary documentation (EN)
+│   │   ├── REPORT.md  # documentation/report file
+│   │   ├── console.log  # text/log artifact
+│   │   ├── dataset_manifest.json  # JSON data artifact
+│   │   ├── metrics.json  # JSON data artifact
+│   │   └── train_log.csv  # CSV data artifact
 │   ├── build30_t4_onecell/  # directory
 │   │   ├── EVIDENCE_POINTER.md  # documentation/report file
 │   │   ├── run_summary.json  # JSON data artifact
@@ -713,6 +733,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── golden_score.py  # Python module/script (automation script for golden score)
 │   ├── hardening_bundle.py  # Python module/script (automation script for hardening bundle)
 │   ├── hash_manifest_to_json.py  # Python module/script (automation script for hash manifest to json)
+│   ├── kaggle_batch_runner.py  # Python module/script (automation script for kaggle batch runner)
 │   ├── kaggle_onecell_t4_build30.py  # Python module/script (automation script for kaggle onecell t4 build30)
 │   ├── kaggle_onefile_closure_build30.py  # Python module/script (automation script for kaggle onefile closure build30)
 │   ├── kaggle_onefile_demo_build30.py  # Python module/script (automation script for kaggle onefile demo build30)
@@ -843,6 +864,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_gradient_checkpoint_moe.py  # Python module/script (automated test module for gradient checkpoint moe)
 │   ├── test_gsm8k_policy.py  # Python module/script (automated test module for gsm8k policy)
 │   ├── test_held_out_ppl.py  # Python module/script (automated test module for held out ppl)
+│   ├── test_kaggle_batch_runner.py  # Python module/script (automated test module for kaggle batch runner)
 │   ├── test_kaggle_compare_script.py  # Python module/script (automated test module for kaggle compare script)
 │   ├── test_kaggle_onefile_closure_build30.py  # Python module/script (automated test module for kaggle onefile closure build30)
 │   ├── test_kaggle_onefile_colab_math_fastproof.py  # Python module/script (automated test module for kaggle onefile colab math fastproof)
