@@ -1,0 +1,33 @@
+{
+  "generated_utc": "2026-07-25T14:55:15.105669+00:00",
+  "ok": true,
+  "verdict": "PASS_DDP_NOT_APPLICABLE",
+  "strict_ddp": false,
+  "steps": {
+    "offline_preflight": {
+      "cmd": ".titan-venv/bin/python scripts/titan_preflight.py",
+      "return_code": 0,
+      "stdout_tail": "🔄 Resuming from Chunk 0\n",
+      "stderr_tail": "✈️ ============================================================\n✈️ 🚀 MERTFORMER TITAN - ULTIMATE PREFLIGHT JUDGE 🚀\n✈️ ============================================================\n⚠️ .env file not found, skipping local load.\n✈️ Config snapshot written: <REPO_ROOT>/scripts/runs/preflight/config_snapshot.json\n✈️ STEP 1: SECRET SCAN...\n⚠️ HF_TOKEN missing (offline mode): OK (online checks will be skipped).\n⚠️ WANDB_API_KEY missing (offline mode): OK (WandB checks disabled).\n✅ Secrets check completed.\n✅ Stage JSONL files present.\n⚠️ CUDA lock missing or unknown (run scripts/write_cuda_lock.py on training hardware).\n✈️ STEP 2: ARCHITECTURAL AUDIT...\n✅ Layer configuration validated: No Liquid/MoE conflicts.\n✅ GQA Dimensions: Consistent (2048 features).\n✈️ BitNet b1.58 logic: configured (not measured here).\n✈️ STEP 3: DATA & DISTILLATION TEST...\n✈️ Offline mode: skipping Hugging Face connectivity checks.\n🛡️ Teacher Model mocked (Prevented 140GB download).\n⚙️  Pre-computing logits for preflight...\n\nDistilling preflight (Chunk 0): 0it [00:00, ?it/s]✅ Saved Final Chunk 0: <REPO_ROOT>/temp_preflight_logits/preflight_test_part_0.pt\n\nDistilling preflight (Chunk 0): 0it [00:00, ?it/s]\n✅ Distillation pipeline: PROVEN (Logits generated/saved).\n✈️ STEP 4: MOE GURU LEARNING TEST...\n✈️ 🏗️  CONFIG: Using 'Mini-Titan' (2 Layers, 256 Hidden, forced MoE/Liquid) for RAM safety.\n✈️ Checking Architectural Gradient Health...\n✅ MoE Learning: PROVEN (48 expert params receiving gradients).\n✅ Liquid Dynamics: PROVEN (7 liquid params receiving gradients).\n✈️ Shared Expert Grad: OK\n✅ MertFormer forward/backward pass verified.\n✅ OVERALL SYSTEM STATUS: all preflight checks passed.\n✈️ CLEANUP: Removing temporary files...\n✈️ Removed <REPO_ROOT>/temp_preflight_data\n✈️ Removed <REPO_ROOT>/temp_preflight_logits\n✅ CLEANUP: Done.\n✈️ Preflight Duration: 3.47s\n✈️ ============================================================\n✈️ RESULT: 🏆 ALL GREEN\n✈️ Full Report: <REPO_ROOT>/logs/preflight/titan_preflight.log\n✈️ ============================================================\n",
+      "ok": true
+    },
+    "dry_run_preview": {
+      "cmd": "bash zero_touch_start.sh --dry-run",
+      "return_code": 0,
+      "stdout_tail": "[phase-0] skipping optional precompute for non-training invocation.\n{\"status\": \"dry-run\", \"mode\": \"dry-run\"}\n",
+      "stderr_tail": "",
+      "ok": true
+    },
+    "ddp_smoke": {
+      "gpu_count": 0,
+      "skipped": true,
+      "attempted": false,
+      "status": "skipped_not_2_gpu",
+      "both_active_any_sample": false,
+      "samples": [],
+      "wall_seconds": 0.0,
+      "ok": false,
+      "error": null
+    }
+  }
+}

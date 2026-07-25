@@ -261,6 +261,27 @@ against duplicate concurrent invocation, and includes a real 2-GPU DDP smoke tes
 GPU utilization while the subprocess is alive) before attempting DDP on the two LM jobs. See
 `tests/test_kaggle_batch_runner.py` for the safety-critical behaviors verified in isolation.
 
+## Pre-45K Gate (cheap, pre-spend launch-readiness check)
+
+`pre45k_gate.sh` / `pre45k_gate.py` — chains three checks, all before any real training spend:
+(1) the existing offline preflight (`titan_preflight.py`'s default profile); (2) the existing
+dry-run preview (`zero_touch_start.sh --dry-run`); (3) a new short, real 2-GPU DDP smoke test
+(`ddp_smoke.py::run_ddp_smoke_test()` — polls actual GPU utilization while the subprocess is
+alive, an independent implementation of the same design as `kaggle_batch_runner.py`'s own DDP
+smoke test, deliberately not sharing code with it). Writes `reports/pre45k_gate_report.json`/`.md`
+with a combined verdict. Exists because today's only DDP-rank-sync assertion (`train/train.py`'s
+"[Gate 3]") only fires *inside* the real training run, at the step-10000-class Liquid-unfreeze
+event — after real budget is already spent. See `BACKLOG.md`, item B8, for the full design
+rationale and the honest claim boundary (the DDP-confirmed path itself has never been exercised
+on real 2-GPU hardware from this repo — only its skip-path and decision logic are verified here).
+
+```bash
+bash scripts/pre45k_gate.sh                # report-only; DDP result is informational
+bash scripts/pre45k_gate.sh --strict-ddp   # also exit 1 if 2+ GPUs present but DDP unconfirmed
+```
+
+See `tests/test_ddp_smoke.py` and `tests/test_pre45k_gate.py`.
+
 ## Build30 Colab Math Fastproof V2 (V1 Closure)
 
 `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` now includes guarded full-spectrum hooks for closure-grade PoC packaging.

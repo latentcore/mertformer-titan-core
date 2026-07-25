@@ -184,6 +184,39 @@ python3 -m pytest -q tests/test_packed_projection_equivalence.py tests/test_liqu
 
 Not: `run.sh` ana otomasyon yolunu kapsar (install + strict preflight + eğitim). Review için `scripts/verify_all.sh` önerilir.
 
+## Kaggle Batch Runner (gözetimsiz çoklu-iş hattı)
+
+`kaggle_batch_runner.py` — bir Kaggle "Save & Run All (Commit)" oturumu içinde 5 yan-deney/yeniden-
+doğrulama işini (Nutrition5k N3/N4 ablasyonları, 36M/171M LM yeniden-doğrulama, satranç PoC) sırayla,
+gözetimsiz çalıştırır. Bağımsız bir Kaggle Dataset olarak paketlenir (repo `git archive` anlık
+görüntüsü + `orchestrator/kaggle_batch_runner.py`), kanonik 45K launch yolunun bir parçası olarak
+çağrılmaz. 2026-07-25'teki gerçek koşu (Kaggle T4×2) `BACKLOG.md` ve `evidence/2026-07-25-*/`'de
+kayıtlı N3/N4/36M/171M sonuçlarını üretti. Her iş için zaman-sınırlı (SIGTERM→grace→SIGKILL),
+eşzamanlı yinelenen çağrıya karşı kilit korumalı, ve iki LM işinde DDP denemeden önce gerçek bir
+2-GPU DDP smoke testi (süreç canlıyken gerçek GPU kullanımını poll eder) içerir. Bağımsız test
+edilen güvenlik-kritik davranışlar için `tests/test_kaggle_batch_runner.py`'ye bakın.
+
+## Pre-45K Gate (ucuz, harcama-öncesi launch-hazırlık kontrolü)
+
+`pre45k_gate.sh` / `pre45k_gate.py` — üç kontrolü, gerçek eğitim harcaması öncesinde zincirler:
+(1) mevcut offline preflight (`titan_preflight.py`'nin varsayılan profili); (2) mevcut dry-run
+önizlemesi (`zero_touch_start.sh --dry-run`); (3) yeni, kısa, gerçek bir 2-GPU DDP smoke testi
+(`ddp_smoke.py::run_ddp_smoke_test()` — süreç canlıyken gerçek GPU kullanımını poll eder,
+`kaggle_batch_runner.py`'nin kendi DDP smoke testiyle aynı tasarımın bağımsız bir uygulaması,
+bilerek onunla kod paylaşmaz). `reports/pre45k_gate_report.json`/`.md`'ye birleşik bir karar
+yazar. Şu yüzden var: bugün tek DDP-rank-sync assertion'ı (`train/train.py`'nin "[Gate 3]"ü)
+yalnızca gerçek eğitim koşusunun İÇİNDE, step-10000 sınıfı Liquid-unfreeze anında tetikleniyor —
+gerçek bütçe zaten harcanmışken. Tam tasarım gerekçesi ve dürüst iddia sınırı (DDP-onaylı yolun
+kendisi bu repodan hiçbir gerçek 2-GPU donanımda hiç denenmedi — yalnızca skip-yolu ve karar
+mantığı burada doğrulandı) için `BACKLOG.md`, madde B8'e bakın.
+
+```bash
+bash scripts/pre45k_gate.sh                # yalnızca rapor; DDP sonucu bilgilendirici
+bash scripts/pre45k_gate.sh --strict-ddp   # 2+ GPU varken DDP onaylanmazsa exit 1 de yap
+```
+
+Bkz. `tests/test_ddp_smoke.py` ve `tests/test_pre45k_gate.py`.
+
 ## Build30 Colab Math Fastproof V2 (V1 Kapanış)
 
 `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py` dosyası kapanış seviyesi PoC paketlemesi için korumalı full-spectrum hooklar ile güncellendi.

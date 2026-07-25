@@ -561,6 +561,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── post_train_autorun_status.json  # JSON data artifact
 │   ├── post_train_autorun_status.md  # documentation/report file
 │   ├── post_train_state_machine.md  # documentation/report file
+│   ├── pre45k_gate_report.json  # JSON data artifact
+│   ├── pre45k_gate_report.md  # documentation/report file
 │   ├── proje_zip_rebuild_manifest_v2.json  # JSON data artifact
 │   ├── proje_zip_rebuild_manifest_v2.md  # documentation/report file
 │   ├── publication_readiness_kit.md  # documentation/report file
@@ -709,6 +711,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── cleanroom_verify.sh  # shell automation script
 │   ├── cleanup_scoped_closure_junk.py  # Python module/script (automation script for cleanup scoped closure junk)
 │   ├── data_pipeline.py  # Python module/script (automation script for data pipeline)
+│   ├── ddp_smoke.py  # Python module/script (automation script for ddp smoke)
 │   ├── dealroom_sync.py  # Python module/script (automation script for dealroom sync)
 │   ├── decrypt_mertformer_result_package.py  # Python module/script (automation script for decrypt mertformer result package)
 │   ├── docs_inventory.py  # Python module/script (markdown inventory and folder policy reporter)
@@ -766,6 +769,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── plot_training_log.py  # Python module/script (automation script for plot training log)
 │   ├── post_run_processor.py  # Python module/script (automation script for post run processor)
 │   ├── post_train_autorun.py  # Python module/script (automation script for post train autorun)
+│   ├── pre45k_gate.py  # Python module/script (automation script for pre45k gate)
+│   ├── pre45k_gate.sh  # shell automation script
 │   ├── precompute_logits_parallel.py  # Python module/script (automation script for precompute logits parallel)
 │   ├── precompute_logits_topk.py  # Python module/script (automation script for precompute logits topk)
 │   ├── predict_nutrition5k.py  # Python module/script (automation script for predict nutrition5k)
@@ -845,6 +850,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_continual_adapter.py  # Python module/script (automated test module for continual adapter)
 │   ├── test_cpp_kernel_loader.py  # Python module/script (automated test module for cpp kernel loader)
 │   ├── test_dataset_pinning_resilience.py  # Python module/script (automated test module for dataset pinning resilience)
+│   ├── test_ddp_smoke.py  # Python module/script (automated test module for ddp smoke)
 │   ├── test_decoupled_rope.py  # Python module/script (automated test module for decoupled rope)
 │   ├── test_dispatcher_extended.py  # Python module/script (automated test module for dispatcher extended)
 │   ├── test_distillation_topk.py  # Python module/script (automated test module for distillation topk)
@@ -898,6 +904,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── test_packing.py  # Python module/script (automated test module for packing)
 │   ├── test_post_run_processor.py  # Python module/script (automated test module for post run processor)
 │   ├── test_post_train_autorun_cli.py  # Python module/script (automated test module for post train autorun cli)
+│   ├── test_pre45k_gate.py  # Python module/script (automated test module for pre45k gate)
 │   ├── test_precompute_parallel.py  # Python module/script (automated test module for precompute parallel)
 │   ├── test_precompute_train_integration.py  # Python module/script (automated test module for precompute train integration)
 │   ├── test_property_moe_capacity.py  # Python module/script (automated test module for property moe capacity)

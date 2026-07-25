@@ -1,0 +1,289 @@
+"""
+Tests for scripts/pre45k_gate.py -- the report-builder and verdict-combination logic
+that chains the offline preflight, the dry-run preview, and the DDP smoke test (see
+scripts/ddp_smoke.py). Every step here is injected as a fake dict (no real subprocess,
+GPU, or network I/O) so these tests are fast and hardware-independent; the real
+end-to-end wiring was verified manually (see BACKLOG.md B8) and is additionally covered
+by test_ddp_smoke.py's own real-subprocess CLI test and the pre-existing
+test_titan_preflight_contract.py / zero_touch_start.sh coverage.
+"""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+from scripts import pre45k_gate as gate
+
+
+def _ok_step(cmd="stub cmd"):
+    return {"cmd": cmd, "return_code": 0, "stdout_tail": "", "stderr_tail": "", "ok": True}
+
+
+def _fail_step(cmd="stub cmd"):
+    return {"cmd": cmd, "return_code": 1, "stdout_tail": "", "stderr_tail": "boom", "ok": False}
+
+
+def _ddp_skipped():
+    return {
+        "gpu_count": 0,
+        "skipped": True,
+        "attempted": False,
+        "status": "skipped_not_2_gpu",
+        "both_active_any_sample": False,
+        "samples": [],
+        "wall_seconds": 0.0,
+        "ok": False,
+        "error": None,
+    }
+
+
+def _ddp_confirmed():
+    return {
+        "gpu_count": 2,
+        "skipped": False,
+        "attempted": True,
+        "status": "timed_out",
+        "both_active_any_sample": True,
+        "samples": [[55, 61]],
+        "wall_seconds": 12.3,
+        "ok": True,
+        "error": None,
+    }
+
+
+def _ddp_unconfirmed():
+    return {
+        "gpu_count": 2,
+        "skipped": False,
+        "attempted": True,
+        "status": "completed",
+        "both_active_any_sample": False,
+        "samples": [[0, 0]],
+        "wall_seconds": 3.1,
+        "ok": False,
+        "error": None,
+    }
+
+
+# ---------------------------------------------------------------------------
+# (a) sanitize_text -- redact absolute repo root and home-relative paths
+# ---------------------------------------------------------------------------
+def test_sanitize_text_redacts_repo_root():
+    text = f"some output at {gate.ROOT}/scripts/foo.py failed"
+    out = gate.sanitize_text(text)
+    assert str(gate.ROOT) not in out
+    assert "<REPO_ROOT>" in out
+
+
+def test_sanitize_text_redacts_home_paths():
+    text = "leaked path: /Users/someone/Downloads/secret_notes.md here"
+    out = gate.sanitize_text(text)
+    assert "someone" not in out
+    assert "<HOME_PATH>" in out
+
+
+# ---------------------------------------------------------------------------
+# (b) combine_verdict -- pure decision logic, every branch
+# ---------------------------------------------------------------------------
+def test_verdict_blocked_when_offline_preflight_fails():
+    ok, verdict = gate.combine_verdict(
+        offline_preflight=_fail_step(), dry_run_preview=_ok_step(), ddp=_ddp_skipped(), strict_ddp=False
+    )
+    assert ok is False
+    assert verdict == "BLOCKED"
+
+
+def test_verdict_blocked_when_dry_run_preview_fails():
+    ok, verdict = gate.combine_verdict(
+        offline_preflight=_ok_step(), dry_run_preview=_fail_step(), ddp=_ddp_skipped(), strict_ddp=False
+    )
+    assert ok is False
+    assert verdict == "BLOCKED"
+
+
+def test_verdict_pass_not_applicable_when_ddp_skipped():
+    ok, verdict = gate.combine_verdict(
+        offline_preflight=_ok_step(), dry_run_preview=_ok_step(), ddp=_ddp_skipped(), strict_ddp=False
+    )
+    assert ok is True
+    assert verdict == "PASS_DDP_NOT_APPLICABLE"
+
+
+def test_verdict_pass_confirmed_when_ddp_confirmed():
+    ok, verdict = gate.combine_verdict(
+        offline_preflight=_ok_step(), dry_run_preview=_ok_step(), ddp=_ddp_confirmed(), strict_ddp=False
+    )
+    assert ok is True
+    assert verdict == "PASS_DDP_CONFIRMED"
+
+
+def test_verdict_pass_unconfirmed_non_strict_is_not_blocking():
+    # Structural checks pass, DDP is inconclusive, but strict_ddp is off -> still ok=True.
+    ok, verdict = gate.combine_verdict(
+        offline_preflight=_ok_step(), dry_run_preview=_ok_step(), ddp=_ddp_unconfirmed(), strict_ddp=False
+    )
+    assert ok is True
+    assert verdict == "PASS_DDP_UNCONFIRMED"
+
+
+def test_verdict_blocked_ddp_when_strict_and_unconfirmed():
+    ok, verdict = gate.combine_verdict(
+        offline_preflight=_ok_step(), dry_run_preview=_ok_step(), ddp=_ddp_unconfirmed(), strict_ddp=True
+    )
+    assert ok is False
+    assert verdict == "BLOCKED_DDP"
+
+
+def test_verdict_strict_but_ddp_skipped_is_not_blocking():
+    # strict_ddp should never punish a machine that genuinely doesn't have 2 GPUs.
+    ok, verdict = gate.combine_verdict(
+        offline_preflight=_ok_step(), dry_run_preview=_ok_step(), ddp=_ddp_skipped(), strict_ddp=True
+    )
+    assert ok is True
+    assert verdict == "PASS_DDP_NOT_APPLICABLE"
+
+
+def test_verdict_strict_and_confirmed_is_pass():
+    ok, verdict = gate.combine_verdict(
+        offline_preflight=_ok_step(), dry_run_preview=_ok_step(), ddp=_ddp_confirmed(), strict_ddp=True
+    )
+    assert ok is True
+    assert verdict == "PASS_DDP_CONFIRMED"
+
+
+# ---------------------------------------------------------------------------
+# (c) build_report / build_report_md -- full report assembly with injected steps
+# ---------------------------------------------------------------------------
+def test_build_report_with_injected_steps_matches_combine_verdict():
+    report = gate.build_report(
+        python_bin="python3",
+        strict_ddp=False,
+        offline_preflight=_ok_step(),
+        dry_run_preview=_ok_step(),
+        ddp=_ddp_skipped(),
+    )
+    assert report["ok"] is True
+    assert report["verdict"] == "PASS_DDP_NOT_APPLICABLE"
+    assert report["strict_ddp"] is False
+    assert "generated_utc" in report
+    assert report["steps"]["offline_preflight"]["ok"] is True
+    assert report["steps"]["ddp_smoke"]["skipped"] is True
+
+
+def test_build_report_md_contains_verdict_and_claim_boundary():
+    report = gate.build_report(
+        python_bin="python3",
+        strict_ddp=False,
+        offline_preflight=_ok_step(),
+        dry_run_preview=_ok_step(),
+        ddp=_ddp_confirmed(),
+    )
+    md = gate.build_report_md(report)
+    assert "PASS_DDP_CONFIRMED" in md
+    assert "Claim boundary" in md
+    assert "not a pass for DDP correctness" in md
+
+
+# ---------------------------------------------------------------------------
+# (d) main() end-to-end with injected steps -- via monkeypatched module functions
+# ---------------------------------------------------------------------------
+def test_main_writes_report_files_and_returns_zero_on_pass(tmp_path, monkeypatch):
+    monkeypatch.setattr(gate, "run_offline_preflight", lambda python_bin: _ok_step())
+    monkeypatch.setattr(gate, "run_dry_run_preview", lambda: _ok_step())
+    monkeypatch.setattr(gate, "run_ddp_smoke_test", lambda **kw: _ddp_skipped())
+
+    report_json = tmp_path / "report.json"
+    report_md = tmp_path / "report.md"
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "pre45k_gate.py",
+            "--python",
+            "python3",
+            "--report-json",
+            str(report_json),
+            "--report-md",
+            str(report_md),
+        ],
+    )
+    rc = gate.main()
+    assert rc == 0
+    assert report_json.exists()
+    assert report_md.exists()
+    payload = json.loads(report_json.read_text(encoding="utf-8"))
+    assert payload["verdict"] == "PASS_DDP_NOT_APPLICABLE"
+
+
+def test_main_returns_nonzero_when_structural_step_fails(tmp_path, monkeypatch):
+    monkeypatch.setattr(gate, "run_offline_preflight", lambda python_bin: _fail_step())
+    monkeypatch.setattr(gate, "run_dry_run_preview", lambda: _ok_step())
+    monkeypatch.setattr(gate, "run_ddp_smoke_test", lambda **kw: _ddp_skipped())
+
+    report_json = tmp_path / "report.json"
+    report_md = tmp_path / "report.md"
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "pre45k_gate.py",
+            "--report-json",
+            str(report_json),
+            "--report-md",
+            str(report_md),
+        ],
+    )
+    rc = gate.main()
+    assert rc == 1
+    payload = json.loads(report_json.read_text(encoding="utf-8"))
+    assert payload["verdict"] == "BLOCKED"
+
+
+def test_main_strict_ddp_flag_blocks_on_unconfirmed_ddp(tmp_path, monkeypatch):
+    monkeypatch.setattr(gate, "run_offline_preflight", lambda python_bin: _ok_step())
+    monkeypatch.setattr(gate, "run_dry_run_preview", lambda: _ok_step())
+    monkeypatch.setattr(gate, "run_ddp_smoke_test", lambda **kw: _ddp_unconfirmed())
+
+    report_json = tmp_path / "report.json"
+    report_md = tmp_path / "report.md"
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "pre45k_gate.py",
+            "--strict-ddp",
+            "--report-json",
+            str(report_json),
+            "--report-md",
+            str(report_md),
+        ],
+    )
+    rc = gate.main()
+    assert rc == 1
+    payload = json.loads(report_json.read_text(encoding="utf-8"))
+    assert payload["verdict"] == "BLOCKED_DDP"
+
+
+# ---------------------------------------------------------------------------
+# (e) run_offline_preflight / run_dry_run_preview -- real subprocess against the
+#     actual repo (proves the wiring genuinely works, not just the mocked logic above).
+# ---------------------------------------------------------------------------
+def _resolve_repo_python() -> str:
+    """Mirrors scripts/pre45k_gate.sh's own interpreter selection: prefer the venv
+    python (which has the repo importable as editable), fall back to plain python3
+    only if the venv is absent. A bare system `python3` without the repo installed
+    editable cannot resolve `from config.build_label import ...` when the script is
+    invoked script-style (its own directory lands on sys.path[0], not the repo root)."""
+    venv_python = gate.ROOT / ".titan-venv" / "bin" / "python"
+    if venv_python.exists():
+        return str(venv_python)
+    return "python3"
+
+
+def test_run_offline_preflight_against_real_repo():
+    result = gate.run_offline_preflight(_resolve_repo_python())
+    assert result["ok"] is True
+    assert "titan_preflight.py" in result["cmd"]
+
+
+def test_run_dry_run_preview_against_real_repo():
+    result = gate.run_dry_run_preview()
+    assert result["ok"] is True
+    assert "--dry-run" in result["cmd"]
