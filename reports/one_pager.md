@@ -32,11 +32,13 @@ A mobile-first, on-device coding model that minimizes inference cost while prese
 - Master training run with telemetry-driven execution.
 - Internal benchmarks on HumanEval and MBPP.
 
-## Business Model
-Licensing for enterprise on-device deployments and private inference stacks.
+## Project Status
+This is a solo, self-funded research and engineering project, not a company or product. There is no commercial offering, licensing arrangement, or enterprise deployment at this stage. The architecture, safety-guard system, and training pipeline are implemented and tested (see `reports/verified_matrix.md` and `README.md`); large-scale trained-checkpoint evidence does not yet exist because the master training run has not been resourced.
 
 ## Ask
-Pilot partners for edge coding workflows and strategic deployment design.
+- Technical review and critique of the architecture, safety-guard design, and evidence-discipline practices.
+- Compute sponsorship for the master training run — see `private/commercial/outreach_compute_sponsorship_messages.md` for exact scope and cost.
+- Research or engineering roles, internships, or collaboration where this work is relevant.
 
 
 V2 refactor: dedup pipeline, parallel MoE dispatch, CfC fast path, stricter train gates.

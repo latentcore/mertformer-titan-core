@@ -1,0 +1,58 @@
+{
+  "source_log": "<HOME>/Documents/log.txt",
+  "parsed_json_events": 47226,
+  "training_start_events": 431,
+  "unique_step_events": 212,
+  "unique_eval_events": 2,
+  "run_config": {
+    "event": "training_start",
+    "world_size": 2,
+    "batch_per_gpu": 96,
+    "global_batch": 192,
+    "seq_len": 512,
+    "max_steps": 1000000,
+    "max_minutes": 675.0,
+    "fixed_eval_cases": 864,
+    "model": {
+      "hidden_size": 768,
+      "num_layers": 8,
+      "num_heads": 8,
+      "num_kv_heads": 4,
+      "moe": "8x2",
+      "liquid_layers_idx": [
+        0,
+        2,
+        4,
+        6
+      ]
+    }
+  },
+  "last_step": 2110,
+  "last_elapsed_sec": 6533.114,
+  "last_elapsed_minutes": 108.885,
+  "last_samples": 405120,
+  "last_supervised_tokens": 23534322,
+  "last_loss": 0.09893,
+  "last_weighted_ce_loss": 0.058352,
+  "last_grad_norm": 1.218963,
+  "tail_mean_samples_per_sec": 63.144,
+  "tail_mean_supervised_tokens_per_sec": 3675.006,
+  "eval_events": [
+    {
+      "event": "eval_quick",
+      "step": 1000,
+      "count": 64,
+      "exact": 1,
+      "exact_accuracy": 0.015625
+    },
+    {
+      "event": "eval_quick",
+      "step": 2000,
+      "count": 64,
+      "exact": 1,
+      "exact_accuracy": 0.015625
+    }
+  ],
+  "note": "Partial run only. It proves training pipeline health/stability, not final arithmetic capability. Capability requires completed held-out eval artifacts."
+}
+

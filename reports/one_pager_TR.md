@@ -32,11 +32,13 @@ Gizlilik ve verimlilik odaklı, cihaz içi çalışan mobil-first kodlama modeli
 - Telemetri ile yönlendirilen master training
 - HumanEval/MBPP benchmark çıktıları
 
-## İş Modeli
-Kurumsal on‑device deploy ve özel inference lisanslama.
+## Proje Durumu
+Bu, tek kişilik, kendi kendini finanse eden bir araştırma ve mühendislik projesidir — bir şirket veya ürün değildir. Şu aşamada ticari bir teklif, lisanslama anlaşması veya kurumsal deployment yoktur. Mimari, güvenlik-guard sistemi ve eğitim pipeline'ı uygulanmış ve test edilmiştir (bkz. `reports/verified_matrix_TR.md` ve `README_TR.md`); büyük ölçekli eğitilmiş-checkpoint kanıtı henüz yoktur çünkü master training run için kaynak ayrılmamıştır.
 
 ## İstek
-Edge kodlama pilot ortakları ve stratejik dağıtım tasarımı.
+- Mimari, güvenlik-guard tasarımı ve kanıt-disiplini pratiklerinin teknik incelemesi/eleştirisi.
+- Master training run için compute sponsorluğu — tam kapsam ve maliyet için `private/commercial/outreach_compute_sponsorship_messages.md`'ye bakın.
+- Bu işin ilgili olduğu araştırma veya mühendislik rolleri, stajlar veya işbirliği.
 
 
 V2 refactor: dedup pipeline, parallel MoE dispatch, CfC fast path, stricter train gates.

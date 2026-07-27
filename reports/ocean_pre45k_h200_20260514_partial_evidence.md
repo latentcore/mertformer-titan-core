@@ -78,13 +78,22 @@ captured steps returned to low loss. This remains a training-dynamics signal
 only; it does not prove final arithmetic capability.
 
 ## Previous Partial Run Context
-An earlier partial H200 run reached later wall-clock time and included quick eval
-events, but quick held-out eval stayed low:
+An earlier partial H200 run ("Run A") reached later wall-clock time (last captured
+step `2110`, ~108.9 minutes) and included quick eval events, but quick held-out eval
+stayed low:
 
 - step `1000`: `1/64` exact = `1.56%`
 - step `2000`: `1/64` exact = `1.56%`
 
 That earlier run is useful as pipeline history, not as capability proof.
+
+**2026-07-27 addition:** this run's own machine-readable summary and dashboard were
+previously mirrored only in the public Gist (`final_math_h200_partial_run_summary.json`,
+`final_math_h200_partial_run_dashboard.svg`) and had never been committed to this repo
+directly — brought in now as `reports/final_math_h200_partial_run_summary.json` and
+`reports/final_math_h200_partial_run_dashboard.svg` so this evidence does not depend
+solely on the Gist's continued availability. Same claim boundary as the rest of this
+document: partial operational evidence only, not a completed-run or capability claim.
 
 ## Operational Lesson
 The cleaned evidence does not show a model-training exception. The weak point was
