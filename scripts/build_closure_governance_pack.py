@@ -1710,7 +1710,7 @@ def build_quality_gate_matrix() -> str:
         "",
         "## KPI and SLA Reference",
         "- `reports/kpi_pack_v1.md`",
-        "- `reports/commercial_handover/sla_kpi_90_180.md`",
+        "- `private/commercial/commercial_handover/sla_kpi_90_180.md` (private, untracked; moved 2026-06-17)",
     ]
     return "\n".join(lines)
 
@@ -1866,7 +1866,7 @@ REPO_CLOSURE_SCORECARD_ITEMS = [
     {
         "item_id": "support_maintenance_policy",
         "title": "Support and maintenance policy",
-        "evidence": ["reports/support_maintenance_policy.md", "reports/commercial_handover/sla_kpi_90_180.md"],
+        "evidence": ["reports/support_maintenance_policy.md", "private/commercial/commercial_handover/sla_kpi_90_180.md"],
     },
     {
         "item_id": "adr_governance_chain",

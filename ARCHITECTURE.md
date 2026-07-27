@@ -18,7 +18,7 @@
 | Vocab | 128256 (Llama-3 tokenizer) | `utils/tokenizer_resolver.py` |
 | Measured params | **3,672,982,022 (~3.67B)** | `reports/param_accounting_report.md` |
 | Design target | **2.64B** | `economics/flops_estimator.py` (`DEFAULT_PARAMS`) |
-| Active params / token | ~1.86B (MoE top-2 + shared) | `economics/flops_estimator.py` |
+| Active params / token | ~1.86B (MoE top-2 + shared) | `scripts/scaling_audit_math.py` |
 | Training | Offline Top-K knowledge distillation from `meta-llama/Llama-3.3-70B-Instruct` | `scripts/precompute_logits_topk.py`, `train/train.py` |
 
 ## Components and the *why*

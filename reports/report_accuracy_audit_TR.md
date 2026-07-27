@@ -43,7 +43,7 @@ Bu denetim, rapordaki iddiaları repo kanıtlarıyla eslestirir. Etiketler:
 
 ## F) Yol Haritası / Assetler
 - "Founders Hub başvurusu hazır." DOĞRU
-  - Kanıt: `reports/founders_hub_application.md`
+  - Kanıt: `private/commercial/founders_hub_application.md` (private, untracked; 2026-06-16'da taşındı)
 
 ## Özet
 Mimari ve safety altyapısı gerçek. Performans ve cihaz iddiaları hedef olarak yazıldı; tam eğitim ve cihaz profili ile doğrulanmalıdır.

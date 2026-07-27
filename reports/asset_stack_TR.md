@@ -6,12 +6,12 @@ Bu dosya lansman asset’lerini ve kaynaklarını listeler.
 - One-pager (TR): `reports/one_pager_TR.md`
 - Technical snapshot (EN): `reports/technical_snapshot.md`
 - Technical snapshot (TR): `reports/technical_snapshot_TR.md`
-- Investor brief: `PITCH.md`
-- Investor brief (TR): `PITCH_TR.md`
-- Investor deck (PPTX, EN): `reports/investor_deck.pptx`
-- Investor deck (PPTX, TR): `reports/investor_deck_TR.pptx`
-- Founders Hub başvuru taslağı (EN): `reports/founders_hub_application.md`
-- Founders Hub başvuru taslağı (TR): `reports/founders_hub_application_TR.md`
+- Investor brief: `private/commercial/PITCH.md` (private, untracked; 2026-06-16'da taşındı)
+- Investor brief (TR): `private/commercial/PITCH_TR.md` (private, untracked; 2026-06-16'da taşındı)
+- Investor deck (PPTX, EN): `reports/investor_deck.pptx` (gitignored; `scripts/build_investor_deck.py` ile yerelde üretilir)
+- Investor deck (PPTX, TR): `reports/investor_deck_TR.pptx` (gitignored; `scripts/build_investor_deck.py` ile yerelde üretilir)
+- Founders Hub başvuru taslağı (EN): `private/commercial/founders_hub_application.md` (private, untracked; 2026-06-16'da taşındı)
+- Founders Hub başvuru taslağı (TR): `private/commercial/founders_hub_application_TR.md` (private, untracked; 2026-06-16'da taşındı)
 - Güvenlik & Uyum (EN): `reports/security_compliance.md`
 - Güvenlik & Uyum (TR): `reports/security_compliance_TR.md`
 - PoC Protokolü (EN): `reports/poc_protocol.md`

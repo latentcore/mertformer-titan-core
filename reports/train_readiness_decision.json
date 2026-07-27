@@ -103,7 +103,7 @@
           }
         }
       },
-      "elapsed_s": 0.005,
+      "elapsed_s": 0.006,
       "path_name": "offline_clean",
       "exit_code": 1,
       "stdout_tail": "TRAIN_READY:FAIL reason_code=PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE\n",

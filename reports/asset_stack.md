@@ -6,12 +6,12 @@ This file lists the launch assets and their source files.
 - One-pager (TR): `reports/one_pager_TR.md`
 - Technical snapshot (EN): `reports/technical_snapshot.md`
 - Technical snapshot (TR): `reports/technical_snapshot_TR.md`
-- Investor brief: `PITCH.md`
-- Investor brief (TR): `PITCH_TR.md`
-- Investor deck (PPTX, EN): `reports/investor_deck.pptx`
-- Investor deck (PPTX, TR): `reports/investor_deck_TR.pptx`
-- Founders Hub application draft (EN): `reports/founders_hub_application.md`
-- Founders Hub application draft (TR): `reports/founders_hub_application_TR.md`
+- Investor brief: `private/commercial/PITCH.md` (private, untracked; moved 2026-06-16)
+- Investor brief (TR): `private/commercial/PITCH_TR.md` (private, untracked; moved 2026-06-16)
+- Investor deck (PPTX, EN): `reports/investor_deck.pptx` (gitignored; regenerate via `scripts/build_investor_deck.py`)
+- Investor deck (PPTX, TR): `reports/investor_deck_TR.pptx` (gitignored; regenerate via `scripts/build_investor_deck.py`)
+- Founders Hub application draft (EN): `private/commercial/founders_hub_application.md` (private, untracked; moved 2026-06-16)
+- Founders Hub application draft (TR): `private/commercial/founders_hub_application_TR.md` (private, untracked; moved 2026-06-16)
 - Security & Compliance (EN): `reports/security_compliance.md`
 - Security & Compliance (TR): `reports/security_compliance_TR.md`
 - PoC Protocol (EN): `reports/poc_protocol.md`

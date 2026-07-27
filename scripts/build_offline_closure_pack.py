@@ -850,7 +850,7 @@ def build_operating_docs(summary: dict) -> None:
             '- current_product_sentence: Türkiye’ye fayda sağlayacak, offline-first, edge-native, yerli ve entegre edilebilir zeka altyapısı.',
             f"- current_repo_state: pre-training closure-complete on {readiness_lane_phrase(summary['readiness'])}; trained evidence pending the real 45K run.",
             '- customer delivery boundary: no trained-model claim until trained checkpoint + benchmark + demo + evidence pack exist.',
-            '- supporting details: `reports/commercial_handover/`',
+            '- supporting details: `private/commercial/commercial_handover/` (private, untracked; moved 2026-06-17)',
         ])
     )
     write_text(

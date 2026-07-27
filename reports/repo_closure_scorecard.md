@@ -4,9 +4,9 @@
 > This is an inventory summary, NOT a behavioral pass-gate; no content,
 > hash, or correctness verification is performed on the listed evidence.
 
-- completed_count: `23`
+- completed_count: `24`
 - target_count: `24`
-- all_green: `false`
+- all_green: `true`
 
 | Item | Status | Evidence |
 | --- | --- | --- |
@@ -30,7 +30,7 @@
 | Written system-memory policy | ✅ | `reports/system_memory_policy.md`, `reports/source_of_truth_map.md` |
 | Backlog operating contract | ✅ | `reports/backlog_operating_contract.md`, `reports/final_backlog_classification.json` |
 | Known limits document | ✅ | `reports/known_limits_v1.md`, `reports/final_truth_matrix.md` |
-| Support and maintenance policy | ❌ | `reports/support_maintenance_policy.md` |
+| Support and maintenance policy | ✅ | `reports/support_maintenance_policy.md`, `private/commercial/commercial_handover/sla_kpi_90_180.md` |
 | ADR governance chain | ✅ | `reports/adr_index.md`, `adr/ADR-0001-source-of-truth-and-claim-boundary.md` |
 | Quality gate matrix | ✅ | `reports/quality_gate_matrix.md`, `reports/kpi_pack_v1.md` |
 | Test and verification matrix | ✅ | `reports/test_verification_matrix.md`, `tests/test_build_closure_governance_pack.py` |

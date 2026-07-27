@@ -23,7 +23,6 @@ Use this checklist for a 10-20 minute outside-reader test.
 - `reports/systems_performance_case_study.md`
 - `reports/offline_assistant_case_study.md`
 - `reports/chess_proof_teaching_case_study.md`
-- `applications/anthropic/README.md`
 
 ## Failure Conditions
 The package is not externally readable yet if the reviewer says any of the following:

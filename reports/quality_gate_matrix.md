@@ -12,4 +12,4 @@
 
 ## KPI and SLA Reference
 - `reports/kpi_pack_v1.md`
-- `reports/commercial_handover/sla_kpi_90_180.md`
+- `private/commercial/commercial_handover/sla_kpi_90_180.md` (private, untracked; moved 2026-06-17)

@@ -493,6 +493,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── file_state_inventory.json  # JSON data artifact
 │   ├── final_commands.md  # documentation/report file
 │   ├── final_evidence_pack.md  # documentation/report file
+│   ├── final_math_h200_partial_run_dashboard.svg  # media asset
+│   ├── final_math_h200_partial_run_summary.json  # JSON data artifact
 │   ├── final_orchestrator_status.json  # JSON data artifact
 │   ├── final_orchestrator_status.md  # documentation/report file
 │   ├── final_repo_audit.md  # documentation/report file

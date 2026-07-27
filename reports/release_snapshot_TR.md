@@ -33,7 +33,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 
 ## Önemli Dokümanlar
 
-- Mühendislik denetimi: `reports/codex_deep_audit_EN.md`, `reports/codex_deep_audit_DE.md`, `reports/codex_deep_audit_TR.md`
+- Mühendislik denetimi: `reports/codex_deep_audit_EN.md`, `archive/audits/codex_deep_audit_DE.md` (2026-06-16'da arşivlendi), `reports/codex_deep_audit_TR.md`
 - TR denetim dosyaları yönlendirme (pointer) dosyalarıdır: `reports/codex_deep_audit_EN_TR.md`, `reports/codex_deep_audit_DE_TR.md` (kanonik TR içerik: `reports/codex_deep_audit_TR.md`)
 - Repo-side closure scorecard: `reports/repo_closure_scorecard.md`, `reports/repo_closure_scorecard.json`
 - Closure freeze ve known limits: `reports/final_master_plan_freeze.md`, `reports/known_limits_v1.md`
@@ -54,7 +54,7 @@ TITAN_OFFLINE=1 bash run.sh --test
 - `MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`
 - Locked artefakt durumu: `skipped (expected: AGE_RECIPIENT_FILE missing)`
 - SHA-256:
-  - `2624687122beb7674e9a1b9fd9d77b2cc54b8f73b4644325e13a5ba5612156f2` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`)
+  - `2404cdc6fb37b4624933aaed3e5db21d9d11ffa1df48d8ff861bad2602e6d6bc` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Release.zip`)
   - `SKIPPED` (`MertFormer_Titan_OnyxStorm_v2.0_B30_Locked.secure.age`)
 
 ## Bilinen Gate / Blokerler

@@ -43,7 +43,7 @@ This audit maps external report claims to repo evidence. Each claim is labeled:
 
 ## F) Roadmap / Assets
 - "Founders Hub application ready." TRUE
-  - Evidence: `reports/founders_hub_application.md`
+  - Evidence: `private/commercial/founders_hub_application.md` (private, untracked; moved 2026-06-16)
 
 ## Summary
 Architecture and safety tooling are real. Performance and device-level claims are framed as targets and require full training + device profiling to validate.
