@@ -25,7 +25,7 @@ Bu hat private/operator odaklı satranç proof akışıdır.
 - Bu hat tek başına ana 45K repo claim yüzeyini yükseltmez.
 
 ## Share Export
-> Not: Bu TR dosyası `scripts/export_chess_5080_share.py`'nin güncel davranışını (Windows build workspace + EXE delivery) yansıtır. EN kanonik dosya (`CHESS_5080_POC_INTERNAL.md`) bu noktada eskidir ("obfuscated share copy" artık üretilmiyor); çelişki EN tarafının güncellenmesiyle çözülmelidir.
+> **⚠ DÜZELTME (2026-07-27):** bu notta işaretlenen EN/TR uyumsuzluğu düzeltildi — `CHESS_5080_POC_INTERNAL.md` artık aynı Windows build workspace + EXE delivery + Stockfish auto-fetch/cache davranışını taşıyor. Bu blockquote, bulgunun tarihsel kaydı olarak (silinmeden) korunuyor.
 - Okunabilir kanonik script repo içinde kalır.
 - `scripts/export_chess_5080_share.py` şunları üretir:
   - açık kopya
@@ -44,3 +44,5 @@ Bu hat private/operator odaklı satranç proof akışıdır.
 - `reports/curated_position_manifest.md`: opening/tactical/endgame/blunder-correction bank özeti
 - `reports/curated_position_suite_report.md`: eğitilmiş checkpoint varsa curated suite hit/tag raporu
 - `reports/synthetic_teaching_corpus.md`: seviyeli Turkish teaching corpus özeti
+
+> **Not (2026-07-27, canlı doğrulandı):** son üç dosya `scripts/build_chess_onefile_extension_report.py`/`scripts/chess_5080_onefile.py` tarafından üretilir ama bu ağaçta şu an mevcut değil (hiç üretilip commit edilmemiş) — repo'nun başka yerindeki "generated locally, version-controlled değil" örüntüsüyle aynı; varsayma, yerelde yeniden üret.

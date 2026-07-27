@@ -20,6 +20,8 @@ MertFormer Titan is an offline-first, auditable AI systems project with three co
 - Remaining non-winning blockers: `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`
 - Real trained checkpoints, benchmark outputs, trained demo bundles, and trained export measurements remain post-run evidence
 
+> This is the external-reviewer onboarding path. For the repo's own contributor/agent-facing source-of-truth order (`AGENTS.md`, `GOVERNANCE.md`, `STATUS.md`, `TRUTH_MATRIX.md`, `BACKLOG.md`, `DECISIONS.md`), see `README.md`'s "Canonical surfaces" list.
+
 ## What To Read In Order
 1. `README_SUMMARY.md` - shortest external summary
 2. `docs/PROJECT_MASTER_TRUTH.md` - compact whole-repo truth table

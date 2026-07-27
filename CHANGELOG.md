@@ -3,6 +3,21 @@
 All notable changes to this project are tracked in this file.
 
 > **Maintenance note (added 2026-07-25):** this file is hand-maintained, not auto-regenerated — it drifted a full month (2026-06-28 → 2026-07-25) before this note existed. Any closure pass that lands a real `BACKLOG.md`/`DECISIONS.md` entry should also add/update the current `## Unreleased - <date>` section here (EN) and in `CHANGELOG_TR.md` (TR) — a short summary is enough, full detail stays in `BACKLOG.md`/`DECISIONS.md`. See `reports/change_control_sop.md`.
+> Entries are kept in strict reverse-chronological order (newest first); a 2026-07-27 pass found "Pass 7 (2026-06-13)" mis-filed after the 2026-03-13/2026-02-08 tagged releases and moved it back to its correct chronological slot — see that entry below for detail.
+
+## Unreleased - 2026-07-27
+
+### Fixed
+- `scripts/scaling_audit_math.py` + `config/config.py::_estimate_total_params()`: both independent analytical param-count estimators reused the dense-FFN `intermediate_size` for MoE experts instead of the real, larger `moe_intermediate`, and both omitted `layers/moe.py`'s always-active "shared expert" entirely — undercounting active params by ~44% and total params by ~8%. Fixed to match the real architecture; `estimate_params()` now reports ~3.698B total / ~1.886B active, matching `ARCHITECTURE.md`'s independently-stated ~1.86B active figure. 4 new regression tests (`tests/test_scaling_audit_math.py`, `tests/test_config_dynamic_param_count.py`).
+- `CHANGELOG.md`/`CHANGELOG_TR.md`: "Pass 7 (2026-06-13)" was filed after the 2026-03-13 and 2026-02-08 entries, breaking reverse-chronological order — moved to its correct slot (between 2026-06-17 and 2026-05-24).
+- `ENV_VARS.md`: re-synced against a live `grep` of every `os.environ.get`/`os.getenv` call — the file had drifted a full month behind the 2026-07-08→07-25 stabilization work and was missing the entire LR/warmup-sweep family (`TITAN_LEARNING_RATE`, `TITAN_ROUTER_LR_MULT`, `TITAN_WARMUP_RATIO`, `TITAN_WARMUP_STEPS`, `TITAN_LIQUID_WARMUP_STEPS`), `TITAN_DIVERGENCE_GUARD`, the re-warmup family, the off-site backup family, the `TITAN_PREFLIGHT_*` family, `TITAN_DETERMINISTIC`, dataloader flags, `TITAN_PROFILE`/`TITAN_INSTALL`, and `MERTFORMER_DDP_SMOKE_SECONDS`/`MERTFORMER_FUSED_BACKWARD`.
+- `V2_BACKLOG_SEED.md` Track F: 3 items (`liquid_warmup_steps` env override, z-loss double-multiply, `mark_weights_updated()` cache question) were still listed as open even though `BACKLOG.md`/`DECISIONS.md` already record them as resolved/investigated — annotated resolved with cross-references.
+- `CHESS_5080_POC_INTERNAL.md` (EN) brought to content parity with `CHESS_5080_POC_INTERNAL_TR.md`, which had flagged the EN file as stale in its own text (Windows build workspace, EXE delivery, Stockfish auto-fetch cache, curated position suite, synthetic teaching corpus were TR-only).
+- `TECHNICAL_REPORT.md`/`_TR`: masthead date was frozen at 2026-06-18 while the body already carried a 2026-07-19 revision (INT-KERNEL relabel) — added an explicit last-revision note rather than silently back-dating.
+- `README.md`/`README_TR.md`: `AGENTS.md` (self-declared #1 in the repo's own source-of-truth order) had zero inbound links from any root doc; `START_HERE.md`/`README_SUMMARY.md` (the external-reviewer onboarding path) were never linked from `README.md` either. Added both to the Canonical surfaces list.
+
+### Validation
+- `626 passed, 5 skipped` (was `622 passed, 5 skipped` at the last entry — the +4 is this pass's own new regression tests). Docs-only changes otherwise (Class A per the Master Protocol); `bash scripts/verify_all.sh` re-run green. No training-math, readiness, or claim-boundary change.
 
 ## Unreleased - 2026-07-25
 
@@ -69,6 +84,14 @@ All notable changes to this project are tracked in this file.
 
 ### Validation
 - `370 passed, 4 skipped` (offline-first pytest); readiness `TRAIN_ALLOWED / READY_REMOTE_BOOTSTRAP`. No trained/benchmark claim — the one remaining gap is a real 45K GPU run.
+
+## Pass 7 (2026-06-13) — Mac-doable backlog zeroed + $0 Kaggle pilot
+- Added `scripts/run_liquid_ablation.py` + `docs/KAGGLE_PILOT.md`: a free LiquidRouter ON-vs-OFF
+  ablation pilot (~80–100M, pure CE, no teacher) — the single domino that unlocks the GPU-gated work.
+- LatentODE per-batch reset during training (no cross-batch state leak); MoE collapse flag DDP
+  all-reduce (guarded, no-op off-DDP); liquid-impl benchmark script; coverage config.
+- Docs: ARCHITECTURE.md Projections + stage-3 note; CPU quickstart. Backlog dispositions in DECISIONS.md.
+- Invariants held: param count locked; pytest green; ruff + scoped mypy + verify_all green.
 
 ## Unreleased - 2026-05-24
 
@@ -138,11 +161,3 @@ All notable changes to this project are tracked in this file.
 - `python3 -m pytest -q` passed.
 - `ruff check .` passed.
 - `bash scripts/verify_all.sh` passed.
-
-## Pass 7 (2026-06-13) — Mac-doable backlog zeroed + $0 Kaggle pilot
-- Added `scripts/run_liquid_ablation.py` + `docs/KAGGLE_PILOT.md`: a free LiquidRouter ON-vs-OFF
-  ablation pilot (~80–100M, pure CE, no teacher) — the single domino that unlocks the GPU-gated work.
-- LatentODE per-batch reset during training (no cross-batch state leak); MoE collapse flag DDP
-  all-reduce (guarded, no-op off-DDP); liquid-impl benchmark script; coverage config.
-- Docs: ARCHITECTURE.md Projections + stage-3 note; CPU quickstart. Backlog dispositions in DECISIONS.md.
-- Invariants held: param count locked; pytest green; ruff + scoped mypy + verify_all green.

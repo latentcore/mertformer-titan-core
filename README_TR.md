@@ -46,6 +46,7 @@ liquid_layers_idx = [4, 10, 16]
 ```
 
 ## Kanonik yüzeyler (önce bunları oku)
+- [AGENTS.md](AGENTS.md) — proje-kapanış anayasası; bu reponun kendi source-of-truth sırasında 1. madde.
 - [STATUS_TR.md](STATUS_TR.md) — aşama, readiness, tek boşluk.
 - [TRUTH_MATRIX_TR.md](TRUTH_MATRIX_TR.md) — her iddia → kanıt sınıfı (measured/target/vision).
 - [BACKLOG_TR.md](BACKLOG_TR.md) — 45K gate + ertelenen post-run bulgular.
@@ -54,6 +55,7 @@ liquid_layers_idx = [4, 10, 16]
 - [DECISIONS_TR.md](DECISIONS_TR.md) — bilinçli kararlar (değiştirilmeyip-belgelenen bulgular dahil).
 - [ARCHITECTURE.md](ARCHITECTURE.md) · [TECHNICAL_REPORT_TR.md](TECHNICAL_REPORT_TR.md) · [MODEL_CARD_TR.md](MODEL_CARD_TR.md).
 - Master-truth dokümanları: [docs/PROJECT_MASTER_TRUTH_TR.md](docs/PROJECT_MASTER_TRUTH_TR.md) · [docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md](docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md).
+- Dış-reviewer onboarding yolu (yukarıdaki listeden ayrı): [START_HERE.md](START_HERE.md) · [README_SUMMARY_TR.md](README_SUMMARY_TR.md).
 
 ## 📂 Proje Yapısı
 ### Kanonik Yerleşim (Build 30 V2)

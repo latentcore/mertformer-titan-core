@@ -6,7 +6,7 @@
 > teknik arka plan ve stratejik çerçevedir; benchmark, production, deployment,
 > AGI veya model üstünlüğü iddiası değildir.
 
-**Tarih:** 2026-06-18
+**Tarih:** 2026-06-18 (ilk) · **son içerik revizyonu: 2026-07-19** (§2.1 INT-KERNEL relabel, bkz. `DECISIONS.md`)
 **Versiyon:** v1.0 (Build 30 V2)
 **Yazar:** Mert Yünlü
 

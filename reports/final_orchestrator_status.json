@@ -1,9 +1,9 @@
 {
   "schema": "run_manifest_v1",
-  "run_id": "zero_touch_20260727T095342Z",
-  "generated_utc": "2026-07-27T09:53:42.047856+00:00",
-  "mode": "dry-run",
-  "status": "dry-run",
+  "run_id": "zero_touch_20260727T104052Z",
+  "generated_utc": "2026-07-27T10:40:52.094833+00:00",
+  "mode": "plan-only",
+  "status": "planned",
   "reports_dir": "<REPO_ROOT>/reports",
   "lock_file": "<REPO_ROOT>/reports/final_orchestrator.lock.json",
   "resume_policy": "auto",

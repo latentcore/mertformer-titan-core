@@ -46,6 +46,7 @@ liquid_layers_idx = [4, 10, 16]
 ```
 
 ## Canonical surfaces (read these first)
+- [AGENTS.md](AGENTS.md) — project-closure constitution; #1 in this repo's own source-of-truth order.
 - [STATUS.md](STATUS.md) — stage, readiness, the one gap.
 - [TRUTH_MATRIX.md](TRUTH_MATRIX.md) — every claim → evidence class (measured/target/vision).
 - [BACKLOG.md](BACKLOG.md) — 45K gate + deferred post-run findings.
@@ -54,6 +55,7 @@ liquid_layers_idx = [4, 10, 16]
 - [DECISIONS.md](DECISIONS.md) — deliberate decisions (incl. documented-not-changed findings).
 - [ARCHITECTURE.md](ARCHITECTURE.md) · [TECHNICAL_REPORT.md](TECHNICAL_REPORT.md) · [MODEL_CARD.md](MODEL_CARD.md).
 - Master-truth docs: [docs/PROJECT_MASTER_TRUTH.md](docs/PROJECT_MASTER_TRUTH.md) · [docs/CHESS_ONEFILE_MASTER_TRUTH.md](docs/CHESS_ONEFILE_MASTER_TRUTH.md).
+- External-reviewer onboarding path (separate from the list above): [START_HERE.md](START_HERE.md) · [README_SUMMARY.md](README_SUMMARY.md).
 
 ## 📂 Project Structure
 ### Canonical Layout (Build 30 V2)

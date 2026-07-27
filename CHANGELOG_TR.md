@@ -3,6 +3,21 @@
 Bu dosya projedeki önemli değişiklikleri takip eder.
 
 > **Bakım notu (2026-07-25'te eklendi):** bu dosya elle bakımı yapılan, otomatik yeniden üretilmeyen bir dosya — bu not var olmadan önce tam bir ay (2026-06-28 → 2026-07-25) bayat kaldı. Gerçek bir `BACKLOG.md`/`DECISIONS.md` girdisi bırakan her closure pass'i, burada (TR) ve `CHANGELOG.md`'de (EN) güncel `## Unreleased - <tarih>` bölümünü de eklemeli/güncellemeli — kısa bir özet yeterli, tam detay `BACKLOG.md`/`DECISIONS.md`'de kalır. Bkz. `reports/change_control_sop.md`.
+> Girdiler sıkı ters-kronolojik sırada tutulur (en yeni en üstte); 2026-07-27 pass'i "Pass 7 (2026-06-13)"in 2026-03-13/2026-02-08 etiketli sürümlerden sonraya yanlış dosyalandığını buldu ve doğru kronolojik yerine taşıdı — ayrıntı için aşağıdaki girdiye bakın.
+
+## Unreleased - 2026-07-27
+
+### Düzeltilenler
+- `scripts/scaling_audit_math.py` + `config/config.py::_estimate_total_params()`: iki bağımsız analitik param-sayısı tahmincisi de MoE expert'leri için dense-FFN `intermediate_size`'ı kullanıyordu (gerçek, daha büyük `moe_intermediate` yerine) ve ikisi de `layers/moe.py`'nin her zaman aktif "shared expert"ini tamamen atlıyordu — aktif parametreleri ~%44, toplam parametreleri ~%8 eksik sayıyordu. Gerçek mimariye uyacak şekilde düzeltildi; `estimate_params()` artık ~3.698B toplam / ~1.886B aktif raporluyor, `ARCHITECTURE.md`'nin bağımsız olarak belirttiği ~1.86B aktif rakamıyla eşleşiyor. 4 yeni regresyon testi (`tests/test_scaling_audit_math.py`, `tests/test_config_dynamic_param_count.py`).
+- `CHANGELOG.md`/`CHANGELOG_TR.md`: "Pass 7 (2026-06-13)", 2026-03-13 ve 2026-02-08 girdilerinden sonraya dosyalanmıştı, ters-kronolojik sırayı bozuyordu — doğru yerine (2026-06-17 ile 2026-05-24 arasına) taşındı.
+- `ENV_VARS.md`: repodaki her `os.environ.get`/`os.getenv` çağrısına karşı canlı `grep` ile yeniden senkronlandı — dosya 2026-07-08→07-25 kararlılık çalışmasının tam bir ay gerisinde kalmıştı ve tüm LR/warmup-sweep ailesini (`TITAN_LEARNING_RATE`, `TITAN_ROUTER_LR_MULT`, `TITAN_WARMUP_RATIO`, `TITAN_WARMUP_STEPS`, `TITAN_LIQUID_WARMUP_STEPS`), `TITAN_DIVERGENCE_GUARD`'ı, re-warmup ailesini, off-site backup ailesini, `TITAN_PREFLIGHT_*` ailesini, `TITAN_DETERMINISTIC`'i, dataloader bayraklarını, `TITAN_PROFILE`/`TITAN_INSTALL`'ı ve `MERTFORMER_DDP_SMOKE_SECONDS`/`MERTFORMER_FUSED_BACKWARD`'ı eksik listeliyordu.
+- `V2_BACKLOG_SEED.md` Track F: 3 madde (`liquid_warmup_steps` env override, z-loss çift-çarpım, `mark_weights_updated()` cache sorusu) `BACKLOG.md`/`DECISIONS.md` zaten çözülmüş/incelenmiş kaydettiği halde hâlâ açık gösteriliyordu — çapraz-referanslarla çözülmüş olarak işaretlendi.
+- `CHESS_5080_POC_INTERNAL.md` (EN), kendi metninde EN dosyayı bayat diye işaretleyen `CHESS_5080_POC_INTERNAL_TR.md` ile içerik paritesine getirildi (Windows build workspace, EXE delivery, Stockfish auto-fetch cache, curated position suite, synthetic teaching corpus yalnız TR'de vardı).
+- `TECHNICAL_REPORT.md`/`_TR`: başlık tarihi 2026-06-18'de donmuştu, gövde zaten 2026-07-19 tarihli bir revizyon taşıyordu (INT-KERNEL relabel) — sessizce tarihi geri değiştirmek yerine açık bir son-revizyon notu eklendi.
+- `README.md`/`README_TR.md`: `AGENTS.md` (repo'nun kendi source-of-truth sırasında kendini 1. sıraya koyan dosya) hiçbir kök dokümandan link almıyordu; `START_HERE.md`/`README_SUMMARY.md` (dış-reviewer onboarding yolu) da `README.md`'den hiç linklenmiyordu. İkisi de Canonical surfaces listesine eklendi.
+
+### Doğrulama
+- `626 passed, 5 skipped` (son kayıtta `622 passed, 5 skipped` idi — +4, bu pass'in kendi yeni regresyon testleri). Bunun dışında yalnız dokümantasyon değişikliği (Master Protokol'e göre Sınıf A); `bash scripts/verify_all.sh` yeniden koşuldu, yeşil. Eğitim-matematiği, readiness veya iddia sınırı değişikliği yok.
 
 ## Unreleased - 2026-07-25
 
@@ -69,6 +84,14 @@ Bu dosya projedeki önemli değişiklikleri takip eder.
 
 ### Doğrulama
 - `370 passed, 4 skipped` (offline-first pytest); readiness `TRAIN_ALLOWED / READY_REMOTE_BOOTSTRAP`. Trained/benchmark iddiası yok — kalan tek boşluk gerçek 45K GPU koşusu.
+
+## Pass 7 (2026-06-13) — Mac'te yapılabilir backlog sıfırlandı + $0 Kaggle pilotu
+- `scripts/run_liquid_ablation.py` + `docs/KAGGLE_PILOT.md` eklendi: ücretsiz LiquidRouter ON-vs-OFF
+  ablasyon pilotu (~80–100M, saf CE, teacher yok) — GPU'ya kapılı işi açan tek domino.
+- Eğitim sırasında LatentODE per-batch reset (batch'ler arası state sızıntısı yok); MoE collapse flag DDP
+  all-reduce (guarded, DDP dışında no-op); liquid-impl benchmark scripti; coverage config'i.
+- Dokümanlar: ARCHITECTURE.md Projections + stage-3 notu; CPU quickstart. Backlog dispozisyonları DECISIONS.md'de.
+- İnvaryantlar korundu: parametre sayısı kilitli; pytest yeşil; ruff + scoped mypy + verify_all yeşil.
 
 ## Unreleased - 2026-05-24
 
@@ -138,11 +161,3 @@ Bu dosya projedeki önemli değişiklikleri takip eder.
 - `python3 -m pytest -q` geçti.
 - `ruff check .` geçti.
 - `bash scripts/verify_all.sh` geçti.
-
-## Pass 7 (2026-06-13) — Mac'te yapılabilir backlog sıfırlandı + $0 Kaggle pilotu
-- `scripts/run_liquid_ablation.py` + `docs/KAGGLE_PILOT.md` eklendi: ücretsiz LiquidRouter ON-vs-OFF
-  ablasyon pilotu (~80–100M, saf CE, teacher yok) — GPU'ya kapılı işi açan tek domino.
-- Eğitim sırasında LatentODE per-batch reset (batch'ler arası state sızıntısı yok); MoE collapse flag DDP
-  all-reduce (guarded, DDP dışında no-op); liquid-impl benchmark scripti; coverage config'i.
-- Dokümanlar: ARCHITECTURE.md Projections + stage-3 notu; CPU quickstart. Backlog dispozisyonları DECISIONS.md'de.
-- İnvaryantlar korundu: parametre sayısı kilitli; pytest yeşil; ruff + scoped mypy + verify_all yeşil.

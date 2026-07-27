@@ -6,7 +6,7 @@
 > technical background and strategic framing; it is not a benchmark, production,
 > deployment, AGI, or model-superiority claim.
 
-**Date:** 2026-06-18
+**Date:** 2026-06-18 (initial) · **last content revision: 2026-07-19** (§2.1 INT-KERNEL relabel, see `DECISIONS.md`)
 **Version:** v1.0 (Build 30 V2)
 **Author:** Mert Yünlü
 
