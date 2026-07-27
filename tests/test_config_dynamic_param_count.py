@@ -46,6 +46,41 @@ def test_estimate_total_params_scales_with_model_size():
     assert small_params < canonical_params
 
 
+def test_estimate_total_params_includes_shared_expert(monkeypatch=None):
+    """Regression for the 2026-07-27 fix: layers/moe.py's MoE always instantiates an
+    additional always-active "shared expert" (BitSwiGLU(hidden_size, moe_intermediate)
+    + a scalar gate), a 9th expert-sized block NOT counted by ``num_experts``. This was
+    previously omitted from ``_estimate_total_params``, undercounting every MoE layer
+    by one full expert's worth of params. Pin: the estimate for a config with MoE
+    layers must exceed the same config's own naive
+    ``num_experts``-only MoE-FFN sum by at least one expert's worth of params.
+    """
+    conf = _stub_conf()
+    total = config_module._estimate_total_params(conf)
+
+    moe_count = conf.num_layers // conf.moe_every_n_layers
+    moe_ffn_per_layer = 3 * conf.hidden_size * conf.moe_intermediate
+    router_params = conf.hidden_size * conf.num_experts
+    # Same attention formula as _estimate_total_params (real GQA: Q/O sized off
+    # num_heads, K/V sized off the smaller num_kv_heads) -- reproduced here (not
+    # imported) so this test independently pins the function's total output.
+    q_proj = conf.hidden_size * (conf.num_heads * conf.head_dim)
+    kv_proj = conf.hidden_size * (conf.num_kv_heads * conf.head_dim)
+    o_proj = (conf.num_heads * conf.head_dim) * conf.hidden_size
+    attn_per_layer = q_proj + 2 * kv_proj + o_proj
+    naive_moe_only_total = (
+        conf.vocab_size * conf.hidden_size
+        + conf.num_layers * attn_per_layer
+        + (conf.num_layers - moe_count) * (3 * conf.hidden_size * conf.intermediate_size)
+        + moe_count * (moe_ffn_per_layer * conf.num_experts + router_params)
+        + conf.num_layers * (2 * conf.hidden_size)
+        + conf.hidden_size
+    )
+    assert total > naive_moe_only_total
+    # The fix adds exactly one shared-expert block (+ its scalar gate) per MoE layer.
+    assert total - naive_moe_only_total == moe_count * (moe_ffn_per_layer + 1)
+
+
 def test_estimate_total_params_is_not_the_old_dead_constant():
     # The old code always returned exactly 3.673e9 for ANY conf. A real formula must
     # not coincidentally reproduce that exact constant for a differently-sized config.

@@ -87,7 +87,13 @@ def _estimate_total_params(conf: Any) -> float:
     dense_ffn_per_layer = 3 * hidden_size * intermediate_size
     moe_ffn_per_layer = 3 * hidden_size * moe_intermediate
     router_params = hidden_size * num_experts
-    moe_layer_params = moe_ffn_per_layer * num_experts + router_params
+    # NOTE (fixed 2026-07-27): layers/moe.py's MoE always instantiates one additional
+    # "shared expert" (BitSwiGLU(hidden_size, moe_intermediate), unconditionally added
+    # to every token via a learnable sigmoid gate) -- a 9th, always-present block that
+    # is NOT part of num_experts (the routed/sparse pool). Previously omitted here,
+    # undercounting every MoE layer by one expert-sized block (+ its scalar gate).
+    shared_expert_params = moe_ffn_per_layer + 1  # +1 = the scalar shared_gate param
+    moe_layer_params = moe_ffn_per_layer * num_experts + shared_expert_params + router_params
 
     if use_moe and moe_every_n_layers > 0:
         moe_count = num_layers // moe_every_n_layers

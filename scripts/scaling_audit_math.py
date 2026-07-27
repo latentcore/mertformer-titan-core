@@ -37,13 +37,21 @@ def estimate_params():
     hidden_size = cfg.hidden_size
     num_layers = cfg.num_layers
     intermediate_size = getattr(cfg, "intermediate_size", hidden_size * 4)
+    # NOTE (fixed 2026-07-27): MoE experts use a SEPARATE intermediate size from
+    # dense-layer FFNs (layers/moe.py BitSwiGLU(hidden_size, moe_intermediate);
+    # config/config.py's own internal param-estimator, `_estimate_total_params`,
+    # already makes this distinction as `moe_ffn_per_layer` vs `dense_ffn_per_layer`
+    # -- this script previously reused the dense `intermediate_size` for MoE experts
+    # too, undercounting every MoE layer whenever moe_intermediate > intermediate_size
+    # (true here: 8192 vs 5632).
+    moe_intermediate = getattr(cfg, "moe_intermediate", intermediate_size)
     num_experts = getattr(cfg, "num_experts", 8)
     active_experts = getattr(cfg, "active_experts", 2)
     moe_every_n = getattr(cfg, "moe_every_n_layers", 0)
-    
+
     # 1. Embeddings
     embedding_params = vocab_size * hidden_size
-    
+
     # 2. Per Layer Attention (approx, non-MLA)
     # NOTE: label-only correction. The real attention is GQA (see layers/mla.py,
     # config.config L223); there is no latent down/up KV projection. The formula
@@ -53,14 +61,23 @@ def estimate_params():
 
     # 4 Projections * (In * Out)
     attn_per_layer = 4 * (hidden_size * (num_heads * head_dim))
-    
-    # 3. Feed Forward / MoE
-    ffn_per_layer = 3 * hidden_size * intermediate_size
-    
+
+    # 3. Feed Forward (dense layers) / MoE (routed layers)
+    dense_ffn_per_layer = 3 * hidden_size * intermediate_size
+    moe_ffn_per_layer = 3 * hidden_size * moe_intermediate
+
     # MoE Layer Cost
+    # NOTE (fixed 2026-07-27): layers/moe.py always instantiates one additional
+    # "shared expert" (BitSwiGLU(hidden_size, moe_intermediate), unconditionally
+    # added to every token's output via a learnable sigmoid gate -- see
+    # MoE.__init__'s `self.shared_expert`/`self.shared_gate` and MoE.forward's
+    # `shared_out = self.shared_expert(x_flat)`). It is a 9th, always-instantiated,
+    # always-active expert-sized block that is NOT part of `num_experts` (the
+    # routed/sparse pool) -- previously omitted entirely from both totals below.
     router_params = hidden_size * num_experts
-    moe_per_layer = (ffn_per_layer * num_experts) + router_params
-    
+    shared_expert_params = moe_ffn_per_layer + 1  # +1 = the scalar shared_gate param
+    moe_per_layer = (moe_ffn_per_layer * num_experts) + shared_expert_params + router_params
+
     # Layer Breakdown
     if cfg.use_moe and moe_every_n > 0:
         moe_count = num_layers // moe_every_n
@@ -68,29 +85,30 @@ def estimate_params():
     else:
         moe_count = 0
         dense_count = num_layers
-        
+
     print(f"   ► Layers: {num_layers} (Dense: {dense_count}, MoE: {moe_count})")
-    
+
     # Total Calculation
     total_params = embedding_params
     total_params += num_layers * attn_per_layer
-    total_params += dense_count * ffn_per_layer
+    total_params += dense_count * dense_ffn_per_layer
     total_params += moe_count * moe_per_layer
     total_params += num_layers * (2 * hidden_size)     # Norms
     total_params += hidden_size                        # Final Norm
-    
+
     # Active Params (Inference Cost / Compute Cost)
-    active_moe_cost = (ffn_per_layer * active_experts) + router_params
-    
+    # Active per MoE layer = top-k routed experts + the always-active shared expert + router.
+    active_moe_cost = (moe_ffn_per_layer * active_experts) + shared_expert_params + router_params
+
     active_params = embedding_params
     active_params += num_layers * attn_per_layer
-    active_params += dense_count * ffn_per_layer
-    active_params += moe_count * active_moe_cost 
+    active_params += dense_count * dense_ffn_per_layer
+    active_params += moe_count * active_moe_cost
     active_params += num_layers * (2 * hidden_size) + hidden_size
 
     print(f"\n--- TITAN SCALING AUDIT (DYNAMIC) ---")
     print(f"Embedding Params: {embedding_params / 1e6:.2f} M")
-    print(f"Dense Layers Params: {(dense_count * (attn_per_layer + ffn_per_layer)) / 1e6:.2f} M")
+    print(f"Dense Layers Params: {(dense_count * (attn_per_layer + dense_ffn_per_layer)) / 1e6:.2f} M")
     if moe_count > 0:
         print(f"MoE Layers Params: {(moe_count * (attn_per_layer + moe_per_layer)) / 1e6:.2f} M")
     
