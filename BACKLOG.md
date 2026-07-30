@@ -296,3 +296,44 @@ A full disposition pass over every item raised in the pre-45K/post-45K planning 
 - **Already closed, verified (I.1 #90):** the "reject harmful-autonomy/covert-surveillance framing" item is already documented in `MISSION.md`, `USE_POLICY.md`, and `SECURITY.md`.
 - **`scripts/preflight_run_pilot171m.py` added to the repo** (was previously zip-only) — 172.67M param Go/No-Go pilot orchestrator, sibling to `scripts/preflight_run.py`; `REPRODUCE.md`/`REPRODUCE_TR.md` gained a discoverability section for both.
 - **Not resolved, flagged honestly:** items #33 ("4 env escape-hatches") and #38 ("versionless skill-proof files") reference wording from an earlier planning brief this pass could not precisely re-locate in the current live docs; the closest verifiable equivalents (launch-script `TITAN_PREFLIGHT_*` safety defaults, no discovered `--no-validate` bypass path) are already in place, but a precise 1:1 match to the original item text was not confirmed. Left open rather than claiming false closure.
+
+## Public-release closure (2026-07-30) — what is done, what stays open
+
+Verification performed for this pass, with results rather than assertions:
+
+- **Closure ladder:** `bash scripts/final_one_shot.sh` alone -> `[final] COMPLETED`, exit 0.
+  pytest `726 passed, 5 skipped`; closure-57 matrix 57/57 green with no in-scope pending;
+  tokenizer canonical/mirror byte-identical; FACTS single-source consistency OK; doc-claim
+  consistency OK; release-zip denylist + secret scan 0 hits.
+- **Git-history secret scan: DONE.** gitleaks was absent and was installed (8.30.1) rather
+  than reported as unavailable. 546 commits / ~43.9 MB scanned; 6 hits, ALL verified false
+  positives before any allowlist was written -- `generic-api-key` matching the JSON field
+  NAME `"key"` in reports/kpi_report_v1.json, whose values are KPI slugs
+  (`kpi01_verify_all`, entropy 3.51-3.73). `.gitleaks.toml` records this and allowlists it
+  narrowly (one rule, one path, one value pattern). Rescan: no leaks found.
+- **Working-tree scan:** scripts/secret_scan.py clean over 950 tracked files; no tracked
+  file carries an absolute `/Users/...` path.
+- **Clean-clone verification: performed, and it caught a real defect.** A fresh clone plus
+  full suite found `tests/test_pre45k_gate.py::test_run_offline_preflight_against_real_repo`
+  failing, because it asserted the offline preflight passes -- which requires the gitignored
+  stage corpus. It passed only on the machine holding local data; every contributor and CI
+  runner would have failed it. Fixed in both directions (skip without the corpus, assert the
+  honest FAILURE reason when absent) and re-verified: clean clone `722 passed, 9 skipped, 0
+  failed`.
+- **Gist `dac0aa0c...` synced.** Grepped for `/Users/`, the username and
+  `gho_`/`ghp_`/`sk-ant-` patterns BOTH before and after: 0 hits each time. Updated the test
+  count, the licence line, the project-structure reference (it still listed the two deleted
+  scripts), and added the hiring/contribution sections. The dated
+  `6_EXECUTIVE_BRIEF_2026-05-22.md` deliberately keeps its historical `505 passed`, and the
+  "private repo" references were deliberately NOT changed -- the repository is still
+  private, and pre-emptively rewriting them would be a false claim.
+
+**STILL OPEN, deliberately, and NOT closed by this pass:**
+- The 45K run itself, corpus materialization (23.59B tokens), teacher-logit precompute,
+  a real 2-GPU DDP smoke, and K-1 (Liquid perf) -- all compute-gated. `pre45k_gate.sh
+  --strict-ddp` on this GPU-less machine returns `PASS_DDP_NOT_APPLICABLE`, which is the
+  correct verdict here, not a pass for DDP correctness.
+- `train/train.py::train()` refactor and O-6 (preflight duplication) -- deliberate, see the
+  entries above.
+- Repository visibility. The code side is ready; flipping Private -> Public is the owner's
+  decision and the owner's action.

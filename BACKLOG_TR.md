@@ -301,3 +301,45 @@ Pre-45K/post-45K planlama konuşmasında gündeme gelen her maddenin tam disposi
 - **Zaten kapalı, doğrulandı (#90):** `MISSION.md`/`USE_POLICY.md`/`SECURITY.md`'de zaten belgeli.
 - **`scripts/preflight_run_pilot171m.py` repoya eklendi**, `REPRODUCE.md`/`REPRODUCE_TR.md` keşfedilebilirlik bölümü kazandı.
 - **Çözülmedi, dürüstçe işaretlendi:** #33 ve #38 orijinal metinde tam olarak yeniden bulunamadı; en yakın doğrulanabilir eşdeğerleri zaten yerinde ama birebir eşleşme teyit edilmedi.
+
+## Public yayın kapanışı (2026-07-30) — yapılanlar ve açık kalanlar
+
+Bu pass için yapılan doğrulamalar, iddia değil sonuçlarıyla:
+
+- **Kapanış merdiveni:** `bash scripts/final_one_shot.sh` tek başına -> `[final] COMPLETED`,
+  exit 0. pytest `726 passed, 5 skipped`; closure-57 matrisi 57/57 yeşil, kapsam-içi pending
+  yok; tokenizer kanonik/ayna bayt-birebir; FACTS tek-kaynak tutarlılığı OK; doküman-iddia
+  tutarlılığı OK; release-zip denylist + secret scan 0 bulgu.
+- **Git tarihçesi secret taraması: YAPILDI.** gitleaks kurulu değildi ve "araç yok" diye
+  raporlanmak yerine kuruldu (8.30.1). 546 commit / ~43.9 MB tarandı; 6 bulgu, hepsi
+  herhangi bir allowlist yazılmadan ÖNCE yanlış-pozitif olarak doğrulandı --
+  `generic-api-key` kuralı reports/kpi_report_v1.json'daki `"key"` alan ADINA takılmış,
+  değerler KPI kimlikleri (`kpi01_verify_all`, entropi 3.51-3.73). `.gitleaks.toml` bunu
+  kaydediyor ve dar biçimde allowlist'liyor (tek kural, tek yol, tek değer deseni). Yeniden
+  tarama: bulgu yok.
+- **Çalışma ağacı taraması:** scripts/secret_scan.py 950 tracked dosyada temiz; hiçbir
+  tracked dosyada mutlak `/Users/...` yolu yok.
+- **Temiz-clone doğrulaması: yapıldı ve gerçek bir kusur yakaladı.** Sıfırdan clone + tam
+  suite, `tests/test_pre45k_gate.py::test_run_offline_preflight_against_real_repo` testinin
+  kırıldığını gösterdi; çünkü test offline preflight'ın geçmesini iddia ediyordu, bu ise
+  gitignore'lu stage korpusunu gerektiriyor. Yalnız yerel verinin bulunduğu makinede
+  geçiyordu; her katkıda bulunan ve her CI koşucusu kırılırdı. İki yönde de düzeltildi
+  (korpus yoksa skip, yokluğunda dürüst HATA sebebini assert et) ve yeniden doğrulandı:
+  temiz clone `722 passed, 9 skipped, 0 failed`.
+- **Gist `dac0aa0c...` senklandı.** `/Users/`, kullanıcı adı ve `gho_`/`ghp_`/`sk-ant-`
+  desenleri için HEM öncesinde HEM sonrasında grep'lendi: her seferinde 0 bulgu. Test
+  sayısı, lisans satırı ve proje-yapısı referansı (silinen iki script hâlâ listeleniyordu)
+  güncellendi, hiring/katkı bölümleri eklendi. Tarihli
+  `6_EXECUTIVE_BRIEF_2026-05-22.md` bilinçli olarak tarihsel `505 passed` değerini korudu;
+  "private repo" ifadeleri de bilinçli olarak DEĞİŞTİRİLMEDİ — depo hâlâ private ve bunları
+  önden değiştirmek yanlış bir iddia olurdu.
+
+**BİLİNÇLİ OLARAK AÇIK KALAN ve bu pass ile KAPANMAYANLAR:**
+- 45K koşusunun kendisi, korpus materyalizasyonu (23.59B token), teacher-logit precompute,
+  gerçek 2-GPU DDP smoke ve K-1 (Liquid perf) — hepsi compute-gated. Bu GPU'suz makinede
+  `pre45k_gate.sh --strict-ddp` `PASS_DDP_NOT_APPLICABLE` döndürüyor; bu buradaki doğru
+  hükümdür, DDP doğruluğu için bir geçiş değildir.
+- `train/train.py::train()` refactor'ı ve O-6 (preflight duplikasyonu) — bilinçli, yukarıdaki
+  kayıtlara bakın.
+- Depo görünürlüğü. Kod tarafı hazır; Private -> Public çevirme kararı ve işlemi sahibinindir.
+  Tam ayrıntı: `BACKLOG.md`.
