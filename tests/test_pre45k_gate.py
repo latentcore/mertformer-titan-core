@@ -12,6 +12,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from scripts import pre45k_gate as gate
 
 
@@ -277,10 +279,56 @@ def _resolve_repo_python() -> str:
     return "python3"
 
 
+def _corpus_is_materialized() -> bool:
+    """True when the (gitignored) stage corpus exists locally.
+
+    Asks scripts/titan_preflight._stage_jsonl_paths() rather than hardcoding paths: the
+    stage directories are NOT uniformly named (stage1..stage3, but `stage4_soul` and
+    `stage5_tools`), and a hand-written path list here silently returned False on a machine
+    that did have the corpus. Reading the preflight's own source of truth means this can
+    never disagree with the check it is guarding.
+    """
+    from scripts import titan_preflight
+
+    return all(path.exists() for path in titan_preflight._stage_jsonl_paths().values())
+
+
 def test_run_offline_preflight_against_real_repo():
+    """[2026-07-30] Skips without the corpus instead of failing.
+
+    Found by the mandatory clean-clone verification: this test asserted `ok is True`
+    unconditionally, but `scripts/titan_preflight.py` correctly FAILS with
+    "Stage JSONL missing: stage1..stage5" when the corpus is absent -- which is the state of
+    every fresh clone, every CI runner and every new contributor's machine, since the corpus
+    is gitignored and cannot be committed (23.59B tokens). It passed only here, on the
+    machine that happens to hold the local data.
+
+    That made it a public-release blocker rather than a cosmetic issue: the repository's own
+    PR rule is "`bash scripts/verify_all.sh` must pass with zero regressions", so a first-time
+    contributor would have failed it through no fault of their own, on their first run.
+
+    The real assertion is preserved wherever the corpus IS present, so this keeps its value
+    on the training machine, which is the only place the check is meaningful.
+    """
+    if not _corpus_is_materialized():
+        pytest.skip("stage corpus not materialized locally (datasets/ is gitignored)")
     result = gate.run_offline_preflight(_resolve_repo_python())
     assert result["ok"] is True
     assert "titan_preflight.py" in result["cmd"]
+
+
+def test_offline_preflight_reports_the_missing_corpus_rather_than_passing():
+    """The other half: without the corpus the gate must FAIL, loudly and for that reason.
+
+    A gate that went green on an empty corpus would be far worse than one that skips, so pin
+    the honest-failure direction too. This runs everywhere, corpus present or not.
+    """
+    if _corpus_is_materialized():
+        pytest.skip("corpus present; the missing-corpus path cannot be exercised here")
+    result = gate.run_offline_preflight(_resolve_repo_python())
+    assert result["ok"] is False, "preflight passed with no corpus on disk"
+    combined = f"{result.get('stdout_tail', '')}{result.get('stderr_tail', '')}"
+    assert "Stage JSONL missing" in combined, combined[-400:]
 
 
 def test_run_dry_run_preview_against_real_repo():
