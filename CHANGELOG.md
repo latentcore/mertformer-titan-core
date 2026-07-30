@@ -5,6 +5,32 @@ All notable changes to this project are tracked in this file.
 > **Maintenance note (added 2026-07-25):** this file is hand-maintained, not auto-regenerated — it drifted a full month (2026-06-28 → 2026-07-25) before this note existed. Any closure pass that lands a real `BACKLOG.md`/`DECISIONS.md` entry should also add/update the current `## Unreleased - <date>` section here (EN) and in `CHANGELOG_TR.md` (TR) — a short summary is enough, full detail stays in `BACKLOG.md`/`DECISIONS.md`. See `reports/change_control_sop.md`.
 > Entries are kept in strict reverse-chronological order (newest first); a 2026-07-27 pass found "Pass 7 (2026-06-13)" mis-filed after the 2026-03-13/2026-02-08 tagged releases and moved it back to its correct chronological slot — see that entry below for detail.
 
+## Unreleased - 2026-07-31
+
+### Fixed
+- `tests/test_pre45k_gate.py::test_offline_preflight_reports_the_missing_corpus_rather_than_passing`: inherited ambient `GITHUB_ACTIONS`/`CI`/`TITAN_PREFLIGHT_ALLOW_MISSING_STAGE_JSONL` env vars into its own subprocess call, passing on a bare local checkout but failing under real GitHub Actions CI (which runs via `bash scripts/verify_all.sh`). Now neutralizes all three via `monkeypatch.delenv(...)` before invoking the gate; both production escape hatches (`scripts/titan_preflight.py`, `scripts/verify_all.sh`) are unchanged. Full detail: `BACKLOG.md`.
+
+### Validation
+- Test count unchanged (`726 passed, 5 skipped` locally, per the prior entry) — this fixes an existing test's environment isolation, it adds/removes nothing. Confirmed: simulating CI ambient pollution (`GITHUB_ACTIONS=true CI=true TITAN_PREFLIGHT_ALLOW_MISSING_STAGE_JSONL=1`) reproduces the failure pre-fix and passes post-fix.
+
+## Unreleased - 2026-07-30
+
+### Added
+- `CODE_OF_CONDUCT.md`/`_TR` (Contributor Covenant 2.1, plus a project-specific measured/target/vision claim-discipline clause) — closes the last gap in GitHub's community-standards checklist now that `README.md` invites external contributions.
+
+### Fixed
+- Audit waves 1-5 (independent 2026-07-27 static audit, 20+ real findings): MoE capacity host-syncs removed, `train/packing.py` resume-counter desync fixed, teacher-logit identity sidecar added, param estimators reproduce the measured count exactly, feature-flagged drift detectors made reachable, 2 dead scripts deleted, plus structure-check/config-validator/alias-guard/PoC-hashing fixes and the 45K dashboard wiring. Full pass-by-pass detail: `BACKLOG.md`.
+- License-header contradictions: 50 `*.py` files and `run.sh` still carried an All-Rights-Reserved header after the Apache 2.0 relicensing; fixed, verified with a full-repo grep across every tracked file type.
+- `NOTICE`: two sentences left factually wrong by the relicensing (stale "proprietary" language, stale team name) corrected; the Llama attribution layer is untouched.
+- `SECURITY.md`/`_TR`: explicit contact-email fallback added alongside the primary GitHub Security Advisories channel.
+- `tests/test_pre45k_gate.py::test_run_offline_preflight_against_real_repo`: depended on the gitignored training corpus and failed on every fresh clone/CI runner; now skips without the corpus, with a new sibling test pinning the honest-failure direction (see the 2026-07-31 entry above for that sibling test's own follow-up fix).
+
+### Changed
+- Relicensed the code under Apache 2.0 for public release; added Hiring and Contribution sections to `README.md`/`README_TR.md`. See `DECISIONS.md`.
+
+### Validation
+- `726 passed, 5 skipped`. `bash scripts/final_one_shot.sh` green (see `BACKLOG.md` "Public-release closure"). No training-math, readiness, or claim-boundary change.
+
 ## Unreleased - 2026-07-27
 
 ### Fixed

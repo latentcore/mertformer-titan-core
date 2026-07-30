@@ -5,6 +5,32 @@ Bu dosya projedeki önemli değişiklikleri takip eder.
 > **Bakım notu (2026-07-25'te eklendi):** bu dosya elle bakımı yapılan, otomatik yeniden üretilmeyen bir dosya — bu not var olmadan önce tam bir ay (2026-06-28 → 2026-07-25) bayat kaldı. Gerçek bir `BACKLOG.md`/`DECISIONS.md` girdisi bırakan her closure pass'i, burada (TR) ve `CHANGELOG.md`'de (EN) güncel `## Unreleased - <tarih>` bölümünü de eklemeli/güncellemeli — kısa bir özet yeterli, tam detay `BACKLOG.md`/`DECISIONS.md`'de kalır. Bkz. `reports/change_control_sop.md`.
 > Girdiler sıkı ters-kronolojik sırada tutulur (en yeni en üstte); 2026-07-27 pass'i "Pass 7 (2026-06-13)"in 2026-03-13/2026-02-08 etiketli sürümlerden sonraya yanlış dosyalandığını buldu ve doğru kronolojik yerine taşıdı — ayrıntı için aşağıdaki girdiye bakın.
 
+## Unreleased - 2026-07-31
+
+### Düzeltilenler
+- `tests/test_pre45k_gate.py::test_offline_preflight_reports_the_missing_corpus_rather_than_passing`: ambient `GITHUB_ACTIONS`/`CI`/`TITAN_PREFLIGHT_ALLOW_MISSING_STAGE_JSONL` env değişkenlerini kendi subprocess çağrısına miras alıyordu; çıplak yerel checkout'ta geçiyor ama gerçek GitHub Actions CI'da (`bash scripts/verify_all.sh` üzerinden koşan) kırılıyordu. Artık kapıyı çağırmadan önce üçünü de `monkeypatch.delenv(...)` ile temizliyor; iki production escape hatch de (`scripts/titan_preflight.py`, `scripts/verify_all.sh`) değişmedi. Tam detay: `BACKLOG.md`.
+
+### Doğrulama
+- Test sayısı değişmedi (`726 passed, 5 skipped` yerelde, önceki girdiyle aynı) — bu, mevcut bir testin ortam izolasyonunu düzeltiyor, test eklemiyor/silmiyor. Doğrulandı: CI ambient kirliliği simüle edildiğinde (`GITHUB_ACTIONS=true CI=true TITAN_PREFLIGHT_ALLOW_MISSING_STAGE_JSONL=1`) düzeltme-öncesi hata tekrarlanıyor, düzeltme-sonrası geçiyor.
+
+## Unreleased - 2026-07-30
+
+### Eklenenler
+- `CODE_OF_CONDUCT.md`/`_TR` (Contributor Covenant 2.1, artı proje-özgü measured/target/vision iddia-disiplini maddesi) — `README.md` artık dış katkı davet ettiğine göre GitHub community-standards kontrol listesindeki son boşluğu kapatıyor.
+
+### Düzeltilenler
+- Audit wave 1-5 (bağımsız 2026-07-27 statik denetimi, 20+ gerçek bulgu): MoE capacity host-sync'leri kaldırıldı, `train/packing.py` resume-sayacı desenkronizasyonu düzeltildi, teacher-logit identity sidecar'ı eklendi, param tahmincileri ölçülen sayıyı birebir üretiyor, feature-flag'li drift dedektörleri erişilebilir kılındı, 2 ölü script silindi, artı structure-check/config-validator/alias-guard/PoC-hashing düzeltmeleri ve 45K dashboard bağlantısı. Tam pass-pass detay: `BACKLOG.md`.
+- Lisans-başlığı çelişkileri: Apache 2.0 relicensing'den sonra 50 `*.py` dosyası ve `run.sh` hâlâ All-Rights-Reserved başlığı taşıyordu; düzeltildi, her tracked dosya tipinde tam-repo grep ile doğrulandı.
+- `NOTICE`: relicensing'in yanlış bıraktığı iki cümle (bayat "proprietary" ifadesi, bayat takım adı) düzeltildi; Llama attribution katmanı dokunulmadı.
+- `SECURITY.md`/`_TR`: birincil GitHub Security Advisories kanalının yanına açık bir contact-email fallback eklendi.
+- `tests/test_pre45k_gate.py::test_run_offline_preflight_against_real_repo`: gitignore'lu eğitim korpusuna bağımlıydı ve her fresh clone/CI koşucusunda kırılıyordu; artık korpus yokken skip ediyor, dürüst-hata yönünü kilitleyen yeni bir kardeş test eklendi (o kardeş testin kendi takip-düzeltmesi için yukarıdaki 2026-07-31 girdisine bakın).
+
+### Değişenler
+- Kod, public release için Apache 2.0 altında relicense edildi; `README.md`/`README_TR.md`'ye Hiring ve Contribution bölümleri eklendi. Bkz. `DECISIONS.md`.
+
+### Doğrulama
+- `726 passed, 5 skipped`. `bash scripts/final_one_shot.sh` yeşildi (bkz. `BACKLOG.md` "Public yayın kapanışı"). Eğitim-matematiği, readiness veya iddia sınırı değişikliği yok.
+
 ## Unreleased - 2026-07-27
 
 ### Düzeltilenler
