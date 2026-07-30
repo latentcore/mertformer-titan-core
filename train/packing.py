@@ -198,7 +198,27 @@ def iter_packed_sequences(
                 pending = []
             trunc = piece[:max_seq_len]
             emitted_tokens += len(trunc)
-            cum += len(piece)
+            # Re-sync, do NOT advance by len(piece). The invariant that makes the
+            # `pending` retirement test (`end_cum <= emitted_tokens`, line ~224) correct is
+            #     len(buf) == cum - emitted_tokens
+            # i.e. `cum` counts tokens that entered `buf` and `emitted_tokens` counts tokens
+            # that left it. This row never enters `buf`: it is truncated to max_seq_len and
+            # emitted alone, so the `piece[max_seq_len:]` tail is DISCARDED, never emitted.
+            # Advancing `cum` by len(piece) therefore leaked (len(piece) - max_seq_len) --
+            # always exactly 1, the EOS, since encode_row() already truncates to max_seq_len
+            # -- into a permanent offset D that grows by 1 per oversized row.
+            #
+            # Measured consequences of the old `cum += len(piece)` (max_seq_len=8):
+            #   30 oversized rows -> resume point lags ~10 rows;
+            #   1600 -> `consumed_through` never advances past the oversized block at all,
+            #   because every pending row's inflated end_cum stays above emitted_tokens.
+            # `pending` then grows linearly with the oversized-row count, and since
+            # _consumed_through() scans it once per emitted sequence, cost goes quadratic
+            # (0.6 ms -> 32 ms in that sweep). Over a 23.59B-token corpus with millions of
+            # over-length rows this is unbounded memory plus a resume point that silently
+            # re-reads a large tail of the shard. Here buf is empty and pending is empty, so
+            # assigning re-establishes the invariant exactly.
+            cum = emitted_tokens
             last_consumed = line_idx
             yield _make_seq(trunc, len(trunc), (line_idx, line_idx), seq_index,
                             max_seq_len, pad_id, line_idx)

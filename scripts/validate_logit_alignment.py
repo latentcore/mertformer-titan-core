@@ -22,6 +22,7 @@ Exit codes (repo convention):
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 import random
 import sys
@@ -38,6 +39,7 @@ from scripts.precompute_logits_topk import (  # noqa: E402
     STAGE_FILES,
     _stage_shards,
     assert_single_naming_mode,
+    identity_sidecar_path,
 )
 from train.packing import (  # noqa: E402
     TOPK_PACKED_FORMAT,
@@ -66,23 +68,87 @@ def _stage_rows(jsonl_path: Path):
             yield li, extract_row_text(obj)
 
 
+_META_KEYS = (
+    "format", "max_seq_len", "pad_id", "eos_id", "tokenizer_identity", "packer_version",
+)
+
+
+def _read_identity_sidecar(shard_path: Path):
+    """Return ``(meta, identities)`` from a shard's sidecar, or None to force a full load.
+
+    [K-6 2026-07-29] The sidecar (written by precompute_logits_topk._write_identity_sidecar)
+    carries the same wrapper metadata and the per-sequence identities, but none of the
+    Top-K logit tensors -- turning a multi-GiB ``torch.load`` per shard into a small JSON
+    read. It is a CACHE, never authoritative: anything unexpected returns None so the
+    caller re-reads the ``.pt`` itself. In particular ``shard_bytes`` is checked against
+    the shard on disk, so a regenerated shard invalidates its own stale sidecar instead of
+    letting the validator compare fresh sequences against old hashes -- which would be a
+    false PASS, the one failure mode that must not be possible here.
+    """
+    side_path = identity_sidecar_path(shard_path)
+    if not side_path.exists():
+        return None
+    try:
+        with side_path.open("r", encoding="utf-8") as handle:
+            data = json.load(handle)
+        if data.get("sidecar_format") != "identities_v1":
+            return None
+        identities = data.get("identities")
+        if not isinstance(identities, list):
+            return None
+        if int(data.get("count", -1)) != len(identities):
+            return None
+        if int(data.get("shard_bytes", -1)) != shard_path.stat().st_size:
+            print(f"⚠️  {side_path.name}: stale sidecar (shard size changed); "
+                  f"reading {shard_path.name} in full")
+            return None
+        meta = {key: data.get(key) for key in _META_KEYS}
+        return meta, identities
+    except Exception as exc:   # noqa: BLE001 - a bad cache must only cost us speed
+        print(f"⚠️  {side_path.name}: unreadable sidecar ({exc}); "
+              f"reading {shard_path.name} in full")
+        return None
+
+
 def _load_stored_identities(shards):
-    """Sequential per-item identities across all shards + first wrapper metadata."""
+    """Sequential per-item identities across all shards + first wrapper metadata.
+
+    Prefers each shard's ``.identities.json`` sidecar and falls back to a full
+    ``torch.load`` per shard when one is absent or stale (see _read_identity_sidecar).
+    Shard order is the caller's, which _stage_shards() already sorts by integer part
+    index to match what training consumes -- identities are positional, so that ordering
+    is load-bearing regardless of which path supplies them.
+    """
     meta = None
     identities = []
+    full_loads = 0
     for sh in shards:
+        cached = _read_identity_sidecar(sh)
+        if cached is not None:
+            side_meta, side_ids = cached
+            if meta is None:
+                meta = side_meta
+            identities.extend(side_ids)
+            continue
+
+        full_loads += 1
         chunk = torch.load(sh, map_location="cpu", weights_only=False)
         if isinstance(chunk, dict):
             if meta is None:
-                meta = {k: chunk.get(k) for k in (
-                    "format", "max_seq_len", "pad_id", "eos_id",
-                    "tokenizer_identity", "packer_version",
-                )}
+                meta = {k: chunk.get(k) for k in _META_KEYS}
             items = chunk.get("logits", [])
         else:
             items = chunk
         for it in items:
             identities.append(it.get("identity") if isinstance(it, dict) else None)
+        # Free the logit tensors before opening the next shard; without this the peak
+        # is the sum of every fully-loaded shard rather than the largest single one.
+        del chunk
+        gc.collect()
+
+    if full_loads:
+        print(f"ℹ️  {full_loads}/{len(shards)} shard(s) had no usable identity sidecar and "
+              f"were loaded in full. Re-running precompute writes the sidecars.")
     return meta, identities
 
 

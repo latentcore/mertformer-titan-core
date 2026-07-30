@@ -5,17 +5,27 @@ generated inputs, pinning the invariants that must hold for ALL valid
 ``(tokens, k, experts, factor)``: capacity is always >= 1, monotonically
 non-decreasing in the capacity factor, and covers the perfectly-balanced per-expert
 share at factor 1.0. Pure arithmetic (no torch), so it is fast and deterministic
-under hypothesis's own seeding. Mirrors the inline formula in layers/moe.py; if that
-logic is extracted into a helper, import it here instead of mirroring.
+under hypothesis's own seeding.
+
+[2026-07-29] These properties now hold over the SHIPPED ``layers.moe.moe_capacity``
+helper, not a local copy of the formula. Keep it that way: while the formula was
+mirrored here, the entire capacity block in ``MoE.forward`` could be rewritten and both
+capacity test files would stay green regardless.
 """
-import math
+import sys
+from pathlib import Path
 
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-def _capacity(n_tokens: int, k: int, num_experts: int, factor: float) -> int:
-    return max(1, int(math.ceil(factor * (n_tokens * k) / max(1, num_experts))))
+# [2026-07-29] Now imports the SHIPPED helper instead of mirroring the formula locally,
+# per this file's own standing note ("Mirrors the inline formula in layers/moe.py; if
+# that logic is extracted into a helper, import it here instead of mirroring").
+# layers.moe.moe_capacity is that extraction. While mirrored, these properties held
+# over a private copy and could not detect a change to the real capacity path.
+from layers.moe import moe_capacity as _capacity
 
 
 @settings(max_examples=200)

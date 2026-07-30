@@ -19,6 +19,7 @@ every symbol so all historical imports keep working unchanged.
 from config.build_label import BUILD_LABEL as __version__
 __author__ = "Mert Yünlü"
 
+import array
 import json
 import random
 from pathlib import Path
@@ -108,11 +109,21 @@ class CurriculumDataset(IterableDataset):
         #     yielded the first line, distorting intra-stage source ratios. Fix:
         #     index each non-empty line's byte offset once, then sample a UNIFORM
         #     line index (no length bias).
+        # [MED · Y-8 2026-07-29] The offset index is array("q"), not list[int].
+        #     A Python list of ints stores a pointer per slot PLUS a boxed int object;
+        #     measured 34.8 MiB per 1M offsets versus 7.6 MiB for array("q") -- 4.56x.
+        #     The index is built per stage file and, because CurriculumDataset is an
+        #     IterableDataset, the whole object is copied into every DataLoader worker,
+        #     so the multiplier compounds with num_workers. At the canonical corpus
+        #     scale (~100M lines) this is the difference between ~3.4 GiB and ~0.75 GiB
+        #     of host RAM per worker. Downstream use is only len(), [idx] and a
+        #     truthiness check (see __iter__), all of which array supports identically;
+        #     "q" is a signed 64-bit slot, so byte offsets beyond 2 GiB are fine.
         self.file_offsets = {}
         self.line_offsets = {}
         for p in stage_paths:
             if p.exists():
-                offsets = []
+                offsets = array.array("q")
                 with open(p, "rb") as f:
                     pos = f.tell()
                     line = f.readline()

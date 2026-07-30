@@ -42,6 +42,29 @@ def _moe_packed_bitlinear(x: torch.Tensor, weight: torch.Tensor) -> torch.Tensor
     return F.linear(x_q, w_q, None)
 
 
+def moe_capacity(n_tokens: int, top_k: int, num_experts: int, capacity_factor: float) -> int:
+    """Switch-style per-expert capacity: ceil(factor * total_assignments / experts), min 1.
+
+    [2026-07-29] Extracted from ``MoE.forward`` so it can be imported and tested for
+    real. Both ``tests/test_moe_capacity.py`` and ``tests/test_property_moe_capacity.py``
+    previously re-implemented this formula as a local copy, and each said so explicitly
+    ("Mirrors the inline formula in layers/moe.py; if that logic is extracted into a
+    helper, import it here instead of mirroring"). That meant neither test actually
+    exercised the shipped code -- a change to the real capacity path could break it while
+    both tests stayed green. This is that extraction; the tests now import this function.
+
+    Args:
+        n_tokens: flattened token count (batch x seq).
+        top_k: experts selected per token.
+        num_experts: size of the routed expert pool.
+        capacity_factor: slack multiplier over a perfectly balanced share (1.0 = exact
+            share; the canonical config uses 1.25).
+    Returns:
+        Maximum assignments a single expert may accept, floored at 1.
+    """
+    return max(1, int(math.ceil(capacity_factor * (n_tokens * top_k) / max(1, num_experts))))
+
+
 class BitSwiGLU(nn.Module):
     """
     BitNet SwiGLU block - Optimization for MoE experts.
@@ -701,37 +724,64 @@ class MoE(nn.Module):
         overflow_ratio = torch.tensor(0.0, device=x.device, dtype=torch.float32)
 
         # Switch-style capacity control: cap per-expert assignments and renormalize gates.
+        #
+        # [2026-07-29] Fully vectorized. The previous implementation looped over experts
+        # and called `(topk_idx == e).nonzero()` for each -- and `torch.nonzero` needs a
+        # device->host sync to size its output. With E=8 experts x 6 MoE layers, plus the
+        # `empty_rows.any()` and `int(overflow.size(0))` syncs, that was ~50+ pipeline
+        # stalls per micro-batch on top of an O(E) full-tensor scan of N*k elements
+        # (N = micro_batch x 4096 at the canonical config). This version is sync-free.
+        #
+        # SEMANTICS ARE PRESERVED EXACTLY, and that is the delicate part: `nonzero()`
+        # returns hits in ROW-MAJOR order, so the old code kept each expert's first
+        # `capacity` assignments ordered by (row, then column). `topk_idx.reshape(-1)`
+        # produces flat index `row * k + col`, i.e. that same row-major order, and a
+        # STABLE argsort groups by expert while preserving it inside each group. The
+        # rank-within-group is therefore identical to the old slice boundary.
+        # scripts/cfc_moe_tolerance_check.py is the gate on this (max_diff must stay 0).
         if self.moe_capacity_enforce and self.moe_capacity_factor > 0.0:
-            capacity = max(1, int(math.ceil(self.moe_capacity_factor * (N * k) / max(1, E))))
-            dropped = 0
-            for expert_id_int in range(E):
-                hits = (topk_idx == expert_id_int).nonzero(as_tuple=False)
-                if hits.size(0) > capacity:
-                    overflow = hits[capacity:]
-                    capacity_mask[overflow[:, 0], overflow[:, 1]] = False
-                    dropped += int(overflow.size(0))
+            capacity = moe_capacity(N, k, E, self.moe_capacity_factor)
+
+            flat_e = topk_idx.reshape(-1)                                   # (N*k,) row-major
+            order = torch.argsort(flat_e, stable=True)                      # expert-grouped
+            slot_counts = torch.zeros(E, device=flat_e.device, dtype=torch.long)
+            slot_counts.scatter_add_(0, flat_e, torch.ones_like(flat_e))
+            group_starts = torch.cumsum(slot_counts, 0) - slot_counts
+            rank_in_sorted = torch.empty_like(order)
+            rank_in_sorted[order] = torch.arange(order.numel(), device=order.device)
+            within_group = rank_in_sorted - group_starts[flat_e]
+            capacity_mask = (within_group < capacity).reshape(topk_idx.shape)
+
+            # Count drops BEFORE the empty-row restoration, matching the old ordering
+            # (the old `dropped` was accumulated before the restoration ran).
+            dropped = (~capacity_mask).sum()
 
             topk_vals = topk_vals * capacity_mask.float()
+            # Any token whose every choice was dropped falls back to its top-1 expert.
+            # Done with torch.where instead of `if empty_rows.any(): ...` so no sync.
             empty_rows = topk_vals.sum(dim=-1) <= 0
-            if empty_rows.any():
-                topk_vals[empty_rows, 0] = 1.0
-                capacity_mask[empty_rows, 0] = True
+            first_slot = torch.zeros_like(capacity_mask)
+            first_slot[:, 0] = True
+            force_first = empty_rows.unsqueeze(-1) & first_slot
+            topk_vals = torch.where(force_first, torch.ones_like(topk_vals), topk_vals)
+            capacity_mask = capacity_mask | force_first
 
             topk_vals = topk_vals / topk_vals.sum(dim=-1, keepdim=True).clamp(min=1e-6)
-            overflow_ratio = torch.tensor(
-                float(dropped) / float(max(1, N * k)),
-                device=x.device,
-                dtype=torch.float32,
-            )
+            overflow_ratio = dropped.to(torch.float32) / float(max(1, N * k))
 
         # [TELEMETRY] Load Calculation (Always compute for monitoring)
-        # MPS Safe Bincount: Use scatter_add_ instead of bincount for compatibility
-        flat_idx = topk_idx[capacity_mask].reshape(-1)
-        counts = torch.zeros(E, device=flat_idx.device, dtype=torch.float32)
-        if flat_idx.numel() > 0:
-            counts.scatter_add_(0, flat_idx, torch.ones_like(flat_idx, dtype=torch.float32))
-        
-        denom = float(max(1, int(flat_idx.numel())))
+        # MPS Safe Bincount: Use scatter_add_ instead of bincount for compatibility.
+        # [2026-07-29] Counts are now accumulated with the capacity mask as the scatter
+        # WEIGHT rather than via `topk_idx[capacity_mask]`. Boolean-mask indexing has a
+        # data-dependent output size and therefore also forces a device->host sync every
+        # forward; weighting the scatter is mathematically identical (dropped slots
+        # contribute 0) and stays on-device.
+        mask_flat = capacity_mask.reshape(-1).to(torch.float32)
+        counts = torch.zeros(E, device=topk_idx.device, dtype=torch.float32)
+        counts.scatter_add_(0, topk_idx.reshape(-1), mask_flat)
+
+        # Kept-assignment count as a tensor (was `float(int(flat_idx.numel()))`, a sync).
+        denom = mask_flat.sum().clamp(min=1.0)
         load = counts / denom
         self.last_expert_load.copy_(load.detach()) # Store for logging
         self.last_router_max_load.copy_(load.max().detach())
@@ -885,12 +935,18 @@ class MoE(nn.Module):
         if counts.numel() == 0:
             return out_flat
 
+        # [2026-07-29] One device->host transfer instead of E of them. This loop needs the
+        # per-expert segment boundaries as Python ints to slice with, and it used to read
+        # them one at a time via `int(counts[e].item())` -- E separate syncs per MoE layer
+        # per micro-batch (x6 MoE layers x grad_accum). `.tolist()` moves the whole E-length
+        # boundary vector in a single transfer. Identical segmentation, identical order.
+        segment_ends = torch.cumsum(counts, 0).tolist()
+
         start = 0
         for expert_id_int, expert in enumerate(self.experts):
-            cnt = int(counts[expert_id_int].item())
-            if cnt == 0:
+            end = segment_ends[expert_id_int]
+            if end == start:
                 continue
-            end = start + cnt
             idx = token_sorted[start:end]
             w = weight_sorted[start:end].unsqueeze(-1)
             selected_x = x_flat.index_select(0, idx)
@@ -900,6 +956,14 @@ class MoE(nn.Module):
             expert_out = expert(selected_x)
             if expert_out.dtype != out_flat.dtype:
                 expert_out = expert_out.to(dtype=out_flat.dtype)
-            out_flat.index_add_(0, idx, expert_out * w)
+            # [2026-07-29] `index_add_` REQUIRES source dtype == self dtype (unlike
+            # `__setitem__`, which casts). `expert_out` is cast to out_flat.dtype just
+            # above, but `w` comes from topk_vals, which is fp32 (the router deliberately
+            # computes in fp32), so `expert_out * w` promoted BACK to fp32 and the call
+            # only survived because the residual stream happens to stay fp32 under
+            # autocast (nn.Embedding is not autocast-listed, and `fp32 + bf16` promotes to
+            # fp32). That is an accident, not an invariant: anything that makes the
+            # residual bf16 would turn this into a hard RuntimeError mid-training.
+            out_flat.index_add_(0, idx, expert_out * w.to(out_flat.dtype))
             start = end
         return out_flat

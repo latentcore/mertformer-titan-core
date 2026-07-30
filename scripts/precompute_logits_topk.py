@@ -69,6 +69,70 @@ def _atomic_torch_save(payload, path: Path) -> None:
     tmp_path = path.with_suffix(path.suffix + ".tmp")
     torch.save(payload, tmp_path)
     os.replace(tmp_path, path)
+    _write_identity_sidecar(path, payload)
+
+
+def identity_sidecar_path(shard_path: Path) -> Path:
+    """Sidecar holding a shard's per-sequence identities WITHOUT its logit tensors.
+
+    Named ``<shard>.pt.identities.json`` so it never matches ``_stage_pattern()``'s
+    ``*_part_*.pt`` glob and is therefore invisible to every shard-counting gate.
+    """
+    return shard_path.with_suffix(shard_path.suffix + ".identities.json")
+
+
+# Wrapper keys copied verbatim into the sidecar. Must stay a superset of what
+# validate_logit_alignment._load_stored_identities reads out of `meta`.
+_SIDECAR_META_KEYS = (
+    "format", "max_seq_len", "pad_id", "eos_id", "tokenizer_identity", "packer_version",
+)
+
+
+def _write_identity_sidecar(shard_path: Path, payload) -> None:
+    """Write the identity-only sidecar for a shard that is already safely in place.
+
+    [K-6 2026-07-29] validate_logit_alignment.py used to ``torch.load`` every shard in
+    full purely to read each item's small ``identity`` dict, materialising all the Top-K
+    teacher logits in host RAM to do it. At the canonical corpus scale that is hundreds of
+    GiB of reads for a few MiB of hashes, which makes the alignment gate unrunnable on
+    anything but the training box. The sidecar makes the common path a small JSON read.
+
+    Called AFTER ``os.replace``, so a sidecar's existence implies a complete shard -- and
+    never the other way round. A failure here is deliberately non-fatal: the sidecar is a
+    cache, the ``.pt`` remains the source of truth, and the read side falls back to a full
+    load (with a warning) whenever the sidecar is missing, stale or unparseable. Raising
+    would turn a cache miss into a lost precompute shard, which is the far more expensive
+    outcome.
+    """
+    try:
+        if not isinstance(payload, dict):
+            return
+        items = payload.get("logits")
+        if not isinstance(items, list):
+            return
+        identities = [it.get("identity") if isinstance(it, dict) else None for it in items]
+
+        sidecar = {
+            "sidecar_format": "identities_v1",
+            "shard_name": shard_path.name,
+            # Cheap staleness key: a regenerated shard of any different length
+            # invalidates the cache without needing to read the .pt back.
+            "shard_bytes": shard_path.stat().st_size,
+            "count": len(identities),
+            "identities": identities,
+        }
+        for key in _SIDECAR_META_KEYS:
+            if key in payload:
+                sidecar[key] = payload[key]
+
+        side_path = identity_sidecar_path(shard_path)
+        tmp_path = side_path.with_suffix(side_path.suffix + ".tmp")
+        with tmp_path.open("w", encoding="utf-8") as handle:
+            json.dump(sidecar, handle, ensure_ascii=False, sort_keys=True)
+        os.replace(tmp_path, side_path)
+    except Exception as exc:   # noqa: BLE001 - cache write must never lose a shard
+        logger.warning("Identity sidecar for %s not written (%s); validation will fall "
+                       "back to a full shard load.", shard_path.name, exc)
 
 
 def _state_path(logits_dir: Path, stage_name: str) -> Path:

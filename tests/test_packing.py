@@ -83,3 +83,113 @@ def test_consumed_through_advances_for_resume():
     cons = [s["consumed_through"] for s in seqs]
     assert cons == sorted(cons)
     assert cons[-1] <= 3
+
+
+# --- Y-5 [2026-07-29]: oversized rows must not desynchronise the resume counter -------
+#
+# The `pending` window retires a row when `end_cum <= emitted_tokens`, which is only a
+# valid test while `len(buf) == cum - emitted_tokens` holds. The oversized branch used to
+# do `cum += len(piece)` for a row it emitted TRUNCATED (and whose tail it discarded),
+# leaking exactly 1 token -- the EOS -- per oversized row into a permanent offset. The
+# tests below pin the observable consequences, all of which were wrong before the fix.
+
+def _mixed_rows(n_oversized: int, n_normal: int, wide: str = "x" * 99):
+    """`n_oversized` over-length rows first, then `n_normal` short rows."""
+    rows = [(i, wide) for i in range(n_oversized)]
+    rows += [(n_oversized + i, "ab") for i in range(n_normal)]
+    return rows
+
+
+def _worst_resume_lag(rows, max_seq_len=8):
+    """Largest gap between a sequence's last contributing row and its resume point.
+
+    NOTE for future maintainers: do NOT probe this with ``seqs[-1]``. The trailing
+    ``if buf:`` flush sets consumed_through from ``pending[-1][0]`` unconditionally, so
+    the final sequence reports a perfect resume point even when every mid-stream one is
+    stale. Measured with the pre-fix code, the final-sequence lag was 0 across
+    1..400 oversized rows while the mid-stream lag ran to 134 rows.
+    """
+    tok = _StubTokenizer()
+    seqs = list(packing.iter_packed_sequences(iter(rows), tok, max_seq_len, 2, 0))
+    assert seqs, "packer produced nothing"
+    return max(s["row_span"][1] - s["consumed_through"] for s in seqs)
+
+
+def test_resume_point_never_trails_its_own_row_span():
+    """A sequence's resume point must stay adjacent to the rows it just consumed.
+
+    One row of lag is structural: the row straddling the sequence boundary is genuinely
+    not finished yet. Anything beyond that is leaked `cum`. Pre-fix this test failed from
+    5 oversized rows upward (lag 3), reaching 134 at 400.
+    """
+    for n_oversized in (0, 1, 5, 30, 100, 400):
+        lag = _worst_resume_lag(_mixed_rows(n_oversized, 300))
+        assert lag <= 1, (
+            f"{n_oversized} oversized rows left the resume point {lag} rows behind "
+            f"the sequence's own row_span"
+        )
+
+
+def test_resume_lag_does_not_grow_with_oversized_row_count():
+    """The lag must be INDEPENDENT of how many oversized rows preceded it.
+
+    Pre-fix the same sweep produced [1, 1, 3, 11, 34, 134] -- linear in the oversized
+    count, hence unbounded over a real multi-billion-token corpus. Post-fix it is flat.
+    """
+    lags = [_worst_resume_lag(_mixed_rows(n, 300))
+            for n in (0, 1, 5, 30, 100, 400)]
+    assert len(set(lags)) == 1, f"resume lag scales with oversized rows: {lags}"
+
+
+def test_pending_window_stays_bounded_across_oversized_rows():
+    """`pending` is internal, so probe it through its observable effects.
+
+    An unretired `pending` entry is exactly what holds consumed_through back, so a
+    bounded lag over a long mixed stream proves the window is being drained. The old
+    code let `pending` grow linearly with the oversized count, which also made
+    ``_consumed_through()`` -- an O(len(pending)) scan run once per emitted sequence --
+    quadratic overall (0.6 ms -> 32 ms over a 0..6400 oversized sweep).
+    """
+    tok = _StubTokenizer()
+    rows = _mixed_rows(200, 600)
+    seqs = list(packing.iter_packed_sequences(iter(rows), tok, 8, 2, 0))
+
+    cons = [s["consumed_through"] for s in seqs]
+    assert cons == sorted(cons), "consumed_through must stay monotone"
+    assert _worst_resume_lag(rows) <= 1
+
+
+def test_oversized_row_emits_exactly_max_seq_len_and_discards_its_tail():
+    """Pins WHY cum must not advance by len(piece): the tail is never emitted."""
+    tok = _StubTokenizer()
+    max_seq_len = 8
+    seqs = list(packing.iter_packed_sequences(_rows("x" * 99), tok, max_seq_len, 2, 0))
+    assert len(seqs) == 1
+    assert seqs[0]["true_len"] == max_seq_len
+    assert len(seqs[0]["input_ids"]) == max_seq_len
+    assert seqs[0]["consumed_through"] == 0
+
+
+def test_oversized_fix_preserves_the_token_stream():
+    """The fix touches resume bookkeeping only -- packed tokens must be untouched.
+
+    The packer is contractually a pure function of (rows, max_seq_len, eos, pad,
+    tokenizer) because the teacher and student streams must stay byte-identical; a
+    change to the emitted tokens would invalidate every precomputed teacher logit.
+
+    The constants below were captured by RUNNING THE PRE-FIX implementation on this
+    exact input, so this test fails if the resume-counter fix ever perturbs the tokens.
+    """
+    tok = _StubTokenizer()
+    rows = [(i, "x" * 99 if i % 7 == 0 else "ab") for i in range(200)]
+    seqs = list(packing.iter_packed_sequences(iter(rows), tok, 8, 2, 0))
+
+    assert len(seqs) == 115
+    assert [s["true_len"] for s in seqs] == [8, 8, 8, 2] * 28 + [8, 8, 1]
+    # Byte-level anchor: the packed-token hash of the first sequence.
+    assert seqs[0]["identity"] == {"len": 8, "hash": "9578f9bc5668648abb3560c7e539d0a4"}
+
+    # Determinism, not merely stability: a second pass must reproduce it exactly.
+    again = list(packing.iter_packed_sequences(iter(rows), tok, 8, 2, 0))
+    assert [s["identity"] for s in again] == [s["identity"] for s in seqs]
+    assert [s["input_ids"] for s in again] == [s["input_ids"] for s in seqs]
