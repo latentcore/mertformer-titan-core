@@ -522,14 +522,23 @@ class MertFormerConfig:
     grad_accum_steps: Optional[int] = field(default=None)  # Auto-configured
     
     def __post_init__(self):
-        """Post-initialization: Auto-configure batch sizes if not set."""
-        if self.micro_batch_size is None or self.grad_accum_steps is None:
-            auto_micro, auto_accum = auto_configure_batch_size(target_global_batch=self.batch_size, conf=self)
-            if self.micro_batch_size is None:
-                self.micro_batch_size = auto_micro
-            if self.grad_accum_steps is None:
-                self.grad_accum_steps = auto_accum
-        
+        """Post-initialization: CPU-worker cap only.
+
+        [2026-07-29] Batch auto-configuration deliberately does NOT happen here any
+        more -- it moved to `_finalize_config()`, which runs AFTER the YAML overlays are
+        applied. Reason: `__post_init__` fires during `MertFormerConfig()` construction,
+        i.e. BEFORE `_apply_overrides()`. It filled in `micro_batch_size` /
+        `grad_accum_steps` from the pre-overlay `batch_size`, which then made
+        `_finalize_config()`'s `is None` re-computation guard permanently false. So an
+        overlay that set `batch_size: 1024` got a micro/accum pair still solved for
+        `batch_size=128` -- the run silently trained at 1/8 of the intended global batch,
+        and the TITAN_STRICT_TOKEN_BUDGET guard could not see it either because that
+        guard reads `cfg.batch_size`, not the realized micro x accum product.
+
+        Constructing MertFormerConfig() directly (tests, scripts) therefore leaves
+        micro/accum as None until _finalize_config() is called. The module-level
+        singleton below always calls it, so `cfg` is unchanged for every real consumer.
+        """
         # [TITAN AUTO-TUNE] Adjust workers based on CPU cores
         try:
             import os
@@ -811,13 +820,42 @@ def _apply_overrides(cfg: MertFormerConfig, overrides: Dict[str, Any]) -> None:
 
 
 def _finalize_config(cfg: MertFormerConfig) -> None:
-    """Finalize config after overrides (batch size auto-tune, worker cap)."""
+    """Finalize config AFTER overrides (batch size auto-tune, worker cap, contract).
+
+    This is the only place batch auto-configuration happens, precisely because it runs
+    after `_apply_overrides()` -- see the `__post_init__` docstring for the overlay bug
+    that motivated moving it here.
+    """
     if cfg.micro_batch_size is None or cfg.grad_accum_steps is None:
         auto_micro, auto_accum = auto_configure_batch_size(target_global_batch=cfg.batch_size, conf=cfg)
         if cfg.micro_batch_size is None:
             cfg.micro_batch_size = auto_micro
         if cfg.grad_accum_steps is None:
             cfg.grad_accum_steps = auto_accum
+
+    # Honesty guard: surface a micro x accum product that does not reconstruct the
+    # requested global batch_size. Warn rather than raise -- an operator may pin
+    # micro/accum deliberately (small-GPU smoke runs do exactly this), and a hard
+    # failure here would break every reduced-size script in scripts/. But it must never
+    # be silent: this mismatch is what the pre-2026-07-29 overlay ordering produced
+    # invisibly, and it changes the effective token budget of the whole run.
+    try:
+        micro = int(cfg.micro_batch_size or 0)
+        accum = int(cfg.grad_accum_steps or 0)
+        requested = int(cfg.batch_size or 0)
+        realized = micro * accum
+        if micro > 0 and accum > 0 and requested > 0 and realized != requested:
+            print(
+                f"⚠️  BATCH SHAPE MISMATCH: batch_size={requested} but "
+                f"micro_batch_size({micro}) x grad_accum_steps({accum}) = {realized}. "
+                f"Per-process global batch is {realized}, not {requested}; the token "
+                f"budget derived from batch_size will not match what actually trains. "
+                f"(Expected when micro/accum are pinned on purpose; unexpected if an "
+                f"overlay changed batch_size alone.)",
+                file=sys.stderr,
+            )
+    except (TypeError, ValueError):
+        pass
 
     try:
         cpu_count = os.cpu_count() or 4

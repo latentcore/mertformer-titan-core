@@ -2018,6 +2018,34 @@ def train() -> None:
                                 latest_val_loss = float(val_loss)
                                 print(f"📊 Validation Loss: {val_loss:.4f} (Best: {best_val_loss:.4f})")
 
+                                # [2026-07-29] Emit the validation point to the run log.
+                                # Until now val_loss existed ONLY as console text, so
+                                # scripts/plot_training_log.py's validation panels (and
+                                # any post-run analysis reading logs/*.jsonl) had no
+                                # source of eval data at all -- the loss curve could
+                                # never be compared against held-out loss. Purely
+                                # additive, main-process only, inside the existing
+                                # guard; nothing above or below is reordered.
+                                if logger:
+                                    try:
+                                        val_ppl = math.exp(min(float(val_loss), 20.0))
+                                    except (OverflowError, ValueError):
+                                        val_ppl = None
+                                    logger.log_step(
+                                        {
+                                            "type": "eval",
+                                            "step": global_step,
+                                            "val_loss": float(val_loss),
+                                            "val_ppl_capped": val_ppl,
+                                            "val_samples": int(val_samples_global),
+                                            "best_val_loss": (
+                                                float(best_val_loss)
+                                                if math.isfinite(float(best_val_loss))
+                                                else None
+                                            ),
+                                        }
+                                    )
+
                                 # EVAL-DRIVEN EARLY STOPPING
                                 if val_loss < best_val_loss:
                                     previous_best_val_loss = best_val_loss

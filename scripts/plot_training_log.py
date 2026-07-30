@@ -18,15 +18,34 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
-try:
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    import matplotlib.ticker as ticker
-    from matplotlib.gridspec import GridSpec
-except ImportError:
-    print("❌  matplotlib gerekli: pip install matplotlib")
-    sys.exit(1)
+# matplotlib is imported LAZILY (see _require_matplotlib) rather than at module
+# import time. Two reasons:
+#   1. Parsing + the console summary need no plotting backend at all, so they must
+#      stay usable (and unit-testable) in an environment without matplotlib.
+#   2. scripts/one_command_full_sop.sh runs this script as a ladder step. A
+#      hard `sys.exit(1)` at import turned "matplotlib not installed" into a FAILED
+#      ladder step instead of a skipped chart -- and matplotlib is genuinely absent
+#      from a freshly bootstrapped .titan-venv even though requirements.txt lists it.
+plt = None
+ticker = None
+GridSpec = None
+
+
+def _require_matplotlib() -> bool:
+    """Import matplotlib on demand. Returns False (no raise) when unavailable."""
+    global plt, ticker, GridSpec
+    if plt is not None:
+        return True
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as _plt
+        import matplotlib.ticker as _ticker
+        from matplotlib.gridspec import GridSpec as _GridSpec
+    except ImportError:
+        return False
+    plt, ticker, GridSpec = _plt, _ticker, _GridSpec
+    return True
 
 # ─────────────────────────────────────────────────────────────────────────────
 # THEME
@@ -85,16 +104,67 @@ def apply_theme(dark: bool = True):
 # DATA PARSING
 # ─────────────────────────────────────────────────────────────────────────────
 
+STEP_FIELD_ALIASES = {
+    # dashboard key            : accepted source keys, in priority order
+    "loss": ("loss",),
+    "ce": ("ce",),
+    "kd": ("kd", "distill"),
+    "aux_loss": ("aux_loss", "aux"),
+    "router_entropy": ("router_entropy", "moe_load_entropy"),
+    "router_max_load": ("router_max_load", "moe_max_load"),
+    "collapse_detected": ("collapse_detected", "router_collapse"),
+    "grad_norm": ("grad_norm",),
+    "lr": ("lr",),
+    "tok_s": ("tokens_per_sec", "tok_s"),
+    "tokens_seen": ("tokens_seen",),
+    "capacity_overflow_ratio": ("capacity_overflow_ratio", "moe_capacity_overflow"),
+}
+
+
+def _record_view(entry: Dict[str, Any]) -> Dict[str, Any]:
+    """Return the dict that actually holds the metric fields.
+
+    ``utils/logger.py::RunLogger.log_step`` writes step metrics **flat** at the top
+    level of the record; ``log_event`` nests its payload under ``"data"``. This
+    parser previously only looked at ``entry["data"]``, so every real step record
+    (the flat kind) resolved to ``{}``, ``step`` came back ``None``, and the whole
+    dashboard silently reported "No training steps found" and exited 1. Accept both
+    shapes.
+    """
+    nested = entry.get("data")
+    return nested if isinstance(nested, dict) else entry
+
+
+def _pick(row: Dict[str, Any], names: tuple, default: Any = None) -> Any:
+    """First non-None value among ``names``.
+
+    train/train.py emits the MoE telemetry under ``moe_*`` names
+    (``moe_load_entropy``, ``moe_max_load``, ``moe_capacity_overflow``) and the aux
+    loss as ``aux``/``distill``, while this dashboard's panels were written against
+    ``router_*`` / ``aux_loss`` / ``kd``. Both spellings are accepted so the MoE
+    Health and loss panels are populated by the real trainer output.
+    """
+    for name in names:
+        value = row.get(name)
+        if value is not None:
+            return value
+    return default
+
+
 def parse_log(path: str) -> Dict[str, List]:
     """Parse JSONL log file into metric arrays."""
-    steps = {
-        "step": [], "loss": [], "ce": [], "kd": [], "aux_loss": [],
-        "router_entropy": [], "router_max_load": [], "collapse_detected": [],
-        "grad_norm": [], "lr": [], "tok_s": [], "tokens_seen": [],
-        "capacity_overflow_ratio": [],
-    }
+    steps = {"step": [], **{key: [] for key in STEP_FIELD_ALIASES}}
     evals = {"step": [], "val_loss": [], "val_ppl": []}
     config_info: Dict[str, Any] = {}
+
+    # train/train.py calls logger.log_step() TWICE per logged optimizer step (once
+    # with the compact `metrics` dict, once with the richer `log_data` dict), both
+    # tagged type="step" and both carrying the same step number. Merge by step so a
+    # single point per step is plotted with the union of both field sets, instead of
+    # two half-populated points. Same approach preflight_run.py::parse_step_csvs
+    # already uses for the CSV side.
+    merged_steps: Dict[int, Dict[str, Any]] = {}
+    merged_evals: Dict[int, Dict[str, Any]] = {}
 
     with open(path, "r", encoding="utf-8") as f:
         for line in f:
@@ -106,41 +176,37 @@ def parse_log(path: str) -> Dict[str, List]:
             except json.JSONDecodeError:
                 continue
 
-            data = entry.get("data", {})
-            entry_type = entry.get("type") or data.get("type", "")
+            row = _record_view(entry)
+            entry_type = entry.get("type") or row.get("type", "")
 
             if entry_type == "config":
-                config_info = data
+                config_info = row
                 continue
 
-            if entry_type == "step":
-                step = data.get("step")
-                if step is None:
+            if entry_type in ("step", "eval"):
+                raw_step = row.get("global_step", row.get("step"))
+                try:
+                    step = int(raw_step)
+                except (TypeError, ValueError):
                     continue
-                steps["step"].append(step)
-                steps["loss"].append(data.get("loss"))
-                steps["ce"].append(data.get("ce"))
-                steps["kd"].append(data.get("kd"))
-                steps["aux_loss"].append(data.get("aux_loss"))
-                steps["router_entropy"].append(data.get("router_entropy"))
-                steps["router_max_load"].append(data.get("router_max_load"))
-                steps["collapse_detected"].append(data.get("collapse_detected", 0))
-                steps["grad_norm"].append(data.get("grad_norm"))
-                steps["lr"].append(data.get("lr"))
-                steps["tok_s"].append(data.get("tokens_per_sec") or data.get("tok_s"))
-                steps["tokens_seen"].append(data.get("tokens_seen"))
-                steps["capacity_overflow_ratio"].append(
-                    data.get("capacity_overflow_ratio", 0)
-                )
+                bucket = merged_steps if entry_type == "step" else merged_evals
+                target = bucket.setdefault(step, {})
+                for key, value in row.items():
+                    if value is not None:
+                        target[key] = value
 
-            elif entry_type == "eval":
-                step = data.get("step")
-                if step is None:
-                    continue
-                evals["step"].append(step)
-                evals["val_loss"].append(data.get("val_loss"))
-                ppl = data.get("val_ppl_capped") or data.get("val_ppl")
-                evals["val_ppl"].append(ppl)
+    for step in sorted(merged_steps):
+        row = merged_steps[step]
+        steps["step"].append(step)
+        for key, aliases in STEP_FIELD_ALIASES.items():
+            default = 0 if key in ("collapse_detected", "capacity_overflow_ratio") else None
+            steps[key].append(_pick(row, aliases, default))
+
+    for step in sorted(merged_evals):
+        row = merged_evals[step]
+        evals["step"].append(step)
+        evals["val_loss"].append(_pick(row, ("val_loss",)))
+        evals["val_ppl"].append(_pick(row, ("val_ppl_capped", "val_ppl")))
 
     return steps, evals, config_info
 
@@ -486,6 +552,13 @@ Examples:
 
     if not args.no_summary:
         print_summary(steps, evals, config_info)
+
+    if not _require_matplotlib():
+        # Degrade to summary-only instead of failing the ladder step. The parsed
+        # metrics above are the substance; the PNG is a convenience.
+        print("⚠️  matplotlib not installed — summary printed, chart skipped.")
+        print("    Install it to get the PNG dashboard: pip install matplotlib")
+        return
 
     plot_dashboard(steps, evals, config_info, out_path, dark=dark)
 

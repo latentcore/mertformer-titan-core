@@ -4,13 +4,30 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-try:
-    from pptx import Presentation
-    from pptx.util import Inches
-except Exception as exc:  # pragma: no cover
-    raise SystemExit(
-        "python-pptx is required. Install with: pip install python-pptx"
-    ) from exc
+# python-pptx is imported LAZILY (see _require_pptx). Importing it at module load
+# turned "optional dependency absent" into a SystemExit at import time, which made the
+# pure text-transform helpers below (notably _replace_text, where the non-idempotency
+# bug lived) impossible to unit-test in an environment without python-pptx -- and
+# python-pptx is genuinely absent from a freshly bootstrapped .titan-venv even though
+# requirements.txt lists it. Same pattern as scripts/plot_training_log.py's matplotlib.
+Presentation = None
+Inches = None
+
+
+def _require_pptx() -> None:
+    """Import python-pptx on demand; raise a clear, actionable error if missing."""
+    global Presentation, Inches
+    if Presentation is not None:
+        return
+    try:
+        from pptx import Presentation as _Presentation
+        from pptx.util import Inches as _Inches
+    except Exception as exc:  # pragma: no cover - depends on local env
+        raise SystemExit(
+            "python-pptx is required for the PPTX write path. "
+            "Install with: pip install python-pptx"
+        ) from exc
+    Presentation, Inches = _Presentation, _Inches
 
 
 # NOT: Asagidaki "V2" etiketleri surum fosili degildir; bu betigin amaci
@@ -42,8 +59,20 @@ V2_BULLETS_TR = [
 
 
 def _replace_text(text: str) -> str:
+    """Apply the V2 stamp, IDEMPOTENTLY.
+
+    [2026-07-29] Each replacement's target string CONTAINS its source
+    ("Build 30" -> "Build 30 V2"), so a second run rewrote the already-stamped text
+    into "Build 30 V2 V2", a third into "Build 30 V2 V2 V2", and so on. Combined with
+    update_pptx()'s default of writing back over the SOURCE file, that silently and
+    irreversibly corrupted a binary deck on every re-run. The `new in out` guard makes
+    re-running a no-op. (_update_or_add_v2_slide below was already idempotent -- it
+    looks the slide up by title -- so only this path was affected.)
+    """
     out = text
     for old, new in REPLACEMENTS:
+        if new in out:
+            continue  # already stamped; re-applying would append another " V2"
         out = out.replace(old, new)
     return out
 
@@ -109,6 +138,7 @@ def _update_or_add_v2_slide(prs: Presentation, title: str, bullets: list[str]) -
 
 
 def update_pptx(path: Path, language: str, out: Path | None = None) -> Path:
+    _require_pptx()
     prs = Presentation(str(path))
 
     for _, shape in _iter_text_shapes(prs):
@@ -122,6 +152,9 @@ def update_pptx(path: Path, language: str, out: Path | None = None) -> Path:
     else:
         _update_or_add_v2_slide(prs, "Build 30 V2 Update", V2_BULLETS_EN)
 
+    # In-place write is the intended UX ("update the deck"), and it is safe now that
+    # _replace_text is idempotent -- before that guard, re-running this corrupted the
+    # binary source deck ("Build 30 V2 V2 V2") with no way back.
     target = out or path
     prs.save(str(target))
     return target

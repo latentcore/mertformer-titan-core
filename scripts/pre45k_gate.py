@@ -31,9 +31,21 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from scripts.ddp_smoke import run_ddp_smoke_test
-
 ROOT = Path(__file__).resolve().parent.parent
+
+# [2026-07-29] sys.path bootstrap must run BEFORE the `scripts.*` import below.
+# The canonical entrypoint (scripts/pre45k_gate.sh) invokes this as
+# `python -m scripts.pre45k_gate`, and tests import it as `from scripts import
+# pre45k_gate` -- both put the repo root on sys.path for us. But a plain
+# `python scripts/pre45k_gate.py` sets sys.path[0] to scripts/ instead, so
+# `import scripts.ddp_smoke` raised ModuleNotFoundError. This is the pre-spend
+# gate: the one script most likely to be run by hand, directly, the first time.
+# Every other script in this directory already does this bootstrap.
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.ddp_smoke import run_ddp_smoke_test  # noqa: E402  (needs the path above)
+
 DEFAULT_REPORT_JSON = ROOT / "reports" / "pre45k_gate_report.json"
 DEFAULT_REPORT_MD = ROOT / "reports" / "pre45k_gate_report.md"
 

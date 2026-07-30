@@ -230,6 +230,23 @@ def run_training_with_batch_fallback(root: Path, cmd: list[str], env: dict[str, 
             }
         )
         last_result = result
+        # NOTE (2026-07-29 audit, finding K-7 examined and REJECTED as a false positive):
+        # an external static review flagged `result["ok"] and not clear_oom` as a bug --
+        # "a successful run whose log tail mentions OOM gets needlessly re-run". Verified
+        # against the live code and tests/test_final_orchestrator_cli.py; the review was
+        # wrong on two counts and the condition is CORRECT as written:
+        #   1. train/train.py's OOM *safety brake* (max_consecutive_oom_backoff_fail
+        #      exhausted) breaks the loop, finalizes, and prints "Safety brake stop
+        #      finalized. reason=oom_backoff_exhausted" -- but `train()` is a function,
+        #      so the accelerate process still exits 0. A run can therefore be ok=True
+        #      while having genuinely died of OOM. Retrying at a smaller batch is exactly
+        #      the right response, and requires looking at the log, not just the exit code.
+        #   2. train.py's RECOVERED-OOM notice ("⚠️ OOM detected (1/5). Clearing cache...")
+        #      does not match any result_has_clear_oom() marker ("out of memory",
+        #      "cuda oom", "oom_backoff_exhausted", ...), so the "successful run needlessly
+        #      restarted" scenario the review described cannot actually fire.
+        # Do not "simplify" this to `if result["ok"]: return` -- that silently disables
+        # batch fallback for the one case it exists to handle.
         if result["ok"] and not clear_oom:
             return attach_batch_fallback_metadata(
                 result,
@@ -245,6 +262,11 @@ def run_training_with_batch_fallback(root: Path, cmd: list[str], env: dict[str, 
                 policy=policy,
             )
 
+    # Reaching here means every candidate batch size was tried and each one looked like
+    # a clear OOM -- the retry budget is exhausted. The last attempt may still carry
+    # ok=True (see the exit-0-after-safety-brake case noted in the loop above), so the
+    # block below is genuinely reachable and must stay: an exhausted OOM fallback is
+    # never reported as a green run.
     final_result = attach_batch_fallback_metadata(
         last_result or {"cmd": sanitize_text(" ".join(cmd), root), "return_code": EXIT_GATE_FAILED, "ok": False, "stdout_tail": "", "stderr_tail": ""},
         attempts=attempts,

@@ -30,11 +30,20 @@ from utils.dataset_registry import get_hf_revision
 # Import sources
 try:
     from scripts.data_pipeline import (
-        STAGE1_SOURCES, 
-        STAGE2_SOURCES, 
-        STAGE3_SOURCES, 
-        STAGE4_SOURCES, 
-        STAGE5_SOURCES
+        STAGE1_SOURCES,
+        STAGE2_SOURCES,
+        STAGE3_SOURCES,
+        STAGE4_SOURCES,
+        STAGE5_SOURCES,
+        # [2026-07-29] Reuse the pipeline's OWN field extractor instead of a local
+        # `item.get(field)`. A source's `field` is not always a plain string: it can be
+        # a dict (`{"join": ["instruction", "output"]}` for MathInstruct/gsm8k) or a
+        # list of candidate keys (`["text", "conversation", "messages"]` for the
+        # Stage-4/5 instruction sources). `dict.get()` with an unhashable dict/list key
+        # raises TypeError, which the broad `except Exception` below then reported as
+        # "error" -- so 7 of the ~11 configured sources were falsely marked unreachable
+        # even when they were perfectly fine. _extract_text handles all three shapes.
+        _extract_text,
     )
 except ImportError:
     print("❌ Critical: Could not import data pipeline sources.")
@@ -71,9 +80,18 @@ def check_source(source, log_file):
             name=subset,
             split=split,
             revision=revision,
+            # [2026-07-29] streaming=True is MANDATORY here, not an optimization.
+            # Several configured sources are TB-scale (bigcode/the-stack-dedup,
+            # HuggingFaceFW/fineweb-edu, uonlp/CulturaX); without streaming this call
+            # tries to download the entire split just to inspect ONE row, filling the
+            # disk and hanging for hours before failing. scripts/data_pipeline.py and
+            # scripts/eval.py already open the same sources with streaming=True.
+            streaming=True,
         )
         item = next(iter(ds))
-        content = item.get(field)
+        # Single-source extractor (see the import note): handles str / list-of-keys /
+        # {"join": [...]} field shapes identically to the real pipeline.
+        content = _extract_text(item, field) or None
 
         # Fallback check
         if content is None:

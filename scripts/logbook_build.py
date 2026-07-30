@@ -40,6 +40,29 @@ SENSITIVE_KEY_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+# KEEP IN SYNC with utils/logger.py _PROVENANCE_SAFE_KEYS.
+# [2026-07-29] The 40-hex catch-all above also matches a git commit SHA, so a run's
+# "git_commit" provenance field was being rewritten to REDACTED on this rebuild path
+# exactly as it was on the live-logger path. These key names hold a hash/identifier by
+# definition, never a credential, so their string values are exempt from VALUE-level
+# redaction. The key-NAME check (_is_sensitive_key) still applies to everything, and any
+# 40-hex appearing in free text (or under a non-provenance key) is still scrubbed.
+_PROVENANCE_SAFE_KEYS = frozenset(
+    {
+        "git_commit",
+        "sha256",
+        "hash",
+        "prev",
+        "chain_genesis",
+        "final_chain_hash",
+        "pre_final_chain_hash",
+        "config_hash",
+        "source_sha256",
+        "fingerprint_set_sha256",
+        "revision",
+    }
+)
+
 
 def _utc_iso() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
@@ -70,10 +93,14 @@ def _is_sensitive_key(key: str) -> bool:
     return bool(SENSITIVE_KEY_PATTERN.search(key))
 
 
-def _redact(obj: Any) -> Any:
+def _redact(obj: Any, _key: str | None = None) -> Any:
     if obj is None:
         return None
     if isinstance(obj, str):
+        # A provenance key's value is a hash/identifier by definition -- exempt it from
+        # the value-level patterns (notably the 40-hex one) so git SHAs survive.
+        if _key is not None and _key in _PROVENANCE_SAFE_KEYS:
+            return obj
         return _redact_text(obj)
     if isinstance(obj, (int, float, bool)):
         return obj
@@ -81,10 +108,12 @@ def _redact(obj: Any) -> Any:
         redacted: dict[str, Any] = {}
         for k, v in obj.items():
             key = str(k)
-            redacted[key] = "REDACTED" if _is_sensitive_key(key) else _redact(v)
+            # Propagate the key so nested provenance values (e.g. per-file
+            # {"sha256": ...} entries under "source_hashes") stay exempt too.
+            redacted[key] = "REDACTED" if _is_sensitive_key(key) else _redact(v, key)
         return redacted
     if isinstance(obj, (list, tuple)):
-        return [_redact(v) for v in obj]
+        return [_redact(v, _key) for v in obj]
     return _redact_text(str(obj))
 
 

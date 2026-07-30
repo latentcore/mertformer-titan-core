@@ -130,6 +130,32 @@ SENSITIVE_KEY_PATTERN = re.compile(
 )
 
 
+# KEEP IN SYNC with scripts/logbook_build.py _PROVENANCE_SAFE_KEYS.
+# [2026-07-29] The 40-hex catch-all in SECRET_PATTERNS above (added for WandB API keys)
+# also matches a git commit SHA, and `log_meta()` writes exactly such a SHA under
+# "git_commit". Result: every run log recorded its provenance as "[REDACTED]" -- the one
+# field that says WHICH COMMIT a run executed was destroyed by the repo's own secret
+# scrubber, in a repo whose entire discipline is provenance. These key names carry
+# content that is a hash/identifier BY DEFINITION, never a credential, so their string
+# values are exempt from value-level redaction. The key-name check (_is_sensitive_key)
+# still applies to everything, and every other field is still scrubbed.
+_PROVENANCE_SAFE_KEYS = frozenset(
+    {
+        "git_commit",
+        "sha256",
+        "hash",
+        "prev",
+        "chain_genesis",
+        "final_chain_hash",
+        "pre_final_chain_hash",
+        "config_hash",
+        "source_sha256",
+        "fingerprint_set_sha256",
+        "revision",
+    }
+)
+
+
 def _is_sensitive_key(key: str) -> bool:
     normalized = re.sub(r"[^A-Za-z0-9]+", "_", key).strip("_").lower()
     if normalized in {"token", "secret", "password", "passwd", "api_key", "access_key", "private_key", "credential"}:
@@ -144,10 +170,14 @@ def _redact_text(text: str) -> str:
     return out
 
 
-def _redact_obj(obj: Any) -> Any:
+def _redact_obj(obj: Any, _key: Optional[str] = None) -> Any:
     if obj is None:
         return None
     if isinstance(obj, str):
+        # A provenance key's value is a hash/identifier by definition -- exempt it from
+        # the value-level patterns (notably the 40-hex one) so git SHAs survive.
+        if _key is not None and _key in _PROVENANCE_SAFE_KEYS:
+            return obj
         return _redact_text(obj)
     if isinstance(obj, (int, float, bool)):
         return obj
@@ -158,10 +188,13 @@ def _redact_obj(obj: Any) -> Any:
             if _is_sensitive_key(key):
                 redacted[key] = "[REDACTED]"
             else:
-                redacted[key] = _redact_obj(v)
+                # Propagate the key so nested provenance values (e.g. the per-file
+                # {"sha256": ...} entries under "source_hashes") are exempt too.
+                redacted[key] = _redact_obj(v, key)
         return redacted
     if isinstance(obj, (list, tuple)):
-        return [_redact_obj(v) for v in obj]
+        # Carry the key through: a list of hashes under a provenance key stays exempt.
+        return [_redact_obj(v, _key) for v in obj]
     return _redact_text(str(obj))
 
 
@@ -558,6 +591,11 @@ class RunLogger:
             "chain_genesis": self._genesis_hash,
             "final_chain_hash": self._prev_hash,
             "csv_path": str(self.csv_path) if self.csv_path else None,
+            # [2026-07-29] The run manifest previously carried NO commit identity at all;
+            # the only record lived in the log_meta line, which the 40-hex secret pattern
+            # was silently redacting (see _PROVENANCE_SAFE_KEYS). A run's manifest is the
+            # artifact downstream evidence tooling reads, so the commit belongs here too.
+            "git_commit": try_git_commit(self.project_root),
         }
         if extra:
             manifest["extra"] = _redact_obj(_safe_json(extra))
