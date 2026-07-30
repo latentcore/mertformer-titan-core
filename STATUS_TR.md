@@ -5,7 +5,7 @@ Kanonik, elle tutulan durum giriş noktası. Üretilen ayrıntı `reports/` alt�
 
 ## Tek bakış
 - **Aşama:** pre-training **closure-complete** — kanonik model **henüz eğitilmedi**.
-- **Build:** `724 passed, 4 skipped` (offline-first `pytest`). Bkz. [REPRODUCE.md](REPRODUCE.md).
+- **Build:** `726 passed, 4 skipped` (offline-first `pytest`). Bkz. [REPRODUCE.md](REPRODUCE.md).
 - **Readiness:** `train_allowed = true` · `decision_reason_code = READY_REMOTE_BOOTSTRAP` · `start_gate = START_ALLOWED`.
 - **Crash-sınıfı bug:** yok (kanonik model + orchestrator sorunsuz import oluyor).
 

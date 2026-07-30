@@ -1,6 +1,6 @@
 {
   "schema": "workspace_hygiene_manifest_v1",
-  "generated_utc": "2026-07-27T11:43:58Z",
+  "generated_utc": "2026-07-30T15:24:22Z",
   "mode": "audit_only",
   "workspace_root": "<WORKSPACE_ROOT>",
   "repo_root": "<REPO_ROOT>",
@@ -28,45 +28,31 @@
       "decision_state": "quarantine_first"
     },
     {
-      "path": "<WORKSPACE_ROOT>/adb_pull",
+      "path": "<WORKSPACE_ROOT>/Applications",
       "classification": "external_workspace_entry",
       "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/adb_pull",
+      "restore_target": "<WORKSPACE_ROOT>/Applications",
       "decision_state": "quarantine_first"
     },
     {
-      "path": "<WORKSPACE_ROOT>/anthropic_closure_private",
+      "path": "<WORKSPACE_ROOT>/Claude Reis",
       "classification": "external_workspace_entry",
       "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/anthropic_closure_private",
+      "restore_target": "<WORKSPACE_ROOT>/Claude Reis",
       "decision_state": "quarantine_first"
     },
     {
-      "path": "<WORKSPACE_ROOT>/chat_exports",
+      "path": "<WORKSPACE_ROOT>/Documents",
       "classification": "external_workspace_entry",
       "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/chat_exports",
+      "restore_target": "<WORKSPACE_ROOT>/Documents",
       "decision_state": "quarantine_first"
     },
     {
-      "path": "<WORKSPACE_ROOT>/codex_chat_extract.py",
-      "classification": "external_workspace_file",
-      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
-      "restore_target": "<WORKSPACE_ROOT>/codex_chat_extract.py",
-      "decision_state": "quarantine_first"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/codex_chats_found.md",
-      "classification": "external_workspace_file",
-      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
-      "restore_target": "<WORKSPACE_ROOT>/codex_chats_found.md",
-      "decision_state": "quarantine_first"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/current_codex_chat_transcript.md",
-      "classification": "external_workspace_file",
-      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
-      "restore_target": "<WORKSPACE_ROOT>/current_codex_chat_transcript.md",
+      "path": "<WORKSPACE_ROOT>/İndirilenler",
+      "classification": "external_workspace_entry",
+      "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
+      "restore_target": "<WORKSPACE_ROOT>/İndirilenler",
       "decision_state": "quarantine_first"
     },
     {
@@ -77,73 +63,24 @@
       "decision_state": "keep"
     },
     {
-      "path": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_20260422_183127",
+      "path": "<WORKSPACE_ROOT>/Samsung Smart Switch Yedekleri (A34)",
       "classification": "external_workspace_entry",
       "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_20260422_183127",
+      "restore_target": "<WORKSPACE_ROOT>/Samsung Smart Switch Yedekleri (A34)",
       "decision_state": "quarantine_first"
     },
     {
-      "path": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_20260422_183127.zip",
-      "classification": "archive_or_dump",
-      "reason": "Top-level archive or dump outside the main repo. Review and quarantine before any permanent cleanup.",
-      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_20260422_183127.zip",
-      "decision_state": "quarantine_first"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_20260422_183127.zip.sha256",
-      "classification": "external_workspace_file",
-      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
-      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_20260422_183127.zip.sha256",
-      "decision_state": "quarantine_first"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_v2_20260422_183704",
+      "path": "<WORKSPACE_ROOT>/Sistem_ve_Ayar_Yedekleri",
       "classification": "external_workspace_entry",
       "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_v2_20260422_183704",
+      "restore_target": "<WORKSPACE_ROOT>/Sistem_ve_Ayar_Yedekleri",
       "decision_state": "quarantine_first"
     },
     {
-      "path": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_v2_20260422_183704.zip",
-      "classification": "archive_or_dump",
-      "reason": "Top-level archive or dump outside the main repo. Review and quarantine before any permanent cleanup.",
-      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_v2_20260422_183704.zip",
-      "decision_state": "quarantine_first"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_v2_20260422_183704.zip.sha256",
-      "classification": "external_workspace_file",
-      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
-      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_v2_20260422_183704.zip.sha256",
-      "decision_state": "quarantine_first"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_v3_logged_20260422_190808",
+      "path": "<WORKSPACE_ROOT>/Uygulamalar",
       "classification": "external_workspace_entry",
       "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_v3_logged_20260422_190808",
-      "decision_state": "quarantine_first"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_v3_logged_20260422_190808.zip.sha256",
-      "classification": "external_workspace_file",
-      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
-      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_native_challenge_builder_v3_logged_20260422_190808.zip.sha256",
-      "decision_state": "quarantine_first"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420",
-      "classification": "external_workspace_entry",
-      "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420",
-      "decision_state": "quarantine_first"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420.zip.sha256",
-      "classification": "external_workspace_file",
-      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
-      "restore_target": "<WORKSPACE_ROOT>/mertformer_5080_runner_for_friend_20260420.zip.sha256",
+      "restore_target": "<WORKSPACE_ROOT>/Uygulamalar",
       "decision_state": "quarantine_first"
     }
   ]

@@ -114,6 +114,7 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `scripts/chess_5080_onefile.py` | `fallback` |
 | `scripts/data_pipeline.py` | `fallback` |
 | `scripts/eval.py` | `fallback` |
+| `scripts/final_orchestrator.py` | `fallback` |
 | `scripts/generate_bench_reports.py` | `fallback` |
 | `scripts/golden_eval.py` | `fallback` |
 | `scripts/golden_score.py` | `fallback` |
@@ -142,6 +143,8 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `tests/test_benchmark_tokenizer_id.py` | `fallback` |
 | `tests/test_config_dynamic_param_count.py` | `fallback` |
 | `tests/test_distillation_topk.py` | `fallback` |
+| `tests/test_identity_sidecar.py` | `fallback` |
+| `tests/test_moe_capacity_drop_order.py` | `fallback` |
 | `tests/test_onnx_custom_op_contract.py` | `fallback` |
 | `tests/test_sdk_api.py` | `fallback` |
 | `tests/test_sweep_dead_getattr_fixes.py` | `fallback` |

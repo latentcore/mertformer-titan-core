@@ -1,6 +1,6 @@
 # Feature Flag Governance
 
-- generated_utc: `2026-07-27T11:45:16Z`
+- generated_utc: `2026-07-30T15:26:18Z`
 
 ## Canonical Main Path
 

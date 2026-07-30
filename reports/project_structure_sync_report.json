@@ -1,21 +1,21 @@
 {
-  "generated_utc": "2026-07-30T09:06:00.639398+00:00",
+  "generated_utc": "2026-07-30T15:25:00.804166+00:00",
   "ok": true,
   "readme_sync": {
     "README.md": true,
     "README_TR.md": true
   },
   "details": {
-    "generated_utc": "2026-07-30T09:06:00.639261+00:00",
+    "generated_utc": "2026-07-30T15:25:00.803854+00:00",
     "check": "manifest_vs_rendered_structure_md",
-    "manifest_count": 955,
-    "structure_count": 955,
+    "manifest_count": 958,
+    "structure_count": 958,
     "missing_in_structure": [],
     "missing_in_manifest": [],
     "ok": true,
     "previous_structure": {
       "readable": true,
-      "count": 955,
+      "count": 958,
       "was_stale": false,
       "added_since_previous": [],
       "removed_since_previous": [],

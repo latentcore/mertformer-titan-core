@@ -1,6 +1,6 @@
 {
   "schema": "post_train_autorun_status_v1",
-  "generated_utc": "2026-07-27T11:45:16.566250+00:00",
+  "generated_utc": "2026-07-30T15:26:17.810485+00:00",
   "mode": "demo-only",
   "status": "completed",
   "checkpoint": "<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt",
