@@ -46,10 +46,21 @@ class LifelongSafetyLayer(nn.Module):
     def _update_stats(self, x: torch.Tensor) -> None:
         with torch.no_grad():
             mean = x.detach().mean(dim=(0, 1))
-            self.running_mean.mul_(self.ema_decay).add_(mean * (1.0 - self.ema_decay))
 
+            # [2026-07-29] Drift MUST be measured against the PREVIOUS running mean, i.e.
+            # before the EMA absorbs this batch. It used to be computed after the update:
+            #   running' = d*running + (1-d)*mean
+            #   mean - running' = (1-d) * (mean - running)
+            # so the reported drift was (1-ema_decay) x the real drift -- at the default
+            # ema_decay=0.99 that is 1% of it. `drift_threshold=0.35` was therefore
+            # unreachable in practice and the stability-first damping branch in forward()
+            # (scale *= 0.5) was dead code. The layer is feature-flagged off by default,
+            # so this changes no canonical-run behaviour -- but a component named
+            # "safety layer" whose safety trigger can never fire is worse than no layer.
             drift = (mean - self.running_mean).abs().mean()
             self.last_drift.copy_(drift.detach())
+
+            self.running_mean.mul_(self.ema_decay).add_(mean * (1.0 - self.ema_decay))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if x.dim() != 3:

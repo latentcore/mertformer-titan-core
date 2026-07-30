@@ -34,6 +34,18 @@ def _stub_cfg(**overrides):
         active_experts=2,
         moe_every_n_layers=3,
         num_heads=16,
+        # [2026-07-29] num_kv_heads was MISSING from this stub, which is why the GQA
+        # attention bug could hide here: without it the test could only express the
+        # (wrong) MHA formula. The canonical config is 16 query heads / 8 kv heads.
+        num_kv_heads=8,
+        # [2026-07-29] use_liquid / liquid_layers_idx were also missing, which is why the
+        # Liquid/CfC mixers being omitted from BOTH parameter sums (~50.35M, 1.37% of the
+        # model) was invisible here: with no such field the script's
+        # getattr(cfg, "use_liquid", False) resolved to False and counted zero Liquid
+        # layers, matching the (also wrong) expectation. Canonical config: layers 4/10/16.
+        use_liquid=True,
+        liquid_layers_idx=[4, 10, 16],
+        liquid_every_n_layers=0,
         head_dim=128,
         use_moe=True,
         batch_size=128,
@@ -55,12 +67,21 @@ def _run_and_capture(monkeypatch, capsys, cfg_stub):
 
 def test_canonical_stub_total_matches_measured_within_one_percent(monkeypatch, capsys):
     # Canonical measured total (reports/param_accounting_report.md, FACTS.json):
-    # 3,672,982,022 (~3.67B). This script's formula is an analytical approximation,
-    # not the measured count, so an exact match isn't expected -- but omitting the
-    # shared expert (the pre-fix bug) undercounted by ~300M (~8%), far outside 1%.
+    # 3,672,982,022 (~3.67B).
+    #
+    # [2026-07-29] This assertion used to pass for the WRONG reason. Two errors were
+    # cancelling: the script counted attention with the MHA formula (+75,497,472 over 18
+    # layers) while omitting the Liquid/CfC mixers entirely (-50,350,080), plus the
+    # LiquidRouter's fluid_mixer/fluid_gate (-147,456) and GQA's q_norm/k_norm (-4,608).
+    # Net error landed inside the 1% band, so a 1%-tolerance test could not see either
+    # bug. With all four fixed the analytical sum now reproduces the measured count
+    # EXACTLY, so this asserts exact equality at the printed 3-decimal precision.
     total_b, _ = _run_and_capture(monkeypatch, capsys, _stub_cfg())
     measured_b = 3_672_982_022 / 1e9
-    assert abs(total_b - measured_b) / measured_b < 0.01
+    assert total_b == round(measured_b, 3), (
+        f"analytical total {total_b} B must reproduce the measured "
+        f"{round(measured_b, 3)} B exactly"
+    )
 
 
 def test_canonical_stub_active_params_include_shared_expert(monkeypatch, capsys):
@@ -70,11 +91,37 @@ def test_canonical_stub_active_params_include_shared_expert(monkeypatch, capsys)
     moe_count = stub.num_layers // stub.moe_every_n_layers
     dense_count = stub.num_layers - moe_count
     embedding = stub.vocab_size * stub.hidden_size
-    attn_per_layer = 4 * (stub.hidden_size * (stub.num_heads * stub.head_dim))
+    # [2026-07-29] This hand-computation previously hardcoded the MHA formula
+    # `4 * hidden * (num_heads * head_dim)` and asserted the script matched it -- so the
+    # test LOCKED IN the bug: layers/mla.py is GQA, where k_proj/v_proj are only
+    # `num_kv_heads * head_dim` wide. Verified against a live GQA() instance that the
+    # expression below equals the summed numel of its q/k/v/o projections exactly.
+    # At the canonical 16q/8kv the old formula overcounted by 4,194,304 params per layer
+    # (+75,497,472 over 18 layers) and contradicted config._estimate_total_params.
+    attn_per_layer = (
+        stub.hidden_size * (stub.num_heads * stub.head_dim)          # q_proj
+        + 2 * (stub.hidden_size * (stub.num_kv_heads * stub.head_dim))  # k_proj + v_proj
+        + (stub.num_heads * stub.head_dim) * stub.hidden_size         # o_proj
+        + 2 * stub.head_dim                                           # q_norm + k_norm
+    )
     dense_ffn = 3 * stub.hidden_size * stub.intermediate_size
     moe_ffn_correct = 3 * stub.hidden_size * stub.moe_intermediate
-    router = stub.hidden_size * stub.num_experts
+    # LiquidRouter, not a bare Linear: main_proj + depthwise Conv1d fluid_mixer
+    # (kernel = history_window = 4, bias=False) + fluid_gate.
+    router = (
+        stub.hidden_size * stub.num_experts
+        + stub.hidden_size * 4
+        + stub.hidden_size * stub.num_experts
+    )
     shared_correct = moe_ffn_correct + 1  # +1 = the scalar shared_gate param
+    # Liquid/CfC mixers: 4 hidden x hidden projections + tau_bias + LayerNorm(w, b).
+    # Always dense, so fully counted in the ACTIVE sum too.
+    liquid_count = len(
+        [i for i in stub.liquid_layers_idx if 0 <= int(i) < stub.num_layers]
+    ) if getattr(stub, "use_liquid", False) else 0
+    liquid_total = liquid_count * (
+        4 * stub.hidden_size * stub.hidden_size + stub.hidden_size + 2 * stub.hidden_size
+    )
 
     active_moe_correct = moe_ffn_correct * stub.active_experts + shared_correct + router
     hand_active_correct = (
@@ -82,6 +129,7 @@ def test_canonical_stub_active_params_include_shared_expert(monkeypatch, capsys)
         + stub.num_layers * attn_per_layer
         + dense_count * dense_ffn
         + moe_count * active_moe_correct
+        + liquid_total
         + stub.num_layers * (2 * stub.hidden_size)
         + stub.hidden_size
     )

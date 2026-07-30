@@ -74,7 +74,17 @@ class ContinualLearningAdapter:
             self.running_loss_ema = (
                 self.running_loss_ema * self.loss_ema_decay + float(loss) * (1.0 - self.loss_ema_decay)
             )
-        drift = abs(self.running_loss_ema - self.prev_loss_ema)
+        # [2026-07-29] Drift is the deviation of the OBSERVED loss from the EMA it is
+        # being compared against -- not the movement of the EMA itself. The previous
+        # `abs(running_loss_ema - prev_loss_ema)` measured the latter, and since
+        #   running' - prev = (1 - decay) * (loss - prev)
+        # it reported (1-decay) x the real deviation: at the default decay=0.98 just 2% of
+        # it. With drift_threshold=0.2 that required |loss - ema| > 10 to alert, i.e. a
+        # 10-unit single-step jump -- something the NaN brake in train/train.py would
+        # catch long before. So drift_alert could effectively never fire and the
+        # "Continual Drift Alert" branch in train/train.py was dead. The adapter is
+        # feature-flagged off by default, so no canonical-run behaviour changes here.
+        drift = abs(float(loss) - self.prev_loss_ema)
         self.drift_alert = drift > self.drift_threshold
 
         if sample is not None:

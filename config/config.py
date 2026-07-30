@@ -84,9 +84,24 @@ def _estimate_total_params(conf: Any) -> float:
     o_proj = (num_heads * head_dim) * hidden_size
     attn_per_layer = q_proj + 2 * kv_proj + o_proj
 
+    # NOTE (fixed 2026-07-29): layers/mla.py's GQA also owns two _QKRMSNorm modules
+    # (q_norm, k_norm), each a learnable weight of head_dim. Small (2 x 128 per layer)
+    # but real, and it was missing.
+    attn_per_layer += 2 * head_dim  # q_norm + k_norm
+
     dense_ffn_per_layer = 3 * hidden_size * intermediate_size
     moe_ffn_per_layer = 3 * hidden_size * moe_intermediate
-    router_params = hidden_size * num_experts
+    # NOTE (fixed 2026-07-29): the router is layers/moe.py's LiquidRouter, not a bare
+    # nn.Linear. Besides main_proj (hidden x num_experts) it owns a depthwise Conv1d
+    # `fluid_mixer` (groups=hidden, kernel=history_window=4 -> hidden * 4 weights, no
+    # bias) and a second projection `fluid_gate` (hidden x num_experts). Counting only
+    # main_proj undercounted every MoE layer by hidden * (4 + num_experts).
+    history_window = 4  # LiquidRouter.history_window
+    router_params = (
+        hidden_size * num_experts          # main_proj
+        + hidden_size * history_window     # fluid_mixer (depthwise Conv1d, bias=False)
+        + hidden_size * num_experts        # fluid_gate
+    )
     # NOTE (fixed 2026-07-27): layers/moe.py's MoE always instantiates one additional
     # "shared expert" (BitSwiGLU(hidden_size, moe_intermediate), unconditionally added
     # to every token via a learnable sigmoid gate) -- a 9th, always-present block that
@@ -101,10 +116,42 @@ def _estimate_total_params(conf: Any) -> float:
         moe_count = 0
     dense_count = num_layers - moe_count
 
+    # NOTE (fixed 2026-07-29): the Liquid/CfC mixers were omitted ENTIRELY, and they are
+    # the single largest gap -- ~50.35M params at the canonical config, i.e. 1.37% of the
+    # model. Each LiquidMixer (layers/liquid.py) holds a LiquidCell with FOUR
+    # hidden x hidden BitLinear projections (input_w, hidden_w, tau_input_w,
+    # tau_hidden_w, all bias=False), a tau_bias of shape (1, hidden), and an
+    # nn.LayerNorm(hidden) (weight + bias). Placement mirrors
+    # layers/mertformer_block.py: explicit liquid_layers_idx wins, else the
+    # liquid_every_n_layers cadence.
+    #
+    # Why this mattered: this omission (-50.5M) was silently cancelling the MHA-instead-
+    # of-GQA attention overcount (+75.5M) that scripts/scaling_audit_math.py carried, so
+    # the two errors together landed within 1% of the measured count and the drift test
+    # passed. With both fixed, this function now reproduces the measured
+    # 3,672,982,022 exactly at the canonical config.
+    use_liquid = getattr(conf, "use_liquid", True)
+    liquid_layers_idx = getattr(conf, "liquid_layers_idx", None) or []
+    liquid_every_n_layers = int(getattr(conf, "liquid_every_n_layers", 0) or 0)
+    if not use_liquid:
+        liquid_count = 0
+    elif liquid_layers_idx:
+        liquid_count = len([i for i in liquid_layers_idx if 0 <= int(i) < num_layers])
+    elif liquid_every_n_layers > 0:
+        liquid_count = num_layers // liquid_every_n_layers
+    else:
+        liquid_count = 0
+    liquid_per_layer = (
+        4 * hidden_size * hidden_size  # input_w, hidden_w, tau_input_w, tau_hidden_w
+        + hidden_size                  # tau_bias, shape (1, hidden)
+        + 2 * hidden_size              # nn.LayerNorm weight + bias
+    )
+
     total_params = embedding_params
     total_params += num_layers * attn_per_layer
     total_params += dense_count * dense_ffn_per_layer
     total_params += moe_count * moe_layer_params
+    total_params += liquid_count * liquid_per_layer
     total_params += num_layers * (2 * hidden_size)  # norms
     total_params += hidden_size  # final norm
     return float(total_params)

@@ -31,9 +31,47 @@ def _stub_conf(**overrides):
         moe_intermediate=8192,
         use_8bit_adam=True,
         max_seq_len=4096,
+        # [2026-07-29] Liquid fields were absent from this stub, which is why the
+        # estimator omitting Liquid/CfC entirely (~50.35M, 1.37%) was invisible here.
+        use_liquid=True,
+        liquid_layers_idx=[4, 10, 16],
+        liquid_every_n_layers=0,
     )
     base.update(overrides)
     return SimpleNamespace(**base)
+
+
+# Canonical measured parameter count (reports/param_accounting_report.md, FACTS.json).
+MEASURED_CANONICAL_PARAMS = 3_672_982_022
+
+
+def test_estimate_reproduces_measured_canonical_count_exactly():
+    """The analytical estimate must equal the measured count, to the parameter.
+
+    [2026-07-29] Before this, ``_estimate_total_params`` was 50,502,144 params (1.37%)
+    BELOW the measured total, because it omitted:
+      - the Liquid/CfC mixers entirely            (3 x 16,783,360 = 50,350,080)
+      - LiquidRouter's fluid_mixer + fluid_gate   (6 x    24,576  =    147,456)
+      - GQA's q_norm/k_norm _QKRMSNorm weights    (18 x 2 x 128   =      4,608)
+    That gap was silently cancelling an equal-and-opposite MHA-instead-of-GQA overcount
+    in scripts/scaling_audit_math.py, so a 1%-tolerance drift test saw neither bug.
+    Exact equality is the only assertion that cannot be satisfied by two errors
+    conveniently offsetting each other.
+    """
+    conf = _stub_conf()
+    assert int(config_module._estimate_total_params(conf)) == MEASURED_CANONICAL_PARAMS
+
+
+def test_estimate_counts_liquid_layers():
+    """Turning Liquid off must reduce the estimate by exactly the mixer cost."""
+    with_liquid = _stub_conf()
+    without_liquid = _stub_conf(use_liquid=False)
+    delta = int(config_module._estimate_total_params(with_liquid)) - int(
+        config_module._estimate_total_params(without_liquid)
+    )
+    hidden = with_liquid.hidden_size
+    per_mixer = 4 * hidden * hidden + hidden + 2 * hidden
+    assert delta == len(with_liquid.liquid_layers_idx) * per_mixer
 
 
 def test_estimate_total_params_scales_with_model_size():
@@ -60,19 +98,38 @@ def test_estimate_total_params_includes_shared_expert(monkeypatch=None):
 
     moe_count = conf.num_layers // conf.moe_every_n_layers
     moe_ffn_per_layer = 3 * conf.hidden_size * conf.moe_intermediate
-    router_params = conf.hidden_size * conf.num_experts
+    # [2026-07-29] The router is layers/moe.py's LiquidRouter: main_proj +
+    # depthwise Conv1d fluid_mixer (kernel = history_window = 4, bias=False) +
+    # fluid_gate. Counting only main_proj undercounted each MoE layer.
+    router_params = (
+        conf.hidden_size * conf.num_experts
+        + conf.hidden_size * 4
+        + conf.hidden_size * conf.num_experts
+    )
     # Same attention formula as _estimate_total_params (real GQA: Q/O sized off
     # num_heads, K/V sized off the smaller num_kv_heads) -- reproduced here (not
     # imported) so this test independently pins the function's total output.
+    # [2026-07-29] + GQA's two _QKRMSNorm weights (q_norm, k_norm), head_dim each.
     q_proj = conf.hidden_size * (conf.num_heads * conf.head_dim)
     kv_proj = conf.hidden_size * (conf.num_kv_heads * conf.head_dim)
     o_proj = (conf.num_heads * conf.head_dim) * conf.hidden_size
-    attn_per_layer = q_proj + 2 * kv_proj + o_proj
+    attn_per_layer = q_proj + 2 * kv_proj + o_proj + 2 * conf.head_dim
+    # [2026-07-29] Liquid/CfC mixers, previously omitted from the estimate entirely
+    # (~1.37% of the canonical model). Mirrors layers/mertformer_block.py placement.
+    use_liquid = bool(getattr(conf, "use_liquid", False))
+    liquid_idx = list(getattr(conf, "liquid_layers_idx", None) or [])
+    liquid_count = (
+        len([i for i in liquid_idx if 0 <= int(i) < conf.num_layers]) if use_liquid else 0
+    )
+    liquid_total = liquid_count * (
+        4 * conf.hidden_size * conf.hidden_size + conf.hidden_size + 2 * conf.hidden_size
+    )
     naive_moe_only_total = (
         conf.vocab_size * conf.hidden_size
         + conf.num_layers * attn_per_layer
         + (conf.num_layers - moe_count) * (3 * conf.hidden_size * conf.intermediate_size)
         + moe_count * (moe_ffn_per_layer * conf.num_experts + router_params)
+        + liquid_total
         + conf.num_layers * (2 * conf.hidden_size)
         + conf.hidden_size
     )

@@ -3439,9 +3439,15 @@ class LifelongSafetyLayer(nn.Module):
         with torch.no_grad():
             mean = x.detach().mean(dim=(0, 1))
             var = x.detach().var(dim=(0, 1), unbiased=False)
+            # [2026-07-29] Mirrors the canonical layers/lifelong_safety.py fix: drift must
+            # be sampled BEFORE the EMA absorbs this batch. Measuring it after makes the
+            # reported value a (1 - ema_decay)-scaled shadow of the real deviation, which
+            # put drift_threshold out of reach. Kept in lockstep with the canonical layer
+            # -- tests/test_chess_5080_onefile.py::test_lifelong_safety_matches_canonical
+            # asserts numeric parity between the two, so they must be fixed together.
+            self.last_drift.copy_((mean - self.running_mean).abs().mean().detach())
             self.running_mean.mul_(self.ema_decay).add_(mean * (1.0 - self.ema_decay))
             self.running_var.mul_(self.ema_decay).add_(var * (1.0 - self.ema_decay))
-            self.last_drift.copy_((mean - self.running_mean).abs().mean().detach())
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if x.dim() != 3:
