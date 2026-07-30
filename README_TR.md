@@ -8,7 +8,7 @@ bir koşu checkpoint üretene kadar hiçbir yetenek/benchmark iddiası yapılmaz
 English: [README.md](README.md).
 
 ## Durum (kanonik: [STATUS_TR.md](STATUS_TR.md))
-- **Build:** `724 passed, 4 skipped` (offline-first `pytest`).
+- **Build:** `726 passed, 4 skipped` (offline-first `pytest`).
 - **Readiness:** `decision_reason_code = READY_REMOTE_BOOTSTRAP` · `recommended_path = remote_bootstrap` · `train_allowed = true`.
 - **Koşu engelleri:** `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
 - **Tek gerçek boşluk:** gerçek bir 45K GPU koşusu (H100/H200). Crash-sınıfı bug: yok.
@@ -32,7 +32,7 @@ Bu repo bir **pre-training**, **proof-of-system** PoC'sidir; production-ready/se
 ## Hızlı başlangıç
 ```bash
 bash scripts/bootstrap_venv.sh        # pinli bağımlılıklarla .titan-venv (Python 3.11)
-bash scripts/verify_all.sh            # offline: 724 passed, 4 skipped + gate'ler (GPU/ağ yok)
+bash scripts/verify_all.sh            # offline: 726 passed, 4 skipped + gate'ler (GPU/ağ yok)
 bash zero_touch_start.sh --check-only # readiness verdict + engeller (eğitim yok)
 ```
 Tam doğrulama/başlatma akışı: [REPRODUCE_TR.md](REPRODUCE_TR.md).
@@ -63,5 +63,43 @@ liquid_layers_idx = [4, 10, 16]
 Tam tracked-dosya ağacı: docs/PROJECT_STRUCTURE.md
 ```
 
+## 🚀 İş Birliği ve Ticari Fırsatlar
+
+LLM ön-eğitimi, verimli mimariler (ternary/düşük-bit, MoE, yinelemeli mixer'lar) ve eğitim
+altyapısı alanlarındaki rollere ve iş birliklerine açığım.
+
+Bu deponun göstermeyi amaçladığı şey: açıkta kurulmuş ve denetlenmiş uçtan uca bir
+ön-eğitim yığını — mimari, veri hattı, damıtma, değerlendirme koşumu, kapanış kapıları ve
+iddia disiplini. Bugün neyin *ölçülmüş*, neyin *hedef* ya da *vizyon* olduğu için
+[STATUS_TR.md](STATUS_TR.md)'ye bakın; bu ayrım bilinçlidir ve
+[TRUTH_MATRIX_TR.md](TRUTH_MATRIX_TR.md) tarafından zorlanır.
+
+İletişim: bir issue açın ya da bu deponun sahibi olan GitHub profili üzerinden ulaşın.
+
+## 🤝 Katkılar ve PR Kuralları
+
+Katkılar Apache 2.0 lisansı altında memnuniyetle karşılanır.
+
+Bir pull request açmadan önce:
+
+1. **`bash scripts/verify_all.sh` sıfır regresyonla geçmelidir.** Bu komut tüm pytest
+   suite'ini ve kapanış kapılarını (manifest senkronu, doküman-iddia tutarlılığı, secret
+   scan, fact drift) koşar. Geçen test sayısını düşüren bir PR birleştirilmez.
+2. **Davranış değişikliğiyle birlikte test ekleyin.** Suite sözleşmedir; bu depoda kapatılan
+   birkaç bug tam olarak testin gerçek kodu import etmek yerine kopyalaması yüzünden aylarca
+   hayatta kalmıştı.
+3. **İddia sınırlarını gevşetmeyin.** Ölçülen/hedef/vizyon ayrımı, reason code'lar ve
+   `TRUTH_MATRIX_TR.md` taşıyıcı unsurlardır. Ölçülmemiş bir sayıyı ölçülmüş gibi
+   etiketlemeyin; gerçek bir koşuyla desteklenmeyen hiçbir yüzeye `trained`,
+   `benchmark-verified` veya `production-ready` eklemeyin.
+4. **EN/TR ikizlerini birlikte güncelleyin.** `README.md`/`README_TR.md`,
+   `BACKLOG.md`/`BACKLOG_TR.md`, `DECISIONS.md`/`DECISIONS_TR.md`,
+   `STATUS.md`/`STATUS_TR.md` ve kardeşleri birlikte değişir.
+5. **`feature/` veya `fix/` dal öneki kullanın** ve yapay zekâ asistanı katkısını commit
+   trailer'ında beyan edin — bkz. [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Güvenlik açıklarını asla public bir issue'da değil, [SECURITY.md](SECURITY.md) üzerinden
+özel olarak bildirin.
+
 ## Lisans
-Proprietary & Confidential — tüm haklar saklı; bkz. [LICENSE](LICENSE). Built with Llama — bkz. [NOTICE](NOTICE) ve [MODEL_LICENSE_TR.md](MODEL_LICENSE_TR.md).
+Apache License 2.0 — bkz. [LICENSE](LICENSE) (Türkçe bilgilendirme: [LICENSE_TR](LICENSE_TR)). Telif Hakkı 2026 Mert Yunlu. Built with Llama — bkz. [NOTICE](NOTICE) ve [MODEL_LICENSE_TR.md](MODEL_LICENSE_TR.md).

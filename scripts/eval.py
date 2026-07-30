@@ -2,8 +2,8 @@
 ==============================================================================
 MERTFORMER TITAN (ONYX STORM) - BENCHMARK SUITE (EVAL)
 -------------------------------------------------------------------------------
-Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
-Proprietary - All Rights Reserved.
+Copyright 2026 Mert Yunlu
+Licensed under the Apache License, Version 2.0 (see LICENSE).
 
 Project: Mobile-First LLM Architecture (planned target: Samsung S25 NPU — UNVERIFIED)
          NOTE: Bu dosyada NPU/S25 ozel kodu veya olcumu YOKTUR; "Samsung S25 NPU"

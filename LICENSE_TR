@@ -1,37 +1,49 @@
-ÖZEL VE GİZLİ LİSANS BİLDİRİMİ
-==============================================================================
-Telif Hakkı (c) 2026 Mert Yünlü. Tüm Hakları Saklıdır.
-==============================================================================
-Bu depo özeldir ve yalnızca yetkili incelemeciler ve işbirlikçiler
-ile paylaşılmaktadır.
-==============================================================================
+MertFormer Titan — Lisans (Türkçe Bilgilendirme)
+================================================================================
+Telif Hakkı 2026 Mert Yunlu
 
-1. MÜLKİYET
-Bu yazılım; tüm kaynak kodları, dökümantasyon, logolar ve ilgili varlıklar dahil 
-olmak üzere, Mert Yünlü'nün ("Sahip") yegane ve münhasır mülkiyetindedir.
+YETKİLİ METİN
+--------------------------------------------------------------------------------
+Bu proje **Apache License, Version 2.0** ile lisanslanmıştır.
 
-2. KISITLAMALAR
-Bu yazılımın yetkisiz kullanımı, kopyalanması, değiştirilmesi, dağıtılması veya 
-tersine mühendislik işlemlerine tabi tutulması kesinlikle yasaktır. Yazılıma 
-erişim, yalnızca Sahibi ile yapılan açık yazılı anlaşma veya iş sözleşmesi 
-kapsamında verilir.
+Bağlayıcı ve yetkili lisans metni, bu deponun kökündeki `LICENSE` dosyasındaki
+İNGİLİZCE Apache 2.0 metnidir. Apache Software Foundation, Apache 2.0'ın resmî
+bir Türkçe çevirisini yayımlamamaktadır; bu dosya bir çeviri DEĞİL, yalnızca
+Türkçe okuyucular için gayriresmî bir özettir. Herhangi bir uyuşmazlıkta
+`LICENSE` dosyasındaki İngilizce metin geçerlidir.
 
-3. GİZLİLİK
-Burada yer alan algoritmalar, mimari tasarımlar ve eğitim metodolojileri gizli
-ve tescilli teknoloji teşkil eder. İmzalı bir Gizlilik Sözleşmesi (NDA)
-olmaksızın üçüncü şahıslara herhangi bir ifşaat, fikri mülkiyet yasalarının
-ihlalidir.
+Lisansın tam metni: http://www.apache.org/licenses/LICENSE-2.0
 
-4. GARANTİ YOKTUR
-BU YAZILIM "OLDUĞU GİBİ" SUNULMAKTADIR; AÇIK VEYA ZIMNİ HERHANGİ BİR GARANTİ
-VERİLMEMEKTEDİR. YAZARLAR VEYA TELİF HAKKI SAHİPLERİ, HERHANGİ BİR İDDİA, TAZMİNAT 
-VEYA DİĞER YÜKÜMLÜLÜKLERDEN SORUMLU TUTULAMAZ.
+GAYRİRESMÎ ÖZET (bağlayıcı değildir)
+--------------------------------------------------------------------------------
+Apache 2.0 size şunları verir:
 
-5. FESİH
-Sahip, önceden bildirimde bulunmaksızın herhangi bir zamanda erişim veya 
-kullanım izinlerini iptal etme hakkını saklı tutar.
+  • Yazılımı ticari ve ticari olmayan amaçlarla kullanma, kopyalama, değiştirme,
+    dağıtma ve alt lisanslama hakkı.
+  • Katkıda bulunanların, katkılarının zorunlu olarak ihlal ettiği patent
+    istemleri için telifsiz bir patent lisansı.
 
-==============================================================================
-TÜRKİYE CUMHURİYETİ YASALARI VE ULUSLARARASI TELİF HAKKI ANLAŞMALARI TARAFINDAN 
-YÖNETİLMEKTEDİR.
-==============================================================================
+Karşılığında şunları yapmanız gerekir:
+
+  • Lisansın bir kopyasını, eserin veya türev eserlerin her alıcısına vermek.
+  • Değiştirdiğiniz dosyalara, değiştirdiğinizi belirten belirgin bir not koymak.
+  • Kaynak biçiminde dağıttığınız türev eserlerde, özgün eserdeki telif hakkı,
+    patent, ticari marka ve atıf bildirimlerini korumak.
+  • Dağıtımda bir `NOTICE` dosyası varsa, içindeki atıf bildirimlerinin okunabilir
+    bir kopyasını türev eserlerinizde de bulundurmak.
+
+Ayrıca dikkat edin:
+
+  • Yazılım "OLDUĞU GİBİ" sunulur; açık veya zımni hiçbir garanti verilmez.
+  • Sorumluluk, lisansın 8. maddesinde tanımlandığı ölçüde sınırlıdır.
+  • Lisans, lisans verenin ticari adlarını veya markalarını kullanma izni vermez.
+  • Patent davası açarsanız, size verilen patent lisansı sona erer (madde 3).
+
+AYRI BİR KATMAN: LLAMA MODEL LİSANSI
+--------------------------------------------------------------------------------
+Yukarıdaki Apache 2.0 lisansı bu deponun KODUNU kapsar. Meta'nın Llama 3.3
+modeline ilişkin yükümlülükler bundan ayrı ve bağımsız bir katmandır ve bu
+belgeyle değişmez. Ayrıntılar için `NOTICE` ve `MODEL_LICENSE_TR.md` dosyalarına
+bakın.
+
+Bu belge hukuki tavsiye değildir.

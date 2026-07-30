@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -186,3 +187,56 @@ def test_matplotlib_import_is_lazy(mod):
     """
     assert hasattr(mod, "_require_matplotlib")
     assert callable(mod.parse_log)
+
+
+# --- [2026-07-30] A log with no steps must NOT fail the closure ladder ------------------
+#
+# plot_training_log.py became a DEFAULT step in scripts/one_command_full_sop.sh (moved
+# ahead of training_outputs_bundle so a fresh dashboard can reach the zip). It used to
+# `sys.exit(1)` when a log carried no `type=step` records -- which is the normal state of a
+# repo that has not trained yet, and of aggregate/event-only logs like logs/ALL_LOGS.jsonl.
+# That took down the whole ladder on the first run after the step was enabled.
+
+def test_empty_log_exits_zero_instead_of_failing_the_ladder(tmp_path, monkeypatch, capsys):
+    """No steps is 'nothing to plot', not an error."""
+    PLOT = _load_module()
+
+    log = tmp_path / "ALL_LOGS.jsonl"
+    log.write_text(
+        json.dumps({"type": "meta", "run_id": "x"}) + "\n"
+        + json.dumps({"type": "event", "data": {"note": "no steps here"}}) + "\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        sys, "argv",
+        ["plot_training_log.py", str(log), "--out", str(tmp_path / "out.png"), "--no-summary"],
+    )
+
+    # Must return normally; a SystemExit with a non-zero code would fail verify_all.sh.
+    PLOT.main()
+
+    captured = capsys.readouterr().out
+    assert "nothing to plot" in captured
+    assert not (tmp_path / "out.png").exists()
+
+
+def test_real_log_still_produces_a_dashboard(tmp_path, monkeypatch):
+    """Guard the other direction: the non-fatal path must not swallow real work."""
+    pytest.importorskip("matplotlib")
+    PLOT = _load_module()
+
+    log = tmp_path / "run.jsonl"
+    with log.open("w", encoding="utf-8") as handle:
+        for step in range(1, 25):
+            handle.write(json.dumps({
+                "type": "step", "step": step, "loss": 6.0 - step * 0.01,
+                "grad_norm": 0.8, "lr": 3e-4,
+            }) + "\n")
+
+    out = tmp_path / "dash.png"
+    monkeypatch.setattr(
+        sys, "argv",
+        ["plot_training_log.py", str(log), "--out", str(out), "--no-summary"],
+    )
+    PLOT.main()
+    assert out.exists() and out.stat().st_size > 1000

@@ -4,8 +4,8 @@ from __future__ import annotations
 ==============================================================================
 MERTFORMER TITAN (ONYX STORM) - RUN LOGGER (Mini-Titan v5.0)
 -------------------------------------------------------------------------------
-Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
-Proprietary - All Rights Reserved.
+Copyright 2026 Mert Yunlu
+Licensed under the Apache License, Version 2.0 (see LICENSE).
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: v5.0-FORENSIC (Pre-Training)

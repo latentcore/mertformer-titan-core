@@ -544,8 +544,18 @@ Examples:
     steps, evals, config_info = parse_log(str(log_path))
 
     if not steps["step"]:
-        print("❌  No training steps found in log file.")
-        sys.exit(1)
+        # [2026-07-30] Exit 0, not 1. "This log has no training steps" is not an error --
+        # it is the normal state of a repo that has not run training yet, and of
+        # aggregate/event-only logs such as logs/ALL_LOGS.jsonl. Since this script is now
+        # a DEFAULT step in scripts/one_command_full_sop.sh (moved ahead of the bundle so
+        # a fresh dashboard can actually reach the zip), a non-zero exit here failed the
+        # entire closure ladder on a machine that simply has no run to plot.
+        # A real failure -- a corrupt log, a matplotlib crash -- still surfaces: this
+        # branch is only reached when parsing SUCCEEDED and found zero step records.
+        print(f"⚠️   No training steps found in {log_path.name}; nothing to plot.")
+        print("    (Not an error: this log carries no `type=step` records. Point --out at "
+              "a real run log, or run training first.)")
+        return
 
     print(f"📊  Found {len(steps['step']):,} training steps, "
           f"{len(evals['step'])} eval points")

@@ -8,7 +8,7 @@ no capability/benchmark claim is made until a real run produces checkpoints.
 Türkçe: [README_TR.md](README_TR.md).
 
 ## Status (canonical: [STATUS.md](STATUS.md))
-- **Build:** `724 passed, 4 skipped` (offline-first `pytest`).
+- **Build:** `726 passed, 4 skipped` (offline-first `pytest`).
 - **Readiness:** `decision_reason_code = READY_REMOTE_BOOTSTRAP` · `recommended_path = remote_bootstrap` · `train_allowed = true`.
 - **Run blockers:** `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`, `online_teacher:MISSING_HF_TOKEN`.
 - **The one real gap:** a real 45K GPU run (H100/H200). Crash-class bugs: none.
@@ -32,7 +32,7 @@ This repo is a **pre-training**, **proof-of-system** PoC; it is explicitly inten
 ## Quickstart
 ```bash
 bash scripts/bootstrap_venv.sh        # .titan-venv with pinned deps (Python 3.11)
-bash scripts/verify_all.sh            # offline: 724 passed, 4 skipped + gates (no GPU, no network)
+bash scripts/verify_all.sh            # offline: 726 passed, 4 skipped + gates (no GPU, no network)
 bash zero_touch_start.sh --check-only # readiness verdict + blockers (no training)
 ```
 Full verify/launch flow: [REPRODUCE.md](REPRODUCE.md).
@@ -63,5 +63,42 @@ liquid_layers_idx = [4, 10, 16]
 Full tracked-file tree: docs/PROJECT_STRUCTURE.md
 ```
 
+## 🚀 Hiring & Commercial Opportunities
+
+I am open to roles and collaborations in LLM pre-training, efficient architectures
+(ternary/low-bit, MoE, recurrent mixers) and training infrastructure.
+
+What this repository is meant to show: an end-to-end pre-training stack built and audited
+in the open — architecture, data pipeline, distillation, evaluation harness, closure gates
+and claim discipline. Read [STATUS.md](STATUS.md) for what is *measured* today versus what
+is *target* or *vision*; the separation is deliberate and enforced by
+[TRUTH_MATRIX.md](TRUTH_MATRIX.md).
+
+Contact: open an issue, or reach me through the GitHub profile that owns this repository.
+
+## 🤝 Contributions & PR Rules
+
+Contributions are welcome under the Apache 2.0 license.
+
+Before opening a pull request:
+
+1. **`bash scripts/verify_all.sh` must pass with zero regressions.** This runs the full
+   pytest suite plus the closure gates (manifest sync, doc-claim consistency, secret scan,
+   fact drift). A PR that reduces the passing test count will not be merged.
+2. **Add a test with behaviour changes.** The suite is the contract; several bugs closed in
+   this repository survived for months precisely because a test mirrored the code instead
+   of importing it.
+3. **Do not weaken claim boundaries.** The measured/target/vision separation, the reason
+   codes and `TRUTH_MATRIX.md` are load-bearing. Do not relabel an unmeasured number as
+   measured, and do not add `trained`, `benchmark-verified` or `production-ready` to any
+   surface that is not backed by a real run.
+4. **Keep the EN/TR twins in sync.** `README.md`/`README_TR.md`, `BACKLOG.md`/`BACKLOG_TR.md`,
+   `DECISIONS.md`/`DECISIONS_TR.md`, `STATUS.md`/`STATUS_TR.md` and their siblings change
+   together.
+5. **Use `feature/` or `fix/` branch prefixes**, and disclose AI-assistant involvement in the
+   commit trailer — see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Report security issues privately via [SECURITY.md](SECURITY.md), never in a public issue.
+
 ## License
-Proprietary & Confidential — all rights reserved; see [LICENSE](LICENSE). Built with Llama — see [NOTICE](NOTICE) and [MODEL_LICENSE.md](MODEL_LICENSE.md).
+Apache License 2.0 — see [LICENSE](LICENSE). Copyright 2026 Mert Yunlu. Built with Llama — see [NOTICE](NOTICE) and [MODEL_LICENSE.md](MODEL_LICENSE.md).

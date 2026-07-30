@@ -2,8 +2,8 @@
 ==============================================================================
 MERTFORMER TITAN (ONYX STORM) - NUTRITION5K VISION SIDE-EXPERIMENT
 -------------------------------------------------------------------------------
-Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
-Proprietary - All Rights Reserved.
+Copyright 2026 Mert Yunlu
+Licensed under the Apache License, Version 2.0 (see LICENSE).
 
 Bounded side experiment (see scripts/train_nutrition5k.py). NOT part of the
 canonical 45K text-pretraining run and NOT wired into model/transformers.py.

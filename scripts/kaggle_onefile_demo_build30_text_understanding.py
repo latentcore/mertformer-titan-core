@@ -4,8 +4,8 @@ from __future__ import annotations
 ==============================================================================
 MERTFORMER TITAN (ONYX STORM) - RULE-BASED EXTRACTION PoC (BUILD30 V2)
 -------------------------------------------------------------------------------
-Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
-Proprietary - All Rights Reserved.
+Copyright 2026 Mert Yunlu
+Licensed under the Apache License, Version 2.0 (see LICENSE).
 
 NOTE (honest scope): Despite the "Mertformer Titan" / LLM framing, this PoC does
 NOT perform any text "understanding" or model inference. The pipeline is a

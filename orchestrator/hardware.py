@@ -2,8 +2,8 @@
 ==============================================================================
 MERTFORMER TITAN (ONYX STORM) - HARDWARE SENSE (MONITORING)
 -------------------------------------------------------------------------------
-Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
-Proprietary - All Rights Reserved.
+Copyright 2026 Mert Yunlu
+Licensed under the Apache License, Version 2.0 (see LICENSE).
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: bkz. __version__ (1.0-BUILD30-V2) - Pre-Training

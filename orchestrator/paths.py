@@ -2,8 +2,8 @@
 ==============================================================================
 MERTFORMER TITAN (ONYX STORM) - ARCHITECTURAL PATHS
 -------------------------------------------------------------------------------
-Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
-Proprietary - All Rights Reserved.
+Copyright 2026 Mert Yunlu
+Licensed under the Apache License, Version 2.0 (see LICENSE).
 
 NOTE: This module lives under orchestrator/ and is INERT / OUT-OF-SCOPE for the
 45K training path (orchestrator is closed/feature-flagged off in that path).

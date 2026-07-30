@@ -593,3 +593,47 @@ was re-verified against live code and closed wave by wave. Decisions worth recor
   findings inside it were touched, and its structure and statement order are unchanged. This is
   the primary reason the code-quality ceiling for this pass is ~8.5-9/10 and not 10/10; it is a
   deliberate risk decision, not an unfinished item.
+
+## License: Proprietary & Confidential → Apache 2.0 (2026-07-30)
+
+**SUPERSEDES the 2026-06-17 "License contradiction resolved → Proprietary" decision above.**
+
+That entry resolved a contradiction (README footers said `Apache-2.0` while `LICENSE` said
+Proprietary) by pulling everything toward Proprietary, and it closed with: *"this is not
+legal advice; actually open-sourcing is a separate, deliberate decision."* This is that
+separate, deliberate decision, made by the owner on 2026-07-29 as part of preparing the
+repository for public release.
+
+**What changed:**
+- `LICENSE` — full Apache License 2.0 text, `Copyright 2026 Mert Yunlu`.
+- `LICENSE_TR` — deliberately NOT a translation. The ASF publishes no official Turkish
+  text and Apache 2.0 must be reproduced verbatim, so this file is now a Turkish
+  orientation document that names the English `LICENSE` as the sole authoritative text and
+  offers an explicitly non-binding summary.
+- `README.md` / `README_TR.md` — License section, plus two new sections requested by the
+  owner: "Hiring & Commercial Opportunities" and "Contributions & PR Rules". Contact
+  details are the GitHub profile only; no email or phone was invented.
+- `CITATION.cff` — `license: "Proprietary"` → `Apache-2.0`.
+- `CONTRIBUTING.md` / `CONTRIBUTING_TR.md` — "not open to external contributions" →
+  open under Apache 2.0 §5, with `bash scripts/verify_all.sh` named as the PR gate.
+- **50 Python source headers** — `Proprietary - All Rights Reserved.` →
+  `Licensed under the Apache License, Version 2.0 (see LICENSE).` This was not cosmetic:
+  a per-file proprietary notice on every module directly contradicts an Apache 2.0
+  `LICENSE` the moment the repository is public, and a reader trusts the file header they
+  are looking at.
+- `pyproject.toml` needed no change: it already declares `license = {file = "LICENSE"}`,
+  so replacing the file was sufficient.
+
+**What deliberately did NOT change:**
+- `NOTICE`, `MODEL_LICENSE.md`, `MODEL_LICENSE_TR.md` — Meta's Llama 3.3 obligations are a
+  SEPARATE, independent layer that this decision does not touch. The "Built with Llama"
+  attribution stays verbatim. Apache 2.0 covers this repository's CODE; the model licence
+  layer is unaffected, and the model-weights posture remains proprietary (no trained
+  weights exist yet in any case).
+- `datasets/INTERNAL_POLICY*.md`, `datasets/LICENSES*.md` — the internal dataset policy is
+  a third independent layer and is unrelated to the code licence.
+- Every dated historical record (`CHANGELOG`, earlier `DECISIONS` entries) keeps its
+  original wording. This entry supersedes; it does not rewrite.
+
+**Not legal advice.** The Llama naming question flagged in `NOTICE` as EXTERNAL-PENDING
+legal remains open and is unaffected by this change.

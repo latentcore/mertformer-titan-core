@@ -3,8 +3,8 @@ from __future__ import annotations
 ==============================================================================
 MERTFORMER TITAN (ONYX STORM) - AGI EXPERIENCE STORE
 -------------------------------------------------------------------------------
-Copyright (c) 2026 Mert Yünlü. All Rights Reserved.
-Proprietary - All Rights Reserved.
+Copyright 2026 Mert Yunlu
+Licensed under the Apache License, Version 2.0 (see LICENSE).
 
 Project: Mobile-First LLM Architecture for Samsung S25 NPU
 Version: v1.0 (Build 30) — Pre-Training

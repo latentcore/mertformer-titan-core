@@ -160,3 +160,46 @@ karşı yeniden doğrulanıp dalga dalga kapatıldı. Kayda değer kararlar:
   Yalnız içindeki izole bulgulara dokunuldu; fonksiyonun yapısı ve ifade sırası değişmedi. Bu
   pass'in kod-kalitesi tavanının 10/10 değil ~8.5-9/10 olmasının birinci sebebi budur; bir
   eksiklik değil, bilinçli bir risk kararıdır. Tam ayrıntı: `DECISIONS.md`.
+
+## Lisans: Proprietary & Confidential → Apache 2.0 (2026-07-30)
+
+**Yukarıdaki 2026-06-17 tarihli "Lisans çelişkisi → Proprietary çözüldü" kararını GEÇERSİZ
+KILAR.**
+
+O karar bir çelişkiyi (README footer'ları `Apache-2.0` derken `LICENSE` Proprietary
+diyordu) her şeyi Proprietary'ye çekerek çözmüş ve şöyle bitmişti: *"hukuki tavsiye
+değildir; gerçekten açık-kaynak yapma kararı ayrı, bilinçli bir karardır."* İşte bu, o ayrı
+ve bilinçli karardır; sahibi tarafından 2026-07-29'da, depoyu public yayına hazırlama
+kapsamında verilmiştir.
+
+**Değişenler:**
+- `LICENSE` — tam Apache License 2.0 metni, `Copyright 2026 Mert Yunlu`.
+- `LICENSE_TR` — bilinçli olarak çeviri DEĞİL. ASF resmî bir Türkçe metin yayımlamıyor ve
+  Apache 2.0 aynen çoğaltılmak zorunda; bu yüzden dosya artık tek yetkili metnin İngilizce
+  `LICENSE` olduğunu belirten ve açıkça bağlayıcı olmayan bir özet sunan Türkçe
+  bilgilendirme belgesidir.
+- `README.md` / `README_TR.md` — Lisans bölümü ve sahibinin istediği iki yeni bölüm: "İş
+  Birliği ve Ticari Fırsatlar" ile "Katkılar ve PR Kuralları". İletişim bilgisi yalnızca
+  GitHub profilidir; hiçbir e-posta veya telefon uydurulmamıştır.
+- `CITATION.cff` — `license: "Proprietary"` → `Apache-2.0`.
+- `CONTRIBUTING.md` / `CONTRIBUTING_TR.md` — "dış katkılara açık değildir" → Apache 2.0
+  5. madde uyarınca açık; PR kapısı olarak `bash scripts/verify_all.sh` adlandırıldı.
+- **50 Python kaynak başlığı** — `Proprietary - All Rights Reserved.` →
+  `Licensed under the Apache License, Version 2.0 (see LICENSE).` Bu kozmetik değildi: her
+  modülde dosya-başı proprietary bildirimi, depo public olduğu anda Apache 2.0 `LICENSE`
+  ile doğrudan çelişir ve okuyucu baktığı dosyanın başlığına güvenir.
+- `pyproject.toml` değişmedi: zaten `license = {file = "LICENSE"}` beyan ediyordu, dosyayı
+  değiştirmek yeterliydi.
+
+**Bilinçli olarak DEĞİŞMEYENLER:**
+- `NOTICE`, `MODEL_LICENSE.md`, `MODEL_LICENSE_TR.md` — Meta'nın Llama 3.3 yükümlülükleri
+  bu kararın dokunmadığı AYRI ve bağımsız bir katmandır. "Built with Llama" atfı aynen
+  kalır. Apache 2.0 bu deponun KODUNU kapsar; model lisansı katmanı etkilenmez ve model
+  ağırlıkları duruşu proprietary kalır (zaten henüz eğitilmiş ağırlık yok).
+- `datasets/INTERNAL_POLICY*.md`, `datasets/LICENSES*.md` — dahili veri seti politikası
+  üçüncü bir bağımsız katmandır ve kod lisansıyla ilgisizdir.
+- Her tarihli tarihsel kayıt (`CHANGELOG`, önceki `DECISIONS` girdileri) özgün ifadesini
+  korur. Bu girdi geçersiz kılar, yeniden yazmaz.
+
+**Hukuki tavsiye değildir.** `NOTICE`'ta EXTERNAL-PENDING legal olarak işaretli Llama
+isimlendirme sorusu açık kalır ve bu değişiklikten etkilenmez. Tam ayrıntı: `DECISIONS.md`.
