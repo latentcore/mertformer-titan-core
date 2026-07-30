@@ -317,14 +317,31 @@ def test_run_offline_preflight_against_real_repo():
     assert "titan_preflight.py" in result["cmd"]
 
 
-def test_offline_preflight_reports_the_missing_corpus_rather_than_passing():
+def test_offline_preflight_reports_the_missing_corpus_rather_than_passing(monkeypatch):
     """The other half: without the corpus the gate must FAIL, loudly and for that reason.
 
     A gate that went green on an empty corpus would be far worse than one that skips, so pin
     the honest-failure direction too. This runs everywhere, corpus present or not.
+
+    [2026-07-31] Must also neutralize the two deliberate offline-preflight escape hatches for
+    its OWN subprocess call, or this test's premise is defeated by its own environment:
+    `scripts/titan_preflight.py::check_stage_jsonl()` returns `ok: True` on a missing corpus
+    when either `GITHUB_ACTIONS`/`CI` is `"true"` (deliberate, CI runners never have the real
+    corpus) or `TITAN_PREFLIGHT_ALLOW_MISSING_STAGE_JSONL=1` is set (deliberate, exported by
+    `scripts/verify_all.sh` whenever `TITAN_OFFLINE=1`, which is CI's own default).
+    `gate.run_offline_preflight()` does `env = dict(os.environ)`, so this test's own subprocess
+    inherits whatever of those is ambient. Locally that's nothing, so this passed on a bare
+    checkout -- but under real GitHub Actions CI (which runs via `bash scripts/verify_all.sh`)
+    both were ambient and the subprocess got `ok: True`, failing this test's own assertion.
+    Both escape hatches remain untouched and correct in production; only this test's own view
+    of its environment is neutralized here, so it genuinely exercises "a real machine, no
+    corpus, no override" regardless of what is ambient around it.
     """
     if _corpus_is_materialized():
         pytest.skip("corpus present; the missing-corpus path cannot be exercised here")
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    monkeypatch.delenv("CI", raising=False)
+    monkeypatch.delenv("TITAN_PREFLIGHT_ALLOW_MISSING_STAGE_JSONL", raising=False)
     result = gate.run_offline_preflight(_resolve_repo_python())
     assert result["ok"] is False, "preflight passed with no corpus on disk"
     combined = f"{result.get('stdout_tail', '')}{result.get('stderr_tail', '')}"
