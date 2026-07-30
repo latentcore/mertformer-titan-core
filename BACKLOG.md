@@ -27,6 +27,92 @@ Total omission `50,502,144` almost exactly offset the `+75,497,472` attention ov
 
 **STILL OPEN — candidate, needs a real run to calibrate:** the two thresholds (`0.35`, `0.2`) were chosen against a quantity ~50-100x smaller than what is now reported, so they are almost certainly too loose for the corrected scale. Deliberately **not** retuned in this pass: picking a threshold without a real loss/activation trace to calibrate against would just be substituting one unverified number for another. Retune when the 45K run (or a pilot) produces real drift traces, and only if either flag is actually turned on.
 
+## Hot-path fixes with numeric gates (2026-07-29), no training-math change
+
+Four findings on paths that run inside training. Each was gated by a numeric or differential
+check rather than by review alone, because none of them are visible in a loss curve.
+
+- **MoE capacity path de-synced — DONE, throughput gain UNMEASURED.** `layers/moe.py`'s capacity
+  block looped over all 8 experts calling `(topk_idx == e).nonzero()`, and also used
+  boolean-mask indexing, `.any()`, and per-expert `.item()` in `_dispatch_parallel`. Every one
+  of those forces a CUDA device→host synchronisation inside the forward pass (`torch.nonzero`
+  must sync to size its output). Replaced with a vectorized stable-`argsort`/`cumsum` form; the
+  overflow-row fallback uses `torch.where` and telemetry scatters the mask as a weight.
+  `_dispatch_parallel` takes one `counts.tolist()` transfer instead of E `.item()` calls.
+  **GATE:** `scripts/cfc_moe_tolerance_check.py` → `max_diff_moe=0.000000`, i.e. losses
+  bit-identical to the previous implementation, plus 15/15 MoE guard tests. This reverses the
+  2026-06-13 Pass 7 deferral of item 17 (see `DECISIONS.md`).
+  **The throughput benefit is NOT measured.** There is no CUDA device on this machine; the
+  sync-count reasoning is static analysis. Treat "faster" as a candidate until a real GPU run
+  shows it.
+- **Capacity formula extracted to `layers.moe.moe_capacity()`.** `tests/test_moe_capacity.py`
+  and `tests/test_property_moe_capacity.py` were each re-implementing the formula locally, so
+  the entire capacity rewrite above could have broken the real path with both files green.
+  Both now import the shipped helper. New `tests/test_moe_capacity_drop_order.py` (14 cases)
+  pins *which* assignments survive over capacity — `torch.nonzero` returns row-major, so the
+  old code kept each expert's first `capacity` hits in (row, col) order, and the vectorized mask
+  is asserted bit-identical to a direct `nonzero()` reference over adversarial patterns.
+- **`train/packing.py` resume counter de-synced by oversized rows — DONE.** The `pending` window
+  retires a row when `end_cum <= emitted_tokens`, which is only valid while
+  `len(buf) == cum - emitted_tokens` holds. The oversized branch did `cum += len(piece)` for a
+  row it emitted TRUNCATED and whose tail it discarded, leaking exactly 1 token (the EOS —
+  `encode_row` already truncates to `max_seq_len`) into a permanent offset growing by 1 per
+  oversized row. **MEASURED** at `max_seq_len=8`, worst gap between a sequence's last
+  contributing row and its resume point, sweeping oversized-row count 0/1/5/30/100/400:
+  `1, 1, 3, 11, 34, 134` before → `1, 1, 1, 1, 1, 1` after (1 is structural). At 1600 oversized
+  rows the old counter never advanced past the oversized block at all, so a resume would
+  silently re-read the whole tail; `pending` grew linearly and `_consumed_through()` scans it
+  once per sequence, so cost went quadratic (0.6 ms → 32 ms over a 0..6400 sweep). **GATE:** the
+  packed token stream is byte-identical — `input_ids`, `identity` and `true_len` compared
+  against the pre-fix implementation across four configurations — which is the contract keeping
+  teacher and student streams aligned. 3 regression tests confirmed to fail pre-fix.
+  This partly closes Pass 7's deferred item 38 (packing resume-seam coverage); the seam was not
+  merely uncovered, it was hiding this bug.
+- **`train/trainer_data.py` offset index → `array("q")` — DONE.** **MEASURED** 34.8 MiB per 1M
+  offsets as `list[int]` vs 7.6 MiB as `array("q")` (4.56x). `CurriculumDataset` is an
+  `IterableDataset`, so the object is copied into every DataLoader worker and the multiplier
+  compounds with `num_workers`; at ~100M lines that is ~3.4 GiB vs ~0.75 GiB of host RAM per
+  worker. `CurriculumDataset` had **no test coverage at all** despite being on the real training
+  path — new `tests/test_curriculum_dataset.py` (10 cases) pins the array type plus the
+  pre-existing uniform-line-sampling fix, which also had none.
+- **Teacher-logit identity sidecar — DONE.** `scripts/validate_logit_alignment.py` called
+  `torch.load(shard, weights_only=False)` on every shard purely to read each item's small
+  `identity` dict, materialising all the Top-K teacher logits in host RAM to do it. At corpus
+  scale that is hundreds of GiB of reads for a few MiB of hashes, making the alignment gate
+  unrunnable off the training box. `scripts/precompute_logits_topk.py` now writes
+  `<shard>.pt.identities.json` (hooked into `_atomic_torch_save`, the single gate both write
+  sites pass through, so the parallel lane gets it free). The sidecar is a **cache, never
+  authoritative**: it carries `shard_bytes` and is rejected when that disagrees with the shard
+  on disk, because comparing freshly packed sequences against identities from an older shard
+  generation would be a silent false PASS on the one gate guaranteeing teacher/student
+  alignment. Unknown format, count mismatch and unparseable JSON all fall back to a full load
+  with a warning; the fallback path now also frees each chunk so its peak is the largest single
+  shard rather than the sum. Named `.pt.identities.json` so it never matches the
+  `*_part_*.pt` glob and stays invisible to shard-count gates. 10 cases in
+  `tests/test_identity_sidecar.py`.
+
+Test count: `649 → 691 passed, 5 skipped` (+42).
+
+## Dead scripts deleted (2026-07-29)
+- **`scripts/md_build30_sweep.py`** — every `REPLACEMENTS` pair was `old == new`, so the script
+  was a no-op under any argument. Deleted; rationale in [DECISIONS.md](DECISIONS.md).
+- **`scripts/titan_onnx_stress_test.py`** — tokenized with the OpenAI GPT-4 encoding
+  (`cl100k_base`) rather than the project's Llama-3 tokenizer, and `tiktoken` is deliberately
+  absent from `requirements.txt` so it could not import. Deleted; rationale in
+  [DECISIONS.md](DECISIONS.md).
+
+## STILL OPEN — pytest mutates tracked release artifacts (found 2026-07-30)
+Running `pytest` rewrites tracked files under `reports/`: `final_orchestrator_status.{json,md}`
+and `post_train_autorun_status.{json,md}`. On a machine with no checkpoint this is a
+**downgrade** — the committed versions record `mode: demo-only` / `status: completed` with a
+resolved checkpoint path, and a local test run overwrites them with `plan-only` / `planned`.
+Committing that loses real information, so this pass reverted those files rather than staging
+them (`git checkout HEAD -- reports/`). Not fixed here because the fix is a decision, not an
+edit: either the affected tests get a `tmp_path` output directory, or those four artifacts stop
+being tracked and are regenerated by the ladder only. Both are behavioural changes to the
+closure ladder, which is out of scope for an audit-closure pass. **Anyone running the suite
+locally must check `git status -- reports/` before committing.**
+
 ## Doc-consistency pass (2026-07-27) — cross-file contradictions found via a root-`*.md` X-Ray audit, all fixed
 A full-content audit of every root-level `*.md` file (60 files, no subdirectories) surfaced several real, self-contained cross-file contradictions — each verified against live code/git state before fixing, none requiring compute:
 - **This file's own discipline gap:** the shared-expert fix above (commit `198e06c`) landed real code+test changes with zero corresponding `BACKLOG.md`/`DECISIONS.md`/`CHANGELOG.md` entry — landing the very next commit after `f8890af` added the CHANGELOG-drift-prevention note this exact gap is about. This section (and the matching `CHANGELOG.md`/`CHANGELOG_TR.md`/`DECISIONS.md` entries) close that gap.

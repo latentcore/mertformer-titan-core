@@ -153,7 +153,6 @@ python3 -m pytest -q tests/test_packed_projection_equivalence.py tests/test_liqu
 - `mobile_export.py` — ONNX export for mobile/edge.
 - `test_onnx_export.py` — ONNX export test.
 - `verify_onnx_local.py` — Local ONNX verification.
-- `titan_onnx_stress_test.py` — ONNX stress test.
 
 ## Dataset Compliance / Provenance
 - `extract_dataset_refs.py` — Extracts dataset IDs referenced by code into `datasets/inventory*` (offline by default).

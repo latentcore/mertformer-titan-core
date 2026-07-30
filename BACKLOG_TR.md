@@ -27,6 +27,94 @@ Toplam `50,502,144` eksiklik, `+75,497,472` attention fazlalığını neredeyse 
 
 **HÂLÂ AÇIK — aday, kalibrasyon için gerçek koşu gerekiyor:** iki eşik (`0.35`, `0.2`) artık raporlanandan ~50-100 kat küçük bir niceliğe göre seçilmişti, dolayısıyla düzeltilmiş ölçek için neredeyse kesinlikle çok gevşek. Bu pass'te bilinçli olarak **yeniden ayarlanmadı**: kalibre edilecek gerçek bir loss/aktivasyon izi olmadan eşik seçmek, doğrulanmamış bir sayıyı bir başkasıyla değiştirmekten öteye gitmezdi. 45K koşusu (veya bir pilot) gerçek drift izleri ürettiğinde ve yalnızca bu flag'lerden biri gerçekten açılacaksa yeniden ayarlanmalı.
 
+## Sıcak-yol düzeltmeleri, sayısal kapılarla (2026-07-29), eğitim-matematiği değişmedi
+
+Eğitim sırasında koşan yollarda dört bulgu. Hiçbiri loss eğrisinde görünmediği için her biri
+salt gözden geçirme yerine sayısal ya da diferansiyel bir kapıyla doğrulandı.
+
+- **MoE capacity yolundaki host-sync'ler kaldırıldı — YAPILDI, throughput kazancı ÖLÇÜLMEDİ.**
+  `layers/moe.py`'nin capacity bloğu 8 expert üzerinde dönüp `(topk_idx == e).nonzero()`
+  çağırıyordu; ayrıca boolean-mask indeksleme, `.any()` ve `_dispatch_parallel`'da expert başına
+  `.item()` kullanıyordu. Bunların her biri forward pass içinde bir CUDA aygıt→host
+  senkronizasyonu zorlar (`torch.nonzero` çıktısını boyutlandırmak için sync etmek zorundadır).
+  Yerine vektörize, kararlı-`argsort`/`cumsum` biçimi geldi; taşan satır fallback'i
+  `torch.where` kullanıyor, telemetri maskeyi ağırlık olarak scatter ediyor.
+  `_dispatch_parallel` E adet `.item()` yerine tek bir `counts.tolist()` transferi yapıyor.
+  **KAPI:** `scripts/cfc_moe_tolerance_check.py` → `max_diff_moe=0.000000`, yani loss'lar önceki
+  uygulamayla bit-birebir aynı; ayrıca 15/15 MoE muhafız testi yeşil. Bu, 2026-06-13 Pass 7'nin
+  17. maddesindeki ertelemeyi tersine çevirir (bkz. `DECISIONS.md`).
+  **Throughput kazancı ÖLÇÜLMEDİ.** Bu makinede CUDA aygıtı yok; sync-sayısı gerekçesi statik
+  analizdir. Gerçek bir GPU koşusu gösterene kadar "daha hızlı" iddiası adaydır.
+- **Capacity formülü `layers.moe.moe_capacity()`'ye çıkarıldı.** `tests/test_moe_capacity.py` ve
+  `tests/test_property_moe_capacity.py` formülü kendi içlerinde yeniden yazıyordu; dolayısıyla
+  yukarıdaki capacity yeniden-yazımı gerçek yolu bozsa bile ikisi de yeşil kalabilirdi. İkisi de
+  artık gerçek helper'ı import ediyor. Yeni `tests/test_moe_capacity_drop_order.py` (14 vaka)
+  kapasite aşımında *hangi* atamaların hayatta kaldığını kilitliyor — `torch.nonzero` row-major
+  döner, yani eski kod her expert'in ilk `capacity` isabetini (satır, kolon) sırasında tutardı;
+  vektörize maske doğrudan bir `nonzero()` referansına karşı bit-birebir aynı olduğu, düşmanca
+  desenler üzerinde iddia ediliyor.
+- **`train/packing.py` resume sayacı oversized satırlarla desenkronize oluyordu — YAPILDI.**
+  `pending` penceresi bir satırı `end_cum <= emitted_tokens` olduğunda emekli eder; bu ancak
+  `len(buf) == cum - emitted_tokens` değişmezi geçerliyken doğrudur. Oversized dal, KIRPILARAK
+  emit edilen ve kuyruğu atılan bir satır için `cum += len(piece)` yapıyordu ve tam 1 token
+  (EOS — `encode_row` zaten `max_seq_len`'e kırpıyor) kaçırıyordu; bu, oversized satır başına 1
+  büyüyen kalıcı bir offset yaratıyordu. **ÖLÇÜM**, `max_seq_len=8`'de, bir dizinin son katkı
+  veren satırı ile resume noktası arasındaki en kötü fark, oversized satır sayısı
+  0/1/5/30/100/400 taranarak: öncesinde `1, 1, 3, 11, 34, 134` → sonrasında `1, 1, 1, 1, 1, 1`
+  (1 yapısaldır). 1600 oversized satırda eski sayaç oversized bloğun ötesine hiç geçmiyordu,
+  yani bir resume tüm kuyruğu sessizce yeniden okurdu; `pending` doğrusal büyüyordu ve
+  `_consumed_through()` onu dizi başına bir kez taradığı için maliyet kuadratikleşiyordu
+  (0..6400 taramasında 0.6 ms → 32 ms). **KAPI:** paketlenmiş token akışı bayt-birebir aynı —
+  `input_ids`, `identity` ve `true_len` dört farklı yapılandırmada düzeltme-öncesi uygulamaya
+  karşı karşılaştırıldı — ki bu, teacher ve student akışlarını hizalı tutan sözleşmedir. 3
+  regresyon testinin düzeltme öncesinde kırıldığı teyit edildi.
+  Bu, Pass 7'nin ertelenen 38. maddesini (packing resume dikişi kapsamı) kısmen kapatır; dikiş
+  yalnız kapsamsız değildi, bu bug'ı saklıyordu.
+- **`train/trainer_data.py` offset indeksi → `array("q")` — YAPILDI.** **ÖLÇÜM** 1M offset için
+  `list[int]` 34.8 MiB, `array("q")` 7.6 MiB (4.56x). `CurriculumDataset` bir
+  `IterableDataset` olduğu için nesne her DataLoader worker'ına kopyalanır ve çarpan
+  `num_workers` ile katlanır; ~100M satırda bu, worker başına ~3.4 GiB'e karşı ~0.75 GiB host
+  RAM demektir. `CurriculumDataset` gerçek eğitim yolunda olmasına rağmen **hiç test kapsamında
+  değildi** — yeni `tests/test_curriculum_dataset.py` (10 vaka) array tipini ve kapsamı hiç
+  olmayan mevcut uniform-satır-örnekleme düzeltmesini kilitliyor.
+- **Teacher-logit identity sidecar'ı — YAPILDI.** `scripts/validate_logit_alignment.py` her
+  shard'ı `torch.load(shard, weights_only=False)` ile yalnızca her öğenin küçük `identity`
+  dict'ini okumak için açıyordu ve bunu yapmak için tüm Top-K teacher logit'lerini host RAM'e
+  alıyordu. Korpus ölçeğinde bu, birkaç MiB hash için yüzlerce GiB okuma demektir ve hizalama
+  kapısını eğitim kutusu dışında koşulamaz hâle getirir. `scripts/precompute_logits_topk.py`
+  artık `<shard>.pt.identities.json` yazıyor (`_atomic_torch_save`'e bağlı — iki yazma
+  noktasının da geçtiği tek geçit, dolayısıyla paralel hat da bedelsiz kazanıyor). Sidecar bir
+  **önbellektir, asla otorite değil**: `shard_bytes` taşır ve bu diskteki shard ile
+  uyuşmadığında reddedilir, çünkü yeni paketlenmiş dizileri eski bir shard nesli kimlikleriyle
+  karşılaştırmak, teacher/student hizalamasını garanti eden tek kapıda sessiz bir sahte-PASS
+  olurdu. Bilinmeyen format, sayı uyuşmazlığı ve ayrıştırılamayan JSON'un hepsi uyarıyla tam
+  yüklemeye düşer; fallback yolu artık her chunk'ı serbest bırakıyor, böylece tepe değeri tüm
+  shard'ların toplamı değil en büyük tek shard oluyor. `.pt.identities.json` adı `*_part_*.pt`
+  glob'una asla uymaz, yani shard-sayan kapılara görünmez. `tests/test_identity_sidecar.py`'de
+  10 vaka.
+
+Test sayısı: `649 → 691 passed, 5 skipped` (+42).
+
+## Ölü script'ler silindi (2026-07-29)
+- **`scripts/md_build30_sweep.py`** — `REPLACEMENTS` içindeki her çift `old == new` olduğu için
+  script hangi argümanla çağrılsa no-op'tu. Silindi; gerekçe: [DECISIONS.md](DECISIONS.md).
+- **`scripts/titan_onnx_stress_test.py`** — projenin Llama-3 tokenizer'ı yerine OpenAI GPT-4
+  encoding'i (`cl100k_base`) ile tokenize ediyordu ve `tiktoken` bilinçli olarak
+  `requirements.txt`'te yok, yani import bile olamıyordu. Silindi; gerekçe:
+  [DECISIONS.md](DECISIONS.md).
+
+## HÂLÂ AÇIK — pytest, izlenen release artefaktlarını değiştiriyor (2026-07-30'da bulundu)
+`pytest` koşmak `reports/` altındaki izlenen dosyaları yeniden yazıyor:
+`final_orchestrator_status.{json,md}` ve `post_train_autorun_status.{json,md}`. Checkpoint'i
+olmayan bir makinede bu bir **geriye düşürmedir** — commit'li sürümler çözümlenmiş bir
+checkpoint yoluyla `mode: demo-only` / `status: completed` kaydediyor, yerel bir test koşusu ise
+bunları `plan-only` / `planned` ile eziyor. Bunu commit'lemek gerçek bilgi kaybı olacağından bu
+pass o dosyaları stage'lemek yerine geri aldı (`git checkout HEAD -- reports/`). Burada
+düzeltilmedi, çünkü düzeltme bir düzenleme değil karardır: ya ilgili testler `tmp_path` çıktı
+dizini alacak, ya o dört artefakt izlenmekten çıkıp yalnız ladder tarafından üretilecek. İkisi de
+closure ladder'ında davranış değişikliğidir ve bir denetim-kapanış pass'inin kapsamı dışındadır.
+**Suite'i yerelde koşan herkes commit'ten önce `git status -- reports/` kontrol etmelidir.**
+
 ## Doküman-tutarlılık pass'i (2026-07-27) — kök `*.md` X-Ray denetimiyle bulunan çapraz-dosya çelişkileri, hepsi düzeltildi
 Her kök-seviyeli `*.md` dosyasının (60 dosya, alt-dizin yok) tam-içerik denetimi, düzeltmeden önce canlı kod/git durumuna karşı doğrulanmış birkaç gerçek, kendi içinde kanıtlanabilir çapraz-dosya çelişkisi ortaya çıkardı:
 - **Bu dosyanın kendi disiplin boşluğu:** yukarıdaki shared-expert düzeltmesi (commit `198e06c`) gerçek kod+test değişikliği getirdi ama sıfır karşılık `BACKLOG.md`/`DECISIONS.md`/`CHANGELOG.md` girdisiyle — tam da `f8890af`'in CHANGELOG-drift-önleme notunu eklediği bir sonraki commit'te. Bu bölüm (ve eşleşen `CHANGELOG.md`/`CHANGELOG_TR.md`/`DECISIONS.md` girdileri) o boşluğu kapatıyor.

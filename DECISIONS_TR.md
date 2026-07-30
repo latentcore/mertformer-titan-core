@@ -102,3 +102,61 @@ Mert, açık çoktan-seçmeli sorularla (varsayılmadan) sekiz gerçek launch-an
   6. Doküman-navigasyon parçalanması — `AGENTS.md` (kendi source-of-truth sırasında kendini 1. sıraya koyan dosya) hiçbir başka kök dokümandan gelen link almıyordu (`grep` ile doğrulandı); `README.md`/`README_TR.md` de hiçbir zaman `START_HERE.md`/`README_SUMMARY.md`'ye (dış-reviewer onboarding dokümanları) link vermiyordu. İkisi de `README.md`'nin/`README_TR.md`'nin Canonical surfaces listesine eklenerek düzeltildi — yeni bir hiyerarşi icat ederek değil, zaten var olanı linkleyerek.
 - **İşaretlenip incelenen ve doğru şekilde değiştirilmeyen bir madde:** `TROUBLESHOOTING.md`'nin accelerate-config uyumsuzluğu için `run.sh`'i (zero_touch_start.sh değil) tekrar çalıştırma tavsiyesinin bayat olabileceğinden şüphelenildi, ama `grep` `TITAN_FORCE_ACCELERATE_RECONF`'un yalnız `run.sh` tarafından okunduğunu doğruladı — mevcut tavsiye doğru.
 - **Sınıflandırma:** Master Protokol'ün kendi değişiklik-sınıfı taksonomisine göre Sınıf A (doküman/truth-sync); gereken minimum `bash scripts/verify_all.sh`'tır ve yeniden koşulup yeşil alındı. Bu pass hiçbir readiness, claim-boundary veya eğitim-matematiği yüzeyine dokunmadı.
+
+## Bağımsız denetim kapanış pass'i (2026-07-29/30) — iki ölü script silindi, üç önceki erteleme tersine çevrildi
+
+Repo'ya sıfır erişimle yapılan bağımsız statik denetim (rapor:
+`~/Documents/mertformer_titan_bagimsiz_denetim_2026-07-27.md`, 6.5/10, 63 bulgu) canlı koda
+karşı yeniden doğrulanıp dalga dalga kapatıldı. Kayda değer kararlar:
+
+- **`scripts/md_build30_sweep.py` SİLİNDİ.** `REPLACEMENTS` tablosundaki her çift `old == new`
+  olduğu için her `.replace()` çağrısı no-op'tu — script hangi argümanla çağrılsa hiçbir dosyayı
+  değiştiremezdi ve kendi docstring'i bunu söylüyordu ("fiilen NO-OP'tur"). Hiçbir launcher,
+  ladder veya test referans vermiyordu. `scripts/repo_hygiene_guard.py`'nin
+  `_FOSSIL_ALLOW_SUBSTR` listesindeki girdisi de birlikte kaldırıldı (o izin listesi dosyayı
+  yalnız build-fossil regex'inden muaf tutuyordu, başka hiçbir şey ona bağlı değildi).
+  `docs/PROJECT_STRUCTURE.md`'den çıkarıldı; `reports/release_manifest.json` ladder içindeki
+  `scripts/sync_manifest.py` ile yeniden üretiliyor.
+- **`scripts/titan_onnx_stress_test.py` SİLİNDİ.** Ölü *ve* semantik olarak yanlış:
+  `tiktoken.get_encoding("cl100k_base")` ile tokenize ediyordu — yani OpenAI GPT-4
+  tokenizer'ıyla, projenin Llama-3 tokenizer'ıyla değil; ürettiği id'ler modelin export
+  edildiği sözlükle eşleşmezdi. `tiktoken` ayrıca `requirements.txt`'te yok (bilinçli: ihtiyaç
+  düştü ve yeniden EKLENMİYOR), yani script import bile olamazdı. Üstelik cwd'ye göreli
+  `titan_mobile.onnx` yolunu sabit gömüyordu ve `scripts/` altındaki bir dosyayı test gibi
+  gösteren bir `pytest.skip` shim'i taşıyordu. `docs/PROJECT_STRUCTURE.md`,
+  `scripts/README.md` ve `scripts/README_TR.md`'den çıkarıldı.
+- **Neden silmek, korumak değil:** ikisi de git history'de duruyor, hiçbir şey kaybolmadı. Altı
+  ay sonra "bu script nereye gitti" sorusuna anında cevap veren bir kaydın maliyeti sıfıra
+  yakın; public bir repo ise no-op bir sweeper ile yanlış tokenizer'a bağlı bir stress tester
+  taşımamalı. `archive/**` snapshot'ları ve `reports/scoped_external_intake_matrix.*` hâlâ iki
+  yolu anıyor ve bilinçli olarak DÜZENLENMEDİ — ilki tarihsel snapshot, ikincisi bu repo
+  dışındaki harici kopyaların denetim kaydı.
+
+- **Bu pass'te üç önceki erteleme tersine çevrildi — bu bilinçli, drift değil:**
+  - 2026-06-13 Pass 7 tasfiyeleri *"17 MoE capacity-loop vektörizasyon — yalnız GPU-perf
+    (eğitim kutusunda)"* maddesini şimdi-değil diye kapatmıştı. Artık YAPILDI
+    (`layers/moe.py`), çünkü değişiklik GPU dışında kanıtlanabilir çıktı:
+    `scripts/cfc_moe_tolerance_check.py` `max_diff_moe=0.000000` veriyor, yani bit-birebir aynı
+    loss'lar; ayrıca yeni `tests/test_moe_capacity_drop_order.py` drop-sırası semantiğini
+    doğrudan bir `nonzero()` referansına karşı kilitliyor. *Throughput* kazancı ise
+    **ÖLÇÜLMEDİ** — burada CUDA aygıtı yok, dolayısıyla sync-sayısı argümanı statik analizdir,
+    ölçüm değildir.
+  - Aynı Pass 7 girdisinin "capacity formülü inline kalabilir" gerekçesi geçersiz kıldı: formül
+    artık modül seviyesindeki `layers.moe.moe_capacity()` helper'ı, çünkü
+    `tests/test_moe_capacity.py` ve `tests/test_property_moe_capacity.py` formülü kendi
+    içlerinde kopyalıyordu ve tüm bu yeniden yazım boyunca yeşil kalırlardı. İki docstring de
+    bu çıkarımı açıkça davet etmişti.
+  - Pass 7'nin *"24/25/31/38 test backlog (… packing resume-seam) — additive saf-CPU kapsam,
+    risksiz, ertelendi"* maddesi kısmen kapandı: packing resume dikişi artık kapsamda ve orada
+    yalnız kapsam eksik değildi — gerçek bir bug saklıydı (Y-5, bkz. BACKLOG).
+- **Hâlâ ertelenmiş, dokunulmamış ve bu pass ile kapanmış SAYILMAMASI gerekenler:** Pass 7
+  madde 14 (Liquid impl default `TITAN_LIQUID_TRAIN_IMPL`), madde 20 (teacher pad-mask
+  GPU-perf), madde 34 (`train/train.py` split), madde 68 (repo-geneli mypy). Özellikle madde 34
+  bu pass'te bilinçli dokunulmaz olarak yeniden teyit edildi: 1100 satırlık `train()`'in ücretli
+  bir 45K koşusu öncesinde neden yapısal olarak bozulmadan bırakıldığı BACKLOG'da.
+- **`train/train.py::train()` REFACTOR EDİLMEDİ — açık sahip kararı (2026-07-29).** Kazanç
+  kozmetik; kayıp senaryosu ise buradaki hiçbir CPU-only testin yakalayamayacağı ve ancak
+  binlerce dolarlık 45K compute harcandıktan sonra yüzeye çıkacak bir yan-etki-sırası kayması.
+  Yalnız içindeki izole bulgulara dokunuldu; fonksiyonun yapısı ve ifade sırası değişmedi. Bu
+  pass'in kod-kalitesi tavanının 10/10 değil ~8.5-9/10 olmasının birinci sebebi budur; bir
+  eksiklik değil, bilinçli bir risk kararıdır. Tam ayrıntı: `DECISIONS.md`.

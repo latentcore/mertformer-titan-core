@@ -536,3 +536,60 @@ Mert made eight real launch-time decisions via explicit multiple-choice question
   6. Documentation-navigation fragmentation — `AGENTS.md` (self-declared #1 in its own source-of-truth order) had zero inbound links from any other root doc (`grep`-verified); `README.md`/`README_TR.md` never linked `START_HERE.md`/`README_SUMMARY.md` (the external-reviewer onboarding docs) either. Fixed by adding both to `README.md`'s/`README_TR.md`'s Canonical surfaces list — not by inventing new hierarchy, just linking what already existed.
 - **One flagged item checked and left unchanged, correctly:** `TROUBLESHOOTING.md`'s advice to re-run `run.sh` (not `zero_touch_start.sh`) for an accelerate-config mismatch was suspected stale but `grep` confirmed `TITAN_FORCE_ACCELERATE_RECONF` is read only by `run.sh` — the existing advice is accurate.
 - **Classification:** Class A (docs/truth-sync) per the Master Protocol's own change-class taxonomy; `bash scripts/verify_all.sh` is the required minimum and was re-run green. No readiness, claim-boundary, or training-math surface was touched by this pass.
+
+## Independent-audit closure pass (2026-07-29/30) — two dead scripts deleted, three prior deferrals reversed
+
+A fully independent static audit (no repo/tool access; report at
+`~/Documents/mertformer_titan_bagimsiz_denetim_2026-07-27.md`, scored 6.5/10, 63 findings)
+was re-verified against live code and closed wave by wave. Decisions worth recording:
+
+- **`scripts/md_build30_sweep.py` DELETED.** Every pair in its `REPLACEMENTS` table was
+  `old == new`, so every `.replace()` call was a no-op — the script could not change a file
+  under any argument, and its own docstring said so ("fiilen NO-OP'tur"). No launcher, ladder
+  or test referenced it. Its entry in `scripts/repo_hygiene_guard.py`'s
+  `_FOSSIL_ALLOW_SUBSTR` was removed with it (that allowlist only ever exempted the file from
+  the build-fossil regex, nothing else depended on it). Removed from
+  `docs/PROJECT_STRUCTURE.md`; `reports/release_manifest.json` regenerates from
+  `scripts/sync_manifest.py` in the ladder.
+- **`scripts/titan_onnx_stress_test.py` DELETED.** Dead *and* semantically wrong: it tokenized
+  with `tiktoken.get_encoding("cl100k_base")` — the OpenAI GPT-4 tokenizer — not the project's
+  Llama-3 tokenizer, so the ids it fed the model would not have matched the vocabulary it was
+  exported against. `tiktoken` is also absent from `requirements.txt` (deliberately: the need
+  lapsed and it is NOT being re-added), so the script could not import. It further hardcoded a
+  cwd-relative `titan_mobile.onnx` and carried a `pytest.skip` shim that made a `scripts/`
+  file look like a test. Removed from `docs/PROJECT_STRUCTURE.md`, `scripts/README.md` and
+  `scripts/README_TR.md`.
+- **Why delete rather than keep:** both remain in git history, so nothing is lost. The cost of
+  a record that answers "where did this script go" six months from now is near zero, and a
+  public repo should not ship a no-op sweeper and a stress tester wired to the wrong
+  tokenizer. `archive/**` snapshots and `reports/scoped_external_intake_matrix.*` still
+  mention both paths and were deliberately NOT edited — the former are historical snapshots,
+  the latter is an audit record of external copies outside this repo.
+
+- **Three earlier deferrals were reversed in this pass — this is deliberate, not drift:**
+  - The 2026-06-13 Pass 7 dispositions closed *"17 MoE capacity-loop vectorization — GPU-perf
+    only (on the training box)"* as not-now. It is now DONE (`layers/moe.py`), because the
+    change turned out to be provable off-GPU: `scripts/cfc_moe_tolerance_check.py` reports
+    `max_diff_moe=0.000000`, i.e. bit-identical losses, and a new
+    `tests/test_moe_capacity_drop_order.py` pins the drop-order semantics against a direct
+    `nonzero()` reference. The *throughput* benefit remains **unmeasured** — there is no CUDA
+    device here, so the sync-count argument is static analysis, not a measurement.
+  - The same Pass 7 entry's reasoning that the capacity formula was fine to leave inline is
+    superseded: the formula is now the module-level `layers.moe.moe_capacity()` helper, because
+    `tests/test_moe_capacity.py` and `tests/test_property_moe_capacity.py` were each
+    re-implementing it locally and would have stayed green through the entire rewrite. Both
+    docstrings had explicitly invited the extraction.
+  - Pass 7's *"24/25/31/38 test backlog (… packing resume-seam) — additive pure-CPU coverage,
+    risk-free, deferred"* is partly closed: the packing resume seam is now covered, and it was
+    not merely missing coverage — it was hiding a real bug (Y-5, see BACKLOG).
+- **Still deferred, untouched, and NOT to be read as closed by this pass:** Pass 7 item 14
+  (Liquid impl default `TITAN_LIQUID_TRAIN_IMPL`), item 20 (teacher pad-mask GPU-perf), item
+  34 (`train/train.py` split), item 68 (whole-repo mypy). Item 34 in particular was
+  re-confirmed as a deliberate no-touch this pass: see the BACKLOG entry for why the 1100-line
+  `train()` was left structurally intact before a paid 45K run.
+- **`train/train.py::train()` NOT refactored — explicit owner decision (2026-07-29).** The gain
+  is cosmetic; the loss scenario is a side-effect-ordering slip that no CPU-only test here can
+  catch and that would surface only after thousands of dollars of 45K compute. Only isolated
+  findings inside it were touched, and its structure and statement order are unchanged. This is
+  the primary reason the code-quality ceiling for this pass is ~8.5-9/10 and not 10/10; it is a
+  deliberate risk decision, not an unfinished item.

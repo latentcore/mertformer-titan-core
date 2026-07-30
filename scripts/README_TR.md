@@ -142,7 +142,6 @@ python3 -m pytest -q tests/test_packed_projection_equivalence.py tests/test_liqu
 - `mobile_export.py` — Mobil/edge ONNX export.
 - `test_onnx_export.py` — ONNX export test.
 - `verify_onnx_local.py` — Yerel ONNX doğrulama.
-- `titan_onnx_stress_test.py` — ONNX stres testi.
 
 ## Dataset Uyum / Provenans
 - `extract_dataset_refs.py` — Kodun referansladığı dataset ID'lerini `datasets/inventory*` dosyalarına çıkarır (default offline).
