@@ -24,6 +24,7 @@ This document defines the security, governance, and deployment boundaries for Me
 
 ## Reporting a Vulnerability
 - Report security vulnerabilities privately via GitHub Security Advisories (repository → **Security** tab → **Report a vulnerability**). Do not open a public issue.
+- If Security Advisories are unavailable to you, email **mert.yunlu08@gmail.com** with `SECURITY` in the subject line. Please allow up to 7 days for an initial response.
 - Operational incidents are recorded in `postmortems/` using the provided template; mitigation steps are updated after resolution.
 
 ## Status

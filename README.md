@@ -74,7 +74,8 @@ and claim discipline. Read [STATUS.md](STATUS.md) for what is *measured* today v
 is *target* or *vision*; the separation is deliberate and enforced by
 [TRUTH_MATRIX.md](TRUTH_MATRIX.md).
 
-Contact: open an issue, or reach me through the GitHub profile that owns this repository.
+**Contact:** [mert.yunlu08@gmail.com](mailto:mert.yunlu08@gmail.com) — or open an issue
+on this repository.
 
 ## 🤝 Contributions & PR Rules
 
@@ -97,6 +98,8 @@ Before opening a pull request:
    together.
 5. **Use `feature/` or `fix/` branch prefixes**, and disclose AI-assistant involvement in the
    commit trailer — see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+All participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 Report security issues privately via [SECURITY.md](SECURITY.md), never in a public issue.
 

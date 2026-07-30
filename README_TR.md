@@ -74,7 +74,8 @@ iddia disiplini. Bugün neyin *ölçülmüş*, neyin *hedef* ya da *vizyon* oldu
 [STATUS_TR.md](STATUS_TR.md)'ye bakın; bu ayrım bilinçlidir ve
 [TRUTH_MATRIX_TR.md](TRUTH_MATRIX_TR.md) tarafından zorlanır.
 
-İletişim: bir issue açın ya da bu deponun sahibi olan GitHub profili üzerinden ulaşın.
+**İletişim:** [mert.yunlu08@gmail.com](mailto:mert.yunlu08@gmail.com) — ya da bu depoda
+bir issue açın.
 
 ## 🤝 Katkılar ve PR Kuralları
 
@@ -98,7 +99,9 @@ Bir pull request açmadan önce:
 5. **`feature/` veya `fix/` dal öneki kullanın** ve yapay zekâ asistanı katkısını commit
    trailer'ında beyan edin — bkz. [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Güvenlik açıklarını asla public bir issue'da değil, [SECURITY.md](SECURITY.md) üzerinden
+Tüm katılım [Davranış Kuralları](CODE_OF_CONDUCT_TR.md) kapsamındadır.
+
+Güvenlik açıklarını asla public bir issue'da değil, [SECURITY_TR.md](SECURITY_TR.md) üzerinden
 özel olarak bildirin.
 
 ## Lisans

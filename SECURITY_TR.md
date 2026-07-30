@@ -24,6 +24,7 @@ Bu doküman, MertFormer Titan için güvenlik, yönetişim ve deployment sınır
 
 ## Güvenlik Açığı Bildirimi
 - Güvenlik açıklarını gizli olarak GitHub Security Advisories üzerinden bildirin (depo → **Security** sekmesi → **Report a vulnerability**). Public issue açmayın.
+- Security Advisories size kapalıysa, konu satırında `SECURITY` yazarak **mert.yunlu08@gmail.com** adresine e-posta gönderin. İlk yanıt için 7 güne kadar süre tanıyın.
 - Operasyonel olaylar `postmortems/` altında şablonla kaydedilir; çözümden sonra mitigation adımları güncellenir.
 
 ## Durum

@@ -24,13 +24,14 @@ Training data is drawn from third-party datasets, each under its own upstream li
 from bigcode/the-stack-dedup; users must respect the per-file upstream licenses and any
 opt-out signals carried by those corpora.
 
-Scope of "All Rights Reserved"
-------------------------------
-The proprietary "All Rights Reserved" notice in LICENSE applies to MertFormer AI Team
-ORIGINAL code, architecture, and (future) trained weights. It does NOT — and cannot —
-override the upstream license obligations of the Teacher model, the Teacher's outputs,
-or the third-party datasets above. Any distribution of trained weights derived from the
-Teacher must continue to satisfy the Llama 3.3 Community License (including the
+Scope of the code license
+-------------------------
+The Apache License 2.0 in LICENSE applies to Mert Yunlu's ORIGINAL code and architecture.
+Trained weights, when they exist, are a separate layer and are NOT covered by it (see
+MODEL_LICENSE.md). The code license does NOT — and cannot — override the upstream license
+obligations of the Teacher model, the Teacher's outputs, or the third-party datasets
+above. Any distribution of trained weights derived from the Teacher must continue to
+satisfy the Llama 3.3 Community License (including the
 "Built with Llama" notice and naming requirement) and the applicable dataset licenses.
 
 This NOTICE is informational and does not grant rights beyond those in LICENSE and the

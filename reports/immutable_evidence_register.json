@@ -1,6 +1,6 @@
 {
-  "generated_local": "2026-07-30T18:26:19",
-  "entry_count": 20,
+  "generated_local": "2026-07-30T19:08:01",
+  "entry_count": 19,
   "entries": [
     {
       "path": "<HOME>/Desktop/NİHAİ/Documents/MertFormer_Strategy_Vault_2026_04_27",
@@ -114,12 +114,6 @@
       "path": "<HOME>/Desktop/NİHAİ/İndirilenler/MertFormer_Titan_Preflight_Evidence_Note_2026-07-02_GIST_READY.md",
       "kind": "file",
       "immutable_reason": "evidence",
-      "disposition": "preserve_immutable_evidence"
-    },
-    {
-      "path": "<HOME>/Downloads/content/mertformer_outputs",
-      "kind": "dir",
-      "immutable_reason": "output",
       "disposition": "preserve_immutable_evidence"
     }
   ]

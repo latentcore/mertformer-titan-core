@@ -978,6 +978,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── safety.py  # Python module/script (module for safety)
 │   └── tokenizer_resolver.py  # Python module/script (module for tokenizer resolver)
 ├── .gitignore  # git ignore policy
+├── .gitleaks.toml  # TOML configuration file
 ├── .pre-commit-config.yaml  # YAML configuration file
 ├── ABLATION.md  # documentation/report file
 ├── ABLATION_TR.md  # Turkish document counterpart
