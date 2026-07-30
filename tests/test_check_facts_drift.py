@@ -23,8 +23,15 @@ def test_check_small_overlays_flags_a_stale_docstring_claim() -> None:
         "# total parameters ....... 999,999,999  (~1.00B)\n"
         "hidden_size: 512\n"
         "intermediate_size: 1408\n"
+        # [O-1 2026-07-29] Both spellings of each aliased field. config/config.py's
+        # _assert_alias_consistency() now rejects an overlay that sets only one, because
+        # the unset twin keeps its default (18) and different modules read different
+        # names -- exactly the silent layer/head-count mismatch that check was added for.
+        # Every real overlay in config/model/ already writes both; this fixture did not.
         "num_layers: 9\n"
+        "num_hidden_layers: 9\n"
         "num_heads: 8\n"
+        "num_attention_heads: 8\n"
         "num_kv_heads: 2\n"
         "head_dim: 64\n"
         "use_moe: true\n"

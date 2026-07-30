@@ -83,8 +83,17 @@ fi
   run_step "release_build30" bash scripts/release_build30.sh
   run_step "unlock_artifacts" bash -lc 'chflags nouchg artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 artifacts/mertformer_training_outputs_bundle.zip artifacts/mertformer_training_outputs_bundle.zip.sha256 2>/dev/null || true; chmod u+w artifacts/mertformer_release.zip artifacts/mertformer_release.zip.sha256 artifacts/mertformer_training_outputs_bundle.zip artifacts/mertformer_training_outputs_bundle.zip.sha256 2>/dev/null || true'
   run_step "artifact_release_zip" bash scripts/build_artifacts_release_zip.sh
-  run_step "training_outputs_bundle" "$PY_BIN" scripts/build_training_outputs_bundle.py
-  if [[ "${SOP_PLOT_TRAINING_LOG:-0}" == "1" ]]; then
+  # [2026-07-30] The dashboard is rendered BEFORE the bundle, not after.
+  # It used to run after "training_outputs_bundle", so a freshly-rendered dashboard could
+  # never reach the zip -- at best the bundle carried the PREVIOUS run's stale image.
+  # build_training_outputs_bundle.py bundles reports/ recursively (BundleRoot("reports",
+  # "dir") + rglob), so rendering into reports/ first is all that is needed.
+  #
+  # Also now on by DEFAULT (SOP_PLOT_TRAINING_LOG=0 opts out) rather than off by default:
+  # the visual is the single most useful artifact for reading a finished run, and
+  # scripts/plot_training_log.py degrades to a warning when matplotlib is missing instead
+  # of failing the ladder, so enabling it cannot break a run.
+  if [[ "${SOP_PLOT_TRAINING_LOG:-1}" == "1" ]]; then
     LOG_PATH_CAND="${SOP_TRAINING_LOG:-}"
     if [[ -z "$LOG_PATH_CAND" ]]; then
       LOG_PATH_CAND=$(ls -t "$ROOT_DIR"/logs/*.jsonl 2>/dev/null | head -n 1 || true)
@@ -96,6 +105,7 @@ fi
       echo "plot_training_log: skipped (no jsonl log found)"
     fi
   fi
+  run_step "training_outputs_bundle" "$PY_BIN" scripts/build_training_outputs_bundle.py
   run_step "zip_denylist_audit zip=$REL_ZIP" "$PY_BIN" scripts/zip_denylist_audit.py --zip "$REL_ZIP"
   run_step "secret_scan" "$PY_BIN" scripts/secret_scan.py
 

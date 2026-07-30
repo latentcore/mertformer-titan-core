@@ -377,6 +377,19 @@ class MiniTitan(nn.Module):
 # ==============================================================================
 # DATA & ENGINE
 # ==============================================================================
+def _stable_token_id(word: str, vocab_size: int) -> int:
+    """Deterministic word -> token id for this PoC's throwaway hashing "tokenizer".
+
+    Deliberately NOT the builtin ``hash()``: CPython salts string hashing per process
+    (PYTHONHASHSEED), so the same word mapped to a different id on every run and two PoC
+    runs could not be compared. blake2b is stable across processes, machines and Python
+    builds. This is still a hashing stand-in, not a real tokenizer -- collisions are
+    expected and fine for a PoC; only the REPRODUCIBILITY was broken.
+    """
+    digest = hashlib.blake2b(word.encode("utf-8"), digest_size=8).digest()
+    return int.from_bytes(digest, "big") % vocab_size
+
+
 def get_dataset():
     try:
         from utils.dataset_registry import get_hf_revision
@@ -386,7 +399,16 @@ def get_dataset():
         if revision:
             print(f"   📌 Pinned revision: {revision}")
         ds = load_dataset("wikitext", "wikitext-2-raw-v1", split="train", revision=revision)
-        tokens = torch.tensor([hash(w) % cfg.vocab_size for w in "\n".join(ds["text"]).split()], dtype=torch.long)
+        # [O-7 2026-07-29] blake2b, not the builtin hash(). Python salts str hashing per
+        # process (PYTHONHASHSEED), so `hash(w) % vocab_size` gave a DIFFERENT token id for
+        # the same word on every run -- measured: "merhaba" mapped to 63210 / 89102 / 28056
+        # across three consecutive interpreters. The PoC's loss curve was therefore not
+        # reproducible and two runs were not comparable, which defeats the point of a PoC.
+        # blake2b is stable across processes and Python builds.
+        tokens = torch.tensor(
+            [_stable_token_id(w, cfg.vocab_size) for w in "\n".join(ds["text"]).split()],
+            dtype=torch.long,
+        )
         print(f"✅ Real Data: {len(tokens)} tokens")
         class DS(Dataset):
             def __len__(self): return (len(tokens)-1)//128

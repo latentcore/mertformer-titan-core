@@ -69,6 +69,17 @@ packages = [
   "orchestrator",
 ]
 
+[tool.pytest.ini_options]
+# [O-19 2026-07-29] Restrict collection to tests/. Without this, a bare `pytest` from the
+# repo root -- which is exactly how scripts/verify_all.sh invokes it -- also collected
+# scripts/test_onnx_export.py, a standalone ONNX export VALIDATOR CLI that merely happens
+# to match the default `test_*.py` pattern. It is not a unit test: it appends os.getcwd()
+# to sys.path and builds a full MertFormer. Real ONNX coverage lives in
+# tests/test_onnx_export_path.py, tests/test_onnx_custom_op_contract.py and
+# tests/test_onnx_metadata_hook.py. Net effect on the suite: 691 -> 690 collected, and the
+# script stays runnable directly (`python scripts/test_onnx_export.py`).
+testpaths = ["tests"]
+
 [tool.interrogate]
 # Docstring-coverage REGRESSION floor (not an aspiration). The tree currently sits
 # around 15.5%; this pins a conservative baseline so coverage cannot silently regress,

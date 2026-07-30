@@ -401,17 +401,77 @@ def structure_comment(rel: str, is_dir: bool, lang: str = "en") -> str:
 
 
 def flatten_tree(node: dict[str, Any], parent_parts: tuple[str, ...] = ()) -> list[str]:
-    """Reconstruct the relative file paths actually emitted into the structure tree.
+    """Reconstruct the relative file paths held in an in-memory build_tree() node.
 
-    Used to diff the rendered PROJECT_STRUCTURE tree against the manifest entry
-    list so the file_sync_matrix gate reflects a real comparison rather than a
-    hardcoded green result.
+    [Y-10 2026-07-29] This walks the DICT, not the rendered markdown. Its previous
+    docstring claimed it diffed "the rendered PROJECT_STRUCTURE tree against the manifest
+    entry list", and the caller's comment claimed the resulting gate was "a real
+    comparison rather than a hardcoded green" -- neither was true:
+
+      * the caller compared ``set(entry_paths)`` against
+        ``set(flatten_tree(build_tree(entry_paths)))``, an in-memory round trip of the
+        same list, so the two sets could only differ if build_tree/flatten_tree
+        themselves lost or duplicated an entry; and
+      * ``build_structure_md`` had already REWRITTEN docs/PROJECT_STRUCTURE.md from that
+        same list a few lines earlier, so even a real file read at that point would only
+        have re-read what was just written.
+
+    The markdown is produced by a DIFFERENT path (build_structure_lines -> emit_tree),
+    which flatten_tree never touches -- so the round trip did not even validate the
+    renderer that writes the file. Use parse_structure_md() for that; this function is
+    now only the in-memory helper it always actually was.
     """
     paths: list[str] = []
     for name in node.get("files", []):
         paths.append("/".join(parent_parts + (name,)))
     for name, child in node.get("dirs", {}).items():
         paths.extend(flatten_tree(child, parent_parts + (name,)))
+    return paths
+
+
+def parse_structure_md(text: str) -> list[str]:
+    """Recover file paths from a RENDERED PROJECT_STRUCTURE.md tree.
+
+    The inverse of emit_tree(): each entry is ``<prefix><branch><name>  # <role>`` where
+    prefix is 4 characters per level (``|   `` or four spaces), branch is the tee or elbow,
+    and directories are suffixed with ``/``. Returns files only, in document order.
+
+    Used for the two checks that replaced the round-trip tautology described in
+    flatten_tree(): drift of the PREVIOUS on-disk tree against the manifest, and
+    losslessness of the renderer that produces the new one. Unparseable input yields an
+    empty list, which the caller reports rather than treating as agreement.
+    """
+    paths: list[str] = []
+    stack: list[str] = []
+    in_fence = False
+
+    for raw in text.splitlines():
+        if raw.strip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if not in_fence:
+            continue
+
+        marker_at = -1
+        for branch in ("├── ", "└── "):
+            found = raw.find(branch)
+            if found != -1 and (marker_at == -1 or found < marker_at):
+                marker_at = found
+        if marker_at == -1:
+            continue          # the root line, or a blank/decorative line
+
+        depth = marker_at // 4
+        entry = raw[marker_at + 4:]
+        name = entry.split("  # ", 1)[0].rstrip()
+        if not name:
+            continue
+
+        del stack[depth:]
+        if name.endswith("/"):
+            stack.append(name[:-1])
+        else:
+            paths.append("/".join(stack + [name]))
+
     return paths
 
 
@@ -535,6 +595,21 @@ def main() -> int:
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
+    # [Y-10 2026-07-29] Capture the COMMITTED tree before overwriting it. This is the one
+    # moment the previous on-disk state is still observable, and it answers the question
+    # the old round-trip check pretended to answer: was docs/PROJECT_STRUCTURE.md stale --
+    # i.e. did someone add or remove a tracked file without re-running this sync?
+    previous_structure_paths: list[str] = []
+    previous_structure_readable = False
+    if structure_path.exists():
+        try:
+            previous_structure_paths = parse_structure_md(
+                structure_path.read_text(encoding="utf-8")
+            )
+            previous_structure_readable = True
+        except OSError:
+            previous_structure_readable = False
+
     build_structure_md(entry_paths, structure_path)
 
     readme_sync = {
@@ -554,21 +629,45 @@ def main() -> int:
     }
     readme_sync_ok = all(readme_sync.values())
 
-    # Real drift check: diff the manifest entry list against the paths actually
-    # rendered into the structure tree (flattened back out of build_tree). This
-    # binds the matrix gate to a genuine comparison instead of a hardcoded green.
-    structure_paths = flatten_tree(build_tree(entry_paths))
+    # [Y-10 2026-07-29] The gate below used to compare set(entry_paths) against
+    # set(flatten_tree(build_tree(entry_paths))) -- an in-memory round trip of the same
+    # list, and therefore always equal unless build_tree/flatten_tree were themselves
+    # broken. See flatten_tree()'s docstring for the full account. It is replaced by two
+    # checks that can actually fail:
+    #
+    #   1. RENDER LOSSLESSNESS (gating). Parse back the markdown we just wrote and diff it
+    #      against the manifest. This exercises the real renderer
+    #      (build_structure_lines -> emit_tree), which the round trip bypassed entirely, so
+    #      an emit_tree bug that silently dropped or mangled entries now fails here.
+    #   2. PRE-EXISTING DRIFT (reported, NOT gating). Diff the committed tree captured
+    #      above against the manifest. Non-empty simply means the tree was stale and this
+    #      run refreshed it -- which is this tool's job, so it must not fail the ladder.
     manifest_set = set(entry_paths)
-    structure_set = set(structure_paths)
-    missing_in_structure = sorted(manifest_set - structure_set)
-    missing_in_manifest = sorted(structure_set - manifest_set)
+    rendered_paths = parse_structure_md(structure_path.read_text(encoding="utf-8"))
+    rendered_set = set(rendered_paths)
+    missing_in_structure = sorted(manifest_set - rendered_set)
+    missing_in_manifest = sorted(rendered_set - manifest_set)
+
+    previous_set = set(previous_structure_paths)
     matrix_payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
+        "check": "manifest_vs_rendered_structure_md",
         "manifest_count": len(manifest_set),
-        "structure_count": len(structure_set),
+        "structure_count": len(rendered_set),
         "missing_in_structure": missing_in_structure,
         "missing_in_manifest": missing_in_manifest,
         "ok": not missing_in_structure and not missing_in_manifest,
+        # Informational only; never folded into "ok".
+        "previous_structure": {
+            "readable": previous_structure_readable,
+            "count": len(previous_set),
+            "was_stale": bool(previous_structure_readable and previous_set != manifest_set),
+            "added_since_previous": sorted(manifest_set - previous_set)[:50],
+            "removed_since_previous": sorted(previous_set - manifest_set)[:50],
+            "note": "Drift of the COMMITTED tree against the manifest, measured before "
+                    "this run rewrote it. Refreshing it is this tool's purpose, so a "
+                    "non-empty diff is not a failure.",
+        },
     }
 
     matrix_path.parent.mkdir(parents=True, exist_ok=True)

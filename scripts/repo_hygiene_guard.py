@@ -58,7 +58,8 @@ _FOSSIL_ALLOW_SUBSTR = (
     "closure",
     "postmortems/",
     "scripts/repo_hygiene_guard.py",  # this file (contains the patterns)
-    "scripts/md_build30_sweep.py",    # documented historical-sweep helper
+    # scripts/md_build30_sweep.py was listed here until 2026-07-29; the file was
+    # deleted (see DECISIONS.md) so the entry would only have been dead weight.
 )
 
 # Only scan textual source we actually author. Skip binaries/data/vendored.

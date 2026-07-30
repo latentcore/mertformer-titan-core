@@ -7,6 +7,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import zipfile
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -237,11 +238,84 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+DASHBOARD_NAME = "training_dashboard.png"
+
+
+def ensure_training_dashboard(project_root: Path, reports_dir: Path) -> dict:
+    """Render reports/training_dashboard.png from the newest run log, if it is stale.
+
+    [2026-07-30] The bundle is the ONE choke point every lane passes through, so the
+    "a finished run ships with its charts" guarantee is attached here rather than to a
+    single launcher. Before this, ``scripts/plot_training_log.py`` was wired only into
+    ``scripts/one_command_full_sop.sh`` behind an off-by-default flag -- and AFTER the
+    bundle step, so even there a fresh dashboard could not reach the zip. Neither
+    ``launch_ocean_45k.sh`` (which calls this script directly) nor ``launch_8xb300.sh``
+    (which ``exec``s zero_touch_start.sh and has no post-run hook at all) rendered
+    anything, so a completed 45K run produced no visualisation.
+
+    Rendering here happens BEFORE the archive is walked, so reports/ -- which is bundled
+    recursively -- picks the image up automatically.
+
+    Best-effort by construction: any failure is recorded in the manifest and the bundle
+    proceeds. A charting problem must never cost the operator the outputs of a run that
+    consumed real GPU hours. Set TITAN_BUNDLE_SKIP_PLOT=1 to opt out entirely.
+    """
+    status: dict = {"attempted": False, "rendered": False, "reason": None}
+
+    if os.environ.get("TITAN_BUNDLE_SKIP_PLOT", "0").strip().lower() in {"1", "true", "yes"}:
+        status["reason"] = "disabled_by_TITAN_BUNDLE_SKIP_PLOT"
+        return status
+
+    logs_dir = project_root / "logs"
+    candidates = sorted(logs_dir.glob("*.jsonl"), key=lambda p: p.stat().st_mtime, reverse=True) \
+        if logs_dir.is_dir() else []
+    if not candidates:
+        status["reason"] = "no_run_log_found"
+        return status
+
+    newest_log = candidates[0]
+    dashboard = reports_dir / DASHBOARD_NAME
+    if dashboard.exists() and dashboard.stat().st_mtime >= newest_log.stat().st_mtime:
+        status["reason"] = "already_current"
+        status["source_log"] = str(newest_log.relative_to(project_root))
+        return status
+
+    status["attempted"] = True
+    status["source_log"] = str(newest_log.relative_to(project_root))
+    plotter = project_root / "scripts" / "plot_training_log.py"
+    if not plotter.exists():
+        status["reason"] = "plot_training_log.py_missing"
+        return status
+
+    try:
+        proc = subprocess.run(
+            [sys.executable, str(plotter), str(newest_log), "--out", str(dashboard)],
+            cwd=str(project_root), capture_output=True, text=True, timeout=300,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        status["reason"] = f"render_failed: {exc}"
+        return status
+
+    if dashboard.exists():
+        status["rendered"] = True
+        status["reason"] = "rendered"
+        status["path"] = str(dashboard.relative_to(project_root))
+    else:
+        # plot_training_log.py exits 0 with a warning when matplotlib is unavailable.
+        tail = (proc.stderr or proc.stdout or "").strip().splitlines()
+        status["reason"] = f"no_image_produced (rc={proc.returncode}): {tail[-1] if tail else ''}"
+    return status
+
+
 def main() -> int:
     args = parse_args()
     project_root = Path(args.project_root).resolve()
     reports_dir = Path(args.reports_dir).resolve() if args.reports_dir else project_root / "reports"
     artifacts_dir = Path(args.artifacts_dir).resolve() if args.artifacts_dir else project_root / "artifacts"
+
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    dashboard_status = ensure_training_dashboard(project_root, reports_dir)
+    print(f"training_dashboard: {dashboard_status.get('reason')}")
     bundle_zip = artifacts_dir / BUNDLE_NAME
     bundle_sha = artifacts_dir / SHA_NAME
     manifest_json = reports_dir / MANIFEST_JSON

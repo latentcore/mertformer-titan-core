@@ -784,7 +784,11 @@ def test_forward_batch_metrics_reports_auxiliary_head_metrics() -> None:
     assert 'legality_head_top1_is_legal_rate' in metrics
 
 
-def test_generate_selfplay_report_runs_with_stub_model(tmp_path: Path) -> None:
+def test_generate_selfplay_report_runs_with_stub_model(tmp_path: Path, monkeypatch) -> None:
+    # [2026-07-30] Redirect the desktop seam. make_layout() computes
+    # `final_root = root/'final' if delivery_mode else detect_desktop_dir()`, so without
+    # this the test writes its placeholder result zip to the REAL ~/Desktop.
+    monkeypatch.setattr(onefile, 'detect_desktop_dir', lambda: tmp_path)
     cfg = {
         **onefile.RUN_CONFIG,
         'artifact_root': str(tmp_path),
@@ -819,7 +823,11 @@ def test_build_replay_buffer_report_collects_positions() -> None:
     assert report['records'][0]['move'] == 'e2e4'
 
 
-def test_play_inference_mode_tournament_runs_with_stub_model(tmp_path: Path) -> None:
+def test_play_inference_mode_tournament_runs_with_stub_model(tmp_path: Path, monkeypatch) -> None:
+    # [2026-07-30] Redirect the desktop seam. make_layout() computes
+    # `final_root = root/'final' if delivery_mode else detect_desktop_dir()`, so without
+    # this the test writes its placeholder result zip to the REAL ~/Desktop.
+    monkeypatch.setattr(onefile, 'detect_desktop_dir', lambda: tmp_path)
     cfg = {
         **onefile.RUN_CONFIG,
         'artifact_root': str(tmp_path),
@@ -836,7 +844,11 @@ def test_play_inference_mode_tournament_runs_with_stub_model(tmp_path: Path) -> 
     assert 'search_assisted' in report['players']
 
 
-def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path) -> None:
+def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path, monkeypatch) -> None:
+    # [2026-07-30] Redirect the desktop seam. make_layout() computes
+    # `final_root = root/'final' if delivery_mode else detect_desktop_dir()`, so without
+    # this the test writes its placeholder result zip to the REAL ~/Desktop.
+    monkeypatch.setattr(onefile, 'detect_desktop_dir', lambda: tmp_path)
     cfg = {
         **onefile.RUN_CONFIG,
         'artifact_root': str(tmp_path),
@@ -997,7 +1009,11 @@ def test_write_closure_manifests_marks_closure_artifacts_present(tmp_path: Path)
     assert truth['present_required_count'] < truth['required_count']
 
 
-def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path) -> None:
+def test_write_release_evidence_reports_writes_release_surfaces(tmp_path: Path, monkeypatch) -> None:
+    # [2026-07-30] Redirect the desktop seam. make_layout() computes
+    # `final_root = root/'final' if delivery_mode else detect_desktop_dir()`, so without
+    # this the test writes its placeholder result zip to the REAL ~/Desktop.
+    monkeypatch.setattr(onefile, 'detect_desktop_dir', lambda: tmp_path)
     cfg = {
         **onefile.RUN_CONFIG,
         'artifact_root': str(tmp_path),
@@ -2058,3 +2074,65 @@ def test_moe_matches_canonical_eval_path() -> None:
         out_canonical, aux_canonical = canonical(x)
     assert torch.allclose(out_mirror, out_canonical, atol=1e-5, rtol=1e-5)
     assert torch.allclose(aux_mirror, aux_canonical, atol=1e-6, rtol=1e-5)
+
+
+# --- [2026-07-30] Test-isolation guard: no test may write to the real Desktop ----------
+#
+# chess_5080_onefile.make_layout() computes
+#     final_root = root/"final" if delivery_mode else detect_desktop_dir()
+# and then mkdir()s it. So any non-delivery-mode test that touches
+# layout.final_zip_path / final_sha_path writes to the operator's ACTUAL ~/Desktop unless
+# it stubs detect_desktop_dir. Four tests were missing that stub and were depositing
+# MertFormer_Chess_5080_Result_<ts>.zip (3 bytes, literally b"zip") plus a .sha256 reading
+# "deadbeef  bundle.zip" onto the Desktop on every single pytest run.
+
+def test_no_unmocked_make_layout_can_reach_the_real_desktop() -> None:
+    """Meta-guard: every non-delivery make_layout() call here must stub the desktop seam.
+
+    Scans this file's own source. Cheap, and it fails the moment someone adds a new
+    make_layout() test without the stub -- which is exactly how the four leaks appeared.
+    """
+    source_lines = Path(__file__).read_text(encoding='utf-8').splitlines()
+    # Built at runtime so this scanner's own source line does not match itself.
+    needle = 'onefile.' + 'make_layout('
+    offenders = []
+    for index, line in enumerate(source_lines):
+        if needle not in line:
+            continue
+        if line.lstrip().startswith('#'):
+            continue                      # prose about make_layout, not a call
+        for back in range(index, -1, -1):
+            if source_lines[back].startswith('def '):
+                enclosing = source_lines[back].split('(')[0][4:]
+                if enclosing.startswith('test_no_unmocked_make_layout'):
+                    break                 # the scanner itself
+                body = '\n'.join(source_lines[back:index])
+                stubbed = 'detect_desktop_dir' in body
+                delivery = "'delivery_mode': True" in body
+                if not stubbed and not delivery:
+                    offenders.append(f"line {index + 1} in {enclosing}")
+                break
+    assert not offenders, (
+        'make_layout() called without stubbing detect_desktop_dir and without '
+        f'delivery_mode=True -- this writes to the real ~/Desktop: {offenders}'
+    )
+
+
+def test_make_layout_honours_a_stubbed_desktop(tmp_path: Path, monkeypatch) -> None:
+    """The seam the guard above relies on: a stubbed desktop must actually be used."""
+    fake_desktop = tmp_path / 'fake_desktop'
+    fake_desktop.mkdir()
+    monkeypatch.setattr(onefile, 'detect_desktop_dir', lambda: fake_desktop)
+
+    cfg = {
+        **onefile.RUN_CONFIG,
+        'artifact_root': str(tmp_path / 'artifacts'),
+    }
+    layout = onefile.make_layout(cfg)
+
+    assert layout.final_zip_path.parent == fake_desktop
+    assert layout.final_sha_path.parent == fake_desktop
+    # And nothing landed in the operator's real home.
+    real_desktop = Path.home() / 'Desktop'
+    if real_desktop.exists():
+        assert not list(real_desktop.glob(f"{cfg['result_prefix']}_*.zip.tmp"))

@@ -199,7 +199,29 @@ kill "$DMON_PID" 2>/dev/null || true
 [ -n "$BACKUP_PID" ] && kill "$BACKUP_PID" 2>/dev/null || true
 trap - EXIT
 
-# --- post-run: bundle outputs + presence check. ---
+# --- post-run: render the training dashboard, THEN bundle outputs + presence check. ---
+#
+# [2026-07-30] The dashboard step did not exist here at all. This launcher never invoked
+# one_command_full_sop.sh (the only place plot_training_log.py was wired), so a finished
+# 45K run produced NO visualisation and the outputs bundle shipped without one. Rendering
+# happens before build_training_outputs_bundle.py because that script bundles reports/
+# recursively -- render first and the PNG is carried automatically.
+#
+# Deliberately non-fatal (`|| true`): a plotting failure must never mask the exit code of
+# a run that cost real GPU hours. plot_training_log.py already degrades to a warning when
+# matplotlib is unavailable rather than exiting non-zero.
+PLOT_LOG_CAND="${OCEAN_TRAINING_LOG:-}"
+if [[ -z "$PLOT_LOG_CAND" ]]; then
+  PLOT_LOG_CAND=$(ls -t logs/*.jsonl 2>/dev/null | head -n 1 || true)
+fi
+if [[ -n "$PLOT_LOG_CAND" && -f "$PLOT_LOG_CAND" ]]; then
+  echo "[launch] rendering training dashboard from ${PLOT_LOG_CAND}"
+  "$PY" scripts/plot_training_log.py "$PLOT_LOG_CAND" --out reports/training_dashboard.png \
+    2>&1 | tee "logs/launch/plot_${RUN_ID}.log" || true
+else
+  echo "[launch] plot_training_log: skipped (no logs/*.jsonl found)"
+fi
+
 "$PY" scripts/build_training_outputs_bundle.py 2>&1 | tee "logs/launch/bundle_${RUN_ID}.log" || true
 if [[ -f artifacts/mertformer_training_outputs_bundle.zip ]]; then
   unzip -l artifacts/mertformer_training_outputs_bundle.zip \

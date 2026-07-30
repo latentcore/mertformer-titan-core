@@ -983,6 +983,74 @@ def _validate_training_contract(cfg: MertFormerConfig) -> None:
     ).strip():
         raise ValueError("❌ require_gated_teacher=true but teacher_model_id is empty.")
 
+    _assert_alias_consistency(cfg)
+
+
+# Pairs of field names that describe the SAME quantity under two spellings, because
+# different modules read different names (see the "[CRITICAL FIX] We define both names
+# that the code looks for" block in MertFormerConfig). They must agree.
+_ALIAS_PAIRS = (
+    ("num_layers", "num_hidden_layers"),
+    ("num_heads", "num_attention_heads"),
+)
+
+
+def _assert_alias_consistency(cfg: MertFormerConfig) -> None:
+    """Fail loudly when duplicate-name config fields disagree after overlays.
+
+    [O-1 2026-07-29] ``num_layers``/``num_hidden_layers`` and
+    ``num_heads``/``num_attention_heads`` are two spellings each of one quantity, kept
+    because different modules read different names -- ``train/`` reads ``num_layers``,
+    ``layers/mla.py`` reads ``num_heads``. Nothing enforced that they stayed equal, and
+    every YAML overlay in ``config/model/`` sets BOTH by hand
+    (``mertformer_small.yaml`` and ``mertformer_pilot_stabilization.yaml`` each write four
+    lines for two values). An overlay that set only one spelling, or set them to different
+    values, would silently build a model whose layer or head count differed BETWEEN
+    components -- a corruption that surfaces as a shape error deep in training, or worse,
+    not at all.
+
+    Raising rather than auto-repairing is deliberate: if the two disagree there is no
+    principled way to pick a winner, and quietly choosing one is how the original class of
+    bug happens. All four current overlays already agree, so this is a zero-false-positive
+    guard on the tree as it stands.
+
+    Runs at the end of ``_finalize_config()``, i.e. AFTER ``_apply_overrides()`` -- the same
+    ordering lesson as the batch-size auto-tune above; a check in ``__post_init__`` would
+    run before overlays and see only the defaults.
+    """
+    for primary, alias in _ALIAS_PAIRS:
+        left = getattr(cfg, primary, None)
+        right = getattr(cfg, alias, None)
+        if left is None or right is None:
+            continue
+        if int(left) != int(right):
+            raise ValueError(
+                f"❌ CONFIG ALIAS MISMATCH: {primary}={left} but {alias}={right}. "
+                f"These are two names for the same quantity (different modules read "
+                f"different names), so they must be equal. If you set one in a "
+                f"config/model/*.yaml overlay, set the other to the same value."
+            )
+
+    # head_dim is a CONVENTION, not an invariant: layers/mla.py uses cfg.head_dim as given
+    # (`getattr(cfg, "head_dim", hidden_size // num_heads)`) and sizes q_proj/o_proj from
+    # `num_heads * head_dim`, so an inner attention width that differs from hidden_size is
+    # architecturally legal. Warn, never raise -- raising would forbid a valid design.
+    try:
+        hidden = int(getattr(cfg, "hidden_size", 0))
+        heads = int(getattr(cfg, "num_heads", 0))
+        head_dim = int(getattr(cfg, "head_dim", 0))
+        if hidden and heads and head_dim and hidden % heads == 0:
+            expected = hidden // heads
+            if expected != head_dim:
+                _cfg_print(
+                    f"⚠️  head_dim={head_dim} does not equal hidden_size/num_heads "
+                    f"({hidden}/{heads}={expected}). This is legal (attention runs at a "
+                    f"different inner width) but is usually an overlay that changed "
+                    f"hidden_size or num_heads without updating head_dim."
+                )
+    except (TypeError, ValueError):
+        pass
+
 
 # Config instance
 cfg = MertFormerConfig()
@@ -1026,15 +1094,47 @@ def validate_layer_config(cfg: MertFormerConfig) -> None:
             f"MoE layers: {sorted(moe_layers)}, Liquid layers: {sorted(liquid_layers)}"
         )
 
-    # TITAN: Strictly enforce BF16 for CUDA (S25 memory optimization)
+
+def enforce_cuda_bf16_param_dtype(cfg: MertFormerConfig) -> None:
+    """Force ``cfg.param_dtype`` to bfloat16 on a bf16-capable CUDA device.
+
+    [O-2 2026-07-29] This used to be the tail of ``validate_layer_config()`` -- a MUTATION
+    hidden inside a function named, documented and used as a validator. It has five
+    external callers (``scripts/titan_preflight.py``, ``preflight_run.py``,
+    ``preflight_run_pilot171m.py``, ``offline_4060_demo_train.py``,
+    ``check_overlay_validity.py``) plus tests, and every one of them was silently
+    reassigning ``param_dtype`` as a side effect of asking "is this layer config valid?".
+
+    The concrete victim: ``scripts/offline_4060_demo_train.py`` sets
+    ``cfg.param_dtype = torch.float32`` together with ``cfg.use_amp = False`` (deliberate
+    full-fp32 for a stable 4060 demo), then calls ``validate_layer_config(cfg)`` 61 lines
+    later -- which on a bf16-capable card flipped that choice straight back to bfloat16.
+    The "Overriding User Pref" notice goes through ``_cfg_print``, which is gated behind
+    ``TITAN_CONFIG_VERBOSE``, so by default the override was silent.
+
+    Impact today is LATENT, not active: ``param_dtype`` is not read anywhere in ``train/``,
+    ``model/`` or ``layers/`` (verified by grep) -- the canonical run's precision comes from
+    ``mixed_precision="bf16" if cuda and bf16_supported else ...`` computed independently in
+    ``train/train.py``. So nothing currently consumes the value that was being overwritten.
+    That is exactly why this is a split and not a behaviour change: the enforcement is still
+    invoked at import below, in the same place and order as before, so the module-level
+    result is byte-identical. What changed is that CALLING THE VALIDATOR no longer mutates
+    the config.
+
+    ``param_dtype`` being unconsumed is itself an open question (bind it to precision
+    selection, or drop it) -- deliberately NOT resolved here; see BACKLOG.
+    """
     if cfg.device == "cuda" and torch.cuda.is_bf16_supported():
         if cfg.param_dtype != torch.bfloat16:
             _cfg_print("⚠️  Enforcing bfloat16 for S25 optimization (Overriding User Pref)")
             cfg.param_dtype = torch.bfloat16
 
+
 # Validate on import
 try:
     validate_layer_config(cfg)
+    # Kept at import time, in the original order, so module-level behaviour is unchanged.
+    enforce_cuda_bf16_param_dtype(cfg)
     _cfg_print("✅ Layer configuration validated: No Liquid/MoE conflicts")
 except ValueError as e:
     raise
