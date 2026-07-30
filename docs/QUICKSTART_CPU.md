@@ -20,6 +20,6 @@ bash scripts/verify_all.sh        # bootstraps .titan-venv, runs the full gate (
 .titan-venv/bin/python scripts/cfc_moe_tolerance_check.py
 ```
 
-Tests only: `.titan-venv/bin/python -m pytest -q` (expects the recorded `626 passed, 5 skipped`; see
+Tests only: `.titan-venv/bin/python -m pytest -q` (expects the recorded `724 passed, 4 skipped`; see
 `reports/FACTS.json`). The skips are environment-gated (no GPU locally; optional
 onnxruntime/UnitaryQINN dependency unavailable), not CUDA alone.

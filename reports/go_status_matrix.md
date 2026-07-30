@@ -17,7 +17,7 @@ This matrix tracks what is fully completed in-repo and what remains external/ope
 | A8 | ✅ | Claim policy + pilot checklist are explicit in `README.md`. |
 | A9 | ✅ | README config sample aligned (`use_torch_compile = False`) with `config/config.py`. |
 | A10 | ✅ | Pilot docs set exists: `reports/pilot_readiness_kit.md`, `reports/pilot_offer_packages.md`, `reports/sales_funnel_90d.md`. |
-| A11 | ✅ | Test gate pass: `626 passed, 5 skipped`. |
+| A11 | ✅ | Test gate pass: `724 passed, 4 skipped`. |
 | A12 | ✅ | Lint gate pass: `ruff check` all green. |
 | A13 | ✅ | Full gate pass: `bash scripts/verify_all.sh` -> `[verify] OK`. |
 | A14 | ✅ | SDK EN/TR aligned: `SDK_GUIDE.md`, `SDK_GUIDE_TR.md`. |
