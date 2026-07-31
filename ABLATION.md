@@ -55,6 +55,17 @@ real, scale-representative data. The pilot and H200 numbers are confounded (torc
 run ordering, no T4 fast-path). The only controlled observation is directional: at toy scale, on
 T4, iso-wall-time, Liquid ON was slower — not a production claim.
 
+### External signal (2026-07-31, informational only — not a repo measurement)
+An independent, external test against this repo's own `layers/liquid.py`/`layers/mla.py` (different
+hardware — consumer GPU, `hidden_size=256`, `seq_len=128`, no BitNet/MoE co-training) measured
+`LiquidMixer` at ~9.4x `GQA`'s per-call wall-clock time, and surfaced a mechanism not previously
+written down here: `LiquidCell`'s recurrence is a sequential loop over the time dimension, so its
+cost scales with `seq_len` in a way attention's does not — meaning the ~30% figure above (measured
+at this ablation's much shorter effective sequence) may not hold at the canonical `seq_len=4096`.
+Full detail and a candidate cheap pre-45K validation item: see [BACKLOG.md](BACKLOG.md), entry
+"External signal on Liquid/CfC wall-clock cost." Does not change the verdict above or the
+`DECIDED: Keep` call in [reports/liquid_keep_or_drop_brief.md](reports/liquid_keep_or_drop_brief.md).
+
 ## Other ablations (pending — require training hardware)
 `ablations/` holds scaffolds for `no_moe`, `dense_only`, `bitlinear_off`. These require real GPU
 training and have not been run. Component value remains a hypothesis until measured at scale.

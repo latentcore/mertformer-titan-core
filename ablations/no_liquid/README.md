@@ -13,3 +13,5 @@
 - Boundary: noisy curves (constant lr, no warmup/decay), single seed, tiny corpus (35,634 tok / 128k vocab). This is a pilot signal only; not a benchmark claim until a larger measured run.
 - Evidence: `reports/ablations/liquid_ablation_results.json` (full 500-step curves) + `reports/ablations/liquid_ablation_pilot_curve.png` (plot) + `reports/ablations/liquid_ablation_kaggle_20260614.json` (summary).
 - The full-scale ablation (45K, multi-seed) still requires training hardware; record there in `ablations/results.md`.
+
+**2026-07-31 note:** an independent external test found the `977.18s` vs `214.81s` (~4.55x) timing delta in this pilot's own JSON — dismissed above as confounded — closer in magnitude to a component-level `LiquidMixer`-vs-`GQA` measurement (~9.4x, different hardware, different method) than to the 12-seed ablation's ~30%. May still be confounded; may also be partly explained by sequence-length scaling (see `BACKLOG.md`/`ABLATION.md`). Not re-litigating the "superseded" status above, just flagging that this timing number may be worth a second look before the 45K run.

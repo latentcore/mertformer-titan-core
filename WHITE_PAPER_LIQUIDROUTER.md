@@ -59,6 +59,12 @@ preset (hidden 384, 8 layers), 2-digit addition, Kaggle T4, ~900 s/run:
 **Liquid speed/latency: NO CLAIM** until a verified 45K run produces scale-representative data (pilot/
 H200 numbers are confounded). See `ABLATION.md`.
 
+**2026-07-31 addendum:** an external, independent test (different hardware, small scale — see
+`ABLATION.md`'s "External signal" note and `BACKLOG.md`) suggests the ~30% figure above may
+understate the CfC mixer's cost at the canonical `seq_len=4096`, since its sequential recurrence
+scales with sequence length in a way attention does not. Informational only; does not change the
+claim boundary above.
+
 **Limits (honest):** small toy task, T4, ~15 min/seed — not proof about the 3.67B model. The earlier
 single-seed pilot (Δ(off−on)=+0.50) was largely one lucky seed and is superseded. **No arXiv submission
 on toy-scale data — skeleton now, submission only after a measured 45K run.**

@@ -35,6 +35,8 @@ The Liquid/CfC layers are still in the canonical architecture as of this writing
 
 I'd rather ship a smaller, well-evidenced claim than a bigger one I can't back up. That's the whole point of doing the ablation in the first place.
 
+*(2026-07-31 update: an independent, small-scale external test found the CfC mixer running roughly an order of magnitude slower than attention in isolation, and flagged a mechanism — the mixer's sequential recurrence scales with sequence length while attention doesn't — that this repo hadn't written down before. It's not evidence about this model specifically, but it's a reason the ~30% figure above might be optimistic at the scale that matters. See `BACKLOG.md`/`ABLATION.md` for the full, hedged version before repeating a number from this paragraph anywhere.)*
+
 ---
 
 *Word count: ~700 (draft — expand with concrete numbers/plots from ABLATION.md before publishing; target 1500-2000 per the backlog spec).*

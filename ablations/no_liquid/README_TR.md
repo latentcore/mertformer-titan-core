@@ -13,3 +13,5 @@
 - Sınır: oynak eğriler (sabit lr, warmup/decay yok), tek seed, küçük corpus (35.634 tok / 128k vocab). Bu yalnızca pilot sinyalidir; daha büyük ölçülmüş bir koşuya kadar benchmark iddiası değildir.
 - Kanıt: `reports/ablations/liquid_ablation_results.json` (tam 500-adım eğriler) + `reports/ablations/liquid_ablation_pilot_curve.png` (grafik) + `reports/ablations/liquid_ablation_kaggle_20260614.json` (özet).
 - Tam ölçekli ablasyon (45K, çok-seed) hâlâ eğitim donanımı gerektirir; orada `ablations/results.md`'ye kaydedin.
+
+**2026-07-31 notu:** bağımsız bir dış test, bu pilotun kendi JSON'ındaki `977.18s` vs `214.81s` (~4.55x) zamanlama farkının — yukarıda confounded diye geçiştirilmiş — bileşen-seviyeli bir `LiquidMixer`-vs-`GQA` ölçümüne (~9.4x, farklı donanım, farklı yöntem) 12-seed ablasyonun ~%30'undan daha yakın bir büyüklükte olduğunu buldu. Hâlâ confounded olabilir; kısmen dizi-uzunluğu ölçeklenmesiyle de açıklanabilir (bkz. `BACKLOG_TR.md`/`ABLATION_TR.md`). Yukarıdaki "ezildi" durumunu yeniden tartışmıyor, sadece bu zamanlama sayısının 45K koşusundan önce ikinci bir bakışı hak edebileceğini işaretliyor.

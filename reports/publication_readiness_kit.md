@@ -27,7 +27,10 @@ grouped-query attention. Measured runtime parameters: 3,672,982,022 (~3.67B).
 [PENDING 45K RUN — every number here must cite a checkpoint SHA256, per this
 repo's own FACTS.json discipline. Known negative result to include regardless
 of what else runs: the Liquid/CfC ablation — no measured accuracy benefit,
-~30% slower, see reports/blog_liquid_ablation_draft.md]
+~30% slower, see reports/blog_liquid_ablation_draft.md. Also note the
+2026-07-31 external signal (BACKLOG.md/ABLATION.md) that ~30% may understate
+the real cost at canonical sequence length — check before quoting a fixed
+percentage in a final model card.]
 
 ## Limitations
 [PENDING — draw from STATUS.md's own limitation record + reports/responsible_ai_checklist.md]

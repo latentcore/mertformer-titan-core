@@ -53,6 +53,18 @@ mutlak hız/gecikme iddiası yapmaz.** Pilot ve H200 sayıları confounded'dır 
 çalışma sırası, T4 fast-path yok). Tek kontrollü gözlem yönseldir: toy ölçekte, T4'te, iso-zaman,
 Liquid AÇIK daha yavaştı — üretim iddiası değildir.
 
+### Dış sinyal (2026-07-31, sadece bilgilendirme — repo ölçümü değil)
+Bu reponun kendi `layers/liquid.py`/`layers/mla.py` dosyalarına karşı bağımsız, dış bir test (farklı
+donanım — tüketici GPU, `hidden_size=256`, `seq_len=128`, BitNet/MoE ortak-eğitimi yok) `LiquidMixer`'ı
+`GQA`'nın çağrı-başına duvar-saati süresinin ~9.4 katında ölçtü, ve burada daha önce hiç yazılmamış
+bir mekanizma ortaya çıkardı: `LiquidCell`'in tekrarlaması zaman boyutu üzerinde sıralı bir döngü,
+yani maliyeti attention'ınkinin aksine `seq_len` ile ölçekleniyor — bu da yukarıdaki ~%30 rakamının
+(bu ablasyonun çok daha kısa etkin dizisinde ölçüldü) kanonik `seq_len=4096`'da geçerli olmayabileceği
+anlamına geliyor. Tam detay ve ucuz, aday bir 45K-öncesi doğrulama maddesi için: bkz. [BACKLOG_TR.md](BACKLOG_TR.md),
+"Liquid/CfC duvar-saati maliyeti üzerine dış sinyal" girdisi. Yukarıdaki hükmü ya da
+[reports/liquid_keep_or_drop_brief.md](reports/liquid_keep_or_drop_brief.md)'deki `DECIDED: Keep`
+kararını değiştirmiyor.
+
 ## Diğer ablasyonlar (beklemede — eğitim donanımı gerekir)
 `ablations/`, `no_moe`, `dense_only`, `bitlinear_off` için iskeletler tutar. Bunlar gerçek GPU
 eğitimi ister ve koşulmadı. Bileşen değeri, ölçekte ölçülene kadar hipotezdir.
