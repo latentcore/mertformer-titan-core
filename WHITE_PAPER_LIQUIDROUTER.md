@@ -65,6 +65,13 @@ understate the CfC mixer's cost at the canonical `seq_len=4096`, since its seque
 scales with sequence length in a way attention does not. Informational only; does not change the
 claim boundary above.
 
+**2026-07-31, since measured (own hardware):** the same-day validation item above was run on this
+repo's own RTX 4060 — canonical `hidden_size=2048` train-mode cost measured far worse than either
+figure above (~797-1620x vs `GQA`, plus outright OOM at `seq_len` >= 2048), decode-mode cost
+measured far better (8-23x faster than `GQA`, flat with context). See `BACKLOG.md` for the full,
+hedged numbers. Still not canonical-scale (consumer GPU, `batch_size=1`, single run); claim
+boundary above unchanged.
+
 **Limits (honest):** small toy task, T4, ~15 min/seed — not proof about the 3.67B model. The earlier
 single-seed pilot (Δ(off−on)=+0.50) was largely one lucky seed and is superseded. **No arXiv submission
 on toy-scale data — skeleton now, submission only after a measured 45K run.**

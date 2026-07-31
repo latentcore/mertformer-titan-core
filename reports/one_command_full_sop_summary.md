@@ -1,8 +1,8 @@
 # One-Command Full SOP Summary
 
-- start_utc: 2026-07-31T09:03:33Z
-- end_utc: 2026-07-31T09:18:47Z
-- pytest: {'status': 'ok', 'test_stat': '721 passed, 10 skipped', 'changed': ['reports/FACTS.json', 'README.md', 'README_TR.md', 'reports/release_snapshot.md', 'reports/release_snapshot_TR.md', 'reports/one_command_full_sop_summary.md', 'reports/go_status_matrix.md', 'reports/go_status_matrix_TR.md', 'reports/final_sync_matrix.md', 'reports/final_sync_matrix_TR.md', 'reports/cleanroom_verification.md', 'STATUS.md', 'STATUS_TR.md', 'TRUTH_MATRIX.md', 'TRUTH_MATRIX_TR.md', 'REPRODUCE.md', 'REPRODUCE_TR.md', 'reports/cleanroom_verification_TR.md', 'docs/QUICKSTART_CPU.md'], 'missing': []}
+- start_utc: 2026-07-31T19:55:08Z
+- end_utc: 2026-07-31T20:08:31Z
+- pytest: {'status': 'ok', 'test_stat': '721 passed, 9 skipped', 'changed': ['reports/FACTS.json', 'README.md', 'README_TR.md', 'reports/release_snapshot.md', 'reports/release_snapshot_TR.md', 'reports/one_command_full_sop_summary.md', 'reports/go_status_matrix.md', 'reports/go_status_matrix_TR.md', 'reports/final_sync_matrix.md', 'reports/final_sync_matrix_TR.md', 'reports/cleanroom_verification.md', 'STATUS.md', 'STATUS_TR.md', 'TRUTH_MATRIX.md', 'TRUTH_MATRIX_TR.md', 'REPRODUCE.md', 'REPRODUCE_TR.md', 'reports/cleanroom_verification_TR.md', 'docs/QUICKSTART_CPU.md'], 'missing': []}
 - md_quality_all: md_quality: scope=all files=390 errors=0 warnings=1
 - md_integrity_all: md_integrity_check scanned=373 findings=0
 - linkcheck_all: linkcheck: scope=all files=390 missing=936
@@ -13,7 +13,7 @@
 - zip_denylist_audit: PASS
 - secret_scan: PASS
 - training_dashboard: not_generated
-- release_zip_sha256: `442d0d12f36bdfd1617980201ef3491845a2366ca3c63a982d199ad17113bfeb`
+- release_zip_sha256: `1009f981ec81f243143ccecc51e1a9f7bb15fbc9ff182b93902a8c3255316e62`
 - locked_age_sha256: ``
 - locked_age_generated: no
 

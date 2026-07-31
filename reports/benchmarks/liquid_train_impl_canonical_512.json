@@ -1,0 +1,38 @@
+{
+  "equivalence": {
+    "precompute_input": {
+      "out_diff": 1.7763568394002505e-15,
+      "x_grad_diff": 1.3094070573367415e-18,
+      "param_grad_diff": 3.469446951953614e-18,
+      "ok": true
+    },
+    "packed_pair": {
+      "out_diff": 1.7763568394002505e-15,
+      "x_grad_diff": 1.3077626222789861e-18,
+      "param_grad_diff": 3.469446951953614e-18,
+      "ok": true
+    }
+  },
+  "rows": [
+    {
+      "label": "baseline",
+      "ms_per_step": 10965.245739999955,
+      "steps_per_sec": 0.09119722655663931,
+      "tokens_per_sec": 93.38595999399865,
+      "loss_start": 1.999961256980896,
+      "loss_end": 1.864823579788208,
+      "grad_ok": true,
+      "peak_mem_mb": 8556.3212890625
+    },
+    {
+      "label": "packed_pair",
+      "ms_per_step": 22037.432394999996,
+      "steps_per_sec": 0.04537733716323898,
+      "tokens_per_sec": 46.46639325515672,
+      "loss_start": 1.999961256980896,
+      "loss_end": 1.8648232221603394,
+      "grad_ok": true,
+      "peak_mem_mb": 8708.3369140625
+    }
+  ]
+}

@@ -909,7 +909,17 @@ class MoE(nn.Module):
         k = topk_idx.size(-1)
         out_flat = x_flat.new_zeros((N, H))
 
-        token_idx = torch.arange(N, device=topk_idx.device).repeat_interleave(k)
+        # [2026-07-31] `.repeat_interleave(k)` is replaced with an equivalent
+        # unsqueeze/expand/reshape sequence: torch.onnx.export's trace-time symbolic
+        # for repeat_interleave was found to build its internal index tensor on the
+        # default (CPU) device rather than propagating topk_idx.device, causing a
+        # cuda/cpu index_select mismatch during ONNX export (never previously exercised
+        # -- tests/test_comprehensive.py::TestONNXCycle::test_onnx_export_import is
+        # gated on torch.cuda.is_available()/mps, and this is the first CUDA machine to
+        # run it). Same output as arange(N).repeat_interleave(k): each index 0..N-1
+        # repeated k times consecutively. unsqueeze/expand/reshape have no such
+        # device-placement quirk in ONNX export.
+        token_idx = torch.arange(N, device=topk_idx.device).unsqueeze(1).expand(N, k).reshape(-1)
         expert_idx = topk_idx.reshape(-1)
         weights = topk_vals.reshape(-1)
         mask = capacity_mask.reshape(-1)

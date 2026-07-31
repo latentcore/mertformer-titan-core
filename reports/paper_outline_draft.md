@@ -34,7 +34,7 @@
 
 ## 6. Limitations
 - No intermediate-scale scaling run (250M/500M) — direct jump from pilot to canonical 3.67B, and why (STATUS.md's own reasoning: a smaller model has its own dynamics and doesn't predict 45K behavior).
-- Liquid/CfC's toy-scale ablation result and its explicit non-generalization to canonical scale — including a 2026-07-31 external signal (see `BACKLOG.md`/`ABLATION.md`) that the measured ~30% wall-clock cost may not hold at the canonical sequence length, since the mixer's recurrence is sequential and attention's is not.
+- Liquid/CfC's toy-scale ablation result and its explicit non-generalization to canonical scale — including a 2026-07-31 external signal (see `BACKLOG.md`/`ABLATION.md`) that the measured ~30% wall-clock cost may not hold at the canonical sequence length, since the mixer's recurrence is sequential and attention's is not, since measured directly on this repo's own hardware at canonical `hidden_size` (train-mode far worse, decode-mode far better than `GQA` — see `BACKLOG.md`).
 - Single-run, non-reproducible-by-repetition nature of the 45K training (checkpoint-bound, not statistically repeated).
 
 ## 7. Responsible AI / Ethics

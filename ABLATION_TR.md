@@ -70,6 +70,16 @@ full-forward'a karşı `<1e-8` parite), ve mimari olarak büyüyen-KV-cache atte
 uzunluğundan bağımsız bir token-başı maliyete işaret ediyor -- ama gerçek decode-modu hızı hiç
 benchmark edilmedi, aynı 45K-öncesi doğrulama maddesine katlanmış durumda.
 
+**Ölçüldü, kendi donanımımızda (2026-07-31):** yukarıdaki doğrulama maddesi koşuldu (RTX 4060
+Laptop, 8GB VRAM, eager mod). Kanonik `hidden_size=2048`/`seq_len=512`'de train-mode: `LiquidMixer`
+`GQA`'dan ~797-1620 kat yavaş ölçüldü (yukarıdaki toy-ölçek ~9.4x'ten çok daha kötü), `packed_pair`
+`baseline`'dan daha *yavaş* ölçüldü, ve `seq_len=2048`/`4096` bu GPU'da doğrudan OOM verdi (sadece
+duvar-saati değil, bellek-ölçekli bir maliyet). Decode-mode: `LiquidMixer`'ın token-başı maliyeti
+24 kat'lık context aralığında sabit ölçüldü ve `GQA`'dan 8-23 kat daha hızlı, durum-tutan-decode
+hipotezini doğrulayarak. Tam sayılar, hedge'ler ve JSON işaretçileri: `BACKLOG_TR.md`, aynı girdi.
+Hâlâ kanonik-ölçek kanıt değil (tüketici GPU, `batch_size=1`, tek koşu) ve hâlâ `DECIDED: Keep`'i
+değiştirmiyor.
+
 ## Diğer ablasyonlar (beklemede — eğitim donanımı gerekir)
 `ablations/`, `no_moe`, `dense_only`, `bitlinear_off` için iskeletler tutar. Bunlar gerçek GPU
 eğitimi ister ve koşulmadı. Bileşen değeri, ölçekte ölçülene kadar hipotezdir.

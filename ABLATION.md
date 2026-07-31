@@ -71,6 +71,15 @@ vs. full-forward, see `tests/test_liquid_generate_parity.py`), and architectural
 per-token cost independent of context length, unlike growing-KV-cache attention -- but its actual
 decode-mode speed has never been benchmarked, folded into the same pre-45K validation item.
 
+**Measured, own hardware (2026-07-31):** the validation item above was run (RTX 4060 Laptop, 8GB
+VRAM, eager mode). Train-mode at canonical `hidden_size=2048`/`seq_len=512`: `LiquidMixer` measured
+~797-1620x slower than `GQA` (far worse than the toy-scale ~9.4x above), `packed_pair` measured
+*slower* than `baseline`, and `seq_len=2048`/`4096` OOM outright on this GPU (a memory-scaling cost,
+not just wall-clock). Decode-mode: `LiquidMixer`'s per-token cost measured flat across a 24x context
+range and 8-23x faster than `GQA`, confirming the stateful-decode hypothesis. Full numbers, hedges,
+and JSON pointers: `BACKLOG.md`, same entry. Still not canonical-scale evidence (consumer GPU,
+`batch_size=1`, single run) and still does not change `DECIDED: Keep`.
+
 ## Other ablations (pending — require training hardware)
 `ablations/` holds scaffolds for `no_moe`, `dense_only`, `bitlinear_off`. These require real GPU
 training and have not been run. Component value remains a hypothesis until measured at scale.

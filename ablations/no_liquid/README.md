@@ -15,3 +15,5 @@
 - The full-scale ablation (45K, multi-seed) still requires training hardware; record there in `ablations/results.md`.
 
 **2026-07-31 note:** an independent external test found the `977.18s` vs `214.81s` (~4.55x) timing delta in this pilot's own JSON — dismissed above as confounded — closer in magnitude to a component-level `LiquidMixer`-vs-`GQA` measurement (~9.4x, different hardware, different method) than to the 12-seed ablation's ~30%. May still be confounded; may also be partly explained by sequence-length scaling (see `BACKLOG.md`/`ABLATION.md`). Not re-litigating the "superseded" status above, just flagging that this timing number may be worth a second look before the 45K run.
+
+**2026-07-31, looked again, same day:** a canonical-`hidden_size` measurement on this repo's own RTX 4060 found train-mode `LiquidMixer` far slower than either number above (~797-1620x vs `GQA`) plus an `OutOfMemoryError` at `seq_len` >= 2048, and a decode-mode measurement found `LiquidMixer` 8-23x *faster* than `GQA`. Full numbers: `BACKLOG.md`. Still not the 45K-scale answer this note asked for, but no longer just "worth a second look" — looked.

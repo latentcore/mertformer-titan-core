@@ -1,0 +1,100 @@
+{
+  "config": {
+    "python": "3.13.14",
+    "torch": "2.6.0+cu124",
+    "device": "cuda",
+    "cuda_name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "amp_dtype": "bf16",
+    "fast_path": false,
+    "canonical_shape": {
+      "hidden_size": 2048,
+      "num_heads": 16,
+      "num_kv_heads": 8,
+      "head_dim": 128,
+      "max_seq_len": 4096
+    },
+    "batch_size": 1,
+    "train_seq_lens": [
+      512
+    ],
+    "decode_context_lens": [
+      128,
+      1024,
+      3072
+    ],
+    "liquid_modes": [
+      "baseline",
+      "packed_pair"
+    ]
+  },
+  "train_mode": [
+    {
+      "label": "gqa",
+      "seq_len": 512,
+      "ms_per_step": 13.144633332558442,
+      "steps_per_sec": 76.07667514947427,
+      "peak_mem_mb": 300.62158203125
+    },
+    {
+      "label": "liquid[baseline]",
+      "seq_len": 512,
+      "ms_per_step": 10466.879800000848,
+      "steps_per_sec": 0.09553945579846239,
+      "peak_mem_mb": 8514.3291015625
+    },
+    {
+      "label": "liquid[packed_pair]",
+      "seq_len": 512,
+      "ms_per_step": 21292.57229999833,
+      "steps_per_sec": 0.04696473427027313,
+      "peak_mem_mb": 8666.3447265625
+    }
+  ],
+  "decode_mode": [
+    {
+      "label": "gqa",
+      "context_len": 128,
+      "ms_per_token": 3.7455549998412607
+    },
+    {
+      "label": "liquid[baseline]",
+      "context_len": 128,
+      "ms_per_token": 0.4242850001901388
+    },
+    {
+      "label": "liquid[packed_pair]",
+      "context_len": 128,
+      "ms_per_token": 0.4477849997783778
+    },
+    {
+      "label": "gqa",
+      "context_len": 1024,
+      "ms_per_token": 3.2282399999530753
+    },
+    {
+      "label": "liquid[baseline]",
+      "context_len": 1024,
+      "ms_per_token": 0.4239699999743607
+    },
+    {
+      "label": "liquid[packed_pair]",
+      "context_len": 1024,
+      "ms_per_token": 0.42281999994884245
+    },
+    {
+      "label": "gqa",
+      "context_len": 3072,
+      "ms_per_token": 10.375690000000759
+    },
+    {
+      "label": "liquid[baseline]",
+      "context_len": 3072,
+      "ms_per_token": 0.4465850000997307
+    },
+    {
+      "label": "liquid[packed_pair]",
+      "context_len": 3072,
+      "ms_per_token": 0.4530849997536279
+    }
+  ]
+}

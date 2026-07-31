@@ -30,7 +30,10 @@ of what else runs: the Liquid/CfC ablation — no measured accuracy benefit,
 ~30% slower, see reports/blog_liquid_ablation_draft.md. Also note the
 2026-07-31 external signal (BACKLOG.md/ABLATION.md) that ~30% may understate
 the real cost at canonical sequence length — check before quoting a fixed
-percentage in a final model card.]
+percentage in a final model card. Since measured directly on this repo's own
+hardware at canonical hidden_size (train-mode far worse, decode-mode far
+better than GQA — see BACKLOG.md) — use the measured numbers, not ~30% or
+~9.4x, if this section is ever filled in.]
 
 ## Limitations
 [PENDING — draw from STATUS.md's own limitation record + reports/responsible_ai_checklist.md]

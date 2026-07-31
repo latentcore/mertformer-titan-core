@@ -37,6 +37,8 @@ I'd rather ship a smaller, well-evidenced claim than a bigger one I can't back u
 
 *(2026-07-31 update: an independent, small-scale external test found the CfC mixer running roughly an order of magnitude slower than attention in isolation, and flagged a mechanism — the mixer's sequential recurrence scales with sequence length while attention doesn't — that this repo hadn't written down before. It's not evidence about this model specifically, but it's a reason the ~30% figure above might be optimistic at the scale that matters. See `BACKLOG.md`/`ABLATION.md` for the full, hedged version before repeating a number from this paragraph anywhere.)*
 
+*(2026-07-31, same day, now measured on this repo's own hardware: canonical-`hidden_size` train-mode cost came in far worse than the external test above suggested — and a decode-mode counterpoint came in far better than `GQA`. Real numbers, still hedged, still consumer-GPU/single-run: `BACKLOG.md`.)*
+
 ---
 
 *Word count: ~700 (draft — expand with concrete numbers/plots from ABLATION.md before publishing; target 1500-2000 per the backlog spec).*
