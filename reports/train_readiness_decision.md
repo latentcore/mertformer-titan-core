@@ -10,7 +10,7 @@
 ### offline_clean
 - profile: `strict_offline_training_readiness`
 - status: `FAIL`
-- reason_code: `STAGE_JSONL_MISSING`
+- reason_code: `PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`
 - exit_code: `1`
 
 ### remote_bootstrap
@@ -27,5 +27,5 @@
 
 ## Blockers
 
-- `offline_clean:STAGE_JSONL_MISSING`
+- `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`
 - `online_teacher:MISSING_HF_TOKEN`

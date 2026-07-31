@@ -8,24 +8,106 @@
     {
       "profile": "strict_offline_training_readiness",
       "status": "FAIL",
-      "reason_code": "STAGE_JSONL_MISSING",
+      "reason_code": "PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE",
       "checks": {
         "stage_jsonl": {
+          "status": "PASS",
+          "missing": []
+        },
+        "validation_jsonl": {
+          "status": "PASS",
+          "path": "<repo>/datasets/validation.jsonl",
+          "rows": 1500,
+          "required_rows": 1000
+        },
+        "dataset_hashes": {
+          "status": "PASS",
+          "path": "<repo>/datasets/hashes.json"
+        },
+        "local_tokenizer": {
+          "status": "PASS",
+          "detail": "ok (local tokenizer cache: data/tokenizer/tr)"
+        },
+        "strict_precompute_policy": {
+          "status": "PASS",
+          "use_precomputed_logits": true,
+          "require_gated_teacher": true,
+          "teacher_model_id": "meta-llama/Llama-3.3-70B-Instruct"
+        },
+        "write_permissions": {
+          "status": "PASS",
+          "paths": {
+            "<repo>/datasets": {
+              "status": "PASS",
+              "detail": "ok"
+            },
+            "<repo>/checkpoints/mertformer_titan_prod": {
+              "status": "PASS",
+              "detail": "ok"
+            },
+            "datasets/logits": {
+              "status": "PASS",
+              "detail": "ok"
+            }
+          }
+        },
+        "distillation_paths": {
           "status": "FAIL",
-          "missing": [
-            "stage1",
-            "stage2",
-            "stage3",
-            "stage4",
-            "stage5"
-          ]
+          "logits_dir": "datasets/logits",
+          "existing_shards": 0,
+          "all_complete": false,
+          "actionable_phase0_precompute": false,
+          "hf_token_present": false,
+          "policy": "offline_clean canonical lane requires either complete precomputed logits shards or actionable Phase-0 precompute with valid gated teacher access",
+          "stages": {
+            "stage1": {
+              "dataset_path": "<repo>/datasets/stage1/stage1_data.jsonl",
+              "total_rows": 41,
+              "done_samples": 0,
+              "shard_count": 0,
+              "complete": false,
+              "state_path": "datasets/logits/stage1_train_topk_state.json"
+            },
+            "stage2": {
+              "dataset_path": "<repo>/datasets/stage2/stage2_data.jsonl",
+              "total_rows": 30,
+              "done_samples": 0,
+              "shard_count": 0,
+              "complete": false,
+              "state_path": "datasets/logits/stage2_train_topk_state.json"
+            },
+            "stage3": {
+              "dataset_path": "<repo>/datasets/stage3/stage3_data.jsonl",
+              "total_rows": 8,
+              "done_samples": 0,
+              "shard_count": 0,
+              "complete": false,
+              "state_path": "datasets/logits/stage3_train_topk_state.json"
+            },
+            "stage4": {
+              "dataset_path": "<repo>/datasets/stage4_soul/stage4_data.jsonl",
+              "total_rows": 8,
+              "done_samples": 0,
+              "shard_count": 0,
+              "complete": false,
+              "state_path": "datasets/logits/stage4_train_topk_state.json"
+            },
+            "stage5": {
+              "dataset_path": "<repo>/datasets/stage5_tools/stage5_data.jsonl",
+              "total_rows": 12,
+              "done_samples": 0,
+              "shard_count": 0,
+              "complete": false,
+              "state_path": "datasets/logits/stage5_train_topk_state.json"
+            }
+          }
         }
       },
-      "elapsed_s": 0.0,
+      "elapsed_s": 0.007,
       "path_name": "offline_clean",
       "exit_code": 1,
-      "stdout_tail": "TRAIN_READY:FAIL reason_code=STAGE_JSONL_MISSING\n",
-      "stderr_tail": "\u26a0\ufe0f .env file not found, skipping local load.\n\u274c STRICT OFFLINE TRAIN-READINESS FAIL [STAGE_JSONL_MISSING]: offline stage JSONL missing: ['stage1', 'stage2', 'stage3', 'stage4', 'stage5']\n\u2708\ufe0f Train-ready report: logs/preflight/train_ready_status.strict_offline_training_readiness.json\n"
+      "stdout_tail": "TRAIN_READY:FAIL reason_code=PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE\n",
+      "stderr_tail": "\u26a0\ufe0f .env file not found, skipping local load.\n\u274c STRICT OFFLINE TRAIN-READINESS FAIL [PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE]: offline_clean strict precompute requirements are not satisfied\n\u2708\ufe0f Train-ready report: logs/preflight/train_ready_status.strict_offline_training_readiness.json\n"
     },
     {
       "profile": "runtime_injected_training_readiness",
@@ -50,36 +132,30 @@
           "policy": "missing local credentials are allowed because this lane assumes runtime injection on the target machine"
         },
         "stage_jsonl": {
-          "status": "WARN",
-          "missing": [
-            "stage1",
-            "stage2",
-            "stage3",
-            "stage4",
-            "stage5"
-          ],
+          "status": "PASS",
+          "missing": [],
           "policy": "remote smart_runner/data_pipeline may generate stage JSONL at training start"
         },
         "write_permissions": {
           "status": "PASS",
           "paths": {
-            "<repo>\\datasets": {
+            "<repo>/datasets": {
               "status": "PASS",
               "detail": "ok"
             },
-            "<repo>\\checkpoints\\mertformer_titan_prod": {
+            "<repo>/checkpoints/mertformer_titan_prod": {
               "status": "PASS",
               "detail": "ok"
             },
-            "datasets\\logits": {
+            "datasets/logits": {
               "status": "PASS",
               "detail": "ok"
             },
-            "<repo>\\reports": {
+            "<repo>/reports": {
               "status": "PASS",
               "detail": "ok"
             },
-            "<repo>\\artifacts": {
+            "<repo>/artifacts": {
               "status": "PASS",
               "detail": "ok"
             }
@@ -87,7 +163,7 @@
         },
         "distillation_bootstrap": {
           "status": "PASS",
-          "logits_dir": "datasets\\logits",
+          "logits_dir": "datasets/logits",
           "existing_shards": 0,
           "policy": "local logits shards are optional because Phase-0 precompute or online teacher generation may run on the target machine"
         },
@@ -103,7 +179,7 @@
           "launcher": "HF_TOKEN=... TITAN_OFFLINE=0 TITAN_INSTALL=1 TITAN_PROFILE=stable bash zero_touch_start.sh"
         }
       },
-      "elapsed_s": 0.004,
+      "elapsed_s": 0.002,
       "path_name": "remote_bootstrap",
       "exit_code": 0,
       "stdout_tail": "TRAIN_READY:PASS reason_code=READY_RUNTIME_INJECTED_BOOTSTRAP\n",
@@ -127,7 +203,7 @@
     }
   ],
   "blockers": [
-    "offline_clean:STAGE_JSONL_MISSING",
+    "offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE",
     "online_teacher:MISSING_HF_TOKEN"
   ]
 }
