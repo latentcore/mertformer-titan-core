@@ -58,6 +58,19 @@ ve MoE yığını iki kolda da AÇIK kalır; sinyal CfC mixer'ı ölçer, router
 **Liquid hız/gecikme: İDDİA YOK** — doğrulanmış bir 45K koşusu ölçek-temsili veri üretene kadar
 (pilot/H200 sayıları confounded). Bkz. `ABLATION_TR.md`.
 
+**2026-07-31 eki:** bağımsız, dış bir test (farklı donanım, küçük ölçek — bkz. `ABLATION_TR.md`'nin
+"Dış sinyal" notu ve `BACKLOG_TR.md`) yukarıdaki ~%30 rakamının kanonik `seq_len=4096`'da CfC
+mixer'ın maliyetini olduğundan az gösteriyor olabileceğini işaret ediyor, çünkü onun sıralı
+tekrarlaması dizi uzunluğuyla ölçekleniyor, attention'ınki ölçeklenmiyor. Sadece bilgilendirme;
+yukarıdaki iddia sınırını değiştirmiyor.
+
+**2026-07-31, artık ölçüldü (kendi donanımımızda):** yukarıdaki aynı-gün doğrulama maddesi bu
+reponun kendi RTX 4060'ında koşuldu — kanonik `hidden_size=2048` train-mode maliyeti yukarıdaki
+her iki rakamdan da çok daha kötü ölçüldü (`GQA`'ya karşı ~797-1620x, artı `seq_len >= 2048`'de
+doğrudan OOM), decode-mode maliyeti ise çok daha iyi ölçüldü (`GQA`'dan 8-23x daha hızlı, context
+ile sabit). Tam, hedge'li sayılar için `BACKLOG_TR.md`'ye bakın. Hâlâ kanonik-ölçek değil (tüketici
+GPU, `batch_size=1`, tek koşu); yukarıdaki iddia sınırı değişmedi.
+
 **Sınırlar (dürüst):** küçük toy görev, T4, ~15 dk/seed — 3.67B model hakkında kanıt değil. Önceki
 tek-seed pilot (Δ(off−on)=+0.50) büyük ölçüde tek şanslı seed'di ve ezildi. **Toy-ölçek veriyle arXiv
 gönderimi yapılmaz — iskelet şimdi, gönderim ölçülmüş 45K koşusundan sonra.**
