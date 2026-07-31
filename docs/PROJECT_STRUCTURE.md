@@ -382,6 +382,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   ├── kaggle_compare_build30.csv  # CSV data artifact
 │   │   ├── kaggle_compare_build30.json  # JSON data artifact
 │   │   ├── kaggle_compare_build30.md  # documentation/report file
+│   │   ├── liquid_train_impl_canonical_512.json  # JSON data artifact
+│   │   ├── liquid_vs_gqa_canonical_decode.json  # JSON data artifact
 │   │   ├── regression_gate_summary.json  # JSON data artifact
 │   │   ├── smoke_train_metrics.json  # JSON data artifact
 │   │   ├── summary.json  # JSON data artifact
@@ -750,6 +752,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   ├── linkcheck_gate.py  # Python module/script (automation script for linkcheck gate)
 │   ├── linkify_doc_paths.py  # Python module/script (automation script for linkify doc paths)
 │   ├── liquid_train_impl_benchmark.py  # Python module/script (automation script for liquid train impl benchmark)
+│   ├── liquid_vs_gqa_canonical_benchmark.py  # Python module/script (automation script for liquid vs gqa canonical benchmark)
 │   ├── logbook_build.py  # Python module/script (automation script for logbook build)
 │   ├── logbook_verify.py  # Python module/script (automation script for logbook verify)
 │   ├── mac_simulation.py  # Python module/script (automation script for mac simulation)

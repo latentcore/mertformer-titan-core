@@ -1,16 +1,20 @@
 {
-  "generated_utc": "2026-07-31T09:19:36.927574+00:00",
+  "generated_utc": "2026-07-31T21:30:38.156335+00:00",
   "check": "manifest_vs_rendered_structure_md",
-  "manifest_count": 961,
-  "structure_count": 961,
+  "manifest_count": 964,
+  "structure_count": 964,
   "missing_in_structure": [],
   "missing_in_manifest": [],
   "ok": true,
   "previous_structure": {
     "readable": true,
     "count": 961,
-    "was_stale": false,
-    "added_since_previous": [],
+    "was_stale": true,
+    "added_since_previous": [
+      "reports/benchmarks/liquid_train_impl_canonical_512.json",
+      "reports/benchmarks/liquid_vs_gqa_canonical_decode.json",
+      "scripts/liquid_vs_gqa_canonical_benchmark.py"
+    ],
     "removed_since_previous": [],
     "note": "Drift of the COMMITTED tree against the manifest, measured before this run rewrote it. Refreshing it is this tool's purpose, so a non-empty diff is not a failure."
   }
