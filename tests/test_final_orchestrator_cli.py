@@ -24,7 +24,7 @@ def test_final_orchestrator_plan_only_writes_contracts(tmp_path: Path):
     report_out = tmp_path / "final_orchestrator_status.json"
     result = subprocess.run(
         [
-            "python3",
+            sys.executable,
             "scripts/final_orchestrator.py",
             "--plan-only",
             "--project-root",

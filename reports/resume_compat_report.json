@@ -1,8 +1,8 @@
 {
   "schema": "resume_compat_report_v2",
-  "generated_at_utc": "2026-07-30T16:07:39Z",
+  "generated_at_utc": "2026-07-31T09:59:35Z",
   "status": "PASS",
-  "checkpoint_path": "reports/_resume_compat_tmp/mertformer_resume_v2_latest.pt",
+  "checkpoint_path": "reports\\_resume_compat_tmp\\mertformer_resume_v2_latest.pt",
   "resume_step": 42,
   "missing_keys": 0,
   "unexpected_keys": 0,

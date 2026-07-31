@@ -179,7 +179,7 @@ def detect_gpu_count() -> int:
         pass
     try:
         out = subprocess.run(
-            ["nvidia-smi", "-L"], capture_output=True, text=True, timeout=15
+            ["nvidia-smi", "-L"], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=15
         )
         if out.returncode == 0:
             return len([ln for ln in out.stdout.splitlines() if ln.strip()])
@@ -291,7 +291,7 @@ def gpu_utilization_snapshot() -> list:
                 "--format=csv,noheader,nounits",
             ],
             capture_output=True,
-            text=True,
+            text=True, encoding="utf-8", errors="replace",
             timeout=15,
         )
         if out.returncode != 0:

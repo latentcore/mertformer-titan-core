@@ -84,7 +84,7 @@ def run_bandit() -> dict:
         ],
         cwd=ROOT,
         capture_output=True,
-        text=True,
+        text=True, encoding="utf-8", errors="replace",
         check=False,  # bandit exits non-zero when it finds ANY issue -- we read the JSON ourselves
     )
     if not REPORT_PATH.exists():

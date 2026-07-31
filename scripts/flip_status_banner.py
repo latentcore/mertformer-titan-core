@@ -46,7 +46,7 @@ PRE_BANNER = "PRE-TRAINING (UNVERIFIED)"
 def _git_tracked_text_files() -> list[Path]:
     try:
         out = subprocess.check_output(
-            ["git", "ls-files"], cwd=ROOT, text=True, stderr=subprocess.DEVNULL
+            ["git", "ls-files"], cwd=ROOT, text=True, encoding="utf-8", errors="replace", stderr=subprocess.DEVNULL
         )
     except Exception:
         return []

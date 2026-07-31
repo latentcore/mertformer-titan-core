@@ -34,7 +34,7 @@ def sanitize_value(value):
 
 def run(cmd: list[str], py: str | None = None) -> dict:
     resolved = [py if token == "<PY>" and py else token for token in cmd]
-    p = subprocess.run(resolved, cwd=ROOT, capture_output=True, text=True, check=False)
+    p = subprocess.run(resolved, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     return {
         "cmd": sanitize_text(" ".join(resolved)),
         "return_code": p.returncode,
@@ -45,7 +45,7 @@ def run(cmd: list[str], py: str | None = None) -> dict:
 
 
 def git_available() -> bool:
-    p = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=ROOT, capture_output=True, text=True, check=False)
+    p = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     return p.returncode == 0 and p.stdout.strip() == "true"
 
 

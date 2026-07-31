@@ -1,17 +1,17 @@
 {
-  "generated_utc": "2026-07-30T16:08:04.677764+00:00",
-  "zip_count": 11,
-  "unique_sha_count": 8,
+  "generated_utc": "2026-07-31T10:35:58.412946+00:00",
+  "zip_count": 7,
+  "unique_sha_count": 4,
   "duplicate_group_count": 2,
   "duplicate_groups": {
-    "3e102637d2500ee61786ffee899101719aba12a337df43f93f38750b5e450db7": [
-      "<DOCUMENTS_PATH>/MertFormer_Final_PreTraining_Closure_2026_07_30/mertformer_release.zip",
-      "<DOCUMENTS_PATH>/mertformer-titan-core.zip",
-      "artifacts/mertformer_release.zip"
+    "a3764101cd1b2b299d089147ff20fb1f69449125588b7a913db43d7f02c86f10": [
+      "artifacts\\mertformer_release.zip",
+      "<DOCUMENTS_PATH>\\mertformer-titan-core.zip",
+      "<DOCUMENTS_PATH>\\MertFormer_Final_PreTraining_Closure_2026_07_31\\mertformer_release.zip"
     ],
-    "6ceb974e93b02ec34ff8f7accd2c7cb69e062b793026777cc404b47cb2d881f8": [
-      "<DOCUMENTS_PATH>/MertFormer_Final_PreTraining_Closure_2026_07_30/target_machine_handoff_bundle.zip",
-      "artifacts/target_machine_handoff_bundle.zip"
+    "9af1b79fc31b4162f854ca5edf0017b2c7e8724c7c57bbcce9f5ffa0738a9a4e": [
+      "artifacts\\target_machine_handoff_bundle.zip",
+      "<DOCUMENTS_PATH>\\MertFormer_Final_PreTraining_Closure_2026_07_31\\target_machine_handoff_bundle.zip"
     ]
   },
   "ok": false

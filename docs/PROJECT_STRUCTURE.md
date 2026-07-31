@@ -991,6 +991,8 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 ├── CHESS_5080_POC_INTERNAL.md  # documentation/report file
 ├── CHESS_5080_POC_INTERNAL_TR.md  # Turkish document counterpart
 ├── CITATION.cff  # citation metadata
+├── CODE_OF_CONDUCT.md  # documentation/report file
+├── CODE_OF_CONDUCT_TR.md  # Turkish document counterpart
 ├── CONTRIBUTING.md  # documentation/report file
 ├── CONTRIBUTING_TR.md  # Turkish document counterpart
 ├── DECISIONS.md  # documentation/report file

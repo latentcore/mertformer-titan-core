@@ -61,7 +61,7 @@ def detect_python() -> str:
 
 
 def run(cmd: list[str], *, allow_failure: bool = False) -> dict:
-    proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, check=False)
+    proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     payload = {
         'cmd': sanitize_text(' '.join(cmd)),
         'return_code': proc.returncode,
@@ -106,7 +106,7 @@ def readiness_lane_phrase(readiness: dict) -> str:
 
 
 def git_output(*args: str) -> str:
-    proc = subprocess.run(['git', *args], cwd=ROOT, capture_output=True, text=True, check=False)
+    proc = subprocess.run(['git', *args], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     return proc.stdout.strip()
 
 

@@ -100,7 +100,7 @@ def test_verify_mode_writes_contract_payload(tmp_path: Path):
     report_out = tmp_path / "verify.json"
     result = __import__("subprocess").run(
         [
-            "python3",
+            sys.executable,
             "scripts/kaggle_onefile_closure_build30.py",
             "--mode",
             "verify",
@@ -134,7 +134,7 @@ def test_package_only_without_checkpoint_emits_warning_and_nonzero(tmp_path: Pat
     report_out = tmp_path / "package.json"
     result = __import__("subprocess").run(
         [
-            "python3",
+            sys.executable,
             "scripts/kaggle_onefile_closure_build30.py",
             "--mode",
             "package-only",

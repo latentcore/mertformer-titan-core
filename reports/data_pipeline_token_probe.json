@@ -1,14 +1,14 @@
 {
   "schema": "data_pipeline_token_probe_v1",
-  "generated_utc": "2026-07-30T16:08:00Z",
+  "generated_utc": "2026-07-31T10:35:56Z",
   "probe_mode": "row_count_and_local_tokenizer_boundary",
   "stage_rows": {
-    "stage1": 41,
-    "stage2": 30,
-    "stage3": 8,
-    "stage4": 8,
-    "stage5": 12
+    "stage1": 0,
+    "stage2": 0,
+    "stage3": 0,
+    "stage4": 0,
+    "stage5": 0
   },
-  "local_tokenizer_cache_present": true,
+  "local_tokenizer_cache_present": false,
   "note": "Token probe remains offline-safe in this pass; claim-grade token accounting resumes after the real run."
 }

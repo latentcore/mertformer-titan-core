@@ -78,7 +78,7 @@ def tracked_files() -> list[str]:
     # past this guard and gets committed unchecked the moment it is staged.
     proc = subprocess.run(
         ["git", "-C", str(PROJECT_ROOT), "ls-files", "--cached", "--others", "--exclude-standard"],
-        check=True, capture_output=True, text=True,
+        check=True, capture_output=True, text=True, encoding="utf-8", errors="replace",
     )
     return [p for p in proc.stdout.splitlines() if p]
 

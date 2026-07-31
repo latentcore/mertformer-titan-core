@@ -4,14 +4,15 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 
 def pip_freeze() -> list[str]:
     result = subprocess.run([
-        ".titan-venv/bin/python", "-m", "pip", "freeze"
-    ], capture_output=True, text=True, check=False)
+        sys.executable, "-m", "pip", "freeze"
+    ], capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     if result.returncode != 0:
         return []
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]

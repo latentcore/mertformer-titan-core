@@ -10,6 +10,7 @@ test_titan_preflight_contract.py / zero_touch_start.sh coverage.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -269,14 +270,26 @@ def test_main_strict_ddp_flag_blocks_on_unconfirmed_ddp(tmp_path, monkeypatch):
 # ---------------------------------------------------------------------------
 def _resolve_repo_python() -> str:
     """Mirrors scripts/pre45k_gate.sh's own interpreter selection: prefer the venv
-    python (which has the repo importable as editable), fall back to plain python3
-    only if the venv is absent. A bare system `python3` without the repo installed
-    editable cannot resolve `from config.build_label import ...` when the script is
-    invoked script-style (its own directory lands on sys.path[0], not the repo root)."""
-    venv_python = gate.ROOT / ".titan-venv" / "bin" / "python"
-    if venv_python.exists():
-        return str(venv_python)
-    return "python3"
+    python (which has the repo importable as editable), fall back to the currently
+    running interpreter only if the venv is absent. A bare `python3`/`python` without
+    the repo installed editable cannot resolve `from config.build_label import ...`
+    when the script is invoked script-style (its own directory lands on sys.path[0],
+    not the repo root).
+
+    [2026-07-31] Checks both the Unix venv layout (`bin/python`) and the Windows
+    layout (`Scripts/python.exe`) -- venv structure is platform-dependent, unlike
+    almost everything else this repo assumes. Falls back to `sys.executable` (this
+    process's own real interpreter) rather than a literal `"python3"` string, which
+    resolves to a non-functional Windows Store alias stub on a machine with no venv
+    and no `python3` on PATH.
+    """
+    venv_python_unix = gate.ROOT / ".titan-venv" / "bin" / "python"
+    venv_python_windows = gate.ROOT / ".titan-venv" / "Scripts" / "python.exe"
+    if venv_python_unix.exists():
+        return str(venv_python_unix)
+    if venv_python_windows.exists():
+        return str(venv_python_windows)
+    return sys.executable
 
 
 def _corpus_is_materialized() -> bool:
@@ -348,7 +361,16 @@ def test_offline_preflight_reports_the_missing_corpus_rather_than_passing(monkey
     assert "Stage JSONL missing" in combined, combined[-400:]
 
 
-def test_run_dry_run_preview_against_real_repo():
+def test_run_dry_run_preview_against_real_repo(monkeypatch):
+    """[2026-07-31] zero_touch_start.sh has its own venv bootstrap, independent of
+    _resolve_repo_python() above, and only recognizes the Unix `.titan-venv/bin/python`
+    layout by default -- same class of gap as test_offline_preflight_reports_the_missing_
+    corpus_rather_than_passing above, in a sibling script. It also honors a TITAN_PYTHON
+    override, so pin one here rather than relying on whatever happens to be ambient in
+    the parent shell (this test passed only by accident when run via a shell that had
+    already exported TITAN_PYTHON for an unrelated reason, and failed on a bare `pytest`
+    invocation)."""
+    monkeypatch.setenv("TITAN_PYTHON", _resolve_repo_python())
     result = gate.run_dry_run_preview()
     assert result["ok"] is True
     assert "--dry-run" in result["cmd"]

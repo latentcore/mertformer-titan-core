@@ -144,6 +144,7 @@ Marker hits are review prompts, not automatic bug declarations. In particular, d
 | `tests/test_config_dynamic_param_count.py` | `fallback` |
 | `tests/test_distillation_topk.py` | `fallback` |
 | `tests/test_identity_sidecar.py` | `fallback` |
+| `tests/test_kaggle_onefile_colab_math_fastproof.py` | `fallback` |
 | `tests/test_moe_capacity_drop_order.py` | `fallback` |
 | `tests/test_onnx_custom_op_contract.py` | `fallback` |
 | `tests/test_sdk_api.py` | `fallback` |

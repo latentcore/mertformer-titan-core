@@ -1,6 +1,6 @@
 {
   "schema": "target_machine_handoff_manifest_v1",
-  "generated_utc": "2026-07-30T16:06:22Z",
+  "generated_utc": "2026-07-31T09:15:31Z",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "train_allowed": true,
   "decision_reason_code": "READY_REMOTE_BOOTSTRAP",
@@ -10,108 +10,108 @@
   "transfer_files": [
     {
       "path": "zero_touch_start.sh",
-      "size_bytes": 4741,
-      "sha256": "8f5c229522a36b0a724364a4797677687caec1502dbb09401098262646a6b39f"
+      "size_bytes": 4851,
+      "sha256": "e2bc5abdbd463087c640f8ad5b1c517290064aac0ac2a06b629010c9c1d7b0e9"
     },
     {
       "path": "run.sh",
-      "size_bytes": 24431,
-      "sha256": "ced539190a246ccd24f2b39e756ce265f11cb131bc7952c62b43b0b79492a5e6"
+      "size_bytes": 25096,
+      "sha256": "ab5f9e98e210720990d6e98a3447de0d2f7bbdc6e1755d6209d3f52aeb057302"
     },
     {
       "path": "launch_mertformer_kaggle_closure.command",
-      "size_bytes": 790,
-      "sha256": "6f3d756beb9bc3f5a4a00921fe71378783e852435921a170b1d625da605ffc0b"
+      "size_bytes": 815,
+      "sha256": "8e2d0130849885e1e6c8a184c4ce1fa8d5900154ccc15d5f942610fdbcae18a4"
     },
     {
       "path": "scripts/data_pipeline.py",
-      "size_bytes": 31738,
-      "sha256": "18d074412002ab3d336472dfc8ac05f1d70b336c821798f41f0c6dca1f88e8b6"
+      "size_bytes": 32543,
+      "sha256": "5589cd0691dd859b847ad52b70433b6ac12af0e518ce8cd123e592877c67b992"
     },
     {
       "path": "scripts/smart_runner.py",
-      "size_bytes": 5317,
-      "sha256": "3e2789e59939558a3ea6b4151db754a0b4267cc1032d9fd31402bd910a72d3c3"
+      "size_bytes": 5454,
+      "sha256": "99d0ab8dbe0c580c57769bf4fe18d83c8b651b6fdc682f017233dfffb6391343"
     },
     {
       "path": "scripts/precompute_logits_topk.py",
-      "size_bytes": 42473,
-      "sha256": "1c278f1cb80a62b959a26ccf8f463ef9b339426ae4c93908b34b60e7fba536a7"
+      "size_bytes": 43494,
+      "sha256": "4a1821812b69b5c8fcc705f6cd7b239e2669413d645930c47bd2cefb1c1fe483"
     },
     {
       "path": "scripts/precompute_logits_parallel.py",
-      "size_bytes": 20496,
-      "sha256": "1a926b590ba57ec5f7f65037e520d04d27bad516ab9cc2e5da0d8a6f43286cc8"
+      "size_bytes": 21005,
+      "sha256": "cade1dfc9076b4c98264f995769c74e74edad725e4c70f97b68658ac6722fc19"
     },
     {
       "path": "scripts/validate_logit_alignment.py",
-      "size_bytes": 11929,
-      "sha256": "2ad4bc2a5fe7a071af4465503a780aeba6e8383598253eec73ccd7ab8379ea96"
+      "size_bytes": 12222,
+      "sha256": "be6774bccac64df11574707cc62033fc85ad9dffd702c5417b059f3b252248e6"
     },
     {
       "path": "train/packing.py",
-      "size_bytes": 10975,
-      "sha256": "f3d11fb437fad88b5ec38e4fbd3449eb8e420fcabdf83d0c2d749bc0538c4372"
+      "size_bytes": 11226,
+      "sha256": "a4ef2f7f1ac5012e193a022f6cd6f59d08b11af86846a12c1c830e8fe1490154"
     },
     {
       "path": "scripts/kaggle_onefile_closure_build30.py",
-      "size_bytes": 43690,
-      "sha256": "a23eedee31b165b73d91cbb313605dff2c79b9cafe0632867f3ce77f4d1f050b"
+      "size_bytes": 44837,
+      "sha256": "100e45e47386414fb36a3b9d5ede51aaece2f61c92cdbdafefd1ad59bcd30d88"
     },
     {
       "path": "scripts/kaggle_onecell_t4_build30.py",
-      "size_bytes": 293850,
-      "sha256": "f79ed367c494176b6f8ae08d8e7967e5ec7ec40648dcf268f9f0132cbdb7ef23"
+      "size_bytes": 300951,
+      "sha256": "ffbb305a62c26ac39d118c91c90505d544d1fb77c82833b75313d084627ff568"
     },
     {
       "path": "scripts/macos_keepawake.sh",
-      "size_bytes": 1440,
-      "sha256": "462f7d4e50b6231ebbec4a9d296760212eafc30b3b7e9f55897e08ddbff2b6a9"
+      "size_bytes": 1515,
+      "sha256": "18b88f8eeb65ef8f1b0d77864ff3a3aa3b8d24ce78c1be3749367a7eacbac915"
     },
     {
       "path": "scripts/final_orchestrator.py",
-      "size_bytes": 33794,
-      "sha256": "9ad7ae7970a0fb9d82b42ba41a830d52c643c6e9702d6da716b416732b690524"
+      "size_bytes": 34701,
+      "sha256": "d96c4f050cd01a4ea01d6551720ae4d623c34b77f819938e7cf85f062e3207f4"
     },
     {
       "path": "scripts/start_gate.py",
-      "size_bytes": 12033,
-      "sha256": "d47190b6cb6394523eb318041aee5368f19684326c99792b56309f751dcc749c"
+      "size_bytes": 12403,
+      "sha256": "f3f52f630a5a7f358770cb333f787dc22ef04e89c13834219b99c649517de6fc"
     },
     {
       "path": "scripts/build_train_readiness_contract.py",
-      "size_bytes": 6830,
-      "sha256": "a5b9d55acb37672a41bd7a6f21fa960f04c152541f9de523f0d0feaa198e8568"
+      "size_bytes": 7069,
+      "sha256": "2f9186aff91b0fc649d342f1ec2885d802a25217009967ec90496fd45e2d1f96"
     },
     {
       "path": "reports/train_readiness_decision.json",
-      "size_bytes": 8224,
-      "sha256": "60d22d56aecc9b202907759562444cca205723f341bed4754110dd9050849fee"
+      "size_bytes": 5313,
+      "sha256": "6e0d59a558a81c3c92af5c3c5ca79cbc88f15b9c37650007a2cf894fcb2820e7"
     },
     {
       "path": "reports/train_readiness_decision.md",
-      "size_bytes": 1005,
-      "sha256": "6984cb6e576f3db3fdd7ba0726d5aad94b1d0f17d7935afec80a9225df2d7cd7"
+      "size_bytes": 970,
+      "sha256": "e0319f2c3d83ea0476c9ac96c1d17b173215a6555d6bca5c01c8e50214b4eff1"
     },
     {
       "path": "reports/start_gate_report.json",
-      "size_bytes": 4038,
-      "sha256": "02949f9e6eb37f068059d1700fe7ccf4dc9ff4dede71bfefabe71e0dece7ff04"
+      "size_bytes": 5606,
+      "sha256": "1ab98eda8561ed71817c8024e75574fc6d1b27c1f628b937ffac8585914f0fd9"
     },
     {
       "path": "reports/start_gate_operator_decision.json",
-      "size_bytes": 1691,
-      "sha256": "8e9720964067edb9fd0649601b9ebc7978f0eb3796c451e10b3c0ebd41383014"
+      "size_bytes": 1698,
+      "sha256": "ead69707a63416690fcb59fe1a80f589dde1590339ef0657138b43bda1092039"
     },
     {
       "path": "reports/start_gate_operator_decision.md",
-      "size_bytes": 1515,
-      "sha256": "9b766f60c680fe78b0dd566b8bbbb730585a0b567b9933ab61317f89af558361"
+      "size_bytes": 1522,
+      "sha256": "ed11173136117192c3737da2dd02960be5076ae5b71f86b28a1d23c830c3b31e"
     },
     {
       "path": "reports/repo_external_handoff.md",
-      "size_bytes": 1709,
-      "sha256": "a3ed4a20a1718a0509f88e9c888403fa358450533801ab2987fbccd4ffe9c61e"
+      "size_bytes": 1753,
+      "sha256": "cf1a4be4c51b2342a1a0d50105a82925962c04bc8c5dbbb30308ba6d2f7b0221"
     }
   ],
   "operator_steps": [

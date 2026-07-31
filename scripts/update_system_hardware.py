@@ -50,7 +50,7 @@ def _mark(ok: bool) -> str:
 
 def _run(cmd: list[str]) -> str:
     try:
-        return _subprocess.check_output(cmd, text=True, stderr=_subprocess.DEVNULL)
+        return _subprocess.check_output(cmd, text=True, encoding="utf-8", errors="replace", stderr=_subprocess.DEVNULL)
     except Exception as _exc:  # noqa: BLE001 - best-effort probe; fallback stays
         import sys as _sys
 

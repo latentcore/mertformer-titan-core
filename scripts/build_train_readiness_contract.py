@@ -91,6 +91,8 @@ def run_profile(py: str, entry: dict) -> dict:
         env=env,
         capture_output=True,
         text=True,
+        encoding='utf-8',
+        errors='replace',
         check=False,
     )
     profile_report = LOG_DIR / f"train_ready_status.{entry['profile']}.json"

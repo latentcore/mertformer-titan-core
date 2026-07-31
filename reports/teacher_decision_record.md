@@ -1,6 +1,6 @@
 # Teacher Decision Record
 
-- generated_utc: `2026-07-30T16:08:00Z`
+- generated_utc: `2026-07-31T10:35:56Z`
 - canonical_training_lane: `offline_clean`
 - remote_handoff_lane: `remote_bootstrap`
 - alternate_lane: `online_teacher`
@@ -22,6 +22,6 @@
 
 ## Current Lane Status
 
-- offline_clean: `FAIL` / `PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`
+- offline_clean: `FAIL` / `STAGE_JSONL_MISSING`
 - remote_bootstrap: `PASS` / `READY_RUNTIME_INJECTED_BOOTSTRAP`
 - online_teacher: `FAIL` / `MISSING_HF_TOKEN`

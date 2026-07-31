@@ -1,5 +1,14 @@
 # ✅ MertFormer Titan README QA Checklist
 
+> **⚠ SUPERSEDED (2026-07-31):** This is a one-time, hand-filled snapshot from the
+> 2026-02-05 / 2026-06-17 README passes, predating this repo's automated closure gates
+> (`scripts/check_doc_claim_consistency.py`, `scripts/md_quality_gate.py`,
+> `scripts/md_integrity_check.py`, all run by `verify_all.sh`). Those gates are the current,
+> live, evidence-backed check on README correctness; this file is not linked from any
+> canonical surface and is kept only as a historical record of the pre-4KB-cut manual
+> review. Not updated for anything since, including the Apache 2.0 relicensing or the
+> Windows-portability pass -- do not treat it as current.
+
 ## 1️⃣ Project Structure
 - [x] **Folder List:** Config, layers, scripts, checkpoints, logs are all listed.
 - [x] **Descriptions:** File purposes are clearly defined (e.g., `bitlinear.py` → 1.58-bit Quantization).

@@ -1,58 +1,23 @@
 {
   "schema": "workspace_hygiene_manifest_v1",
-  "generated_utc": "2026-07-30T16:06:03Z",
+  "generated_utc": "2026-07-31T09:14:46Z",
   "mode": "audit_only",
   "workspace_root": "<WORKSPACE_ROOT>",
   "repo_root": "<REPO_ROOT>",
   "quarantine_root": "<QUARANTINE_ROOT>",
   "items": [
     {
-      "path": "<WORKSPACE_ROOT>/.DS_Store",
-      "classification": "desktop_metadata",
-      "reason": "macOS metadata file. Ignore by default unless a human wants cosmetic cleanup.",
-      "restore_target": "<WORKSPACE_ROOT>/.DS_Store",
-      "decision_state": "ignore"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/.idea",
-      "classification": "workspace_metadata",
-      "reason": "IDE workspace metadata outside the repo root. Keep unless a human explicitly retires the workspace.",
-      "restore_target": "<WORKSPACE_ROOT>/.idea",
-      "decision_state": "keep"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/.pass_backups",
-      "classification": "external_workspace_entry",
-      "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/.pass_backups",
+      "path": "<WORKSPACE_ROOT>/desktop.ini",
+      "classification": "external_workspace_file",
+      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
+      "restore_target": "<WORKSPACE_ROOT>/desktop.ini",
       "decision_state": "quarantine_first"
     },
     {
-      "path": "<WORKSPACE_ROOT>/Applications",
-      "classification": "external_workspace_entry",
-      "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/Applications",
-      "decision_state": "quarantine_first"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/Claude Reis",
-      "classification": "external_workspace_entry",
-      "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/Claude Reis",
-      "decision_state": "quarantine_first"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/Documents",
-      "classification": "external_workspace_entry",
-      "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/Documents",
-      "decision_state": "quarantine_first"
-    },
-    {
-      "path": "<WORKSPACE_ROOT>/İndirilenler",
-      "classification": "external_workspace_entry",
-      "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/İndirilenler",
+      "path": "<WORKSPACE_ROOT>/MERT_YÜNLÜ_NİHAİ_HAYAT_SENTEZİ_v3_2026-07-06.md",
+      "classification": "external_workspace_file",
+      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
+      "restore_target": "<WORKSPACE_ROOT>/MERT_YÜNLÜ_NİHAİ_HAYAT_SENTEZİ_v3_2026-07-06.md",
       "decision_state": "quarantine_first"
     },
     {
@@ -63,24 +28,80 @@
       "decision_state": "keep"
     },
     {
-      "path": "<WORKSPACE_ROOT>/Samsung Smart Switch Yedekleri (A34)",
-      "classification": "external_workspace_entry",
-      "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/Samsung Smart Switch Yedekleri (A34)",
+      "path": "<WORKSPACE_ROOT>/MertFormer_Build30_Max_Closure_Handoff.md",
+      "classification": "external_workspace_file",
+      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
+      "restore_target": "<WORKSPACE_ROOT>/MertFormer_Build30_Max_Closure_Handoff.md",
       "decision_state": "quarantine_first"
     },
     {
-      "path": "<WORKSPACE_ROOT>/Sistem_ve_Ayar_Yedekleri",
+      "path": "<WORKSPACE_ROOT>/MertFormer_Chess_5080_Delivery_20260731_050915",
       "classification": "external_workspace_entry",
       "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/Sistem_ve_Ayar_Yedekleri",
+      "restore_target": "<WORKSPACE_ROOT>/MertFormer_Chess_5080_Delivery_20260731_050915",
       "decision_state": "quarantine_first"
     },
     {
-      "path": "<WORKSPACE_ROOT>/Uygulamalar",
+      "path": "<WORKSPACE_ROOT>/MertFormer_Chess_5080_Delivery_20260731_050915.zip",
+      "classification": "archive_or_dump",
+      "reason": "Top-level archive or dump outside the main repo. Review and quarantine before any permanent cleanup.",
+      "restore_target": "<WORKSPACE_ROOT>/MertFormer_Chess_5080_Delivery_20260731_050915.zip",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/MertFormer_Chess_5080_Delivery_20260731_050915.zip.sha256",
+      "classification": "external_workspace_file",
+      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
+      "restore_target": "<WORKSPACE_ROOT>/MertFormer_Chess_5080_Delivery_20260731_050915.zip.sha256",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/MertFormer_Chess_5080_Delivery_20260731_052426",
       "classification": "external_workspace_entry",
       "reason": "Top-level directory outside the active repo root. Keep only if still actively used; otherwise quarantine first.",
-      "restore_target": "<WORKSPACE_ROOT>/Uygulamalar",
+      "restore_target": "<WORKSPACE_ROOT>/MertFormer_Chess_5080_Delivery_20260731_052426",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/MertFormer_Chess_5080_Delivery_20260731_052426.zip",
+      "classification": "archive_or_dump",
+      "reason": "Top-level archive or dump outside the main repo. Review and quarantine before any permanent cleanup.",
+      "restore_target": "<WORKSPACE_ROOT>/MertFormer_Chess_5080_Delivery_20260731_052426.zip",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/MertFormer_Chess_5080_Delivery_20260731_052426.zip.sha256",
+      "classification": "external_workspace_file",
+      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
+      "restore_target": "<WORKSPACE_ROOT>/MertFormer_Chess_5080_Delivery_20260731_052426.zip.sha256",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/MertFormer_Kapanış_Release_TruthSync_Master_Protokolu_2026-05-12.md",
+      "classification": "external_workspace_file",
+      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
+      "restore_target": "<WORKSPACE_ROOT>/MertFormer_Kapanış_Release_TruthSync_Master_Protokolu_2026-05-12.md",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/MERTFORMER_PRE45K_POST45K_TEK_LISTE_2026-07-25.md",
+      "classification": "external_workspace_file",
+      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
+      "restore_target": "<WORKSPACE_ROOT>/MERTFORMER_PRE45K_POST45K_TEK_LISTE_2026-07-25.md",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/mertformer_titan_bagimsiz_denetim_2026-07-27.md",
+      "classification": "external_workspace_file",
+      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
+      "restore_target": "<WORKSPACE_ROOT>/mertformer_titan_bagimsiz_denetim_2026-07-27.md",
+      "decision_state": "quarantine_first"
+    },
+    {
+      "path": "<WORKSPACE_ROOT>/MERTFORMER_TITAN_TEK_NIHAI_REFERANS_2026-07-08.md",
+      "classification": "external_workspace_file",
+      "reason": "Top-level file outside the active repo root. Quarantine first instead of deleting in place.",
+      "restore_target": "<WORKSPACE_ROOT>/MERTFORMER_TITAN_TEK_NIHAI_REFERANS_2026-07-08.md",
       "decision_state": "quarantine_first"
     }
   ]

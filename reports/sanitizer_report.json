@@ -1,9 +1,9 @@
 {
-  "generated_utc": "2026-07-30T16:06:28.242920+00:00",
-  "tooling_available": true,
-  "status": "pass",
-  "skipped": false,
-  "sanitizer_actually_ran": true,
+  "generated_utc": "2026-07-31T09:19:31.209671+00:00",
+  "tooling_available": false,
+  "status": "skip",
+  "skipped": true,
+  "sanitizer_actually_ran": false,
   "ok": true,
-  "reason": "sanitizer smoke not required for python-only path"
+  "reason": "clang unavailable on runner"
 }

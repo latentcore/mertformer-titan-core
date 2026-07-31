@@ -33,6 +33,12 @@ import torch.onnx
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader, IterableDataset, get_worker_info
 
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 try:
     import wandb

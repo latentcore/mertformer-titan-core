@@ -59,7 +59,17 @@ def sanitize_text(text: str) -> str:
 
 
 def _run_subprocess_step(cmd: list, *, cwd: Path, env: dict = None) -> dict:
-    p = subprocess.run(cmd, cwd=str(cwd), capture_output=True, text=True, env=env)
+    # [2026-07-31] Explicit encoding/errors, not the `text=True` default of
+    # locale.getpreferredencoding(). On Windows that default is the system codepage
+    # (e.g. cp1254), not UTF-8 -- but child scripts here (titan_preflight.py etc.) now
+    # reconfigure their own stdout/stderr to UTF-8, so a parent still decoding as cp1254
+    # crashes trying to decode valid UTF-8 bytes it wasn't expecting (confirmed: a
+    # background reader thread died mid-read, leaving p.stderr as None). Pin both sides
+    # to UTF-8 explicitly so the encoding contract is consistent regardless of the
+    # invoking process's locale.
+    p = subprocess.run(
+        cmd, cwd=str(cwd), capture_output=True, text=True, encoding="utf-8", errors="replace", env=env
+    )
     return {
         "cmd": sanitize_text(" ".join(cmd)),
         "return_code": p.returncode,

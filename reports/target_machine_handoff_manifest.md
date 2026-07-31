@@ -18,24 +18,24 @@
 
 ## Transfer Files
 
-- `zero_touch_start.sh` · `4741` bytes · sha256=`8f5c229522a36b0a724364a4797677687caec1502dbb09401098262646a6b39f`
-- `run.sh` · `24431` bytes · sha256=`ced539190a246ccd24f2b39e756ce265f11cb131bc7952c62b43b0b79492a5e6`
-- `launch_mertformer_kaggle_closure.command` · `790` bytes · sha256=`6f3d756beb9bc3f5a4a00921fe71378783e852435921a170b1d625da605ffc0b`
-- `scripts/data_pipeline.py` · `31738` bytes · sha256=`18d074412002ab3d336472dfc8ac05f1d70b336c821798f41f0c6dca1f88e8b6`
-- `scripts/smart_runner.py` · `5317` bytes · sha256=`3e2789e59939558a3ea6b4151db754a0b4267cc1032d9fd31402bd910a72d3c3`
-- `scripts/precompute_logits_topk.py` · `42473` bytes · sha256=`1c278f1cb80a62b959a26ccf8f463ef9b339426ae4c93908b34b60e7fba536a7`
-- `scripts/precompute_logits_parallel.py` · `20496` bytes · sha256=`1a926b590ba57ec5f7f65037e520d04d27bad516ab9cc2e5da0d8a6f43286cc8`
-- `scripts/validate_logit_alignment.py` · `11929` bytes · sha256=`2ad4bc2a5fe7a071af4465503a780aeba6e8383598253eec73ccd7ab8379ea96`
-- `train/packing.py` · `10975` bytes · sha256=`f3d11fb437fad88b5ec38e4fbd3449eb8e420fcabdf83d0c2d749bc0538c4372`
-- `scripts/kaggle_onefile_closure_build30.py` · `43690` bytes · sha256=`a23eedee31b165b73d91cbb313605dff2c79b9cafe0632867f3ce77f4d1f050b`
-- `scripts/kaggle_onecell_t4_build30.py` · `293850` bytes · sha256=`f79ed367c494176b6f8ae08d8e7967e5ec7ec40648dcf268f9f0132cbdb7ef23`
-- `scripts/macos_keepawake.sh` · `1440` bytes · sha256=`462f7d4e50b6231ebbec4a9d296760212eafc30b3b7e9f55897e08ddbff2b6a9`
-- `scripts/final_orchestrator.py` · `33794` bytes · sha256=`9ad7ae7970a0fb9d82b42ba41a830d52c643c6e9702d6da716b416732b690524`
-- `scripts/start_gate.py` · `12033` bytes · sha256=`d47190b6cb6394523eb318041aee5368f19684326c99792b56309f751dcc749c`
-- `scripts/build_train_readiness_contract.py` · `6830` bytes · sha256=`a5b9d55acb37672a41bd7a6f21fa960f04c152541f9de523f0d0feaa198e8568`
-- `reports/train_readiness_decision.json` · `8224` bytes · sha256=`60d22d56aecc9b202907759562444cca205723f341bed4754110dd9050849fee`
-- `reports/train_readiness_decision.md` · `1005` bytes · sha256=`6984cb6e576f3db3fdd7ba0726d5aad94b1d0f17d7935afec80a9225df2d7cd7`
-- `reports/start_gate_report.json` · `4038` bytes · sha256=`02949f9e6eb37f068059d1700fe7ccf4dc9ff4dede71bfefabe71e0dece7ff04`
-- `reports/start_gate_operator_decision.json` · `1691` bytes · sha256=`8e9720964067edb9fd0649601b9ebc7978f0eb3796c451e10b3c0ebd41383014`
-- `reports/start_gate_operator_decision.md` · `1515` bytes · sha256=`9b766f60c680fe78b0dd566b8bbbb730585a0b567b9933ab61317f89af558361`
-- `reports/repo_external_handoff.md` · `1709` bytes · sha256=`a3ed4a20a1718a0509f88e9c888403fa358450533801ab2987fbccd4ffe9c61e`
+- `zero_touch_start.sh` · `4851` bytes · sha256=`e2bc5abdbd463087c640f8ad5b1c517290064aac0ac2a06b629010c9c1d7b0e9`
+- `run.sh` · `25096` bytes · sha256=`ab5f9e98e210720990d6e98a3447de0d2f7bbdc6e1755d6209d3f52aeb057302`
+- `launch_mertformer_kaggle_closure.command` · `815` bytes · sha256=`8e2d0130849885e1e6c8a184c4ce1fa8d5900154ccc15d5f942610fdbcae18a4`
+- `scripts/data_pipeline.py` · `32543` bytes · sha256=`5589cd0691dd859b847ad52b70433b6ac12af0e518ce8cd123e592877c67b992`
+- `scripts/smart_runner.py` · `5454` bytes · sha256=`99d0ab8dbe0c580c57769bf4fe18d83c8b651b6fdc682f017233dfffb6391343`
+- `scripts/precompute_logits_topk.py` · `43494` bytes · sha256=`4a1821812b69b5c8fcc705f6cd7b239e2669413d645930c47bd2cefb1c1fe483`
+- `scripts/precompute_logits_parallel.py` · `21005` bytes · sha256=`cade1dfc9076b4c98264f995769c74e74edad725e4c70f97b68658ac6722fc19`
+- `scripts/validate_logit_alignment.py` · `12222` bytes · sha256=`be6774bccac64df11574707cc62033fc85ad9dffd702c5417b059f3b252248e6`
+- `train/packing.py` · `11226` bytes · sha256=`a4ef2f7f1ac5012e193a022f6cd6f59d08b11af86846a12c1c830e8fe1490154`
+- `scripts/kaggle_onefile_closure_build30.py` · `44837` bytes · sha256=`100e45e47386414fb36a3b9d5ede51aaece2f61c92cdbdafefd1ad59bcd30d88`
+- `scripts/kaggle_onecell_t4_build30.py` · `300951` bytes · sha256=`ffbb305a62c26ac39d118c91c90505d544d1fb77c82833b75313d084627ff568`
+- `scripts/macos_keepawake.sh` · `1515` bytes · sha256=`18b88f8eeb65ef8f1b0d77864ff3a3aa3b8d24ce78c1be3749367a7eacbac915`
+- `scripts/final_orchestrator.py` · `34701` bytes · sha256=`d96c4f050cd01a4ea01d6551720ae4d623c34b77f819938e7cf85f062e3207f4`
+- `scripts/start_gate.py` · `12403` bytes · sha256=`f3f52f630a5a7f358770cb333f787dc22ef04e89c13834219b99c649517de6fc`
+- `scripts/build_train_readiness_contract.py` · `7069` bytes · sha256=`2f9186aff91b0fc649d342f1ec2885d802a25217009967ec90496fd45e2d1f96`
+- `reports/train_readiness_decision.json` · `5313` bytes · sha256=`6e0d59a558a81c3c92af5c3c5ca79cbc88f15b9c37650007a2cf894fcb2820e7`
+- `reports/train_readiness_decision.md` · `970` bytes · sha256=`e0319f2c3d83ea0476c9ac96c1d17b173215a6555d6bca5c01c8e50214b4eff1`
+- `reports/start_gate_report.json` · `5606` bytes · sha256=`1ab98eda8561ed71817c8024e75574fc6d1b27c1f628b937ffac8585914f0fd9`
+- `reports/start_gate_operator_decision.json` · `1698` bytes · sha256=`ead69707a63416690fcb59fe1a80f589dde1590339ef0657138b43bda1092039`
+- `reports/start_gate_operator_decision.md` · `1522` bytes · sha256=`ed11173136117192c3737da2dd02960be5076ae5b71f86b28a1d23c830c3b31e`
+- `reports/repo_external_handoff.md` · `1753` bytes · sha256=`cf1a4be4c51b2342a1a0d50105a82925962c04bc8c5dbbb30308ba6d2f7b0221`

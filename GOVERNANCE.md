@@ -23,4 +23,8 @@ Turkish: [GOVERNANCE_TR.md](GOVERNANCE_TR.md). Deliberate decisions: [DECISIONS.
 
 ## Privacy / visibility
 - The main repo and the separate dealroom repo are **PRIVATE**. The only public surface is the README-derived Gist.
-- Commercial / investor / hiring material is kept out of the technical repo (`private/`, dealroom) — see [DECISIONS.md](DECISIONS.md) "Repo curation".
+- **Updated (2026-07-30, Apache 2.0 relicensing pass):** README.md/README_TR.md now carry a
+  short, deliberate "Hiring & Commercial Opportunities" section (role interest + a real
+  contact address) as part of preparing the repo for public release — see [DECISIONS.md](DECISIONS.md).
+  Deeper investor/pitch/outreach material (decks, one-pagers, sponsorship messaging) stays
+  out of the technical repo, in `private/commercial/` and the separate dealroom repo.

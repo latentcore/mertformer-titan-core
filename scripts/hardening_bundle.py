@@ -37,7 +37,7 @@ def run_static_analysis() -> dict:
         python_bin = str(ROOT / ".titan-venv/bin/python")
 
     cmd = [python_bin, "-m", "ruff", "check", "."]
-    p = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+    p = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace")
     payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "tool": "ruff",
@@ -51,7 +51,7 @@ def run_static_analysis() -> dict:
 
 
 def run_sanitizer_smoke() -> dict:
-    clang = subprocess.run(["bash", "-lc", "command -v clang || true"], capture_output=True, text=True)
+    clang = subprocess.run(["bash", "-lc", "command -v clang || true"], capture_output=True, text=True, encoding="utf-8", errors="replace")
     has_clang = bool(clang.stdout.strip())
     # DURUSTLUK NOTU: clang yoksa sanitizer hic calismaz; bu durumda "ok" gercek
     # bir bellek/UB kontrolu GECTI demek DEGILDIR, sadece adimin atlandigi demektir.

@@ -534,7 +534,7 @@ def find_latest_run_dir(runtime: RuntimeMeta, artifact_root: Path, explicit: str
 
 def run_command(cmd: list[str], env: Optional[dict[str, str]] = None) -> dict[str, Any]:
     started = time.time()
-    proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, env=env, check=False)
+    proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env, check=False)
     return {
         "cmd": " ".join(cmd),
         "return_code": proc.returncode,

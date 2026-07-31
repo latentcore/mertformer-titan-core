@@ -1,8 +1,8 @@
 {
   "schema": "checkpoint_restore_report_v1",
-  "generated_utc": "2026-07-30T16:07:44Z",
+  "generated_utc": "2026-07-31T09:59:57Z",
   "status": "PASS",
-  "cmd": "<REPO_ROOT>/.titan-venv/bin/python scripts/checkpoint_restore_drill.py",
+  "cmd": "<REPO_ROOT>\\.titan-venv\\bin\\python scripts/checkpoint_restore_drill.py",
   "stdout_tail": "Checkpoint restore drill: PASS\n",
-  "stderr_tail": ""
+  "stderr_tail": "<REPO_ROOT>\\layers\\liquid.py:392: RuntimeWarning: Liquid fast path failed; falling back to eager: InvalidCxxCompiler: Compiler: cl is not found.\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n\n  warnings.warn(\n<REPO_ROOT>\\layers\\liquid.py:392: RuntimeWarning: Liquid fast path failed; falling back to eager: InvalidCxxCompiler: Compiler: cl is not found.\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n\n  warnings.warn(\n"
 }

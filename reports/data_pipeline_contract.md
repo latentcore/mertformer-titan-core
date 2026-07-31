@@ -1,17 +1,17 @@
 # Data Pipeline Contract
 
-- generated_utc: `2026-07-30T16:08:00Z`
+- generated_utc: `2026-07-31T10:35:56Z`
 - current_training_lane: `remote_bootstrap`
 - stage_contract: `stage1..stage5 JSONL must exist before claim-grade training`
 - validation_contract: `datasets/validation.jsonl` must remain parseable and above the minimum sample gate
 
 ## Current Stage Presence
 
-- `stage1`: `41` rows
-- `stage2`: `30` rows
-- `stage3`: `8` rows
-- `stage4`: `8` rows
-- `stage5`: `12` rows
+- `stage1`: `0` rows
+- `stage2`: `0` rows
+- `stage3`: `0` rows
+- `stage4`: `0` rows
+- `stage5`: `0` rows
 
 ## Boundary
 

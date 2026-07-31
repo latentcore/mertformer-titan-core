@@ -18,6 +18,18 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
+# [2026-07-31] Same fix as scripts/titan_preflight.py: this script prints emoji glyphs
+# (e.g. the folder icon in the "Reading: <path>" line), which crash with UnicodeEncodeError
+# on Windows' default non-UTF-8 console codepage. Reconfigured once here so it is robust
+# regardless of how the script is invoked (direct, or as a ladder subprocess) rather than
+# depending on the caller setting PYTHONIOENCODING.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
+
 # matplotlib is imported LAZILY (see _require_matplotlib) rather than at module
 # import time. Two reasons:
 #   1. Parsing + the console summary need no plotting backend at all, so they must

@@ -96,7 +96,7 @@ def test_scatter_add_counts_handles_missing_experts():
 def test_dispatch_parallel_real_forward_backward(parallel_moe_cfg):
     """The actual MoE forward/backward through _dispatch_parallel must run clean
     post-fix, on whichever device is available (MPS on this machine)."""
-    device = "mps" if torch.backends.mps.is_available() else "cpu"
+    device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
     model = MertFormer().to(device)
     model.train()
     opt = torch.optim.AdamW(model.parameters(), lr=1e-4)
@@ -121,7 +121,7 @@ def test_dispatch_parallel_and_sequential_route_the_same_tokens(parallel_moe_cfg
     """Parallel and sequential dispatch must select the same expert for each token
     (the counting rewrite must not silently change routing assignment)."""
     parallel_moe_cfg.moe_dispatch_mode = "parallel"
-    device = "mps" if torch.backends.mps.is_available() else "cpu"
+    device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
     torch.manual_seed(7)
     model_parallel = MertFormer().to(device)
     model_parallel.eval()

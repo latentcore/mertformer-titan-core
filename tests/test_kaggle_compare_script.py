@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -9,7 +10,7 @@ def test_kaggle_compare_script_generates_reports(tmp_path: Path):
     out_dir = tmp_path / "bench"
     result = subprocess.run(
         [
-            "python3",
+            sys.executable,
             "scripts/kaggle_train_compare_build30.py",
             "--quick",
             "--steps",

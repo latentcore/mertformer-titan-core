@@ -84,7 +84,12 @@ def test_answer_only_loss_mask():
             assert int(value) == -100
 
 
-def test_architecture_selector_prompt_fallback():
+def test_architecture_selector_prompt_fallback(monkeypatch):
+    # can_accept_user_input() treats a real TTY on stdin as consent to prompt even
+    # when force_interactive_input/allow_notebook_input are both False. Whether fd 0
+    # reports as a TTY depends on the terminal/CI runner, not on this test's intent
+    # (verify the no-prompt fallback), so isatty is pinned False here for determinism.
+    monkeypatch.setattr("os.isatty", lambda fd: False)
     cfg = dict(onefile.RUN_CONFIG)
     cfg["startup_prompt_enabled"] = True
     cfg["allow_notebook_input"] = False
@@ -133,7 +138,16 @@ def test_logging_artifacts_written_and_compare_schema(tmp_path: Path, monkeypatc
 
     monkeypatch.setattr(onefile, "mathfp_build_variant_models", _mock_models)
 
-    cfg = onefile.resolve_runtime_config(dict(onefile.RUN_CONFIG))
+    # out_dir/artifact_root must already be tmp_path-scoped in the dict passed INTO
+    # resolve_runtime_config(), not overridden on the dict it returns: the function's own
+    # RUN_CONFIG default ("/content/mertformer_outputs") is a Colab-mirroring convention that,
+    # off Kaggle/Colab, falls back to a real ~/Downloads/content/mertformer_outputs and mkdir()s
+    # it as a side effect before this test ever gets the returned dict back -- overriding after
+    # the call is too late to prevent that real, stray directory on the operator's machine.
+    base_cfg = dict(onefile.RUN_CONFIG)
+    base_cfg["out_dir"] = str(tmp_path / "out")
+    base_cfg["artifact_root"] = str(tmp_path / "out")
+    cfg = onefile.resolve_runtime_config(base_cfg)
     cfg["out_dir"] = str(tmp_path / "out")
     cfg["artifact_root"] = str(tmp_path / "out")
     cfg["checkpoint_dir"] = str(tmp_path / "out" / "checkpoints")

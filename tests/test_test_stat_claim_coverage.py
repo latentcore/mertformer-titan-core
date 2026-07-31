@@ -39,7 +39,7 @@ def test_every_tracked_stat_claim_is_classified():
 
 def test_the_two_lists_do_not_overlap():
     """A file cannot be both synced and deliberately frozen."""
-    target_rels = {str(p.relative_to(SYNC.ROOT)) for p in SYNC.TARGETS}
+    target_rels = {p.relative_to(SYNC.ROOT).as_posix() for p in SYNC.TARGETS}
     overlap = sorted(target_rels & set(SYNC.HISTORICAL_ALLOWLIST))
     assert not overlap, f"listed as both synced and historical: {overlap}"
 
@@ -49,7 +49,7 @@ def test_all_sync_targets_exist_and_carry_a_claim():
     found = SYNC.tracked_files_with_stat_claims()
     dead = []
     for path in SYNC.TARGETS:
-        rel = str(path.relative_to(SYNC.ROOT))
+        rel = path.relative_to(SYNC.ROOT).as_posix()
         if not path.exists():
             dead.append(f"{rel} (missing)")
         elif rel not in found:
@@ -74,7 +74,7 @@ def test_synced_surfaces_agree_with_each_other():
     found = SYNC.tracked_files_with_stat_claims()
     claims: dict[tuple[str, str], list[str]] = {}
     for path in SYNC.TARGETS:
-        rel = str(path.relative_to(SYNC.ROOT))
+        rel = path.relative_to(SYNC.ROOT).as_posix()
         for value in found.get(rel, []):
             claims.setdefault(value, []).append(rel)
     assert len(claims) <= 1, (
@@ -90,7 +90,7 @@ def test_historical_ledgers_are_not_synced():
     If one of them ever ends up in TARGETS, every historical figure in it collapses to the
     live one and the record of how the suite grew is gone.
     """
-    target_rels = {str(p.relative_to(SYNC.ROOT)) for p in SYNC.TARGETS}
+    target_rels = {p.relative_to(SYNC.ROOT).as_posix() for p in SYNC.TARGETS}
     ledgers = {"BACKLOG.md", "BACKLOG_TR.md", "CHANGELOG.md", "CHANGELOG_TR.md",
                "DECISIONS.md", "DECISIONS_TR.md"}
     wrongly_synced = sorted(ledgers & target_rels)

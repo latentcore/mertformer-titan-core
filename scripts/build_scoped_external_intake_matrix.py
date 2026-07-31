@@ -55,6 +55,14 @@ IGNORE_NAMES = {
     "node_modules",
 }
 
+# [2026-07-31] Every entry below is a specific, dated, one-time evidence location from the
+# original macOS operator machine (build/run timestamps in the names: 20260401, 20260220,
+# 20260110, 2026_04_27) plus the macOS-only /Applications convention. None of them mean
+# anything on a different machine -- on Windows in particular, checking/touching these paths
+# was observed to leave a stray empty directory behind (Downloads/content/mertformer_outputs)
+# for a piece of "evidence" that was never there to begin with. Scoped to darwin so the
+# original Mac-side watch/preserve behavior is completely unchanged; every other platform
+# skips this list rather than trying to guess a meaningless equivalent path.
 SCOPED_PATTERNS = [
     HOME / "Desktop" / "MertFormer_45K_Launch_Bundle_20260401_2130",
     HOME / "Desktop" / "MertFormer_45K_Launch_Bundle_20260401_2130.zip",
@@ -72,15 +80,16 @@ SCOPED_PATTERNS = [
     Path("/Applications") / "mertformer-titan-core.zip",
     Path("/Applications") / "mertformer-titan-core.zip.sha256",
     Path("/Applications") / "MertFormerChessDownload",
-]
+] if sys.platform == "darwin" else []
 
 SCAN_ROOTS = [
     {"label": "Desktop", "path": HOME / "Desktop", "max_depth": 3, "mutation_policy": "project_only"},
     {"label": "Documents", "path": HOME / "Documents", "max_depth": 4, "mutation_policy": "project_only"},
     {"label": "Downloads", "path": HOME / "Downloads", "max_depth": 4, "mutation_policy": "project_only"},
+] + ([
     {"label": "Applications", "path": Path("/Applications"), "max_depth": 3, "mutation_policy": "audit_only_unrelated"},
     {"label": "UserApplications", "path": HOME / "Applications", "max_depth": 3, "mutation_policy": "audit_only_unrelated"},
-]
+] if sys.platform == "darwin" else [])
 
 
 def now_local() -> str:
@@ -400,24 +409,32 @@ def sync_external_artifacts(entries: list[dict], sync_mode: str) -> dict:
             "kind": "zip",
         },
         {
-            "id": "applications_release_zip",
-            "source": release_zip,
-            "target": Path("/Applications") / "mertformer-titan-core.zip",
-            "kind": "zip",
-        },
-        {
             "id": "desktop_repo_handoff",
             "source": handoff_md,
             "target": HOME / "Desktop" / "MertFormer_Build30_Max_Closure_Handoff.md",
             "kind": "file",
         },
-        {
-            "id": "applications_chess_onefile",
-            "source": ROOT / "scripts" / "chess_5080_onefile.py",
-            "target": Path("/Applications") / "MertFormerChessDownload" / "chess_5080_onefile.py",
-            "kind": "file",
-        },
     ]
+    # [2026-07-31] /Applications is a macOS-only convention (see the SCOPED_PATTERNS note
+    # above); Documents and Desktop are real, meaningful locations on every platform and
+    # stay active everywhere.
+    if sys.platform == "darwin":
+        sync_rules.extend(
+            [
+                {
+                    "id": "applications_release_zip",
+                    "source": release_zip,
+                    "target": Path("/Applications") / "mertformer-titan-core.zip",
+                    "kind": "zip",
+                },
+                {
+                    "id": "applications_chess_onefile",
+                    "source": ROOT / "scripts" / "chess_5080_onefile.py",
+                    "target": Path("/Applications") / "MertFormerChessDownload" / "chess_5080_onefile.py",
+                    "kind": "file",
+                },
+            ]
+        )
 
     for rule in sync_rules:
         source = Path(rule["source"])

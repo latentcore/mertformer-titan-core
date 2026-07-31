@@ -13,7 +13,7 @@
 Repo-side gate is green via the rented-machine bootstrap lane. Allocate or rent the target training machine, inject `HF_TOKEN` there (and `WANDB_API_KEY` only if needed), rerun `bash zero_touch_start.sh --check-only`, and start immediately if the target-machine gate remains green.
 
 ## Blockers
-- `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE`
+- `offline_clean:STAGE_JSONL_MISSING`
 - `online_teacher:MISSING_HF_TOKEN`
 
 ## Required Transfer Files

@@ -3,7 +3,7 @@
 ## Current Measured Truth
 - Repo-side verification, truth-sync, and governance surfaces are active.
 - Chess onefile delivery, runtime containment, and Stockfish auto-fetch are implemented.
-- Repo-side training readiness is currently `TRAIN_ALLOWED` with blockers `offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE, online_teacher:MISSING_HF_TOKEN`.
+- Repo-side training readiness is currently `TRAIN_ALLOWED` with blockers `offline_clean:STAGE_JSONL_MISSING, online_teacher:MISSING_HF_TOKEN`.
 - Exact `45K` remains the preferred main-run target, but application readiness is gated by a real owned training run plus checkpoint-bound evidence rather than the exact step count alone.
 - Costly large-scale compute is not a personal-funding requirement; truthful verified evidence is the actual gate.
 - The 2026-05-14 Ocean pre-45K H200 capture is partial operational evidence only: it captured 2x GPU startup and training through step `1880`, but did not recover final eval, checkpoint, or archive artifacts.

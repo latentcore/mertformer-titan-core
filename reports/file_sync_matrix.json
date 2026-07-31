@@ -1,14 +1,14 @@
 {
-  "generated_utc": "2026-07-30T16:06:42.157104+00:00",
+  "generated_utc": "2026-07-31T09:19:36.927574+00:00",
   "check": "manifest_vs_rendered_structure_md",
-  "manifest_count": 959,
-  "structure_count": 959,
+  "manifest_count": 961,
+  "structure_count": 961,
   "missing_in_structure": [],
   "missing_in_manifest": [],
   "ok": true,
   "previous_structure": {
     "readable": true,
-    "count": 959,
+    "count": 961,
     "was_stale": false,
     "added_since_previous": [],
     "removed_since_previous": [],

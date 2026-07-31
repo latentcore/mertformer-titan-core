@@ -1549,7 +1549,7 @@ def get_nvidia_driver_version() -> str:
         output = subprocess.check_output(
             [binary, "--query-gpu=driver_version", "--format=csv,noheader"],
             stderr=subprocess.DEVNULL,
-            text=True,
+            text=True, encoding="utf-8", errors="replace",
             timeout=5,
         ).strip()
     except Exception:

@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -32,7 +33,7 @@ def sha256(path: Path) -> str:
 
 
 def cmd_out(*args: str) -> str:
-    r = subprocess.run(args, capture_output=True, text=True, check=False)
+    r = subprocess.run(args, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     return r.stdout.strip() if r.returncode == 0 else ""
 
 
@@ -48,7 +49,7 @@ def main() -> int:
     payload = {
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "git_commit": cmd_out("git", "rev-parse", "HEAD"),
-        "python": cmd_out(".titan-venv/bin/python", "-V"),
+        "python": cmd_out(sys.executable, "-V"),
         "targets": rows,
         "ok": all("sha256" in x for x in rows),
     }

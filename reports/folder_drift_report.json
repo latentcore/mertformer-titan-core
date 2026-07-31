@@ -1,175 +1,113 @@
 {
-  "generated_utc": "2026-07-30T16:06:31.222777+00:00",
-  "md_file_count": 496,
-  "duplicate_name_group_count": 27,
+  "generated_utc": "2026-07-31T09:19:34.726828+00:00",
+  "md_file_count": 389,
+  "duplicate_name_group_count": 13,
   "duplicate_name_groups": {
+    "readme.md": [
+      "ablations\\bitlinear_off\\README.md",
+      "ablations\\dense_only\\README.md",
+      "ablations\\no_liquid\\README.md",
+      "ablations\\no_moe\\README.md",
+      "apps\\chess_gui\\checkpoints\\README.md",
+      "apps\\chess_gui\\logs\\README.md",
+      "apps\\chess_gui\\README.md",
+      "assets\\sources\\README.md",
+      "checklists\\README.md",
+      "configs\\README.md",
+      "datasets\\README.md",
+      "evidence\\2026-07-02-laptop-preflight\\README.md",
+      "evidence\\2026-07-12-laptop-preflight-v2\\README.md",
+      "evidence\\2026-07-18-nutrition5k-rtx5070\\README.md",
+      "evidence\\2026-07-25-lm-171m-reverify\\README.md",
+      "evidence\\2026-07-25-lm-36m-reverify\\README.md",
+      "evidence\\2026-07-25-nutrition5k-liquid-off\\README.md",
+      "evidence\\2026-07-25-nutrition5k-moe-off\\README.md",
+      "evidence\\README.md",
+      "knowledge\\README.md",
+      "logs\\README.md",
+      "orchestrator\\README.md",
+      "postmortems\\README.md",
+      "README.md",
+      "releases\\README.md",
+      "reports\\ablations\\README.md",
+      "reports\\benchmarks\\linkedin_sweetspot\\README.md",
+      "reports\\benchmarks\\math_fastproof\\README.md",
+      "reports\\benchmarks\\README.md",
+      "reports\\benchmarks\\ternary_kernel_microbench_s25\\README.md",
+      "reports\\benchmarks\\text_understanding\\README.md",
+      "reports\\pilots\\README.md",
+      "runbooks\\README.md",
+      "scripts\\README.md",
+      "tokenizer\\tr\\README.md",
+      "tools\\contracts\\README.md",
+      "tools\\sandbox\\README.md"
+    ],
+    "readme_tr.md": [
+      "ablations\\bitlinear_off\\README_TR.md",
+      "ablations\\dense_only\\README_TR.md",
+      "ablations\\no_liquid\\README_TR.md",
+      "ablations\\no_moe\\README_TR.md",
+      "assets\\sources\\README_TR.md",
+      "configs\\README_TR.md",
+      "datasets\\README_TR.md",
+      "logs\\README_TR.md",
+      "orchestrator\\README_TR.md",
+      "postmortems\\README_TR.md",
+      "README_TR.md",
+      "reports\\benchmarks\\linkedin_sweetspot\\README_TR.md",
+      "reports\\benchmarks\\math_fastproof\\README_TR.md",
+      "reports\\benchmarks\\README_TR.md",
+      "reports\\benchmarks\\text_understanding\\README_TR.md",
+      "reports\\pilots\\README_TR.md",
+      "scripts\\README_TR.md",
+      "tokenizer\\tr\\README_TR.md",
+      "tools\\contracts\\README_TR.md",
+      "tools\\sandbox\\README_TR.md"
+    ],
+    "cold_vs_warm.md": [
+      "archive\\templates\\cold_vs_warm.md",
+      "training_dynamics\\cold_vs_warm.md"
+    ],
+    "notes.md": [
+      "archive\\templates\\notes.md",
+      "experiments\\exp_001_baseline\\notes.md"
+    ],
     "changelog.md": [
       "CHANGELOG.md",
-      "prompts/changelog.md"
+      "prompts\\changelog.md"
     ],
     "changelog_tr.md": [
       "CHANGELOG_TR.md",
-      "prompts/changelog_TR.md"
-    ],
-    "model_card_tr.md": [
-      "MODEL_CARD_TR.md",
-      "mertformer-titan-dealroom-private/09_APPENDIX/model_card_TR.md"
-    ],
-    "readme.md": [
-      "README.md",
-      "ablations/bitlinear_off/README.md",
-      "ablations/dense_only/README.md",
-      "ablations/no_liquid/README.md",
-      "ablations/no_moe/README.md",
-      "apps/chess_gui/README.md",
-      "apps/chess_gui/checkpoints/README.md",
-      "apps/chess_gui/logs/README.md",
-      "assets/sources/README.md",
-      "checklists/README.md",
-      "configs/README.md",
-      "datasets/README.md",
-      "datasets/offline_demo/README.md",
-      "evidence/2026-07-02-laptop-preflight/README.md",
-      "evidence/2026-07-12-laptop-preflight-v2/README.md",
-      "evidence/2026-07-18-nutrition5k-rtx5070/README.md",
-      "evidence/2026-07-25-lm-171m-reverify/README.md",
-      "evidence/2026-07-25-lm-36m-reverify/README.md",
-      "evidence/2026-07-25-nutrition5k-liquid-off/README.md",
-      "evidence/2026-07-25-nutrition5k-moe-off/README.md",
-      "evidence/README.md",
-      "knowledge/README.md",
-      "logs/README.md",
-      "orchestrator/README.md",
-      "postmortems/README.md",
-      "private/anthropic_internal/README.md",
-      "releases/README.md",
-      "reports/ablations/README.md",
-      "reports/benchmarks/README.md",
-      "reports/benchmarks/linkedin_sweetspot/README.md",
-      "reports/benchmarks/math_fastproof/README.md",
-      "reports/benchmarks/ternary_kernel_microbench_s25/README.md",
-      "reports/benchmarks/text_understanding/README.md",
-      "reports/pilots/README.md",
-      "runbooks/README.md",
-      "scripts/README.md",
-      "tokenizer/tr/README.md",
-      "tools/contracts/README.md",
-      "tools/sandbox/README.md"
-    ],
-    "readme_tr.md": [
-      "README_TR.md",
-      "ablations/bitlinear_off/README_TR.md",
-      "ablations/dense_only/README_TR.md",
-      "ablations/no_liquid/README_TR.md",
-      "ablations/no_moe/README_TR.md",
-      "assets/sources/README_TR.md",
-      "configs/README_TR.md",
-      "datasets/README_TR.md",
-      "logs/README_TR.md",
-      "orchestrator/README_TR.md",
-      "postmortems/README_TR.md",
-      "reports/benchmarks/README_TR.md",
-      "reports/benchmarks/linkedin_sweetspot/README_TR.md",
-      "reports/benchmarks/math_fastproof/README_TR.md",
-      "reports/benchmarks/text_understanding/README_TR.md",
-      "reports/pilots/README_TR.md",
-      "scripts/README_TR.md",
-      "tokenizer/tr/README_TR.md",
-      "tools/contracts/README_TR.md",
-      "tools/sandbox/README_TR.md"
-    ],
-    "technical_report_tr.md": [
-      "TECHNICAL_REPORT_TR.md",
-      "mertformer-titan-dealroom-private/09_APPENDIX/technical_report_TR.md"
-    ],
-    "cold_vs_warm.md": [
-      "archive/templates/cold_vs_warm.md",
-      "training_dynamics/cold_vs_warm.md"
-    ],
-    "notes.md": [
-      "archive/templates/notes.md",
-      "experiments/exp_001_baseline/notes.md"
+      "prompts\\changelog_TR.md"
     ],
     "chess_4060_24h.md": [
-      "checklists/chess_4060_24h.md",
-      "runbooks/chess_4060_24h.md"
-    ],
-    "chess_4060_24h_tr.md": [
-      "checklists/chess_4060_24h_TR.md",
-      "runbooks/chess_4060_24h_TR.md"
+      "checklists\\chess_4060_24h.md",
+      "runbooks\\chess_4060_24h.md"
     ],
     "chess_4060_24h_all_on_experimental.md": [
-      "checklists/chess_4060_24h_all_on_experimental.md",
-      "runbooks/chess_4060_24h_all_on_experimental.md"
+      "checklists\\chess_4060_24h_all_on_experimental.md",
+      "runbooks\\chess_4060_24h_all_on_experimental.md"
     ],
     "chess_4060_24h_all_on_experimental_tr.md": [
-      "checklists/chess_4060_24h_all_on_experimental_TR.md",
-      "runbooks/chess_4060_24h_all_on_experimental_TR.md"
+      "checklists\\chess_4060_24h_all_on_experimental_TR.md",
+      "runbooks\\chess_4060_24h_all_on_experimental_TR.md"
+    ],
+    "chess_4060_24h_tr.md": [
+      "checklists\\chess_4060_24h_TR.md",
+      "runbooks\\chess_4060_24h_TR.md"
     ],
     "report.md": [
-      "evidence/2026-07-18-nutrition5k-rtx5070/REPORT.md",
-      "evidence/2026-07-25-nutrition5k-liquid-off/REPORT.md",
-      "evidence/2026-07-25-nutrition5k-moe-off/REPORT.md"
-    ],
-    "one_pager_tr.md": [
-      "mertformer-titan-dealroom-private/02_EXECUTIVE/one_pager_TR.md",
-      "reports/one_pager_TR.md"
-    ],
-    "v1_closure_sync_v2.md": [
-      "mertformer-titan-dealroom-private/02_EXECUTIVE/v1_closure_sync_v2.md",
-      "mertformer-titan-dealroom-private/04_SECURITY_LEGAL/v1_closure_sync_v2.md",
-      "mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/v1_closure_sync_v2.md",
-      "mertformer-titan-dealroom-private/07_OUTREACH_READY/v1_closure_sync_v2.md",
-      "mertformer-titan-dealroom-private/08_GITHUB_GIST/v1_closure_sync_v2.md",
-      "mertformer-titan-dealroom-private/09_APPENDIX/v1_closure_sync_v2.md"
-    ],
-    "closure_57_matrix_tr.md": [
-      "mertformer-titan-dealroom-private/03_TECH_EVIDENCE/closure_57_matrix_TR.md",
-      "reports/closure_57_matrix_TR.md"
-    ],
-    "report_accuracy_audit_tr.md": [
-      "mertformer-titan-dealroom-private/03_TECH_EVIDENCE/report_accuracy_audit_TR.md",
-      "reports/report_accuracy_audit_TR.md"
-    ],
-    "legal_cleanroom_signoff_internal.md": [
-      "mertformer-titan-dealroom-private/04_SECURITY_LEGAL/legal_cleanroom_signoff_internal.md",
-      "reports/legal_cleanroom_signoff_internal.md"
-    ],
-    "security_compliance_tr.md": [
-      "mertformer-titan-dealroom-private/04_SECURITY_LEGAL/security_compliance_TR.md",
-      "reports/security_compliance_TR.md"
-    ],
-    "teacher_output_license_assessment.md": [
-      "mertformer-titan-dealroom-private/04_SECURITY_LEGAL/teacher_output_license_assessment.md",
-      "reports/teacher_output_license_assessment.md"
-    ],
-    "pilot_acceptance_signoff_tr.md": [
-      "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_acceptance_signoff_TR.md",
-      "reports/pilot_acceptance_signoff_TR.md"
-    ],
-    "pilot_readiness_kit_tr.md": [
-      "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_readiness_kit_TR.md",
-      "reports/pilot_readiness_kit_TR.md"
-    ],
-    "poc_protocol_tr.md": [
-      "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/poc_protocol_TR.md",
-      "reports/poc_protocol_TR.md"
-    ],
-    "sales_funnel_90d_tr.md": [
-      "mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/sales_funnel_90d_TR.md",
-      "private/commercial/sales_funnel_90d_TR.md"
-    ],
-    "founders_hub_application_tr.md": [
-      "mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/founders_hub_application_TR.md",
-      "private/commercial/founders_hub_application_TR.md"
+      "evidence\\2026-07-18-nutrition5k-rtx5070\\REPORT.md",
+      "evidence\\2026-07-25-nutrition5k-liquid-off\\REPORT.md",
+      "evidence\\2026-07-25-nutrition5k-moe-off\\REPORT.md"
     ],
     "model_health.md": [
-      "reports/model_health.md",
-      "scripts/reports/model_health.md"
+      "reports\\model_health.md",
+      "scripts\\reports\\model_health.md"
     ],
     "model_health_tr.md": [
-      "reports/model_health_TR.md",
-      "scripts/reports/model_health_TR.md"
+      "reports\\model_health_TR.md",
+      "scripts\\reports\\model_health_TR.md"
     ]
   },
   "ok": false

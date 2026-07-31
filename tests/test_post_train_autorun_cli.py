@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -9,7 +10,7 @@ def test_post_train_autorun_plan_only_writes_contracts(tmp_path: Path):
     report_out = tmp_path / "post_train_status.json"
     result = subprocess.run(
         [
-            "python3",
+            sys.executable,
             "scripts/post_train_autorun.py",
             "--plan-only",
             "--allow-missing-checkpoint",
@@ -36,7 +37,7 @@ def test_post_train_autorun_demo_only_allows_missing_checkpoint(tmp_path: Path):
     report_out = tmp_path / "post_train_status.json"
     result = subprocess.run(
         [
-            "python3",
+            sys.executable,
             "scripts/post_train_autorun.py",
             "--demo-only",
             "--allow-missing-checkpoint",

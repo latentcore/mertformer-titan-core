@@ -1,12 +1,12 @@
 # Demo Bundle
 
-- generated_utc: `2026-07-30T16:07:59.708952+00:00`
-- checkpoint: `<REPO_ROOT>/checkpoints/offline_4060_demo/MertFormer_Titan_Offline_4060_Demo_latest.pt`
-- note: A trained checkpoint was resolved for post-train closure.
+- generated_utc: `2026-07-31T10:35:56.213057+00:00`
+- checkpoint: `none`
+- note: No trained checkpoint resolved; this manifest only records current repo-side proof/demo assets.
 
 ## Items
 
-- `assets/snake_demo_proof.mp4` | exists=`True` | kind=`ui_demo`
-- `assets/snake_demo_preview.gif` | exists=`True` | kind=`ui_demo`
-- `reports/drone_sitl_demo.md` | exists=`True` | kind=`sitl_sim_demo`
-- `reports/drone_sitl_demo_TR.md` | exists=`True` | kind=`sitl_sim_demo`
+- `assets\snake_demo_proof.mp4` | exists=`True` | kind=`ui_demo`
+- `assets\snake_demo_preview.gif` | exists=`True` | kind=`ui_demo`
+- `reports\drone_sitl_demo.md` | exists=`True` | kind=`sitl_sim_demo`
+- `reports\drone_sitl_demo_TR.md` | exists=`True` | kind=`sitl_sim_demo`

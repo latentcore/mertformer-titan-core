@@ -140,7 +140,7 @@ def file_hash(path: Path) -> str:
 
 def _rel_if_under(root: Path, target: Path) -> str | None:
     try:
-        return str(target.resolve().relative_to(root.resolve()))
+        return target.resolve().relative_to(root.resolve()).as_posix()
     except Exception:
         return None
 
@@ -171,7 +171,7 @@ def collect_entries(root: Path, excluded_relpaths: set[str]) -> list[dict[str, o
         if not p.exists() or not p.is_file():
             continue
         rel = p.relative_to(root)
-        rel_s = str(rel)
+        rel_s = rel.as_posix()
         if any(part in EXCLUDE_PARTS for part in rel.parts):
             continue
         if rel_s in excluded_relpaths:

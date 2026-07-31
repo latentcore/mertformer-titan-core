@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 from mertformer_sdk.kpi import collect_kpis
@@ -17,7 +18,7 @@ def test_cli_kpi_report_writes_file(tmp_path: Path):
     out_path = tmp_path / "kpi_report.json"
     result = subprocess.run(
         [
-            "python3",
+            sys.executable,
             "-m",
             "mertformer_sdk.cli",
             "kpi-report",

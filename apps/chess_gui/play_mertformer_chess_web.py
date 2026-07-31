@@ -1168,6 +1168,8 @@ def choose_device(onefile: Any, preferred: Optional[str]) -> str:
     if preferred:
         return preferred
     torch = onefile.torch
+    if torch.cuda.is_available():
+        return "cuda"
     if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
         return "mps"
     return "cpu"

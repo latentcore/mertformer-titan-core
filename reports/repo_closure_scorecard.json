@@ -1,8 +1,8 @@
 {
   "schema": "repo_closure_scorecard_v1",
-  "completed_count": 24,
+  "completed_count": 23,
   "target_count": 24,
-  "all_green": true,
+  "all_green": false,
   "items": [
     {
       "item_id": "observability_provenance_manifest",
@@ -198,10 +198,9 @@
     {
       "item_id": "support_maintenance_policy",
       "title": "Support and maintenance policy",
-      "done": true,
+      "done": false,
       "evidence": [
-        "reports/support_maintenance_policy.md",
-        "private/commercial/commercial_handover/sla_kpi_90_180.md"
+        "reports/support_maintenance_policy.md"
       ]
     },
     {

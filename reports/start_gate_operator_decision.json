@@ -1,6 +1,6 @@
 {
   "schema": "start_gate_operator_decision_v1",
-  "generated_utc": "2026-07-30T16:06:24.979308+00:00",
+  "generated_utc": "2026-07-31T09:19:24.555652+00:00",
   "next_action": "ALLOCATE_TARGET_MACHINE_AND_START",
   "operator_message": "Repo-side gate is green via the rented-machine bootstrap lane. Allocate or rent the target training machine, inject `HF_TOKEN` there (and `WANDB_API_KEY` only if needed), rerun `bash zero_touch_start.sh --check-only`, and start immediately if the target-machine gate remains green.",
   "train_allowed": true,
@@ -11,7 +11,7 @@
   "package_mode": false,
   "git_metadata_available": true,
   "blockers": [
-    "offline_clean:PRECOMPUTED_LOGITS_MISSING_AND_PHASE0_NOT_ACTIONABLE",
+    "offline_clean:STAGE_JSONL_MISSING",
     "online_teacher:MISSING_HF_TOKEN"
   ],
   "required_transfer_files": [

@@ -1,41 +1,31 @@
 {
   "schema": "data_pipeline_provenance_v1",
-  "generated_utc": "2026-07-30T16:08:00Z",
+  "generated_utc": "2026-07-31T10:35:56Z",
   "stages": {
     "stage1": {
       "path": "datasets/stage1/stage1_data.jsonl",
-      "rows": 41,
-      "seed_sources": {
-        "inline_or_primary": 41
-      }
+      "rows": 0,
+      "seed_sources": {}
     },
     "stage2": {
       "path": "datasets/stage2/stage2_data.jsonl",
-      "rows": 30,
-      "seed_sources": {
-        "inline_or_primary": 30
-      }
+      "rows": 0,
+      "seed_sources": {}
     },
     "stage3": {
       "path": "datasets/stage3/stage3_data.jsonl",
-      "rows": 8,
-      "seed_sources": {
-        "inline_or_primary": 8
-      }
+      "rows": 0,
+      "seed_sources": {}
     },
     "stage4": {
       "path": "datasets/stage4_soul/stage4_data.jsonl",
-      "rows": 8,
-      "seed_sources": {
-        "datasets/validation.jsonl": 8
-      }
+      "rows": 0,
+      "seed_sources": {}
     },
     "stage5": {
       "path": "datasets/stage5_tools/stage5_data.jsonl",
-      "rows": 12,
-      "seed_sources": {
-        "datasets/golden_samples.jsonl": 12
-      }
+      "rows": 0,
+      "seed_sources": {}
     }
   },
   "validation_rows": 1500,

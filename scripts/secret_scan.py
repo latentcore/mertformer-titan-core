@@ -158,7 +158,7 @@ def _should_skip_path(path: Path, root: Path) -> bool:
 
 
 def _git_tracked_files(root: Path = ROOT) -> list[Path]:
-    out = subprocess.check_output(["git", "ls-files"], cwd=root, stderr=subprocess.DEVNULL, text=True)
+    out = subprocess.check_output(["git", "ls-files"], cwd=root, stderr=subprocess.DEVNULL, text=True, encoding="utf-8", errors="replace")
     paths = []
     for line in out.splitlines():
         p = root / line

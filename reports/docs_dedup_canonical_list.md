@@ -2,32 +2,127 @@
 
 Generated automatically.
 
-- `.github/ISSUE_TEMPLATE/bug_report.md`
-- `.github/ISSUE_TEMPLATE/feature_request.md`
-- `.github/PULL_REQUEST_TEMPLATE.md`
+- `.github\ISSUE_TEMPLATE\bug_report.md`
+- `.github\ISSUE_TEMPLATE\feature_request.md`
+- `.github\PULL_REQUEST_TEMPLATE.md`
 - `ABLATION.md`
 - `ABLATION_TR.md`
+- `ablations\bitlinear_off\README.md`
+- `ablations\bitlinear_off\README_TR.md`
+- `ablations\dense_only\README.md`
+- `ablations\dense_only\README_TR.md`
+- `ablations\no_liquid\README.md`
+- `ablations\no_liquid\README_TR.md`
+- `ablations\no_moe\README.md`
+- `ablations\no_moe\README_TR.md`
+- `ablations\results.md`
+- `ablations\results_TR.md`
+- `adr\ADR-0001-source-of-truth-and-claim-boundary.md`
+- `adr\ADR-0002-change-control-and-closure-governance.md`
+- `adr\ADR-0003-chess-oneclick-delivery-runtime-contract.md`
+- `adr\ADR-0004-blocker-fix-pass-core-override.md`
+- `adr\ADR-0005-parallel-precompute-orchestration.md`
 - `AGENTS.md`
+- `apps\chess_gui\checkpoints\README.md`
+- `apps\chess_gui\logs\README.md`
+- `apps\chess_gui\README.md`
 - `ARCHITECTURE.md`
+- `archive\ablations\liquid_ablation_pilot_note_2026-06-15.md`
+- `archive\audits\codex_deep_audit_DE.md`
+- `archive\closure\closure_report_build30_v2.md`
+- `archive\closure\presentation_readiness_final.md`
+- `archive\closure\report_truth_matrix.md`
+- `archive\documents\README_before_final_simplification.md`
+- `archive\documents\README_snapshot_source.md`
+- `archive\documents\README_TR_before_final_simplification.md`
+- `archive\readme_full_2026-06-16.md`
+- `archive\readme_TR_full_2026-06-16.md`
+- `archive\templates\cold_vs_warm.md`
+- `archive\templates\cost_model.md`
+- `archive\templates\drift_report.md`
+- `archive\templates\efficiency_report.md`
+- `archive\templates\notes.md`
+- `archive\templates\scaling_breakpoints.md`
+- `archive\templates\stats.md`
+- `assets\sources\README.md`
+- `assets\sources\README_TR.md`
 - `BACKLOG.md`
 - `BACKLOG_TR.md`
 - `CHANGELOG.md`
 - `CHANGELOG_TR.md`
+- `checklists\chess_4060_24h.md`
+- `checklists\chess_4060_24h_all_on_experimental.md`
+- `checklists\chess_4060_24h_all_on_experimental_TR.md`
+- `checklists\chess_4060_24h_TR.md`
+- `checklists\README.md`
 - `CHESS_5080_POC_INTERNAL.md`
 - `CHESS_5080_POC_INTERNAL_TR.md`
 - `CODE_OF_CONDUCT.md`
 - `CODE_OF_CONDUCT_TR.md`
+- `configs\chess_onefile_profile_contract.md`
+- `configs\README.md`
+- `configs\README_TR.md`
 - `CONTRIBUTING.md`
 - `CONTRIBUTING_TR.md`
+- `datasets\INTERNAL_POLICY.md`
+- `datasets\INTERNAL_POLICY_TR.md`
+- `datasets\inventory.md`
+- `datasets\inventory_TR.md`
+- `datasets\LICENSES.md`
+- `datasets\LICENSES_TR.md`
+- `datasets\README.md`
+- `datasets\README_TR.md`
+- `datasets\SOURCES.md`
+- `datasets\SOURCES_TR.md`
 - `DECISIONS.md`
 - `DECISIONS_TR.md`
+- `docs\CHAIN_MAP.md`
+- `docs\CHAIN_MAP_TR.md`
+- `docs\CHESS_ONEFILE_MASTER_TRUTH.md`
+- `docs\CHESS_ONEFILE_MASTER_TRUTH_TR.md`
+- `docs\KAGGLE_PILOT.md`
+- `docs\MERTFORMER_5080_ARTIFACT_INTAKE_CHECKLIST_TR.md`
+- `docs\MERTFORMER_5080_FINAL_ONEFILE_TRUTH.md`
+- `docs\MERTFORMER_5080_FINAL_ONEFILE_TRUTH_TR.md`
+- `docs\PROJECT_MASTER_TRUTH.md`
+- `docs\PROJECT_MASTER_TRUTH_TR.md`
+- `docs\PROJECT_STRUCTURE.md`
+- `docs\QUICKSTART_CPU.md`
+- `economics\cost_model_TR.md`
+- `economics\efficiency_report_TR.md`
 - `ENV_VARS.md`
+- `evidence\2026-07-02-laptop-preflight\README.md`
+- `evidence\2026-07-12-laptop-preflight-v2\README.md`
+- `evidence\2026-07-18-nutrition5k-rtx5070\evaluation_independent.md`
+- `evidence\2026-07-18-nutrition5k-rtx5070\README.md`
+- `evidence\2026-07-18-nutrition5k-rtx5070\REPORT.md`
+- `evidence\2026-07-25-lm-171m-reverify\README.md`
+- `evidence\2026-07-25-lm-36m-reverify\README.md`
+- `evidence\2026-07-25-nutrition5k-liquid-off\README.md`
+- `evidence\2026-07-25-nutrition5k-liquid-off\REPORT.md`
+- `evidence\2026-07-25-nutrition5k-moe-off\README.md`
+- `evidence\2026-07-25-nutrition5k-moe-off\REPORT.md`
+- `evidence\build30_t4_onecell\EVIDENCE_POINTER.md`
+- `evidence\build30_t4_onecell\smoke_test_result.md`
+- `evidence\chess_evidence_contract.md`
+- `evidence\README.md`
+- `experiments\exp_001_baseline\notes.md`
+- `experiments\exp_001_baseline\notes_TR.md`
 - `GOVERNANCE.md`
 - `GOVERNANCE_TR.md`
 - `IMPLEMENTATION_PLAN.md`
 - `IMPLEMENTATION_PLAN_TR.md`
+- `interfaces\inference_contract.md`
+- `interfaces\inference_contract_TR.md`
 - `INTERNAL_AGI_GAP.md`
 - `INTERNAL_AGI_GAP_TR.md`
+- `knowledge\chess_onefile_glossary.md`
+- `knowledge\README.md`
+- `limits\scaling_breakpoints_TR.md`
+- `logs\README.md`
+- `logs\README_TR.md`
+- `logs\verify\closure_57_matrix.verify.md`
+- `logs\verify\closure_57_matrix.verify_TR.md`
 - `MISSION.md`
 - `MISSION_TR.md`
 - `MODEL_CARD.md`
@@ -35,14 +130,231 @@ Generated automatically.
 - `MODEL_LICENSE.md`
 - `MODEL_LICENSE_TR.md`
 - `OFFLINE_4060_DEMO.md`
+- `orchestrator\README.md`
+- `orchestrator\README_TR.md`
+- `postmortems\_template.md`
+- `postmortems\_template_TR.md`
+- `postmortems\example_001.md`
+- `postmortems\example_001_TR.md`
+- `postmortems\README.md`
+- `postmortems\README_TR.md`
+- `prompts\changelog.md`
+- `prompts\changelog_TR.md`
 - `README.md`
 - `README_CHECKLIST.md`
 - `README_CHECKLIST_TR.md`
 - `README_SUMMARY.md`
 - `README_SUMMARY_TR.md`
 - `README_TR.md`
+- `releases\chess_release_contract.md`
+- `releases\README.md`
+- `reports\ablations\README.md`
+- `reports\adr_index.md`
+- `reports\anthropic_fellows_application_checklist.md`
+- `reports\architecture_honesty_audit.md`
+- `reports\asset_stack.md`
+- `reports\asset_stack_TR.md`
+- `reports\automation_boundary_policy.md`
+- `reports\backlog_operating_contract.md`
+- `reports\benchmark_compare_report.md`
+- `reports\benchmark_contract.md`
+- `reports\benchmarks\kaggle_compare_build30.md`
+- `reports\benchmarks\linkedin_sweetspot\README.md`
+- `reports\benchmarks\linkedin_sweetspot\README_TR.md`
+- `reports\benchmarks\linkedin_sweetspot\run_20260318_144125_compare.md`
+- `reports\benchmarks\math_fastproof\README.md`
+- `reports\benchmarks\math_fastproof\README_TR.md`
+- `reports\benchmarks\math_fastproof\run_20260315_050133_compare.md`
+- `reports\benchmarks\README.md`
+- `reports\benchmarks\README_TR.md`
+- `reports\benchmarks\summary.md`
+- `reports\benchmarks\ternary_kernel_microbench_s25\README.md`
+- `reports\benchmarks\text_understanding\README.md`
+- `reports\benchmarks\text_understanding\README_TR.md`
+- `reports\benchmarks\text_understanding\run_20260315_180151_compare.md`
+- `reports\blog_liquid_ablation_draft.md`
+- `reports\canonical_entrypoint.md`
+- `reports\change_control_sop.md`
+- `reports\checkpoint_contract.md`
+- `reports\chess_gui_onefile_sync_report.md`
+- `reports\chess_onefile_extension_report.md`
+- `reports\chess_proof_teaching_case_study.md`
+- `reports\chess_teaching_contract_report.md`
+- `reports\chess_training_readiness_report.md`
+- `reports\cleanroom_verification.md`
+- `reports\cleanroom_verification_TR.md`
+- `reports\cli_smoke_log.md`
+- `reports\cli_smoke_log_TR.md`
+- `reports\closure_57_matrix.md`
+- `reports\closure_57_matrix_TR.md`
+- `reports\closure_release_truthsync_master_protocol.md`
+- `reports\closure_risk_register.md`
+- `reports\cloud_readiness_report.md`
+- `reports\code_truth_contract.md`
+- `reports\code_truth_delta_audit.md`
+- `reports\codex_deep_audit_DE_TR.md`
+- `reports\codex_deep_audit_EN.md`
+- `reports\codex_deep_audit_EN_TR.md`
+- `reports\codex_deep_audit_TR.md`
+- `reports\commercial_handover_pack.md`
+- `reports\contamination_report_build30.md`
+- `reports\current_delta_addendum_2026_05_15.md`
+- `reports\customer_ready_definition.md`
+- `reports\data_pipeline_contract.md`
+- `reports\data_poisoning_risk_analysis.md`
+- `reports\data_provenance_audit_template.md`
+- `reports\dataset_health.md`
+- `reports\dataset_health_final.md`
+- `reports\dataset_health_TR.md`
+- `reports\demo_bundle.md`
+- `reports\deprecated_surface_report.md`
+- `reports\divergence_guard_decision_brief.md`
+- `reports\doc_alignment_report.md`
+- `reports\doc_ownership_matrix.md`
+- `reports\docs_dedup_canonical_list.md`
+- `reports\drone_sitl_demo.md`
+- `reports\drone_sitl_demo_TR.md`
+- `reports\dry_run_report.md`
+- `reports\duplicate_source_of_truth_report.md`
+- `reports\edge_readiness_plan.md`
+- `reports\efficiency_convergence_analysis.md`
+- `reports\efficiency_convergence_analysis_TR.md`
+- `reports\entrypoint_deprecation_map.md`
+- `reports\exit_code_standard.md`
+- `reports\expected_artifacts_list.md`
+- `reports\external_readability_checklist.md`
+- `reports\feature_flag_governance.md`
+- `reports\feature_flag_governance_TR.md`
+- `reports\final_backlog_classification.md`
+- `reports\final_backlog_coverage_diff.md`
+- `reports\final_backlog_missing_items.md`
+- `reports\final_commands.md`
+- `reports\final_evidence_pack.md`
+- `reports\final_freeze_manifest.md`
+- `reports\final_master_plan_freeze.md`
+- `reports\final_orchestrator_status.md`
+- `reports\final_repo_audit.md`
+- `reports\final_sync_matrix.md`
+- `reports\final_sync_matrix_TR.md`
+- `reports\final_truth_constitution.md`
+- `reports\final_truth_matrix.md`
+- `reports\folder_structure_policy.md`
+- `reports\go_nogo_signoff_onepager.md`
+- `reports\go_nogo_signoff_onepager_TR.md`
+- `reports\go_status_matrix.md`
+- `reports\go_status_matrix_TR.md`
+- `reports\gtm_master_plan.md`
+- `reports\immutable_evidence_register.md`
+- `reports\independent_signoff_template.md`
+- `reports\investable_definition.md`
+- `reports\known_limits_v1.md`
+- `reports\kpi_contract_build30.md`
+- `reports\kpi_pack_v1.md`
+- `reports\kpi_pack_v1_TR.md`
+- `reports\lane_cost_tradeoff_brief.md`
+- `reports\launch_time_decisions_checklist.md`
+- `reports\legal_cleanroom_signoff_internal.md`
+- `reports\legal_ip_pack.md`
+- `reports\liquid_keep_or_drop_brief.md`
+- `reports\logger_contract.md`
+- `reports\logits_integrity_report.md`
+- `reports\master_closure_matrix.md`
+- `reports\master_operating_plan.md`
+- `reports\model_health.md`
+- `reports\model_health_final.md`
+- `reports\model_health_TR.md`
+- `reports\ocean_2xh200_1024_first_launch_profile.md`
+- `reports\ocean_pre45k_h200_20260514_partial_evidence.md`
+- `reports\offline_4060_demo_evidence.md`
+- `reports\offline_assistant_case_study.md`
+- `reports\one_command_full_sop_summary.md`
+- `reports\one_pager.md`
+- `reports\one_pager_TR.md`
+- `reports\owner_matrix.md`
+- `reports\package_validation_report.md`
+- `reports\paper_outline_draft.md`
+- `reports\param_accounting_report.md`
+- `reports\phase2_carryover.md`
+- `reports\pilot_acceptance_signoff.md`
+- `reports\pilot_acceptance_signoff_TR.md`
+- `reports\pilot_readiness_kit.md`
+- `reports\pilot_readiness_kit_TR.md`
+- `reports\pilots\README.md`
+- `reports\pilots\README_TR.md`
+- `reports\plot_contract.md`
+- `reports\poc_protocol.md`
+- `reports\poc_protocol_TR.md`
+- `reports\post_45k_decision_tree.md`
+- `reports\post_45k_research_agenda.md`
+- `reports\post_train_automation_contract.md`
+- `reports\post_train_autorun_status.md`
+- `reports\post_train_state_machine.md`
+- `reports\pre45k_gate_report.md`
+- `reports\proje_zip_rebuild_manifest_v2.md`
+- `reports\publication_readiness_kit.md`
+- `reports\quality_gate_matrix.md`
+- `reports\release_closure_note.md`
+- `reports\release_snapshot.md`
+- `reports\release_snapshot_TR.md`
+- `reports\rented_machine_bringup.md`
+- `reports\repo_closure_scorecard.md`
+- `reports\repo_directory_contract.md`
+- `reports\repo_external_handoff.md`
+- `reports\report_accuracy_audit.md`
+- `reports\report_accuracy_audit_TR.md`
+- `reports\responsible_ai_checklist.md`
+- `reports\review_checklist.md`
+- `reports\review_checklist_TR.md`
+- `reports\run_contract.md`
+- `reports\scoped_external_intake_matrix.md`
+- `reports\security_compliance.md`
+- `reports\security_compliance_TR.md`
+- `reports\snapshots\2026-02-24\mertformer_master_decision_report_TR_2026-02-24.md`
+- `reports\snapshots\2026-02-24\web_validation_sources_2026-02-24.md`
+- `reports\source_of_truth_map.md`
+- `reports\stage3_mixture_freeze_proposal.md`
+- `reports\stale_script_report.md`
+- `reports\start_gate_operator_decision.md`
+- `reports\support_maintenance_policy.md`
+- `reports\surface_lifecycle_matrix.md`
+- `reports\system_hardware.md`
+- `reports\system_hardware_TR.md`
+- `reports\system_memory_policy.md`
+- `reports\systems_performance_case_study.md`
+- `reports\target_machine_handoff_manifest.md`
+- `reports\teacher_decision_record.md`
+- `reports\teacher_output_license_assessment.md`
+- `reports\technical_snapshot.md`
+- `reports\technical_snapshot_TR.md`
+- `reports\test_verification_matrix.md`
+- `reports\test_verification_matrix_TR.md`
+- `reports\tokenizer_parity_fix.md`
+- `reports\tokenizer_sync_final_report.md`
+- `reports\train_readiness_decision.md`
+- `reports\training_outputs_bundle_manifest.md`
+- `reports\training_surface_audit_2026_05_15.md`
+- `reports\turk_telekom_call_faq.md`
+- `reports\update_first_policy.md`
+- `reports\verified_matrix.md`
+- `reports\verified_matrix_TR.md`
+- `reports\workspace_hygiene_manifest.md`
+- `repro\python.md`
+- `repro\python_TR.md`
+- `repro\seed_policy.md`
+- `repro\seed_policy_TR.md`
 - `REPRODUCE.md`
 - `REPRODUCE_TR.md`
+- `runbooks\checkpoint_offsite_backup.md`
+- `runbooks\checkpoint_offsite_backup_TR.md`
+- `runbooks\chess_4060_24h.md`
+- `runbooks\chess_4060_24h_all_on_experimental.md`
+- `runbooks\chess_4060_24h_all_on_experimental_TR.md`
+- `runbooks\chess_4060_24h_TR.md`
+- `runbooks\README.md`
+- `scripts\README.md`
+- `scripts\README_TR.md`
+- `scripts\reports\model_health.md`
+- `scripts\reports\model_health_TR.md`
 - `SDK_GUIDE.md`
 - `SDK_GUIDE_TR.md`
 - `SECURITY.md`
@@ -54,6 +366,18 @@ Generated automatically.
 - `TASK_TR.md`
 - `TECHNICAL_REPORT.md`
 - `TECHNICAL_REPORT_TR.md`
+- `tokenizer\drift_report_TR.md`
+- `tokenizer\stats_TR.md`
+- `tokenizer\tr\README.md`
+- `tokenizer\tr\README_TR.md`
+- `tools\abuse_tests.md`
+- `tools\abuse_tests_TR.md`
+- `tools\contracts\README.md`
+- `tools\contracts\README_TR.md`
+- `tools\sandbox\README.md`
+- `tools\sandbox\README_TR.md`
+- `training_dynamics\cold_vs_warm.md`
+- `training_dynamics\cold_vs_warm_TR.md`
 - `TRAINING_PLAN.md`
 - `TRAINING_PLAN_TR.md`
 - `TROUBLESHOOTING.md`
@@ -67,577 +391,98 @@ Generated automatically.
 - `V2_BACKLOG_SEED.md`
 - `WHITE_PAPER_LIQUIDROUTER.md`
 - `WHITE_PAPER_LIQUIDROUTER_TR.md`
-- `ablations/bitlinear_off/README.md`
-- `ablations/bitlinear_off/README_TR.md`
-- `ablations/dense_only/README.md`
-- `ablations/dense_only/README_TR.md`
-- `ablations/no_liquid/README.md`
-- `ablations/no_liquid/README_TR.md`
-- `ablations/no_moe/README.md`
-- `ablations/no_moe/README_TR.md`
-- `ablations/results.md`
-- `ablations/results_TR.md`
-- `adr/ADR-0001-source-of-truth-and-claim-boundary.md`
-- `adr/ADR-0002-change-control-and-closure-governance.md`
-- `adr/ADR-0003-chess-oneclick-delivery-runtime-contract.md`
-- `adr/ADR-0004-blocker-fix-pass-core-override.md`
-- `adr/ADR-0005-parallel-precompute-orchestration.md`
-- `apps/chess_gui/README.md`
-- `apps/chess_gui/checkpoints/README.md`
-- `apps/chess_gui/logs/README.md`
-- `apps/chess_gui/logs/stockfish_1100_20260406_235718.md`
-- `apps/chess_gui/logs/stockfish_1100_20260406_235903.md`
-- `apps/chess_gui/logs/stockfish_1100_20260411_001504.md`
-- `apps/chess_gui/logs/stockfish_1600_20260406_233934.md`
-- `apps/chess_gui/logs/stockfish_1600_20260406_234202.md`
-- `apps/chess_gui/logs/stockfish_1600_20260406_234632.md`
-- `apps/chess_gui/logs/stockfish_1600_20260406_234646.md`
-- `apps/chess_gui/logs/stockfish_1600_20260406_234718.md`
-- `archive/ablations/liquid_ablation_pilot_note_2026-06-15.md`
-- `archive/audits/codex_deep_audit_DE.md`
-- `archive/closure/closure_report_build30_v2.md`
-- `archive/closure/presentation_readiness_final.md`
-- `archive/closure/report_truth_matrix.md`
-- `archive/documents/README_TR_before_final_simplification.md`
-- `archive/documents/README_before_final_simplification.md`
-- `archive/documents/README_snapshot_source.md`
-- `archive/readme_TR_full_2026-06-16.md`
-- `archive/readme_full_2026-06-16.md`
-- `archive/templates/cold_vs_warm.md`
-- `archive/templates/cost_model.md`
-- `archive/templates/drift_report.md`
-- `archive/templates/efficiency_report.md`
-- `archive/templates/notes.md`
-- `archive/templates/scaling_breakpoints.md`
-- `archive/templates/stats.md`
-- `assets/sources/README.md`
-- `assets/sources/README_TR.md`
-- `checklists/README.md`
-- `checklists/chess_4060_24h.md`
-- `checklists/chess_4060_24h_TR.md`
-- `checklists/chess_4060_24h_all_on_experimental.md`
-- `checklists/chess_4060_24h_all_on_experimental_TR.md`
-- `configs/README.md`
-- `configs/README_TR.md`
-- `configs/chess_onefile_profile_contract.md`
-- `datasets/INTERNAL_POLICY.md`
-- `datasets/INTERNAL_POLICY_TR.md`
-- `datasets/LICENSES.md`
-- `datasets/LICENSES_TR.md`
-- `datasets/README.md`
-- `datasets/README_TR.md`
-- `datasets/SOURCES.md`
-- `datasets/SOURCES_TR.md`
-- `datasets/inventory.md`
-- `datasets/inventory_TR.md`
-- `datasets/offline_demo/README.md`
-- `docs/CHAIN_MAP.md`
-- `docs/CHAIN_MAP_TR.md`
-- `docs/CHESS_ONEFILE_MASTER_TRUTH.md`
-- `docs/CHESS_ONEFILE_MASTER_TRUTH_TR.md`
-- `docs/KAGGLE_PILOT.md`
-- `docs/MERTFORMER_5080_ARTIFACT_INTAKE_CHECKLIST_TR.md`
-- `docs/MERTFORMER_5080_FINAL_ONEFILE_TRUTH.md`
-- `docs/MERTFORMER_5080_FINAL_ONEFILE_TRUTH_TR.md`
-- `docs/PROJECT_MASTER_TRUTH.md`
-- `docs/PROJECT_MASTER_TRUTH_TR.md`
-- `docs/PROJECT_STRUCTURE.md`
-- `docs/QUICKSTART_CPU.md`
-- `economics/cost_model_TR.md`
-- `economics/efficiency_report_TR.md`
-- `evidence/2026-07-02-laptop-preflight/README.md`
-- `evidence/2026-07-12-laptop-preflight-v2/README.md`
-- `evidence/2026-07-18-nutrition5k-rtx5070/README.md`
-- `evidence/2026-07-18-nutrition5k-rtx5070/REPORT.md`
-- `evidence/2026-07-18-nutrition5k-rtx5070/evaluation_independent.md`
-- `evidence/2026-07-25-lm-171m-reverify/README.md`
-- `evidence/2026-07-25-lm-36m-reverify/README.md`
-- `evidence/2026-07-25-nutrition5k-liquid-off/README.md`
-- `evidence/2026-07-25-nutrition5k-liquid-off/REPORT.md`
-- `evidence/2026-07-25-nutrition5k-moe-off/README.md`
-- `evidence/2026-07-25-nutrition5k-moe-off/REPORT.md`
-- `evidence/README.md`
-- `evidence/build30_t4_onecell/EVIDENCE_POINTER.md`
-- `evidence/build30_t4_onecell/smoke_test_result.md`
-- `evidence/chess_evidence_contract.md`
-- `experiments/exp_001_baseline/notes.md`
-- `experiments/exp_001_baseline/notes_TR.md`
-- `interfaces/inference_contract.md`
-- `interfaces/inference_contract_TR.md`
-- `knowledge/README.md`
-- `knowledge/chess_onefile_glossary.md`
-- `limits/scaling_breakpoints_TR.md`
-- `logs/README.md`
-- `logs/README_TR.md`
-- `logs/verify/closure_57_matrix.verify.md`
-- `logs/verify/closure_57_matrix.verify_TR.md`
-- `mertformer-titan-dealroom-private/01_START_HERE/README_TR_EN.md`
-- `mertformer-titan-dealroom-private/02_EXECUTIVE/one_pager_EN.md`
-- `mertformer-titan-dealroom-private/02_EXECUTIVE/one_pager_TR.md`
-- `mertformer-titan-dealroom-private/02_EXECUTIVE/quick_decision_EN.md`
-- `mertformer-titan-dealroom-private/02_EXECUTIVE/quick_decision_TR.md`
-- `mertformer-titan-dealroom-private/02_EXECUTIVE/v1_closure_sync_v2.md`
-- `mertformer-titan-dealroom-private/03_TECH_EVIDENCE/closure_57_matrix_EN.md`
-- `mertformer-titan-dealroom-private/03_TECH_EVIDENCE/closure_57_matrix_TR.md`
-- `mertformer-titan-dealroom-private/03_TECH_EVIDENCE/compile_cudagraph_stall_fix_note.md`
-- `mertformer-titan-dealroom-private/03_TECH_EVIDENCE/feature_coverage_matrix_v2.md`
-- `mertformer-titan-dealroom-private/03_TECH_EVIDENCE/live_validation_snapshot.md`
-- `mertformer-titan-dealroom-private/03_TECH_EVIDENCE/report_accuracy_audit_EN.md`
-- `mertformer-titan-dealroom-private/03_TECH_EVIDENCE/report_accuracy_audit_TR.md`
-- `mertformer-titan-dealroom-private/03_TECH_EVIDENCE/runtime_disclosure.md`
-- `mertformer-titan-dealroom-private/04_SECURITY_LEGAL/legal_cleanroom_signoff_internal.md`
-- `mertformer-titan-dealroom-private/04_SECURITY_LEGAL/security_compliance_EN.md`
-- `mertformer-titan-dealroom-private/04_SECURITY_LEGAL/security_compliance_TR.md`
-- `mertformer-titan-dealroom-private/04_SECURITY_LEGAL/teacher_output_license_assessment.md`
-- `mertformer-titan-dealroom-private/04_SECURITY_LEGAL/v1_closure_sync_v2.md`
-- `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/company_readiness_pack_v2.md`
-- `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_acceptance_signoff_EN.md`
-- `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_acceptance_signoff_TR.md`
-- `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_packages_EN.md`
-- `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_packages_TR.md`
-- `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_readiness_kit_EN.md`
-- `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_readiness_kit_TR.md`
-- `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/poc_protocol_EN.md`
-- `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/poc_protocol_TR.md`
-- `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/sales_funnel_90d_EN.md`
-- `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/sales_funnel_90d_TR.md`
-- `mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/founders_hub_application_EN.md`
-- `mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/founders_hub_application_TR.md`
-- `mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/private_placement_brief_EN.md`
-- `mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/private_placement_brief_TR.md`
-- `mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/v1_closure_sync_v2.md`
-- `mertformer-titan-dealroom-private/07_OUTREACH_READY/DM_templates_TR_EN.md`
-- `mertformer-titan-dealroom-private/07_OUTREACH_READY/EXECUTE_NOW_48H_TR.md`
-- `mertformer-titan-dealroom-private/07_OUTREACH_READY/email_templates_TR_EN.md`
-- `mertformer-titan-dealroom-private/07_OUTREACH_READY/linkedin_posts_TR_EN.md`
-- `mertformer-titan-dealroom-private/07_OUTREACH_READY/v1_closure_sync_v2.md`
-- `mertformer-titan-dealroom-private/08_GITHUB_GIST/gist_payload_TR_EN.md`
-- `mertformer-titan-dealroom-private/08_GITHUB_GIST/superseded_gists.md`
-- `mertformer-titan-dealroom-private/08_GITHUB_GIST/v1_closure_sync_v2.md`
-- `mertformer-titan-dealroom-private/09_APPENDIX/liquidrouter_whitepaper_EN.md`
-- `mertformer-titan-dealroom-private/09_APPENDIX/liquidrouter_whitepaper_TR.md`
-- `mertformer-titan-dealroom-private/09_APPENDIX/model_card_EN.md`
-- `mertformer-titan-dealroom-private/09_APPENDIX/model_card_TR.md`
-- `mertformer-titan-dealroom-private/09_APPENDIX/technical_report_EN.md`
-- `mertformer-titan-dealroom-private/09_APPENDIX/technical_report_TR.md`
-- `mertformer-titan-dealroom-private/09_APPENDIX/v1_closure_sync_v2.md`
-- `mertformer-titan-dealroom-private/MANIFEST/claim_boundary_audit_v1.md`
-- `mertformer-titan-dealroom-private/MANIFEST/consistency_check_v1.md`
-- `mertformer-titan-dealroom-private/MANIFEST/exposure_policy_v1.md`
-- `mertformer-titan-dealroom-private/MANIFEST/final_operator_checklist.md`
-- `mertformer-titan-dealroom-private/MANIFEST/private_only_certificate_v1.md`
-- `mertformer-titan-dealroom-private/MANIFEST/release_signoff_v1.md`
-- `orchestrator/README.md`
-- `orchestrator/README_TR.md`
-- `postmortems/README.md`
-- `postmortems/README_TR.md`
-- `postmortems/_template.md`
-- `postmortems/_template_TR.md`
-- `postmortems/example_001.md`
-- `postmortems/example_001_TR.md`
-- `private/anthropic_internal/PACKET_POINTER_20260419.md`
-- `private/anthropic_internal/README.md`
-- `private/anthropic_internal/application_strategy.md`
-- `private/anthropic_internal/interview_prep.md`
-- `private/anthropic_internal/measured_evidence_summary.md`
-- `private/anthropic_internal/performance_engineer_fallback.md`
-- `private/anthropic_internal/project_summary.md`
-- `private/anthropic_internal/science_of_scaling_cv_seed.md`
-- `private/anthropic_internal/strongest_stories.md`
-- `private/anthropic_internal/tokens_variant_notes.md`
-- `private/anthropic_internal/why_anthropic_science_of_scaling.md`
-- `private/commercial/PITCH.md`
-- `private/commercial/PITCH_TR.md`
-- `private/commercial/commercial_handover/contract_terms_checklist.md`
-- `private/commercial/commercial_handover/contract_terms_checklist_TR.md`
-- `private/commercial/commercial_handover/handover_scope.md`
-- `private/commercial/commercial_handover/handover_scope_TR.md`
-- `private/commercial/commercial_handover/known_issues.md`
-- `private/commercial/commercial_handover/known_issues_TR.md`
-- `private/commercial/commercial_handover/ownership_and_role.md`
-- `private/commercial/commercial_handover/ownership_and_role_TR.md`
-- `private/commercial/commercial_handover/sla_kpi_90_180.md`
-- `private/commercial/commercial_handover/sla_kpi_90_180_TR.md`
-- `private/commercial/founders_hub_application.md`
-- `private/commercial/founders_hub_application_TR.md`
-- `private/commercial/github_release_post.md`
-- `private/commercial/huggingface_launch.md`
-- `private/commercial/ip_licensing_split.md`
-- `private/commercial/ip_licensing_split_TR.md`
-- `private/commercial/mertformer_titan_1_page_evidence_packet_2026-05-22.md`
-- `private/commercial/mertformer_titan_executive_brief_2026-05-22.md`
-- `private/commercial/outreach_compute_sponsorship_messages.md`
-- `private/commercial/pilot_offer_packages.md`
-- `private/commercial/pilot_offer_packages_TR.md`
-- `private/commercial/reddit_post.md`
-- `private/commercial/sales_funnel_90d.md`
-- `private/commercial/sales_funnel_90d_TR.md`
-- `private/commercial/strategic_value.md`
-- `private/commercial/strategic_value_TR.md`
-- `prompts/changelog.md`
-- `prompts/changelog_TR.md`
-- `releases/README.md`
-- `releases/chess_release_contract.md`
-- `reports/ablations/README.md`
-- `reports/adr_index.md`
-- `reports/anthropic_fellows_application_checklist.md`
-- `reports/architecture_honesty_audit.md`
-- `reports/asset_stack.md`
-- `reports/asset_stack_TR.md`
-- `reports/automation_boundary_policy.md`
-- `reports/backlog_operating_contract.md`
-- `reports/benchmark_compare_report.md`
-- `reports/benchmark_contract.md`
-- `reports/benchmarks/README.md`
-- `reports/benchmarks/README_TR.md`
-- `reports/benchmarks/kaggle_compare_build30.md`
-- `reports/benchmarks/linkedin_sweetspot/README.md`
-- `reports/benchmarks/linkedin_sweetspot/README_TR.md`
-- `reports/benchmarks/linkedin_sweetspot/run_20260318_144125_compare.md`
-- `reports/benchmarks/math_fastproof/README.md`
-- `reports/benchmarks/math_fastproof/README_TR.md`
-- `reports/benchmarks/math_fastproof/run_20260315_050133_compare.md`
-- `reports/benchmarks/summary.md`
-- `reports/benchmarks/ternary_kernel_microbench_s25/README.md`
-- `reports/benchmarks/text_understanding/README.md`
-- `reports/benchmarks/text_understanding/README_TR.md`
-- `reports/benchmarks/text_understanding/run_20260315_180151_compare.md`
-- `reports/blog_liquid_ablation_draft.md`
-- `reports/canonical_entrypoint.md`
-- `reports/change_control_sop.md`
-- `reports/checkpoint_contract.md`
-- `reports/chess_gui_onefile_sync_report.md`
-- `reports/chess_onefile_extension_report.md`
-- `reports/chess_proof_teaching_case_study.md`
-- `reports/chess_teaching_contract_report.md`
-- `reports/chess_training_readiness_report.md`
-- `reports/cleanroom_verification.md`
-- `reports/cleanroom_verification_TR.md`
-- `reports/cli_smoke_log.md`
-- `reports/cli_smoke_log_TR.md`
-- `reports/closure_57_matrix.md`
-- `reports/closure_57_matrix_TR.md`
-- `reports/closure_release_truthsync_master_protocol.md`
-- `reports/closure_risk_register.md`
-- `reports/cloud_readiness_report.md`
-- `reports/code_truth_contract.md`
-- `reports/code_truth_delta_audit.md`
-- `reports/codex_deep_audit_DE_TR.md`
-- `reports/codex_deep_audit_EN.md`
-- `reports/codex_deep_audit_EN_TR.md`
-- `reports/codex_deep_audit_TR.md`
-- `reports/commercial_handover_pack.md`
-- `reports/contamination_report_build30.md`
-- `reports/current_delta_addendum_2026_05_15.md`
-- `reports/customer_ready_definition.md`
-- `reports/data_pipeline_contract.md`
-- `reports/data_poisoning_risk_analysis.md`
-- `reports/data_provenance_audit_template.md`
-- `reports/dataset_health.md`
-- `reports/dataset_health_TR.md`
-- `reports/dataset_health_final.md`
-- `reports/demo_bundle.md`
-- `reports/deprecated_surface_report.md`
-- `reports/divergence_guard_decision_brief.md`
-- `reports/doc_alignment_report.md`
-- `reports/doc_ownership_matrix.md`
-- `reports/docs_dedup_canonical_list.md`
-- `reports/drone_sitl_demo.md`
-- `reports/drone_sitl_demo_TR.md`
-- `reports/dry_run_report.md`
-- `reports/duplicate_source_of_truth_report.md`
-- `reports/edge_readiness_plan.md`
-- `reports/efficiency_convergence_analysis.md`
-- `reports/efficiency_convergence_analysis_TR.md`
-- `reports/entrypoint_deprecation_map.md`
-- `reports/exit_code_standard.md`
-- `reports/expected_artifacts_list.md`
-- `reports/external_readability_checklist.md`
-- `reports/feature_flag_governance.md`
-- `reports/feature_flag_governance_TR.md`
-- `reports/final_backlog_classification.md`
-- `reports/final_backlog_coverage_diff.md`
-- `reports/final_backlog_missing_items.md`
-- `reports/final_commands.md`
-- `reports/final_evidence_pack.md`
-- `reports/final_freeze_manifest.md`
-- `reports/final_master_plan_freeze.md`
-- `reports/final_orchestrator_status.md`
-- `reports/final_repo_audit.md`
-- `reports/final_sync_matrix.md`
-- `reports/final_sync_matrix_TR.md`
-- `reports/final_truth_constitution.md`
-- `reports/final_truth_matrix.md`
-- `reports/folder_structure_policy.md`
-- `reports/go_nogo_signoff_onepager.md`
-- `reports/go_nogo_signoff_onepager_TR.md`
-- `reports/go_status_matrix.md`
-- `reports/go_status_matrix_TR.md`
-- `reports/gtm_master_plan.md`
-- `reports/immutable_evidence_register.md`
-- `reports/independent_signoff_template.md`
-- `reports/investable_definition.md`
-- `reports/known_limits_v1.md`
-- `reports/kpi_contract_build30.md`
-- `reports/kpi_pack_v1.md`
-- `reports/kpi_pack_v1_TR.md`
-- `reports/lane_cost_tradeoff_brief.md`
-- `reports/launch_time_decisions_checklist.md`
-- `reports/legal_cleanroom_signoff_internal.md`
-- `reports/legal_ip_pack.md`
-- `reports/liquid_keep_or_drop_brief.md`
-- `reports/logger_contract.md`
-- `reports/logits_integrity_report.md`
-- `reports/master_closure_matrix.md`
-- `reports/master_operating_plan.md`
-- `reports/model_health.md`
-- `reports/model_health_TR.md`
-- `reports/model_health_final.md`
-- `reports/ocean_2xh200_1024_first_launch_profile.md`
-- `reports/ocean_pre45k_h200_20260514_partial_evidence.md`
-- `reports/offline_4060_demo_evidence.md`
-- `reports/offline_assistant_case_study.md`
-- `reports/one_command_full_sop_summary.md`
-- `reports/one_pager.md`
-- `reports/one_pager_TR.md`
-- `reports/owner_matrix.md`
-- `reports/package_validation_report.md`
-- `reports/paper_outline_draft.md`
-- `reports/param_accounting_report.md`
-- `reports/phase2_carryover.md`
-- `reports/pilot_acceptance_signoff.md`
-- `reports/pilot_acceptance_signoff_TR.md`
-- `reports/pilot_readiness_kit.md`
-- `reports/pilot_readiness_kit_TR.md`
-- `reports/pilots/README.md`
-- `reports/pilots/README_TR.md`
-- `reports/pitch_kit/04_KAYNAK_README.md`
-- `reports/pitch_kit/04_KAYNAK_README_TR.md`
-- `reports/plot_contract.md`
-- `reports/poc_protocol.md`
-- `reports/poc_protocol_TR.md`
-- `reports/post_45k_decision_tree.md`
-- `reports/post_45k_research_agenda.md`
-- `reports/post_train_automation_contract.md`
-- `reports/post_train_autorun_status.md`
-- `reports/post_train_state_machine.md`
-- `reports/pre45k_gate_report.md`
-- `reports/proje_zip_rebuild_manifest_v2.md`
-- `reports/publication_readiness_kit.md`
-- `reports/quality_gate_matrix.md`
-- `reports/release_closure_note.md`
-- `reports/release_snapshot.md`
-- `reports/release_snapshot_TR.md`
-- `reports/rented_machine_bringup.md`
-- `reports/repo_closure_scorecard.md`
-- `reports/repo_directory_contract.md`
-- `reports/repo_external_handoff.md`
-- `reports/report_accuracy_audit.md`
-- `reports/report_accuracy_audit_TR.md`
-- `reports/responsible_ai_checklist.md`
-- `reports/review_checklist.md`
-- `reports/review_checklist_TR.md`
-- `reports/run_contract.md`
-- `reports/scoped_external_intake_matrix.md`
-- `reports/security_compliance.md`
-- `reports/security_compliance_TR.md`
-- `reports/snapshots/2026-02-24/mertformer_master_decision_report_TR_2026-02-24.md`
-- `reports/snapshots/2026-02-24/web_validation_sources_2026-02-24.md`
-- `reports/source_of_truth_map.md`
-- `reports/stage3_mixture_freeze_proposal.md`
-- `reports/stale_script_report.md`
-- `reports/start_gate_operator_decision.md`
-- `reports/support_maintenance_policy.md`
-- `reports/surface_lifecycle_matrix.md`
-- `reports/system_hardware.md`
-- `reports/system_hardware_TR.md`
-- `reports/system_memory_policy.md`
-- `reports/systems_performance_case_study.md`
-- `reports/target_machine_handoff_manifest.md`
-- `reports/teacher_decision_record.md`
-- `reports/teacher_output_license_assessment.md`
-- `reports/technical_snapshot.md`
-- `reports/technical_snapshot_TR.md`
-- `reports/test_verification_matrix.md`
-- `reports/test_verification_matrix_TR.md`
-- `reports/tokenizer_parity_fix.md`
-- `reports/tokenizer_sync_final_report.md`
-- `reports/train_readiness_decision.md`
-- `reports/training_outputs_bundle_manifest.md`
-- `reports/training_surface_audit_2026_05_15.md`
-- `reports/turk_telekom_call_faq.md`
-- `reports/update_first_policy.md`
-- `reports/verified_matrix.md`
-- `reports/verified_matrix_TR.md`
-- `reports/workspace_hygiene_manifest.md`
-- `repro/python.md`
-- `repro/python_TR.md`
-- `repro/seed_policy.md`
-- `repro/seed_policy_TR.md`
-- `runbooks/README.md`
-- `runbooks/checkpoint_offsite_backup.md`
-- `runbooks/checkpoint_offsite_backup_TR.md`
-- `runbooks/chess_4060_24h.md`
-- `runbooks/chess_4060_24h_TR.md`
-- `runbooks/chess_4060_24h_all_on_experimental.md`
-- `runbooks/chess_4060_24h_all_on_experimental_TR.md`
-- `scripts/README.md`
-- `scripts/README_TR.md`
-- `scripts/reports/model_health.md`
-- `scripts/reports/model_health_TR.md`
-- `scripts/reports/pilots/pilot_001/sitl_20260211T214734Z/sitl_report.md`
-- `tokenizer/drift_report_TR.md`
-- `tokenizer/stats_TR.md`
-- `tokenizer/tr/README.md`
-- `tokenizer/tr/README_TR.md`
-- `tools/abuse_tests.md`
-- `tools/abuse_tests_TR.md`
-- `tools/contracts/README.md`
-- `tools/contracts/README_TR.md`
-- `tools/sandbox/README.md`
-- `tools/sandbox/README_TR.md`
-- `training_dynamics/cold_vs_warm.md`
-- `training_dynamics/cold_vs_warm_TR.md`
 
 ## Duplicate Name Groups
 - `changelog.md`
   - `CHANGELOG.md`
-  - `prompts/changelog.md`
+  - `prompts\changelog.md`
 - `changelog_tr.md`
   - `CHANGELOG_TR.md`
-  - `prompts/changelog_TR.md`
+  - `prompts\changelog_TR.md`
 - `chess_4060_24h.md`
-  - `checklists/chess_4060_24h.md`
-  - `runbooks/chess_4060_24h.md`
+  - `checklists\chess_4060_24h.md`
+  - `runbooks\chess_4060_24h.md`
 - `chess_4060_24h_all_on_experimental.md`
-  - `checklists/chess_4060_24h_all_on_experimental.md`
-  - `runbooks/chess_4060_24h_all_on_experimental.md`
+  - `checklists\chess_4060_24h_all_on_experimental.md`
+  - `runbooks\chess_4060_24h_all_on_experimental.md`
 - `chess_4060_24h_all_on_experimental_tr.md`
-  - `checklists/chess_4060_24h_all_on_experimental_TR.md`
-  - `runbooks/chess_4060_24h_all_on_experimental_TR.md`
+  - `checklists\chess_4060_24h_all_on_experimental_TR.md`
+  - `runbooks\chess_4060_24h_all_on_experimental_TR.md`
 - `chess_4060_24h_tr.md`
-  - `checklists/chess_4060_24h_TR.md`
-  - `runbooks/chess_4060_24h_TR.md`
-- `closure_57_matrix_tr.md`
-  - `mertformer-titan-dealroom-private/03_TECH_EVIDENCE/closure_57_matrix_TR.md`
-  - `reports/closure_57_matrix_TR.md`
+  - `checklists\chess_4060_24h_TR.md`
+  - `runbooks\chess_4060_24h_TR.md`
 - `cold_vs_warm.md`
-  - `archive/templates/cold_vs_warm.md`
-  - `training_dynamics/cold_vs_warm.md`
-- `founders_hub_application_tr.md`
-  - `mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/founders_hub_application_TR.md`
-  - `private/commercial/founders_hub_application_TR.md`
-- `legal_cleanroom_signoff_internal.md`
-  - `mertformer-titan-dealroom-private/04_SECURITY_LEGAL/legal_cleanroom_signoff_internal.md`
-  - `reports/legal_cleanroom_signoff_internal.md`
-- `model_card_tr.md`
-  - `MODEL_CARD_TR.md`
-  - `mertformer-titan-dealroom-private/09_APPENDIX/model_card_TR.md`
+  - `archive\templates\cold_vs_warm.md`
+  - `training_dynamics\cold_vs_warm.md`
 - `model_health.md`
-  - `reports/model_health.md`
-  - `scripts/reports/model_health.md`
+  - `reports\model_health.md`
+  - `scripts\reports\model_health.md`
 - `model_health_tr.md`
-  - `reports/model_health_TR.md`
-  - `scripts/reports/model_health_TR.md`
+  - `reports\model_health_TR.md`
+  - `scripts\reports\model_health_TR.md`
 - `notes.md`
-  - `archive/templates/notes.md`
-  - `experiments/exp_001_baseline/notes.md`
-- `one_pager_tr.md`
-  - `mertformer-titan-dealroom-private/02_EXECUTIVE/one_pager_TR.md`
-  - `reports/one_pager_TR.md`
-- `pilot_acceptance_signoff_tr.md`
-  - `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_acceptance_signoff_TR.md`
-  - `reports/pilot_acceptance_signoff_TR.md`
-- `pilot_readiness_kit_tr.md`
-  - `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/pilot_readiness_kit_TR.md`
-  - `reports/pilot_readiness_kit_TR.md`
-- `poc_protocol_tr.md`
-  - `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/poc_protocol_TR.md`
-  - `reports/poc_protocol_TR.md`
+  - `archive\templates\notes.md`
+  - `experiments\exp_001_baseline\notes.md`
 - `readme.md`
+  - `ablations\bitlinear_off\README.md`
+  - `ablations\dense_only\README.md`
+  - `ablations\no_liquid\README.md`
+  - `ablations\no_moe\README.md`
+  - `apps\chess_gui\checkpoints\README.md`
+  - `apps\chess_gui\logs\README.md`
+  - `apps\chess_gui\README.md`
+  - `assets\sources\README.md`
+  - `checklists\README.md`
+  - `configs\README.md`
+  - `datasets\README.md`
+  - `evidence\2026-07-02-laptop-preflight\README.md`
+  - `evidence\2026-07-12-laptop-preflight-v2\README.md`
+  - `evidence\2026-07-18-nutrition5k-rtx5070\README.md`
+  - `evidence\2026-07-25-lm-171m-reverify\README.md`
+  - `evidence\2026-07-25-lm-36m-reverify\README.md`
+  - `evidence\2026-07-25-nutrition5k-liquid-off\README.md`
+  - `evidence\2026-07-25-nutrition5k-moe-off\README.md`
+  - `evidence\README.md`
+  - `knowledge\README.md`
+  - `logs\README.md`
+  - `orchestrator\README.md`
+  - `postmortems\README.md`
   - `README.md`
-  - `ablations/bitlinear_off/README.md`
-  - `ablations/dense_only/README.md`
-  - `ablations/no_liquid/README.md`
-  - `ablations/no_moe/README.md`
-  - `apps/chess_gui/README.md`
-  - `apps/chess_gui/checkpoints/README.md`
-  - `apps/chess_gui/logs/README.md`
-  - `assets/sources/README.md`
-  - `checklists/README.md`
-  - `configs/README.md`
-  - `datasets/README.md`
-  - `datasets/offline_demo/README.md`
-  - `evidence/2026-07-02-laptop-preflight/README.md`
-  - `evidence/2026-07-12-laptop-preflight-v2/README.md`
-  - `evidence/2026-07-18-nutrition5k-rtx5070/README.md`
-  - `evidence/2026-07-25-lm-171m-reverify/README.md`
-  - `evidence/2026-07-25-lm-36m-reverify/README.md`
-  - `evidence/2026-07-25-nutrition5k-liquid-off/README.md`
-  - `evidence/2026-07-25-nutrition5k-moe-off/README.md`
-  - `evidence/README.md`
-  - `knowledge/README.md`
-  - `logs/README.md`
-  - `orchestrator/README.md`
-  - `postmortems/README.md`
-  - `private/anthropic_internal/README.md`
-  - `releases/README.md`
-  - `reports/ablations/README.md`
-  - `reports/benchmarks/README.md`
-  - `reports/benchmarks/linkedin_sweetspot/README.md`
-  - `reports/benchmarks/math_fastproof/README.md`
-  - `reports/benchmarks/ternary_kernel_microbench_s25/README.md`
-  - `reports/benchmarks/text_understanding/README.md`
-  - `reports/pilots/README.md`
-  - `runbooks/README.md`
-  - `scripts/README.md`
-  - `tokenizer/tr/README.md`
-  - `tools/contracts/README.md`
-  - `tools/sandbox/README.md`
+  - `releases\README.md`
+  - `reports\ablations\README.md`
+  - `reports\benchmarks\linkedin_sweetspot\README.md`
+  - `reports\benchmarks\math_fastproof\README.md`
+  - `reports\benchmarks\README.md`
+  - `reports\benchmarks\ternary_kernel_microbench_s25\README.md`
+  - `reports\benchmarks\text_understanding\README.md`
+  - `reports\pilots\README.md`
+  - `runbooks\README.md`
+  - `scripts\README.md`
+  - `tokenizer\tr\README.md`
+  - `tools\contracts\README.md`
+  - `tools\sandbox\README.md`
 - `readme_tr.md`
+  - `ablations\bitlinear_off\README_TR.md`
+  - `ablations\dense_only\README_TR.md`
+  - `ablations\no_liquid\README_TR.md`
+  - `ablations\no_moe\README_TR.md`
+  - `assets\sources\README_TR.md`
+  - `configs\README_TR.md`
+  - `datasets\README_TR.md`
+  - `logs\README_TR.md`
+  - `orchestrator\README_TR.md`
+  - `postmortems\README_TR.md`
   - `README_TR.md`
-  - `ablations/bitlinear_off/README_TR.md`
-  - `ablations/dense_only/README_TR.md`
-  - `ablations/no_liquid/README_TR.md`
-  - `ablations/no_moe/README_TR.md`
-  - `assets/sources/README_TR.md`
-  - `configs/README_TR.md`
-  - `datasets/README_TR.md`
-  - `logs/README_TR.md`
-  - `orchestrator/README_TR.md`
-  - `postmortems/README_TR.md`
-  - `reports/benchmarks/README_TR.md`
-  - `reports/benchmarks/linkedin_sweetspot/README_TR.md`
-  - `reports/benchmarks/math_fastproof/README_TR.md`
-  - `reports/benchmarks/text_understanding/README_TR.md`
-  - `reports/pilots/README_TR.md`
-  - `scripts/README_TR.md`
-  - `tokenizer/tr/README_TR.md`
-  - `tools/contracts/README_TR.md`
-  - `tools/sandbox/README_TR.md`
+  - `reports\benchmarks\linkedin_sweetspot\README_TR.md`
+  - `reports\benchmarks\math_fastproof\README_TR.md`
+  - `reports\benchmarks\README_TR.md`
+  - `reports\benchmarks\text_understanding\README_TR.md`
+  - `reports\pilots\README_TR.md`
+  - `scripts\README_TR.md`
+  - `tokenizer\tr\README_TR.md`
+  - `tools\contracts\README_TR.md`
+  - `tools\sandbox\README_TR.md`
 - `report.md`
-  - `evidence/2026-07-18-nutrition5k-rtx5070/REPORT.md`
-  - `evidence/2026-07-25-nutrition5k-liquid-off/REPORT.md`
-  - `evidence/2026-07-25-nutrition5k-moe-off/REPORT.md`
-- `report_accuracy_audit_tr.md`
-  - `mertformer-titan-dealroom-private/03_TECH_EVIDENCE/report_accuracy_audit_TR.md`
-  - `reports/report_accuracy_audit_TR.md`
-- `sales_funnel_90d_tr.md`
-  - `mertformer-titan-dealroom-private/05_COMMERCIAL_PILOT/sales_funnel_90d_TR.md`
-  - `private/commercial/sales_funnel_90d_TR.md`
-- `security_compliance_tr.md`
-  - `mertformer-titan-dealroom-private/04_SECURITY_LEGAL/security_compliance_TR.md`
-  - `reports/security_compliance_TR.md`
-- `teacher_output_license_assessment.md`
-  - `mertformer-titan-dealroom-private/04_SECURITY_LEGAL/teacher_output_license_assessment.md`
-  - `reports/teacher_output_license_assessment.md`
-- `technical_report_tr.md`
-  - `TECHNICAL_REPORT_TR.md`
-  - `mertformer-titan-dealroom-private/09_APPENDIX/technical_report_TR.md`
-- `v1_closure_sync_v2.md`
-  - `mertformer-titan-dealroom-private/02_EXECUTIVE/v1_closure_sync_v2.md`
-  - `mertformer-titan-dealroom-private/04_SECURITY_LEGAL/v1_closure_sync_v2.md`
-  - `mertformer-titan-dealroom-private/06_INVESTOR_ASSETS/v1_closure_sync_v2.md`
-  - `mertformer-titan-dealroom-private/07_OUTREACH_READY/v1_closure_sync_v2.md`
-  - `mertformer-titan-dealroom-private/08_GITHUB_GIST/v1_closure_sync_v2.md`
-  - `mertformer-titan-dealroom-private/09_APPENDIX/v1_closure_sync_v2.md`
+  - `evidence\2026-07-18-nutrition5k-rtx5070\REPORT.md`
+  - `evidence\2026-07-25-nutrition5k-liquid-off\REPORT.md`
+  - `evidence\2026-07-25-nutrition5k-moe-off\REPORT.md`

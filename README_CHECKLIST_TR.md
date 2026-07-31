@@ -1,5 +1,14 @@
 # ✅ MertFormer Titan README Kalite Kontrol Listesi
 
+> **⚠ SÜPERSEDED (2026-07-31):** Bu, 2026-02-05 / 2026-06-17 README pass'lerinden kalma,
+> tek seferlik ve elle doldurulmuş bir anlık görüntü — repo'nun otomatik kapanış kapılarından
+> (`scripts/check_doc_claim_consistency.py`, `scripts/md_quality_gate.py`,
+> `scripts/md_integrity_check.py`, hepsi `verify_all.sh` tarafından çalıştırılıyor) önce
+> yazılmış. Bu kapılar README doğruluğunun şu anki, canlı, kanıt-destekli kontrolü; bu dosya
+> hiçbir kanonik yüzeyden linklenmiyor ve yalnızca 4KB-kesim öncesi manuel incelemenin tarihi
+> bir kaydı olarak tutuluyor. O tarihten beri hiçbir şey için (Apache 2.0 relicensing veya
+> Windows-portlama pass'i dahil) güncellenmedi — güncel kabul etmeyin.
+
 > DÜRÜSTLÜK NOTU: Aşağıdaki `[x]` işaretleri, eğitim öncesi taslak aşamasında elle yapılan ÖZ-BEYANDIR; otomatik doğrulamadan geçmiş bir GEÇME-KAPISI (pass-gate) DEĞİLDİR. Üretim metrikleri/karşılaştırmalar henüz kanıtlanmadı. Tamlık (satır 8), Karşılaştırmalar (satır 24), Bağlantılar (satır 28) ve Yazım Denetimi (satır 30) gibi maddeler bir betik/rapor çıktısıyla DESTEKLENMEMEKTEDİR — bunları doğrulanmış kapılar değil, "kanıt beklemede" olarak değerlendirin. `[n/a]` maddeleri 4KB README kesiminde bilinçli olarak düşürülmüştür.
 
 ## 1️⃣ Proje Yapısı

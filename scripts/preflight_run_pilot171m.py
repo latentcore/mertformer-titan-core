@@ -571,7 +571,7 @@ def bootstrap_dependencies() -> None:
     proc = subprocess.run(
         [sys.executable, "-m", "pip", "install", "--disable-pip-version-check", *missing],
         capture_output=True,
-        text=True,
+        text=True, encoding="utf-8", errors="replace",
     )
     if proc.returncode != 0:
         tail = "\n".join((proc.stderr or proc.stdout or "").strip().splitlines()[-12:])
@@ -856,7 +856,7 @@ def phase_repo(repo_path: Path | None, searched: list[Path]) -> None:
         proc = subprocess.run(
             ["git", "clone", "--depth", "1", auth_url, str(REPO_DIR)],
             capture_output=True,
-            text=True,
+            text=True, encoding="utf-8", errors="replace",
         )
         if proc.returncode != 0:
             fail(

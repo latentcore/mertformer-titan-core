@@ -109,7 +109,7 @@ def tracked_files_with_stat_claims() -> dict[str, list[str]]:
 
     proc = subprocess.run(
         ["git", "-C", str(ROOT), "ls-files"],
-        check=True, capture_output=True, text=True,
+        check=True, capture_output=True, text=True, encoding="utf-8", errors="replace",
     )
     found: dict[str, list[str]] = {}
     for rel in proc.stdout.split("\n"):
@@ -131,7 +131,7 @@ def tracked_files_with_stat_claims() -> dict[str, list[str]]:
 
 def unclassified_stat_claim_files() -> list[str]:
     """Tracked files carrying a test-stat claim that are in neither list."""
-    target_rels = {str(p.relative_to(ROOT)) for p in TARGETS}
+    target_rels = {p.relative_to(ROOT).as_posix() for p in TARGETS}
     return sorted(
         rel for rel in tracked_files_with_stat_claims()
         if rel not in target_rels and rel not in HISTORICAL_ALLOWLIST
@@ -159,10 +159,10 @@ def main() -> int:
     missing = []
     for path in TARGETS:
         if not path.exists():
-            missing.append(str(path.relative_to(ROOT)))
+            missing.append(path.relative_to(ROOT).as_posix())
             continue
         if sync_file(path, stat):
-            changed.append(str(path.relative_to(ROOT)))
+            changed.append(path.relative_to(ROOT).as_posix())
 
     print(
         {

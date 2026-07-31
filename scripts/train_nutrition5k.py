@@ -481,7 +481,7 @@ def bootstrap_dependencies() -> None:
     proc = subprocess.run(
         [sys.executable, "-m", "pip", "install", "--disable-pip-version-check", *missing],
         capture_output=True,
-        text=True,
+        text=True, encoding="utf-8", errors="replace",
     )
     if proc.returncode != 0:
         tail = "\n".join((proc.stderr or proc.stdout or "").strip().splitlines()[-12:])

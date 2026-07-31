@@ -17,7 +17,7 @@ LOG_PATH="$ROOT_DIR/reports/one_command_full_sop.log"
 SUMMARY_PATH="$ROOT_DIR/reports/one_command_full_sop_summary.md"
 # Clean any stale raw logs from older runs (glob, not a literal mktemp template).
 rm -f "$ROOT_DIR"/reports/.one_command_full_sop_raw.*.log 2>/dev/null || true
-RAW_LOG="$(mktemp -t one_command_full_sop_raw)"
+RAW_LOG="$(mktemp -t one_command_full_sop_raw.XXXXXX)"
 
 mkdir -p "$ROOT_DIR/reports" "$ROOT_DIR/packages" "$ROOT_DIR/artifacts"
 
@@ -71,7 +71,11 @@ fi
   run_step "linkcheck_all" "$PY_BIN" scripts/linkcheck_gate.py --root . --scope all --out reports/linkcheck_report.json
   run_step "docs_inventory" "$PY_BIN" scripts/docs_inventory.py
   run_step "sync_manifest" "$PY_BIN" scripts/sync_manifest.py --root . --manifest reports/release_manifest.json --structure docs/PROJECT_STRUCTURE.md --matrix reports/file_sync_matrix.json --sync-report reports/project_structure_sync_report.json --policy-report reports/policy_sync_report.json
-  run_step "dealroom_sync" "$PY_BIN" scripts/dealroom_sync.py
+  # Best effort, does not fail the SOP -- the dealroom repo is a separate sibling checkout
+  # that only exists on the original operator's machine; dealroom_sync.py itself correctly
+  # reports/exits non-zero when it is absent, which is the expected state on any fresh clone
+  # or contributor machine, not a real failure.
+  run_step "dealroom_sync" "$PY_BIN" scripts/dealroom_sync.py || true
   run_step "unicode_path_guard" "$PY_BIN" scripts/unicode_path_guard.py --root . --out reports/unicode_path_guard_report.json --fail-on-hit
   run_step "duplicate_zip_guard" "$PY_BIN" scripts/duplicate_zip_guard.py --root packages --root artifacts --out reports/duplicate_zip_guard_report.json
   run_step "scoped_external_intake_matrix" "$PY_BIN" scripts/build_scoped_external_intake_matrix.py --sync-mode audit

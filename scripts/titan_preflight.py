@@ -18,6 +18,21 @@ import os
 import sys
 import shutil
 import logging
+
+# [2026-07-31] This script prints emoji status glyphs throughout. On Windows, stdout/
+# stderr default to the system ANSI codepage (e.g. cp1254), not UTF-8, so a bare print()
+# of an emoji crashes with UnicodeEncodeError before the real check result is ever shown
+# -- confirmed live (data_distill_test's "resuming from chunk" glyph). Reconfiguring here,
+# once, at the real entrypoint, fixes every call site without touching each print() or
+# depending on the caller remembering to set PYTHONIOENCODING. No-op on platforms already
+# defaulting to UTF-8 (macOS/Linux) or on streams that don't support reconfigure (rare
+# redirected-stream edge cases), hence the guard.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 import time
 import subprocess
 import json
@@ -150,9 +165,10 @@ def write_train_ready_report(payload: Dict[str, Any], report_name: str | None = 
 
 def _display_path(path: Path) -> str:
     try:
-        return str(path.relative_to(PROJECT_ROOT))
+        rel = path.relative_to(PROJECT_ROOT)
     except ValueError:
-        return str(path)
+        return path.as_posix()
+    return rel.as_posix()
 
 
 def _serialize_cfg() -> Dict[str, Any]:

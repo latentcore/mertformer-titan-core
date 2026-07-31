@@ -158,7 +158,7 @@ def verify_zip(zip_path: Path, project_root: Path) -> dict[str, object]:
         proc = subprocess.run(
             [unzip_available, "-t", str(zip_path)],
             capture_output=True,
-            text=True,
+            text=True, encoding="utf-8", errors="replace",
             check=False,
         )
         unzip_result = {
@@ -288,9 +288,11 @@ def ensure_training_dashboard(project_root: Path, reports_dir: Path) -> dict:
         return status
 
     try:
+        child_env = dict(os.environ)
+        child_env["PYTHONIOENCODING"] = "utf-8"
         proc = subprocess.run(
             [sys.executable, str(plotter), str(newest_log), "--out", str(dashboard)],
-            cwd=str(project_root), capture_output=True, text=True, timeout=300,
+            cwd=str(project_root), capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=300, env=child_env,
         )
     except (OSError, subprocess.SubprocessError) as exc:
         status["reason"] = f"render_failed: {exc}"

@@ -80,7 +80,7 @@ def inspect_torch_install() -> Dict[str, Any]:
         print(json.dumps(payload))
         """
     ).strip()
-    result = subprocess.run([sys.executable, "-c", code], check=False, capture_output=True, text=True)
+    result = subprocess.run([sys.executable, "-c", code], check=False, capture_output=True, text=True, encoding="utf-8", errors="replace")
     if result.returncode != 0:
         return {"found": False, "error": result.stderr.strip() or result.stdout.strip() or "torch_probe_failed"}
     try:
@@ -257,7 +257,7 @@ def main() -> int:
         'source_path': str(source_path),
         'output_executable': str(final_exe),
         'output_sha256': sha256_file(final_exe),
-        'nuitka_version': subprocess.check_output([sys.executable, '-m', 'nuitka', '--version'], text=True).strip(),
+        'nuitka_version': subprocess.check_output([sys.executable, '-m', 'nuitka', '--version'], text=True, encoding="utf-8", errors="replace").strip(),
         'python': sys.version,
         'torch_runtime': inspect_torch_install(),
         'signing': sign_report,

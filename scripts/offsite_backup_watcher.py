@@ -93,7 +93,7 @@ def sync_with_retry(
     last_error = ""
     for attempt in range(max_retries):
         try:
-            result = run_fn(cmd, capture_output=True, text=True, check=False)
+            result = run_fn(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
             if result.returncode == 0:
                 return True
             stderr_tail = (result.stderr or "")[-500:]

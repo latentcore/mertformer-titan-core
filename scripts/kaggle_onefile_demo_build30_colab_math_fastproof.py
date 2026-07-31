@@ -839,15 +839,15 @@ def build_ownership_proof(cfg: Dict[str, Any]) -> Dict[str, Any]:
     git_branch = ""
     if (repo / ".git").exists():
         try:
-            git_remote = subprocess.check_output(["git", "remote", "get-url", "origin"], text=True).strip()
+            git_remote = subprocess.check_output(["git", "remote", "get-url", "origin"], text=True, encoding="utf-8", errors="replace").strip()
         except Exception:
             git_remote = ""
         try:
-            git_head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+            git_head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True, encoding="utf-8", errors="replace").strip()
         except Exception:
             git_head = ""
         try:
-            git_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], text=True).strip()
+            git_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], text=True, encoding="utf-8", errors="replace").strip()
         except Exception:
             git_branch = ""
     fp = build_runtime_fingerprint(cfg)

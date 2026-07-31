@@ -1,6 +1,6 @@
 {
   "schema": "doc_alignment_report_v1",
-  "generated_utc": "2026-07-30T16:08:00Z",
+  "generated_utc": "2026-07-31T10:35:56Z",
   "checks": [
     {
       "path": "README.md",
@@ -9,7 +9,7 @@
       "mentions_final_ceiling": false,
       "mentions_current_reason": true,
       "mentions_current_path": true,
-      "mentions_all_blockers": true,
+      "mentions_all_blockers": false,
       "mentions_stale_active_reason": false
     },
     {
@@ -19,7 +19,7 @@
       "mentions_final_ceiling": false,
       "mentions_current_reason": true,
       "mentions_current_path": true,
-      "mentions_all_blockers": true,
+      "mentions_all_blockers": false,
       "mentions_stale_active_reason": false
     },
     {
@@ -39,7 +39,7 @@
       "mentions_final_ceiling": true,
       "mentions_current_reason": true,
       "mentions_current_path": true,
-      "mentions_all_blockers": true,
+      "mentions_all_blockers": false,
       "mentions_stale_active_reason": false
     },
     {
@@ -49,7 +49,7 @@
       "mentions_final_ceiling": true,
       "mentions_current_reason": true,
       "mentions_current_path": true,
-      "mentions_all_blockers": true,
+      "mentions_all_blockers": false,
       "mentions_stale_active_reason": false
     }
   ]

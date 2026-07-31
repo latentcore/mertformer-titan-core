@@ -12,7 +12,9 @@ from config.config import cfg
 # -----------------------------------------------------------------------------
 @pytest.fixture(scope="module")
 def device():
-    """Selects the fastest available device (MPS for Mac, CPU as fallback)."""
+    """Selects the fastest available device (CUDA, then MPS for Mac, CPU as fallback)."""
+    if torch.cuda.is_available():
+        return torch.device("cuda")
     if torch.backends.mps.is_available():
         return torch.device("mps")
     return torch.device("cpu")

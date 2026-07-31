@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -9,7 +10,7 @@ def test_drone_sitl_demo_generates_artifacts(tmp_path: Path):
     out_root = tmp_path / "pilots"
 
     cmd = [
-        "python3",
+        sys.executable,
         "scripts/drone_sitl_demo.py",
         "--pilot-id",
         "pilot_test",

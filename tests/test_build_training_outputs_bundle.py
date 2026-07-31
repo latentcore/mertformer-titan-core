@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 import zipfile
 from pathlib import Path
 
@@ -32,7 +33,7 @@ def test_build_training_outputs_bundle_collects_outputs_and_excludes_sensitive_f
 
     result = subprocess.run(
         [
-            "python3",
+            sys.executable,
             str(ROOT / "scripts" / "build_training_outputs_bundle.py"),
             "--project-root",
             str(project_root),

@@ -86,7 +86,7 @@ def detect_python(root: Path, *, bootstrap: bool) -> str:
 
 def run_command(root: Path, cmd: list[str], env: dict[str, str] | None = None) -> dict:
     started = time.time()
-    proc = subprocess.run(cmd, cwd=root, capture_output=True, text=True, env=env, check=False)
+    proc = subprocess.run(cmd, cwd=root, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env, check=False)
     return {
         "cmd": sanitize_text(" ".join(cmd), root),
         "return_code": proc.returncode,
@@ -116,7 +116,7 @@ def detect_num_processes() -> int:
             return len(parts)
 
     if shutil.which("nvidia-smi"):
-        proc = subprocess.run(["nvidia-smi", "-L"], capture_output=True, text=True, check=False)
+        proc = subprocess.run(["nvidia-smi", "-L"], capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
         if proc.returncode == 0:
             lines = [line for line in proc.stdout.splitlines() if line.strip()]
             if lines:

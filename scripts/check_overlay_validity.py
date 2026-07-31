@@ -43,7 +43,7 @@ def check_overlay(yaml_name: str) -> tuple:
         cwd=ROOT,
         env=full_env,
         capture_output=True,
-        text=True,
+        text=True, encoding="utf-8", errors="replace",
         timeout=120,
     )
     ok = proc.returncode == 0 and "OVERLAY_OK" in proc.stdout

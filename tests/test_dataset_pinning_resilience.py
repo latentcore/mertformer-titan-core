@@ -25,7 +25,7 @@ def test_extract_dataset_refs_ignores_fstring_placeholder_but_keeps_real_call(tm
     out_json = tmp_path / "inventory.json"
     result = subprocess.run(
         [
-            "python3",
+            sys.executable,
             str(ROOT / "scripts" / "extract_dataset_refs.py"),
             "--root",
             str(tmp_path),

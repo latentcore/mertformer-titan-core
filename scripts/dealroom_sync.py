@@ -12,7 +12,7 @@ DEALROOM = ROOT / 'mertformer-titan-dealroom-private'
 
 
 def cmd(cwd: Path, *args: str) -> str:
-    p = subprocess.run(args, cwd=cwd, capture_output=True, text=True, check=False)
+    p = subprocess.run(args, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     if p.returncode != 0:
         # Komut basarisiz oldu; geriye bos string donuyoruz (rapor o alani 'bos'
         # gosterir) ama hatanin sessizce yutulmamasi için stderr'e uyari yaziyoruz.

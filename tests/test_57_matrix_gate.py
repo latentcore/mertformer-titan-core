@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -11,7 +12,7 @@ def test_closure_57_gate_returns_all_green_and_writes_reports(tmp_path: Path):
     md_tr = tmp_path / "closure_57_TR.md"
     result = subprocess.run(
         [
-            "python3",
+            sys.executable,
             "scripts/check_57_matrix.py",
             "--out",
             str(out),
