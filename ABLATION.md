@@ -65,6 +65,11 @@ at this ablation's much shorter effective sequence) may not hold at the canonica
 Full detail and a candidate cheap pre-45K validation item: see [BACKLOG.md](BACKLOG.md), entry
 "External signal on Liquid/CfC wall-clock cost." Does not change the verdict above or the
 `DECIDED: Keep` call in [reports/liquid_keep_or_drop_brief.md](reports/liquid_keep_or_drop_brief.md).
+The same BACKLOG.md entry also records a symmetric inference-side counterpoint: `generate()`'s
+stateful `LiquidMixer` decode path is already implemented and correctness-tested (`<1e-8` parity
+vs. full-forward, see `tests/test_liquid_generate_parity.py`), and architecturally implies a
+per-token cost independent of context length, unlike growing-KV-cache attention -- but its actual
+decode-mode speed has never been benchmarked, folded into the same pre-45K validation item.
 
 ## Other ablations (pending — require training hardware)
 `ablations/` holds scaffolds for `no_moe`, `dense_only`, `bitlinear_off`. These require real GPU

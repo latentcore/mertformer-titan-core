@@ -64,6 +64,11 @@ anlamına geliyor. Tam detay ve ucuz, aday bir 45K-öncesi doğrulama maddesi i�
 "Liquid/CfC duvar-saati maliyeti üzerine dış sinyal" girdisi. Yukarıdaki hükmü ya da
 [reports/liquid_keep_or_drop_brief.md](reports/liquid_keep_or_drop_brief.md)'deki `DECIDED: Keep`
 kararını değiştirmiyor.
+Aynı BACKLOG_TR.md girdisi, simetrik bir inference-tarafı karşı-nokta da kaydediyor: `generate()`'in
+durum-tutan `LiquidMixer` decode yolu zaten uygulanmış ve doğruluğu test edilmiş (`tests/test_liquid_generate_parity.py`'de
+full-forward'a karşı `<1e-8` parite), ve mimari olarak büyüyen-KV-cache attention'ın aksine context
+uzunluğundan bağımsız bir token-başı maliyete işaret ediyor -- ama gerçek decode-modu hızı hiç
+benchmark edilmedi, aynı 45K-öncesi doğrulama maddesine katlanmış durumda.
 
 ## Diğer ablasyonlar (beklemede — eğitim donanımı gerekir)
 `ablations/`, `no_moe`, `dense_only`, `bitlinear_off` için iskeletler tutar. Bunlar gerçek GPU
