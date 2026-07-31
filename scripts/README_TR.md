@@ -90,6 +90,7 @@ python3 scripts/chess_5080_onefile.py --mode train --profile production_5080 --f
 - `train_smoke.py` — Küçük offline training sanity loop (CPU/MPS).
 - `cfc_moe_tolerance_check.py` — CfC/MoE loss tolerans kontrolü (<=%1 fark).
 - `liquid_train_impl_benchmark.py` — Opsiyonel Liquid eğitim implementasyonu mikrobenchmark'ı; hedef makine koşu artefaktına bağlanmadıkça yalnızca yerel kanıt sayılır.
+- `liquid_vs_gqa_canonical_benchmark.py` — Kanonik boyutta opsiyonel bileşen-seviyeli `GQA`-vs-`LiquidMixer` mikrobenchmark'ı (train-mode `ms/adım` + decode-mode token-başı gecikme, CUDA/MPS/CPU); sonuçlar yalnızca yerel kanıt, bkz. `BACKLOG_TR.md`.
 - `build_training_outputs_bundle.py` — Kanonik indirilebilir training outputs bundle zip + SHA256 + manifest üreticisi.
 
 ## Review-Ready Araçlar
