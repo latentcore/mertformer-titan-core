@@ -104,4 +104,4 @@ All participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 Report security issues privately via [SECURITY.md](SECURITY.md), never in a public issue.
 
 ## License
-Apache License 2.0 — see [LICENSE](LICENSE). Copyright 2026 Mert Yunlu. Built with Llama — see [NOTICE](NOTICE) and [MODEL_LICENSE.md](MODEL_LICENSE.md).
+Apache License 2.0 — see [LICENSE](LICENSE). Copyright 2026 Mert Yünlü. Built with Llama — see [NOTICE](NOTICE) and [MODEL_LICENSE.md](MODEL_LICENSE.md).

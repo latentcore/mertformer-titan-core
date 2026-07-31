@@ -2,7 +2,7 @@
 # ==============================================================================
 # 🚀 MERTFORMER TITAN - ULTIMATE LAUNCHPAD
 # ------------------------------------------------------------------------------
-# Copyright 2026 Mert Yunlu
+# Copyright 2026 Mert Yünlü
 # Licensed under the Apache License, Version 2.0 (see LICENSE).
 # Version: v1.0 (Build 30) — Pre-Training
 # Status : PRE-TRAINING (UNVERIFIED)

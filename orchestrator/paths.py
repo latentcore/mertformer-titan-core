@@ -2,7 +2,7 @@
 ==============================================================================
 MERTFORMER TITAN (ONYX STORM) - ARCHITECTURAL PATHS
 -------------------------------------------------------------------------------
-Copyright 2026 Mert Yunlu
+Copyright 2026 Mert Yünlü
 Licensed under the Apache License, Version 2.0 (see LICENSE).
 
 NOTE: This module lives under orchestrator/ and is INERT / OUT-OF-SCOPE for the

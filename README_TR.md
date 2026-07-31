@@ -105,4 +105,4 @@ Güvenlik açıklarını asla public bir issue'da değil, [SECURITY_TR.md](SECUR
 özel olarak bildirin.
 
 ## Lisans
-Apache License 2.0 — bkz. [LICENSE](LICENSE) (Türkçe bilgilendirme: [LICENSE_TR](LICENSE_TR)). Telif Hakkı 2026 Mert Yunlu. Built with Llama — bkz. [NOTICE](NOTICE) ve [MODEL_LICENSE_TR.md](MODEL_LICENSE_TR.md).
+Apache License 2.0 — bkz. [LICENSE](LICENSE) (Türkçe bilgilendirme: [LICENSE_TR](LICENSE_TR)). Telif Hakkı 2026 Mert Yünlü. Built with Llama — bkz. [NOTICE](NOTICE) ve [MODEL_LICENSE_TR.md](MODEL_LICENSE_TR.md).

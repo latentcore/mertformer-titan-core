@@ -2,7 +2,7 @@
 ==============================================================================
 MERTFORMER TITAN (ONYX STORM) - COGNITIVE ORCHESTRATOR CORE
 -------------------------------------------------------------------------------
-Copyright 2026 Mert Yunlu
+Copyright 2026 Mert Yünlü
 Licensed under the Apache License, Version 2.0 (see LICENSE).
 
 NOTE (scope): This orchestrator module is inert / out-of-scope for the 45K

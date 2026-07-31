@@ -2,7 +2,7 @@
 ==============================================================================
 MERTFORMER TITAN (ONYX STORM) - GOD MEMORY MODULE
 -------------------------------------------------------------------------------
-Copyright 2026 Mert Yunlu
+Copyright 2026 Mert Yünlü
 Licensed under the Apache License, Version 2.0 (see LICENSE).
 
 Project: Mobile-First LLM Architecture (target: on-device inference)

@@ -26,7 +26,7 @@ opt-out signals carried by those corpora.
 
 Scope of the code license
 -------------------------
-The Apache License 2.0 in LICENSE applies to Mert Yunlu's ORIGINAL code and architecture.
+The Apache License 2.0 in LICENSE applies to Mert Yünlü's ORIGINAL code and architecture.
 Trained weights, when they exist, are a separate layer and are NOT covered by it (see
 MODEL_LICENSE.md). The code license does NOT — and cannot — override the upstream license
 obligations of the Teacher model, the Teacher's outputs, or the third-party datasets
