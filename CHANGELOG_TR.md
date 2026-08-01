@@ -4,6 +4,7 @@ Bu dosya projedeki önemli değişiklikleri takip eder.
 
 > **Bakım notu (2026-07-25'te eklendi):** bu dosya elle bakımı yapılan, otomatik yeniden üretilmeyen bir dosya — bu not var olmadan önce tam bir ay (2026-06-28 → 2026-07-25) bayat kaldı. Gerçek bir `BACKLOG.md`/`DECISIONS.md` girdisi bırakan her closure pass'i, burada (TR) ve `CHANGELOG.md`'de (EN) güncel `## Unreleased - <tarih>` bölümünü de eklemeli/güncellemeli — kısa bir özet yeterli, tam detay `BACKLOG.md`/`DECISIONS.md`'de kalır. Bkz. `reports/change_control_sop.md`.
 > Girdiler sıkı ters-kronolojik sırada tutulur (en yeni en üstte); 2026-07-27 pass'i "Pass 7 (2026-06-13)"in 2026-03-13/2026-02-08 etiketli sürümlerden sonraya yanlış dosyalandığını buldu ve doğru kronolojik yerine taşıdı — ayrıntı için aşağıdaki girdiye bakın.
+> **Kapsam notu:** bu dosyanın en eski girdisi `v0.1.0-pilot-ready` (2026-02-08) — bu proje için changelog disiplini burada başladı, projenin kendisi burada başlamadı. Öncesi burada özetlenmiyor; o tarihten öncesi için `git log` tek doğru kaynak.
 
 ## Unreleased - 2026-08-01
 

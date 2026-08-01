@@ -4,6 +4,7 @@ All notable changes to this project are tracked in this file.
 
 > **Maintenance note (added 2026-07-25):** this file is hand-maintained, not auto-regenerated — it drifted a full month (2026-06-28 → 2026-07-25) before this note existed. Any closure pass that lands a real `BACKLOG.md`/`DECISIONS.md` entry should also add/update the current `## Unreleased - <date>` section here (EN) and in `CHANGELOG_TR.md` (TR) — a short summary is enough, full detail stays in `BACKLOG.md`/`DECISIONS.md`. See `reports/change_control_sop.md`.
 > Entries are kept in strict reverse-chronological order (newest first); a 2026-07-27 pass found "Pass 7 (2026-06-13)" mis-filed after the 2026-03-13/2026-02-08 tagged releases and moved it back to its correct chronological slot — see that entry below for detail.
+> **Coverage note:** this file's earliest entry is `v0.1.0-pilot-ready` (2026-02-08) — that is where changelog discipline for this project began, not where the project itself began. Earlier work is not summarized here; `git log` is the source of truth for anything before that date.
 
 ## Unreleased - 2026-08-01
 
