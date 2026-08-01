@@ -2060,7 +2060,7 @@ def build_state(preferred_device: Optional[str]) -> ArenaState:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Local web GUI for the trained MertFormer Chess checkpoint")
     parser.add_argument("--port", type=int, default=DEFAULT_PORT)
-    parser.add_argument("--device", choices=["cpu", "mps"], default=None)
+    parser.add_argument("--device", choices=["cpu", "mps", "cuda"], default=None)
     parser.add_argument("--no-browser", action="store_true")
     args = parser.parse_args()
 

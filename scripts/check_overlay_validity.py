@@ -33,7 +33,6 @@ _PROBE = (
 
 
 def check_overlay(yaml_name: str) -> tuple:
-    env = {"MERTFORMER_MODEL_CONFIG": yaml_name, "PATH": "/usr/bin:/bin:/usr/local/bin"}
     import os
 
     full_env = dict(os.environ)
