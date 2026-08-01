@@ -15,7 +15,7 @@ If you are unsure, run the single-command verification first: `bash scripts/veri
 - Official/canonical Kaggle one-cell script (single-T4 copy/paste lane): `scripts/kaggle_onecell_t4_build30.py`
 - Legacy/reference one-file trainer: `scripts/kaggle_onefile_demo_build30.py`
 - Legacy/reference fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
-- Text-understanding PoC one-file script: `scripts/kaggle_onefile_demo_build30_text_understanding.py`
+- Legacy/reference text-understanding PoC one-file script (rule-based extraction, no model trained/run despite the naming -- see the script's own header): `scripts/kaggle_onefile_demo_build30_text_understanding.py`
 - Windows RTX 5080 chess PoC one-file script: `scripts/chess_5080_onefile.py`
 - Canonical general 5080 final one-file script: `scripts/mertformer_5080_final_onefile.py`
 - General 5080 delivery builder: `scripts/build_mertformer_5080_final_delivery.py`

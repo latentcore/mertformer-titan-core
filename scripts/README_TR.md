@@ -15,7 +15,7 @@ Emin değilseniz önce tek komut doğrulama çalıştırın: `bash scripts/verif
 - Resmi/kanonik Kaggle one-cell scripti (tek-T4 copy/paste yolu): `scripts/kaggle_onecell_t4_build30.py`
 - Legacy/reference one-file trainer: `scripts/kaggle_onefile_demo_build30.py`
 - Colab fastproof companion one-file script: `scripts/kaggle_onefile_demo_build30_colab_math_fastproof.py`
-- Text-understanding PoC one-file script: `scripts/kaggle_onefile_demo_build30_text_understanding.py`
+- Legacy/reference text-understanding PoC tek-dosya script'i (kural-tabanlı çıkarım, isme rağmen hiçbir model eğitilmiyor/çalıştırılmıyor — script'in kendi başlığına bakın): `scripts/kaggle_onefile_demo_build30_text_understanding.py`
 - Windows RTX 5080 satranç PoC one-file script: `scripts/chess_5080_onefile.py`
 - Kanonik genel 5080 final one-file scripti: `scripts/mertformer_5080_final_onefile.py`
 - Genel 5080 delivery builder: `scripts/build_mertformer_5080_final_delivery.py`
