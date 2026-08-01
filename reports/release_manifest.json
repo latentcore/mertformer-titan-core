@@ -1,7 +1,7 @@
 {
-  "generated_utc": "2026-07-31T21:30:38.131652+00:00",
+  "generated_utc": "2026-08-01T10:38:15.317652+00:00",
   "root": ".",
-  "entry_count": 964,
+  "entry_count": 965,
   "entries": [
     {
       "path": ".github/CODEOWNERS",
@@ -167,9 +167,9 @@
     },
     {
       "path": "GOVERNANCE.md",
-      "size_bytes": 2245,
-      "sha256": "b0e7b44a9623f2fbb09bf317023f459ed89bad33c473ce4aff899c97081a4f7c",
-      "mtime_utc": "2026-07-31T00:08:05.421543+00:00"
+      "size_bytes": 2246,
+      "sha256": "0a13d8d4e473d6b5f1f6caec3d7572a116e9a0c46f6653d41e1133acb35832f2",
+      "mtime_utc": "2026-08-01T10:37:26.014200+00:00"
     },
     {
       "path": "GOVERNANCE_TR.md",
@@ -311,9 +311,9 @@
     },
     {
       "path": "REPRODUCE.md",
-      "size_bytes": 4672,
-      "sha256": "6a757c0fc739df3a403e4676c565476940db610c8f7eb039c87d9a7d8c7e3056",
-      "mtime_utc": "2026-07-31T20:01:37.727954+00:00"
+      "size_bytes": 4673,
+      "sha256": "8e06e9da71bcea843692496b9f844be8301c44ad833724dd6d5964ba6ee93b6f",
+      "mtime_utc": "2026-08-01T10:37:41.014806+00:00"
     },
     {
       "path": "REPRODUCE_TR.md",
@@ -563,9 +563,9 @@
     },
     {
       "path": "apps/chess_gui/README.md",
-      "size_bytes": 848,
-      "sha256": "0b96190a93c7f205d4109d2941a731c72052448fd54297c9252138e960803d26",
-      "mtime_utc": "2026-07-30T20:06:40.831277+00:00"
+      "size_bytes": 1395,
+      "sha256": "9cbd34e60e0c96bc074ee5ea347fabb02189a569edf58b34e713afaaf11e3e5c",
+      "mtime_utc": "2026-08-01T10:28:08.504495+00:00"
     },
     {
       "path": "apps/chess_gui/checkpoints/README.md",
@@ -2374,6 +2374,12 @@
       "mtime_utc": "2026-07-30T20:06:41.015680+00:00"
     },
     {
+      "path": "reports/benchmarks/ternary_kernel_microbench_s25/README_TR.md",
+      "size_bytes": 2584,
+      "sha256": "91151940285e4c446542795427940c1f6a2580aeb2380fd58a50be69b1bb6f76",
+      "mtime_utc": "2026-08-01T10:37:01.860370+00:00"
+    },
+    {
       "path": "reports/benchmarks/ternary_kernel_microbench_s25/results.json",
       "size_bytes": 3243,
       "sha256": "100046009ac8b24deb1531e1286d6c3716822623c47d9af38175028eb7b33588",
@@ -2765,9 +2771,9 @@
     },
     {
       "path": "reports/docs_dedup_canonical_list.md",
-      "size_bytes": 17876,
-      "sha256": "4985ba799529fb05cc1e0c7e7b54c4598a6b1095de5e42c39e533dcaa29e0fdf",
-      "mtime_utc": "2026-07-31T20:09:21.698341+00:00"
+      "size_bytes": 18012,
+      "sha256": "8fd42c9d24ec47473b48c7dd5a12d243e0f4076b5effe957e0eab062cfa6007c",
+      "mtime_utc": "2026-08-01T10:37:54.202583+00:00"
     },
     {
       "path": "reports/docs_packages_hash_manifest.json",
@@ -2951,15 +2957,15 @@
     },
     {
       "path": "reports/folder_drift_report.json",
-      "size_bytes": 4116,
-      "sha256": "facf1f96f8efb0b47c784d5809ea052eb7332a84560bf48a8c537f954b4c8291",
-      "mtime_utc": "2026-07-31T20:47:39.496375+00:00"
+      "size_bytes": 4191,
+      "sha256": "b192a9eb61431d536f2648740367967a5896038f06edbc407a75cb22e8c22aec",
+      "mtime_utc": "2026-08-01T10:37:54.203583+00:00"
     },
     {
       "path": "reports/folder_structure_policy.md",
       "size_bytes": 534,
       "sha256": "bd9f3672570468d3623ccafad4d551332946a35f260f648fe57deaf35d2535cb",
-      "mtime_utc": "2026-07-31T20:09:21.698341+00:00"
+      "mtime_utc": "2026-08-01T10:37:54.202583+00:00"
     },
     {
       "path": "reports/github_policy_report.json",
@@ -3085,7 +3091,7 @@
       "path": "reports/linkcheck_report.json",
       "size_bytes": 189,
       "sha256": "7613faf87c1bf289d259c6677ac96e78cc2a0fe74fc5f16f40d69c7eaa4902ba",
-      "mtime_utc": "2026-07-31T21:27:50.754038+00:00"
+      "mtime_utc": "2026-08-01T10:28:38.293365+00:00"
     },
     {
       "path": "reports/liquid_keep_or_drop_brief.md",
@@ -3929,15 +3935,15 @@
     },
     {
       "path": "scripts/README.md",
-      "size_bytes": 24328,
-      "sha256": "dcfab6e3aa0f6c9d0894cd90a254e85a2a4035e030f75e9df9939b9c30b678b6",
-      "mtime_utc": "2026-07-30T20:06:41.122279+00:00"
+      "size_bytes": 24577,
+      "sha256": "db1300555d183bd9eef7545f5b5386d7c1ff036ed778028291415965a0326f36",
+      "mtime_utc": "2026-07-31T21:34:30.493422+00:00"
     },
     {
       "path": "scripts/README_TR.md",
-      "size_bytes": 21907,
-      "sha256": "0e83e492dbe80c240807a0870eb7577d6ff4ab4b89df90569a6fcdbbf5eacbd9",
-      "mtime_utc": "2026-07-30T20:06:41.122279+00:00"
+      "size_bytes": 22168,
+      "sha256": "a69b0b34ba0d1565843f774524545a75cdaa1c81acb82e73cf844bfdea6bcfeb",
+      "mtime_utc": "2026-07-31T21:34:41.520736+00:00"
     },
     {
       "path": "scripts/RUN_NUTRITION5K.bat",

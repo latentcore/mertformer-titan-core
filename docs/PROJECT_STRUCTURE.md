@@ -362,6 +362,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   │   └── zip_manifest.json  # JSON data artifact
 │   │   ├── ternary_kernel_microbench_s25/  # directory
 │   │   │   ├── README.md  # primary documentation (EN)
+│   │   │   ├── README_TR.md  # Turkish document counterpart
 │   │   │   ├── results.json  # JSON data artifact
 │   │   │   └── ternary_matmul_arm.cpp  # C++ source file
 │   │   ├── text_understanding/  # directory

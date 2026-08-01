@@ -169,6 +169,7 @@ Generated automatically.
 - `reports\benchmarks\README_TR.md`
 - `reports\benchmarks\summary.md`
 - `reports\benchmarks\ternary_kernel_microbench_s25\README.md`
+- `reports\benchmarks\ternary_kernel_microbench_s25\README_TR.md`
 - `reports\benchmarks\text_understanding\README.md`
 - `reports\benchmarks\text_understanding\README_TR.md`
 - `reports\benchmarks\text_understanding\run_20260315_180151_compare.md`
@@ -476,6 +477,7 @@ Generated automatically.
   - `reports\benchmarks\linkedin_sweetspot\README_TR.md`
   - `reports\benchmarks\math_fastproof\README_TR.md`
   - `reports\benchmarks\README_TR.md`
+  - `reports\benchmarks\ternary_kernel_microbench_s25\README_TR.md`
   - `reports\benchmarks\text_understanding\README_TR.md`
   - `reports\pilots\README_TR.md`
   - `scripts\README_TR.md`

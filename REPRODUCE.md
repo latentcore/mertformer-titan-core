@@ -1,7 +1,7 @@
 # REPRODUCE — verify & launch
 
 Canonical command surface (consolidated from `reports/final_commands.md` + `repro/`).
-Turkish: [REPRODUCE_TR.md](REPRODUCE_TR.md).
+Türkçe: [REPRODUCE_TR.md](REPRODUCE_TR.md).
 
 ## 0. Bootstrap (offline-first)
 ```bash

@@ -1,7 +1,7 @@
 # GOVERNANCE — policies, contracts, change control
 
 Single index for the repo's governance surfaces (previously scattered across `reports/`).
-Turkish: [GOVERNANCE_TR.md](GOVERNANCE_TR.md). Deliberate decisions: [DECISIONS.md](DECISIONS.md).
+Türkçe: [GOVERNANCE_TR.md](GOVERNANCE_TR.md). Deliberate decisions: [DECISIONS.md](DECISIONS.md).
 
 ## Change control
 - Commits scoped + reason-coded; CI gate name `verify` (see [REPRODUCE.md](REPRODUCE.md)).
