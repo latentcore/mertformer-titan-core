@@ -7,6 +7,30 @@ Canonical backlog entry point. Turkish: [BACKLOG_TR.md](BACKLOG_TR.md). Seed det
 
 **Scope note (2026-07-25):** the small set of genuinely-standalone pre-45K action items is what's enumerated below by name (dataset pinning, the 5 low-priority code-level items in the "safe pass" section, etc.) — not the entire backlog. Most of what's filed under "Post-45K" elsewhere in this doc (checkpoint-bound eval probes, benchmark regression gates, publication/release prep) is **not** separate pending work that needs scheduling before or alongside the run — those items are structurally blocked on a real checkpoint existing (`SKIPPED`/`NO_CHECKPOINT` today, by design) and execute as the natural next step once the 45K run itself produces one. They don't need a decision now; the 45K run is the thing that unblocks them.
 
+## Chess onefile — independent review found 3 real drift/bugs (2026-08-02), not yet fixed in this file
+An independent code-review pass, scoping a separate rewrite of the chess lane
+(`ChessFormerAI/chessformer`, developed in an isolated directory using `scripts/chess_5080_onefile.py`
+and `layers/` as read-only reference — the package itself lives outside this repo, not
+part of it), found three confirmed issues still live in `scripts/chess_5080_onefile.py`:
+- **`is_causal` mislabeling** — `chess_5080_onefile.py:2533` sets `is_causal=True` in its
+  attention call, directly contradicting the file's own documented claim at `:7451` that
+  the model sees the whole board non-causally. Code and its own stated design disagree.
+- **Liquid clamp train/eval mismatch** — the canonical `layers/liquid.py:93-94` clamps
+  `tau` to `[1e-4, 5.0]`; `chess_5080_onefile.py`'s eager (training) path lacks this clamp
+  around `:2597`, but its own quantized inference kernel applies it — the model would be
+  trained under one math and evaluated under a different one.
+- **MoE dispatch capacity drift** — `layers/moe.py`'s capacity-dispatch path was vectorized
+  and fixed on 2026-07-29 (see the "Hot-path fixes" entry below); `chess_5080_onefile.py`
+  still carries the pre-fix, unvectorized form.
+
+None of this is fixed here — the rewrite addressing all three lives entirely in the
+separate, isolated `ChessFormerAI/chessformer` package, deliberately not merged into this
+repo pending a real training run on the target hardware. `scripts/chess_5080_onefile.py`
+itself is unchanged and has never been run (`CHESS_5080_POC_INTERNAL.md` already documents
+its reports as "never generated/committed here"), so this is a known-bug note for an
+unexercised code path, not a regression in anything actually used. The fold-back-or-deprecate
+decision for this file is deferred until the rewrite has real-hardware results to validate against.
+
 ## Analytical param-count estimator bug — FIXED (2026-07-27), no training-math change
 A cross-check of `ARCHITECTURE.md`'s stated `~1.86B active params (MoE top-2 + shared)` against this repo's two independent analytical estimators — `scripts/scaling_audit_math.py::estimate_params()` and `config/config.py::_estimate_total_params()` (the latter feeds the real `auto_configure_batch_size()` VRAM-budgeting logic, not just a reporting tool) — found both undercounting for two compounding reasons: (1) both reused the dense-layer `intermediate_size` (5632) for MoE-expert sizing instead of the real, larger `moe_intermediate` (8192) that `layers/moe.py`'s `BitSwiGLU` experts actually use; (2) both omitted `layers/moe.py`'s always-instantiated, always-active **shared expert** (`self.shared_expert = BitSwiGLU(hidden_size, moe_intermediate)`, unconditionally added to every token's output via a learnable sigmoid gate) entirely — a 9th, always-active expert-sized block that is not part of `num_experts`. Net effect: active params were undercounted by ~44% (~1.06B vs. the real ~1.886B) and total params by ~8%. **Fixed** in both files to mirror the real architecture; `scaling_audit_math.py` now reports `~3.698B` total / `~1.886B` active, matching `ARCHITECTURE.md`'s independently-sourced figure. 4 new regression tests: `tests/test_scaling_audit_math.py` (3 tests, isolated-stub `cfg` via `monkeypatch` rather than the live global singleton, to avoid the test-order-dependent pollution class already documented elsewhere in this file) and one addition to `tests/test_config_dynamic_param_count.py` (hand-derives the correct GQA-attention + shared-expert total and pins the exact delta introduced by the fix). Pure param-accounting/tooling fix — no training-loop, LR, or architecture change; `auto_configure_batch_size()`'s VRAM math is now more accurate but this repo has never run it against real GPU hardware to begin with, so no prior claim is invalidated. Test count: `622 → 626 passed, 5 skipped` (+4).
 

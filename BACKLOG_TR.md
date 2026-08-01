@@ -7,6 +7,33 @@ Kanonik backlog giriş noktası. English: [BACKLOG.md](BACKLOG.md). Tohum ayrın
 
 **Kapsam notu (2026-07-25):** gerçekten bağımsız pre-45K aksiyon maddelerinin küçük kümesi, aşağıda isim isim sayılanlardır (dataset pinleme, "safe pass" bölümündeki 5 düşük-öncelikli kod-seviyesi madde, vb.) — bu dokümanın tamamı değil. Bu dokümanın başka yerlerinde "Post-45K" altında dosyalanmış olanların çoğu (checkpoint-bağlı eval probe'ları, benchmark regression gate'leri, yayın/release hazırlığı) **ayrı, 45K koşusundan önce veya onunla birlikte planlanması gereken bekleyen bir iş değildir** — bu maddeler yapısal olarak gerçek bir checkpoint'in var olmasına bağlıdır (bugün tasarım gereği `SKIPPED`/`NO_CHECKPOINT`) ve 45K koşusunun kendisi bir checkpoint ürettiği an doğal bir sonraki adım olarak çalışırlar. Şimdi bir karar gerektirmezler; onları açan şey 45K koşusunun kendisidir.
 
+## Satranç onefile — bağımsız inceleme 3 gerçek drift/bug buldu (2026-08-02), bu dosyada henüz düzeltilmedi
+Satranç hattının ayrı bir yeniden yazımını kapsamlandıran bağımsız bir kod-inceleme pass'i
+(`ChessFormerAI/chessformer` — `scripts/chess_5080_onefile.py` ve `layers/`'ı salt-okunur
+referans olarak kullanan, izole bir dizinde geliştirilen paketin kendisi bu reponun dışında
+yaşıyor, parçası değil), `scripts/chess_5080_onefile.py`'de hâlâ geçerli 3 doğrulanmış sorun
+buldu:
+- **`is_causal` yanlış-etiketleme** — `chess_5080_onefile.py:2533`, attention çağrısında
+  `is_causal=True` set ediyor; bu, dosyanın kendi `:7451`'deki belgelenmiş iddiasıyla
+  (modelin tahtanın tamamını non-causal şekilde gördüğü) doğrudan çelişiyor. Kod ile kendi
+  belirttiği tasarım birbirini yalanlıyor.
+- **Liquid clamp eğitim/değerlendirme uyuşmazlığı** — kanonik `layers/liquid.py:93-94`,
+  `tau`'yu `[1e-4, 5.0]`'a clamp'liyor; `chess_5080_onefile.py`'nin eager (eğitim) yolu
+  `:2597` civarında bu clamp'ten yoksun, ama kendi quantized inference kernel'i uyguluyor —
+  model bir matematikle eğitilip başka bir matematikle değerlendirilmiş olurdu.
+- **MoE dispatch kapasite drift'i** — `layers/moe.py`'nin kapasite-dispatch yolu 2026-07-29'da
+  vektörize edilip düzeltildi (aşağıdaki "Hot-path fixes" girdisine bkz.); `chess_5080_onefile.py`
+  hâlâ düzeltme-öncesi, vektörize-olmayan hâli taşıyor.
+
+Bunların hiçbiri burada düzeltilmedi — üçünü de ele alan yeniden yazım tamamen ayrı, izole
+`ChessFormerAI/chessformer` paketinde yaşıyor; hedef donanımda gerçek bir eğitim koşusu
+olana kadar bilinçli olarak bu repoya birleştirilmedi. `scripts/chess_5080_onefile.py`'nin
+kendisi değişmedi ve hiç çalıştırılmadı (`CHESS_5080_POC_INTERNAL.md` zaten raporlarının
+"never generated/committed here" olduğunu belgeliyor) — yani bu, kullanılmış bir şeyde
+regresyon değil, hiç koşulmamış bir kod yolu için bilinen-bug notu. Bu dosyanın geri-taşınma
+ya da deprecated işaretlenme kararı, yeniden yazımın gerçek donanım sonuçları elde edene
+kadar ertelendi.
+
 ## Analitik param-sayısı tahmincisi bug'ı — DÜZELTİLDİ (2026-07-27), eğitim-matematiği değişmedi
 `ARCHITECTURE.md`'nin belirttiği `~1.86B aktif param (MoE top-2 + shared)` rakamı, bu reponun iki bağımsız analitik tahmincisiyle (`scripts/scaling_audit_math.py::estimate_params()` ve `config/config.py::_estimate_total_params()` — ikincisi gerçek `auto_configure_batch_size()` VRAM-bütçeleme mantığını besliyor, yalnız raporlama aracı değil) çapraz kontrol edildiğinde, ikisinin de iki birleşen sebepten eksik saydığı bulundu: (1) ikisi de MoE-expert boyutlandırması için dense-katman `intermediate_size`'ını (5632) kullanıyordu, `layers/moe.py`'nin `BitSwiGLU` expert'lerinin gerçekte kullandığı daha büyük `moe_intermediate` (8192) yerine; (2) ikisi de `layers/moe.py`'nin her zaman instantiate edilen, her zaman aktif **shared expert**'ini (`self.shared_expert = BitSwiGLU(hidden_size, moe_intermediate)`, öğrenilebilir bir sigmoid gate ile her token'ın çıktısına koşulsuz eklenir) tamamen atlıyordu — `num_experts`'e dahil olmayan, her zaman aktif 9. bir expert-boyutlu blok. Net etki: aktif parametreler ~%44 (gerçek ~1.886B yerine ~1.06B), toplam parametreler ~%8 eksik sayılıyordu. Her iki dosyada da gerçek mimariye uyacak şekilde **düzeltildi**; `scaling_audit_math.py` artık `~3.698B` toplam / `~1.886B` aktif raporluyor, `ARCHITECTURE.md`'nin bağımsız kaynaklı rakamıyla eşleşiyor. 4 yeni regresyon testi: `tests/test_scaling_audit_math.py` (3 test, global singleton yerine `monkeypatch` ile izole stub `cfg`) ve `tests/test_config_dynamic_param_count.py`'ye bir ekleme. Salt param-muhasebesi/araç düzeltmesi — eğitim döngüsü, LR veya mimari değişikliği yok. Test sayısı: `622 → 626 passed, 5 skipped` (+4).
 
