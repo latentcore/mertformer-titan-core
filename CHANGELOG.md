@@ -5,6 +5,11 @@ All notable changes to this project are tracked in this file.
 > **Maintenance note (added 2026-07-25):** this file is hand-maintained, not auto-regenerated — it drifted a full month (2026-06-28 → 2026-07-25) before this note existed. Any closure pass that lands a real `BACKLOG.md`/`DECISIONS.md` entry should also add/update the current `## Unreleased - <date>` section here (EN) and in `CHANGELOG_TR.md` (TR) — a short summary is enough, full detail stays in `BACKLOG.md`/`DECISIONS.md`. See `reports/change_control_sop.md`.
 > Entries are kept in strict reverse-chronological order (newest first); a 2026-07-27 pass found "Pass 7 (2026-06-13)" mis-filed after the 2026-03-13/2026-02-08 tagged releases and moved it back to its correct chronological slot — see that entry below for detail.
 
+## Unreleased - 2026-08-01
+
+### Fixed
+- `tests/test_kaggle_onefile_config.py`: three tests (`test_run_config_schema_v2_defaults_ok`, `test_run_config_unknown_key_rejected_in_strict_mode`, `test_required_core_keys_present`) called `resolve_runtime_config()` unscoped, so its Colab-mirroring default `out_dir` fell back to a real `~/Downloads/content/mertformer_outputs` and got `mkdir()`'d as a side effect on every pytest run, on any OS — the same bug class already fixed once for a different test in `tests/test_kaggle_onefile_colab_math_fastproof.py`, independently uncovered here since that earlier fix only touched the one test it landed in. Fixed with the same proven pattern: `tmp_path`-scoped `out_dir`/`artifact_root` passed into the config before calling `resolve_runtime_config()`. Verified: stray directory deleted and confirmed absent after a full suite run (`721 passed, 9 skipped, 1 xfailed` — identical count, no regression), plus standalone `ruff`/`bandit`/`interrogate` (all clean; `final_one_shot.sh` itself not required for a test-file-only change). Full detail: `BACKLOG.md`.
+
 ## Unreleased - 2026-07-31
 
 ### Added

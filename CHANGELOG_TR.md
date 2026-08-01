@@ -5,6 +5,11 @@ Bu dosya projedeki önemli değişiklikleri takip eder.
 > **Bakım notu (2026-07-25'te eklendi):** bu dosya elle bakımı yapılan, otomatik yeniden üretilmeyen bir dosya — bu not var olmadan önce tam bir ay (2026-06-28 → 2026-07-25) bayat kaldı. Gerçek bir `BACKLOG.md`/`DECISIONS.md` girdisi bırakan her closure pass'i, burada (TR) ve `CHANGELOG.md`'de (EN) güncel `## Unreleased - <tarih>` bölümünü de eklemeli/güncellemeli — kısa bir özet yeterli, tam detay `BACKLOG.md`/`DECISIONS.md`'de kalır. Bkz. `reports/change_control_sop.md`.
 > Girdiler sıkı ters-kronolojik sırada tutulur (en yeni en üstte); 2026-07-27 pass'i "Pass 7 (2026-06-13)"in 2026-03-13/2026-02-08 etiketli sürümlerden sonraya yanlış dosyalandığını buldu ve doğru kronolojik yerine taşıdı — ayrıntı için aşağıdaki girdiye bakın.
 
+## Unreleased - 2026-08-01
+
+### Düzeltilenler
+- `tests/test_kaggle_onefile_config.py`: üç test (`test_run_config_schema_v2_defaults_ok`, `test_run_config_unknown_key_rejected_in_strict_mode`, `test_required_core_keys_present`) `resolve_runtime_config()`'ı scope'lanmadan çağırıyordu, bu yüzden onun Colab-taklit varsayılan `out_dir`'ı gerçek bir `~/Downloads/content/mertformer_outputs`'a düşüp her pytest koşusunda yan etki olarak `mkdir()` ediliyordu, herhangi bir işletim sisteminde — daha önce farklı bir test için `tests/test_kaggle_onefile_colab_math_fastproof.py`'de zaten bir kez düzeltilmiş aynı bug sınıfı, o önceki düzeltme sadece indiği tek testi kapsadığı için burada bağımsız olarak bulundu. Aynı kanıtlanmış desenle düzeltildi: `resolve_runtime_config()`'ı çağırmadan önce config'e `tmp_path`-scope'lu `out_dir`/`artifact_root` verilmesi. Doğrulandı: sızıntı klasörü silindi ve tam suite koşusundan sonra da yok olduğu teyit edildi (`721 passed, 9 skipped, 1 xfailed` — birebir aynı sayı, regresyon yok), artı bağımsız `ruff`/`bandit`/`interrogate` (hepsi temiz; sadece test-dosyası değişikliği olduğu için `final_one_shot.sh`'ın kendisine gerek yok). Tam detay: `BACKLOG_TR.md`.
+
 ## Unreleased - 2026-07-31
 
 ### Eklenenler
