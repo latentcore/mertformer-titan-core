@@ -20,10 +20,17 @@ FONT_BOLD = "MertFormerSansBold"
 FONT_REGULAR_CANDIDATES = [
     Path("/System/Library/Fonts/Supplemental/Arial Unicode.ttf"),
     Path("/System/Library/Fonts/Supplemental/Arial.ttf"),
+    Path("C:/Windows/Fonts/arial.ttf"),
+    Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+    Path("/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"),
 ]
 FONT_BOLD_CANDIDATES = [
     Path("/System/Library/Fonts/Supplemental/Arial Bold.ttf"),
     Path("/System/Library/Fonts/Supplemental/Arial.ttf"),
+    Path("C:/Windows/Fonts/arialbd.ttf"),
+    Path("C:/Windows/Fonts/arial.ttf"),
+    Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
+    Path("/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"),
 ]
 
 
