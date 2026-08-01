@@ -96,6 +96,10 @@ HISTORICAL_ALLOWLIST = frozenset({
     # The coverage guard itself -- its regex test feeds sample summary lines through
     # STAT_RE. It flagged itself the moment it was staged, which is the guard working.
     "tests/test_test_stat_claim_coverage.py",
+    # Quotes a real historical commit message verbatim as a style example (commit
+    # 0b4f79d6's own "Verified:" line) -- frozen by design, not a live status claim.
+    "CONTRIBUTING.md",
+    "CONTRIBUTING_TR.md",
 })
 
 
