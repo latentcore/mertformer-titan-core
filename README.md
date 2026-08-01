@@ -34,6 +34,7 @@ This repo is a **pre-training**, **proof-of-system** PoC; it is explicitly inten
 bash scripts/bootstrap_venv.sh        # .titan-venv with pinned deps (Python 3.11)
 bash scripts/verify_all.sh            # offline: 721 passed, 9 skipped + gates (no GPU, no network)
 bash zero_touch_start.sh --check-only # readiness verdict + blockers (no training)
+python scripts/train_smoke.py --cleanup  # tiny CUDA/MPS/CPU sanity loop -- proves it trains, not a claim
 ```
 Full verify/launch flow: [REPRODUCE.md](REPRODUCE.md).
 

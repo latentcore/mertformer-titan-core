@@ -34,6 +34,7 @@ Bu repo bir **pre-training**, **proof-of-system** PoC'sidir; production-ready/se
 bash scripts/bootstrap_venv.sh        # pinli bağımlılıklarla .titan-venv (Python 3.11)
 bash scripts/verify_all.sh            # offline: 721 passed, 9 skipped + gate'ler (GPU/ağ yok)
 bash zero_touch_start.sh --check-only # readiness verdict + engeller (eğitim yok)
+python scripts/train_smoke.py --cleanup  # küçük CUDA/MPS/CPU sanity loop -- gerçekten eğitildiğini kanıtlar, iddia değildir
 ```
 Tam doğrulama/başlatma akışı: [REPRODUCE_TR.md](REPRODUCE_TR.md).
 

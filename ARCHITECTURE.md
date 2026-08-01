@@ -21,6 +21,14 @@
 | Active params / token | ~1.86B (MoE top-2 + shared) | `scripts/scaling_audit_math.py` |
 | Training | Offline Top-K knowledge distillation from `meta-llama/Llama-3.3-70B-Instruct` | `scripts/precompute_logits_topk.py`, `train/train.py` |
 
+## Layer flow (per decoder layer, x18)
+
+```text
+x → RMSNorm → GQA Attention (16q/8kv, RoPE θ=100000) → +x
+  → RMSNorm → FFN: BitNet SwiGLU (dense)  |  every 3rd layer: MoE (8 experts top-2 + shared) → +x
+  → layers [4, 10, 16] only: Liquid/CfC mixer (continuous-time recurrence) → +x
+```
+
 ## Components and the *why*
 
 - **BitLinear (BitNet b1.58)** — ternary {-1,0,+1} weight simulation via straight-through
