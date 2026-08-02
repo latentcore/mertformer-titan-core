@@ -75,6 +75,11 @@ iddia disiplini. Bugün neyin *ölçülmüş*, neyin *hedef* ya da *vizyon* oldu
 [STATUS_TR.md](STATUS_TR.md)'ye bakın; bu ayrım bilinçlidir ve
 [TRUTH_MATRIX_TR.md](TRUTH_MATRIX_TR.md) tarafından zorlanır.
 
+**Compute sponsorluğu:** bu reponun eğitilmiş bir checkpoint'e olan tek gerçek engeli,
+kanonik 45K koşusu için GPU süresi (H100/H200). Kurumunuz compute kredisi veya kısa bir
+kiralama penceresi sunabiliyorsa iletişime geçin — bu koşunun önündeki tam kontrol listesi
+için [BACKLOG_TR.md](BACKLOG_TR.md)'ye bakın.
+
 **İletişim:** [mert.yunlu08@gmail.com](mailto:mert.yunlu08@gmail.com) — ya da bu depoda
 bir issue açın.
 

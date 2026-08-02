@@ -75,6 +75,11 @@ and claim discipline. Read [STATUS.md](STATUS.md) for what is *measured* today v
 is *target* or *vision*; the separation is deliberate and enforced by
 [TRUTH_MATRIX.md](TRUTH_MATRIX.md).
 
+**Compute sponsorship:** the one real gap between this repo and a trained checkpoint is
+GPU time for the canonical 45K run (H100/H200). If your organization can offer compute
+credits or a short rental window, reach out — [BACKLOG.md](BACKLOG.md) has the exact
+pre-run checklist this would unblock.
+
 **Contact:** [mert.yunlu08@gmail.com](mailto:mert.yunlu08@gmail.com) — or open an issue
 on this repository.
 
