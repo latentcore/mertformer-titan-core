@@ -1,0 +1,179 @@
+{
+  "schema": "chessformer_puzzle_report_v1",
+  "status": "completed",
+  "source": "<REDACTED_LOCAL_PATH>",
+  "sample_size_requested": 5000,
+  "puzzles_attempted": 5000,
+  "solved_strict": 2289,
+  "accuracy_strict": 0.4578,
+  "solved_relaxed": 2314,
+  "accuracy_relaxed": 0.4628,
+  "by_rating_band": {
+    "0-1000": {
+      "puzzles": 1153,
+      "solved": 847,
+      "accuracy": 0.7346
+    },
+    "1000-1400": {
+      "puzzles": 1342,
+      "solved": 767,
+      "accuracy": 0.5715
+    },
+    "1400-1800": {
+      "puzzles": 1103,
+      "solved": 449,
+      "accuracy": 0.4071
+    },
+    "1800-2200": {
+      "puzzles": 867,
+      "solved": 182,
+      "accuracy": 0.2099
+    },
+    "2200-2600": {
+      "puzzles": 428,
+      "solved": 40,
+      "accuracy": 0.0935
+    },
+    "2600-10000": {
+      "puzzles": 107,
+      "solved": 4,
+      "accuracy": 0.0374
+    }
+  },
+  "selection_mode": "policy",
+  "elapsed_sec": 1217.3,
+  "sample_failures": [
+    {
+      "ply": 1,
+      "expected": "d8b8",
+      "played": "a8b8",
+      "fen": "r2qbrk1/5ppp/p3p3/3pN1N1/P5Q1/2P5/2P2PPP/1K1R3R b - - 0 20"
+    },
+    {
+      "ply": 3,
+      "expected": "b4d4",
+      "played": "h7h5",
+      "fen": "4r1k1/1p3bpp/5p2/p2p4/Pq1N2P1/1P2P2P/4QP2/2R3K1 b - - 0 32"
+    },
+    {
+      "ply": 1,
+      "expected": "d8d2",
+      "played": "e3a3",
+      "fen": "3r3k/6p1/4p2p/5p2/1P6/P3qP2/2Q3PP/2R2K2 b - - 1 34"
+    },
+    {
+      "ply": 1,
+      "expected": "f6f1",
+      "played": "f6e5",
+      "fen": "r3kb1r/ppp1npp1/3p1q1n/4P3/2B1P1Qp/2PP3P/PP4P1/RNB2RK1 b kq - 0 12"
+    },
+    {
+      "ply": 1,
+      "expected": "a5c7",
+      "played": "a5d2",
+      "fen": "1k5r/1p1R4/3p2p1/Q1pPp3/2P1P3/KP6/P2qr3/8 w - - 2 39"
+    },
+    {
+      "ply": 3,
+      "expected": "h6g7",
+      "played": "f4e5",
+      "fen": "r1bQ4/1p4pk/4pr1P/4p2n/2q2P1P/2N5/PKP5/3R2R1 w - - 2 25"
+    },
+    {
+      "ply": 1,
+      "expected": "d1e2",
+      "played": "g5e6",
+      "fen": "2r2qkr/p1pnb1pp/1p3n2/3P2N1/2P5/8/PP3PPP/R1BQR1K1 w - - 3 18"
+    },
+    {
+      "ply": 1,
+      "expected": "c4d5",
+      "played": "e4g3",
+      "fen": "r2q1rk1/ppp1npp1/7p/3n1b1Q/1bB1N3/5N2/PB3PPP/R4RK1 w - - 2 14"
+    },
+    {
+      "ply": 1,
+      "expected": "e3f5",
+      "played": "d2d4",
+      "fen": "3r3r/4npk1/1p1p4/p2Ppp1p/P1Pq3P/1P2N1PB/3Q1P1K/4R3 w - - 2 30"
+    },
+    {
+      "ply": 1,
+      "expected": "e1e3",
+      "played": "h4g4",
+      "fen": "3r3k/p4p1p/5p2/4q2r/1P1p3Q/P3b1P1/2P3NP/3RR2K w - - 2 30"
+    },
+    {
+      "ply": 1,
+      "expected": "c3c2",
+      "played": "d8d4",
+      "fen": "2kr4/8/b4Pp1/2K1N3/1p1R4/1Pp2P2/6PP/8 b - - 4 44"
+    },
+    {
+      "ply": 1,
+      "expected": "f6d4",
+      "played": "f5f1",
+      "fen": "5qkn/1p4p1/p3pb2/2p2r2/3NR1Q1/1P1P3P/1PPB2P1/5RK1 b - - 0 26"
+    },
+    {
+      "ply": 3,
+      "expected": "d6e5",
+      "played": "e6f5",
+      "fen": "r6k/6bp/q1pBQ3/1pP2p2/3P4/rB5P/7K/1R6 w - - 1 37"
+    },
+    {
+      "ply": 1,
+      "expected": "d4f3",
+      "played": "c8c2",
+      "fen": "2r2rk1/p4ppp/1p2p3/4Pq2/1P1n4/P4N2/1Q1N1KPP/R4R2 b - - 2 21"
+    },
+    {
+      "ply": 1,
+      "expected": "h5h3",
+      "played": "g4h3",
+      "fen": "5nk1/7p/1Q1P3r/4Np1q/1P2b1p1/1P2P2P/4BPPK/5R2 b - - 0 28"
+    },
+    {
+      "ply": 3,
+      "expected": "a8g8",
+      "played": "h8h1",
+      "fen": "r6r/2p5/4k3/pP2Pp2/2PR4/8/P4Pp1/3R2K1 b - - 0 31"
+    },
+    {
+      "ply": 3,
+      "expected": "a5c4",
+      "played": "g2h1",
+      "fen": "2k4r/ppp2ppp/8/n3Q3/3P4/8/PPP2PqP/R1B1K2R b KQ - 0 14"
+    },
+    {
+      "ply": 3,
+      "expected": "g3h2",
+      "played": "h3h1",
+      "fen": "6k1/1bp2ppp/p7/8/8/1P1P1Pqr/1BNP2P1/R3Q1K1 b - - 1 25"
+    },
+    {
+      "ply": 3,
+      "expected": "b8f8",
+      "played": "b8f4",
+      "fen": "1Q6/pp3p1p/2b2Bpk/2pq4/3p2P1/1P1P3P/P1P1r3/5RK1 w - - 7 28"
+    },
+    {
+      "ply": 1,
+      "expected": "d7a4",
+      "played": "d7f5",
+      "fen": "3rrk2/1p1b1pp1/p4b1p/8/P7/1BN5/1PR2PPP/3R2K1 b - - 6 21"
+    }
+  ],
+  "protocol": {
+    "definition": "A puzzle is solved only if the model plays every one of its moves in the solution line correctly; opponent replies come from the solution.",
+    "relaxation": "an alternative move giving immediate checkmate is accepted (relaxed count)",
+    "sampling": "reservoir sample, seed=42"
+  },
+  "comparability": {
+    "deepmind_270m_puzzle_accuracy": 0.935,
+    "deepmind_136m_puzzle_accuracy": 0.921,
+    "deepmind_9m_puzzle_accuracy": 0.855,
+    "source": "arXiv:2402.04494 Table 1",
+    "note": "Same puzzle database and same solved-if-exact protocol, so these are comparable in kind. The puzzle sample differs, so small differences are not meaningful; sampling error at n=5000 is roughly +/-1%."
+  }
+}

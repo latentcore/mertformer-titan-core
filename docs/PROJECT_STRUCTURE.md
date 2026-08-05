@@ -194,6 +194,18 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   ├── dataset_manifest.json  # JSON data artifact
 │   │   ├── metrics.json  # JSON data artifact
 │   │   └── train_log.csv  # CSV data artifact
+│   ├── 2026-08-02-chess-searchless-5070/  # directory
+│   │   ├── EVIDENCE_MANIFEST.json  # JSON data artifact
+│   │   ├── README.md  # primary documentation (EN)
+│   │   ├── architecture_parity_summary.json  # JSON data artifact
+│   │   ├── dataset_provenance.json  # JSON data artifact
+│   │   ├── elo_report.json  # JSON data artifact
+│   │   ├── environment_snapshot.json  # JSON data artifact
+│   │   ├── holdout_report.json  # JSON data artifact
+│   │   ├── model_report.json  # JSON data artifact
+│   │   ├── puzzle_report.json  # JSON data artifact
+│   │   ├── training_curve.png  # media asset
+│   │   └── training_report.json  # JSON data artifact
 │   ├── build30_t4_onecell/  # directory
 │   │   ├── EVIDENCE_POINTER.md  # documentation/report file
 │   │   ├── run_summary.json  # JSON data artifact

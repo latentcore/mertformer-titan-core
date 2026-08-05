@@ -1,0 +1,28 @@
+{
+  "schema": "chessformer_parity_summary_v1",
+  "canonical_source": "vendor/upstream/layers/",
+  "verified_by": "tests/test_arch_parity.py (torch.allclose against the canonical modules)",
+  "checks": {
+    "activation_quant / weight_quant": "allclose",
+    "BitLinear.forward": "allclose",
+    "RMSNorm / QKRMSNorm": "allclose",
+    "RoPE (rotate_half, apply_rope_optimized, cache)": "allclose",
+    "GQA (attention_mode='causal')": "allclose",
+    "MertFormerFFN": "allclose",
+    "LiquidCell": "allclose",
+    "newton_schulz_inverse": "allclose",
+    "moe_capacity": "exact match",
+    "MoE capacity mask": "matches the row-major nonzero() semantics"
+  },
+  "drifts_fixed": [
+    "LiquidCell lost the canonical clamp(tau, 1e-4, 5.0) in scripts/chess_5080_onefile.py while its TorchScript eval kernel kept it, so training and evaluation ran different recurrences. Both paths now clamp (layers/liquid.py:93-94).",
+    "MoE capacity enforcement in the onefile used a per-expert Python loop with nonzero() plus boolean-mask counting; the canonical layers/moe.py:742-781 had already replaced that with a vectorized, sync-free version and documents the old shape as a fixed bug. The canonical version is used here.",
+    "The onefile discarded the LiquidMixer hidden state; the canonical layers/mertformer_block.py:230 threads it through. It is threaded here.",
+    "The canonical liquid inference kernel multiplies raw activations by quantized weights while LiquidCell routes through BitLinear (which also quantizes activations), so the two disagree under BitNet. Activation quantization was added to the inference kernel so it is a speed optimization of the same math."
+  ],
+  "deliberate_deviations": [
+    "Attention is bidirectional by default. A board is a state, not a sequence: scripts/chess_5080_onefile.py:2533 applied a causal mask so square a1 could only attend to the meta tokens, while the same file's model card (:7451) claimed 'the model sees the whole board state at once'. attention_mode='causal' still reproduces the canonical behaviour exactly and is what the parity test compares.",
+    "The policy head is factorized over (from-square, to-square, promotion) instead of a single Linear on a mean-pooled vector.",
+    "KV-cache, hierarchical-KV and autoregressive decode paths are not carried over: this trunk is an encoder over a fixed 76-token board and never decodes step by step."
+  ]
+}

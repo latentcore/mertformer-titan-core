@@ -1,17 +1,27 @@
 {
-  "generated_utc": "2026-08-01T10:38:15.340531+00:00",
+  "generated_utc": "2026-08-05T22:28:08.385495+00:00",
   "check": "manifest_vs_rendered_structure_md",
-  "manifest_count": 965,
-  "structure_count": 965,
+  "manifest_count": 976,
+  "structure_count": 976,
   "missing_in_structure": [],
   "missing_in_manifest": [],
   "ok": true,
   "previous_structure": {
     "readable": true,
-    "count": 964,
+    "count": 965,
     "was_stale": true,
     "added_since_previous": [
-      "reports/benchmarks/ternary_kernel_microbench_s25/README_TR.md"
+      "evidence/2026-08-02-chess-searchless-5070/EVIDENCE_MANIFEST.json",
+      "evidence/2026-08-02-chess-searchless-5070/README.md",
+      "evidence/2026-08-02-chess-searchless-5070/architecture_parity_summary.json",
+      "evidence/2026-08-02-chess-searchless-5070/dataset_provenance.json",
+      "evidence/2026-08-02-chess-searchless-5070/elo_report.json",
+      "evidence/2026-08-02-chess-searchless-5070/environment_snapshot.json",
+      "evidence/2026-08-02-chess-searchless-5070/holdout_report.json",
+      "evidence/2026-08-02-chess-searchless-5070/model_report.json",
+      "evidence/2026-08-02-chess-searchless-5070/puzzle_report.json",
+      "evidence/2026-08-02-chess-searchless-5070/training_curve.png",
+      "evidence/2026-08-02-chess-searchless-5070/training_report.json"
     ],
     "removed_since_previous": [],
     "note": "Drift of the COMMITTED tree against the manifest, measured before this run rewrote it. Refreshing it is this tool's purpose, so a non-empty diff is not a failure."

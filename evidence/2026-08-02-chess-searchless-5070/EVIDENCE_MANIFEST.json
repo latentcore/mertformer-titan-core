@@ -1,0 +1,33 @@
+{
+  "schema": "chessformer_evidence_manifest_v1",
+  "run_id": "20260802_194441",
+  "checkpoints_included_in_repo": false,
+  "checkpoints_reason": "Checkpoint files (.pt, ~52.7 MB each) are kept locally only, not committed -- this repo's evidence/ folders carry reports and provenance, not multi-hundred-MB binaries.",
+  "checkpoint_files": [
+    {
+      "name": "best.pt",
+      "bytes": 55282275,
+      "sha256": "22ac8b498d438164f4a5e6e616c961a6951bef6c42a1d14355d2aac0530986fa"
+    },
+    {
+      "name": "last.pt",
+      "bytes": 55281955,
+      "sha256": "b8e4c972868a6376c06061cff86b5d0809672be6e3195661195c220d9da1dcbc"
+    },
+    {
+      "name": "step_000030000.pt",
+      "bytes": 55281955,
+      "sha256": "beb535a3bf35b72a9c90527d86a7d830a31c6fa4ab07ccee344c5f314518d9c2"
+    },
+    {
+      "name": "step_000031466.pt",
+      "bytes": 55281955,
+      "sha256": "d361ff1c80dc1ac3c000bf95ffec7f017fefa2e9ec30179b4b0051e2bf54ff62"
+    },
+    {
+      "name": "step_000032000.pt",
+      "bytes": 55281955,
+      "sha256": "6b8fed4eeaefeff02ebf7c388ccaa01ad769f7b67f7728efa4f14a6ec1bbf965"
+    }
+  ]
+}

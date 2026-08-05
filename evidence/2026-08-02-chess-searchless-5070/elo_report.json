@@ -1,0 +1,162 @@
+{
+  "schema": "chessformer_elo_report_v1",
+  "status": "completed",
+  "stopped_early": false,
+  "games_played": 140,
+  "games_requested": 200,
+  "total_score": 72.0,
+  "overall_score_rate": 0.5143,
+  "elapsed_sec": 1493.3,
+  "estimate": {
+    "status": "estimated",
+    "rating": 1509.0,
+    "ci95_low": 1452.0,
+    "ci95_high": 1567.0,
+    "ci95_width": 115.0,
+    "log_likelihood": -96.6344,
+    "games": 140,
+    "score_rate": 0.5143,
+    "method": "profile-likelihood MLE under the standard Elo logistic model",
+    "ci_note": "95% CI = ratings within 1.9207 log-likelihood of the maximum",
+    "hit_grid_edge": false
+  },
+  "blocks": [
+    {
+      "opponent_elo": 1500,
+      "effective_opponent_elo": 1500,
+      "games": 20,
+      "wins": 8,
+      "draws": 4,
+      "losses": 8,
+      "score": 10.0,
+      "score_rate": 0.5,
+      "elapsed_sec": 227.29,
+      "estimate_after": 1500.0
+    },
+    {
+      "opponent_elo": 1500,
+      "effective_opponent_elo": 1500,
+      "games": 20,
+      "wins": 6,
+      "draws": 5,
+      "losses": 9,
+      "score": 8.5,
+      "score_rate": 0.425,
+      "elapsed_sec": 207.41,
+      "estimate_after": 1474.0
+    },
+    {
+      "opponent_elo": 1474,
+      "effective_opponent_elo": 1474,
+      "games": 20,
+      "wins": 10,
+      "draws": 2,
+      "losses": 8,
+      "score": 11.0,
+      "score_rate": 0.55,
+      "elapsed_sec": 198.29,
+      "estimate_after": 1486.0
+    },
+    {
+      "opponent_elo": 1486,
+      "effective_opponent_elo": 1486,
+      "games": 20,
+      "wins": 10,
+      "draws": 4,
+      "losses": 6,
+      "score": 12.0,
+      "score_rate": 0.6,
+      "elapsed_sec": 206.07,
+      "estimate_after": 1503.0
+    },
+    {
+      "opponent_elo": 1503,
+      "effective_opponent_elo": 1503,
+      "games": 20,
+      "wins": 10,
+      "draws": 5,
+      "losses": 5,
+      "score": 12.5,
+      "score_rate": 0.625,
+      "elapsed_sec": 201.79,
+      "estimate_after": 1520.0
+    },
+    {
+      "opponent_elo": 1520,
+      "effective_opponent_elo": 1520,
+      "games": 20,
+      "wins": 5,
+      "draws": 7,
+      "losses": 8,
+      "score": 8.5,
+      "score_rate": 0.425,
+      "elapsed_sec": 239.46,
+      "estimate_after": 1512.0
+    },
+    {
+      "opponent_elo": 1512,
+      "effective_opponent_elo": 1512,
+      "games": 20,
+      "wins": 7,
+      "draws": 5,
+      "losses": 8,
+      "score": 9.5,
+      "score_rate": 0.475,
+      "elapsed_sec": 211.91,
+      "estimate_after": 1509.0
+    }
+  ],
+  "methodology": {
+    "opponent": "Stockfish with UCI_LimitStrength=true and UCI_Elo set per block",
+    "rating_model": "E = 1/(1+10^((Ropp-R)/400)); draws scored 0.5",
+    "estimator": "maximum likelihood over all games",
+    "interval": "profile-likelihood 95% CI (delta logL = 1.9207)",
+    "ladder": "opponent Elo re-aimed at the running estimate after each block",
+    "colour_policy": "each opening played from both sides within a block",
+    "opening_book_size": 10,
+    "uci_elo_clamp_range": [
+      1320,
+      3190
+    ]
+  },
+  "interpretation": {
+    "is_a_lichess_rating": false,
+    "is_a_fide_rating": false,
+    "comparable_to_deepmind_2895": false,
+    "note": "This is an internal measurement against Stockfish's UCI_Elo scale. The 2895 figure in arXiv:2402.04494 is Lichess blitz versus human opponents and lives on a different rating pool; the two numbers are not interchangeable. Puzzle accuracy is the directly comparable metric."
+  },
+  "engine": {
+    "resolution": {
+      "status": "downloaded",
+      "path": "<REDACTED_LOCAL_PATH>",
+      "downloaded": true,
+      "release_tag": "sf_18",
+      "asset": "stockfish-windows-x86-64-avx2.zip",
+      "source": "https://github.com/official-stockfish/Stockfish/releases/download/sf_18/stockfish-windows-x86-64-avx2.zip"
+    },
+    "version": "Stockfish 18",
+    "config": {
+      "engine": "stockfish",
+      "path": "<REDACTED_LOCAL_PATH>",
+      "uci_limit_strength": true,
+      "uci_elo_requested": 1512,
+      "uci_elo_effective": 1512,
+      "uci_elo_clamped": false,
+      "uci_elo_range": [
+        1320,
+        3190
+      ],
+      "movetime_ms": 100,
+      "threads": 1,
+      "hash_mb": 64
+    }
+  },
+  "selection_mode": "policy",
+  "searchless": true,
+  "max_plies": 300,
+  "raw_illegal_top1_events": 6018,
+  "total_plies": 12159,
+  "illegal_move_attempts_after_masking": 0,
+  "legality_note": "Every move played was drawn from the legality-masked policy and re-checked before being pushed, so illegal moves are structurally impossible. 'raw_illegal_top1_events' counts how often the UNMASKED argmax would have been illegal, which is a measure of what the network learned unaided.",
+  "pgn_dir": "<REDACTED_LOCAL_PATH>"
+}

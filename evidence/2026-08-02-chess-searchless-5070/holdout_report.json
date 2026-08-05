@@ -1,0 +1,42 @@
+{
+  "schema": "chessformer_holdout_report_v1",
+  "val": {
+    "status": "completed",
+    "split": "val",
+    "positions_evaluated": 335,
+    "masked_policy_top1": 0.39403,
+    "masked_policy_top5": 0.81791,
+    "raw_top1_is_legal": 0.01791,
+    "policy_cross_entropy": 1.894894,
+    "value_mae_winprob": 0.064131,
+    "value_rmse_winprob": 0.109269,
+    "wdl_accuracy": 0.853731,
+    "mean_legal_moves": 28.54,
+    "elapsed_sec": 1.85,
+    "metric_notes": {
+      "masked_policy_top1": "top-1 agreement with the Stockfish best move, given the legal move mask",
+      "raw_top1_is_legal": "fraction of positions where the UNMASKED argmax is a legal move",
+      "value_mae_winprob": "mean absolute error against the Stockfish-derived win probability"
+    }
+  },
+  "test": {
+    "status": "completed",
+    "split": "test",
+    "positions_evaluated": 349,
+    "masked_policy_top1": 0.501433,
+    "masked_policy_top5": 0.873926,
+    "raw_top1_is_legal": 0.025788,
+    "policy_cross_entropy": 1.754972,
+    "value_mae_winprob": 0.077447,
+    "value_rmse_winprob": 0.130348,
+    "wdl_accuracy": 0.859599,
+    "mean_legal_moves": 28.862,
+    "elapsed_sec": 1.68,
+    "metric_notes": {
+      "masked_policy_top1": "top-1 agreement with the Stockfish best move, given the legal move mask",
+      "raw_top1_is_legal": "fraction of positions where the UNMASKED argmax is a legal move",
+      "value_mae_winprob": "mean absolute error against the Stockfish-derived win probability"
+    }
+  },
+  "status": "completed"
+}

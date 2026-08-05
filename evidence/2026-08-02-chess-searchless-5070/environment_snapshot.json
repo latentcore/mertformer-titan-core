@@ -1,0 +1,59 @@
+{
+  "schema": "chessformer_evidence_environment_snapshot_v1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "device": {
+    "device": "cuda",
+    "kind": "cuda",
+    "name": "NVIDIA GeForce RTX 5070 Laptop GPU",
+    "total_vram_bytes": 8546484224,
+    "total_vram_gb": 7.96,
+    "compute_capability": "12.0",
+    "supports_bf16": true,
+    "torch_version": "2.11.0+cu128",
+    "cuda_version": "12.8"
+  },
+  "gpu_compatibility": {
+    "ok": true,
+    "problems": [],
+    "advice": [],
+    "torch_arch_list": [
+      "sm_75",
+      "sm_80",
+      "sm_86",
+      "sm_90",
+      "sm_100",
+      "sm_120"
+    ],
+    "hard_incompatible": false,
+    "kernel_probe": {
+      "ok": true
+    }
+  },
+  "nvidia_smi": {
+    "available": true,
+    "gpus": [
+      {
+        "name": "NVIDIA GeForce RTX 5070 Laptop GPU",
+        "memory_total": "8151 MiB",
+        "driver_version": "610.74",
+        "compute_cap": "12.0"
+      }
+    ]
+  },
+  "cpu_count": 24,
+  "ram_total_gb": 31.61,
+  "precision_policy": {
+    "requested_tf32": true,
+    "deterministic": false,
+    "tf32_enabled": true,
+    "cudnn_benchmark": true
+  },
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "numpy": "2.5.1",
+    "zstandard": "0.25.0",
+    "python-chess": "1.999",
+    "psutil": "7.2.2"
+  },
+  "note": "Training itself ran on this GPU. The retroactive holdout/puzzle/elo evaluation pass was run separately, on CPU, on a different machine (an RTX 4060 laptop with no local CUDA-enabled torch install) -- the model is small enough (4.59M params) that this does not change the results, only their wall-clock time."
+}

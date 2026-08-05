@@ -1,0 +1,19 @@
+{
+  "schema": "chessformer_evidence_training_report_v1",
+  "run_id": "20260802_194441",
+  "profile": "run_24h",
+  "finished_reason": "stopped_by_operator",
+  "steps_completed": 32191,
+  "total_steps_planned": 100365,
+  "epochs_completed": 1,
+  "positions_seen": 16481792,
+  "mean_positions_per_sec": 626.5,
+  "elapsed_hours": 7.3072,
+  "best_val_loss": 3.756347,
+  "batch_size": 512,
+  "amp": {
+    "enabled": true,
+    "dtype": "bfloat16"
+  },
+  "note": "Training was stopped by the operator at step 32191 of a planned 100365 (~32%). The pipeline's own evaluation stages (holdout/puzzles/elo) ran with should_stop() already true and produced no real numbers in this run's own reports/ (all null/not_run). holdout_report.json, puzzle_report.json and elo_report.json in this evidence package are from a SEPARATE retroactive, inference-only pass against the saved best.pt checkpoint (step 30000, the lowest-val-loss checkpoint), run without resuming or continuing training."
+}

@@ -1,0 +1,50 @@
+{
+  "schema": "chessformer_evidence_dataset_provenance_v1",
+  "source_dataset": "Lichess Elo-annotated evaluation database (lichess_db_eval.jsonl.zst)",
+  "source_url": "https://database.lichess.org/lichess_db_eval.jsonl.zst",
+  "sha256": "d20f6b4f4e91abb371c8ddb253a4bdf259ce1bb39edfd0cb503bbb636b08693b",
+  "positions_total": 16200000,
+  "bytes_total": 2752162362,
+  "split_policy": {
+    "method": "blake2b(position_key) % 10000",
+    "test_buckets": [
+      0,
+      62
+    ],
+    "val_buckets": [
+      62,
+      124
+    ],
+    "train_buckets": [
+      124,
+      10000
+    ],
+    "note": "hash-based so a duplicated FEN always lands in the same split"
+  },
+  "parse_stats": {
+    "lines_read": 16489396,
+    "accepted": 16200339,
+    "json_errors": 0,
+    "fen_errors": 0,
+    "dropped_low_depth": 135723,
+    "dropped_no_eval": 0,
+    "dropped_no_legal_pv": 153334,
+    "dropped_terminal": 0,
+    "multi_pv_positions": 6995204,
+    "mate_positions": 2410599,
+    "mean_depth": 34.633,
+    "mean_legal_moves": 28.943,
+    "flipped_fraction": 0.486
+  },
+  "cp_perspective": {
+    "value": "white_relative",
+    "determined_by": "empirical material-sign correlation over 3189 sampled positions",
+    "white_pov_agreement": 0.6911,
+    "side_to_move_agreement": 0.4967
+  },
+  "known_limitations": [
+    "Source FENs carry only 4 fields, so halfmove/fullmove clocks are absent; meta slots 6 and 7 are forced to 0 on BOTH the training and inference paths (board.INCLUDE_CLOCKS_DEFAULT) to avoid train/serve skew.",
+    "The model therefore has no 50-move-rule or repetition awareness from this data."
+  ],
+  "puzzle_source": "Lichess puzzle database (lichess_db_puzzle.csv.zst), used only for the retroactive puzzle_report.json evaluation, not for training"
+}
