@@ -80,6 +80,11 @@ GPU time for the canonical 45K run (H100/H200). If your organization can offer c
 credits or a short rental window, reach out — [BACKLOG.md](BACKLOG.md) has the exact
 pre-run checklist this would unblock.
 
+Separately, a small side project mirroring this architecture family (BitNet/MoE/Liquid/GQA)
+completed a real, checkpoint-bound training run on consumer hardware — see
+[evidence/2026-08-02-chess-searchless-5070/](evidence/2026-08-02-chess-searchless-5070/)
+(not the same model, not the same checkpoint as the flagship above).
+
 **Contact:** [mert.yunlu08@gmail.com](mailto:mert.yunlu08@gmail.com) — or open an issue
 on this repository.
 

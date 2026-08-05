@@ -80,6 +80,11 @@ kanonik 45K koşusu için GPU süresi (H100/H200). Kurumunuz compute kredisi vey
 kiralama penceresi sunabiliyorsa iletişime geçin — bu koşunun önündeki tam kontrol listesi
 için [BACKLOG_TR.md](BACKLOG_TR.md)'ye bakın.
 
+Ayrıca, bu mimari ailesini (BitNet/MoE/Liquid/GQA) küçük ölçekte yansıtan bir yan proje,
+tüketici donanımında gerçek, checkpoint-bağlı bir eğitim koşusu tamamladı — bkz.
+[evidence/2026-08-02-chess-searchless-5070/](evidence/2026-08-02-chess-searchless-5070/)
+(yukarıdaki flagship ile aynı model, aynı checkpoint değil).
+
 **İletişim:** [mert.yunlu08@gmail.com](mailto:mert.yunlu08@gmail.com) — ya da bu depoda
 bir issue açın.
 

@@ -34,6 +34,70 @@ regresyon değil, hiç koşulmamış bir kod yolu için bilinen-bug notu. Bu dos
 ya da deprecated işaretlenme kararı, yeniden yazımın gerçek donanım sonuçları elde edene
 kadar ertelendi.
 
+## Satranç onefile yeniden yazımı (`ChessFormerAI/chessformer`) — gerçek RTX 5070 eğitim koşusu, retroaktif değerlendirme (2026-08-06)
+
+Yukarıdaki maddede referans verilen bağımsız yeniden yazım artık gerçek bir eğitim koşusuna
+ve gerçek ölçülmüş sonuçlara sahip. **Bu, yukarıdaki 45K boşluğunu kapatmıyor ve
+`scripts/chess_5080_onefile.py`'ye dokunmuyor** — burada kaydedildi çünkü o madde geri-taşınma
+ya da deprecated işaretlenme kararını yeniden yazımın gerçek donanım sonuçları elde etmesine
+kadar bilinçli olarak ertelemişti, ve artık elde etti.
+
+**Run:** `run_20260802_194441`, 4.592.740-parametre "tiny" preset, `use_bitnet`/`use_moe`/
+`use_liquid` üçü de gerçekten `true` olarak resolve edilmiş (bu projede Liquid'in gerçekten
+aktif olduğunun daha önce doğrulandığı yöntemle aynı çapraz kontrol: `total_parameters`,
+auto-scaler'ın kendi `estimated_params`'ına 1 parametre farkla eşleşiyor — bu yalnızca
+tahmincinin BitNet/MoE/Liquid katkıları gerçekten mevcutsa olur). Planlanan 100.365 step'in
+32.150'si (~%32), operatör tarafından durduruldu (ıraksama ya da çökme değil) — loss düzenli
+şekilde 6.12→3.82'ye düştü, hiç sıçrama yok; bkz.
+`evidence/2026-08-02-chess-searchless-5070/training_curve.png`.
+
+**Bu pass'te bulunan+kapatılan gerçek bir boşluk:** run'ın kendi `holdout`/`puzzles`/`elo`
+pipeline aşamaları `should_stop()` zaten `true` iken koştu, üçü de kendi `reports/`'unda boş/
+`not_run` sonuç üretti (headline metrikler tamamen `null`) — sağlıklı bir loss eğrisi ama
+sıfır gerçek değerlendirme. Küçük, bağımsız bir betikle (`ChessFormerAI/retroactive_eval.py`,
+~120 satır, mevcut `chessformer.eval.holdout`/`puzzles`/`benchmark` fonksiyonlarını yüklenmiş
+bir checkpoint'e karşı doğrudan çağırıyor — yeni değerlendirme mantığı yazılmadı) düzeltildi,
+kaydedilmiş `best.pt`'ye (step 30.000, en düşük val loss) karşı, eğitimi devam ettirmeden ya
+da yeniden başlatmadan koşuldu.
+
+**Gerçek, ölçülmüş sonuçlar** (`evidence/2026-08-02-chess-searchless-5070/`):
+- Puzzle accuracy (strict): **%45.78** (2.289/5.000) — DeepMind'ın Searchless Chess'ine
+  (arXiv:2402.04494) doğrudan kıyaslanabilir metrik: 9M-param model %85.5, 136M %92.1, 270M
+  %93.5, aynı veritabanı ve protokol.
+- Holdout: masked policy top-1 %39.4 (val) / %50.1 (test), WDL accuracy %85.4/%86.0.
+- Elo: **1509** (%95 GA 1452–1567), Stockfish 18'e karşı `UCI_LimitStrength` ile 140 oyun.
+  DeepMind'ın 2895 Lichess-blitz-insana-karşı rakamıyla **kıyaslanamaz** — farklı rating
+  havuzu; `elo.py`'nin kendisi zaten ikisini karıştırmayı reddediyor
+  (`comparable_to_deepmind_2895: false`).
+- 140 oyunun ve 5.000 puzzle denemesinin tamamında sıfır illegal hamle (legality-masked
+  policy, yapısal olarak zorunlu).
+
+**Çerçeveleme (bilinçli, rekor iddiası değil):** DeepMind'ın 9M modeli TPU ölçeğinde ~15B
+örnekle eğitildi; bu run ~16.2M pozisyon (~925 kat daha az veri) ile tek bir 8GB laptop
+GPU'da birkaç saat, kabaca yarı parametre sayısıyla koştu. Bu kısıtlar altında 9M modelin
+puzzle accuracy'sinin ~%54'üne ulaşmak bir veri/compute-verimliliği veri noktası, bir
+benchmark iddiası değil. "Tiny" preset'in kendisi bir kısayol değildi —
+`chessformer/config.py`'nin `MIN_POSITIONS_PER_PARAM` auto-scaler'ı bunu özellikle, veri seti
+daha büyük bir modeli dürüstçe desteklemediği için seçti; küçük boyut tasarlandığı gibi
+çalışan bir korumadır, gizlenen bir sınırlama değil.
+
+**`scripts/chess_5080_onefile.py` üzerindeki geri-taşınma-ya-da-deprecated-işaretleme kararı,
+artık verildi: ayrı kalıyor, geri taşınmıyor, superseded işaretlenmiyor.** `chessformer`
+sıfırdan bir yeniden yazım — kendi (çok daha küçük, dürüst) rapor şeması, kendi GUI'si
+(`chessformer/gui/`) var, ve `chess_5080_onefile.py`'nin öğretme-corpus'u/curated-suite/
+release-governance yüzeylerini (`chess_evidence_contract.md`, `chess_release_contract.md`,
+bu reponun `docs/CHESS_ONEFILE_MASTER_TRUTH.md` ile takip ettiği ~80-dosyalık stub/contract
+apparatus'u) hiç kapsamıyor — geri taşımak, zaten kendi ayaklarının üzerinde duran bir paket
+için o apparatus'un büyük bir kısmını yeniden yazmak demek olurdu. 123-testlik `chessformer`
+suite'i aynı sebeple kendi paketinde kalıyor, bu reponun suite'ine birleştirilmiyor.
+`chess_5080_onefile.py`'nin kendisi değişmedi; yukarıdaki maddenin D1-D4 bulguları hâlâ
+içinde geçerli. Tam gerekçe: `DECISIONS_TR.md`.
+
+**Evidence paketine dahil edilmeyenler:** checkpoint ağırlıkları (`.pt`, yerelde kalıyor,
+yalnız `EVIDENCE_MANIFEST.json` üzerinden SHA256-referanslı), ham PGN oyun kayıtları (yol
+kaydedildi, repoya kopyalanmadı — aynı retroaktif değerlendirmeyi tekrar koşarak yeniden
+üretilebilir).
+
 ## Analitik param-sayısı tahmincisi bug'ı — DÜZELTİLDİ (2026-07-27), eğitim-matematiği değişmedi
 `ARCHITECTURE.md`'nin belirttiği `~1.86B aktif param (MoE top-2 + shared)` rakamı, bu reponun iki bağımsız analitik tahmincisiyle (`scripts/scaling_audit_math.py::estimate_params()` ve `config/config.py::_estimate_total_params()` — ikincisi gerçek `auto_configure_batch_size()` VRAM-bütçeleme mantığını besliyor, yalnız raporlama aracı değil) çapraz kontrol edildiğinde, ikisinin de iki birleşen sebepten eksik saydığı bulundu: (1) ikisi de MoE-expert boyutlandırması için dense-katman `intermediate_size`'ını (5632) kullanıyordu, `layers/moe.py`'nin `BitSwiGLU` expert'lerinin gerçekte kullandığı daha büyük `moe_intermediate` (8192) yerine; (2) ikisi de `layers/moe.py`'nin her zaman instantiate edilen, her zaman aktif **shared expert**'ini (`self.shared_expert = BitSwiGLU(hidden_size, moe_intermediate)`, öğrenilebilir bir sigmoid gate ile her token'ın çıktısına koşulsuz eklenir) tamamen atlıyordu — `num_experts`'e dahil olmayan, her zaman aktif 9. bir expert-boyutlu blok. Net etki: aktif parametreler ~%44 (gerçek ~1.886B yerine ~1.06B), toplam parametreler ~%8 eksik sayılıyordu. Her iki dosyada da gerçek mimariye uyacak şekilde **düzeltildi**; `scaling_audit_math.py` artık `~3.698B` toplam / `~1.886B` aktif raporluyor, `ARCHITECTURE.md`'nin bağımsız kaynaklı rakamıyla eşleşiyor. 4 yeni regresyon testi: `tests/test_scaling_audit_math.py` (3 test, global singleton yerine `monkeypatch` ile izole stub `cfg`) ve `tests/test_config_dynamic_param_count.py`'ye bir ekleme. Salt param-muhasebesi/araç düzeltmesi — eğitim döngüsü, LR veya mimari değişikliği yok. Test sayısı: `622 → 626 passed, 5 skipped` (+4).
 

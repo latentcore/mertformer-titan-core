@@ -31,6 +31,65 @@ its reports as "never generated/committed here"), so this is a known-bug note fo
 unexercised code path, not a regression in anything actually used. The fold-back-or-deprecate
 decision for this file is deferred until the rewrite has real-hardware results to validate against.
 
+## Chess onefile rewrite (`ChessFormerAI/chessformer`) — real RTX 5070 training run, retroactive evaluation (2026-08-06)
+
+The independent rewrite referenced in the entry above now has a real training run and real
+measured results. **This does not close the 45K gap above and does not touch
+`scripts/chess_5080_onefile.py`** — recorded here because that entry explicitly deferred the
+fold-back-or-deprecate decision until the rewrite had real-hardware results, and it now does.
+
+**Run:** `run_20260802_194441`, 4,592,740-parameter "tiny" preset, `use_bitnet`/`use_moe`/
+`use_liquid` all resolved `true` into the instantiated model (cross-checked the same way
+Liquid activation was verified earlier this project: `total_parameters` matches the
+autoscaler's own `estimated_params` to within 1 parameter, which only happens if the
+estimator's BitNet/MoE/Liquid parameter contributions are actually present). 32,150 of
+100,365 planned steps (~32%), stopped by the operator (not divergence, not a crash) — loss
+fell smoothly 6.12→3.82 with no spikes; see `evidence/2026-08-02-chess-searchless-5070/training_curve.png`.
+
+**A real gap found and closed in this pass:** the run's own `holdout`/`puzzles`/`elo`
+pipeline stages ran with `should_stop()` already `true`, so all three produced empty/
+`not_run` results in the run's own `reports/` (headline metrics all `null`) — a healthy loss
+curve but zero real evaluation. Fixed with a small standalone script
+(`ChessFormerAI/retroactive_eval.py`, ~120 lines, calls the existing
+`chessformer.eval.holdout`/`puzzles`/`benchmark` functions directly against a loaded
+checkpoint — no new evaluation logic written) run against the saved `best.pt` (step 30,000,
+lowest val loss), without resuming or retraining.
+
+**Real, measured results** (`evidence/2026-08-02-chess-searchless-5070/`):
+- Puzzle accuracy (strict): **45.78%** (2,289/5,000) — the directly comparable metric to
+  DeepMind's Searchless Chess (arXiv:2402.04494): 9M-param model 85.5%, 136M 92.1%, 270M
+  93.5%, same database and protocol.
+- Holdout: masked policy top-1 39.4% (val) / 50.1% (test), WDL accuracy 85.4%/86.0%.
+- Elo: **1509** (95% CI 1452–1567), 140 games vs. Stockfish 18 with `UCI_LimitStrength`.
+  **Not comparable** to DeepMind's 2895 Lichess-blitz-vs-humans figure — different rating
+  pool; `elo.py` itself already refuses to conflate the two (`comparable_to_deepmind_2895:
+  false`).
+- Zero illegal moves across all 140 games and 5,000 puzzle attempts (legality-masked policy,
+  structurally enforced).
+
+**Framing (deliberate, not a record claim):** DeepMind's 9M model trained on ~15B examples
+at TPU scale; this run used ~16.2M positions (~925x less data) on one 8GB laptop GPU for a
+few hours, at roughly half the parameter count. ~54% of the 9M model's puzzle accuracy under
+those constraints is a data/compute-efficiency data point, not a benchmark claim. The "tiny"
+preset itself was not a corner cut — `chessformer/config.py`'s `MIN_POSITIONS_PER_PARAM`
+autoscaler picked it specifically because the dataset couldn't honestly support a larger
+model; the small size is the guard working as designed, not a limitation being hidden.
+
+**Fold-back-or-deprecate decision on `scripts/chess_5080_onefile.py`, now made: stays
+separate, not folded back, not marked superseded.** `chessformer` is a from-scratch rewrite
+with its own (much smaller, honest) report schema, its own GUI (`chessformer/gui/`), and no
+coverage of `chess_5080_onefile.py`'s teaching-corpus/curated-suite/release-governance
+surfaces (`chess_evidence_contract.md`, `chess_release_contract.md`, this repo's
+`docs/CHESS_ONEFILE_MASTER_TRUTH.md`-tracked ~80-file stub/contract apparatus) — folding
+back would mean rewriting a large fraction of that apparatus for a package that already
+stands on its own. The 123-test `chessformer` suite stays in its own package, not merged
+into this repo's suite, for the same reason. `chess_5080_onefile.py` itself is unchanged;
+the D1-D4 findings from the entry above are still live in it. Full reasoning: `DECISIONS.md`.
+
+**Not included in the evidence package:** checkpoint weights (`.pt`, stay local, SHA256-
+referenced only via `EVIDENCE_MANIFEST.json`), raw PGN game records (path recorded, not
+copied into the repo — regenerable by re-running the same retroactive evaluation).
+
 ## Analytical param-count estimator bug — FIXED (2026-07-27), no training-math change
 A cross-check of `ARCHITECTURE.md`'s stated `~1.86B active params (MoE top-2 + shared)` against this repo's two independent analytical estimators — `scripts/scaling_audit_math.py::estimate_params()` and `config/config.py::_estimate_total_params()` (the latter feeds the real `auto_configure_batch_size()` VRAM-budgeting logic, not just a reporting tool) — found both undercounting for two compounding reasons: (1) both reused the dense-layer `intermediate_size` (5632) for MoE-expert sizing instead of the real, larger `moe_intermediate` (8192) that `layers/moe.py`'s `BitSwiGLU` experts actually use; (2) both omitted `layers/moe.py`'s always-instantiated, always-active **shared expert** (`self.shared_expert = BitSwiGLU(hidden_size, moe_intermediate)`, unconditionally added to every token's output via a learnable sigmoid gate) entirely — a 9th, always-active expert-sized block that is not part of `num_experts`. Net effect: active params were undercounted by ~44% (~1.06B vs. the real ~1.886B) and total params by ~8%. **Fixed** in both files to mirror the real architecture; `scaling_audit_math.py` now reports `~3.698B` total / `~1.886B` active, matching `ARCHITECTURE.md`'s independently-sourced figure. 4 new regression tests: `tests/test_scaling_audit_math.py` (3 tests, isolated-stub `cfg` via `monkeypatch` rather than the live global singleton, to avoid the test-order-dependent pollution class already documented elsewhere in this file) and one addition to `tests/test_config_dynamic_param_count.py` (hand-derives the correct GQA-attention + shared-expert total and pins the exact delta introduced by the fix). Pure param-accounting/tooling fix — no training-loop, LR, or architecture change; `auto_configure_batch_size()`'s VRAM math is now more accurate but this repo has never run it against real GPU hardware to begin with, so no prior claim is invalidated. Test count: `622 → 626 passed, 5 skipped` (+4).
 

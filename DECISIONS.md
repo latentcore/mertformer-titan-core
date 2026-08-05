@@ -637,3 +637,57 @@ repository for public release.
 
 **Not legal advice.** The Llama naming question flagged in `NOTICE` as EXTERNAL-PENDING
 legal remains open and is unaffected by this change.
+
+## Chess onefile rewrite (`ChessFormerAI/chessformer`) stays a separate package, not a submodule or a fold-back (2026-08-06)
+
+**Context.** `BACKLOG.md`'s "Chess onefile — independent review found 3 real drift/bugs
+(2026-08-02)" entry documented that a separate, isolated rewrite of the chess lane
+(`ChessFormerAI/chessformer`, developed against a read-only mirror of this repo's `layers/`)
+fixes four real bugs in `scripts/chess_5080_onefile.py` (is_causal mislabeling, a Liquid
+clamp train/eval mismatch, a MoE dispatch capacity drift, and a Liquid-state-discard bug that
+also lives in this repo's own `layers/mertformer_block.py`), but deferred the
+fold-back-or-deprecate decision until the rewrite had real-hardware results. It now does —
+`run_20260802_194441`, real RTX 5070 training + retroactive evaluation, real measured Elo
+(1509) and puzzle accuracy (45.78%). See `BACKLOG.md`'s matching 2026-08-06 entry for the
+full run detail and `evidence/2026-08-02-chess-searchless-5070/` for the raw numbers.
+
+**Alternatives considered.**
+- **Fold the D1-D4 fixes back into `scripts/chess_5080_onefile.py` in place.** Rejected: that
+  file's own governance apparatus (`docs/CHESS_ONEFILE_MASTER_TRUTH.md`, `chess_evidence_
+  contract.md`, `chess_release_contract.md`, `chess_onefile_glossary.md` — roughly 80
+  tracked stub/contract/report filenames across `reports/`, `runbooks/`, `checklists/`,
+  `releases/`, `evidence/`) is built around that exact file's identity, its teaching-corpus
+  and curated-position-suite extension, and its Windows one-click delivery lane
+  (`CHESS_5080_POC_INTERNAL.md`). None of that exists in `chessformer` and porting it would
+  mean rebuilding most of that apparatus for a package that already works standalone — high
+  effort for no measured benefit over just keeping the two separate.
+- **Merge `chessformer` into this repo as a tracked subdirectory or git submodule.** Rejected
+  for now: `chessformer` has its own dependency surface, its own 123-test suite, its own GUI
+  (`chessformer/gui/`), and its own report schema deliberately simpler than this repo's
+  chess-onefile stub apparatus. Merging would either force it to adopt that apparatus (real
+  work, no clear benefit) or create a second, inconsistent chess-evidence convention inside
+  one repo. `ChessFormerAI` remains a standalone project; this repo references its results as
+  evidence (`evidence/2026-08-02-chess-searchless-5070/`), the same pattern already used for
+  the Nutrition5k side-experiment.
+- **Mark `scripts/chess_5080_onefile.py` "superseded" without merging anything.** Rejected:
+  `chessformer` has not been validated as a strict superset of what `chess_5080_onefile.py`
+  does (Turkish teaching corpus, curated opening/tactical/endgame/blunder-correction suite,
+  Windows one-click EXE delivery — none of these exist in `chessformer`). Calling one file
+  "superseded" by a package that cannot yet do everything it does would be a claim-boundary
+  violation of exactly the kind this repo's own discipline exists to prevent.
+
+**Decision.** `ChessFormerAI/chessformer` stays a separate, standalone package.
+`scripts/chess_5080_onefile.py` is unchanged, not deprecated, not marked superseded — its
+D1-D4 findings remain documented, known, live bugs in an unexercised code path (it has still
+never itself been run — see `CHESS_5080_POC_INTERNAL.md`). The 123 `chessformer` tests stay
+in their own package. This repo's only footprint from this work is the evidence folder.
+
+**Tradeoffs.** The known D1-D4 bugs in `chess_5080_onefile.py` remain unfixed in that file
+specifically; anyone running it directly (rather than `chessformer`) still hits them. Accepted
+because the file has never been run for real and the rewrite is now the validated path if/when
+a real onefile-lane run is wanted.
+
+**Rollback impact.** None — no code in this repo changed as a result of this decision, only
+documentation and the evidence folder.
+
+**Compatibility impact.** None.

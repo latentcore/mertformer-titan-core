@@ -203,3 +203,60 @@ kapsamında verilmiştir.
 
 **Hukuki tavsiye değildir.** `NOTICE`'ta EXTERNAL-PENDING legal olarak işaretli Llama
 isimlendirme sorusu açık kalır ve bu değişiklikten etkilenmez. Tam ayrıntı: `DECISIONS.md`.
+
+## Satranç onefile yeniden yazımı (`ChessFormerAI/chessformer`) ayrı paket olarak kalıyor, alt-modül ya da geri-taşıma değil (2026-08-06)
+
+**Bağlam.** `BACKLOG.md`'nin "Chess onefile — independent review found 3 real drift/bugs
+(2026-08-02)" maddesi, satranç hattının ayrı, izole bir yeniden yazımının
+(`ChessFormerAI/chessformer`, bu reponun `layers/`'ının salt-okunur bir kopyasına karşı
+geliştirildi) `scripts/chess_5080_onefile.py`'de dört gerçek bug'ı düzelttiğini belgeledi
+(is_causal yanlış-etiketleme, Liquid clamp eğitim/değerlendirme uyuşmazlığı, MoE dispatch
+kapasite drift'i, ve bu reponun kendi `layers/mertformer_block.py`'sinde de yaşayan bir
+Liquid-state-atma bug'ı), ama geri-taşınma-ya-da-deprecated-işaretleme kararını yeniden
+yazımın gerçek donanım sonuçları elde etmesine kadar erteledi. Artık elde etti —
+`run_20260802_194441`, gerçek RTX 5070 eğitimi + retroaktif değerlendirme, gerçek ölçülmüş
+Elo (1509) ve puzzle accuracy (%45.78). Tam run detayı için `BACKLOG_TR.md`'nin eşleşen
+2026-08-06 maddesine, ham sayılar için `evidence/2026-08-02-chess-searchless-5070/`'e bakın.
+
+**Değerlendirilen alternatifler.**
+- **D1-D4 düzeltmelerini `scripts/chess_5080_onefile.py`'ye yerinde geri taşı.** Reddedildi:
+  o dosyanın kendi governance apparatus'u (`docs/CHESS_ONEFILE_MASTER_TRUTH.md`,
+  `chess_evidence_contract.md`, `chess_release_contract.md`, `chess_onefile_glossary.md` —
+  `reports/`, `runbooks/`, `checklists/`, `releases/`, `evidence/` genelinde kabaca 80
+  tracked stub/contract/rapor dosya adı) tam olarak o dosyanın kimliği, öğretme-corpus'u ve
+  curated-position-suite genişletmesi, ve Windows tek-tık delivery hattı
+  (`CHESS_5080_POC_INTERNAL.md`) etrafında kurulu. Bunların hiçbiri `chessformer`'da yok ve
+  portlamak, zaten kendi ayaklarının üzerinde çalışan bir paket için o apparatus'un çoğunu
+  yeniden inşa etmek demek olurdu — ikisini ayrı tutmaya kıyasla ölçülen bir fayda olmadan
+  yüksek efor.
+- **`chessformer`'ı bu repoya tracked bir alt-dizin ya da git submodule olarak birleştir.**
+  Şimdilik reddedildi: `chessformer`'ın kendi bağımlılık yüzeyi, kendi 123-testlik suite'i,
+  kendi GUI'si (`chessformer/gui/`), ve bilerek bu reponun chess-onefile stub apparatus'undan
+  çok daha yalın kendi rapor şeması var. Birleştirmek ya onu o apparatus'u benimsemeye
+  zorlardı (gerçek iş, net fayda yok) ya da tek bir repo içinde ikinci, tutarsız bir
+  chess-evidence konvansiyonu yaratırdı. `ChessFormerAI` bağımsız bir proje olarak kalıyor;
+  bu repo onun sonuçlarını kanıt olarak referans alıyor (`evidence/2026-08-02-chess-
+  searchless-5070/`), Nutrition5k yan-deneyinde zaten kullanılan aynı örüntü.
+- **Hiçbir şeyi birleştirmeden `scripts/chess_5080_onefile.py`'yi "superseded" işaretle.**
+  Reddedildi: `chessformer`, `chess_5080_onefile.py`'nin yaptığı her şeyin katı bir üst-kümesi
+  olarak doğrulanmadı (Türkçe öğretme corpus'u, curated opening/tactical/endgame/blunder-
+  correction suite'i, Windows tek-tık EXE delivery'si — bunların hiçbiri `chessformer`'da
+  yok). Henüz yapabildiği her şeyi yapamayan bir paket tarafından bir dosyayı "superseded"
+  ilan etmek, tam olarak bu reponun kendi disiplininin önlemeye çalıştığı türden bir
+  claim-sınırı ihlali olurdu.
+
+**Karar.** `ChessFormerAI/chessformer` ayrı, bağımsız bir paket olarak kalıyor.
+`scripts/chess_5080_onefile.py` değişmedi, deprecated değil, superseded işaretlenmedi — D1-D4
+bulguları hiç koşulmamış bir kod yolunda belgeli, bilinen, canlı bug'lar olarak kalıyor (kendisi
+de hâlâ hiç çalıştırılmadı — bkz. `CHESS_5080_POC_INTERNAL.md`). 123 `chessformer` testi kendi
+paketinde kalıyor. Bu işin bu repodaki tek izi evidence klasörü.
+
+**Ödünleşimler.** `chess_5080_onefile.py`'deki bilinen D1-D4 bug'ları o dosyada özellikle
+düzeltilmemiş kalıyor; onu doğrudan (chessformer yerine) koşturan biri hâlâ bunlara çarpar.
+Kabul edildi çünkü dosya hiç gerçekten koşulmadı ve gerçek bir onefile-hattı koşusu
+istenirse yeniden yazım artık doğrulanmış yol.
+
+**Geri-alma etkisi.** Yok — bu karar sonucunda bu repoda hiçbir kod değişmedi, yalnızca
+dokümantasyon ve evidence klasörü.
+
+**Uyumluluk etkisi.** Yok.

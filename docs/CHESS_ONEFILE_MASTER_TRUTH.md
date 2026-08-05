@@ -50,6 +50,24 @@ It is intentionally strict about the difference between:
 - Management-closure stub surfaces
 - Master summary and aggregated truth surfaces
 
+## Related, separate package: `ChessFormerAI/chessformer`
+
+An independent rewrite of this lane (`ChessFormerAI/chessformer`, developed against a
+read-only mirror of this repo's `layers/`, not part of this repo) has a real, checkpoint-bound
+training run on target consumer hardware (RTX 5070) with real measured evaluation: puzzle
+accuracy 45.78% (directly comparable to DeepMind's Searchless Chess, arXiv:2402.04494) and an
+Elo estimate of 1509 on Stockfish's own internal rating scale (not comparable to DeepMind's
+2895 Lichess-blitz-vs-humans figure). Full detail: `evidence/2026-08-02-chess-searchless-5070/`,
+`BACKLOG.md`, `DECISIONS.md`.
+
+This does **not** change anything in this document's own table above — `scripts/
+chess_5080_onefile.py` itself is unchanged, still never run, and the two packages have
+different report schemas, different governance apparatus, and (as of 2026-08-06) a deliberate
+decision to stay separate rather than merge. `chessformer` fixed four real bugs found in
+`scripts/chess_5080_onefile.py` by an earlier independent review (`is_causal` mislabeling, a
+Liquid clamp train/eval mismatch, a MoE dispatch capacity drift, a Liquid-state-discard bug);
+those bugs remain live in `chess_5080_onefile.py` itself.
+
 ## Real Remaining Core Work
 
 The following remain actual blockers even after repo-side closure is strong:

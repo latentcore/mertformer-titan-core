@@ -6,6 +6,18 @@ Bu dosya projedeki önemli değişiklikleri takip eder.
 > Girdiler sıkı ters-kronolojik sırada tutulur (en yeni en üstte); 2026-07-27 pass'i "Pass 7 (2026-06-13)"in 2026-03-13/2026-02-08 etiketli sürümlerden sonraya yanlış dosyalandığını buldu ve doğru kronolojik yerine taşıdı — ayrıntı için aşağıdaki girdiye bakın.
 > **Kapsam notu:** bu dosyanın en eski girdisi `v0.1.0-pilot-ready` (2026-02-08) — bu proje için changelog disiplini burada başladı, projenin kendisi burada başlamadı. Öncesi burada özetlenmiyor; o tarihten öncesi için `git log` tek doğru kaynak.
 
+## Unreleased - 2026-08-06
+
+### Eklenenler
+- `evidence/2026-08-02-chess-searchless-5070/`: `ChessFormerAI/chessformer` (bağımsız yan
+  proje, bu reponun kendi kanonik modelinin parçası değil) için gerçek, checkpoint-bağlı
+  eğitim + retroaktif holdout/puzzle/elo değerlendirme sonuçları. Puzzle accuracy %45.78
+  (DeepMind'ın Searchless Chess'ine, arXiv:2402.04494, doğrudan kıyaslanabilir), Elo 1509
+  (Stockfish'in kendi iç ölçeği, DeepMind'ın 2895'ine kıyaslanamaz). Bu reponun kendi 45K
+  boşluğunu kapatmıyor. `scripts/chess_5080_onefile.py` üzerindeki geri-taşınma-ya-da-
+  deprecated-işaretleme kararı verildi: ayrı kalıyor. Tam detay: `BACKLOG_TR.md`,
+  `DECISIONS_TR.md`.
+
 ## Unreleased - 2026-08-01
 
 ### Eklenenler

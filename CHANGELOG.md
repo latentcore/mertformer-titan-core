@@ -6,6 +6,17 @@ All notable changes to this project are tracked in this file.
 > Entries are kept in strict reverse-chronological order (newest first); a 2026-07-27 pass found "Pass 7 (2026-06-13)" mis-filed after the 2026-03-13/2026-02-08 tagged releases and moved it back to its correct chronological slot — see that entry below for detail.
 > **Coverage note:** this file's earliest entry is `v0.1.0-pilot-ready` (2026-02-08) — that is where changelog discipline for this project began, not where the project itself began. Earlier work is not summarized here; `git log` is the source of truth for anything before that date.
 
+## Unreleased - 2026-08-06
+
+### Added
+- `evidence/2026-08-02-chess-searchless-5070/`: real, checkpoint-bound training + retroactive
+  holdout/puzzle/elo evaluation results for `ChessFormerAI/chessformer` (independent side
+  project, not part of this repo's own canonical model). Puzzle accuracy 45.78% (directly
+  comparable to DeepMind's Searchless Chess, arXiv:2402.04494), Elo 1509 (internal Stockfish
+  scale, not comparable to DeepMind's 2895). Does not close this repo's own 45K gap. Fold-back-
+  or-deprecate decision on `scripts/chess_5080_onefile.py` made: stays separate. Full detail:
+  `BACKLOG.md`, `DECISIONS.md`.
+
 ## Unreleased - 2026-08-01
 
 ### Added

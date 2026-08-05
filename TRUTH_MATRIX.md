@@ -16,5 +16,6 @@ Evidence classes: **measured** (ran, reproducible) · **target** (design intent,
 | GPT-3.5-class capability / on-device throughput / NPU latency | target/vision | not measured — requires the 45K run + device profiling |
 | Canonical 3.67B model trained & converging | **unverified** | never trained; no real checkpoint — see [STATUS.md](STATUS.md) |
 | Documented-not-changed findings (z-loss 2e-6, dt=1.0, GPU-perf) | measured (mechanism) | [DECISIONS.md](DECISIONS.md) — deliberately deferred pre-45K so the run is not confounded |
+| `ChessFormerAI/chessformer` side project completed a real RTX 5070 training run (puzzle accuracy 45.78%, Elo 1509 internal Stockfish scale) | measured | [evidence/2026-08-02-chess-searchless-5070/](evidence/2026-08-02-chess-searchless-5070/) — **separate project, separate checkpoint, not this repo's canonical 3.67B model; does not close the 45K gap above** |
 
 Generated cross-reference: `reports/final_truth_matrix.md`, `reports/source_of_truth_map.md`.

@@ -69,6 +69,24 @@ Proje blocker’larını repo-side truth zincirine bağlayan actionability rapor
 - Management-closure stub yüzeyleri
 - Master summary ve aggregated truth yüzeyleri
 
+## İlgili, ayrı paket: `ChessFormerAI/chessformer`
+
+Bu hattın bağımsız bir yeniden yazımı (`ChessFormerAI/chessformer`, bu reponun `layers/`'ının
+salt-okunur bir kopyasına karşı geliştirildi, bu reponun parçası değil), hedef tüketici
+donanımında (RTX 5070) gerçek, checkpoint-bağlı bir eğitim koşusuna ve gerçek ölçülmüş
+değerlendirmeye sahip: puzzle accuracy %45.78 (DeepMind'ın Searchless Chess'ine, arXiv:
+2402.04494, doğrudan kıyaslanabilir) ve Stockfish'in kendi iç rating ölçeğinde 1509 Elo tahmini
+(DeepMind'ın 2895 Lichess-blitz-insana-karşı rakamına kıyaslanamaz). Tam detay:
+`evidence/2026-08-02-chess-searchless-5070/`, `BACKLOG_TR.md`, `DECISIONS_TR.md`.
+
+Bu, yukarıdaki bu dokümanın kendi tablosunda **hiçbir şeyi değiştirmiyor** —
+`scripts/chess_5080_onefile.py`'nin kendisi değişmedi, hâlâ hiç koşulmadı, ve iki paketin
+farklı rapor şemaları, farklı governance apparatus'u var, ve (2026-08-06 itibarıyla) birleşmek
+yerine ayrı kalma konusunda bilinçli bir karar var. `chessformer`, daha önceki bağımsız bir
+incelemenin `scripts/chess_5080_onefile.py`'de bulduğu dört gerçek bug'ı düzeltti (`is_causal`
+yanlış-etiketleme, Liquid clamp eğitim/değerlendirme uyuşmazlığı, MoE dispatch kapasite
+drift'i, Liquid-state-atma bug'ı); bu bug'lar `chess_5080_onefile.py`'nin kendisinde hâlâ canlı.
+
 ## Gerçekte Kalan Çekirdek İşler
 
 Repo-side kapanış güçlü olsa da aşağıdakiler gerçek blocker olarak durur:
