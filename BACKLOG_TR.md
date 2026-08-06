@@ -104,6 +104,20 @@ kaydedildi, repoya kopyalanmadı — aynı retroaktif değerlendirmeyi tekrar ko
 "sayılar burada" ile "onları üreten kodun kendisi de burada" arasındaki boşluğu kapatan bir
 tamamlama, tam reprodüksiyon için.
 
+**Checkpoint yayınlandı, oynanabilir demo kararı (2026-08-06):** step-30.000 checkpoint artık
+[Hugging Face](https://huggingface.co/Mert21779033/mertformer-chess-searchless)'te, evidence
+paketinin dürüstlük çerçevesini aynen taşıyan bir model card ile. Herkese açık, hosted bir
+Hugging Face Space (Gradio, tarayıcıda tıkla-oyna) denendi ve vazgeçildi: Hugging Face artık
+ücretsiz `cpu-basic` donanımında Gradio/Docker Space barındırmak için PRO abonelik istiyor
+(`402 Payment Required`, 2026-08-06'da doğrulandı) — teknik değil, tekrarlayan-maliyetli bir
+engel, ve bu kullanım için buna değmiyor. Bunun yerine kendi kendine yeten yerel bir alternatif
+(`app.py` + `requirements.txt` + minimal bir `chessformer` paket alt kümesi) inşa edildi,
+temiz bir indirmeden uçtan uca test edildi ve checkpoint'le aynı Hugging Face reposuna
+yayınlandı — isteyen `pip install` yapıp indirip yerel bir Gradio arayüzüyle modele karşı
+oynayabilir, Space veya GPU gerekmeden. "Başkası ona karşı oynayabilir mi" sorusunu tekrarlayan
+maliyet olmadan tam karşılıyor; hosted bir public Space, maliyet değerse ileride bir yükseltme
+olarak duruyor.
+
 ## Analitik param-sayısı tahmincisi bug'ı — DÜZELTİLDİ (2026-07-27), eğitim-matematiği değişmedi
 `ARCHITECTURE.md`'nin belirttiği `~1.86B aktif param (MoE top-2 + shared)` rakamı, bu reponun iki bağımsız analitik tahmincisiyle (`scripts/scaling_audit_math.py::estimate_params()` ve `config/config.py::_estimate_total_params()` — ikincisi gerçek `auto_configure_batch_size()` VRAM-bütçeleme mantığını besliyor, yalnız raporlama aracı değil) çapraz kontrol edildiğinde, ikisinin de iki birleşen sebepten eksik saydığı bulundu: (1) ikisi de MoE-expert boyutlandırması için dense-katman `intermediate_size`'ını (5632) kullanıyordu, `layers/moe.py`'nin `BitSwiGLU` expert'lerinin gerçekte kullandığı daha büyük `moe_intermediate` (8192) yerine; (2) ikisi de `layers/moe.py`'nin her zaman instantiate edilen, her zaman aktif **shared expert**'ini (`self.shared_expert = BitSwiGLU(hidden_size, moe_intermediate)`, öğrenilebilir bir sigmoid gate ile her token'ın çıktısına koşulsuz eklenir) tamamen atlıyordu — `num_experts`'e dahil olmayan, her zaman aktif 9. bir expert-boyutlu blok. Net etki: aktif parametreler ~%44 (gerçek ~1.886B yerine ~1.06B), toplam parametreler ~%8 eksik sayılıyordu. Her iki dosyada da gerçek mimariye uyacak şekilde **düzeltildi**; `scaling_audit_math.py` artık `~3.698B` toplam / `~1.886B` aktif raporluyor, `ARCHITECTURE.md`'nin bağımsız kaynaklı rakamıyla eşleşiyor. 4 yeni regresyon testi: `tests/test_scaling_audit_math.py` (3 test, global singleton yerine `monkeypatch` ile izole stub `cfg`) ve `tests/test_config_dynamic_param_count.py`'ye bir ekleme. Salt param-muhasebesi/araç düzeltmesi — eğitim döngüsü, LR veya mimari değişikliği yok. Test sayısı: `622 → 626 passed, 5 skipped` (+4).
 

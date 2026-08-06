@@ -96,6 +96,20 @@ the three eval reports above — is now included verbatim in the evidence packag
 closes the gap between "the numbers are here" and "the exact code that produced them is here
 too" for full reproducibility.
 
+**Checkpoint published, playable demo decision (2026-08-06):** the step-30,000 checkpoint is
+now published at [Hugging Face](https://huggingface.co/Mert21779033/mertformer-chess-searchless),
+with a model card mirroring this package's honesty framing. A public Hugging Face Space
+(Gradio, hosted, click-to-play in browser) was attempted and dropped: Hugging Face now
+requires a PRO subscription to host Gradio/Docker Spaces on free `cpu-basic` hardware (`402
+Payment Required`, confirmed 2026-08-06) — not a technical blocker, a recurring-cost one, and
+not worth it for this use case. Instead, a self-contained local alternative (`app.py` +
+`requirements.txt` + a minimal `chessformer/` package subset) was built, tested end-to-end
+from a clean download, and published alongside the checkpoint on the same Hugging Face repo —
+anyone can `pip install`, download, and run a local Gradio UI to play against the model, no
+Space and no GPU required. This fully covers "can someone else play against it" without a
+recurring cost; a hosted public Space remains a possible future upgrade if the cost becomes
+worth it.
+
 ## Analytical param-count estimator bug — FIXED (2026-07-27), no training-math change
 A cross-check of `ARCHITECTURE.md`'s stated `~1.86B active params (MoE top-2 + shared)` against this repo's two independent analytical estimators — `scripts/scaling_audit_math.py::estimate_params()` and `config/config.py::_estimate_total_params()` (the latter feeds the real `auto_configure_batch_size()` VRAM-budgeting logic, not just a reporting tool) — found both undercounting for two compounding reasons: (1) both reused the dense-layer `intermediate_size` (5632) for MoE-expert sizing instead of the real, larger `moe_intermediate` (8192) that `layers/moe.py`'s `BitSwiGLU` experts actually use; (2) both omitted `layers/moe.py`'s always-instantiated, always-active **shared expert** (`self.shared_expert = BitSwiGLU(hidden_size, moe_intermediate)`, unconditionally added to every token's output via a learnable sigmoid gate) entirely — a 9th, always-active expert-sized block that is not part of `num_experts`. Net effect: active params were undercounted by ~44% (~1.06B vs. the real ~1.886B) and total params by ~8%. **Fixed** in both files to mirror the real architecture; `scaling_audit_math.py` now reports `~3.698B` total / `~1.886B` active, matching `ARCHITECTURE.md`'s independently-sourced figure. 4 new regression tests: `tests/test_scaling_audit_math.py` (3 tests, isolated-stub `cfg` via `monkeypatch` rather than the live global singleton, to avoid the test-order-dependent pollution class already documented elsewhere in this file) and one addition to `tests/test_config_dynamic_param_count.py` (hand-derives the correct GQA-attention + shared-expert total and pins the exact delta introduced by the fix). Pure param-accounting/tooling fix — no training-loop, LR, or architecture change; `auto_configure_batch_size()`'s VRAM math is now more accurate but this repo has never run it against real GPU hardware to begin with, so no prior claim is invalidated. Test count: `622 → 626 passed, 5 skipped` (+4).
 

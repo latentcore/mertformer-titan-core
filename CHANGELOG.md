@@ -22,6 +22,9 @@ All notable changes to this project are tracked in this file.
 - Chess checkpoint (step 30,000) published to [Hugging Face](https://huggingface.co/Mert21779033/mertformer-chess-searchless)
   with a model card mirroring the evidence package's honesty framing. README.md/README_TR.md
   and the evidence README updated with the link.
+- Local playable demo (`app.py`, Gradio) for the published chess checkpoint added to the same
+  Hugging Face repo; a public hosted Space was evaluated and dropped (Hugging Face requires a
+  PRO subscription for free-tier Gradio/Docker Spaces). Full detail: `BACKLOG.md`.
 
 ## Unreleased - 2026-08-01
 
