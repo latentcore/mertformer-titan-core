@@ -17,6 +17,9 @@ Bu dosya projedeki önemli değişiklikleri takip eder.
   boşluğunu kapatmıyor. `scripts/chess_5080_onefile.py` üzerindeki geri-taşınma-ya-da-
   deprecated-işaretleme kararı verildi: ayrı kalıyor. Tam detay: `BACKLOG_TR.md`,
   `DECISIONS_TR.md`.
+- `evidence/2026-08-02-chess-searchless-5070/retroactive_eval.py`: yukarıdaki değerlendirme
+  raporlarını üreten script'in kendisi, tam reprodüksiyon için evidence paketine birebir
+  eklendi.
 
 ## Unreleased - 2026-08-01
 

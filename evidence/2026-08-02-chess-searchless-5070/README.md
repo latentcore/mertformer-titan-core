@@ -70,6 +70,10 @@ total plies) is a separate, honest diagnostic of what the network learned
 
 ## Files
 
+- `retroactive_eval.py` — the script that produced `holdout_report.json`/`puzzle_report.json`/
+  `elo_report.json`: loads `best.pt` (step 30,000) and calls the existing
+  `chessformer.eval.holdout`/`puzzles`/`benchmark` functions directly, inference-only, no
+  retraining or resuming. Included verbatim for full reproducibility.
 - `training_report.json` — steps, loss, throughput, why the operator stopped it
 - `model_report.json` — architecture, resolved BitNet/MoE/Liquid, parameter accounting
 - `holdout_report.json`, `puzzle_report.json`, `elo_report.json` — the three retroactive eval passes

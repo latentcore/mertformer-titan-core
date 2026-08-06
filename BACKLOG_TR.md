@@ -98,6 +98,12 @@ yalnız `EVIDENCE_MANIFEST.json` üzerinden SHA256-referanslı), ham PGN oyun ka
 kaydedildi, repoya kopyalanmadı — aynı retroaktif değerlendirmeyi tekrar koşarak yeniden
 üretilebilir).
 
+**Paketleme tamamlaması (2026-08-06):** yukarıdaki üç değerlendirme raporunu üreten
+`retroactive_eval.py` script'inin kendisi artık evidence paketinde birebir yer alıyor
+(`evidence/2026-08-02-chess-searchless-5070/retroactive_eval.py`). Yeni bir bulgu değil —
+"sayılar burada" ile "onları üreten kodun kendisi de burada" arasındaki boşluğu kapatan bir
+tamamlama, tam reprodüksiyon için.
+
 ## Analitik param-sayısı tahmincisi bug'ı — DÜZELTİLDİ (2026-07-27), eğitim-matematiği değişmedi
 `ARCHITECTURE.md`'nin belirttiği `~1.86B aktif param (MoE top-2 + shared)` rakamı, bu reponun iki bağımsız analitik tahmincisiyle (`scripts/scaling_audit_math.py::estimate_params()` ve `config/config.py::_estimate_total_params()` — ikincisi gerçek `auto_configure_batch_size()` VRAM-bütçeleme mantığını besliyor, yalnız raporlama aracı değil) çapraz kontrol edildiğinde, ikisinin de iki birleşen sebepten eksik saydığı bulundu: (1) ikisi de MoE-expert boyutlandırması için dense-katman `intermediate_size`'ını (5632) kullanıyordu, `layers/moe.py`'nin `BitSwiGLU` expert'lerinin gerçekte kullandığı daha büyük `moe_intermediate` (8192) yerine; (2) ikisi de `layers/moe.py`'nin her zaman instantiate edilen, her zaman aktif **shared expert**'ini (`self.shared_expert = BitSwiGLU(hidden_size, moe_intermediate)`, öğrenilebilir bir sigmoid gate ile her token'ın çıktısına koşulsuz eklenir) tamamen atlıyordu — `num_experts`'e dahil olmayan, her zaman aktif 9. bir expert-boyutlu blok. Net etki: aktif parametreler ~%44 (gerçek ~1.886B yerine ~1.06B), toplam parametreler ~%8 eksik sayılıyordu. Her iki dosyada da gerçek mimariye uyacak şekilde **düzeltildi**; `scaling_audit_math.py` artık `~3.698B` toplam / `~1.886B` aktif raporluyor, `ARCHITECTURE.md`'nin bağımsız kaynaklı rakamıyla eşleşiyor. 4 yeni regresyon testi: `tests/test_scaling_audit_math.py` (3 test, global singleton yerine `monkeypatch` ile izole stub `cfg`) ve `tests/test_config_dynamic_param_count.py`'ye bir ekleme. Salt param-muhasebesi/araç düzeltmesi — eğitim döngüsü, LR veya mimari değişikliği yok. Test sayısı: `622 → 626 passed, 5 skipped` (+4).
 

@@ -204,6 +204,7 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   ├── holdout_report.json  # JSON data artifact
 │   │   ├── model_report.json  # JSON data artifact
 │   │   ├── puzzle_report.json  # JSON data artifact
+│   │   ├── retroactive_eval.py  # Python module/script (module for retroactive eval)
 │   │   ├── training_curve.png  # media asset
 │   │   └── training_report.json  # JSON data artifact
 │   ├── build30_t4_onecell/  # directory

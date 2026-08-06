@@ -16,6 +16,9 @@ All notable changes to this project are tracked in this file.
   scale, not comparable to DeepMind's 2895). Does not close this repo's own 45K gap. Fold-back-
   or-deprecate decision on `scripts/chess_5080_onefile.py` made: stays separate. Full detail:
   `BACKLOG.md`, `DECISIONS.md`.
+- `evidence/2026-08-02-chess-searchless-5070/retroactive_eval.py`: the script itself that
+  produced the eval reports above, added to the evidence package verbatim for full
+  reproducibility.
 
 ## Unreleased - 2026-08-01
 
