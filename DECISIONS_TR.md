@@ -260,3 +260,35 @@ istenirse yeniden yazım artık doğrulanmış yol.
 dokümantasyon ve evidence klasörü.
 
 **Uyumluluk etkisi.** Yok.
+
+## `chessformer` checkpoint lisansı: proprietary model-ağırlığı duruşuna Apache 2.0 istisnası (2026-08-06)
+
+**Bağlam.** `MODEL_LICENSE.md` (yukarıdaki 2026-07-30 relicensing girişine bakın) repo kodu
+Apache 2.0'a geçerken model-ağırlığı duruşunu bilinçli olarak proprietary bıraktı — o an
+"zaten hiç eğitilmiş ağırlık yoktu." Bu bugün değişti: `chessformer` (yukarıdaki bağımsız
+yan-proje) Hugging Face'te gerçek, yayınlanmış bir checkpoint'e sahip
+(`Mert21779033/mertformer-chess-searchless`), ilk yüklemede yanlışlıkla `MIT` etiketiyle
+(aynı gün fark edilip düzeltildi — bkz. `BACKLOG.md`'nin eşleşen girişi) — bu da bu girişin
+çözdüğü asıl soruyu ortaya çıkardı: reponun proprietary model-ağırlığı politikası
+`chessformer`'ı da mı kapsıyor, yoksa yalnızca kanonik Titan modelini mi?
+
+**Karar.** Her iki projenin de tek sahibi olan Mert Yünlü, `chessformer` checkpoint'lerini
+proprietary duruştan açıkça istisna tutuyor: bu reponun kodunun kullandığı aynı Apache
+License 2.0 ile lisanslanıyorlar. `MODEL_LICENSE.md`/`MODEL_LICENSE_TR.md`, açık ve sınırlı
+bir istisna bölümüyle güncellendi. Kanonik MertFormer Titan modelinin proprietary duruşu
+değişmedi — bu, 2026-07-30 relicensing kararını yeniden açmıyor, o kararın henüz chess
+checkpoint'i yokken açık bıraktığı bir soruyu netleştiriyor.
+
+**Neden Apache 2.0, ayrı bir model lisansı değil.** Basitlik: `chessformer` zaten her yerde
+(README, evidence paketi, HF model card) bu reponun mimari ailesini ve geliştirme soyunu
+paylaştığı belgelenmiş durumda; ikinci, özel bir model lisansı, birlikte gönderildiği kod
+lisansına zaten uymanın ötesinde gerçek bir fayda getirmeden ekstra bir hukuki yüzey ekler.
+
+**Sonuç olarak değişen:** Hugging Face reposu (bu kararı beklerken aynı gün private yapılmıştı)
+tekrar public; model card'ının `license` alanı ve Lisans bölümü artık ilk yüklemedeki yanlış
+`MIT` etiketi yerine, `MODEL_LICENSE.md`'nin istisna maddesine link veren Apache 2.0 diyor.
+
+**Geri-alma etkisi.** Düşük — bu, zaten yayınlanmış, bağımsız bir yan-proje checkpoint'i
+üzerinde bir lisans bahşi. Geri almak, zaten indirilmiş kopyaları yayından kaldırmaz.
+
+**Uyumluluk etkisi.** Yok.

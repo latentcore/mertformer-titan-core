@@ -25,6 +25,15 @@ All notable changes to this project are tracked in this file.
 - Local playable demo (`app.py`, Gradio) for the published chess checkpoint added to the same
   Hugging Face repo; a public hosted Space was evaluated and dropped (Hugging Face requires a
   PRO subscription for free-tier Gradio/Docker Spaces). Full detail: `BACKLOG.md`.
+- `chessformer` checkpoints explicitly licensed Apache 2.0 (exception to `MODEL_LICENSE.md`'s
+  proprietary posture, scoped to this side-project only) after an incorrect `MIT` tag was caught
+  and the repo briefly made private. `requirements.txt`/`chessformer/runtime.py` wrong-package-name
+  bug, dead `huggingface-cli` command, and a stale docstring also fixed on the HF repo. Full
+  detail: `BACKLOG.md`, `DECISIONS.md`.
+- `evidence/2026-08-02-chess-searchless-5070/chessformer/`: vendored the actual dependency
+  closure `retroactive_eval.py` imports (it previously didn't run from this repo at all --
+  `chessformer` wasn't in the git tree). Two stale "not part of this repo" claims corrected.
+  Full detail: `BACKLOG.md`.
 
 ## Unreleased - 2026-08-01
 

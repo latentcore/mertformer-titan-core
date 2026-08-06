@@ -26,6 +26,15 @@ Bu dosya projedeki önemli değişiklikleri takip eder.
 - Yayınlanan satranç checkpoint'i için yerel oynanabilir demo (`app.py`, Gradio) aynı Hugging
   Face reposuna eklendi; herkese açık, hosted bir Space denendi ve vazgeçildi (Hugging Face
   ücretsiz katmanda Gradio/Docker Space için PRO abonelik istiyor). Tam detay: `BACKLOG_TR.md`.
+- `chessformer` checkpoint'leri açıkça Apache 2.0 ile lisanslandı (`MODEL_LICENSE.md`'nin
+  proprietary duruşuna, yalnızca bu yan-projeyle sınırlı bir istisna) — yanlış bir `MIT` etiketi
+  fark edilip repo kısa süreliğine private yapıldıktan sonra. HF reposunda ayrıca
+  `requirements.txt`/`chessformer/runtime.py`'deki yanlış-paket-adı bug'ı, ölü `huggingface-cli`
+  komutu ve bayat bir docstring de düzeltildi. Tam detay: `BACKLOG_TR.md`, `DECISIONS_TR.md`.
+- `evidence/2026-08-02-chess-searchless-5070/chessformer/`: `retroactive_eval.py`'nin gerçekte
+  import ettiği bağımlılık kapanışı vendor edildi (öncesinde bu repodan hiç çalışmıyordu —
+  `chessformer` git ağacında yoktu). İki bayat "bu reponun parçası değil" iddiası düzeltildi.
+  Tam detay: `BACKLOG_TR.md`.
 
 ## Unreleased - 2026-08-01
 

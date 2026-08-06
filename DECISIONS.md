@@ -691,3 +691,37 @@ a real onefile-lane run is wanted.
 documentation and the evidence folder.
 
 **Compatibility impact.** None.
+
+## `chessformer` checkpoint license: Apache 2.0 exception to the proprietary model-weights posture (2026-08-06)
+
+**Context.** `MODEL_LICENSE.md` (see the 2026-07-30 relicensing entry above) deliberately kept
+the model-weights posture proprietary while the repo's code moved to Apache 2.0 — at the time
+"no trained weights exist yet in any case." That changed today: `chessformer` (the independent
+side-project above) has a real, published checkpoint on Hugging Face
+(`Mert21779033/mertformer-chess-searchless`), initially uploaded under an incorrect `MIT` tag
+(caught and corrected the same day — see `BACKLOG.md`'s matching entry), which surfaced the
+real question this entry resolves: does the repo's proprietary model-weights policy cover
+`chessformer`, or only the canonical Titan model?
+
+**Decision.** Mert Yünlü, sole owner of both, explicitly exempts `chessformer` checkpoints from
+the proprietary posture: they are licensed under the same Apache License 2.0 as this repo's
+code. `MODEL_LICENSE.md`/`MODEL_LICENSE_TR.md` updated with an explicit, scoped exception
+section. The canonical MertFormer Titan model's proprietary posture is unchanged — this does
+not reopen the 2026-07-30 relicensing decision, it clarifies a question that decision left open
+because no chess checkpoint existed yet.
+
+**Why Apache 2.0 and not a separate model license.** Simplicity: `chessformer` is already
+documented everywhere (README, evidence package, HF model card) as sharing this repo's
+architecture family and development lineage; a second, bespoke model license would add a layer
+of legal surface for no real benefit over just matching the code license already governing the
+package it ships with.
+
+**What changed as a result:** the Hugging Face repo (was made private the same day pending this
+decision) is public again; its model card's `license` field and License section now state
+Apache 2.0 with a link to `MODEL_LICENSE.md`'s exception clause instead of the incorrect `MIT`
+tag from the initial upload.
+
+**Rollback impact.** Low — this is a licensing grant on an already-published, independent
+side-project checkpoint. Reversing it does not un-publish copies already downloaded.
+
+**Compatibility impact.** None.

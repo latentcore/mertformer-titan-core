@@ -195,6 +195,35 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   ├── metrics.json  # JSON data artifact
 │   │   └── train_log.csv  # CSV data artifact
 │   ├── 2026-08-02-chess-searchless-5070/  # directory
+│   │   ├── chessformer/  # directory
+│   │   │   ├── arch/  # directory
+│   │   │   │   ├── __init__.py  # Python module/script (arch package initializer and exports)
+│   │   │   │   ├── attention.py  # Python module/script (module for attention)
+│   │   │   │   ├── bitlinear.py  # Python module/script (module for bitlinear)
+│   │   │   │   ├── block.py  # Python module/script (module for block)
+│   │   │   │   ├── ffn.py  # Python module/script (module for ffn)
+│   │   │   │   ├── liquid.py  # Python module/script (module for liquid)
+│   │   │   │   ├── moe.py  # Python module/script (module for moe)
+│   │   │   │   ├── norm.py  # Python module/script (module for norm)
+│   │   │   │   └── qinn.py  # Python module/script (module for qinn)
+│   │   │   ├── data/  # directory
+│   │   │   │   ├── __init__.py  # Python module/script (data package initializer and exports)
+│   │   │   │   ├── dataset.py  # Python module/script (module for dataset)
+│   │   │   │   ├── download.py  # Python module/script (module for download)
+│   │   │   │   └── preprocess.py  # Python module/script (module for preprocess)
+│   │   │   ├── eval/  # directory
+│   │   │   │   ├── __init__.py  # Python module/script (eval package initializer and exports)
+│   │   │   │   ├── benchmark.py  # Python module/script (module for benchmark)
+│   │   │   │   ├── elo.py  # Python module/script (module for elo)
+│   │   │   │   ├── engine.py  # Python module/script (module for engine)
+│   │   │   │   ├── holdout.py  # Python module/script (module for holdout)
+│   │   │   │   └── puzzles.py  # Python module/script (module for puzzles)
+│   │   │   ├── __init__.py  # Python module/script (chessformer package initializer and exports)
+│   │   │   ├── board.py  # Python module/script (module for board)
+│   │   │   ├── config.py  # Python module/script (module for config)
+│   │   │   ├── inference.py  # Python module/script (module for inference)
+│   │   │   ├── model.py  # Python module/script (module for model)
+│   │   │   └── runtime.py  # Python module/script (module for runtime)
 │   │   ├── EVIDENCE_MANIFEST.json  # JSON data artifact
 │   │   ├── README.md  # primary documentation (EN)
 │   │   ├── architecture_parity_summary.json  # JSON data artifact

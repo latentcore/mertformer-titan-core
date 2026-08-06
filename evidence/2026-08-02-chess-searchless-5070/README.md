@@ -3,8 +3,12 @@
 A real, checkpoint-bound training run of **ChessFormerAI** — a small, independent
 side project that mirrors this repo's own architecture family (BitNet b1.58,
 GQA, sparse MoE, Liquid/CfC) at a scale a single consumer GPU can actually
-train, built as a standalone package (`ChessFormerAI/chessformer`, not part of
-this repo) developed against a read-only mirror of this repo's `layers/`.
+train, built as a standalone package (`ChessFormerAI/chessformer`, developed
+against a read-only mirror of this repo's `layers/`). The package itself is
+not part of this repo's training pipeline or test suite (see `DECISIONS.md`'s
+2026-08-06 entry) — but a minimal inference+eval subset of it *is* vendored
+in this folder (`chessformer/`, below) so `retroactive_eval.py` actually runs
+from a clone of this repo, not just the original ChessFormerAI checkout.
 
 **This is not the canonical MertFormer Titan model.** It shares an architecture
 family, not a checkpoint, a parameter count, or a training run. It does **not**
@@ -78,6 +82,12 @@ total plies) is a separate, honest diagnostic of what the network learned
   `elo_report.json`: loads `best.pt` (step 30,000) and calls the existing
   `chessformer.eval.holdout`/`puzzles`/`benchmark` functions directly, inference-only, no
   retraining or resuming. Included verbatim for full reproducibility.
+- `chessformer/` — the minimal `chessformer` package subset `retroactive_eval.py` actually
+  imports (model/arch/board/config/inference/runtime + the `eval`/`data` submodules), vendored
+  here so the script runs from a clone of this repo. Not the full package (no `train.py`,
+  `profiling.py`, `pipeline.py`, `gui/`) and not a data bundle — running the eval stages for
+  real still needs the actual packed shards/puzzle DB/Stockfish binary described in
+  `dataset_provenance.json`.
 - `training_report.json` — steps, loss, throughput, why the operator stopped it
 - `model_report.json` — architecture, resolved BitNet/MoE/Liquid, parameter accounting
 - `holdout_report.json`, `puzzle_report.json`, `elo_report.json` — the three retroactive eval passes

@@ -72,7 +72,9 @@ Proje blocker’larını repo-side truth zincirine bağlayan actionability rapor
 ## İlgili, ayrı paket: `ChessFormerAI/chessformer`
 
 Bu hattın bağımsız bir yeniden yazımı (`ChessFormerAI/chessformer`, bu reponun `layers/`'ının
-salt-okunur bir kopyasına karşı geliştirildi, bu reponun parçası değil), hedef tüketici
+salt-okunur bir kopyasına karşı geliştirildi; bu reponun kendi eğitim hattının veya test
+suite'inin parçası değil, ama reprodüksiyon için minimal bir inference+eval alt kümesi
+`evidence/2026-08-02-chess-searchless-5070/chessformer/` altında vendor edildi), hedef tüketici
 donanımında (RTX 5070) gerçek, checkpoint-bağlı bir eğitim koşusuna ve gerçek ölçülmüş
 değerlendirmeye sahip: puzzle accuracy %45.78 (DeepMind'ın Searchless Chess'ine, arXiv:
 2402.04494, doğrudan kıyaslanabilir) ve Stockfish'in kendi iç rating ölçeğinde 1509 Elo tahmini

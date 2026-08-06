@@ -118,6 +118,52 @@ oynayabilir, Space veya GPU gerekmeden. "Başkası ona karşı oynayabilir mi" s
 maliyet olmadan tam karşılıyor; hosted bir public Space, maliyet değerse ileride bir yükseltme
 olarak duruyor.
 
+**Lisans düzeltmesi + açık Apache 2.0 istisnası (2026-08-06, aynı gün):** yukarıdaki ilk
+Hugging Face yüklemesi checkpoint'i `license: mit` diye etiketlemişti — yanlıştı, ve daha
+kötüsü, gerçek bir açık soruyu ortaya çıkardı: `MODEL_LICENSE.md` bu reponun model-ağırlığı
+duruşunu proprietary tutuyor, ve `chessformer`'ın (bağımsız bir yan-proje, kanonik Titan modeli
+değil) bunun kapsamında olup olmadığını hiç açıkça söylememişti. HF reposundaki her dosyanın
+tam bir taramasıyla aynı gün fark edildi; bu çözülürken repo hemen **private** yapıldı, güvenli
+varsayılan olarak (belirsiz lisanslı bir checkpoint'i açık bırakmak doğru değildi). Aynı gün
+çözüldü: her iki projenin de tek sahibi Mert Yünlü, `chessformer` checkpoint'lerini proprietary
+duruştan açıkça istisna tuttu, bu reponun kendi Apache License 2.0'ı ile lisansladı — bkz.
+`DECISIONS.md`'nin eşleşen 2026-08-06 girişi ve `MODEL_LICENSE.md`/`MODEL_LICENSE_TR.md`'deki
+yeni istisna bölümü. HF model card'ı Apache 2.0 diyecek ve o istisna maddesine link verecek
+şekilde düzeltildi; repo tekrar public yapıldı. Aynı tarama geçişinde ayrıca bulunup düzeltilen:
+`requirements.txt` yanlış, uzun süredir terk edilmiş PyPI paketini (`python-chess`, `1.999`'da
+donmuş bir stub sürümü) adlandırıyordu, gerçek bakımı yapılan paket (`chess`) yerine — kurulum
+talimatlarını harfiyen izleyen herkes çalışan bir `import chess` elde edemezdi;
+`chessformer/runtime.py`'nin `environment_snapshot()`'ı versiyon raporlaması için aynı yanlış
+paket adını sorguluyordu (bu reponun kendi `constraints.txt` konvansiyonuna uyacak şekilde
+`chess`'e düzeltildi); model card'daki `huggingface-cli download` komutu artık çalışmıyor
+(CLI'ın kendisi bunu söylüyor) — `hf download`'a düzeltildi; `chessformer/__init__.py`'nin
+docstring'i yayınlanan alt küme bunları bilerek dışarıda bırakırken `data/`/`train.py`/`eval/`/
+`pipeline.py`/`gui/`'yi mevcutmuş gibi listeliyordu — docstring yalnızca gerçekten dahil olanı
+anlatacak şekilde düzeltildi, gerisi için tam GitHub reposuna işaret ediyor. Tüm düzeltmeler
+yeniden yayınlanmadan önce temiz bir `hf download` + `pip install` + tam bir oyun turuyla
+doğrulandı, varsayılmadı.
+
+**Aynı geçişte daha derin bir boşluk bulundu: `retroactive_eval.py` bu repodan gerçekte
+çalışmıyordu (2026-08-06).** `chessformer.board`/`.config`/`.model`/`.eval.holdout`/
+`.eval.puzzles`/`.eval.benchmark`/`.runtime` import ediyor — bunların hiçbiri bu reponun git
+ağacında hiçbir yerde yoktu (`git ls-files | grep chessformer` boş döndü). Script'i tek başına
+eklemek (yukarıdaki önceki giriş) onu reprodüklenebilir yapmamıştı, sadece bir stub'ı yerine
+koymuştu. `evidence/2026-08-02-chess-searchless-5070/chessformer/` altına gerçek bağımlılık
+kapanışını vendor ederek düzeltildi: `arch/` (9 dosya), `board.py`, `config.py`, `model.py`,
+`inference.py`, `runtime.py`, artı `eval.holdout`'un transitif olarak ihtiyaç duyduğu `eval/`
+(benchmark/elo/engine/holdout/puzzles) ve `data/` (dataset/preprocess/download) alt modülleri —
+her import zinciri okunarak izlendi, tahmin edilmedi. `retroactive_eval.py`'nin altı üst-seviye
+import'unun hepsini gerçekten import edip gerçek checkpoint'i onlardan yükleyerek doğrulandı
+(4.592.740 param, `model_report.json` ile birebir eşleşiyor). Bilerek hâlâ hariç tutulan:
+`train.py`, `profiling.py`, `pipeline.py`, `gui/` — eval raporlarını reprodüklemek için gerekli
+değil, ve dahil etmek tam paketi bu reponun içine gömmeye benzemeye başlardı, ki `DECISIONS.md`'nin
+yukarıdaki 2026-08-06 girişi bunu zaten reddetmişti. Bu, eval aşamalarının yeni sayı üretmesi
+için gereken gerçek veri setlerini/Stockfish binary'sini paketlemiyor — sadece kodu, bu
+klasörün checkpoint ağırlıkları ve PGN'ler için zaten sahip olduğu "bu klasöre dahil olmayanlar"
+notuyla aynı mantıkta. İki artık bayat "bu reponun parçası değil" iddiası (bu klasörün kendi
+README'si, `docs/CHESS_ONEFILE_MASTER_TRUTH.md`/`_TR`) gerçekte vendor edilen şeyi anlatacak
+şekilde düzeltildi.
+
 ## Analitik param-sayısı tahmincisi bug'ı — DÜZELTİLDİ (2026-07-27), eğitim-matematiği değişmedi
 `ARCHITECTURE.md`'nin belirttiği `~1.86B aktif param (MoE top-2 + shared)` rakamı, bu reponun iki bağımsız analitik tahmincisiyle (`scripts/scaling_audit_math.py::estimate_params()` ve `config/config.py::_estimate_total_params()` — ikincisi gerçek `auto_configure_batch_size()` VRAM-bütçeleme mantığını besliyor, yalnız raporlama aracı değil) çapraz kontrol edildiğinde, ikisinin de iki birleşen sebepten eksik saydığı bulundu: (1) ikisi de MoE-expert boyutlandırması için dense-katman `intermediate_size`'ını (5632) kullanıyordu, `layers/moe.py`'nin `BitSwiGLU` expert'lerinin gerçekte kullandığı daha büyük `moe_intermediate` (8192) yerine; (2) ikisi de `layers/moe.py`'nin her zaman instantiate edilen, her zaman aktif **shared expert**'ini (`self.shared_expert = BitSwiGLU(hidden_size, moe_intermediate)`, öğrenilebilir bir sigmoid gate ile her token'ın çıktısına koşulsuz eklenir) tamamen atlıyordu — `num_experts`'e dahil olmayan, her zaman aktif 9. bir expert-boyutlu blok. Net etki: aktif parametreler ~%44 (gerçek ~1.886B yerine ~1.06B), toplam parametreler ~%8 eksik sayılıyordu. Her iki dosyada da gerçek mimariye uyacak şekilde **düzeltildi**; `scaling_audit_math.py` artık `~3.698B` toplam / `~1.886B` aktif raporluyor, `ARCHITECTURE.md`'nin bağımsız kaynaklı rakamıyla eşleşiyor. 4 yeni regresyon testi: `tests/test_scaling_audit_math.py` (3 test, global singleton yerine `monkeypatch` ile izole stub `cfg`) ve `tests/test_config_dynamic_param_count.py`'ye bir ekleme. Salt param-muhasebesi/araç düzeltmesi — eğitim döngüsü, LR veya mimari değişikliği yok. Test sayısı: `622 → 626 passed, 5 skipped` (+4).
 

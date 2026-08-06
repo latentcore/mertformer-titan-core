@@ -53,7 +53,9 @@ It is intentionally strict about the difference between:
 ## Related, separate package: `ChessFormerAI/chessformer`
 
 An independent rewrite of this lane (`ChessFormerAI/chessformer`, developed against a
-read-only mirror of this repo's `layers/`, not part of this repo) has a real, checkpoint-bound
+read-only mirror of this repo's `layers/`; not part of this repo's own training pipeline or
+test suite, though a minimal inference+eval subset is vendored at
+`evidence/2026-08-02-chess-searchless-5070/chessformer/` for reproducibility) has a real, checkpoint-bound
 training run on target consumer hardware (RTX 5070) with real measured evaluation: puzzle
 accuracy 45.78% (directly comparable to DeepMind's Searchless Chess, arXiv:2402.04494) and an
 Elo estimate of 1509 on Stockfish's own internal rating scale (not comparable to DeepMind's

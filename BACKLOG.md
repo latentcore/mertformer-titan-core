@@ -110,6 +110,51 @@ Space and no GPU required. This fully covers "can someone else play against it" 
 recurring cost; a hosted public Space remains a possible future upgrade if the cost becomes
 worth it.
 
+**License correction + explicit Apache 2.0 exception (2026-08-06, same day):** the initial
+Hugging Face upload above tagged the checkpoint `license: mit` — wrong, and worse, it surfaced
+a real open question: `MODEL_LICENSE.md` keeps this repo's model-weights posture proprietary,
+and had never explicitly said whether `chessformer` (an independent side-project, not the
+canonical Titan model) was covered by that or not. Caught the same day via a full proofread of
+every file on the HF repo; the repo was made **private** immediately as a safe default while
+this was resolved (public exposure of an ambiguously-licensed checkpoint isn't something to
+leave sitting open). Resolved same day: Mert Yünlü, sole owner of both this repo and
+`chessformer`, explicitly exempted `chessformer` checkpoints from the proprietary posture,
+licensing them under this repo's own Apache License 2.0 — see `DECISIONS.md`'s matching
+2026-08-06 entry and the new exception section in `MODEL_LICENSE.md`/`MODEL_LICENSE_TR.md`. HF
+model card corrected to state Apache 2.0 with a link to that exception clause; repo made public
+again. Also caught and fixed in the same proofread pass: `requirements.txt` named the wrong,
+long-abandoned PyPI package (`python-chess`, frozen at a stub `1.999` release) instead of the
+actual maintained package (`chess`) — anyone following the install instructions verbatim would
+have failed to get a working `import chess`; `chessformer/runtime.py`'s `environment_snapshot()`
+queried the same wrong package name for version reporting (fixed to `chess`, matching this
+repo's own `constraints.txt` convention); the model card's `huggingface-cli download` command
+no longer works (the CLI itself now says so) — corrected to `hf download`; `chessformer/__init__.py`'s
+docstring listed `data/`/`train.py`/`eval/`/`pipeline.py`/`gui/` as present when the published
+subset deliberately excludes them for an inference-only package — docstring corrected to
+describe only what's actually included, with a pointer to the full GitHub repo for the rest.
+All fixes verified via a fresh `hf download` + `pip install` + full game round-trip before
+re-publishing, not assumed.
+
+**A deeper gap found in the same pass: `retroactive_eval.py` didn't actually run from this
+repo (2026-08-06).** It imports `chessformer.board`/`.config`/`.model`/`.eval.holdout`/
+`.eval.puzzles`/`.eval.benchmark`/`.runtime` -- none of which existed anywhere in this repo's
+git tree (`git ls-files | grep chessformer` returned nothing). Adding the script alone (the
+earlier entry above) didn't make it reproducible, it just moved a stub into place. Fixed by
+vendoring the actual dependency closure into `evidence/2026-08-02-chess-searchless-5070/
+chessformer/`: `arch/` (9 files), `board.py`, `config.py`, `model.py`, `inference.py`,
+`runtime.py`, plus the `eval/` (benchmark/elo/engine/holdout/puzzles) and `data/`
+(dataset/preprocess/download) submodules `eval.holdout` transitively needs -- traced by reading
+every import chain, not guessed. Verified by actually importing all six `retroactive_eval.py`
+top-level imports and loading the real checkpoint through them from a fresh interpreter
+(4,592,740 params, matches `model_report.json` exactly). Still deliberately excluded:
+`train.py`, `profiling.py`, `pipeline.py`, `gui/` -- not needed to reproduce the eval reports,
+and including them would start to look like folding the full package into this repo, which
+`DECISIONS.md`'s 2026-08-06 entry above already ruled out. This does not bundle the actual
+datasets/Stockfish binary the eval stages need to produce new numbers -- only the code, matching
+this folder's existing "not included in this folder" note for checkpoint weights and PGNs.
+Two now-stale "not part of this repo" claims (this folder's own README, `docs/
+CHESS_ONEFILE_MASTER_TRUTH.md`/`_TR`) corrected to describe what's actually vendored.
+
 ## Analytical param-count estimator bug — FIXED (2026-07-27), no training-math change
 A cross-check of `ARCHITECTURE.md`'s stated `~1.86B active params (MoE top-2 + shared)` against this repo's two independent analytical estimators — `scripts/scaling_audit_math.py::estimate_params()` and `config/config.py::_estimate_total_params()` (the latter feeds the real `auto_configure_batch_size()` VRAM-budgeting logic, not just a reporting tool) — found both undercounting for two compounding reasons: (1) both reused the dense-layer `intermediate_size` (5632) for MoE-expert sizing instead of the real, larger `moe_intermediate` (8192) that `layers/moe.py`'s `BitSwiGLU` experts actually use; (2) both omitted `layers/moe.py`'s always-instantiated, always-active **shared expert** (`self.shared_expert = BitSwiGLU(hidden_size, moe_intermediate)`, unconditionally added to every token's output via a learnable sigmoid gate) entirely — a 9th, always-active expert-sized block that is not part of `num_experts`. Net effect: active params were undercounted by ~44% (~1.06B vs. the real ~1.886B) and total params by ~8%. **Fixed** in both files to mirror the real architecture; `scaling_audit_math.py` now reports `~3.698B` total / `~1.886B` active, matching `ARCHITECTURE.md`'s independently-sourced figure. 4 new regression tests: `tests/test_scaling_audit_math.py` (3 tests, isolated-stub `cfg` via `monkeypatch` rather than the live global singleton, to avoid the test-order-dependent pollution class already documented elsewhere in this file) and one addition to `tests/test_config_dynamic_param_count.py` (hand-derives the correct GQA-attention + shared-expert total and pins the exact delta introduced by the fix). Pure param-accounting/tooling fix — no training-loop, LR, or architecture change; `auto_configure_batch_size()`'s VRAM math is now more accurate but this repo has never run it against real GPU hardware to begin with, so no prior claim is invalidated. Test count: `622 → 626 passed, 5 skipped` (+4).
 

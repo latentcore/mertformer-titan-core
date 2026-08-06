@@ -16,6 +16,6 @@ Kanıt sınıfları: **measured** (koşuldu, tekrarlanabilir) · **target** (tas
 | GPT-3.5-sınıfı yetenek / cihaz-içi throughput / NPU gecikmesi | target/vision | ölçülmedi — 45K koşusu + cihaz profili gerektirir |
 | Kanonik 3.67B model eğitildi & yakınsıyor | **doğrulanmadı** | hiç eğitilmedi; gerçek checkpoint yok — bkz. [STATUS_TR.md](STATUS_TR.md) |
 | Değiştirilmeyip-belgelenen bulgular (z-loss 2e-6, dt=1.0, GPU-perf) | measured (mekanizma) | [DECISIONS_TR.md](DECISIONS_TR.md) — 45K'yı confound etmemek için kasıtlı ertelendi |
-| `ChessFormerAI/chessformer` yan projesi gerçek bir RTX 5070 eğitim koşusu tamamladı (puzzle accuracy %45.78, Elo 1509, Stockfish'in kendi iç ölçeği) | measured | [evidence/2026-08-02-chess-searchless-5070/](evidence/2026-08-02-chess-searchless-5070/) — **ayrı proje, ayrı checkpoint, bu reponun kanonik 3.67B modeli değil; yukarıdaki 45K boşluğunu kapatmıyor** |
+| `ChessFormerAI/chessformer` yan projesi gerçek bir RTX 5070 eğitim koşusu tamamladı (puzzle accuracy %45.78, Elo 1509, Stockfish'in kendi iç ölçeği) | measured | [evidence/2026-08-02-chess-searchless-5070/](evidence/2026-08-02-chess-searchless-5070/), checkpoint [Hugging Face](https://huggingface.co/Mert21779033/mertformer-chess-searchless)'te — **ayrı proje, ayrı checkpoint, bu reponun kanonik 3.67B modeli değil; yukarıdaki 45K boşluğunu kapatmıyor** |
 
 Üretilen çapraz referans: `reports/final_truth_matrix.md`, `reports/source_of_truth_map.md`.
