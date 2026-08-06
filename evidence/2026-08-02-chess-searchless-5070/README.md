@@ -60,7 +60,11 @@ total plies) is a separate, honest diagnostic of what the network learned
 ## What is NOT in this folder
 
 - **Checkpoint weights.** `.pt` files (~52.7 MB each) stay local; `EVIDENCE_MANIFEST.json`
-  carries their SHA256 for reference, not the weights themselves.
+  carries their SHA256 for reference, not the weights themselves. The step-30,000 checkpoint
+  (the one these results are measured against) is published separately on
+  [Hugging Face](https://huggingface.co/Mert21779033/mertformer-chess-searchless), alongside
+  a copy of `retroactive_eval.py` and this same eval data, for anyone who wants to reproduce
+  or load the weights directly.
 - **Raw PGN game records** from the Elo ladder — `elo_report.json`'s own
   `pgn_dir` field records where they live locally; not included in this
   package to keep it small. Available on request / regenerable by re-running

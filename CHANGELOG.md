@@ -19,6 +19,9 @@ All notable changes to this project are tracked in this file.
 - `evidence/2026-08-02-chess-searchless-5070/retroactive_eval.py`: the script itself that
   produced the eval reports above, added to the evidence package verbatim for full
   reproducibility.
+- Chess checkpoint (step 30,000) published to [Hugging Face](https://huggingface.co/Mert21779033/mertformer-chess-searchless)
+  with a model card mirroring the evidence package's honesty framing. README.md/README_TR.md
+  and the evidence README updated with the link.
 
 ## Unreleased - 2026-08-01
 

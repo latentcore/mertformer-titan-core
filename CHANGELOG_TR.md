@@ -20,6 +20,9 @@ Bu dosya projedeki önemli değişiklikleri takip eder.
 - `evidence/2026-08-02-chess-searchless-5070/retroactive_eval.py`: yukarıdaki değerlendirme
   raporlarını üreten script'in kendisi, tam reprodüksiyon için evidence paketine birebir
   eklendi.
+- Satranç checkpoint'i (step 30.000) [Hugging Face](https://huggingface.co/Mert21779033/mertformer-chess-searchless)'e
+  yüklendi, evidence paketiyle aynı dürüstlük çerçevesini taşıyan bir model card ile.
+  README.md/README_TR.md ve evidence README'si linkle güncellendi.
 
 ## Unreleased - 2026-08-01
 
