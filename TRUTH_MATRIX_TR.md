@@ -8,7 +8,7 @@ Kanıt sınıfları: **measured** (koşuldu, tekrarlanabilir) · **target** (tas
 | Mimari: 18L / 2048 / GQA(16:8) / MoE 8-top2 / Liquid[4,10,16] / BitNet b1.58 | measured | kod: `config/config.py`, `model/transformers.py`, `layers/` |
 | Ölçülen runtime param = 3,672,982,022 (~3.67B) | measured | `reports/param_accounting_report.md`, `reports/FACTS.json` |
 | Tasarım hedefi param = 2.64B | target | `economics/flops_estimator.py` `DEFAULT_PARAMS` |
-| Test suite: 728 passed, 10 skipped (offline) | measured | `pytest` — bkz. [REPRODUCE.md](REPRODUCE.md) |
+| Test suite: 728 passed, 9 skipped (offline) | measured | `pytest` — bkz. [REPRODUCE.md](REPRODUCE.md) |
 | Checkpoint save→restore→resume bütünlüğü (K4) | measured (yerel, toy ölçek) | `scripts/checkpoint_restore_drill.py`, `resume_compat_check.py`; **45K ölçeğinde henüz kanıtlanmadı** |
 | CfC/MoE fast-path sayısal parite (≤%1) | measured (toy ölçek) | `scripts/cfc_moe_tolerance_check.py` + rapor |
 | Liquid katmanları doğruluğu artırır | **DESTEKLENMİYOR** | [ABLATION_TR.md](ABLATION_TR.md): OFF %96.32 / ON %94.69, Δ−1.63pp, p=0.305, d=−0.43 — sonuçsuz; maliyet (~%30 yavaş) kesin |

@@ -2,7 +2,7 @@
 
 - start_utc: 2026-07-31T19:55:08Z
 - end_utc: 2026-07-31T20:08:31Z
-- pytest: {'status': 'ok', 'test_stat': '721 passed, 9 skipped', 'changed': ['reports/FACTS.json', 'README.md', 'README_TR.md', 'reports/release_snapshot.md', 'reports/release_snapshot_TR.md', 'reports/one_command_full_sop_summary.md', 'reports/go_status_matrix.md', 'reports/go_status_matrix_TR.md', 'reports/final_sync_matrix.md', 'reports/final_sync_matrix_TR.md', 'reports/cleanroom_verification.md', 'STATUS.md', 'STATUS_TR.md', 'TRUTH_MATRIX.md', 'TRUTH_MATRIX_TR.md', 'REPRODUCE.md', 'REPRODUCE_TR.md', 'reports/cleanroom_verification_TR.md', 'docs/QUICKSTART_CPU.md'], 'missing': []}
+- pytest: {'status': 'ok', 'test_stat': '728 passed, 9 skipped', 'changed': ['reports/FACTS.json', 'README.md', 'README_TR.md', 'reports/release_snapshot.md', 'reports/release_snapshot_TR.md', 'reports/one_command_full_sop_summary.md', 'reports/go_status_matrix.md', 'reports/go_status_matrix_TR.md', 'reports/final_sync_matrix.md', 'reports/final_sync_matrix_TR.md', 'reports/cleanroom_verification.md', 'STATUS.md', 'STATUS_TR.md', 'TRUTH_MATRIX.md', 'TRUTH_MATRIX_TR.md', 'REPRODUCE.md', 'REPRODUCE_TR.md', 'reports/cleanroom_verification_TR.md', 'docs/QUICKSTART_CPU.md'], 'missing': []}
 - md_quality_all: md_quality: scope=all files=390 errors=0 warnings=1
 - md_integrity_all: md_integrity_check scanned=373 findings=0
 - linkcheck_all: linkcheck: scope=all files=390 missing=936
