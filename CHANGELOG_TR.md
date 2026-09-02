@@ -6,6 +6,33 @@ Bu dosya projedeki önemli değişiklikleri takip eder.
 > Girdiler sıkı ters-kronolojik sırada tutulur (en yeni en üstte); 2026-07-27 pass'i "Pass 7 (2026-06-13)"in 2026-03-13/2026-02-08 etiketli sürümlerden sonraya yanlış dosyalandığını buldu ve doğru kronolojik yerine taşıdı — ayrıntı için aşağıdaki girdiye bakın.
 > **Kapsam notu:** bu dosyanın en eski girdisi `v0.1.0-pilot-ready` (2026-02-08) — bu proje için changelog disiplini burada başladı, projenin kendisi burada başlamadı. Öncesi burada özetlenmiyor; o tarihten öncesi için `git log` tek doğru kaynak.
 
+## Unreleased - 2026-09-02
+
+### Düzeltilenler
+- `layers/ffn.py`, `layers/mla.py`, `layers/moe.py`, `layers/liquid.py`: `cfg.use_bitnet`
+  (`config/config.py`, varsayılan `True`) tanımlıydı ama kanonik model build'i tarafından hiç
+  okunmuyordu — dört dosya da `BitLinear(...)`'ı koşulsuz çağırıyordu, yani `use_bitnet=False`
+  **modele hiç etki etmiyordu**. Bu, `ablations/bitlinear_off`'u (ablasyon iskeleti kurulduğundan
+  beri `ablations/results.md`'de "Beklemede") olduğu gibi koşulsaydı yapısal olarak anlamsız
+  hâle getiriyordu. Yeni bir `layers/bitlinear.py::make_linear(use_bitnet, ...)` yardımcısıyla
+  düzeltildi (zaten `evidence/2026-08-02-chess-searchless-5070/chessformer/arch/bitlinear.py` ve
+  `scripts/chess_5080_onefile.py`'de doğru olan aynı kalıp); her dosyanın packed-path hızlı
+  yolu da bir `isinstance(..., BitLinear)` koruması kazandı. `layers/liquid.py`'nin
+  `packed_pair` eğitim-implementasyonu internallerine bilerek dokunulmadı (ayrıca ölçülmüş,
+  kapsam dışı). Tam ayrıntı: `BACKLOG.md`, `DECISIONS.md`.
+
+### Eklenenler
+- `scripts/run_bitlinear_ablation.py`: `ablations/bitlinear_off` için $0-pilot koşturucusu
+  (`scripts/run_liquid_ablation.py` ile aynı metodoloji), fix sonrası CPU-smoke ile doğrulandı
+  (iki kol artık gerçekten ayrışıyor; fix öncesi birebir aynıydı).
+- `tests/test_bitnet_toggle.py` (8 test): yukarıdaki fix için regresyon kapsamı — önceden hiç
+  yoktu, bug'ın hiç fark edilmemesinin sebebi de bu.
+
+### Doğrulama
+- Tam suite: `728 passed, 10 skipped` (önceden `721 passed, 9 skipped`; fark tam olarak 8 yeni
+  testle eşleşiyor). Bu pass için `bash scripts/final_one_shot.sh` koşuldu — kapı-kapı detay
+  için kendi özetine bakın.
+
 ## Unreleased - 2026-08-06
 
 ### Eklenenler

@@ -6,6 +6,33 @@ All notable changes to this project are tracked in this file.
 > Entries are kept in strict reverse-chronological order (newest first); a 2026-07-27 pass found "Pass 7 (2026-06-13)" mis-filed after the 2026-03-13/2026-02-08 tagged releases and moved it back to its correct chronological slot — see that entry below for detail.
 > **Coverage note:** this file's earliest entry is `v0.1.0-pilot-ready` (2026-02-08) — that is where changelog discipline for this project began, not where the project itself began. Earlier work is not summarized here; `git log` is the source of truth for anything before that date.
 
+## Unreleased - 2026-09-02
+
+### Fixed
+- `layers/ffn.py`, `layers/mla.py`, `layers/moe.py`, `layers/liquid.py`: `cfg.use_bitnet`
+  (`config/config.py`, default `True`) was defined but never read by the canonical model build —
+  all four files called `BitLinear(...)` unconditionally, so `use_bitnet=False` had **no effect
+  on the model at all**. This made `ablations/bitlinear_off` (present in `ablations/results.md`
+  as "Pending" since the ablations scaffold was built) structurally meaningless if ever run
+  as-is. Fixed via a new `layers/bitlinear.py::make_linear(use_bitnet, ...)` helper (the same
+  pattern already correct in `evidence/2026-08-02-chess-searchless-5070/chessformer/arch/bitlinear.py`
+  and `scripts/chess_5080_onefile.py`); each file's packed-path fast route also gained an
+  `isinstance(..., BitLinear)` guard. `layers/liquid.py`'s `packed_pair` training-impl internals
+  deliberately left untouched (separately benchmarked, out of scope). Full detail: `BACKLOG.md`,
+  `DECISIONS.md`.
+
+### Added
+- `scripts/run_bitlinear_ablation.py`: the $0-pilot runner for `ablations/bitlinear_off` (same
+  methodology as `scripts/run_liquid_ablation.py`), CPU-smoke-verified post-fix (the two arms now
+  genuinely diverge; before the fix they were byte-identical).
+- `tests/test_bitnet_toggle.py` (8 tests): regression coverage for the fix above — did not exist
+  before, which is why the bug went unnoticed.
+
+### Validation
+- Full suite: `728 passed, 10 skipped` (was `721 passed, 9 skipped`; delta matches the 8 new
+  tests exactly). `bash scripts/final_one_shot.sh` run for this pass — see its own summary for
+  gate-by-gate detail.
+
 ## Unreleased - 2026-08-06
 
 ### Added

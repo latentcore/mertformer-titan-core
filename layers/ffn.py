@@ -23,7 +23,7 @@ from typing import Optional
 
 # Local imports
 from config.config import cfg
-from layers.bitlinear import BitLinear, activation_quant, weight_quant
+from layers.bitlinear import BitLinear, activation_quant, make_linear, weight_quant
 
 
 _FFN_PACK_ENABLED = os.environ.get("TITAN_FFN_PACK", "0") == "1"
@@ -63,10 +63,11 @@ class MertFormerFFN(nn.Module):
         self.hidden_size = hidden_size
         self.intermediate_size = intermediate_size
 
-        # SwiGLU: gate, up, down (all BitLinear)
-        self.gate_proj = BitLinear(hidden_size, intermediate_size, bias=False)
-        self.up_proj = BitLinear(hidden_size, intermediate_size, bias=False)
-        self.down_proj = BitLinear(intermediate_size, hidden_size, bias=False)
+        # SwiGLU: gate, up, down (BitLinear when cfg.use_bitnet, else plain nn.Linear)
+        use_bn = bool(cfg.use_bitnet)
+        self.gate_proj = make_linear(use_bn, hidden_size, intermediate_size, bias=False)
+        self.up_proj = make_linear(use_bn, hidden_size, intermediate_size, bias=False)
+        self.down_proj = make_linear(use_bn, intermediate_size, hidden_size, bias=False)
         
         # Dropout layer
         self.dropout = nn.Dropout(ffn_dropout)
@@ -74,7 +75,12 @@ class MertFormerFFN(nn.Module):
     def _forward_packed(self, x: torch.Tensor) -> torch.Tensor:
         """Computes the gate+up projections in a single packed matmul."""
         packed_weight = torch.cat([self.gate_proj.weight, self.up_proj.weight], dim=0)
-        gate_up = _ffn_packed_bitlinear(x, packed_weight)
+        if isinstance(self.gate_proj, BitLinear):
+            gate_up = _ffn_packed_bitlinear(x, packed_weight)
+        else:
+            # cfg.use_bitnet=False: gate_proj/up_proj are plain nn.Linear, no bias here --
+            # do NOT run BitNet ternary/int8 quant math on their weights.
+            gate_up = F.linear(x, packed_weight, None)
         gate, up = gate_up.chunk(2, dim=-1)
         x_inter = F.silu(gate) * up
         x_inter = self.dropout(x_inter)

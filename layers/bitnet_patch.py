@@ -10,10 +10,18 @@ Version: v1.0 (Build 30) - Pre-Training
 Status : PRE-TRAINING (UNVERIFIED)
 ==============================================================================
 
-Role: standalone nn.Linear -> BitLinear conversion utility (apply_bitnet). The canonical
-model build instantiates BitLinear directly, so the MAIN path does NOT use this module; it
-is consumed by the self-contained onefile demo (scripts/mertformer_5080_final_onefile.py) and
-is available for ad-hoc conversion of an existing fp checkpoint.
+Role: standalone nn.Linear -> BitLinear conversion utility (apply_bitnet). It is consumed by
+the self-contained onefile demo (scripts/mertformer_5080_final_onefile.py) and is available
+for ad-hoc conversion of an existing fp checkpoint (e.g. one trained with cfg.use_bitnet=False).
+
+[2026-09-02 fix] This docstring previously claimed "canonical model build instantiates
+BitLinear directly, so the MAIN path does NOT use this module" -- true at the time, but it
+masked a real bug: layers/ffn.py, layers/mla.py, layers/moe.py and layers/liquid.py called
+BitLinear(...) UNCONDITIONALLY, so cfg.use_bitnet (config.py) had NO effect on the model at
+all -- the ablations/bitlinear_off ablation was structurally meaningless as a result (both
+arms produced identical loss curves; confirmed empirically before this fix). Those four files
+now read cfg.use_bitnet for real via layers/bitlinear.py::make_linear; this file (apply_bitnet)
+is unchanged, still a separate, valid post-hoc fp->BitLinear conversion utility.
 """
 
 from config.build_label import BUILD_LABEL as __version__

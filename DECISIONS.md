@@ -8,6 +8,7 @@
 - **Fallback boundary**: Remove teacherless fallback from the canonical `offline_clean` training path. If logits are missing, fail with the exact blocker instead of silently downgrading the run.
 - **Prompt surface**: Keep `prompts/system_v1.txt` as the only canonical system prompt surface until post-training behavioral evidence justifies expansion.
 - **Artifact strategy**: Preserve the existing release/repo zips and add a separate training outputs bundle zip for real run retrieval (`artifacts/mertformer_training_outputs_bundle.zip` + SHA256 + manifests).
+- **`use_bitnet` wiring (2026-09-02)**: `layers/ffn.py`/`mla.py`/`moe.py`/`liquid.py` now build `BitLinear` vs. plain `nn.Linear` via `layers/bitlinear.py::make_linear(cfg.use_bitnet, ...)` instead of the previous hardcoded `BitLinear(...)` — the flag was a structural no-op before this (see `BACKLOG.md`). `layers/liquid.py`'s `packed_pair`/`packed_pair_compile` training-impl internals were deliberately left calling the raw quant functions directly rather than being routed through the new gate — they are separately benchmarked (2026-07-12 wall-clock findings) and are not exercised when `use_liquid=False`, which `scripts/run_bitlinear_ablation.py` forces in both arms to isolate BitNet only. Revisit only if a future pass specifically wants `use_bitnet=False` to also affect the Liquid path.
 
 ## Audited decisions (2026-06-12 zero-contradiction closure) — document, do NOT "re-fix"
 

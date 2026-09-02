@@ -23,7 +23,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from config.config import cfg
-from layers.bitlinear import BitLinear, activation_quant, weight_quant
+from layers.bitlinear import BitLinear, activation_quant, make_linear, weight_quant
 
 _MLA_KV_PACK_ENABLED = os.environ.get("TITAN_MLA_KV_PACK", "0") == "1"
 
@@ -263,12 +263,13 @@ class GQA(nn.Module):
             base=self.rope_base
         )
         
-        # Projections (BitLinear for efficiency)
-        self.q_proj = BitLinear(self.hidden_size, self.num_heads * self.head_dim, bias=False)
+        # Projections (BitLinear when cfg.use_bitnet, else plain nn.Linear)
+        use_bn = bool(cfg.use_bitnet)
+        self.q_proj = make_linear(use_bn, self.hidden_size, self.num_heads * self.head_dim, bias=False)
         # Correct KV Head Projection for GQA
-        self.k_proj = BitLinear(self.hidden_size, self.num_kv_heads * self.head_dim, bias=False)
-        self.v_proj = BitLinear(self.hidden_size, self.num_kv_heads * self.head_dim, bias=False)
-        self.o_proj = BitLinear(self.num_heads * self.head_dim, self.hidden_size, bias=False)
+        self.k_proj = make_linear(use_bn, self.hidden_size, self.num_kv_heads * self.head_dim, bias=False)
+        self.v_proj = make_linear(use_bn, self.hidden_size, self.num_kv_heads * self.head_dim, bias=False)
+        self.o_proj = make_linear(use_bn, self.num_heads * self.head_dim, self.hidden_size, bias=False)
         
         # QK Norm
         self.q_norm = _QKRMSNorm(self.head_dim)
@@ -349,7 +350,8 @@ class GQA(nn.Module):
 
         # Projection: compute Q, K, V
         q = self.q_proj(x).view(B, T, self.num_heads, self.head_dim).transpose(1, 2)
-        if _MLA_KV_PACK_ENABLED and os.environ.get("MERTFORMER_LOWBIT_KERNEL", "0") != "1":
+        if (_MLA_KV_PACK_ENABLED and os.environ.get("MERTFORMER_LOWBIT_KERNEL", "0") != "1"
+                and isinstance(self.k_proj, BitLinear)):
             kv_out_dim = self.num_kv_heads * self.head_dim
             k_flat, v_flat = _mla_packed_kv(
                 x,

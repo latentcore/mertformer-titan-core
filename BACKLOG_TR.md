@@ -7,6 +7,48 @@ Kanonik backlog giriş noktası. English: [BACKLOG.md](BACKLOG.md). Tohum ayrın
 
 **Kapsam notu (2026-07-25):** gerçekten bağımsız pre-45K aksiyon maddelerinin küçük kümesi, aşağıda isim isim sayılanlardır (dataset pinleme, "safe pass" bölümündeki 5 düşük-öncelikli kod-seviyesi madde, vb.) — bu dokümanın tamamı değil. Bu dokümanın başka yerlerinde "Post-45K" altında dosyalanmış olanların çoğu (checkpoint-bağlı eval probe'ları, benchmark regression gate'leri, yayın/release hazırlığı) **ayrı, 45K koşusundan önce veya onunla birlikte planlanması gereken bekleyen bir iş değildir** — bu maddeler yapısal olarak gerçek bir checkpoint'in var olmasına bağlıdır (bugün tasarım gereği `SKIPPED`/`NO_CHECKPOINT`) ve 45K koşusunun kendisi bir checkpoint ürettiği an doğal bir sonraki adım olarak çalışırlar. Şimdi bir karar gerektirmezler; onları açan şey 45K koşusunun kendisidir.
 
+## `use_bitnet` ablasyonu-bloklayan bug bulundu ve düzeltildi (2026-09-02)
+
+`config/config.py`'nin `use_bitnet`'i (varsayılan `True`) tanımlıydı ama kanonik model build'i
+tarafından hiç okunmuyordu: `layers/ffn.py`, `layers/mla.py`, `layers/moe.py` ve
+`layers/liquid.py` construction anında `BitLinear(...)`'ı koşulsuz çağırıyordu.
+`use_bitnet=False` yapmak bu yüzden **modele hiç etki etmiyordu** — fix öncesi ampirik olarak
+doğrulandı: `scripts/run_bitlinear_ablation.py` (yeni, `scripts/run_liquid_ablation.py` ile aynı
+$0-pilot kalıbı) "on"/"off" kolları için birebir aynı loss eğrileri üretti. Bu, uzun süredir
+iskeletli duran `ablations/bitlinear_off` slotunu (`ablations/results.md`: "Beklemede — Eğitim
+donanımı gerekir", ablasyon iskeleti ilk kurulduğundan beri) **olduğu gibi koşulsaydı yapısal
+olarak anlamsız** hâle getiriyordu — sessizce sahte bir sıfır-fark sonucu dönerdi, gerçek bir
+"etkisi yok" bulgusu değil.
+
+**Düzeltilen:** `layers/bitlinear.py`'ye bir `make_linear(use_bitnet, in_features, out_features,
+bias=False)` yardımcısı eklendi (zaten `evidence/2026-08-02-chess-searchless-5070/chessformer/arch/bitlinear.py`
+ve `scripts/chess_5080_onefile.py`'de doğru kullanılan aynı kalıp — kanonik yol bunu hiç
+benimsememişti). Dört dosyanın constructor çağrı noktaları artık bundan geçiyor; her dosyanın
+`_forward_packed`/packed-KV hızlı yolu da bir `isinstance(..., BitLinear)` koruması kazandı —
+`TITAN_FFN_PACK`/`TITAN_MOE_PACK`/`TITAN_MLA_KV_PACK` set edildiğinde `use_bitnet=False` bir
+koşunun düz `nn.Linear` ağırlıkları üzerinde yanlışlıkla BitNet ternary/int8 quant matematiği
+çalıştırmaması için.
+
+**Bilerek DOKUNULMADI:** `layers/liquid.py`'nin optimize `packed_pair`/`packed_pair_compile`
+eğitim-implementasyonu internalleri (her modülün kendi `.forward()`'ını atlayan ham
+`activation_quant`/`weight_quant` çağrıları) — bunlar ayrıca, zaten ölçülmüş/benchmark edilmiş
+(bkz. bu dosyadaki 2026-07-12 Liquid duvar-saati bulguları) ve `use_liquid=False` iken hiç
+çalışmıyor — yeni ablasyon script'i BitNet'i izole etmek için iki kolda da bunu zorluyor.
+Gelecekte bir pass `use_bitnet`'in Liquid yoluna da tam yayılmasını isterse, o ayrı,
+kapsamlandırılmış bir iş.
+
+**Yeni test kapsamı** (önceden hiç yoktu — bug'ın hiç fark edilmemesinin sebebi de bu):
+`tests/test_bitnet_toggle.py`, 8 test, `cfg.use_bitnet`'in dört çağrı noktasında da gerçekten
+`BitLinear` vs `nn.Linear`'ı gating ettiğini + `make_linear`'ın doğrudan unit testini + her iki
+config'de uçtan uca forward-pass smoke'unu doğruluyor.
+
+**Hâlâ açık:** ablasyonun kendisi henüz gerçek bir sinyal üretmedi — sadece CPU'da 3-adımlık bir
+plumbing-doğruluğu smoke'u (`run_bitlinear_ablation.py`, ayrışmayı doğruladıktan sonra silindi,
+"sonuç" olarak commit'lenmedi). Eğitim donanımında gerçek bir pilot (`--steps 500` ya da fazlası,
+`--device cuda`) sıradaki adım; yönsel bir etki gösterirse, `ablations/results.md`'ye herhangi bir
+`measured` iddia yazmadan önce Liquid ablasyonunun kullandığı aynı çok-seed titizliğe
+(`ABLATION.md`'nin 12-seed metodolojisi) yükseltilmeli.
+
 ## Satranç onefile — bağımsız inceleme 3 gerçek drift/bug buldu (2026-08-02), bu dosyada henüz düzeltilmedi
 Satranç hattının ayrı bir yeniden yazımını kapsamlandıran bağımsız bir kod-inceleme pass'i
 (`ChessFormerAI/chessformer` — `scripts/chess_5080_onefile.py` ve `layers/`'ı salt-okunur

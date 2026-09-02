@@ -23,7 +23,7 @@ import math
 from typing import Any, Dict, List, Set, Tuple
 
 from config.config import cfg
-from layers.bitlinear import BitLinear, activation_quant, weight_quant
+from layers.bitlinear import BitLinear, activation_quant, make_linear, weight_quant
 
 
 _MOE_PACK_ENABLED = os.environ.get("TITAN_MOE_PACK", "0") == "1"
@@ -86,14 +86,18 @@ class BitSwiGLU(nn.Module):
         self.hidden_size = hidden_size
         self.intermediate_size = intermediate_size
 
-        # BitLinear projections: gate, up, down
-        self.gate_proj = BitLinear(hidden_size, intermediate_size, bias=False)
-        self.up_proj = BitLinear(hidden_size, intermediate_size, bias=False)
-        self.down_proj = BitLinear(intermediate_size, hidden_size, bias=False)
+        # Projections: gate, up, down (BitLinear when cfg.use_bitnet, else plain nn.Linear)
+        use_bn = bool(cfg.use_bitnet)
+        self.gate_proj = make_linear(use_bn, hidden_size, intermediate_size, bias=False)
+        self.up_proj = make_linear(use_bn, hidden_size, intermediate_size, bias=False)
+        self.down_proj = make_linear(use_bn, intermediate_size, hidden_size, bias=False)
 
     def _forward_packed(self, x: torch.Tensor) -> torch.Tensor:
         packed_weight = torch.cat([self.gate_proj.weight, self.up_proj.weight], dim=0)
-        gate_up = _moe_packed_bitlinear(x, packed_weight)
+        if isinstance(self.gate_proj, BitLinear):
+            gate_up = _moe_packed_bitlinear(x, packed_weight)
+        else:
+            gate_up = F.linear(x, packed_weight, None)
         gate, up = gate_up.chunk(2, dim=-1)
         x_inter = F.silu(gate) * up
         return self.down_proj(x_inter)
@@ -143,8 +147,9 @@ class LiquidRouter(nn.Module):
         self.hidden_size = hidden_size
         self.num_experts = num_experts
         
-        # Router Quantization: Use BitLinear for consistent 1.58-bit
-        self.main_proj = BitLinear(hidden_size, num_experts, bias=False)
+        # Router Quantization: BitLinear when cfg.use_bitnet, else plain nn.Linear
+        use_bn = bool(cfg.use_bitnet)
+        self.main_proj = make_linear(use_bn, hidden_size, num_experts, bias=False)
         
         # Fluid Dynamics: Lightweight history (History/Momentum)
         self.history_window = 4
@@ -157,7 +162,7 @@ class LiquidRouter(nn.Module):
             bias=False
         )
         # Router Quantization
-        self.fluid_gate = BitLinear(hidden_size, num_experts, bias=False)
+        self.fluid_gate = make_linear(use_bn, hidden_size, num_experts, bias=False)
         nn.init.zeros_(self.fluid_gate.weight)
         
         # Stateful Inference Buffer

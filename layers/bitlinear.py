@@ -203,3 +203,24 @@ class BitLinear(nn.Linear):
         x_q = activation_quant(x)
         w_q = weight_quant(self.weight)
         return F.linear(x_q, w_q, self.bias)
+
+
+def make_linear(use_bitnet: bool, in_features: int, out_features: int, bias: bool = False) -> nn.Linear:
+    """
+    TR: cfg.use_bitnet'e gore BitLinear ya da duz nn.Linear dondurur. Bu, layers/ffn.py,
+        layers/mla.py, layers/moe.py ve layers/liquid.py'deki dogrudan/kosulsuz BitLinear(...)
+        cagrilarinin yerini alir -- oncesinde cfg.use_bitnet=False'un modele HICBIR etkisi
+        yoktu (ablations/bitlinear_off ablasyonu bu yuzden anlamsizdi, bkz. ABLATION.md).
+        Ayni kalip zaten evidence/2026-08-02-chess-searchless-5070/chessformer/arch/bitlinear.py
+        ve scripts/chess_5080_onefile.py'de dogru sekilde kullaniliyordu.
+    EN: Returns BitLinear or plain nn.Linear depending on cfg.use_bitnet. Replaces the direct/
+        unconditional BitLinear(...) calls in layers/ffn.py, layers/mla.py, layers/moe.py and
+        layers/liquid.py -- previously cfg.use_bitnet=False had NO effect on the model at all
+        (the ablations/bitlinear_off ablation was meaningless as a result, see ABLATION.md).
+        The same pattern was already used correctly in
+        evidence/2026-08-02-chess-searchless-5070/chessformer/arch/bitlinear.py and
+        scripts/chess_5080_onefile.py.
+    """
+    if use_bitnet:
+        return BitLinear(in_features, out_features, bias=bias)
+    return nn.Linear(in_features, out_features, bias=bias)

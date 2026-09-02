@@ -22,7 +22,8 @@ import sys
 import warnings
 from typing import Optional, Tuple
 
-from layers.bitlinear import BitLinear, activation_quant, weight_quant
+from config.config import cfg
+from layers.bitlinear import BitLinear, activation_quant, make_linear, weight_quant
 
 DEFAULT_TORCHSCRIPT_COMPAT_ENV = "MERTFORMER_ENABLE_TORCHSCRIPT_COMPAT"
 DEFAULT_LIQUID_TRAIN_IMPL_ENV = "TITAN_LIQUID_TRAIN_IMPL"
@@ -59,14 +60,15 @@ class LiquidCell(nn.Module):
         super().__init__()
         # TR: 1. Durum Güncelleme Projeksiyonları (Whal = tanh(W*x + R*h))
         # EN: 1. State Update Projections (Whal = tanh(W*x + R*h))
-        self.input_w = BitLinear(h, h, bias=False)
-        self.hidden_w = BitLinear(h, h, bias=False)
-        
+        use_bn = bool(cfg.use_bitnet)
+        self.input_w = make_linear(use_bn, h, h, bias=False)
+        self.hidden_w = make_linear(use_bn, h, h, bias=False)
+
         # TR: 2. Zaman-Sabiti Projeksiyonları (Tau = softplus(W_tau*x + R_tau*h + bias))
         # EN: 2. Time-Constant Projections (Tau = softplus(W_tau*x + R_tau*h + bias))
         # TR: Zaman-sabiti için ayrı ağırlıklar / EN: Separate weights for time-constant
-        self.tau_input_w = BitLinear(h, h, bias=False)
-        self.tau_hidden_w = BitLinear(h, h, bias=False)
+        self.tau_input_w = make_linear(use_bn, h, h, bias=False)
+        self.tau_hidden_w = make_linear(use_bn, h, h, bias=False)
         # TR: Daha yavaş bozulma = daha uzun zamansal hafıza için 0.5 ile başlat
         # EN: Initialize with 0.5 for slower decay = longer temporal memory
         self.tau_bias = nn.Parameter(torch.ones(1, h) * 0.5)

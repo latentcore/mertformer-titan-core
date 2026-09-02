@@ -7,6 +7,46 @@ Canonical backlog entry point. Turkish: [BACKLOG_TR.md](BACKLOG_TR.md). Seed det
 
 **Scope note (2026-07-25):** the small set of genuinely-standalone pre-45K action items is what's enumerated below by name (dataset pinning, the 5 low-priority code-level items in the "safe pass" section, etc.) — not the entire backlog. Most of what's filed under "Post-45K" elsewhere in this doc (checkpoint-bound eval probes, benchmark regression gates, publication/release prep) is **not** separate pending work that needs scheduling before or alongside the run — those items are structurally blocked on a real checkpoint existing (`SKIPPED`/`NO_CHECKPOINT` today, by design) and execute as the natural next step once the 45K run itself produces one. They don't need a decision now; the 45K run is the thing that unblocks them.
 
+## `use_bitnet` ablation-blocking bug found and fixed (2026-09-02)
+
+`config/config.py`'s `use_bitnet` (default `True`) was defined but never read by the canonical
+model build: `layers/ffn.py`, `layers/mla.py`, `layers/moe.py` and `layers/liquid.py` all called
+`BitLinear(...)` unconditionally at construction time. Setting `use_bitnet=False` therefore had
+**zero effect on the model** — confirmed empirically before the fix: `scripts/run_bitlinear_ablation.py`
+(new, same $0-pilot pattern as `scripts/run_liquid_ablation.py`) produced byte-identical loss
+curves for the "on"/"off" arms. This made the long-scaffolded `ablations/bitlinear_off` slot
+(`ablations/results.md`: "Pending — Run on training hardware", present since the ablations
+scaffold was first built) **structurally meaningless if ever run as-is** — it would have silently
+returned a fake zero-delta result, not a real absence-of-effect finding.
+
+**Fixed:** `layers/bitlinear.py` gained a `make_linear(use_bitnet, in_features, out_features,
+bias=False)` helper (same pattern already used correctly in
+`evidence/2026-08-02-chess-searchless-5070/chessformer/arch/bitlinear.py` and
+`scripts/chess_5080_onefile.py` — the canonical path just never adopted it). The four files'
+constructor call sites now route through it; each file's `_forward_packed`/packed-KV fast path
+also gained an `isinstance(..., BitLinear)` guard so a `use_bitnet=False` run does not
+accidentally run BitNet ternary/int8 quant math on plain `nn.Linear` weights when
+`TITAN_FFN_PACK`/`TITAN_MOE_PACK`/`TITAN_MLA_KV_PACK` are set.
+
+**Deliberately NOT touched:** `layers/liquid.py`'s optimized `packed_pair`/`packed_pair_compile`
+training-impl internals (the raw `activation_quant`/`weight_quant` calls bypassing each module's
+own `.forward()`) — these are separately, already benchmarked/measured (see the 2026-07-12
+Liquid wall-clock findings elsewhere in this file) and are not exercised when `use_liquid=False`,
+which the new ablation script forces in both arms to isolate BitNet only. If a future pass wants
+`use_bitnet` to fully propagate through the Liquid path too, that is separate scoped work.
+
+**New test coverage** (previously nonexistent — this is why the bug went unnoticed):
+`tests/test_bitnet_toggle.py`, 8 tests, asserting `cfg.use_bitnet` actually gates `BitLinear` vs
+`nn.Linear` in all four call sites plus a direct unit test of `make_linear` and an end-to-end
+forward-pass smoke in both configs.
+
+**Still open:** the ablation itself has not produced a real signal — only a CPU 3-step
+plumbing-correctness smoke (`run_bitlinear_ablation.py`, deleted after confirming divergence, not
+committed as a "result"). A real pilot (`--steps 500` or higher, `--device cuda`) on training
+hardware is the next step; if it shows a directional effect worth trusting, escalate to the same
+multi-seed rigor the Liquid ablation used (`ABLATION.md`'s 12-seed methodology) before writing any
+`measured` claim into `ablations/results.md`.
+
 ## Chess onefile — independent review found 3 real drift/bugs (2026-08-02), not yet fixed in this file
 An independent code-review pass, scoping a separate rewrite of the chess lane
 (`ChessFormerAI/chessformer`, developed in an isolated directory using `scripts/chess_5080_onefile.py`
