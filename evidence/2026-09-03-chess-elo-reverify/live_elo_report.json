@@ -1,0 +1,54 @@
+{
+  "schema": "chessformer_live_elo_rebench_v1",
+  "date": "2026-09-03",
+  "games_played": 36,
+  "total_score": 17.5,
+  "overall_score_rate": 0.4861,
+  "elapsed_sec": 637.32,
+  "final_estimate_elo": 1495.0,
+  "blocks": [
+    {
+      "block": 1,
+      "opponent_elo": 1500,
+      "games": 12,
+      "wins": 5,
+      "draws": 3,
+      "losses": 4,
+      "score": 6.5,
+      "score_rate": 0.5417,
+      "elapsed_sec": 230.04,
+      "estimate_after": 1529.0
+    },
+    {
+      "block": 2,
+      "opponent_elo": 1529,
+      "games": 12,
+      "wins": 3,
+      "draws": 3,
+      "losses": 6,
+      "score": 4.5,
+      "score_rate": 0.375,
+      "elapsed_sec": 214.94,
+      "estimate_after": 1485.4
+    },
+    {
+      "block": 3,
+      "opponent_elo": 1485,
+      "games": 12,
+      "wins": 5,
+      "draws": 3,
+      "losses": 4,
+      "score": 6.5,
+      "score_rate": 0.5417,
+      "elapsed_sec": 192.27,
+      "estimate_after": 1495.0
+    }
+  ],
+  "methodology": {
+    "opponent": "Stockfish 18, UCI_LimitStrength=true, UCI_Elo re-aimed to running estimate each block",
+    "movetime_ms": 100,
+    "selection_mode": "policy (searchless)",
+    "opening_book_size": 6,
+    "note": "Smaller-scale live rebench (36 games vs original 140) for a fresh, same-day sanity check against the documented 1509 figure -- not a replacement for the full study."
+  }
+}
