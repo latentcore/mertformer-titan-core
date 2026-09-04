@@ -1,18 +1,22 @@
 {
-  "generated_utc": "2026-09-02T19:21:56.838334+00:00",
+  "generated_utc": "2026-09-04T15:41:27.654503+00:00",
   "check": "manifest_vs_rendered_structure_md",
-  "manifest_count": 1004,
-  "structure_count": 1004,
+  "manifest_count": 1010,
+  "structure_count": 1010,
   "missing_in_structure": [],
   "missing_in_manifest": [],
   "ok": true,
   "previous_structure": {
     "readable": true,
-    "count": 1002,
+    "count": 1004,
     "was_stale": true,
     "added_since_previous": [
-      "scripts/run_bitlinear_ablation.py",
-      "tests/test_bitnet_toggle.py"
+      "evidence/2026-09-03-chess-elo-reverify/README.md",
+      "evidence/2026-09-03-chess-elo-reverify/live_elo_bench.py",
+      "evidence/2026-09-03-chess-elo-reverify/live_elo_report.json",
+      "evidence/2026-09-04-chess-vs-stockfish-1700/README.md",
+      "evidence/2026-09-04-chess-vs-stockfish-1700/stockfish_1700_test.py",
+      "evidence/2026-09-04-chess-vs-stockfish-1700/stockfish_1700_test_report.json"
     ],
     "removed_since_previous": [],
     "note": "Drift of the COMMITTED tree against the manifest, measured before this run rewrote it. Refreshing it is this tool's purpose, so a non-empty diff is not a failure."

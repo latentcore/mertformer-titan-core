@@ -236,6 +236,14 @@ mertformer-titan-core/  # project root (git ls-files inventory)
 │   │   ├── retroactive_eval.py  # Python module/script (module for retroactive eval)
 │   │   ├── training_curve.png  # media asset
 │   │   └── training_report.json  # JSON data artifact
+│   ├── 2026-09-03-chess-elo-reverify/  # directory
+│   │   ├── README.md  # primary documentation (EN)
+│   │   ├── live_elo_bench.py  # Python module/script (module for live elo bench)
+│   │   └── live_elo_report.json  # JSON data artifact
+│   ├── 2026-09-04-chess-vs-stockfish-1700/  # directory
+│   │   ├── README.md  # primary documentation (EN)
+│   │   ├── stockfish_1700_test.py  # Python module/script (module for stockfish 1700 test)
+│   │   └── stockfish_1700_test_report.json  # JSON data artifact
 │   ├── build30_t4_onecell/  # directory
 │   │   ├── EVIDENCE_POINTER.md  # documentation/report file
 │   │   ├── run_summary.json  # JSON data artifact
