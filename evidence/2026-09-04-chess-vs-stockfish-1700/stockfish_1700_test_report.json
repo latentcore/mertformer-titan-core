@@ -1,0 +1,136 @@
+{
+  "schema": "chessformer_fixed_opponent_test_v1",
+  "date": "2026-09-04",
+  "purpose": "Answer: can chessformer-tiny (measured ~1509 Elo) beat Stockfish 18 fixed at UCI_Elo=1700 even once?",
+  "checkpoint_verified_params": 4592740,
+  "opponent": {
+    "engine": "Stockfish 18",
+    "UCI_LimitStrength": true,
+    "UCI_Elo": 1700,
+    "movetime_ms": 100
+  },
+  "mode": "policy (searchless)",
+  "games_played": 10,
+  "wins": 2,
+  "draws": 2,
+  "losses": 6,
+  "score": 3.0,
+  "score_rate": 0.3,
+  "elapsed_sec_total": 187.0,
+  "games": [
+    {
+      "game": 1,
+      "opening": [],
+      "model_color": "white",
+      "result": "1/2-1/2",
+      "plies": 93,
+      "model_score": 0.5,
+      "elapsed_sec": 20.57
+    },
+    {
+      "game": 2,
+      "opening": [],
+      "model_color": "black",
+      "result": "1-0",
+      "plies": 167,
+      "model_score": 0.0,
+      "elapsed_sec": 34.43
+    },
+    {
+      "game": 3,
+      "opening": [
+        "e2e4",
+        "e7e5"
+      ],
+      "model_color": "white",
+      "result": "1-0",
+      "plies": 43,
+      "model_score": 1.0,
+      "elapsed_sec": 8.61
+    },
+    {
+      "game": 4,
+      "opening": [
+        "e2e4",
+        "e7e5"
+      ],
+      "model_color": "black",
+      "result": "1-0",
+      "plies": 15,
+      "model_score": 0.0,
+      "elapsed_sec": 2.9
+    },
+    {
+      "game": 5,
+      "opening": [
+        "e2e4",
+        "c7c5"
+      ],
+      "model_color": "white",
+      "result": "1/2-1/2",
+      "plies": 117,
+      "model_score": 0.5,
+      "elapsed_sec": 23.36
+    },
+    {
+      "game": 6,
+      "opening": [
+        "e2e4",
+        "c7c5"
+      ],
+      "model_color": "black",
+      "result": "1-0",
+      "plies": 73,
+      "model_score": 0.0,
+      "elapsed_sec": 14.4
+    },
+    {
+      "game": 7,
+      "opening": [
+        "d2d4",
+        "d7d5"
+      ],
+      "model_color": "white",
+      "result": "0-1",
+      "plies": 124,
+      "model_score": 0.0,
+      "elapsed_sec": 24.71
+    },
+    {
+      "game": 8,
+      "opening": [
+        "d2d4",
+        "d7d5"
+      ],
+      "model_color": "black",
+      "result": "0-1",
+      "plies": 104,
+      "model_score": 1.0,
+      "elapsed_sec": 20.53
+    },
+    {
+      "game": 9,
+      "opening": [
+        "d2d4",
+        "g8f6"
+      ],
+      "model_color": "white",
+      "result": "0-1",
+      "plies": 68,
+      "model_score": 0.0,
+      "elapsed_sec": 13.55
+    },
+    {
+      "game": 10,
+      "opening": [
+        "d2d4",
+        "g8f6"
+      ],
+      "model_color": "black",
+      "result": "1-0",
+      "plies": 121,
+      "model_score": 0.0,
+      "elapsed_sec": 23.86
+    }
+  ]
+}
